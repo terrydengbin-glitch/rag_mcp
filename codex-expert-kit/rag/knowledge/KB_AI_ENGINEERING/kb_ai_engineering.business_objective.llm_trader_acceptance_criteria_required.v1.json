@@ -1,0 +1,334 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_ai_engineering.business_objective.llm_trader_acceptance_criteria_required.v1",
+  "title": "LLM 交易质量项目的成功指标不能只看 PnL，还必须覆盖风险拦截、坏交易过滤、解释质量和审计成本。",
+  "metadata": {
+    "partition_id": "KB_AI_ENGINEERING",
+    "domain": "ai_engineering",
+    "subdomain": "ai_business_objective",
+    "rule_type": "checklist",
+    "content_type": "json",
+    "project_binding": "none",
+    "tree_node_id": "kt.ai_business_objective",
+    "tree_path": "CEK-TA / AI Engineering",
+    "canonical_node_id": "kt.ai_business_objective",
+    "canonical_tree_path": "CEK-TA / AI Engineering",
+    "risk_level": "medium",
+    "used_for": [
+      "llm_training",
+      "trading_gating_scoring",
+      "rag_engineering",
+      "mcp",
+      "vue_audit_ui"
+    ],
+    "source_candidate_id": "cand_20260609_ai_engineering_business_objective_llm_trader_acceptance_criteria_required_v1_001",
+    "research_task_id": "RIT-P36-D-B01",
+    "claim_type": "ai_governance_rule",
+    "classification_notes": "Phase 36 AI Engineering reviewed knowledge; UI tree and canonical node are inherited from candidate classification. Trading rule bodies must remain in Trading Engineering."
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "general",
+    "data_granularity": "general",
+    "project_type": "trading_llm_assistant",
+    "applies_when": [
+      "外接项目正在构建或审计交易 LLM gating/scoring、训练数据、评估、RAG/MCP、部署或治理链路。",
+      "该规则用于阻断数据泄漏、权限越界、无来源默认指导、训练/评估污染或上线前治理缺口。"
+    ],
+    "not_applicable_when": [
+      "用户需要具体买卖点、仓位、止损止盈、策略参数或实盘订单执行。",
+      "知识点主要描述 K 线结构、市场微观结构、回测模型、fill model 或交易风控本体，应路由到 Trading Engineering。"
+    ]
+  },
+  "content": {
+    "statement": "LLM 交易质量项目的成功指标不能只看 PnL，还必须覆盖风险拦截、坏交易过滤、解释质量和审计成本。",
+    "rationale": "本候选仅沉淀 AI Engineering 中训练、评估、RAG/MCP、安全、部署或治理规则；不定义 K 线信号、具体交易策略、订单执行规则或账户参数。 审计结论：方向成立，但与 success_metric_not_only_pnl 内容重复。建议本条作为父规则：LLM 交易质量项目上线前必须定义 acceptance criteria，覆盖风险拦截、坏交易过滤、解释质量、人工复核、审计成本和运行约束，而不仅是收益表现。",
+    "procedure": [
+      "确认项目事实匹配 applies_when，且没有命中 not_applicable_when。",
+      "按 source_patch_notes 检查来源是否足够支撑 statement。",
+      "按 content_patch_notes 补齐正式实现、schema、字段和 checklist。",
+      "按 boundary_patch_notes 确认没有把交易规则本体、项目私有参数或实盘执行规则写入 AI Engineering。",
+      "保留 required_followups，后续由来源增强或治理任务继续关闭。"
+    ],
+    "examples": [],
+    "anti_patterns": [
+      "把 reviewed 知识当作 approved 默认指导。",
+      "把 AI Engineering 规则扩写成具体交易阈值、仓位、买卖点或执行参数。",
+      "忽略审计结果中的来源限制、适用范围和后续补强要求。"
+    ],
+    "validation": [
+      "source_evidence 至少 2 条，且没有 low-only 来源。",
+      "conflict_status 为 none 或 resolved。",
+      "review_status 为 reviewed 时 machine_gate 必须是 caveat_only。",
+      "MCP/SearchLab 默认指导不得把本条当作 approved 返回。"
+    ],
+    "risk_notes": [
+      "本条仍是 candidate，需要外部 AI/人工审计确认来源充分性、适用边界和是否需要拆分。",
+      "AI Engineering 只定义 LLM gate/scoring 质量指标和审计指标。",
+      "PnL、回撤、夏普、滑点、成交质量等交易绩效指标的计算口径应路由到 Trading Engineering。",
+      "与 business_objective.success_metric_not_only_pnl 重复，应拆分父子关系。",
+      "未发现直接冲突。",
+      "建立 acceptance criteria 模板。",
+      "将本条与第 4 条互链：本条为项目准入 checklist，第 4 条为 metric composition rule。"
+    ],
+    "citation_notes": "OpenAI evals documentation supports programmatic evaluation setup and workflow-specific quality checks before relying on model behavior.；NIST AI RMF supports governance, mapping, measurement, and management of AI risks across design, deployment, and monitoring.",
+    "audit_patch_notes": {
+      "source_patch_notes": [
+        "保留 OpenAI evals 来源，但注明 Evals platform 正在退役，应迁移到当前 Datasets/新 eval 工作流。",
+        "保留 NIST AI RMF，支持 intended purpose、measurement、deployment context 和 risk management。",
+        "补 Model Cards for Model Reporting，支持 intended use、evaluation procedures、performance characteristics 和 limitations。",
+        "补 CFA Institute GIPS 或投资表现呈现来源，用于说明投资表现报告不能只看单一 PnL 且不得误导。"
+      ],
+      "content_patch_notes": [
+        "将本条改为 acceptance criteria 父 checklist，不再重复“不能只看 PnL”的一句话。",
+        "建议字段：risk_interception_rate、false_allow_rate、false_block_rate、bad_trade_filter_quality、explanation_quality、source_coverage、human_review_rate、audit_cost_minutes、latency_budget、privacy_compliance_pass。",
+        "明确 acceptance criteria 是上线准入条件，不等于策略收益承诺。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 只定义 LLM gate/scoring 质量指标和审计指标。",
+        "PnL、回撤、夏普、滑点、成交质量等交易绩效指标的计算口径应路由到 Trading Engineering。"
+      ],
+      "conflict_patch_notes": [
+        "与 business_objective.success_metric_not_only_pnl 重复，应拆分父子关系。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "建立 acceptance criteria 模板。",
+        "将本条与第 4 条互链：本条为项目准入 checklist，第 4 条为 metric composition rule。"
+      ]
+    }
+  },
+  "assumptions": [
+    "外接项目提供项目事实、私有交易数据和策略上下文；CEK-TA 只沉淀可复用专业规则。",
+    "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+  ],
+  "source_evidence": [
+    {
+      "source_id": "src_openai_evals",
+      "source_title": "Working with evals | OpenAI API",
+      "source_url": "https://platform.openai.com/docs/guides/evals?api-mode=chat",
+      "source_type": "official_doc",
+      "publisher": "OpenAI",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "OpenAI evals documentation supports programmatic evaluation setup and workflow-specific quality checks before relying on model behavior.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_nist",
+      "source_title": "AI Risk Management Framework | NIST",
+      "source_url": "https://www.nist.gov/itl/ai-risk-management-framework",
+      "source_type": "standard_or_risk_framework",
+      "publisher": "NIST",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "NIST AI RMF supports governance, mapping, measurement, and management of AI risks across design, deployment, and monitoring.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_fed_model_risk",
+      "source_title": "Supervisory Guidance on Model Risk Management",
+      "source_url": "https://www.federalreserve.gov/frrs/guidance/supervisory-guidance-on-model-risk-management.htm",
+      "source_type": "standard_or_risk_framework",
+      "publisher": "Federal Reserve",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "Model risk guidance supports independent validation, governance, change control, and risk-based model oversight.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_occ_fed_fdic_revised_model_risk_2026",
+      "source_title": "Model Risk Management: Revised Guidance",
+      "source_url": "https://occ.gov/news-issuances/bulletins/2026/bulletin-2026-13.html",
+      "source_type": "standard_or_risk_framework",
+      "publisher": "OCC / Federal Reserve / FDIC",
+      "published_at": "2026-04-17",
+      "accessed_at": "2026-06-09",
+      "version": "OCC Bulletin 2026-13 / SR 26-2",
+      "reliability": "high",
+      "relevance": "medium",
+      "evidence_summary": "2026 年跨机构模型风险管理修订指南支持模型治理、验证、变更控制和风险分层；同时需注明 generative AI 和 agentic AI 不在其直接范围内，只能作为模型风险治理类比来源。",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 90,
+    "score_version": "1.0.0",
+    "primary_source_count": 2,
+    "supporting_source_count": 2,
+    "low_reliability_source_count": 0,
+    "limitations": [
+      "本条为 reviewed 知识，来源和审计补丁已记录；默认指导仍需后续人工治理升级 approved。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "docs/contracts/ai_engineering_gating_scoring_contract.md",
+      "docs/contracts/ai_engineering_knowledge_item_policy.md",
+      "docs/tasks/phase36_ai_engineering_gating_scoring_knowledge.md"
+    ],
+    "conflicts": [],
+    "resolution_summary": "未发现与当前 CEK-TA formal knowledge 的直接冲突；候选不会进入默认指导。",
+    "default_recommendation": "caveat_only_until_approved"
+  },
+  "review": {
+    "confidence": "medium",
+    "freshness": "time_sensitive",
+    "review_status": "reviewed",
+    "reviewer": "codex",
+    "reviewed_at": "2026-06-09",
+    "created_at": "2026-06-09",
+    "updated_at": "2026-06-09",
+    "open_questions": [
+      "审计时确认该候选是否应与相邻 AI Engineering 规则合并、拆分，或改路由到 Trading Engineering。",
+      "建立 acceptance criteria 模板。",
+      "将本条与第 4 条互链：本条为项目准入 checklist，第 4 条为 metric composition rule。"
+    ],
+    "decision_log": [
+      {
+        "at": "2026-06-09",
+        "actor": "external_ai",
+        "decision": "accepted_for_draft",
+        "reason": "方向成立，但与 success_metric_not_only_pnl 内容重复。建议本条作为父规则：LLM 交易质量项目上线前必须定义 acceptance criteria，覆盖风险拦截、坏交易过滤、解释质量、人工复核、审计成本和运行约束，而不仅是收益表现。",
+        "audit_result_id": "audit_result_phase36_ai_engineering_batch_01_of_10_20260609_gpt55_pro"
+      },
+      {
+        "at": "2026-06-09",
+        "actor": "codex",
+        "decision": "converted_to_reviewed",
+        "reason": "按 Phase 36 批量审计结果优化候选并转为 formal reviewed；未升级 approved。",
+        "audit_result_id": "audit_result_phase36_ai_engineering_batch_01_of_10_20260609_gpt55_pro"
+      }
+    ],
+    "approval_status": "not_requested",
+    "default_guidance_allowed": false,
+    "source_candidate_id": "cand_20260609_ai_engineering_business_objective_llm_trader_acceptance_criteria_required_v1_001",
+    "ai_audit_result_id": "audit_result_phase36_ai_engineering_batch_01_of_10_20260609_gpt55_pro",
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase36_ai_engineering_batch_01_of_10_20260609_gpt55_pro",
+      "source_package_id": "phase36_ai_engineering_candidate_audit_batch_01_of_10_20260609",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立，但与 success_metric_not_only_pnl 内容重复。建议本条作为父规则：LLM 交易质量项目上线前必须定义 acceptance criteria，覆盖风险拦截、坏交易过滤、解释质量、人工复核、审计成本和运行约束，而不仅是收益表现。",
+      "source_patch_notes": [
+        "保留 OpenAI evals 来源，但注明 Evals platform 正在退役，应迁移到当前 Datasets/新 eval 工作流。",
+        "保留 NIST AI RMF，支持 intended purpose、measurement、deployment context 和 risk management。",
+        "补 Model Cards for Model Reporting，支持 intended use、evaluation procedures、performance characteristics 和 limitations。",
+        "补 CFA Institute GIPS 或投资表现呈现来源，用于说明投资表现报告不能只看单一 PnL 且不得误导。"
+      ],
+      "content_patch_notes": [
+        "将本条改为 acceptance criteria 父 checklist，不再重复“不能只看 PnL”的一句话。",
+        "建议字段：risk_interception_rate、false_allow_rate、false_block_rate、bad_trade_filter_quality、explanation_quality、source_coverage、human_review_rate、audit_cost_minutes、latency_budget、privacy_compliance_pass。",
+        "明确 acceptance criteria 是上线准入条件，不等于策略收益承诺。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 只定义 LLM gate/scoring 质量指标和审计指标。",
+        "PnL、回撤、夏普、滑点、成交质量等交易绩效指标的计算口径应路由到 Trading Engineering。"
+      ],
+      "conflict_patch_notes": [
+        "与 business_objective.success_metric_not_only_pnl 重复，应拆分父子关系。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "建立 acceptance criteria 模板。",
+        "将本条与第 4 条互链：本条为项目准入 checklist，第 4 条为 metric composition rule。"
+      ]
+    },
+    "approved_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "contribution": {
+    "contribution_id": null,
+    "source_project": null,
+    "sanitization_status": "not_applicable",
+    "private_data_removed": true,
+    "generic_mapping_notes": "Phase 36 public-source AI Engineering candidate; no project-private trading facts included."
+  },
+  "copyright": {
+    "stores_full_text": false,
+    "stores_long_quote": false,
+    "summary_only": true,
+    "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+    "reuse_risk": "low"
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于审计 AI Engineering、LLM 训练、RAG/MCP、部署、安全或治理链路。",
+      "用于提醒外接项目补齐来源、适用边界、冲突状态、审计记录和人工审批。",
+      "用于 reviewed/audit 模式下带 caveat 引用。"
+    ],
+    "not_allowed": [
+      "不得生成买卖点、仓位、杠杆、止损止盈或实盘执行指令。",
+      "不得覆盖确定性风控、交易执行系统或人工审批。",
+      "不得作为 approved/default guidance 直接返回。"
+    ],
+    "required_context": [
+      "project_type",
+      "task_type",
+      "mode",
+      "strategy_version",
+      "data_boundary",
+      "review_status"
+    ],
+    "fallback_behavior": "cite_with_caveat"
+  },
+  "machine_gate": {
+    "default_guidance": "caveat_only",
+    "reason": "reviewed only; accepted_for_draft is not approved; default guidance requires later human governance approval.",
+    "requires_human_escalation": true,
+    "blocking_reasons": [
+      "not_approved",
+      "phase36_batch_reviewed_only"
+    ],
+    "checked_at": "2026-06-09",
+    "gate_version": "1.0.0",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "recommended_extra_sources": [
+    {
+      "title": "保留 OpenAI evals 来源，但注明 Evals platform 正在退役，应迁移到当前 Datasets/新 eval 工作流。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_1"
+    },
+    {
+      "title": "保留 NIST AI RMF，支持 intended purpose、measurement、deployment context 和 risk management。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_2"
+    },
+    {
+      "title": "补 Model Cards for Model Reporting，支持 intended use、evaluation procedures、performance characteristics 和 limitations。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_3"
+    },
+    {
+      "title": "补 CFA Institute GIPS 或投资表现呈现来源，用于说明投资表现报告不能只看单一 PnL 且不得误导。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_4"
+    }
+  ]
+}

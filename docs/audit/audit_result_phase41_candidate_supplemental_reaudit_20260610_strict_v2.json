@@ -1,0 +1,220 @@
+{
+  "audit_result_id": "audit_result_phase41_candidate_supplemental_reaudit_20260610_strict_v2",
+  "source_package_id": "phase41_candidate_supplemental_reaudit_package_20260610",
+  "audit_date": "2026-06-10",
+  "decision": "conditional_accept_for_formal_draft_queue_with_one_remaining_needs_more_evidence",
+  "scope": "5 supplemented needs_more_evidence candidates + 3 rebuilt empty-slug candidates from Phase 41",
+  "hard_boundary_enforcement": {
+    "direct_reviewed_allowed": false,
+    "direct_approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "qwen3_final_gate_allowed": false,
+    "trading_engineering_body_allowed_in_ai_engineering": false
+  },
+  "decisions": [
+    {
+      "candidate_id": "cand_20260610_phase41_p41_a05_model_selection_business_cost_latency_explainability_calibration_governance_001",
+      "research_task_id": "P41-A05-R1",
+      "decision": "needs_more_evidence",
+      "reason": "空 slug 已修复，cost/governance 证据有所增强；但 claim 同时要求比较 latency、explainability、calibration quality 和 governance complexity。当前 source_refs 仍缺直接 latency/SLO/serving benchmark 来源、解释性边界来源和 calibration quality 直接来源，因此不能升级 accepted_for_draft。",
+      "source_patch_notes": [
+        "补充 latency/SLO 或 serving benchmark 官方/工程来源。",
+        "补充 scorer explainability/feature attribution boundary 来源，例如 SHAP limitation 或 model interpretability source。",
+        "补充 scikit-learn probability calibration / reliability diagram / Brier/ECE 来源，或将 calibration quality 从该 claim 拆出。"
+      ],
+      "content_patch_notes": [
+        "可拆分为 model_selection_cost_governance.v1 与 latency_explainability_calibration_tradeoff.v1，避免一个候选承载过多维度。",
+        "明确业务成本与交易 PnL/fill/slippage/cost 本体只引用 Phase37/外接项目，不在 AI Engineering 定义。"
+      ],
+      "boundary_patch_notes": [
+        "不得把 latency/cost 比较写成模型收益承诺或实盘上线许可。"
+      ],
+      "conflict_patch_notes": [],
+      "required_followups": [
+        "add_latency_slo_or_serving_benchmark_source",
+        "add_explainability_boundary_source",
+        "add_calibration_quality_source_or_split_claim"
+      ],
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false
+    },
+    {
+      "candidate_id": "cand_20260610_phase41_p41_b01_bad_trade_false_allow_class_weight_sample_weight_001",
+      "research_task_id": "P41-B01",
+      "decision": "accepted_for_draft",
+      "reason": "补充 scikit-learn probability calibration 后，class/sample weight 与加权/采样后重新检查校准质量的证据链已足够进入 draft。",
+      "source_patch_notes": [
+        "保留 compute_class_weight / sample_weight 来源，并保留 scikit-learn calibration 作为 recalibration 支撑。"
+      ],
+      "content_patch_notes": [
+        "Draft 必须要求 weighting_policy_version、sampling_policy_version、calibration_set_hash、recalibration_report_id、post_weighting_reliability_diagram。"
+      ],
+      "boundary_patch_notes": [
+        "加权/采样是训练策略，不得绕过独立 calibration set 或 final gate。"
+      ],
+      "conflict_patch_notes": [],
+      "required_followups": [],
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false
+    },
+    {
+      "candidate_id": "cand_20260610_phase41_p41_b03_time_aware_split_no_random_shuffle_001",
+      "research_task_id": "P41-B03-R1",
+      "decision": "accepted_for_draft",
+      "reason": "原空 slug 已修复；TimeSeriesSplit 与 common pitfalls 来源足以支撑时间序列交易样本不得随机打散、必须时间感知切分的 draft 规则。",
+      "source_patch_notes": [
+        "保留 scikit-learn TimeSeriesSplit 和 common pitfalls 来源。"
+      ],
+      "content_patch_notes": [
+        "Draft 必须明确 walk-forward / embargo / purge 如适用；禁止 HPO/validation 读取未来窗口。"
+      ],
+      "boundary_patch_notes": [
+        "该规则只定义 AI training split，不定义交易回测模型本体。"
+      ],
+      "conflict_patch_notes": [],
+      "required_followups": [],
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false
+    },
+    {
+      "candidate_id": "cand_20260610_phase41_p41_c03_threshold_policy_false_allow_false_block_review_capacity_001",
+      "research_task_id": "P41-C03",
+      "decision": "accepted_for_draft",
+      "reason": "已补 cost-sensitive threshold 与 Phase41 runtime contract；可以支撑 threshold policy 绑定业务成本矩阵、false allow/false block 和 review capacity 的 draft 规则。",
+      "source_patch_notes": [
+        "保留 scikit-learn classification threshold 与 cost-sensitive threshold 示例；review capacity 由 Phase41 runtime/internal contract 支撑。"
+      ],
+      "content_patch_notes": [
+        "Draft 必须包含 cost_matrix_version、false_allow_cost_ref、false_block_cost_ref、review_capacity_snapshot_ref、overflow_policy、owner_approval_ref。"
+      ],
+      "boundary_patch_notes": [
+        "review capacity 超限不得自动 allow/block；只能触发 owner_review、freeze_threshold_change、safe_mode 或 collect_more_evidence。"
+      ],
+      "conflict_patch_notes": [],
+      "required_followups": [],
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false
+    },
+    {
+      "candidate_id": "cand_20260610_phase41_p41_d02_offline_online_feature_parity_default_guidance_block_001",
+      "research_task_id": "P41-D02-R1",
+      "decision": "accepted_for_draft",
+      "reason": "原空 slug 已修复；Feast point-in-time/online availability 与 TFDV training-serving skew 来源足以支撑 offline/online feature parity 和不一致时阻断默认指导。",
+      "source_patch_notes": [
+        "保留 Feast、TFDV training-serving skew 和 Phase41 training data contract。"
+      ],
+      "content_patch_notes": [
+        "Draft 必须包含 offline_feature_pipeline_version、online_feature_pipeline_version、parity_check_report_id、skew_threshold_policy、default_guidance_block_reason。"
+      ],
+      "boundary_patch_notes": [
+        "feature parity failure 只能阻断默认指导或触发人审，不得自动影响实盘交易动作。"
+      ],
+      "conflict_patch_notes": [],
+      "required_followups": [],
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false
+    },
+    {
+      "candidate_id": "cand_20260610_phase41_p41_e03_qwen3_rag_abstain_needs_human_review_001",
+      "research_task_id": "P41-E03",
+      "decision": "accepted_for_draft",
+      "reason": "补充 Ragas/DeepEval/Promptfoo faithfulness 与 Phase41 runtime contract 后，可以支撑 no-hit/no-source/citation conflict 时 Qwen3 必须 abstain 或 needs_human_review。",
+      "source_patch_notes": [
+        "保留 RAG faithfulness/context faithfulness、citation resolver/no-source policy internal contract。"
+      ],
+      "content_patch_notes": [
+        "Draft 必须定义 citation_resolution_status、no_hit_status、conflict_status、unsupported_claims、abstain_reason、human_review_required。"
+      ],
+      "boundary_patch_notes": [
+        "Qwen3 的 abstain/needs_human_review 是审计建议，不是 final gate 决策。"
+      ],
+      "conflict_patch_notes": [],
+      "required_followups": [],
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false
+    },
+    {
+      "candidate_id": "cand_20260610_phase41_p41_e09_rag_context_qwen3_prompt_injection_guard_citation_resolver_unsupported_claim_detector_schema_validation_001",
+      "research_task_id": "P41-E09",
+      "decision": "accepted_for_draft",
+      "reason": "OWASP LLM01 支撑把 RAG/user content 视为不可信输入；Ragas/Promptfoo 与 Phase41 runtime contract 支撑 citation resolver、unsupported_claim detector 与 schema validation 链路。可以进入 draft。",
+      "source_patch_notes": [
+        "保留 OWASP LLM01、JSON Schema、Ragas/Promptfoo faithfulness 与 Phase41 runtime contract。"
+      ],
+      "content_patch_notes": [
+        "Draft 必须包含 prompt_injection_guard_version、citation_resolver_version、unsupported_claim_detector_version、schema_validation_result、no_source_abstain_policy。"
+      ],
+      "boundary_patch_notes": [
+        "Guard 链路只约束 Qwen3 audit assistant 输出；不得把通过 guard 解释为可 default guidance 或 hard gate。"
+      ],
+      "conflict_patch_notes": [],
+      "required_followups": [],
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false
+    },
+    {
+      "candidate_id": "cand_20260610_phase41_p41_f02_composite_release_manifest_scorer_calibrator_threshold_qwen3_prompt_rag_index_reason_taxonomy_rollback_target_001",
+      "research_task_id": "P41-F02",
+      "decision": "accepted_for_draft",
+      "reason": "MLflow/DVC/NIST 支撑模型/数据版本与治理；Phase41 runtime contract 直接补足 composite release unit 的内部契约。可以作为 CEK-TA 项目内 composite release manifest draft。",
+      "source_patch_notes": [
+        "保留 MLflow registry、DVC、NIST AI RMF 与 Phase41 runtime contract；外部来源支撑通用 artifact governance，内部契约定义组合发布字段。"
+      ],
+      "content_patch_notes": [
+        "Draft 必须定义 CompositeReleaseUnit 与 CompositeRollbackTarget，至少绑定 scorer_version、calibrator_version、threshold_policy_version、qwen_prompt_version、rag_index_version、reason_taxonomy_version、dataset_hash、code_hash、owner_approval_ref、rollback_target。"
+      ],
+      "boundary_patch_notes": [
+        "禁止 partial rollback：不得只回滚 scorer 而保留事故版本 prompt/RAG/threshold/reason taxonomy。"
+      ],
+      "conflict_patch_notes": [],
+      "required_followups": [],
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false
+    }
+  ],
+  "batch_summary": {
+    "accepted_count": 7,
+    "needs_more_evidence_count": 1,
+    "rejected_count": 0,
+    "reviewed_allowed_count": 0,
+    "approved_allowed_count": 0,
+    "default_guidance_allowed_count": 0,
+    "hard_gate_allowed_count": 0,
+    "misrouted_to_trading_count": 0
+  },
+  "global_required_patches": [
+    "For all accepted_for_draft items, keep target_review_status=draft and reviewed_allowed=false.",
+    "Keep hidden_from_default_queue=true and visible_in_default_guidance_queue=false.",
+    "Keep approved_allowed=false, default_guidance_allowed=false, hard_gate_allowed=false.",
+    "Do not route any Qwen3 recommendation, raw scorer score, or uncalibrated probability into deterministic final gate as final action.",
+    "Trading execution, K-line logic, fill/slippage/fee/latency execution assumptions remain Phase37/Trading Engineering references only."
+  ],
+  "web_sources_verified": [
+    "scikit-learn probability calibration",
+    "scikit-learn TimeSeriesSplit",
+    "scikit-learn cost-sensitive threshold tuning",
+    "Feast point-in-time correctness / training-serving skew",
+    "TensorFlow Data Validation skew/drift",
+    "Ragas faithfulness",
+    "Promptfoo context faithfulness",
+    "OWASP LLM01 prompt injection",
+    "MLflow Model Registry"
+  ]
+}

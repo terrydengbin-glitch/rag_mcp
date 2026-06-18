@@ -1,0 +1,1711 @@
+{
+  "package_id": "phase37_replay_simulation_blocked_supplemental_reaudit_package_20260612",
+  "package_type": "replay_simulation_blocked_supplemental_reaudit",
+  "schema_version": "1.0.0",
+  "generated_at": "2026-06-12",
+  "task_id": "CEK-TA-432",
+  "language": "zh-CN",
+  "phase": "37",
+  "title": "Phase 37 Replay / Simulation R02/R10/R12 内部契约补证再审包",
+  "purpose": "严格复审 R02/R10/R12 在补齐 CEK-TA Replay / Simulation 内部契约和 schema extract 后，是否可进入 formal reviewed/caveat_only。",
+  "strict_boundaries": [
+    "candidate 不是正式知识。",
+    "本次审计最多只能允许 accepted_for_reviewed_caveat_only。",
+    "不得创建 approved。",
+    "不得启用 default guidance。",
+    "不得启用 hard gate。",
+    "不得生成买卖点、仓位、杠杆、止损止盈或实盘执行建议。"
+  ],
+  "audit_instructions": [
+    "必须搜索相关的专业网站、资料、案例和数据，对审计报告进行严格审计。",
+    "重点检查 same_bar_fill_ordering 是否足以支撑 OHLC 同根 K TP/SL 成交排序假设。",
+    "重点检查 simulation_live_gap_report 是否覆盖 fill_price、fill_qty、latency、reject/cancel、slippage、fee、order_state、risk_trigger、live_reference、simulation_reference、owner 和缺失字段处理。",
+    "重点检查 execution_cost_mapping 是否覆盖 fee、spread、slippage、market_impact、fill_model 在 Backtest、Replay、Paper、Live 之间的版本映射与 owner 边界。",
+    "检查外部框架、平台、交易所、broker 和 FIX 文档是否只作为实现模式支撑，没有被误用为 CEK-TA 字段本体。",
+    "如果仍缺来源、字段定义、owner 映射、冲突审计或边界，必须返回 needs_more_evidence 或 blocked。"
+  ],
+  "required_output_schema": {
+    "audit_result_id": "string",
+    "package_id": "phase37_replay_simulation_blocked_supplemental_reaudit_package_20260612",
+    "auditor": "string",
+    "audited_at": "YYYY-MM-DD",
+    "quality_gate": {
+      "pass": "boolean",
+      "candidate_count": 3,
+      "notes": [
+        "string"
+      ]
+    },
+    "candidate_results": [
+      {
+        "candidate_id": "string",
+        "research_task_id": "P37-F-R02 | P37-F-R10 | P37-F-R12",
+        "decision": "accepted_for_reviewed_caveat_only | needs_more_evidence | rejected | blocked",
+        "confidence": "low | medium | medium_high | high",
+        "reviewed_allowed": "boolean",
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "reasons": [
+          "string"
+        ],
+        "required_followups": [
+          "string"
+        ],
+        "patch_notes": {
+          "source": [
+            "string"
+          ],
+          "content": [
+            "string"
+          ],
+          "boundary": [
+            "string"
+          ],
+          "conflict": [
+            "string"
+          ]
+        }
+      }
+    ]
+  },
+  "contract_inline": {
+    "path": "docs/contracts/phase37_replay_simulation_execution_assumption_contract.md",
+    "sha256": "8594bfd05c0e59422602feaec68b73af3a584a278bbf784fe4ce0245d653357f",
+    "full_text": "# Phase 37 Replay / Simulation Execution Assumption Contract\n\n生成日期：2026-06-12\n\n## 1. 契约目标\n\n本契约用于支撑 Phase 37 Replay / Simulation 中 3 条 reviewed-preparation 阻断候选：\n\n```text\nP37-F-R02 replay.ohlc_same_bar_tp_sl_ordering_required.v1\nP37-F-R10 replay.simulation_live_gap_report_required.v1\nP37-F-R12 replay.execution_cost_consistency_required.v1\n```\n\n它定义 CEK-TA 内部逻辑 schema、字段本体、owner 边界和审计要求，用于外部 AI/人工判断这 3 条候选是否可以进入 formal reviewed/caveat_only。\n\n## 2. 强制边界\n\n```text\n1. candidate 不是正式知识。\n2. 本契约只支撑 reviewed/caveat_only 准备，不支撑 approved。\n3. 本契约不允许 default guidance。\n4. 本契约不允许 hard gate。\n5. 本契约不生成买卖点、仓位、杠杆、止损止盈或实盘执行建议。\n6. Replay / Simulation 只负责模拟假设、差异审计和证据边界。\n7. 真实下单、真实成交、账户同步、API 权限、拒单处理和安全停机归 Live Execution / Risk Management owner。\n```\n\n## 3. Owner 边界\n\n| 领域 | Owner | 本契约中的职责 |\n| --- | --- | --- |\n| Backtest | Backtest owner | 记录历史假设、回测成本模型、评价时间和指标上下文 |\n| Replay / Simulation | Replay owner | 定义事件时钟、fill model、latency model、同根 K 处理、模拟成交和 gap report |\n| Paper Trading | Paper owner | 记录 paper broker、虚拟账户、paper 成交和模拟/实盘差异 |\n| Live Execution | Execution owner | 提供真实订单、真实成交、真实费用、真实订单状态和 broker/exchange API 事实 |\n| Risk Management | Risk owner | 提供风控触发、阻断、降仓、停机等真实风控事件 |\n| Data Engineering | Data owner | 提供数据版本、时间戳、tick/quote/order event 可用性和质量报告 |\n| Market Microstructure | Market owner | 提供 session、auction、halt、rollover、liquidity regime 和 venue 状态 |\n\n## 4. same_bar_fill_ordering\n\n### 4.1 目标\n\n当只有 OHLC bar，而同一根 K 内 high/low 同时触及 take-profit 和 stop-loss 时，系统不能声称知道真实先后顺序。必须声明成交排序假设，或者使用更细粒度的 tick/order event 证据。\n\n### 4.2 字段契约\n\n```json\n{\n  \"same_bar_fill_ordering\": {\n    \"schema_version\": \"1.0.0\",\n    \"ordering_policy_id\": \"string, required\",\n    \"ordering_policy_version\": \"string, required\",\n    \"market\": \"string, required\",\n    \"venue\": \"string, required\",\n    \"instrument_id\": \"string, required\",\n    \"timeframe\": \"string, required\",\n    \"bar_id\": \"string, required\",\n    \"bar_start_time\": \"ISO-8601 timestamp, required\",\n    \"bar_end_time\": \"ISO-8601 timestamp, required\",\n    \"bar_open\": \"number, required\",\n    \"bar_high\": \"number, required\",\n    \"bar_low\": \"number, required\",\n    \"bar_close\": \"number, required\",\n    \"entry_event_time\": \"ISO-8601 timestamp|null, required\",\n    \"entry_price\": \"number|null, required\",\n    \"stop_loss_price\": \"number|null, required\",\n    \"take_profit_price\": \"number|null, required\",\n    \"touches_stop_loss\": \"boolean, required\",\n    \"touches_take_profit\": \"boolean, required\",\n    \"same_bar_both_touched\": \"boolean, required\",\n    \"intrabar_path_available\": \"boolean, required\",\n    \"intrabar_evidence_type\": \"enum[tick, quote, order_event, exchange_fill, unavailable], required\",\n    \"intrabar_evidence_ref\": \"string|null, required\",\n    \"ordering_mode\": \"enum[tick_replay, conservative, optimistic, next_bar_only, unknown_ordering_blocked], required\",\n    \"tie_break_policy\": \"string, required\",\n    \"assumption_reason\": \"string, required\",\n    \"owner\": \"Replay / Simulation\",\n    \"created_at\": \"ISO-8601 timestamp, required\",\n    \"audit_trace_id\": \"string, required\"\n  }\n}\n```\n\n### 4.3 判定规则\n\n```text\n1. 如果 intrabar_path_available=true 且 intrabar_evidence_type 为 tick、quote、order_event 或 exchange_fill，优先使用 tick_replay。\n2. 如果只有 OHLC bar，且 same_bar_both_touched=true，必须选择 conservative、optimistic、next_bar_only 或 unknown_ordering_blocked。\n3. conservative 表示在不确定时按更不利于策略表现的成交顺序解释。\n4. optimistic 表示在不确定时按更有利于策略表现的成交顺序解释，必须在报告中显著标注。\n5. next_bar_only 表示同根 K 内不执行 TP/SL 触发，下一根可成交 bar 再处理。\n6. unknown_ordering_blocked 表示该样本不能作为成交质量、交易质量或可交易性证据。\n7. 任何 OHLC-only same-bar 处理都不得声称还原真实市场事件顺序。\n```\n\n## 5. simulation_live_gap_report\n\n### 5.1 目标\n\n从 simulation / paper 进入 live 前，必须比较模拟结果与真实订单/成交/费用/风控事件之间的差异。该报告用于审计模拟证据，不等于实盘许可。\n\n### 5.2 字段契约\n\n```json\n{\n  \"simulation_live_gap_report\": {\n    \"schema_version\": \"1.0.0\",\n    \"gap_report_id\": \"string, required\",\n    \"simulation_run_id\": \"string, required\",\n    \"paper_run_id\": \"string|null, optional\",\n    \"live_reference_id\": \"string, required\",\n    \"strategy_id\": \"string, required\",\n    \"strategy_rule_version\": \"string, required\",\n    \"data_version\": \"string, required\",\n    \"market\": \"string, required\",\n    \"venue\": \"string, required\",\n    \"instrument_id\": \"string, required\",\n    \"order_id\": \"string, required\",\n    \"client_order_id\": \"string|null, optional\",\n    \"simulation_order_event_ref\": \"string, required\",\n    \"live_order_event_ref\": \"string, required\",\n    \"simulation_event_time\": \"ISO-8601 timestamp, required\",\n    \"live_event_time\": \"ISO-8601 timestamp, required\",\n    \"simulation_fill_price\": \"number|null, required\",\n    \"live_fill_price\": \"number|null, required\",\n    \"simulation_fill_qty\": \"number|null, required\",\n    \"live_fill_qty\": \"number|null, required\",\n    \"simulation_fee\": \"number|null, required\",\n    \"live_fee\": \"number|null, required\",\n    \"simulation_slippage\": \"number|null, required\",\n    \"live_slippage\": \"number|null, required\",\n    \"latency_delta_ms\": \"number|null, required\",\n    \"fill_price_delta\": \"number|null, required\",\n    \"fill_qty_delta\": \"number|null, required\",\n    \"fee_delta\": \"number|null, required\",\n    \"slippage_delta\": \"number|null, required\",\n    \"spread_delta\": \"number|null, optional\",\n    \"reject_cancel_delta\": \"object, required\",\n    \"order_state_delta\": \"object, required\",\n    \"risk_trigger_delta\": \"object, required\",\n    \"missing_live_fields\": \"array[string], required\",\n    \"missing_simulation_fields\": \"array[string], required\",\n    \"acceptable_gap_policy_id\": \"string, required\",\n    \"gap_classification\": \"enum[within_expected_range, requires_review, invalidates_simulation_evidence, unresolved], required\",\n    \"owner\": \"Replay / Simulation\",\n    \"generated_at\": \"ISO-8601 timestamp, required\",\n    \"audit_trace_id\": \"string, required\"\n  }\n}\n```\n\n### 5.3 生成规则\n\n```text\n1. gap report 必须在 paper-to-live、simulation-to-live 或 post-live-review 阶段生成。\n2. Live Execution 负责真实订单、真实成交、真实拒单、真实费用和真实订单状态。\n3. Replay / Simulation 负责模拟成交、模拟费用、模拟延迟和模拟订单状态。\n4. Risk Management 负责真实和模拟风控触发事件的归因。\n5. 缺失字段必须写入 missing_live_fields 或 missing_simulation_fields，不得静默填 0。\n6. gap_classification=invalidates_simulation_evidence 只表示模拟证据失效，不等于自动拒单、停机或风险 hard gate。\n```\n\n## 6. execution_cost_mapping\n\n### 6.1 目标\n\nBacktest、Replay、Paper 和 Live 之间必须对费用、spread、slippage、market impact 和 fill model 版本进行映射。成本口径不一致时，不能直接比较收益、胜率、PnL、R/R 或执行质量。\n\n### 6.2 字段契约\n\n```json\n{\n  \"execution_cost_mapping\": {\n    \"schema_version\": \"1.0.0\",\n    \"cost_mapping_id\": \"string, required\",\n    \"scope\": \"enum[strategy, portfolio, venue, instrument, account, project], required\",\n    \"market\": \"string, required\",\n    \"venue\": \"string, required\",\n    \"instrument_id\": \"string|null, optional\",\n    \"backtest_cost_model_version\": \"string, required\",\n    \"replay_fill_model_version\": \"string, required\",\n    \"paper_brokerage_model_version\": \"string|null, optional\",\n    \"live_fee_schedule_version\": \"string|null, required_when_live_available\",\n    \"spread_model_version\": \"string, required\",\n    \"slippage_model_version\": \"string, required\",\n    \"market_impact_model_version\": \"string|null, optional\",\n    \"commission_currency\": \"string, required\",\n    \"cost_components\": {\n      \"commission\": \"object, required\",\n      \"exchange_fee\": \"object, optional\",\n      \"clearing_fee\": \"object, optional\",\n      \"spread_cost\": \"object, required\",\n      \"slippage_cost\": \"object, required\",\n      \"borrow_or_funding_cost\": \"object, optional\",\n      \"market_impact_cost\": \"object, optional\",\n      \"tax_or_stamp_duty\": \"object, optional\"\n    },\n    \"component_mapping_status\": \"enum[complete, partial, unknown_component_present, unresolved], required\",\n    \"owner_mapping\": {\n      \"backtest\": \"Backtest owner records model versions and metric context\",\n      \"replay\": \"Replay owner simulates fill/cost assumptions\",\n      \"paper\": \"Paper owner records paper broker model and virtual account fills\",\n      \"live\": \"Live Execution owner records actual fee/fill/order facts\",\n      \"risk\": \"Risk owner records risk-triggered reduce/block/kill events\"\n    },\n    \"valid_from\": \"ISO-8601 timestamp, required\",\n    \"valid_to\": \"ISO-8601 timestamp|null, optional\",\n    \"created_at\": \"ISO-8601 timestamp, required\",\n    \"audit_trace_id\": \"string, required\"\n  }\n}\n```\n\n### 6.3 映射规则\n\n```text\n1. 每个成本组件必须标明来源、版本、币种和 owner。\n2. 未映射组件必须标记为 unknown_component_present 或 unresolved，不得静默当作 0。\n3. Backtest 可以记录 cost model version，但不拥有真实费用事实。\n4. Replay 可以模拟 fill/cost，但不拥有 live fill truth。\n5. Paper 可以记录 paper broker 行为，但不等价于 live execution。\n6. Live Execution 提供真实费用、真实成交和真实订单状态事实。\n7. 成本口径不一致时，不得直接比较 Backtest / Replay / Paper / Live 的表现。\n```\n\n## 7. RAG / MCP 使用边界\n\n```text\n1. MCP/SearchLab 可以检索本契约并返回来源。\n2. 返回内容必须带 source、citation、review_status 和 caveat_only 边界。\n3. 本契约不得进入 default guidance queue。\n4. 本契约不得被解释为交易许可、策略有效性证明或风控 hard gate。\n5. 外接项目可用自身字段映射本契约，不要求完全复制 CEK-TA 物理字段名。\n```\n\n## 8. 测试与验收\n\n```text\n1. 三条候选的再审包必须内联本契约全文。\n2. 再审包必须包含 same_bar_fill_ordering、simulation_live_gap_report 和 execution_cost_mapping 的 schema extract。\n3. 再审包必须明确 reviewed/caveat_only 是最高允许状态。\n4. 质量门禁必须检查 approved_allowed=false、default_guidance_allowed=false、hard_gate_allowed=false。\n5. UTF-8 文档不得出现乱码。\n```\n",
+    "schema_extract": {
+      "schema_extract_id": "phase37_replay_simulation_execution_assumption_schema_extract_v1",
+      "schema_version": "1.0.0",
+      "generated_at": "2026-06-12",
+      "objects": {
+        "same_bar_fill_ordering": {
+          "purpose": "定义 OHLC same-bar TP/SL ambiguity 的处理假设和证据字段。",
+          "owner": "Replay / Simulation",
+          "required_fields": [
+            "ordering_policy_id",
+            "ordering_policy_version",
+            "market",
+            "venue",
+            "instrument_id",
+            "timeframe",
+            "bar_id",
+            "bar_start_time",
+            "bar_end_time",
+            "bar_open",
+            "bar_high",
+            "bar_low",
+            "bar_close",
+            "entry_event_time",
+            "entry_price",
+            "stop_loss_price",
+            "take_profit_price",
+            "touches_stop_loss",
+            "touches_take_profit",
+            "same_bar_both_touched",
+            "intrabar_path_available",
+            "intrabar_evidence_type",
+            "intrabar_evidence_ref",
+            "ordering_mode",
+            "tie_break_policy",
+            "assumption_reason",
+            "created_at",
+            "audit_trace_id"
+          ],
+          "allowed_ordering_modes": [
+            "tick_replay",
+            "conservative",
+            "optimistic",
+            "next_bar_only",
+            "unknown_ordering_blocked"
+          ],
+          "validation_rules": [
+            "OHLC-only 且 same_bar_both_touched=true 时不得声称真实先后顺序。",
+            "tick_replay 只能在 intrabar path evidence 可用时使用。",
+            "unknown_ordering_blocked 只表示该样本不能作为成交质量证据，不等于实盘风控 hard gate。"
+          ]
+        },
+        "simulation_live_gap_report": {
+          "purpose": "定义 simulation/paper 与 live 订单、成交、费用、延迟、状态和风控差异报告。",
+          "owner": "Replay / Simulation",
+          "required_fields": [
+            "gap_report_id",
+            "simulation_run_id",
+            "live_reference_id",
+            "strategy_id",
+            "strategy_rule_version",
+            "data_version",
+            "market",
+            "venue",
+            "instrument_id",
+            "order_id",
+            "simulation_order_event_ref",
+            "live_order_event_ref",
+            "simulation_event_time",
+            "live_event_time",
+            "simulation_fill_price",
+            "live_fill_price",
+            "simulation_fill_qty",
+            "live_fill_qty",
+            "simulation_fee",
+            "live_fee",
+            "simulation_slippage",
+            "live_slippage",
+            "latency_delta_ms",
+            "fill_price_delta",
+            "fill_qty_delta",
+            "fee_delta",
+            "slippage_delta",
+            "reject_cancel_delta",
+            "order_state_delta",
+            "risk_trigger_delta",
+            "missing_live_fields",
+            "missing_simulation_fields",
+            "acceptable_gap_policy_id",
+            "gap_classification",
+            "generated_at",
+            "audit_trace_id"
+          ],
+          "allowed_gap_classifications": [
+            "within_expected_range",
+            "requires_review",
+            "invalidates_simulation_evidence",
+            "unresolved"
+          ],
+          "validation_rules": [
+            "缺失字段必须进入 missing_live_fields 或 missing_simulation_fields，不得静默填 0。",
+            "Live Execution 拥有真实订单、成交、拒单、费用和状态事实。",
+            "gap_classification=invalidates_simulation_evidence 不等于自动拒单、停机或 hard gate。"
+          ]
+        },
+        "execution_cost_mapping": {
+          "purpose": "定义 Backtest、Replay、Paper、Live 之间执行成本组件和版本映射。",
+          "owner": "Replay / Simulation with Backtest / Paper / Live Execution owner mapping",
+          "required_fields": [
+            "cost_mapping_id",
+            "scope",
+            "market",
+            "venue",
+            "backtest_cost_model_version",
+            "replay_fill_model_version",
+            "live_fee_schedule_version",
+            "spread_model_version",
+            "slippage_model_version",
+            "commission_currency",
+            "cost_components",
+            "component_mapping_status",
+            "owner_mapping",
+            "valid_from",
+            "created_at",
+            "audit_trace_id"
+          ],
+          "cost_components": [
+            "commission",
+            "exchange_fee",
+            "clearing_fee",
+            "spread_cost",
+            "slippage_cost",
+            "borrow_or_funding_cost",
+            "market_impact_cost",
+            "tax_or_stamp_duty"
+          ],
+          "validation_rules": [
+            "未映射成本组件必须标记 unknown_component_present 或 unresolved，不得静默当作 0。",
+            "Backtest 只记录 cost model version，不拥有真实费用事实。",
+            "Live Execution 提供真实费用、真实成交和真实订单状态事实。",
+            "成本口径不一致时不得直接比较 Backtest / Replay / Paper / Live 的表现。"
+          ]
+        }
+      },
+      "hard_boundaries": {
+        "reviewed_caveat_only_is_maximum": true,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "trade_execution_advice_allowed": false
+      },
+      "contract_path": "docs/contracts/phase37_replay_simulation_execution_assumption_contract.md",
+      "contract_sha256": "8594bfd05c0e59422602feaec68b73af3a584a278bbf784fe4ce0245d653357f"
+    }
+  },
+  "source_review_notes": {
+    "internal_contract_source": "CEK-TA Replay / Simulation execution assumption contract 是字段本体主来源。",
+    "external_tool_sources": "Backtrader、HftBacktest、QuantConnect、FIX、IBKR 等只能作为 implementation pattern 或 supporting source。",
+    "source_quality_boundary": "不得把 tool-specific docs 写成 universal market rule 或 CEK-TA internal contract。"
+  },
+  "candidates": [
+    {
+      "schema_version": "1.1.0-candidate",
+      "candidate_id": "cand_20260611_phase37_replay_simulation_ohlc_same_bar_tp_sl_ordering_required_001",
+      "research_task_id": "P37-F-R02",
+      "status": {
+        "review_status": "needs_more_evidence",
+        "ingestion_decision": "ready_for_reaudit",
+        "decision_reason": "已补充 CEK-TA Replay / Simulation 内部契约和 schema extract，等待 reviewed/caveat_only 严格再审。",
+        "created_at": "2026-06-11",
+        "updated_at": "2026-06-12"
+      },
+      "classification": {
+        "tree_node_id": "kt.replay_simulation",
+        "canonical_node_id": "kt.replay_simulation",
+        "tree_path": "CEK-TA / Trading Engineering / Replay Simulation",
+        "related_nodes": [
+          "kt.trading_engineering",
+          "kt.trading_engineering.backtest",
+          "kt.trading_engineering.data_engineering",
+          "kt.market_microstructure",
+          "kt.live_execution",
+          "kt.risk_management",
+          "kt.ai_engineering.llm_training"
+        ],
+        "partition_id": "KB_05_REPLAY_SIMULATION",
+        "domain": "replay_simulation",
+        "subdomain": "ohlc_same_bar",
+        "rule_type": "replay_simulation_boundary_rule",
+        "claim_type": "fill_ordering_boundary",
+        "used_for": [
+          "replay_review",
+          "simulation_audit",
+          "paper_trading_readiness_review",
+          "external_project_rag_retrieval"
+        ],
+        "classification_notes": "本候选主归属 Trading Engineering / Replay Simulation。AI Engineering 只能引用本规则，不得把成交模拟、交易所规则或执行假设改写为模型训练本体规则。"
+      },
+      "claim": {
+        "claim_id": "claim_p37_f_r02",
+        "title": "OHLC 同根 K TP/SL 必须声明成交顺序假设",
+        "statement": "仅有 OHLC bar 且同一根 K 内同时触达止盈和止损时，系统不能声称知道真实先后顺序；必须声明 tick_replay、conservative、optimistic、next_bar_only 或 unknown_ordering_blocked 处理假设。",
+        "normalized_claim": "replay.ohlc_same_bar_tp_sl_ordering_required.v1",
+        "evidence_summary": "内联 same_bar_fill_ordering schema，定义 tick_replay、conservative、optimistic、next_bar_only、unknown_ordering_blocked 的字段和判定规则。 外部框架、FIX 或平台文档只作为实现模式支撑，字段本体以 CEK-TA 内部契约为准。",
+        "interpretation_notes": "本候选只定义 replay/simulation 的事件、成交、延迟、交易所规则、订单状态和模拟-实盘差异边界，不输出买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+        "claim_strength": "reviewed_caveat_only_pending_reaudit",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general_with_venue_specific_mapping",
+        "asset": "general",
+        "timeframe": "historical_replay_or_paper_simulation",
+        "data_granularity": "ohlc_tick_quote_order_book_and_order_events",
+        "project_type": "trading_ai_support_layer",
+        "applies_when": [
+          "审计 replay、simulation、paper trading、fill model、latency model 或交易所规则模拟",
+          "把模拟成交结果用于 AI scoring、paper/live 前置评估、回测复核或执行质量研究"
+        ],
+        "not_applicable_when": [
+          "需要直接生成买卖点、仓位、杠杆、止损止盈或实盘执行建议",
+          "问题属于 live execution 真实订单路由、账户同步或 risk hard gate，应由对应分支处理",
+          "没有市场、交易所、品种、数据粒度、事件时钟或订单状态来源"
+        ],
+        "assumptions": [
+          "候选用于 CEK-TA 通用支持层知识库，不包含任何外接项目私有策略参数。",
+          "模拟结果必须保留事件时钟、成交模型、成本、延迟、订单状态、交易所规则和数据粒度边界。",
+          "候选通过外部审计前不能进入正式 reviewed 知识库。"
+        ],
+        "limitations": [
+          "平台和框架文档只能支持实现模式，不能证明任何特定策略可实盘盈利。",
+          "交易所或经纪商规则具有市场、品种、时间和版本差异，外接项目必须映射自己的 venue/rulebook。",
+          "本候选不提供任何投资建议、订单建议或实盘许可。",
+          "本候选只约束 Replay / Simulation 审计证据和假设声明，不证明策略盈利能力。",
+          "本候选不得生成买卖点、仓位、杠杆、止损止盈或实盘执行建议。",
+          "Live Execution / Risk Management 事实和动作仍由对应 owner 处理。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_title": "Orders - Creation/Execution",
+          "source_url": "https://www.backtrader.com/docu/order-creation-execution/order-creation-execution/",
+          "source_type": "framework_doc",
+          "publisher": "Backtrader",
+          "reliability": "medium_high",
+          "score": 80,
+          "freshness": "stable",
+          "evidence_summary": "Backtrader documents broker order execution assumptions, including that the current data bar has already happened and cannot be used to execute an order unless special cheat modes are used.",
+          "limitations": [
+            "Framework-specific semantics; useful for event-clock and same-bar ambiguity boundaries."
+          ],
+          "source_id": "src_001",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Broker - Cheat-On-Open",
+          "source_url": "https://www.backtrader.com/docu/cerebro/cheat-on-open/cheat-on-open/",
+          "source_type": "framework_doc",
+          "publisher": "Backtrader",
+          "reliability": "medium",
+          "score": 74,
+          "freshness": "stable",
+          "evidence_summary": "Backtrader documents cheat-on-open behavior as a deliberate simulation mode that changes when orders can be issued relative to the open.",
+          "limitations": [
+            "Use only as evidence that event timing modes must be declared."
+          ],
+          "source_id": "src_002",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Trade Fills - Key Concepts",
+          "source_url": "https://www.quantconnect.com/docs/v2/writing-algorithms/reality-modeling/trade-fills/key-concepts",
+          "source_type": "framework_doc",
+          "publisher": "QuantConnect",
+          "reliability": "medium_high",
+          "score": 82,
+          "freshness": "time_sensitive",
+          "evidence_summary": "QuantConnect explains that fill models determine fill price and quantity, may incorporate spread costs, and work with slippage models.",
+          "limitations": [
+            "Platform-specific implementation semantics; external projects must map their own fill model."
+          ],
+          "source_id": "src_003",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Order Fill",
+          "source_url": "https://hftbacktest.readthedocs.io/en/latest/order_fill.html",
+          "source_type": "framework_doc",
+          "publisher": "HftBacktest",
+          "reliability": "medium_high",
+          "score": 82,
+          "freshness": "time_sensitive",
+          "evidence_summary": "HftBacktest distinguishes no-partial-fill and partial-fill exchange simulations and warns that market-data replay cannot alter the market.",
+          "limitations": [
+            "Framework-specific; strong support for replay/fill-model caveats, not a universal exchange simulator."
+          ],
+          "source_id": "src_004",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_p37_replay_contract_same_bar_fill_ordering",
+          "source_title": "Phase 37 Replay / Simulation Execution Assumption Contract",
+          "source_url": "docs/contracts/phase37_replay_simulation_execution_assumption_contract.md",
+          "source_type": "internal_contract_schema_extract",
+          "publisher": "CEK-TA",
+          "published_at": "2026-06-12",
+          "accessed_at": "2026-06-12",
+          "version": "1.0.0",
+          "reliability": "high",
+          "relevance": "high",
+          "score": 92,
+          "evidence_summary": "内联 same_bar_fill_ordering schema，定义 tick_replay、conservative、optimistic、next_bar_only、unknown_ordering_blocked 的字段和判定规则。",
+          "limitations": [
+            "该来源只定义 CEK-TA 内部逻辑字段和 owner 边界，外部项目可映射等价字段。",
+            "该来源只支撑 reviewed/caveat_only 再审，不支撑 approved、default guidance 或 hard gate。"
+          ],
+          "contract_sha256": "8594bfd05c0e59422602feaec68b73af3a584a278bbf784fe4ce0245d653357f",
+          "schema_object": "same_bar_fill_ordering",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_backtrader_order_execution_same_bar_boundary",
+          "source_title": "Orders - Creation/Execution",
+          "source_url": "https://www.backtrader.com/docu/order-creation-execution/order-creation-execution/",
+          "source_type": "framework_doc",
+          "publisher": "Backtrader",
+          "reliability": "medium_high",
+          "score": 80,
+          "evidence_summary": "Backtrader order execution assumptions support the need to declare event timing and same-bar execution assumptions.",
+          "limitations": [
+            "Framework-specific; supports simulation timing caveat, not universal market truth."
+          ],
+          "published_at": null,
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "freshness": "time_sensitive",
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_hftbacktest_order_fill_replay_boundary",
+          "source_title": "Order Fill",
+          "source_url": "https://hftbacktest.readthedocs.io/en/latest/order_fill.html",
+          "source_type": "framework_doc",
+          "publisher": "HftBacktest",
+          "reliability": "medium_high",
+          "score": 82,
+          "evidence_summary": "HftBacktest order-fill docs support replay/fill-model caveats and market-data replay limitations.",
+          "limitations": [
+            "Framework-specific; useful for fill-model caveats, not a universal exchange simulator."
+          ],
+          "published_at": null,
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "freshness": "time_sensitive",
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "medium_high",
+        "score": 79.5,
+        "score_version": "phase37_replay_simulation_source_scoring_v1",
+        "primary_source_count": 3,
+        "supporting_source_count": 4,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "本批候选大量使用平台/框架/交易所文档，审计时必须防止把具体平台实现泛化为通用交易所真理。",
+          "CEK-TA Replay / Simulation 内部契约已内联到再审包，支撑字段本体、owner 边界和机器门禁。",
+          "框架、平台、交易所、broker 和 FIX 文档只能支撑各自语义，不得泛化为所有市场通用规则。",
+          "本轮仍只请求 reviewed/caveat_only，不请求 approved、default guidance 或 hard gate。"
+        ],
+        "internal_contract_evidence_status": "inline_contract_and_schema_extract_added",
+        "internal_contract_sha256": "8594bfd05c0e59422602feaec68b73af3a584a278bbf784fe4ce0245d653357f"
+      },
+      "conflict_audit": {
+        "conflict_status": "none_known_in_visible_context",
+        "checked_against": [
+          "KB_04_BACKTEST",
+          "KB_03_MARKET_MICROSTRUCTURE",
+          "KB_06_LIVE_EXECUTION",
+          "KB_07_RISK_MANAGEMENT",
+          "KB_AI_ENGINEERING"
+        ],
+        "resolution_summary": "CEK-TA-432 已补充 Replay / Simulation 内部契约和 schema extract；仍需外部再审确认是否可进入 formal reviewed/caveat_only。与 Live Execution / Risk Management 重叠时，Replay 只模拟和审计假设，不拥有真实执行事实。",
+        "approval_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 设计 replay/simulation 时声明事件时钟、成交模型、延迟、成本和交易所规则边界",
+          "用于审计模拟盘、回放、paper trading 和 backtest-to-live gap 报告",
+          "用于阻止 AI 把模拟成交当作真实成交或实盘许可"
+        ],
+        "not_allowed": [
+          "不得据此生成买卖点、仓位、杠杆、止损止盈参数或实盘订单",
+          "不得据此声称某个策略可盈利或可实盘",
+          "不得把某个框架或交易所的实现细节写成所有市场通用规则"
+        ],
+        "requires_context": [
+          "market",
+          "venue",
+          "instrument",
+          "data_granularity",
+          "event_clock",
+          "order_type",
+          "fill_model_version",
+          "latency_model_version"
+        ]
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "已补内部契约并等待 reviewed/caveat_only 再审；不得作为默认指导。",
+        "requires_human_escalation": true,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "hidden_from_default_queue": true,
+        "visible_in_default_guidance_queue": false
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_05_replay_simulation.ohlc_same_bar_tp_sl_ordering_required.v1",
+        "target_review_status": "blocked_until_contract_reaudit",
+        "default_guidance_after_conversion": "deny_until_reviewed_caveat_only_audit",
+        "formalization_blockers": [
+          "requires_reviewed_preparation_audit"
+        ],
+        "reviewed_allowed": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "copyright": {
+        "stores_full_text": false,
+        "stores_long_quote": false,
+        "summary_only": true
+      },
+      "workflow": {
+        "phase": "37",
+        "task_id": "CEK-TA-424",
+        "stage": "supplemented_for_contract_reaudit",
+        "next_allowed_decisions": [
+          "accepted_for_reviewed_caveat_only",
+          "needs_more_evidence",
+          "rejected",
+          "blocked"
+        ],
+        "forbidden_decisions": [
+          "approved",
+          "default_guidance",
+          "hard_gate"
+        ],
+        "ai_audit_result_id": "pending_phase37_replay_simulation_blocked_supplemental_reaudit_package_20260612",
+        "formal_knowledge_id": null,
+        "formal_review_status": null,
+        "default_guidance_allowed": false,
+        "approved_allowed": false,
+        "hard_gate_allowed": false,
+        "hidden_from_default_queue": true,
+        "visible_in_default_guidance_queue": false,
+        "formalization_allowed": false,
+        "conversion_target": {
+          "target_review_status": "draft",
+          "reviewed_allowed": false,
+          "approved_allowed": false,
+          "default_guidance_allowed": false,
+          "hard_gate_allowed": false
+        },
+        "queue_group": "needs_more_evidence",
+        "next_action": "external_ai_or_human_contract_reaudit",
+        "reviewed_preparation_audit_result_id": "audit_result_phase37_replay_simulation_reviewed_preparation_20260612_strict_v1",
+        "current_task_id": "CEK-TA-432"
+      },
+      "review": {
+        "audit_log": [
+          {
+            "at": "2026-06-12",
+            "actor": "external_ai_strict_audit",
+            "action": "phase37_replay_simulation_first_audit_imported",
+            "reason": "accepted_for_draft / confidence=medium_high",
+            "audit_result_id": "audit_result_phase37_replay_simulation_candidate_audit_20260611_strict_v1",
+            "patch_notes": [
+              "source: 框架、平台、交易所、broker 和 FIX 文档只能支撑各自语义，不得泛化为所有市场通用规则。",
+              "content: Replay / Simulation 只表达事件时钟、成交模型、partial/no fill、延迟模型、交易所/经纪商规则映射、订单状态生命周期、模拟盘/实盘 gap report、OHLC vs tick replay 粒度边界。",
+              "boundary: simulation evidence invalidation 不等于自动拒单、实盘停机或风控 hard gate。",
+              "conflict: R07/R08/R09 与 Live Execution / Exchange Adapter 重叠时，Replay 只模拟规则与状态；真实下单、真实拒单、账户同步、实盘订单状态归 Live Execution owner。"
+            ]
+          },
+          {
+            "at": "2026-06-12",
+            "actor": "external_ai_strict_audit",
+            "action": "phase37_replay_simulation_first_audit_imported",
+            "reason": "accepted_for_draft / confidence=medium_high",
+            "audit_result_id": "audit_result_phase37_replay_simulation_candidate_audit_20260611_strict_v1",
+            "patch_notes": [
+              "source: 框架、平台、交易所、broker 和 FIX 文档只能支撑各自语义，不得泛化为所有市场通用规则。",
+              "content: Replay / Simulation 只表达事件时钟、成交模型、partial/no fill、延迟模型、交易所/经纪商规则映射、订单状态生命周期、模拟盘/实盘 gap report、OHLC vs tick replay 粒度边界。",
+              "boundary: simulation evidence invalidation 不等于自动拒单、实盘停机或风控 hard gate。",
+              "conflict: R07/R08/R09 与 Live Execution / Exchange Adapter 重叠时，Replay 只模拟规则与状态；真实下单、真实拒单、账户同步、实盘订单状态归 Live Execution owner。"
+            ]
+          },
+          {
+            "at": "2026-06-12",
+            "actor": "codex",
+            "action": "phase37_replay_simulation_reviewed_preparation_needs_more_evidence",
+            "reason": "CEK-TA-430: 仅有 OHLC bar 时同根 K 内 TP/SL 先后顺序不能由现有 OHLC 来源证明；当前外部框架文档足以支撑 draft，但 reviewed/caveat_only 还需要 CEK-TA fill-ordering/同根 K 处理契约或 schema 明确 conservative/optimistic/next-bar/tick-replay 的判定规则。",
+            "audit_result_id": "audit_result_phase37_replay_simulation_reviewed_preparation_20260612_strict_v1"
+          },
+          {
+            "at": "2026-06-12",
+            "actor": "codex",
+            "action": "phase37_replay_simulation_blocked_contract_supplemented",
+            "reason": "CEK-TA-432: 补充 same_bar_fill_ordering 内部契约、schema extract、contract hash 和 owner 边界。",
+            "audit_result_id": "pending_phase37_replay_simulation_blocked_supplemental_reaudit_package_20260612"
+          }
+        ],
+        "reviewer": "external_ai_and_codex_alignment",
+        "reviewed_at": "2026-06-12",
+        "ai_audit": {
+          "audit_result_id": "audit_result_phase37_replay_simulation_candidate_audit_20260611_strict_v1",
+          "package_id": "phase37_replay_simulation_candidate_audit_package_20260611",
+          "auditor": "external_ai_strict_audit",
+          "audited_at": "2026-06-12",
+          "decision": "accepted_for_draft",
+          "confidence": "medium_high",
+          "reviewed_allowed": false,
+          "approved_allowed": false,
+          "default_guidance_allowed": false,
+          "hard_gate_allowed": false,
+          "reasons": [
+            "OHLC 同根 K 内 TP/SL 真实先后不可证明，必须声明处理假设；reviewed 前建议补 CEK-TA fill-ordering contract。"
+          ],
+          "required_followups": [
+            "进入 reviewed/caveat_only 前必须另行导出 reviewed-preparation 审计包。",
+            "不得创建 approved、default guidance 或 hard gate。"
+          ],
+          "patch_notes": [
+            "source: 框架、平台、交易所、broker 和 FIX 文档只能支撑各自语义，不得泛化为所有市场通用规则。",
+            "content: Replay / Simulation 只表达事件时钟、成交模型、partial/no fill、延迟模型、交易所/经纪商规则映射、订单状态生命周期、模拟盘/实盘 gap report、OHLC vs tick replay 粒度边界。",
+            "boundary: simulation evidence invalidation 不等于自动拒单、实盘停机或风控 hard gate。",
+            "conflict: R07/R08/R09 与 Live Execution / Exchange Adapter 重叠时，Replay 只模拟规则与状态；真实下单、真实拒单、账户同步、实盘订单状态归 Live Execution owner。"
+          ],
+          "patch_note_groups": {
+            "source": [
+              "框架、平台、交易所、broker 和 FIX 文档只能支撑各自语义，不得泛化为所有市场通用规则。"
+            ],
+            "content": [
+              "Replay / Simulation 只表达事件时钟、成交模型、partial/no fill、延迟模型、交易所/经纪商规则映射、订单状态生命周期、模拟盘/实盘 gap report、OHLC vs tick replay 粒度边界。"
+            ],
+            "boundary": [
+              "simulation evidence invalidation 不等于自动拒单、实盘停机或风控 hard gate。"
+            ],
+            "conflict": [
+              "R07/R08/R09 与 Live Execution / Exchange Adapter 重叠时，Replay 只模拟规则与状态；真实下单、真实拒单、账户同步、实盘订单状态归 Live Execution owner。"
+            ]
+          },
+          "source_assessment": {
+            "source_count": 4,
+            "missing_sources": [],
+            "weak_sources": [],
+            "recommended_extra_sources": []
+          },
+          "classification_assessment": {
+            "is_correct_branch": true,
+            "expected_branch": "Trading Engineering / Replay Simulation",
+            "misplaced_topics": []
+          },
+          "boundary": "accepted_for_draft is not reviewed or approved; this audit does not allow default guidance or hard gate."
+        },
+        "confidence": "high",
+        "open_questions": [
+          "审计方是否认可 same_bar_fill_ordering schema 足以支撑 OHLC same-bar TP/SL ordering 的 reviewed/caveat_only 字段本体？",
+          "审计方是否确认本候选仍只能进入 formal reviewed/caveat_only，而不能进入 approved、default guidance 或 hard gate？",
+          "审计方是否发现与 Backtest、Live Execution、Risk Management 或 Market Microstructure owner 边界冲突？"
+        ],
+        "reviewed_preparation_audit": {
+          "audit_result_id": "audit_result_phase37_replay_simulation_reviewed_preparation_20260612_strict_v1",
+          "package_id": "phase37_replay_simulation_reviewed_preparation_audit_package_20260612",
+          "decision": "needs_more_evidence",
+          "reviewed_allowed": false,
+          "approved_allowed": false,
+          "default_guidance_allowed": false,
+          "hard_gate_allowed": false,
+          "reasons": [
+            "仅有 OHLC bar 时同根 K 内 TP/SL 先后顺序不能由现有 OHLC 来源证明；当前外部框架文档足以支撑 draft，但 reviewed/caveat_only 还需要 CEK-TA fill-ordering/同根 K 处理契约或 schema 明确 conservative/optimistic/next-bar/tick-replay 的判定规则。"
+          ],
+          "required_followups": [
+            "上传或内联 CEK-TA OHLC same-bar fill-ordering contract/schema，定义 conservative、optimistic、next-bar、tick-replay、unknown-ordering 的字段与应用规则。"
+          ],
+          "patch_notes": {
+            "source": [
+              "框架、平台、交易所、broker 和 FIX 文档只能支撑各自语义，不得泛化为所有市场通用规则。",
+              "需要内部契约支撑的字段本体不得只由外部工具文档替代。"
+            ],
+            "content": [
+              "Replay / Simulation 只表达事件时钟、成交模型、partial/no fill、延迟模型、交易所/经纪商规则映射、订单状态生命周期、simulation-live gap report、OHLC vs tick replay 粒度边界。",
+              "simulation evidence invalidation 只能表示该模拟证据不可作为执行质量或可交易性证据。"
+            ],
+            "boundary": [
+              "reviewed/caveat_only 不等于 approved、default guidance 或 hard gate。",
+              "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+              "不得把 paper/simulation 通过解释成 live execution permission。"
+            ],
+            "conflict": [
+              "R07/R08/R09 与 Live Execution / Exchange Adapter 重叠时，Replay 只模拟规则与状态；真实下单、真实拒单、账户同步、实盘订单状态归 Live Execution owner。",
+              "R12 与 Backtest/Replay/Live Execution 成本版本映射重叠时，需要 owner contract 明确 Backtest 记录、Replay 模拟、Live Execution 真实成交的边界。"
+            ]
+          }
+        },
+        "contract_reaudit": {
+          "package_id": "phase37_replay_simulation_blocked_supplemental_reaudit_package_20260612",
+          "previous_audit_result_id": "audit_result_phase37_replay_simulation_reviewed_preparation_20260612_strict_v1",
+          "schema_object": "same_bar_fill_ordering",
+          "reviewed_allowed": false,
+          "approved_allowed": false,
+          "default_guidance_allowed": false,
+          "hard_gate_allowed": false,
+          "required_checks": [
+            "contract_full_text_present",
+            "schema_extract_present",
+            "contract_sha256_present",
+            "owner_boundary_present",
+            "tool_docs_not_used_as_internal_contract",
+            "no_trade_execution_advice"
+          ]
+        }
+      },
+      "_inline_contract_evidence": {
+        "task_id": "CEK-TA-432",
+        "contract_path": "docs/contracts/phase37_replay_simulation_execution_assumption_contract.md",
+        "contract_sha256": "8594bfd05c0e59422602feaec68b73af3a584a278bbf784fe4ce0245d653357f",
+        "schema_extract_id": "phase37_replay_simulation_execution_assumption_schema_extract_v1",
+        "schema_object": "same_bar_fill_ordering"
+      }
+    },
+    {
+      "schema_version": "1.1.0-candidate",
+      "candidate_id": "cand_20260611_phase37_replay_simulation_simulation_live_gap_report_required_001",
+      "research_task_id": "P37-F-R10",
+      "status": {
+        "review_status": "needs_more_evidence",
+        "ingestion_decision": "ready_for_reaudit",
+        "decision_reason": "已补充 CEK-TA Replay / Simulation 内部契约和 schema extract，等待 reviewed/caveat_only 严格再审。",
+        "created_at": "2026-06-11",
+        "updated_at": "2026-06-12"
+      },
+      "classification": {
+        "tree_node_id": "kt.replay_simulation",
+        "canonical_node_id": "kt.replay_simulation",
+        "tree_path": "CEK-TA / Trading Engineering / Replay Simulation",
+        "related_nodes": [
+          "kt.trading_engineering",
+          "kt.trading_engineering.backtest",
+          "kt.trading_engineering.data_engineering",
+          "kt.market_microstructure",
+          "kt.live_execution",
+          "kt.risk_management",
+          "kt.ai_engineering.llm_training"
+        ],
+        "partition_id": "KB_05_REPLAY_SIMULATION",
+        "domain": "replay_simulation",
+        "subdomain": "simulation_live_gap",
+        "rule_type": "replay_simulation_boundary_rule",
+        "claim_type": "audit_report_contract",
+        "used_for": [
+          "replay_review",
+          "simulation_audit",
+          "paper_trading_readiness_review",
+          "external_project_rag_retrieval"
+        ],
+        "classification_notes": "本候选主归属 Trading Engineering / Replay Simulation。AI Engineering 只能引用本规则，不得把成交模拟、交易所规则或执行假设改写为模型训练本体规则。"
+      },
+      "claim": {
+        "claim_id": "claim_p37_f_r10",
+        "title": "模拟盘与实盘差异必须出 gap report",
+        "statement": "从 simulation / paper 进入 live 前，必须生成 simulation_live_gap_report，记录模拟与真实订单、成交、费用、延迟、拒单、订单状态和风控触发差异；该报告用于审计模拟证据，不等于实盘许可。",
+        "normalized_claim": "replay.simulation_live_gap_report_required.v1",
+        "evidence_summary": "内联 simulation_live_gap_report schema，定义模拟/实盘成交价格、数量、延迟、拒单、费用、订单状态、风控触发、缺失字段和 owner 边界。 外部框架、FIX 或平台文档只作为实现模式支撑，字段本体以 CEK-TA 内部契约为准。",
+        "interpretation_notes": "本候选只定义 replay/simulation 的事件、成交、延迟、交易所规则、订单状态和模拟-实盘差异边界，不输出买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+        "claim_strength": "reviewed_caveat_only_pending_reaudit",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general_with_venue_specific_mapping",
+        "asset": "general",
+        "timeframe": "historical_replay_or_paper_simulation",
+        "data_granularity": "ohlc_tick_quote_order_book_and_order_events",
+        "project_type": "trading_ai_support_layer",
+        "applies_when": [
+          "审计 replay、simulation、paper trading、fill model、latency model 或交易所规则模拟",
+          "把模拟成交结果用于 AI scoring、paper/live 前置评估、回测复核或执行质量研究"
+        ],
+        "not_applicable_when": [
+          "需要直接生成买卖点、仓位、杠杆、止损止盈或实盘执行建议",
+          "问题属于 live execution 真实订单路由、账户同步或 risk hard gate，应由对应分支处理",
+          "没有市场、交易所、品种、数据粒度、事件时钟或订单状态来源"
+        ],
+        "assumptions": [
+          "候选用于 CEK-TA 通用支持层知识库，不包含任何外接项目私有策略参数。",
+          "模拟结果必须保留事件时钟、成交模型、成本、延迟、订单状态、交易所规则和数据粒度边界。",
+          "候选通过外部审计前不能进入正式 reviewed 知识库。"
+        ],
+        "limitations": [
+          "平台和框架文档只能支持实现模式，不能证明任何特定策略可实盘盈利。",
+          "交易所或经纪商规则具有市场、品种、时间和版本差异，外接项目必须映射自己的 venue/rulebook。",
+          "本候选不提供任何投资建议、订单建议或实盘许可。",
+          "本候选只约束 Replay / Simulation 审计证据和假设声明，不证明策略盈利能力。",
+          "本候选不得生成买卖点、仓位、杠杆、止损止盈或实盘执行建议。",
+          "Live Execution / Risk Management 事实和动作仍由对应 owner 处理。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_title": "Trade Fills - Key Concepts",
+          "source_url": "https://www.quantconnect.com/docs/v2/writing-algorithms/reality-modeling/trade-fills/key-concepts",
+          "source_type": "framework_doc",
+          "publisher": "QuantConnect",
+          "reliability": "medium_high",
+          "score": 82,
+          "freshness": "time_sensitive",
+          "evidence_summary": "QuantConnect explains that fill models determine fill price and quantity, may incorporate spread costs, and work with slippage models.",
+          "limitations": [
+            "Platform-specific implementation semantics; external projects must map their own fill model."
+          ],
+          "source_id": "src_001",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Slippage Models - Key Concepts",
+          "source_url": "https://www.quantconnect.com/docs/v2/writing-algorithms/reality-modeling/slippage/key-concepts",
+          "source_type": "framework_doc",
+          "publisher": "QuantConnect",
+          "reliability": "medium_high",
+          "score": 82,
+          "freshness": "time_sensitive",
+          "evidence_summary": "QuantConnect defines slippage as the difference between expected and actual fill price and models it to make backtests more realistic.",
+          "limitations": [
+            "Platform-specific; supports concept and modeling boundary, not universal parameter values."
+          ],
+          "source_id": "src_002",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Execution Report <8> message - FIX 4.4",
+          "source_url": "https://www.onixs.biz/fix-dictionary/4.4/msgtype_8_8.html",
+          "source_type": "standard_doc",
+          "publisher": "OnixS FIX Dictionary",
+          "reliability": "medium_high",
+          "score": 78,
+          "freshness": "stable",
+          "evidence_summary": "FIX Execution Report confirms receipt, changes, order status, fills, rejects and fees calculations, supporting order-state and fill-event trace boundaries.",
+          "limitations": [
+            "FIX dictionary mirror; useful for status semantics, not venue-specific implementation."
+          ],
+          "source_id": "src_003",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "TWS API Documentation",
+          "source_url": "https://www.interactivebrokers.com/campus/ibkr-api-page/trader-workstation-api/",
+          "source_type": "official_doc",
+          "publisher": "Interactive Brokers",
+          "reliability": "medium_high",
+          "score": 80,
+          "freshness": "time_sensitive",
+          "evidence_summary": "IBKR documents TWS API connectivity for retrieving and sending data and orders, supporting the need to distinguish simulated and broker/API behavior.",
+          "limitations": [
+            "Broker-specific; supports adapter boundary, not a universal exchange rule."
+          ],
+          "source_id": "src_004",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_p37_replay_contract_simulation_live_gap_report",
+          "source_title": "Phase 37 Replay / Simulation Execution Assumption Contract",
+          "source_url": "docs/contracts/phase37_replay_simulation_execution_assumption_contract.md",
+          "source_type": "internal_contract_schema_extract",
+          "publisher": "CEK-TA",
+          "published_at": "2026-06-12",
+          "accessed_at": "2026-06-12",
+          "version": "1.0.0",
+          "reliability": "high",
+          "relevance": "high",
+          "score": 92,
+          "evidence_summary": "内联 simulation_live_gap_report schema，定义模拟/实盘成交价格、数量、延迟、拒单、费用、订单状态、风控触发、缺失字段和 owner 边界。",
+          "limitations": [
+            "该来源只定义 CEK-TA 内部逻辑字段和 owner 边界，外部项目可映射等价字段。",
+            "该来源只支撑 reviewed/caveat_only 再审，不支撑 approved、default guidance 或 hard gate。"
+          ],
+          "contract_sha256": "8594bfd05c0e59422602feaec68b73af3a584a278bbf784fe4ce0245d653357f",
+          "schema_object": "simulation_live_gap_report",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_fix_execution_report_gap_fields",
+          "source_title": "Execution Report <8> message - FIX 4.4",
+          "source_url": "https://www.onixs.biz/fix-dictionary/4.4/msgtype_8_8.html",
+          "source_type": "standard_doc",
+          "publisher": "OnixS FIX Dictionary",
+          "reliability": "medium_high",
+          "score": 78,
+          "evidence_summary": "FIX Execution Report supports order status, fills, rejects and fee-related event trace semantics.",
+          "limitations": [
+            "FIX dictionary mirror; useful for status semantics, not venue-specific implementation."
+          ],
+          "published_at": null,
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "freshness": "time_sensitive",
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_quantconnect_slippage_gap_concept",
+          "source_title": "Slippage Models - Key Concepts",
+          "source_url": "https://www.quantconnect.com/docs/v2/writing-algorithms/reality-modeling/slippage/key-concepts",
+          "source_type": "framework_doc",
+          "publisher": "QuantConnect",
+          "reliability": "medium_high",
+          "score": 82,
+          "evidence_summary": "QuantConnect slippage concepts support comparing expected versus actual fill price in simulations.",
+          "limitations": [
+            "Platform-specific; does not define CEK-TA gap report schema."
+          ],
+          "published_at": null,
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "freshness": "time_sensitive",
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "medium_high",
+        "score": 80.5,
+        "score_version": "phase37_replay_simulation_source_scoring_v1",
+        "primary_source_count": 4,
+        "supporting_source_count": 4,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "本批候选大量使用平台/框架/交易所文档，审计时必须防止把具体平台实现泛化为通用交易所真理。",
+          "CEK-TA Replay / Simulation 内部契约已内联到再审包，支撑字段本体、owner 边界和机器门禁。",
+          "框架、平台、交易所、broker 和 FIX 文档只能支撑各自语义，不得泛化为所有市场通用规则。",
+          "本轮仍只请求 reviewed/caveat_only，不请求 approved、default guidance 或 hard gate。"
+        ],
+        "internal_contract_evidence_status": "inline_contract_and_schema_extract_added",
+        "internal_contract_sha256": "8594bfd05c0e59422602feaec68b73af3a584a278bbf784fe4ce0245d653357f"
+      },
+      "conflict_audit": {
+        "conflict_status": "none_known_in_visible_context",
+        "checked_against": [
+          "KB_04_BACKTEST",
+          "KB_03_MARKET_MICROSTRUCTURE",
+          "KB_06_LIVE_EXECUTION",
+          "KB_07_RISK_MANAGEMENT",
+          "KB_AI_ENGINEERING"
+        ],
+        "resolution_summary": "CEK-TA-432 已补充 Replay / Simulation 内部契约和 schema extract；仍需外部再审确认是否可进入 formal reviewed/caveat_only。与 Live Execution / Risk Management 重叠时，Replay 只模拟和审计假设，不拥有真实执行事实。",
+        "approval_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 设计 replay/simulation 时声明事件时钟、成交模型、延迟、成本和交易所规则边界",
+          "用于审计模拟盘、回放、paper trading 和 backtest-to-live gap 报告",
+          "用于阻止 AI 把模拟成交当作真实成交或实盘许可"
+        ],
+        "not_allowed": [
+          "不得据此生成买卖点、仓位、杠杆、止损止盈参数或实盘订单",
+          "不得据此声称某个策略可盈利或可实盘",
+          "不得把某个框架或交易所的实现细节写成所有市场通用规则"
+        ],
+        "requires_context": [
+          "market",
+          "venue",
+          "instrument",
+          "data_granularity",
+          "event_clock",
+          "order_type",
+          "fill_model_version",
+          "latency_model_version"
+        ]
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "已补内部契约并等待 reviewed/caveat_only 再审；不得作为默认指导。",
+        "requires_human_escalation": true,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "hidden_from_default_queue": true,
+        "visible_in_default_guidance_queue": false
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_05_replay_simulation.simulation_live_gap_report_required.v1",
+        "target_review_status": "blocked_until_contract_reaudit",
+        "default_guidance_after_conversion": "deny_until_reviewed_caveat_only_audit",
+        "formalization_blockers": [
+          "requires_reviewed_preparation_audit"
+        ],
+        "reviewed_allowed": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "copyright": {
+        "stores_full_text": false,
+        "stores_long_quote": false,
+        "summary_only": true
+      },
+      "workflow": {
+        "phase": "37",
+        "task_id": "CEK-TA-424",
+        "stage": "supplemented_for_contract_reaudit",
+        "next_allowed_decisions": [
+          "accepted_for_reviewed_caveat_only",
+          "needs_more_evidence",
+          "rejected",
+          "blocked"
+        ],
+        "forbidden_decisions": [
+          "approved",
+          "default_guidance",
+          "hard_gate"
+        ],
+        "ai_audit_result_id": "pending_phase37_replay_simulation_blocked_supplemental_reaudit_package_20260612",
+        "formal_knowledge_id": null,
+        "formal_review_status": null,
+        "default_guidance_allowed": false,
+        "approved_allowed": false,
+        "hard_gate_allowed": false,
+        "hidden_from_default_queue": true,
+        "visible_in_default_guidance_queue": false,
+        "formalization_allowed": false,
+        "conversion_target": {
+          "target_review_status": "draft",
+          "reviewed_allowed": false,
+          "approved_allowed": false,
+          "default_guidance_allowed": false,
+          "hard_gate_allowed": false
+        },
+        "queue_group": "needs_more_evidence",
+        "next_action": "external_ai_or_human_contract_reaudit",
+        "reviewed_preparation_audit_result_id": "audit_result_phase37_replay_simulation_reviewed_preparation_20260612_strict_v1",
+        "current_task_id": "CEK-TA-432"
+      },
+      "review": {
+        "audit_log": [
+          {
+            "at": "2026-06-12",
+            "actor": "external_ai_strict_audit",
+            "action": "phase37_replay_simulation_first_audit_imported",
+            "reason": "accepted_for_draft / confidence=medium_high",
+            "audit_result_id": "audit_result_phase37_replay_simulation_candidate_audit_20260611_strict_v1",
+            "patch_notes": [
+              "source: 框架、平台、交易所、broker 和 FIX 文档只能支撑各自语义，不得泛化为所有市场通用规则。",
+              "content: Replay / Simulation 只表达事件时钟、成交模型、partial/no fill、延迟模型、交易所/经纪商规则映射、订单状态生命周期、模拟盘/实盘 gap report、OHLC vs tick replay 粒度边界。",
+              "boundary: simulation evidence invalidation 不等于自动拒单、实盘停机或风控 hard gate。",
+              "conflict: R07/R08/R09 与 Live Execution / Exchange Adapter 重叠时，Replay 只模拟规则与状态；真实下单、真实拒单、账户同步、实盘订单状态归 Live Execution owner。"
+            ]
+          },
+          {
+            "at": "2026-06-12",
+            "actor": "external_ai_strict_audit",
+            "action": "phase37_replay_simulation_first_audit_imported",
+            "reason": "accepted_for_draft / confidence=medium_high",
+            "audit_result_id": "audit_result_phase37_replay_simulation_candidate_audit_20260611_strict_v1",
+            "patch_notes": [
+              "source: 框架、平台、交易所、broker 和 FIX 文档只能支撑各自语义，不得泛化为所有市场通用规则。",
+              "content: Replay / Simulation 只表达事件时钟、成交模型、partial/no fill、延迟模型、交易所/经纪商规则映射、订单状态生命周期、模拟盘/实盘 gap report、OHLC vs tick replay 粒度边界。",
+              "boundary: simulation evidence invalidation 不等于自动拒单、实盘停机或风控 hard gate。",
+              "conflict: R07/R08/R09 与 Live Execution / Exchange Adapter 重叠时，Replay 只模拟规则与状态；真实下单、真实拒单、账户同步、实盘订单状态归 Live Execution owner。"
+            ]
+          },
+          {
+            "at": "2026-06-12",
+            "actor": "codex",
+            "action": "phase37_replay_simulation_reviewed_preparation_needs_more_evidence",
+            "reason": "CEK-TA-430: 外部 fill/slippage/FIX/IBKR 资料支持 gap report 的组成方向，但 reviewed/caveat_only 需要 CEK-TA simulation_live_gap_report schema，定义字段、owner、生成时点、对齐对象、版本和可接受缺失处理。",
+            "audit_result_id": "audit_result_phase37_replay_simulation_reviewed_preparation_20260612_strict_v1"
+          },
+          {
+            "at": "2026-06-12",
+            "actor": "codex",
+            "action": "phase37_replay_simulation_blocked_contract_supplemented",
+            "reason": "CEK-TA-432: 补充 simulation_live_gap_report 内部契约、schema extract、contract hash 和 owner 边界。",
+            "audit_result_id": "pending_phase37_replay_simulation_blocked_supplemental_reaudit_package_20260612"
+          }
+        ],
+        "reviewer": "external_ai_and_codex_alignment",
+        "reviewed_at": "2026-06-12",
+        "ai_audit": {
+          "audit_result_id": "audit_result_phase37_replay_simulation_candidate_audit_20260611_strict_v1",
+          "package_id": "phase37_replay_simulation_candidate_audit_package_20260611",
+          "auditor": "external_ai_strict_audit",
+          "audited_at": "2026-06-12",
+          "decision": "accepted_for_draft",
+          "confidence": "medium_high",
+          "reviewed_allowed": false,
+          "approved_allowed": false,
+          "default_guidance_allowed": false,
+          "hard_gate_allowed": false,
+          "reasons": [
+            "simulation/paper 到 live 前需要 gap report；reviewed 前应补 CEK-TA gap report schema。"
+          ],
+          "required_followups": [
+            "进入 reviewed/caveat_only 前必须另行导出 reviewed-preparation 审计包。",
+            "不得创建 approved、default guidance 或 hard gate。"
+          ],
+          "patch_notes": [
+            "source: 框架、平台、交易所、broker 和 FIX 文档只能支撑各自语义，不得泛化为所有市场通用规则。",
+            "content: Replay / Simulation 只表达事件时钟、成交模型、partial/no fill、延迟模型、交易所/经纪商规则映射、订单状态生命周期、模拟盘/实盘 gap report、OHLC vs tick replay 粒度边界。",
+            "boundary: simulation evidence invalidation 不等于自动拒单、实盘停机或风控 hard gate。",
+            "conflict: R07/R08/R09 与 Live Execution / Exchange Adapter 重叠时，Replay 只模拟规则与状态；真实下单、真实拒单、账户同步、实盘订单状态归 Live Execution owner。"
+          ],
+          "patch_note_groups": {
+            "source": [
+              "框架、平台、交易所、broker 和 FIX 文档只能支撑各自语义，不得泛化为所有市场通用规则。"
+            ],
+            "content": [
+              "Replay / Simulation 只表达事件时钟、成交模型、partial/no fill、延迟模型、交易所/经纪商规则映射、订单状态生命周期、模拟盘/实盘 gap report、OHLC vs tick replay 粒度边界。"
+            ],
+            "boundary": [
+              "simulation evidence invalidation 不等于自动拒单、实盘停机或风控 hard gate。"
+            ],
+            "conflict": [
+              "R07/R08/R09 与 Live Execution / Exchange Adapter 重叠时，Replay 只模拟规则与状态；真实下单、真实拒单、账户同步、实盘订单状态归 Live Execution owner。"
+            ]
+          },
+          "source_assessment": {
+            "source_count": 4,
+            "missing_sources": [],
+            "weak_sources": [],
+            "recommended_extra_sources": []
+          },
+          "classification_assessment": {
+            "is_correct_branch": true,
+            "expected_branch": "Trading Engineering / Replay Simulation",
+            "misplaced_topics": []
+          },
+          "boundary": "accepted_for_draft is not reviewed or approved; this audit does not allow default guidance or hard gate."
+        },
+        "confidence": "high",
+        "open_questions": [
+          "审计方是否认可 simulation_live_gap_report schema 足以支撑 gap report 字段、owner、生成时点、对齐对象和缺失处理？",
+          "审计方是否确认本候选仍只能进入 formal reviewed/caveat_only，而不能进入 approved、default guidance 或 hard gate？",
+          "审计方是否发现与 Backtest、Live Execution、Risk Management 或 Market Microstructure owner 边界冲突？"
+        ],
+        "reviewed_preparation_audit": {
+          "audit_result_id": "audit_result_phase37_replay_simulation_reviewed_preparation_20260612_strict_v1",
+          "package_id": "phase37_replay_simulation_reviewed_preparation_audit_package_20260612",
+          "decision": "needs_more_evidence",
+          "reviewed_allowed": false,
+          "approved_allowed": false,
+          "default_guidance_allowed": false,
+          "hard_gate_allowed": false,
+          "reasons": [
+            "外部 fill/slippage/FIX/IBKR 资料支持 gap report 的组成方向，但 reviewed/caveat_only 需要 CEK-TA simulation_live_gap_report schema，定义字段、owner、生成时点、对齐对象、版本和可接受缺失处理。"
+          ],
+          "required_followups": [
+            "上传或内联 CEK-TA simulation_live_gap_report schema，覆盖 fill_price、fill_qty、latency、reject/cancel、slippage、fee、order_state、risk_trigger、live_reference、simulation_reference 和 owner 字段。"
+          ],
+          "patch_notes": {
+            "source": [
+              "框架、平台、交易所、broker 和 FIX 文档只能支撑各自语义，不得泛化为所有市场通用规则。",
+              "需要内部契约支撑的字段本体不得只由外部工具文档替代。"
+            ],
+            "content": [
+              "Replay / Simulation 只表达事件时钟、成交模型、partial/no fill、延迟模型、交易所/经纪商规则映射、订单状态生命周期、simulation-live gap report、OHLC vs tick replay 粒度边界。",
+              "simulation evidence invalidation 只能表示该模拟证据不可作为执行质量或可交易性证据。"
+            ],
+            "boundary": [
+              "reviewed/caveat_only 不等于 approved、default guidance 或 hard gate。",
+              "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+              "不得把 paper/simulation 通过解释成 live execution permission。"
+            ],
+            "conflict": [
+              "R07/R08/R09 与 Live Execution / Exchange Adapter 重叠时，Replay 只模拟规则与状态；真实下单、真实拒单、账户同步、实盘订单状态归 Live Execution owner。",
+              "R12 与 Backtest/Replay/Live Execution 成本版本映射重叠时，需要 owner contract 明确 Backtest 记录、Replay 模拟、Live Execution 真实成交的边界。"
+            ]
+          }
+        },
+        "contract_reaudit": {
+          "package_id": "phase37_replay_simulation_blocked_supplemental_reaudit_package_20260612",
+          "previous_audit_result_id": "audit_result_phase37_replay_simulation_reviewed_preparation_20260612_strict_v1",
+          "schema_object": "simulation_live_gap_report",
+          "reviewed_allowed": false,
+          "approved_allowed": false,
+          "default_guidance_allowed": false,
+          "hard_gate_allowed": false,
+          "required_checks": [
+            "contract_full_text_present",
+            "schema_extract_present",
+            "contract_sha256_present",
+            "owner_boundary_present",
+            "tool_docs_not_used_as_internal_contract",
+            "no_trade_execution_advice"
+          ]
+        }
+      },
+      "_inline_contract_evidence": {
+        "task_id": "CEK-TA-432",
+        "contract_path": "docs/contracts/phase37_replay_simulation_execution_assumption_contract.md",
+        "contract_sha256": "8594bfd05c0e59422602feaec68b73af3a584a278bbf784fe4ce0245d653357f",
+        "schema_extract_id": "phase37_replay_simulation_execution_assumption_schema_extract_v1",
+        "schema_object": "simulation_live_gap_report"
+      }
+    },
+    {
+      "schema_version": "1.1.0-candidate",
+      "candidate_id": "cand_20260611_phase37_replay_simulation_execution_cost_consistency_required_001",
+      "research_task_id": "P37-F-R12",
+      "status": {
+        "review_status": "needs_more_evidence",
+        "ingestion_decision": "ready_for_reaudit",
+        "decision_reason": "已补充 CEK-TA Replay / Simulation 内部契约和 schema extract，等待 reviewed/caveat_only 严格再审。",
+        "created_at": "2026-06-11",
+        "updated_at": "2026-06-12"
+      },
+      "classification": {
+        "tree_node_id": "kt.replay_simulation",
+        "canonical_node_id": "kt.replay_simulation",
+        "tree_path": "CEK-TA / Trading Engineering / Replay Simulation",
+        "related_nodes": [
+          "kt.trading_engineering",
+          "kt.trading_engineering.backtest",
+          "kt.trading_engineering.data_engineering",
+          "kt.market_microstructure",
+          "kt.live_execution",
+          "kt.risk_management",
+          "kt.ai_engineering.llm_training"
+        ],
+        "partition_id": "KB_05_REPLAY_SIMULATION",
+        "domain": "replay_simulation",
+        "subdomain": "execution_cost",
+        "rule_type": "replay_simulation_boundary_rule",
+        "claim_type": "cost_consistency_contract",
+        "used_for": [
+          "replay_review",
+          "simulation_audit",
+          "paper_trading_readiness_review",
+          "external_project_rag_retrieval"
+        ],
+        "classification_notes": "本候选主归属 Trading Engineering / Replay Simulation。AI Engineering 只能引用本规则，不得把成交模拟、交易所规则或执行假设改写为模型训练本体规则。"
+      },
+      "claim": {
+        "claim_id": "claim_p37_f_r12",
+        "title": "执行成本在 backtest、replay、paper、live 间必须一致可追踪",
+        "statement": "Backtest、Replay、Paper 和 Live 的费用、spread、slippage、market impact 与 fill model 必须有 execution_cost_mapping 版本化映射；成本口径不一致时不能直接比较表现。",
+        "normalized_claim": "replay.execution_cost_consistency_required.v1",
+        "evidence_summary": "内联 execution_cost_mapping schema，定义 Backtest、Replay、Paper、Live 之间费用、spread、slippage、market impact 和 fill model 的版本化映射与 owner 边界。 外部框架、FIX 或平台文档只作为实现模式支撑，字段本体以 CEK-TA 内部契约为准。",
+        "interpretation_notes": "本候选只定义 replay/simulation 的事件、成交、延迟、交易所规则、订单状态和模拟-实盘差异边界，不输出买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+        "claim_strength": "reviewed_caveat_only_pending_reaudit",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general_with_venue_specific_mapping",
+        "asset": "general",
+        "timeframe": "historical_replay_or_paper_simulation",
+        "data_granularity": "ohlc_tick_quote_order_book_and_order_events",
+        "project_type": "trading_ai_support_layer",
+        "applies_when": [
+          "审计 replay、simulation、paper trading、fill model、latency model 或交易所规则模拟",
+          "把模拟成交结果用于 AI scoring、paper/live 前置评估、回测复核或执行质量研究"
+        ],
+        "not_applicable_when": [
+          "需要直接生成买卖点、仓位、杠杆、止损止盈或实盘执行建议",
+          "问题属于 live execution 真实订单路由、账户同步或 risk hard gate，应由对应分支处理",
+          "没有市场、交易所、品种、数据粒度、事件时钟或订单状态来源"
+        ],
+        "assumptions": [
+          "候选用于 CEK-TA 通用支持层知识库，不包含任何外接项目私有策略参数。",
+          "模拟结果必须保留事件时钟、成交模型、成本、延迟、订单状态、交易所规则和数据粒度边界。",
+          "候选通过外部审计前不能进入正式 reviewed 知识库。"
+        ],
+        "limitations": [
+          "平台和框架文档只能支持实现模式，不能证明任何特定策略可实盘盈利。",
+          "交易所或经纪商规则具有市场、品种、时间和版本差异，外接项目必须映射自己的 venue/rulebook。",
+          "本候选不提供任何投资建议、订单建议或实盘许可。",
+          "本候选只约束 Replay / Simulation 审计证据和假设声明，不证明策略盈利能力。",
+          "本候选不得生成买卖点、仓位、杠杆、止损止盈或实盘执行建议。",
+          "Live Execution / Risk Management 事实和动作仍由对应 owner 处理。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_title": "Transaction Fees - Key Concepts",
+          "source_url": "https://www.quantconnect.com/docs/v2/writing-algorithms/reality-modeling/transaction-fees/key-concepts",
+          "source_type": "framework_doc",
+          "publisher": "QuantConnect",
+          "reliability": "medium_high",
+          "score": 80,
+          "freshness": "time_sensitive",
+          "evidence_summary": "QuantConnect fee models simulate brokerage transaction fees so replay/backtest results include cost assumptions.",
+          "limitations": [
+            "Platform-specific; external projects must use their brokerage/exchange fee schedule."
+          ],
+          "source_id": "src_001",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Slippage Models - Key Concepts",
+          "source_url": "https://www.quantconnect.com/docs/v2/writing-algorithms/reality-modeling/slippage/key-concepts",
+          "source_type": "framework_doc",
+          "publisher": "QuantConnect",
+          "reliability": "medium_high",
+          "score": 82,
+          "freshness": "time_sensitive",
+          "evidence_summary": "QuantConnect defines slippage as the difference between expected and actual fill price and models it to make backtests more realistic.",
+          "limitations": [
+            "Platform-specific; supports concept and modeling boundary, not universal parameter values."
+          ],
+          "source_id": "src_002",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Trade Fills - Key Concepts",
+          "source_url": "https://www.quantconnect.com/docs/v2/writing-algorithms/reality-modeling/trade-fills/key-concepts",
+          "source_type": "framework_doc",
+          "publisher": "QuantConnect",
+          "reliability": "medium_high",
+          "score": 82,
+          "freshness": "time_sensitive",
+          "evidence_summary": "QuantConnect explains that fill models determine fill price and quantity, may incorporate spread costs, and work with slippage models.",
+          "limitations": [
+            "Platform-specific implementation semantics; external projects must map their own fill model."
+          ],
+          "source_id": "src_003",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Execution Report <8> message - FIX 4.4",
+          "source_url": "https://www.onixs.biz/fix-dictionary/4.4/msgtype_8_8.html",
+          "source_type": "standard_doc",
+          "publisher": "OnixS FIX Dictionary",
+          "reliability": "medium_high",
+          "score": 78,
+          "freshness": "stable",
+          "evidence_summary": "FIX Execution Report confirms receipt, changes, order status, fills, rejects and fees calculations, supporting order-state and fill-event trace boundaries.",
+          "limitations": [
+            "FIX dictionary mirror; useful for status semantics, not venue-specific implementation."
+          ],
+          "source_id": "src_004",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_p37_replay_contract_execution_cost_mapping",
+          "source_title": "Phase 37 Replay / Simulation Execution Assumption Contract",
+          "source_url": "docs/contracts/phase37_replay_simulation_execution_assumption_contract.md",
+          "source_type": "internal_contract_schema_extract",
+          "publisher": "CEK-TA",
+          "published_at": "2026-06-12",
+          "accessed_at": "2026-06-12",
+          "version": "1.0.0",
+          "reliability": "high",
+          "relevance": "high",
+          "score": 92,
+          "evidence_summary": "内联 execution_cost_mapping schema，定义 Backtest、Replay、Paper、Live 之间费用、spread、slippage、market impact 和 fill model 的版本化映射与 owner 边界。",
+          "limitations": [
+            "该来源只定义 CEK-TA 内部逻辑字段和 owner 边界，外部项目可映射等价字段。",
+            "该来源只支撑 reviewed/caveat_only 再审，不支撑 approved、default guidance 或 hard gate。"
+          ],
+          "contract_sha256": "8594bfd05c0e59422602feaec68b73af3a584a278bbf784fe4ce0245d653357f",
+          "schema_object": "execution_cost_mapping",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_quantconnect_transaction_fee_model",
+          "source_title": "Transaction Fees - Key Concepts",
+          "source_url": "https://www.quantconnect.com/docs/v2/writing-algorithms/reality-modeling/transaction-fees/key-concepts",
+          "source_type": "framework_doc",
+          "publisher": "QuantConnect",
+          "reliability": "medium_high",
+          "score": 80,
+          "evidence_summary": "QuantConnect fee model docs support recording transaction-fee assumptions in simulation/backtest results.",
+          "limitations": [
+            "Platform-specific; external projects must map their own fee schedules."
+          ],
+          "published_at": null,
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "freshness": "time_sensitive",
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_quantconnect_fill_model_cost_boundary",
+          "source_title": "Trade Fills - Key Concepts",
+          "source_url": "https://www.quantconnect.com/docs/v2/writing-algorithms/reality-modeling/trade-fills/key-concepts",
+          "source_type": "framework_doc",
+          "publisher": "QuantConnect",
+          "reliability": "medium_high",
+          "score": 82,
+          "evidence_summary": "QuantConnect fill model docs support fill price/quantity and spread-cost modeling boundaries.",
+          "limitations": [
+            "Platform-specific; not a CEK-TA cross-owner cost mapping contract."
+          ],
+          "published_at": null,
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "freshness": "time_sensitive",
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "medium_high",
+        "score": 80.5,
+        "score_version": "phase37_replay_simulation_source_scoring_v1",
+        "primary_source_count": 4,
+        "supporting_source_count": 4,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "本批候选大量使用平台/框架/交易所文档，审计时必须防止把具体平台实现泛化为通用交易所真理。",
+          "CEK-TA Replay / Simulation 内部契约已内联到再审包，支撑字段本体、owner 边界和机器门禁。",
+          "框架、平台、交易所、broker 和 FIX 文档只能支撑各自语义，不得泛化为所有市场通用规则。",
+          "本轮仍只请求 reviewed/caveat_only，不请求 approved、default guidance 或 hard gate。"
+        ],
+        "internal_contract_evidence_status": "inline_contract_and_schema_extract_added",
+        "internal_contract_sha256": "8594bfd05c0e59422602feaec68b73af3a584a278bbf784fe4ce0245d653357f"
+      },
+      "conflict_audit": {
+        "conflict_status": "none_known_in_visible_context",
+        "checked_against": [
+          "KB_04_BACKTEST",
+          "KB_03_MARKET_MICROSTRUCTURE",
+          "KB_06_LIVE_EXECUTION",
+          "KB_07_RISK_MANAGEMENT",
+          "KB_AI_ENGINEERING"
+        ],
+        "resolution_summary": "CEK-TA-432 已补充 Replay / Simulation 内部契约和 schema extract；仍需外部再审确认是否可进入 formal reviewed/caveat_only。与 Live Execution / Risk Management 重叠时，Replay 只模拟和审计假设，不拥有真实执行事实。",
+        "approval_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 设计 replay/simulation 时声明事件时钟、成交模型、延迟、成本和交易所规则边界",
+          "用于审计模拟盘、回放、paper trading 和 backtest-to-live gap 报告",
+          "用于阻止 AI 把模拟成交当作真实成交或实盘许可"
+        ],
+        "not_allowed": [
+          "不得据此生成买卖点、仓位、杠杆、止损止盈参数或实盘订单",
+          "不得据此声称某个策略可盈利或可实盘",
+          "不得把某个框架或交易所的实现细节写成所有市场通用规则"
+        ],
+        "requires_context": [
+          "market",
+          "venue",
+          "instrument",
+          "data_granularity",
+          "event_clock",
+          "order_type",
+          "fill_model_version",
+          "latency_model_version"
+        ]
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "已补内部契约并等待 reviewed/caveat_only 再审；不得作为默认指导。",
+        "requires_human_escalation": true,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "hidden_from_default_queue": true,
+        "visible_in_default_guidance_queue": false
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_05_replay_simulation.execution_cost_consistency_required.v1",
+        "target_review_status": "blocked_until_contract_reaudit",
+        "default_guidance_after_conversion": "deny_until_reviewed_caveat_only_audit",
+        "formalization_blockers": [
+          "requires_reviewed_preparation_audit"
+        ],
+        "reviewed_allowed": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "copyright": {
+        "stores_full_text": false,
+        "stores_long_quote": false,
+        "summary_only": true
+      },
+      "workflow": {
+        "phase": "37",
+        "task_id": "CEK-TA-424",
+        "stage": "supplemented_for_contract_reaudit",
+        "next_allowed_decisions": [
+          "accepted_for_reviewed_caveat_only",
+          "needs_more_evidence",
+          "rejected",
+          "blocked"
+        ],
+        "forbidden_decisions": [
+          "approved",
+          "default_guidance",
+          "hard_gate"
+        ],
+        "ai_audit_result_id": "pending_phase37_replay_simulation_blocked_supplemental_reaudit_package_20260612",
+        "formal_knowledge_id": null,
+        "formal_review_status": null,
+        "default_guidance_allowed": false,
+        "approved_allowed": false,
+        "hard_gate_allowed": false,
+        "hidden_from_default_queue": true,
+        "visible_in_default_guidance_queue": false,
+        "formalization_allowed": false,
+        "conversion_target": {
+          "target_review_status": "draft",
+          "reviewed_allowed": false,
+          "approved_allowed": false,
+          "default_guidance_allowed": false,
+          "hard_gate_allowed": false
+        },
+        "queue_group": "needs_more_evidence",
+        "next_action": "external_ai_or_human_contract_reaudit",
+        "reviewed_preparation_audit_result_id": "audit_result_phase37_replay_simulation_reviewed_preparation_20260612_strict_v1",
+        "current_task_id": "CEK-TA-432"
+      },
+      "review": {
+        "audit_log": [
+          {
+            "at": "2026-06-12",
+            "actor": "external_ai_strict_audit",
+            "action": "phase37_replay_simulation_first_audit_imported",
+            "reason": "accepted_for_draft / confidence=medium_high",
+            "audit_result_id": "audit_result_phase37_replay_simulation_candidate_audit_20260611_strict_v1",
+            "patch_notes": [
+              "source: 框架、平台、交易所、broker 和 FIX 文档只能支撑各自语义，不得泛化为所有市场通用规则。",
+              "content: Replay / Simulation 只表达事件时钟、成交模型、partial/no fill、延迟模型、交易所/经纪商规则映射、订单状态生命周期、模拟盘/实盘 gap report、OHLC vs tick replay 粒度边界。",
+              "boundary: simulation evidence invalidation 不等于自动拒单、实盘停机或风控 hard gate。",
+              "conflict: R07/R08/R09 与 Live Execution / Exchange Adapter 重叠时，Replay 只模拟规则与状态；真实下单、真实拒单、账户同步、实盘订单状态归 Live Execution owner。"
+            ]
+          },
+          {
+            "at": "2026-06-12",
+            "actor": "external_ai_strict_audit",
+            "action": "phase37_replay_simulation_first_audit_imported",
+            "reason": "accepted_for_draft / confidence=medium_high",
+            "audit_result_id": "audit_result_phase37_replay_simulation_candidate_audit_20260611_strict_v1",
+            "patch_notes": [
+              "source: 框架、平台、交易所、broker 和 FIX 文档只能支撑各自语义，不得泛化为所有市场通用规则。",
+              "content: Replay / Simulation 只表达事件时钟、成交模型、partial/no fill、延迟模型、交易所/经纪商规则映射、订单状态生命周期、模拟盘/实盘 gap report、OHLC vs tick replay 粒度边界。",
+              "boundary: simulation evidence invalidation 不等于自动拒单、实盘停机或风控 hard gate。",
+              "conflict: R07/R08/R09 与 Live Execution / Exchange Adapter 重叠时，Replay 只模拟规则与状态；真实下单、真实拒单、账户同步、实盘订单状态归 Live Execution owner。"
+            ]
+          },
+          {
+            "at": "2026-06-12",
+            "actor": "codex",
+            "action": "phase37_replay_simulation_reviewed_preparation_needs_more_evidence",
+            "reason": "CEK-TA-430: QuantConnect fee/slippage/fill 和 FIX 资料能支撑执行成本口径需记录，但 Backtest/Replay/Paper/Live 间的版本化映射属于 CEK-TA 跨 owner contract；当前包未内联 internal contract 或 owner schema，所以不能 reviewed/caveat_only。",
+            "audit_result_id": "audit_result_phase37_replay_simulation_reviewed_preparation_20260612_strict_v1"
+          },
+          {
+            "at": "2026-06-12",
+            "actor": "codex",
+            "action": "phase37_replay_simulation_blocked_contract_supplemented",
+            "reason": "CEK-TA-432: 补充 execution_cost_mapping 内部契约、schema extract、contract hash 和 owner 边界。",
+            "audit_result_id": "pending_phase37_replay_simulation_blocked_supplemental_reaudit_package_20260612"
+          }
+        ],
+        "reviewer": "external_ai_and_codex_alignment",
+        "reviewed_at": "2026-06-12",
+        "ai_audit": {
+          "audit_result_id": "audit_result_phase37_replay_simulation_candidate_audit_20260611_strict_v1",
+          "package_id": "phase37_replay_simulation_candidate_audit_package_20260611",
+          "auditor": "external_ai_strict_audit",
+          "audited_at": "2026-06-12",
+          "decision": "accepted_for_draft",
+          "confidence": "medium_high",
+          "reviewed_allowed": false,
+          "approved_allowed": false,
+          "default_guidance_allowed": false,
+          "hard_gate_allowed": false,
+          "reasons": [
+            "Backtest/Replay/Paper/Live 的执行成本口径必须版本化映射；reviewed 前需与 Backtest/Execution owner schema 对齐。"
+          ],
+          "required_followups": [
+            "进入 reviewed/caveat_only 前必须另行导出 reviewed-preparation 审计包。",
+            "不得创建 approved、default guidance 或 hard gate。"
+          ],
+          "patch_notes": [
+            "source: 框架、平台、交易所、broker 和 FIX 文档只能支撑各自语义，不得泛化为所有市场通用规则。",
+            "content: Replay / Simulation 只表达事件时钟、成交模型、partial/no fill、延迟模型、交易所/经纪商规则映射、订单状态生命周期、模拟盘/实盘 gap report、OHLC vs tick replay 粒度边界。",
+            "boundary: simulation evidence invalidation 不等于自动拒单、实盘停机或风控 hard gate。",
+            "conflict: R07/R08/R09 与 Live Execution / Exchange Adapter 重叠时，Replay 只模拟规则与状态；真实下单、真实拒单、账户同步、实盘订单状态归 Live Execution owner。"
+          ],
+          "patch_note_groups": {
+            "source": [
+              "框架、平台、交易所、broker 和 FIX 文档只能支撑各自语义，不得泛化为所有市场通用规则。"
+            ],
+            "content": [
+              "Replay / Simulation 只表达事件时钟、成交模型、partial/no fill、延迟模型、交易所/经纪商规则映射、订单状态生命周期、模拟盘/实盘 gap report、OHLC vs tick replay 粒度边界。"
+            ],
+            "boundary": [
+              "simulation evidence invalidation 不等于自动拒单、实盘停机或风控 hard gate。"
+            ],
+            "conflict": [
+              "R07/R08/R09 与 Live Execution / Exchange Adapter 重叠时，Replay 只模拟规则与状态；真实下单、真实拒单、账户同步、实盘订单状态归 Live Execution owner。"
+            ]
+          },
+          "source_assessment": {
+            "source_count": 4,
+            "missing_sources": [],
+            "weak_sources": [],
+            "recommended_extra_sources": []
+          },
+          "classification_assessment": {
+            "is_correct_branch": true,
+            "expected_branch": "Trading Engineering / Replay Simulation",
+            "misplaced_topics": []
+          },
+          "boundary": "accepted_for_draft is not reviewed or approved; this audit does not allow default guidance or hard gate."
+        },
+        "confidence": "high",
+        "open_questions": [
+          "审计方是否认可 execution_cost_mapping schema 足以支撑 Backtest/Replay/Paper/Live 成本版本映射和 owner 边界？",
+          "审计方是否确认本候选仍只能进入 formal reviewed/caveat_only，而不能进入 approved、default guidance 或 hard gate？",
+          "审计方是否发现与 Backtest、Live Execution、Risk Management 或 Market Microstructure owner 边界冲突？"
+        ],
+        "reviewed_preparation_audit": {
+          "audit_result_id": "audit_result_phase37_replay_simulation_reviewed_preparation_20260612_strict_v1",
+          "package_id": "phase37_replay_simulation_reviewed_preparation_audit_package_20260612",
+          "decision": "needs_more_evidence",
+          "reviewed_allowed": false,
+          "approved_allowed": false,
+          "default_guidance_allowed": false,
+          "hard_gate_allowed": false,
+          "reasons": [
+            "QuantConnect fee/slippage/fill 和 FIX 资料能支撑执行成本口径需记录，但 Backtest/Replay/Paper/Live 间的版本化映射属于 CEK-TA 跨 owner contract；当前包未内联 internal contract 或 owner schema，所以不能 reviewed/caveat_only。"
+          ],
+          "required_followups": [
+            "上传或内联 CEK-TA execution_cost_mapping contract，定义 fee/spread/slippage/market_impact/fill_model 在 Backtest、Replay、Paper、Live 之间的版本映射与 owner 边界。"
+          ],
+          "patch_notes": {
+            "source": [
+              "框架、平台、交易所、broker 和 FIX 文档只能支撑各自语义，不得泛化为所有市场通用规则。",
+              "需要内部契约支撑的字段本体不得只由外部工具文档替代。"
+            ],
+            "content": [
+              "Replay / Simulation 只表达事件时钟、成交模型、partial/no fill、延迟模型、交易所/经纪商规则映射、订单状态生命周期、simulation-live gap report、OHLC vs tick replay 粒度边界。",
+              "simulation evidence invalidation 只能表示该模拟证据不可作为执行质量或可交易性证据。"
+            ],
+            "boundary": [
+              "reviewed/caveat_only 不等于 approved、default guidance 或 hard gate。",
+              "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+              "不得把 paper/simulation 通过解释成 live execution permission。"
+            ],
+            "conflict": [
+              "R07/R08/R09 与 Live Execution / Exchange Adapter 重叠时，Replay 只模拟规则与状态；真实下单、真实拒单、账户同步、实盘订单状态归 Live Execution owner。",
+              "R12 与 Backtest/Replay/Live Execution 成本版本映射重叠时，需要 owner contract 明确 Backtest 记录、Replay 模拟、Live Execution 真实成交的边界。"
+            ]
+          }
+        },
+        "contract_reaudit": {
+          "package_id": "phase37_replay_simulation_blocked_supplemental_reaudit_package_20260612",
+          "previous_audit_result_id": "audit_result_phase37_replay_simulation_reviewed_preparation_20260612_strict_v1",
+          "schema_object": "execution_cost_mapping",
+          "reviewed_allowed": false,
+          "approved_allowed": false,
+          "default_guidance_allowed": false,
+          "hard_gate_allowed": false,
+          "required_checks": [
+            "contract_full_text_present",
+            "schema_extract_present",
+            "contract_sha256_present",
+            "owner_boundary_present",
+            "tool_docs_not_used_as_internal_contract",
+            "no_trade_execution_advice"
+          ]
+        }
+      },
+      "_inline_contract_evidence": {
+        "task_id": "CEK-TA-432",
+        "contract_path": "docs/contracts/phase37_replay_simulation_execution_assumption_contract.md",
+        "contract_sha256": "8594bfd05c0e59422602feaec68b73af3a584a278bbf784fe4ce0245d653357f",
+        "schema_extract_id": "phase37_replay_simulation_execution_assumption_schema_extract_v1",
+        "schema_object": "execution_cost_mapping"
+      }
+    }
+  ],
+  "quality_gate": {
+    "gate_id": "phase37_replay_simulation_blocked_supplemental_quality_gate",
+    "generated_at": "2026-06-12",
+    "task_id": "CEK-TA-432",
+    "candidate_count": 3,
+    "failure_count": 0,
+    "failures": [],
+    "gate_status": "pass",
+    "formal_reviewed_created": 0,
+    "approved_created": 0,
+    "default_guidance_created": 0,
+    "hard_gate_created": 0
+  }
+}

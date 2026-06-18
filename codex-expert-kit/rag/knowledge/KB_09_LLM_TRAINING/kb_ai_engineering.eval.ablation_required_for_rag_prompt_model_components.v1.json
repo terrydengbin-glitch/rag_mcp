@@ -1,0 +1,427 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_ai_engineering.eval.ablation_required_for_rag_prompt_model_components.v1",
+  "title": "RAG、prompt、model、reranker、tool 或 MCP 组件变更在进入 gate/scoring ",
+  "metadata": {
+    "partition_id": "KB_09_LLM_TRAINING",
+    "domain": "llm_training",
+    "subdomain": "evaluation_governance",
+    "rule_type": "decision_rule",
+    "content_type": "json",
+    "project_binding": "none",
+    "tree_node_id": "kt.llm_training.model_training_engineering",
+    "tree_path": "CEK-TA / AI Engineering",
+    "canonical_node_id": "kt.llm_training.model_training_engineering",
+    "canonical_tree_path": "CEK-TA / AI Engineering",
+    "risk_level": "medium",
+    "used_for": [
+      "llm_training",
+      "trading_gating_scoring",
+      "rag_engineering",
+      "mcp",
+      "vue_audit_ui"
+    ],
+    "source_candidate_id": "cand_20260609_ai_engineering_eval_ablation_required_for_rag_prompt_model_components_v1_001",
+    "research_task_id": "RIT-P36-N-09",
+    "claim_type": "llm_eval_rule",
+    "classification_notes": "Phase 36 AI Engineering reviewed knowledge; UI tree and canonical node are inherited from candidate classification. Trading rule bodies must remain in Trading Engineering."
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "general",
+    "data_granularity": "general",
+    "project_type": "trading_llm_assistant",
+    "applies_when": [
+      "外接项目改动 RAG、prompt、model、reranker、tool、MCP 或 scoring pipeline 组件，并准备把结果用于 gate/scoring promotion。",
+      "同一模型质量改进可能来自多个组件叠加，需要隔离每个组件的边际贡献。",
+      "评估结果会用于 SearchLab 回归、模型发布、prompt/RAG 版本选择或人工审批。"
+    ],
+    "not_applicable_when": [
+      "只是在建立 production-like eval 父评估环境，应引用 eval.production_like_eval_required。",
+      "只是在比较确定性 baseline 与 LLM gate，应引用 eval.deterministic_baseline_required_before_llm_gate。",
+      "ablation 涉及具体交易收益解释、K 线信号、fill model 或策略参数，应路由到 Trading Engineering。"
+    ]
+  },
+  "content": {
+    "statement": "RAG、prompt、model、reranker、tool 或 MCP 组件变更在进入 gate/scoring promotion 前，必须在同一隔离 eval set 上执行组件级 ablation，对比 baseline、component-disabled、component-enabled 和 combined 配置差异。",
+    "rationale": "本候选已从泛化评估规则收敛为组件级 ablation 规则。它不要求证明某个交易策略有效，只要求外接 LLM gating/scoring 项目在改动 RAG、prompt、model、reranker、tool/MCP 时能说明组件边际贡献。 审计结论：补证后 candidate_id、normalized_claim、statement 和 source_refs 已基本对齐。该条已从泛化 production-like eval 规则改写为 RAG、prompt、model、reranker、tool、MCP 组件变更前的组件级 ablation 规则。PMLR ABLATOR 直接支持 ablation experiments 用于理解方法或组件有效性，COLING 2025 RAG best practices 研究系统分析 RAG 组件和配置对效果的影响，OpenAI model optimization / evals 文档支持在同一 eval workflow 中建立 baseline、运行测试输入并比较配置。因此可升级为 accepted_for_draft。但正式 draft 必须写成 CEK-TA 内部 promotion evidence rule，而不是声称外部标准逐字要求所有 RAG 改动都必须 ablation。",
+    "procedure": [
+      "确认项目事实匹配 applies_when，且没有命中 not_applicable_when。",
+      "按 source_patch_notes 检查来源是否足够支撑 statement。",
+      "按 content_patch_notes 补齐正式实现、schema、字段和 checklist。",
+      "按 boundary_patch_notes 确认没有把交易规则本体、项目私有参数或实盘执行规则写入 AI Engineering。",
+      "保留 required_followups，后续由来源增强或治理任务继续关闭。"
+    ],
+    "examples": [],
+    "anti_patterns": [
+      "把 reviewed 知识当作 approved 默认指导。",
+      "把 AI Engineering 规则扩写成具体交易阈值、仓位、买卖点或执行参数。",
+      "忽略审计结果中的来源限制、适用范围和后续补强要求。"
+    ],
+    "validation": [
+      "source_evidence 至少 2 条，且没有 low-only 来源。",
+      "conflict_status 为 none 或 resolved。",
+      "review_status 为 reviewed 时 machine_gate 必须是 caveat_only。",
+      "MCP/SearchLab 默认指导不得把本条当作 approved 返回。"
+    ],
+    "risk_notes": [
+      "ablation 不等于调参搜索；它用于解释组件贡献，而不是穷举寻找最优参数。",
+      "AI Engineering 只定义 ablation 方法、字段和审计要求，不写具体交易规则。",
+      "若只有 combined system 通过但无法解释组件贡献，不应作为 hard gate 上线证据。",
+      "AI Engineering 只定义 ablation 方法、评估字段、组件版本、审计记录和 promotion gate。",
+      "不得在本知识项写入具体交易策略、K 线信号、仓位、止损止盈、订单执行或账户参数。",
+      "如果 ablation 结果需要解释 PnL、slippage、fill model、market regime 或策略参数影响，应路由到 Trading Engineering。",
+      "与 eval.production_like_eval_required 是父子关系：production-like eval 是评估环境父项，ablation 是组件贡献分析子项。",
+      "与 eval.deterministic_baseline_required_before_llm_gate 互补：baseline comparison 比较 LLM 与非 LLM / 当前 gate；ablation 分析 LLM pipeline 内部组件贡献。",
+      "与 method_selection.rag_first_baseline_required、versioning.model_prompt_rag_strategy_snapshot_required 后续候选应互链。",
+      "未发现需要 rejected 的直接冲突。",
+      "补 ablation_report_schema.json。",
+      "补 material_component_change enum：rag_index、retriever、reranker、prompt、model、tool、mcp_server、scoring_rubric。",
+      "补 eval cases：RAG off、prompt version swap、model swap、reranker off、tool/MCP unavailable、retrieval index changed。",
+      "补 source freshness note：OpenAI Evals platform deprecation。"
+    ],
+    "citation_notes": "OpenAI model optimization 支持先建立 eval baseline 再迭代模型、prompt 和 fine-tuning；OpenAI evals 支持用测试输入和评分标准评估不同模型与参数；PMLR ABLATOR 说明 ablation experiments 用于理解方法或组件有效性；RAG 最佳实践研究使用 ablation studies 分析检索、上下文和生成等组件贡献。",
+    "audit_patch_notes": {
+      "source_patch_notes": [
+        "将 src_pmlr_ablator_ablation_experiments 设为主来源之一，用于支撑 ablation experiments 的方法论。",
+        "将 src_coling_2025_rag_best_practices_ablation 设为 RAG 组件/配置评估的直接来源。",
+        "保留 OpenAI model optimization 和 OpenAI evals 作为 baseline、代表性测试输入、配置比较和迭代评估的 supporting sources。",
+        "OpenAI evals 来源必须注明平台退役时间线：2026-10-31 read-only，2026-11-30 shutdown；新实现应兼容当前 Datasets / 新 eval workflow。",
+        "scikit-learn CV 与 Rules of ML 可保留为 split discipline / production ML baseline supporting sources，但不应作为 ablation 主证据。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议保留补充包写法：RAG、prompt、model、reranker、tool 或 MCP 组件变更在进入 gate/scoring promotion 前，必须在同一隔离 eval set 上执行组件级 ablation。",
+        "建议字段：ablation_run_id、baseline_config_id、component_name、component_version、component_disabled、component_enabled、combined_config_id、eval_dataset_id、eval_dataset_hash、metric_set_id、failure_case_ids、delta_vs_baseline、decision、reviewer。",
+        "明确 ablation 不是调参搜索；它用于解释组件边际贡献和风险，而不是穷举寻找最优交易策略。",
+        "增加 material_change 条件：prompt wording 小修、文案修复或非 gating 影响的 UI 改动可走轻量评估；影响 gate/scoring、RAG retrieval、tool/MCP behavior、model version 的变更才触发强制 ablation。",
+        "如果 only combined system pass 但无法解释组件贡献，不得作为 hard gate promotion 的充分证据。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 只定义 ablation 方法、评估字段、组件版本、审计记录和 promotion gate。",
+        "不得在本知识项写入具体交易策略、K 线信号、仓位、止损止盈、订单执行或账户参数。",
+        "如果 ablation 结果需要解释 PnL、slippage、fill model、market regime 或策略参数影响，应路由到 Trading Engineering。"
+      ],
+      "conflict_patch_notes": [
+        "与 eval.production_like_eval_required 是父子关系：production-like eval 是评估环境父项，ablation 是组件贡献分析子项。",
+        "与 eval.deterministic_baseline_required_before_llm_gate 互补：baseline comparison 比较 LLM 与非 LLM / 当前 gate；ablation 分析 LLM pipeline 内部组件贡献。",
+        "与 method_selection.rag_first_baseline_required、versioning.model_prompt_rag_strategy_snapshot_required 后续候选应互链。",
+        "未发现需要 rejected 的直接冲突。"
+      ],
+      "required_followups": [
+        "补 ablation_report_schema.json。",
+        "补 material_component_change enum：rag_index、retriever、reranker、prompt、model、tool、mcp_server、scoring_rubric。",
+        "补 eval cases：RAG off、prompt version swap、model swap、reranker off、tool/MCP unavailable、retrieval index changed。",
+        "补 source freshness note：OpenAI Evals platform deprecation。"
+      ]
+    }
+  },
+  "assumptions": [
+    "外接项目提供项目事实、私有交易数据和策略上下文；CEK-TA 只沉淀可复用专业规则。",
+    "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+  ],
+  "source_evidence": [
+    {
+      "source_id": "src_openai_evals",
+      "source_title": "Working with evals | OpenAI API",
+      "source_url": "https://platform.openai.com/docs/guides/evals?api-mode=chat",
+      "source_type": "official_doc",
+      "publisher": "OpenAI",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "OpenAI evals documentation supports programmatic evaluation setup and workflow-specific quality checks before relying on model behavior.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_sklearn_cv",
+      "source_title": "Cross-validation: evaluating estimator performance | scikit-learn",
+      "source_url": "https://scikit-learn.org/stable/modules/cross_validation.html",
+      "source_type": "official_doc",
+      "publisher": "scikit-learn",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "scikit-learn cross-validation guidance supports held-out evaluation, splitting discipline, and avoiding evaluation on training data.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_rules_ml",
+      "source_title": "Rules of Machine Learning",
+      "source_url": "https://martin.zinkevich.org/rules_of_ml/rules_of_ml.pdf",
+      "source_type": "paper",
+      "publisher": "Google / Martin Zinkevich",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "medium",
+      "relevance": "high",
+      "evidence_summary": "Rules of ML discusses train/serve consistency, baselines, monitoring, and production ML safeguards.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_openai_model_optimization_baseline",
+      "source_title": "Model optimization | OpenAI API",
+      "source_url": "https://platform.openai.com/docs/guides/model-optimization",
+      "source_type": "official_doc",
+      "publisher": "OpenAI",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "OpenAI model optimization 文档支持先写 evals 建立 baseline，再围绕 prompt、fine-tuning 和模型输出质量进行迭代。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_openai_evals_api_runs",
+      "source_title": "Evals | OpenAI API Reference",
+      "source_url": "https://platform.openai.com/docs/api-reference/evals/createRun?api-mode=chat",
+      "source_type": "official_doc",
+      "publisher": "OpenAI",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "medium",
+      "evidence_summary": "OpenAI Evals API 支持创建评估结构并在不同模型和参数上运行，可支撑同一 eval set 下的配置对比。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_pmlr_ablator_ablation_experiments",
+      "source_title": "ABLATOR: Robust Horizontal-Scaling of Machine Learning Ablation Experiments",
+      "source_url": "https://proceedings.mlr.press/v224/fostiropoulos23a.html",
+      "source_type": "paper",
+      "publisher": "PMLR",
+      "published_at": "2023-11-12",
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "PMLR ABLATOR 论文直接说明 ablation experiments 用于理解方法、组件和训练设置的有效性。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_coling_2025_rag_best_practices_ablation",
+      "source_title": "Enhancing Retrieval-Augmented Generation: A Study of Best Practices",
+      "source_url": "https://aclanthology.org/2025.coling-main.449.pdf",
+      "source_type": "paper",
+      "publisher": "ACL Anthology / COLING",
+      "published_at": "2025",
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "该 RAG 最佳实践研究使用 ablation studies 分析 RAG 组件和配置对效果的影响，可作为 RAG 组件级消融的直接来源。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_occ_fed_fdic_revised_model_risk_2026",
+      "source_title": "Model Risk Management: Revised Guidance",
+      "source_url": "https://occ.gov/news-issuances/bulletins/2026/bulletin-2026-13.html",
+      "source_type": "standard_or_risk_framework",
+      "publisher": "OCC / Federal Reserve / FDIC",
+      "published_at": "2026-04-17",
+      "accessed_at": "2026-06-09",
+      "version": "OCC Bulletin 2026-13 / SR 26-2",
+      "reliability": "high",
+      "relevance": "medium",
+      "evidence_summary": "2026 年跨机构模型风险管理修订指南支持模型治理、验证、变更控制和风险分层；同时需注明 generative AI 和 agentic AI 不在其直接范围内，只能作为模型风险治理类比来源。",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 88,
+    "score_version": "1.0.0",
+    "primary_source_count": 2,
+    "supporting_source_count": 6,
+    "low_reliability_source_count": 0,
+    "limitations": [
+      "本条为 reviewed 知识，来源和审计补丁已记录；默认指导仍需后续人工治理升级 approved。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "docs/contracts/ai_engineering_gating_scoring_contract.md",
+      "docs/contracts/ai_engineering_knowledge_item_policy.md",
+      "docs/tasks/phase36_ai_engineering_gating_scoring_knowledge.md"
+    ],
+    "conflicts": [],
+    "resolution_summary": "未发现与当前 CEK-TA formal knowledge 的直接冲突；候选不会进入默认指导。",
+    "default_recommendation": "caveat_only_until_approved"
+  },
+  "review": {
+    "confidence": "medium",
+    "freshness": "time_sensitive",
+    "review_status": "reviewed",
+    "reviewer": "codex",
+    "reviewed_at": "2026-06-09",
+    "created_at": "2026-06-09",
+    "updated_at": "2026-06-09",
+    "open_questions": [
+      "检查 rewritten statement 是否从泛化评估改为组件级 ablation，source_refs 是否能直接支撑 RAG/prompt/model/tool 组件消融。",
+      "是否与相邻 reviewed 知识重复，应该作为父子规则、互链规则还是合并？",
+      "是否仍需要更多领域直接来源或内部 schema contract？",
+      "补 ablation_report_schema.json。",
+      "补 material_component_change enum：rag_index、retriever、reranker、prompt、model、tool、mcp_server、scoring_rubric。",
+      "补 eval cases：RAG off、prompt version swap、model swap、reranker off、tool/MCP unavailable、retrieval index changed。",
+      "补 source freshness note：OpenAI Evals platform deprecation。"
+    ],
+    "decision_log": [
+      {
+        "at": "2026-06-09",
+        "actor": "external_ai",
+        "decision": "accepted_for_draft",
+        "reason": "补证后 candidate_id、normalized_claim、statement 和 source_refs 已基本对齐。该条已从泛化 production-like eval 规则改写为 RAG、prompt、model、reranker、tool、MCP 组件变更前的组件级 ablation 规则。PMLR ABLATOR 直接支持 ablation experiments 用于理解方法或组件有效性，COLING 2025 RAG best practices 研究系统分析 RAG 组件和配置对效果的影响，OpenAI model optimization / evals 文档支持在同一 eval workflow 中建立 baseline、运行测试输入并比较配置。因此可升级为 accepted_for_draft。但正式 draft 必须写成 CEK-TA 内部 promotion evidence rule，而不是声称外部标准逐字要求所有 RAG 改动都必须 ablation。",
+        "audit_result_id": "audit_result_phase36_batch03_supplemental_reaudit_20260609_gpt55_pro_strict_sources"
+      },
+      {
+        "at": "2026-06-09",
+        "actor": "codex",
+        "decision": "converted_to_reviewed",
+        "reason": "按 Phase 36 批量审计结果优化候选并转为 formal reviewed；未升级 approved。",
+        "audit_result_id": "audit_result_phase36_batch03_supplemental_reaudit_20260609_gpt55_pro_strict_sources"
+      }
+    ],
+    "approval_status": "not_requested",
+    "default_guidance_allowed": false,
+    "source_candidate_id": "cand_20260609_ai_engineering_eval_ablation_required_for_rag_prompt_model_components_v1_001",
+    "ai_audit_result_id": "audit_result_phase36_batch03_supplemental_reaudit_20260609_gpt55_pro_strict_sources",
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase36_batch03_supplemental_reaudit_20260609_gpt55_pro_strict_sources",
+      "source_package_id": "phase36_batch03_supplemental_audit_package_20260609",
+      "decision": "accepted_for_draft",
+      "reason": "补证后 candidate_id、normalized_claim、statement 和 source_refs 已基本对齐。该条已从泛化 production-like eval 规则改写为 RAG、prompt、model、reranker、tool、MCP 组件变更前的组件级 ablation 规则。PMLR ABLATOR 直接支持 ablation experiments 用于理解方法或组件有效性，COLING 2025 RAG best practices 研究系统分析 RAG 组件和配置对效果的影响，OpenAI model optimization / evals 文档支持在同一 eval workflow 中建立 baseline、运行测试输入并比较配置。因此可升级为 accepted_for_draft。但正式 draft 必须写成 CEK-TA 内部 promotion evidence rule，而不是声称外部标准逐字要求所有 RAG 改动都必须 ablation。",
+      "source_patch_notes": [
+        "将 src_pmlr_ablator_ablation_experiments 设为主来源之一，用于支撑 ablation experiments 的方法论。",
+        "将 src_coling_2025_rag_best_practices_ablation 设为 RAG 组件/配置评估的直接来源。",
+        "保留 OpenAI model optimization 和 OpenAI evals 作为 baseline、代表性测试输入、配置比较和迭代评估的 supporting sources。",
+        "OpenAI evals 来源必须注明平台退役时间线：2026-10-31 read-only，2026-11-30 shutdown；新实现应兼容当前 Datasets / 新 eval workflow。",
+        "scikit-learn CV 与 Rules of ML 可保留为 split discipline / production ML baseline supporting sources，但不应作为 ablation 主证据。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议保留补充包写法：RAG、prompt、model、reranker、tool 或 MCP 组件变更在进入 gate/scoring promotion 前，必须在同一隔离 eval set 上执行组件级 ablation。",
+        "建议字段：ablation_run_id、baseline_config_id、component_name、component_version、component_disabled、component_enabled、combined_config_id、eval_dataset_id、eval_dataset_hash、metric_set_id、failure_case_ids、delta_vs_baseline、decision、reviewer。",
+        "明确 ablation 不是调参搜索；它用于解释组件边际贡献和风险，而不是穷举寻找最优交易策略。",
+        "增加 material_change 条件：prompt wording 小修、文案修复或非 gating 影响的 UI 改动可走轻量评估；影响 gate/scoring、RAG retrieval、tool/MCP behavior、model version 的变更才触发强制 ablation。",
+        "如果 only combined system pass 但无法解释组件贡献，不得作为 hard gate promotion 的充分证据。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 只定义 ablation 方法、评估字段、组件版本、审计记录和 promotion gate。",
+        "不得在本知识项写入具体交易策略、K 线信号、仓位、止损止盈、订单执行或账户参数。",
+        "如果 ablation 结果需要解释 PnL、slippage、fill model、market regime 或策略参数影响，应路由到 Trading Engineering。"
+      ],
+      "conflict_patch_notes": [
+        "与 eval.production_like_eval_required 是父子关系：production-like eval 是评估环境父项，ablation 是组件贡献分析子项。",
+        "与 eval.deterministic_baseline_required_before_llm_gate 互补：baseline comparison 比较 LLM 与非 LLM / 当前 gate；ablation 分析 LLM pipeline 内部组件贡献。",
+        "与 method_selection.rag_first_baseline_required、versioning.model_prompt_rag_strategy_snapshot_required 后续候选应互链。",
+        "未发现需要 rejected 的直接冲突。"
+      ],
+      "required_followups": [
+        "补 ablation_report_schema.json。",
+        "补 material_component_change enum：rag_index、retriever、reranker、prompt、model、tool、mcp_server、scoring_rubric。",
+        "补 eval cases：RAG off、prompt version swap、model swap、reranker off、tool/MCP unavailable、retrieval index changed。",
+        "补 source freshness note：OpenAI Evals platform deprecation。"
+      ]
+    },
+    "approved_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "contribution": {
+    "contribution_id": null,
+    "source_project": null,
+    "sanitization_status": "not_applicable",
+    "private_data_removed": true,
+    "generic_mapping_notes": "Phase 36 public-source AI Engineering candidate; no project-private trading facts included."
+  },
+  "copyright": {
+    "stores_full_text": false,
+    "stores_long_quote": false,
+    "summary_only": true,
+    "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+    "reuse_risk": "low"
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于审计 AI Engineering、LLM 训练、RAG/MCP、部署、安全或治理链路。",
+      "用于提醒外接项目补齐来源、适用边界、冲突状态、审计记录和人工审批。",
+      "用于 reviewed/audit 模式下带 caveat 引用。"
+    ],
+    "not_allowed": [
+      "不得生成买卖点、仓位、杠杆、止损止盈或实盘执行指令。",
+      "不得覆盖确定性风控、交易执行系统或人工审批。",
+      "不得作为 approved/default guidance 直接返回。"
+    ],
+    "required_context": [
+      "project_type",
+      "task_type",
+      "mode",
+      "strategy_version",
+      "data_boundary",
+      "review_status"
+    ],
+    "fallback_behavior": "cite_with_caveat"
+  },
+  "machine_gate": {
+    "default_guidance": "caveat_only",
+    "reason": "reviewed only; accepted_for_draft is not approved; default guidance requires later human governance approval.",
+    "requires_human_escalation": true,
+    "blocking_reasons": [
+      "not_approved",
+      "phase36_batch_reviewed_only"
+    ],
+    "checked_at": "2026-06-09",
+    "gate_version": "1.0.0",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "recommended_extra_sources": [
+    {
+      "title": "将 src_pmlr_ablator_ablation_experiments 设为主来源之一，用于支撑 ablation experiments 的方法论。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_1"
+    },
+    {
+      "title": "将 src_coling_2025_rag_best_practices_ablation 设为 RAG 组件/配置评估的直接来源。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_2"
+    },
+    {
+      "title": "保留 OpenAI model optimization 和 OpenAI evals 作为 baseline、代表性测试输入、配置比较和迭代评估的 supporting sources。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_3"
+    },
+    {
+      "title": "OpenAI evals 来源必须注明平台退役时间线：2026-10-31 read-only，2026-11-30 shutdown；新实现应兼容当前 Datasets / 新 eval workflow。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_4"
+    },
+    {
+      "title": "scikit-learn CV 与 Rules of ML 可保留为 split discipline / production ML baseline supporting sources，但不应作为 ablation 主证据。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_5"
+    }
+  ]
+}

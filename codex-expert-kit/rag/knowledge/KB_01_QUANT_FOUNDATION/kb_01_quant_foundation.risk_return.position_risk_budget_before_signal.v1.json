@@ -1,0 +1,172 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_01_quant_foundation.risk_return.position_risk_budget_before_signal.v1",
+  "title": "仓位风险预算必须先于策略信号定义",
+  "metadata": {
+    "partition_id": "KB_01_QUANT_FOUNDATION",
+    "domain": "quant_trading",
+    "subdomain": "risk_return",
+    "rule_type": "principle",
+    "content_type": "json",
+    "project_binding": "none",
+    "tree_node_id": "kt.quant_foundation.risk_return",
+    "tree_path": "CEK-TA / Quant Foundation / Risk Return",
+    "canonical_node_id": "kt.trading_engineering.risk_management.position_sizing",
+    "canonical_tree_path": "CEK-TA / Trading Engineering / Risk Management / Position Sizing",
+    "risk_level": "high",
+    "used_for": [
+      "strategy_design",
+      "code_review",
+      "backtest_review",
+      "simulation",
+      "live_trading",
+      "trade_analysis",
+      "mcp",
+      "vue_audit_ui"
+    ],
+    "claim_type": "risk_boundary_rule",
+    "classification_notes": "UI tree node is kt.quant_foundation.risk_return; canonical classification is kt.trading_engineering.risk_management.position_sizing."
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "multi",
+    "timeframe": "general",
+    "data_granularity": "general",
+    "project_type": "general",
+    "applies_when": [
+      "设计策略、回测、模拟盘或实盘系统的仓位、杠杆、风险预算和亏损上限",
+      "信号强度需要转化为订单数量或资金占用"
+    ],
+    "not_applicable_when": [
+      "只讨论无资金语义的数据清洗或 UI 展示",
+      "交易系统完全不产生订单或仓位"
+    ]
+  },
+  "content": {
+    "statement": "交易系统必须先定义账户级、策略级和单笔交易的风险预算，再允许策略信号生成仓位；信号强弱不能绕过最大风险、杠杆、相关性和回撤约束。",
+    "rationale": "仓位大小决定风险暴露和回撤路径。即使信号有正期望，估计误差、连续亏损和相关持仓也可能导致不可接受的回撤。",
+    "procedure": [
+      "定义账户最大回撤、日亏损、单笔风险和总敞口上限。",
+      "定义风险预算如何映射到 position size。",
+      "检查多个策略或资产的相关敞口。",
+      "在回测、模拟盘和实盘使用同一套风险预算字段。"
+    ],
+    "examples": [
+      "信号评分为强买入，也不能超过账户级最大单笔风险。"
+    ],
+    "anti_patterns": [
+      "先生成满仓信号，再事后补风控。",
+      "按胜率或最近收益直接放大杠杆。"
+    ],
+    "validation": [
+      "构造连续亏损场景，检查仓位是否受预算限制。",
+      "检查订单适配器是否拒绝超过风险预算的订单。"
+    ],
+    "risk_notes": [
+      "该知识不推荐具体仓位比例。",
+      "Kelly 或其他 sizing 模型需要可靠输入，不能替代风险上限。"
+    ],
+    "citation_notes": "Davidsson 关于 position sizing 的论文讨论了组合理论、Kelly 和 1% rule 等仓位模型，并强调系统化风险管理和风险均衡的重要性。"
+  },
+  "assumptions": [
+    "系统需要把信号转化为仓位或订单。",
+    "风险预算可被工程化为前置检查。"
+  ],
+  "source_evidence": [
+    {
+      "source_id": "src_seed_013",
+      "source_title": "The Science and Art of Position Sizing",
+      "source_url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2248261",
+      "source_type": "paper",
+      "publisher": "Journal of Financial Decision Making / SSRN",
+      "published_at": "2011-12-01",
+      "accessed_at": "2026-06-08",
+      "version": "Vol. 7 Issue 2",
+      "reliability": "medium",
+      "relevance": "high",
+      "evidence_summary": "论文讨论 position sizing、Kelly、1% rule 和系统化风险管理，支持在策略信号前定义风险预算。",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "medium",
+    "score": 78,
+    "score_version": "1.0.0",
+    "primary_source_count": 0,
+    "supporting_source_count": 1,
+    "limitations": [
+      "来源为中等可靠研究资料；后续可补充更权威的风险管理教材或机构文档。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "kb_06_live_execution.risk_control.kill_switch_no_new_orders.v1"
+    ],
+    "conflicts": [],
+    "resolution_summary": "仓位预算和 kill switch 都是风险控制层规则，方向一致。",
+    "default_recommendation": "use_as_guidance"
+  },
+  "review": {
+    "confidence": "medium",
+    "freshness": "stable",
+    "review_status": "approved",
+    "reviewer": "codex",
+    "reviewed_at": "2026-06-08",
+    "created_at": "2026-06-08",
+    "updated_at": "2026-06-08",
+    "open_questions": [
+      "后续应补充 portfolio heat、相关性和波动率目标来源。"
+    ],
+    "decision_log": [
+      {
+        "at": "2026-06-08",
+        "actor": "codex",
+        "decision": "approved",
+        "reason": "作为保守工程原则可用，明确不指定具体比例。"
+      }
+    ],
+    "approval_status": "approved",
+    "default_guidance_allowed": true,
+    "source_candidate_id": null,
+    "ai_audit_result_id": null
+  },
+  "contribution": {
+    "contribution_id": null,
+    "source_project": null,
+    "sanitization_status": "not_applicable",
+    "private_data_removed": true,
+    "generic_mapping_notes": "通用仓位风险预算知识。"
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于审计和解释 CEK-TA / Trading Engineering / Risk Management / Position Sizing 范围内的专业边界。",
+      "用于提醒用户补充适用范围、来源、冲突状态和验证条件。",
+      "用于阻止 AI 把未满足边界的知识当成默认交易建议。"
+    ],
+    "not_allowed": [
+      "不得据此生成买卖点、仓位、杠杆或实盘执行指令。",
+      "不得在缺少适用边界、来源或冲突状态时作为默认指导。",
+      "不得把 reviewed 或 caveat_only 知识表述为 approved 结论。",
+      "不得绕过人工风险确认或项目事实核验。"
+    ],
+    "required_context": [
+      "project_type",
+      "market",
+      "asset",
+      "timeframe",
+      "data_granularity",
+      "task_type"
+    ],
+    "fallback_behavior": "cite_with_caveat"
+  },
+  "machine_gate": {
+    "default_guidance": "allow",
+    "reason": "approved; default_guidance_allowed=true; sources, conflict, freshness, and privacy gates passed.",
+    "requires_human_escalation": false,
+    "blocking_reasons": [],
+    "checked_at": "2026-06-09",
+    "gate_version": "1.0.0"
+  },
+  "recommended_extra_sources": []
+}

@@ -1,0 +1,325 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_trading_audit_trace.phase53.trade_audit_time_synchronization_required.v1",
+  "title": "Trade audit time synchronization must be explicit",
+  "metadata": {
+    "partition_id": "KB_06_LIVE_EXECUTION",
+    "domain": "trading_engineering",
+    "subdomain": "audit_trace",
+    "rule_type": "governance_boundary",
+    "claim_type": "execution_safety_rule",
+    "content_type": "json",
+    "project_binding": "none",
+    "tree_node_id": "kt.trading_engineering.audit_trace.time_synchronization",
+    "tree_path": "CEK-TA / Trading Engineering",
+    "canonical_node_id": "kt.trading_engineering.audit_trace.time_synchronization",
+    "canonical_tree_path": "CEK-TA / Trading Engineering",
+    "risk_level": "high",
+    "used_for": [
+      "market_data",
+      "live_execution",
+      "replay_simulation",
+      "risk_audit",
+      "rag_mcp_audit"
+    ],
+    "source_candidate_id": "cand_20260613_phase53_trade_audit_time_synchronization_required_001",
+    "research_task_id": "P53-TR-TS01",
+    "phase": "Phase 53",
+    "classification_notes": "Phase 53 formal reviewed/caveat_only；只用于审计上下文、schema review、RAG 检索和人工复核，不是 approved/default guidance/hard gate。",
+    "related_nodes": [
+      "kt.data_engineering.timestamp_alignment",
+      "kt.live_execution.order_event_log",
+      "kt.replay_simulation.simulation_live_gap_report",
+      "kt.ai_engineering.runtime_observability.inference_trace",
+      "kt.rag_engineering.audit_trace"
+    ]
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "general",
+    "data_granularity": "general",
+    "project_type": "external_trading_ai_project",
+    "applies_when": [
+      "系统需要比较行情、订单、成交、风控、模型推理或 RAG/MCP 审计事件先后顺序。",
+      "回放、模拟、实盘差异报告或执行质量审计依赖 timestamp。"
+    ],
+    "not_applicable_when": [
+      "静态文档知识不需要事件先后证明。",
+      "人工备注时间不能作为机器审计证据。"
+    ]
+  },
+  "content": {
+    "statement": "交易事件、行情事件、订单状态、成交、风控动作、模型推理和 RAG/MCP 审计日志必须声明 clock source、sync status、timestamp precision、timezone、drift policy 和 ordering caveat；没有可信时间同步证据时，只能标记 ordering_unknown，不得推导执行质量、合规结论或交易许可。",
+    "rationale": "本候选仅定义可审计治理边界；不得作为 approved、default guidance、hard gate、交易建议或法律意见。",
+    "normalized_claim": "phase53.trade_audit_time_synchronization_required.v1",
+    "claim_strength": "reviewed_caveat_only",
+    "performance_claim": false,
+    "procedure": [
+      "确认问题属于 Phase 53 的 AI/Trading 安全、市场行为或运行治理范围。",
+      "读取本知识时必须同时返回 source_evidence、review_status、machine_gate、适用范围、不适用场景和 jurisdiction/source caveat。",
+      "如果请求法律意见、操纵定性、合规满足声明、交易许可、风险阈值或实盘执行建议，必须拒绝并提示转交对应 owner。",
+      "如应用到非来源覆盖的 market、venue、jurisdiction 或 asset class，必须要求外接项目补充对应来源。"
+    ],
+    "examples": [],
+    "anti_patterns": [
+      "没有可信时间同步证据却声称事件真实先后顺序。",
+      "把 clock sync 状态解释成交易许可。",
+      "给出具体硬件采购或高频策略建议。",
+      "把 reviewed/caveat_only 当作 approved 或默认指导。",
+      "把审计标签、监管边界或时间同步 caveat 解释成交易 hard gate。",
+      "输出法律意见、操纵定性、合规满足声明、交易许可或风险阈值。"
+    ],
+    "validation": [
+      "review.review_status 必须为 reviewed，review_mode 必须为 caveat_only。",
+      "approved_allowed、default_guidance_allowed、hard_gate_allowed 必须为 false。",
+      "source_evidence 必须包含官方监管、标准、交易所、行业协议或官方文档来源。",
+      "MCP/SearchLab default guidance 查询不得把本条作为 approved 指导返回。"
+    ],
+    "risk_notes": [
+      "本条仍是 candidate，必须经过外部 AI/人工严格审计和补丁回写后才能进入 formal reviewed/caveat_only。",
+      "来源具有 jurisdiction、system scope 或 tool scope 限制，不得跨市场泛化。",
+      "正式 reviewed/caveat_only 文本必须按 source group 标注 FINRA/CAT 为 US CAT 语境，RTS 25 为 EU 语境，OpenTelemetry 为 observability 语境。",
+      "不得给出具体硬件采购建议、高频策略建议或交易许可。",
+      "ordering_unknown 只能作为审计 caveat，不能成为 hard gate。",
+      "本条不是 approved，不进入默认指导，不启用 hard gate。",
+      "本条不得生成法律意见、合规满足声明、交易许可、风险阈值或实盘执行建议。"
+    ],
+    "citation_notes": "FINRA Rule 6820 supports business clock synchronization, NIST atomic clock reference, drift, and daily synchronization requirements.；RTS 25 supports UTC time reference and timestamp accuracy requirements for trading venues and members.；CAT clock synchronization guidance supports certification and clock sync requirements for CAT reporting.；OpenTelemetry supports logs, metrics, traces, and external observability for production systems.",
+    "audit_patch_notes": {
+      "source": [
+        "保留 FINRA Rule 6820、CAT Clock Sync、MiFID RTS 25、OpenTelemetry Observability Primer。"
+      ],
+      "content": [
+        "保留 clock_source、sync_status、timestamp_precision、timezone、drift_policy、ordering_caveat、last_sync_at、sync_evidence_ref。",
+        "no_trusted_clock_sync_result 必须等于 ordering_unknown。"
+      ],
+      "boundary": [
+        "不得推导执行质量结论。",
+        "不得推导合规结论。",
+        "不得生成交易许可或 hard gate。"
+      ],
+      "conflict": [
+        "Data / Live / Replay / RAG 各自拥有事件事实；Time Sync 只提供审计上下文。"
+      ]
+    }
+  },
+  "assumptions": [
+    "外接项目提供自身 jurisdiction、venue、asset class、broker/adapter、权限和项目事实。",
+    "CEK-TA 只沉淀可复用专业边界和证据契约，不接管项目私有运行决策。"
+  ],
+  "source_evidence": [
+    {
+      "source_id": "P53-SRC-TR-004",
+      "source_title": "FINRA Rule 6820 Clock Synchronization",
+      "source_url": "https://www.finra.org/rules-guidance/rulebooks/finra-rules/6820",
+      "source_type": "rule",
+      "publisher": "FINRA",
+      "published_at": null,
+      "accessed_at": "2026-06-13",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "FINRA Rule 6820 supports business clock synchronization, NIST atomic clock reference, drift, and daily synchronization requirements.",
+      "quoted_excerpt_allowed": false,
+      "limitations": [
+        "Does not apply universally to non-US markets."
+      ]
+    },
+    {
+      "source_id": "P53-SRC-TR-006",
+      "source_title": "MiFID II RTS 25 Clock Synchronization",
+      "source_url": "https://ec.europa.eu/finance/securities/docs/isd/mifid/rts/160607-rts-25_en.pdf",
+      "source_type": "regulation",
+      "publisher": "European Commission",
+      "published_at": null,
+      "accessed_at": "2026-06-13",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "RTS 25 supports UTC time reference and timestamp accuracy requirements for trading venues and members.",
+      "quoted_excerpt_allowed": false,
+      "limitations": [
+        "Does not replace US CAT clock requirements."
+      ]
+    },
+    {
+      "source_id": "P53-SRC-TR-010",
+      "source_title": "CAT Clock Synchronization Guidance",
+      "source_url": "https://www.catnmsplan.com/guidance/clock-synchronization",
+      "source_type": "official_plan",
+      "publisher": "CAT NMS Plan",
+      "published_at": null,
+      "accessed_at": "2026-06-13",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "CAT clock synchronization guidance supports certification and clock sync requirements for CAT reporting.",
+      "quoted_excerpt_allowed": false,
+      "limitations": [
+        "Does not cover EU RTS 25."
+      ]
+    },
+    {
+      "source_id": "P53-SRC-AI-007",
+      "source_title": "Observability Primer | OpenTelemetry",
+      "source_url": "https://opentelemetry.io/docs/concepts/observability-primer/",
+      "source_type": "official_docs",
+      "publisher": "OpenTelemetry",
+      "published_at": null,
+      "accessed_at": "2026-06-13",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "OpenTelemetry supports logs, metrics, traces, and external observability for production systems.",
+      "quoted_excerpt_allowed": false,
+      "limitations": [
+        "Does not replace financial clock synchronization rules."
+      ]
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 88,
+    "score_version": "1.1.0",
+    "primary_source_count": 4,
+    "supporting_source_count": 0,
+    "low_reliability_source_count": 0,
+    "mandatory_downgrades": [],
+    "limitations": [
+      "Does not apply universally to non-US markets.",
+      "Does not cover EU RTS 25.",
+      "Does not replace US CAT clock requirements.",
+      "Does not replace financial clock synchronization rules."
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "Phase 52 authoritative gap audit",
+      "Phase 53 scope audit accept_with_patch",
+      "formal knowledge index visible to local script"
+    ],
+    "conflicts": [],
+    "resolution_summary": "reviewed/caveat_only 准备审计通过；formal creation 保持 caveat_only，不创建 approved、default guidance 或 hard gate。",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "legal_opinion_allowed": false,
+    "trade_execution_advice_allowed": false,
+    "risk_threshold_advice_allowed": false
+  },
+  "review": {
+    "review_status": "reviewed",
+    "review_mode": "caveat_only",
+    "confidence": "high",
+    "freshness": "time_sensitive",
+    "reviewer": "external_ai_strict_audit_and_codex",
+    "reviewed_at": "2026-06-13",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "legal_opinion_allowed": false,
+    "trade_execution_advice_allowed": false,
+    "risk_threshold_advice_allowed": false,
+    "source_candidate_id": "cand_20260613_phase53_trade_audit_time_synchronization_required_001",
+    "ai_audit_result_id": "audit_phase53_reviewed_preparation_20260613",
+    "ai_audit": {
+      "audit_result_id": "audit_phase53_reviewed_preparation_20260613",
+      "package_id": "phase53_reviewed_preparation_audit_package_20260613",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "legal_opinion_allowed": false,
+      "trade_execution_advice_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "reasons": [
+        "FINRA Rule 6820、CAT guidance、MiFID RTS 25 足以支撑金融事件 clock source、sync status、timestamp precision、drift policy 与 clock synchronization 语境。",
+        "OpenTelemetry 足以支撑模型推理和 RAG/MCP 审计日志的 observability 语境，但不替代金融 clock synchronization 规则。",
+        "candidate 已提供 audit_time_sync_context schema extract，并明确 no_trusted_clock_sync_result=ordering_unknown。"
+      ],
+      "patch_notes": {
+        "source": [
+          "保留 FINRA Rule 6820、CAT Clock Sync、MiFID RTS 25、OpenTelemetry Observability Primer。"
+        ],
+        "content": [
+          "保留 clock_source、sync_status、timestamp_precision、timezone、drift_policy、ordering_caveat、last_sync_at、sync_evidence_ref。",
+          "no_trusted_clock_sync_result 必须等于 ordering_unknown。"
+        ],
+        "boundary": [
+          "不得推导执行质量结论。",
+          "不得推导合规结论。",
+          "不得生成交易许可或 hard gate。"
+        ],
+        "conflict": [
+          "Data / Live / Replay / RAG 各自拥有事件事实；Time Sync 只提供审计上下文。"
+        ]
+      }
+    },
+    "decision_log": [
+      {
+        "at": "2026-06-13",
+        "actor": "external_ai_strict_audit",
+        "decision": "accepted_for_reviewed_caveat_only",
+        "reason": "audit_phase53_reviewed_preparation_20260613: reviewed/caveat_only allowed; no approved/default/hard gate."
+      },
+      {
+        "at": "2026-06-13",
+        "actor": "codex",
+        "decision": "formal_reviewed_created",
+        "reason": "CEK-TA-524: materialized formal reviewed/caveat_only knowledge."
+      }
+    ]
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于 AI IDE、MCP、SearchLab 和知识树以 caveat 方式返回审计上下文。",
+      "用于生成 schema review、source review、owner boundary、人工复核 checklist。",
+      "用于提醒外接项目补充 jurisdiction、venue、source 或内部 contract。"
+    ],
+    "not_allowed": [
+      "不得作为 approved 默认指导。",
+      "不得生成法律意见、操纵定性、合规满足声明、交易许可、风险阈值或 hard gate。",
+      "不得生成买卖点、仓位、杠杆、止损止盈或实盘执行建议。"
+    ],
+    "required_context": [
+      "必须同时返回 source_evidence、applicability、not_applicable_when、review_status、conflict_status 和 machine_gate。",
+      "若外接项目问题涉及实盘、法律、授权、资金或风控动作，必须要求项目事实层或人工 owner 复核。"
+    ],
+    "fallback_behavior": "cite_with_caveat"
+  },
+  "machine_gate": {
+    "default_guidance": "caveat_only",
+    "review_visibility": "reviewed_caveat_only",
+    "reason": "reviewed/caveat_only audit passed; approved/default guidance/hard gate remain disabled.",
+    "requires_human_escalation": false,
+    "hidden_from_default_queue": true,
+    "visible_in_default_guidance_queue": false,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "legal_opinion_allowed": false,
+    "trade_execution_advice_allowed": false,
+    "risk_threshold_advice_allowed": false,
+    "blocking_reasons": [],
+    "checked_at": "2026-06-13T10:29:14+00:00",
+    "gate_version": "1.0.0"
+  },
+  "contribution": {
+    "contribution_id": null,
+    "source_project": null,
+    "sanitization_status": "not_applicable",
+    "private_data_removed": true,
+    "generic_mapping_notes": "Generated from Phase 53 public-source candidate; no project-private trading facts included."
+  },
+  "phase53_conversion": {
+    "source_candidate_status": "accepted_for_draft",
+    "promoted_by_task": "CEK-TA-524",
+    "approved_created": false,
+    "default_guidance_created": false,
+    "hard_gate_created": false
+  },
+  "recommended_extra_sources": []
+}

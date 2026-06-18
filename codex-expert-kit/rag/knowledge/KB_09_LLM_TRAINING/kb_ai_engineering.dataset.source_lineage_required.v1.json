@@ -1,0 +1,358 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_ai_engineering.dataset.source_lineage_required.v1",
+  "title": "训练和 RAG 数据必须保留来源与转换血缘",
+  "metadata": {
+    "partition_id": "KB_09_LLM_TRAINING",
+    "domain": "llm_training",
+    "subdomain": "dataset_governance",
+    "rule_type": "decision_rule",
+    "content_type": "json",
+    "project_binding": "none",
+    "tree_node_id": "kt.llm_training.model_training_engineering",
+    "tree_path": "CEK-TA / AI Engineering",
+    "canonical_node_id": "kt.llm_training.model_training_engineering",
+    "canonical_tree_path": "CEK-TA / AI Engineering",
+    "risk_level": "medium",
+    "used_for": [
+      "llm_training",
+      "trading_gating_scoring",
+      "rag_engineering",
+      "mcp",
+      "vue_audit_ui"
+    ],
+    "source_candidate_id": "cand_20260609_ai_engineering_dataset_source_lineage_required_v1_001",
+    "research_task_id": "RIT-P36-A-T04",
+    "claim_type": "training_data_schema_rule",
+    "classification_notes": "Phase 36 AI Engineering reviewed knowledge；本条只沉淀 AI/LLM/RAG/MCP/训练数据、评估、部署或治理规则，交易规则本体必须路由到 Trading Engineering。"
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "general",
+    "data_granularity": "general",
+    "project_type": "trading_llm_assistant",
+    "applies_when": [
+      "数据来自回测、模拟盘、实盘、人工标注、规则标注、外部文档或 RAG 采集流水线。",
+      "样本经过清洗、脱敏、切分、标注、聚合或转换后进入训练/评估/RAG。",
+      "需要追踪某条训练样本或知识块对应的来源、版本和处理过程。"
+    ],
+    "not_applicable_when": [
+      "只是在描述数据字段类型，应该路由到 dataset.schema_required。",
+      "只是在描述数据版本和 hash，应该路由到 dataset.version_and_hash_required。",
+      "需要沉淀交易策略本体或订单执行细节。"
+    ]
+  },
+  "content": {
+    "statement": "LLM scoring/gating 训练数据、评估数据和 RAG 知识块必须保留 source lineage 与 transformation lineage；缺少血缘的数据不得进入正式训练、评估、RAG promotion 或默认指导。",
+    "rationale": "来源和转换血缘决定数据能否审计、回滚、去重、授权和复现实验结果；没有血缘时无法判断数据是否污染或是否来自私有项目事实。",
+    "procedure": [
+      "确认当前项目事实命中适用范围，且没有命中不适用场景。",
+      "按本知识项 required_fields 或字段清单补齐数据、训练、评估或部署契约。",
+      "执行 schema、来源、冲突、隐私和边界检查；失败时进入 block、quarantine 或 needs_review。",
+      "保留 source_evidence、audit_trace_id、review_status 和 machine_gate 结果，供 MCP、SearchLab、Vue3 审计界面和外接项目引用。"
+    ],
+    "examples": [],
+    "anti_patterns": [
+      "把 reviewed 知识当作 approved 默认指导。",
+      "把 AI Engineering 规则扩写成具体买卖点、仓位、止损止盈、策略参数或实盘执行动作。",
+      "缺少来源、schema、适用范围、冲突检查或审计记录仍进入训练、评估、RAG promotion 或默认指导。"
+    ],
+    "validation": [
+      "source_evidence 至少存在 2 条，且没有 unresolved conflict。",
+      "review_status 为 reviewed 时 machine_gate.default_guidance 必须是 caveat_only。",
+      "外接项目调用时必须返回 knowledge_id、source_refs、review_status、machine_gate 和适用边界。",
+      "前端候选页和知识树不得显示乱码、问号占位或英文 demo 文案。"
+    ],
+    "risk_notes": [
+      "本条为 formal reviewed 知识，不等于 approved；默认指导需要后续人工治理。",
+      "本知识项只处理 AI Engineering 边界，不沉淀项目私有交易数据和交易规则本体。",
+      "若项目事实涉及具体策略、实盘订单、风控阈值或市场结构，应路由到 Trading Engineering 对应分支。"
+    ],
+    "citation_notes": "Datasheets、TFDV、ML Metadata 和模型风险治理资料支持记录数据来源、转换链路、版本和审计追踪。",
+    "audit_patch_notes": {
+      "source_patch_notes": [
+        "保留 Datasheets for Datasets 作为 collection process、source、recommended use、limitations 来源。",
+        "保留 OpenAI fine-tuning best practices 作为训练/测试数据质量来源。",
+        "补 DVC data versioning 和 MLflow Tracking/Model Registry 作为 lineage、版本、artifacts、run 追踪来源。",
+        "补内部 source registry 或 data contract，定义 external_vendor、project_private、synthetic、incident_replay 等来源类别。"
+      ],
+      "content_patch_notes": [
+        "将 statement 改为：Every dataset used for LLM scoring/gating must have source lineage and transformation lineage before training/eval/RAG promotion。",
+        "建议字段：source_system、source_owner、source_license_ref、ingestion_job_id、transform_pipeline_id、transform_version、upstream_dataset_ids、artifact_uri、hash、created_at、reviewer。",
+        "要求 lineage 不可追踪时 fallback_action 为 block_training 或 needs_more_evidence。",
+        "对 RAG 数据额外记录 document_source_id、chunking_version、embedding_model_version、index_version。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 只记录 lineage metadata、hash、外部引用和脱敏摘要。",
+        "供应商合同全文、私有交易样本、账户数据和策略细节不进入 AI Engineering KB。",
+        "具体数据供应商授权细节应与 data_license rule 和合规 review 关联。"
+      ],
+      "conflict_patch_notes": [
+        "与 dataset_version_and_hash_required 正向互补：lineage 说明来源和转换，version/hash 确保内容可复现。",
+        "与 data_quality_backtest_paper_live_separation 互链：source_mode 是 lineage 的关键字段。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 lineage_registry schema。",
+        "补 lineage completeness checklist。",
+        "补 lineage missing 的 UI warning 和 blocking rule。"
+      ]
+    },
+    "required_fields": [
+      "source_id",
+      "source_type",
+      "source_uri",
+      "collection_time",
+      "transformation_steps",
+      "sanitization_status",
+      "lineage_hash",
+      "owner",
+      "audit_trace_id"
+    ]
+  },
+  "assumptions": [
+    "外接项目提供项目事实、私有交易数据和策略上下文；CEK-TA 只沉淀可复用专业规则。",
+    "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+  ],
+  "source_evidence": [
+    {
+      "source_id": "src_datasheets",
+      "source_title": "Datasheets for Datasets",
+      "source_url": "https://arxiv.org/abs/1803.09010",
+      "source_type": "paper",
+      "publisher": "arXiv",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "The paper supports documenting dataset motivation, composition, collection, intended use, maintenance, and limitations.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_openai_ft",
+      "source_title": "Fine-tuning best practices | OpenAI API",
+      "source_url": "https://platform.openai.com/docs/guides/fine-tuning-best-practices",
+      "source_type": "official_doc",
+      "publisher": "OpenAI",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "OpenAI fine-tuning guidance emphasizes data quality, held-out eval data, and task-specific examples for model improvement.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_tfdv",
+      "source_title": "TensorFlow Data Validation: Checking and analyzing your data",
+      "source_url": "https://tensorflow.github.io/tfx/guide/tfdv/",
+      "source_type": "official_doc",
+      "publisher": "TensorFlow / TFX",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "TFDV supports schema-based data validation, anomaly detection, and train/serve skew checks in ML pipelines.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_occ_fed_fdic_revised_model_risk_2026",
+      "source_title": "Model Risk Management: Revised Guidance",
+      "source_url": "https://occ.gov/news-issuances/bulletins/2026/bulletin-2026-13.html",
+      "source_type": "standard_or_risk_framework",
+      "publisher": "OCC / Federal Reserve / FDIC",
+      "published_at": "2026-04-17",
+      "accessed_at": "2026-06-09",
+      "version": "OCC Bulletin 2026-13 / SR 26-2",
+      "reliability": "high",
+      "relevance": "medium",
+      "evidence_summary": "2026 年跨机构模型风险管理修订指南支持模型治理、验证、变更控制和风险分层；同时需注明 generative AI 和 agentic AI 不在其直接范围内，只能作为模型风险治理类比来源。",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 90,
+    "score_version": "1.0.0",
+    "primary_source_count": 2,
+    "supporting_source_count": 2,
+    "low_reliability_source_count": 0,
+    "limitations": [
+      "本条为 reviewed 知识，来源和审计补丁已记录；默认指导仍需后续人工治理升级 approved。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "docs/contracts/ai_engineering_gating_scoring_contract.md",
+      "docs/contracts/ai_engineering_knowledge_item_policy.md",
+      "docs/tasks/phase36_ai_engineering_gating_scoring_knowledge.md"
+    ],
+    "conflicts": [],
+    "resolution_summary": "未发现与当前 CEK-TA formal knowledge 的直接冲突；候选不会进入默认指导。",
+    "default_recommendation": "caveat_only_until_approved"
+  },
+  "review": {
+    "confidence": "medium",
+    "freshness": "time_sensitive",
+    "review_status": "reviewed",
+    "reviewer": "codex",
+    "reviewed_at": "2026-06-09",
+    "created_at": "2026-06-09",
+    "updated_at": "2026-06-09",
+    "open_questions": [
+      "审计时确认该候选是否应与相邻 AI Engineering 规则合并、拆分，或改路由到 Trading Engineering。",
+      "补 lineage_registry schema。",
+      "补 lineage completeness checklist。",
+      "补 lineage missing 的 UI warning 和 blocking rule。"
+    ],
+    "decision_log": [
+      {
+        "at": "2026-06-09",
+        "actor": "external_ai",
+        "decision": "accepted_for_draft",
+        "reason": "方向成立。训练、评估、RAG 和偏好数据必须有可追踪来源和转换 lineage，不能使用无法追踪的数据。当前 sources 支持数据文档化和数据质量，但正式 draft 应补 DVC/MLflow 或同类 lineage/versioning 来源，增强可复现和审计能力。",
+        "audit_result_id": "audit_result_phase36_ai_engineering_batch_02_of_10_20260609_gpt55_pro_strict_sources"
+      },
+      {
+        "at": "2026-06-09",
+        "actor": "codex",
+        "decision": "converted_to_reviewed",
+        "reason": "按 Phase 36 批量审计结果优化候选并转为 formal reviewed；未升级 approved。",
+        "audit_result_id": "audit_result_phase36_ai_engineering_batch_02_of_10_20260609_gpt55_pro_strict_sources"
+      },
+      {
+        "at": "2026-06-09",
+        "actor": "codex",
+        "decision": "content_patch_applied",
+        "reason": "LLM scoring/gating 训练数据、评估数据和 RAG 知识块必须保留 source lineage 与 transformation lineage；缺少血缘的数据不得进入正式训练、评估、RAG promotion 或默认指导。",
+        "audit_result_id": "audit_result_phase36_ai_engineering_batch_02_of_10_20260609_gpt55_pro_strict_sources"
+      }
+    ],
+    "approval_status": "not_requested",
+    "default_guidance_allowed": false,
+    "source_candidate_id": "cand_20260609_ai_engineering_dataset_source_lineage_required_v1_001",
+    "ai_audit_result_id": "audit_result_phase36_ai_engineering_batch_02_of_10_20260609_gpt55_pro_strict_sources",
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase36_ai_engineering_batch_02_of_10_20260609_gpt55_pro_strict_sources",
+      "source_package_id": "phase36_ai_engineering_candidate_audit_batch_02_of_10_20260609",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立。训练、评估、RAG 和偏好数据必须有可追踪来源和转换 lineage，不能使用无法追踪的数据。当前 sources 支持数据文档化和数据质量，但正式 draft 应补 DVC/MLflow 或同类 lineage/versioning 来源，增强可复现和审计能力。",
+      "source_patch_notes": [
+        "保留 Datasheets for Datasets 作为 collection process、source、recommended use、limitations 来源。",
+        "保留 OpenAI fine-tuning best practices 作为训练/测试数据质量来源。",
+        "补 DVC data versioning 和 MLflow Tracking/Model Registry 作为 lineage、版本、artifacts、run 追踪来源。",
+        "补内部 source registry 或 data contract，定义 external_vendor、project_private、synthetic、incident_replay 等来源类别。"
+      ],
+      "content_patch_notes": [
+        "将 statement 改为：Every dataset used for LLM scoring/gating must have source lineage and transformation lineage before training/eval/RAG promotion。",
+        "建议字段：source_system、source_owner、source_license_ref、ingestion_job_id、transform_pipeline_id、transform_version、upstream_dataset_ids、artifact_uri、hash、created_at、reviewer。",
+        "要求 lineage 不可追踪时 fallback_action 为 block_training 或 needs_more_evidence。",
+        "对 RAG 数据额外记录 document_source_id、chunking_version、embedding_model_version、index_version。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 只记录 lineage metadata、hash、外部引用和脱敏摘要。",
+        "供应商合同全文、私有交易样本、账户数据和策略细节不进入 AI Engineering KB。",
+        "具体数据供应商授权细节应与 data_license rule 和合规 review 关联。"
+      ],
+      "conflict_patch_notes": [
+        "与 dataset_version_and_hash_required 正向互补：lineage 说明来源和转换，version/hash 确保内容可复现。",
+        "与 data_quality_backtest_paper_live_separation 互链：source_mode 是 lineage 的关键字段。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 lineage_registry schema。",
+        "补 lineage completeness checklist。",
+        "补 lineage missing 的 UI warning 和 blocking rule。"
+      ]
+    },
+    "approved_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "contribution": {
+    "contribution_id": null,
+    "source_project": null,
+    "sanitization_status": "not_applicable",
+    "private_data_removed": true,
+    "generic_mapping_notes": "Phase 36 public-source AI Engineering candidate; no project-private trading facts included."
+  },
+  "copyright": {
+    "stores_full_text": false,
+    "stores_long_quote": false,
+    "summary_only": true,
+    "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+    "reuse_risk": "low"
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于外接项目进行 AI Engineering、LLM 训练、RAG/MCP、数据治理、评估或部署审计。",
+      "用于 reviewed/audit 模式下带来源和 caveat 引用。",
+      "用于提示外接项目补齐 schema、来源、边界、冲突检查和审计记录。"
+    ],
+    "not_allowed": [
+      "不得生成买卖点、仓位、杠杆、止损止盈或实盘执行指令。",
+      "不得覆盖确定性风控、交易执行系统或人工审批。",
+      "不得作为 approved/default guidance 直接返回。"
+    ],
+    "required_context": [
+      "project_type",
+      "task_type",
+      "mode",
+      "strategy_version",
+      "data_boundary",
+      "review_status"
+    ],
+    "fallback_behavior": "cite_with_caveat"
+  },
+  "machine_gate": {
+    "default_guidance": "caveat_only",
+    "reason": "reviewed only; not approved; default guidance requires later human governance approval.",
+    "requires_human_escalation": true,
+    "blocking_reasons": [
+      "not_approved",
+      "phase36_reviewed_only"
+    ],
+    "checked_at": "2026-06-09",
+    "gate_version": "1.0.0",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "recommended_extra_sources": [
+    {
+      "title": "保留 Datasheets for Datasets 作为 collection process、source、recommended use、limitations 来源。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_1"
+    },
+    {
+      "title": "保留 OpenAI fine-tuning best practices 作为训练/测试数据质量来源。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_2"
+    },
+    {
+      "title": "补 DVC data versioning 和 MLflow Tracking/Model Registry 作为 lineage、版本、artifacts、run 追踪来源。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_3"
+    },
+    {
+      "title": "补内部 source registry 或 data contract，定义 external_vendor、project_private、synthetic、incident_replay 等来源类别。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_4"
+    }
+  ]
+}

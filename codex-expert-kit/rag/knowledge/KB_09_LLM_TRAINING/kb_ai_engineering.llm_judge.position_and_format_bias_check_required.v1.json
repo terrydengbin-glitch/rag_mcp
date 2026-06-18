@@ -1,0 +1,418 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_ai_engineering.llm_judge.position_and_format_bias_check_required.v1",
+  "title": "LLM-as-judge 评估必须检查候选顺序/位置交换、输出格式变体、回答长度/冗余敏感性和裁判提示稳定性；单次裁",
+  "metadata": {
+    "partition_id": "KB_09_LLM_TRAINING",
+    "domain": "llm_training",
+    "subdomain": "evaluation_governance",
+    "rule_type": "checklist",
+    "content_type": "json",
+    "project_binding": "none",
+    "tree_node_id": "kt.llm_training.model_training_engineering",
+    "tree_path": "CEK-TA / AI Engineering",
+    "canonical_node_id": "kt.llm_training.model_training_engineering",
+    "canonical_tree_path": "CEK-TA / AI Engineering",
+    "risk_level": "medium",
+    "used_for": [
+      "llm_training",
+      "trading_gating_scoring",
+      "rag_engineering",
+      "mcp",
+      "vue_audit_ui"
+    ],
+    "source_candidate_id": "cand_20260609_ai_engineering_llm_judge_position_and_format_bias_check_required_v1_001",
+    "research_task_id": "RIT-P36-C-35",
+    "claim_type": "ai_governance_rule",
+    "classification_notes": "Phase 36 AI Engineering reviewed knowledge; UI tree and canonical node are inherited from candidate classification. Trading rule bodies must remain in Trading Engineering."
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "general",
+    "data_granularity": "general",
+    "project_type": "trading_llm_assistant",
+    "applies_when": [
+      "外接项目使用 LLM 作为 judge、critic、grader 或 evaluator 来评估交易 LLM 输出、偏好样本、模型晋级、RAG 提示或 gating/scoring 证据。",
+      "裁判结果会进入模型调参、候选模型晋级、偏好训练数据筛选、阈值校准或人工审计摘要。"
+    ],
+    "not_applicable_when": [
+      "评估完全由确定性规则、人工标注或可复现实验指标完成，且没有 LLM judge 参与。",
+      "用户需要裁决具体交易策略收益、K 线信号有效性、实盘阈值或订单执行规则，应路由到 Trading Engineering 或项目 owner。"
+    ]
+  },
+  "content": {
+    "statement": "LLM-as-judge 评估必须检查候选顺序/位置交换、输出格式变体、回答长度/冗余敏感性和裁判提示稳定性；单次裁判分数不得作为模型晋级、调参或交易 gating 证据。",
+    "rationale": "本候选仅沉淀 AI Engineering 中训练、评估、RAG/MCP、安全、部署或治理规则；不定义 K 线信号、具体交易策略、订单执行规则或账户参数。 审计结论：补证后可以升级为 accepted_for_draft。rewritten statement 已经与 candidate_id / normalized_claim 对齐，明确要求 LLM-as-judge 评估检查候选顺序/位置交换、输出格式变体、回答长度/冗余敏感性和裁判提示稳定性，并禁止把单次 judge 分数作为模型晋级、调参或交易 gating 的充分证据。Zheng et al. 2023 直接支持 position、verbosity、self-enhancement bias；Shi et al. 2024 直接支持 position consistency、repetition stability、preference fairness；output format bias 研究可作为 format variant / style sensitivity 的补充来源。该条仍需在正式 draft 中说明：format bias 来源不是专门的 LLM-as-judge format-bias 研究，judge_prompt_stability 也应作为 CEK-TA 内部评估字段或继续补更直接来源。",
+    "procedure": [
+      "确认项目事实匹配 applies_when，且没有命中 not_applicable_when。",
+      "按 source_patch_notes 检查来源是否足够支撑 statement。",
+      "按 content_patch_notes 补齐正式实现、schema、字段和 checklist。",
+      "按 boundary_patch_notes 确认没有把交易规则本体、项目私有参数或实盘执行规则写入 AI Engineering。",
+      "保留 required_followups，后续由来源增强或治理任务继续关闭。"
+    ],
+    "examples": [],
+    "anti_patterns": [
+      "把 reviewed 知识当作 approved 默认指导。",
+      "把 AI Engineering 规则扩写成具体交易阈值、仓位、买卖点或执行参数。",
+      "忽略审计结果中的来源限制、适用范围和后续补强要求。"
+    ],
+    "validation": [
+      "source_evidence 至少 2 条，且没有 low-only 来源。",
+      "conflict_status 为 none 或 resolved。",
+      "review_status 为 reviewed 时 machine_gate 必须是 caveat_only。",
+      "MCP/SearchLab 默认指导不得把本条当作 approved 返回。"
+    ],
+    "risk_notes": [
+      "补证后仍需二次审计确认来源与 statement 是否充分对齐。",
+      "本条只约束 LLM judge 评估流程，不证明任何交易模型或交易信号有效。",
+      "AI Engineering 只定义 judge-bias evaluation、prompt/rubric stability、审计字段、promotion gate 和 Vue audit UI 展示。",
+      "LLM judge 评分不得直接影响实盘订单、仓位、止损止盈、broker action 或 Trading Engineering hard risk gate。",
+      "如果 judge 评分用于交易策略收益解释、策略优劣裁决、实盘阈值、风控阈值或执行优先级，必须路由 Trading Engineering 或项目 owner。",
+      "不得在该知识项中沉淀具体交易策略、买卖点、K 线信号、仓位、止损止盈、订单执行规则或账户参数。",
+      "与 eval.production_like_eval_required 是父子关系：production-like eval 规定评估环境，本条规定 LLM judge 偏差与稳定性审计。",
+      "与 eval.ablation_required_for_rag_prompt_model_components 互补：ablation 检查组件贡献，本条检查 judge/evaluator 是否可靠。",
+      "与 eval.score_calibration_required_before_gating 互补：calibration 处理 score 可解释性，本条处理 LLM judge 的排序/偏好偏差。",
+      "与 label_factory.inter_annotator_agreement_required / human consensus 相关：LLM judge 分数应尽量与人工或 gold set 校准。",
+      "未发现需要 rejected 的直接冲突；但 accepted_for_draft 仍不等于 approved。",
+      "补 llm_judge_bias_audit_schema.json。",
+      "补 judge_prompt_stability_eval_case_set，覆盖 prompt wording swap、rubric wording swap、temperature/retry variance、same candidate repeated judging。",
+      "补 position_swap / format_variant / verbosity_control eval cases。",
+      "补 UI 展示字段：judge_prompt_version、judge_rubric_version、swap_result、format_variant_result、verbosity_control_result、human_calibration_ref。",
+      "正式 draft 中标注 source limitation：output format bias 来源不是专门的 LLM-as-judge format-bias 研究。"
+    ],
+    "citation_notes": "Zheng et al. 2023 直接讨论 LLM-as-a-judge 的 position、verbosity、self-enhancement 等偏差；Shi et al. 2024 提出 repetition stability、position consistency、preference fairness 等位置偏差指标；输出格式偏差研究可补充格式变体敏感性检查。",
+    "audit_patch_notes": {
+      "source_patch_notes": [
+        "将 Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena 设为主来源，用于支持 position bias、verbosity bias、self-enhancement bias 和单次 judge 局限。",
+        "将 Judging the Judges: A Systematic Study of Position Bias in LLM-as-a-Judge 设为主来源，用于支持 position swap、repetition stability、position consistency 和 preference fairness。",
+        "保留 LLMs Are Biased Towards Output Formats 作为 format variant / style sensitivity 的补充来源，但正式 draft 应注明该来源研究对象是 LLM 输出格式偏差，不完全等同于 LLM-as-judge format bias。",
+        "保留 OpenAI evals / evaluation best practices 作为通用 eval workflow 来源，但必须标注 Evals platform 退役时间线：2026-10-31 read-only，2026-11-30 shutdown；新实现应兼容 Datasets / 新评估流程。",
+        "保留 Model Cards 作为 intended use、limitations、evaluation procedure 和 risk disclosure 的 supporting source。",
+        "建议继续补一个更直接的 judge prompt sensitivity / rubric stability / evaluator prompt robustness 来源，作为 formal reviewed 前的增强证据。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：LLM-as-judge evals must test order/position swaps, formatting variants, verbosity/length sensitivity and judge-prompt stability before scores are used for promotion, tuning or gating evidence; a single judge score must not be sufficient for hard-gate promotion.",
+        "建议字段：judge_model_id、judge_prompt_version、judge_rubric_version、eval_dataset_id、candidate_order_randomized、position_swap_pass、format_variant_pass、verbosity_control_pass、repetition_stability_score、position_consistency_score、preference_fairness_score、human_calibration_ref、gold_set_ref。",
+        "增加 blocking rule：如果 position swap 后结论翻转、同内容不同格式导致显著分数差异、长度/冗余显著影响裁判、或 judge prompt 小改导致排名不稳定，则不能作为 promotion / tuning / gating 的充分证据。",
+        "将“裁判提示稳定性”明确为 CEK-TA 内部 regression check，而不是声称外部论文逐字要求所有 LLM judge 都必须做该项。",
+        "明确 LLM judge 分数只能作为 eval evidence 或 review signal，不能直接转成交易执行、仓位调整、止损止盈、交易阈值或订单动作。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 只定义 judge-bias evaluation、prompt/rubric stability、审计字段、promotion gate 和 Vue audit UI 展示。",
+        "LLM judge 评分不得直接影响实盘订单、仓位、止损止盈、broker action 或 Trading Engineering hard risk gate。",
+        "如果 judge 评分用于交易策略收益解释、策略优劣裁决、实盘阈值、风控阈值或执行优先级，必须路由 Trading Engineering 或项目 owner。",
+        "不得在该知识项中沉淀具体交易策略、买卖点、K 线信号、仓位、止损止盈、订单执行规则或账户参数。"
+      ],
+      "conflict_patch_notes": [
+        "与 eval.production_like_eval_required 是父子关系：production-like eval 规定评估环境，本条规定 LLM judge 偏差与稳定性审计。",
+        "与 eval.ablation_required_for_rag_prompt_model_components 互补：ablation 检查组件贡献，本条检查 judge/evaluator 是否可靠。",
+        "与 eval.score_calibration_required_before_gating 互补：calibration 处理 score 可解释性，本条处理 LLM judge 的排序/偏好偏差。",
+        "与 label_factory.inter_annotator_agreement_required / human consensus 相关：LLM judge 分数应尽量与人工或 gold set 校准。",
+        "未发现需要 rejected 的直接冲突；但 accepted_for_draft 仍不等于 approved。"
+      ],
+      "required_followups": [
+        "补 llm_judge_bias_audit_schema.json。",
+        "补 judge_prompt_stability_eval_case_set，覆盖 prompt wording swap、rubric wording swap、temperature/retry variance、same candidate repeated judging。",
+        "补 position_swap / format_variant / verbosity_control eval cases。",
+        "补 UI 展示字段：judge_prompt_version、judge_rubric_version、swap_result、format_variant_result、verbosity_control_result、human_calibration_ref。",
+        "正式 draft 中标注 source limitation：output format bias 来源不是专门的 LLM-as-judge format-bias 研究。"
+      ]
+    }
+  },
+  "assumptions": [
+    "外接项目提供项目事实、私有交易数据和策略上下文；CEK-TA 只沉淀可复用专业规则。",
+    "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+  ],
+  "source_evidence": [
+    {
+      "source_id": "src_openai_evals",
+      "source_title": "Working with evals | OpenAI API",
+      "source_url": "https://platform.openai.com/docs/guides/evals?api-mode=chat",
+      "source_type": "official_doc",
+      "publisher": "OpenAI",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "OpenAI evals documentation supports programmatic evaluation setup and workflow-specific quality checks before relying on model behavior.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_model_cards",
+      "source_title": "Model Cards for Model Reporting",
+      "source_url": "https://arxiv.org/abs/1810.03993",
+      "source_type": "paper",
+      "publisher": "arXiv",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "Model Cards support documenting intended use, performance, limitations, and ethical considerations for model deployment and review.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_zheng_mt_bench_chatbot_arena_2023",
+      "source_title": "Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena",
+      "source_url": "https://arxiv.org/abs/2306.05685",
+      "source_type": "paper",
+      "publisher": "arXiv / NeurIPS Datasets and Benchmarks",
+      "published_at": "2023-06-09",
+      "accessed_at": "2026-06-09",
+      "version": "arXiv:2306.05685",
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "该论文系统讨论 LLM-as-a-judge 的使用限制，包括 position bias、verbosity bias、self-enhancement bias 和有限推理能力，可直接支撑裁判偏差专项检查。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_shi_position_bias_llm_judge_2024",
+      "source_title": "Judging the Judges: A Systematic Study of Position Bias in LLM-as-a-Judge",
+      "source_url": "https://arxiv.org/abs/2406.07791",
+      "source_type": "paper",
+      "publisher": "arXiv",
+      "published_at": "2024-06-11",
+      "accessed_at": "2026-06-09",
+      "version": "arXiv:2406.07791",
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "该研究提出从 repetition stability、position consistency、preference fairness 等角度评估 LLM judge 的位置偏差，直接支撑交换顺序和稳定性测试。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_wang_output_format_bias_2024",
+      "source_title": "LLMs Are Biased Towards Output Formats! Systematically Evaluating and Mitigating Output Format Bias of LLMs",
+      "source_url": "https://arxiv.org/abs/2408.08656",
+      "source_type": "paper",
+      "publisher": "arXiv",
+      "published_at": "2024-08-16",
+      "accessed_at": "2026-06-09",
+      "version": "arXiv:2408.08656",
+      "reliability": "medium",
+      "relevance": "medium",
+      "evidence_summary": "该研究系统评估 LLM 对输出格式的偏好，可作为 format variant / style sensitivity 检查的补充来源。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_occ_fed_fdic_revised_model_risk_2026",
+      "source_title": "Model Risk Management: Revised Guidance",
+      "source_url": "https://occ.gov/news-issuances/bulletins/2026/bulletin-2026-13.html",
+      "source_type": "standard_or_risk_framework",
+      "publisher": "OCC / Federal Reserve / FDIC",
+      "published_at": "2026-04-17",
+      "accessed_at": "2026-06-09",
+      "version": "OCC Bulletin 2026-13 / SR 26-2",
+      "reliability": "high",
+      "relevance": "medium",
+      "evidence_summary": "2026 年跨机构模型风险管理修订指南支持模型治理、验证、变更控制和风险分层；同时需注明 generative AI 和 agentic AI 不在其直接范围内，只能作为模型风险治理类比来源。",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 87,
+    "score_version": "1.0.0",
+    "primary_source_count": 2,
+    "supporting_source_count": 4,
+    "low_reliability_source_count": 0,
+    "limitations": [
+      "本条为 reviewed 知识，来源和审计补丁已记录；默认指导仍需后续人工治理升级 approved。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "docs/contracts/ai_engineering_gating_scoring_contract.md",
+      "docs/contracts/ai_engineering_knowledge_item_policy.md",
+      "docs/tasks/phase36_ai_engineering_gating_scoring_knowledge.md",
+      "kb_ai_engineering.eval.ablation_required_for_rag_prompt_model_components",
+      "kb_ai_engineering.eval.production_like_eval_required",
+      "kb_ai_engineering.label_factory.inter_annotator_agreement_required"
+    ],
+    "conflicts": [],
+    "resolution_summary": "未发现与当前 CEK-TA formal knowledge 的直接冲突；候选不会进入默认指导。",
+    "default_recommendation": "caveat_only_until_approved"
+  },
+  "review": {
+    "confidence": "medium",
+    "freshness": "time_sensitive",
+    "review_status": "reviewed",
+    "reviewer": "codex",
+    "reviewed_at": "2026-06-09",
+    "created_at": "2026-06-09",
+    "updated_at": "2026-06-09",
+    "open_questions": [
+      "二审确认 position swap、format variant、verbosity control、judge prompt stability 是否足以作为正式 reviewed 字段。",
+      "确认 format bias 来源是否需要进一步替换成更直接的 LLM-as-judge format/style bias 研究。",
+      "补 llm_judge_bias_audit_schema.json。",
+      "补 judge_prompt_stability_eval_case_set，覆盖 prompt wording swap、rubric wording swap、temperature/retry variance、same candidate repeated judging。",
+      "补 position_swap / format_variant / verbosity_control eval cases。",
+      "补 UI 展示字段：judge_prompt_version、judge_rubric_version、swap_result、format_variant_result、verbosity_control_result、human_calibration_ref。",
+      "正式 draft 中标注 source limitation：output format bias 来源不是专门的 LLM-as-judge format-bias 研究。"
+    ],
+    "decision_log": [
+      {
+        "at": "2026-06-09",
+        "actor": "external_ai",
+        "decision": "accepted_for_draft",
+        "reason": "补证后可以升级为 accepted_for_draft。rewritten statement 已经与 candidate_id / normalized_claim 对齐，明确要求 LLM-as-judge 评估检查候选顺序/位置交换、输出格式变体、回答长度/冗余敏感性和裁判提示稳定性，并禁止把单次 judge 分数作为模型晋级、调参或交易 gating 的充分证据。Zheng et al. 2023 直接支持 position、verbosity、self-enhancement bias；Shi et al. 2024 直接支持 position consistency、repetition stability、preference fairness；output format bias 研究可作为 format variant / style sensitivity 的补充来源。该条仍需在正式 draft 中说明：format bias 来源不是专门的 LLM-as-judge format-bias 研究，judge_prompt_stability 也应作为 CEK-TA 内部评估字段或继续补更直接来源。",
+        "audit_result_id": "audit_result_phase36_batch06_llm_judge_preference_pair_supplemental_reaudit_20260609_gpt55_pro_strict_sources"
+      },
+      {
+        "at": "2026-06-09",
+        "actor": "codex",
+        "decision": "converted_to_reviewed",
+        "reason": "按 Phase 36 批量审计结果优化候选并转为 formal reviewed；未升级 approved。",
+        "audit_result_id": "audit_result_phase36_batch06_llm_judge_preference_pair_supplemental_reaudit_20260609_gpt55_pro_strict_sources"
+      }
+    ],
+    "approval_status": "not_requested",
+    "default_guidance_allowed": false,
+    "source_candidate_id": "cand_20260609_ai_engineering_llm_judge_position_and_format_bias_check_required_v1_001",
+    "ai_audit_result_id": "audit_result_phase36_batch06_llm_judge_preference_pair_supplemental_reaudit_20260609_gpt55_pro_strict_sources",
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase36_batch06_llm_judge_preference_pair_supplemental_reaudit_20260609_gpt55_pro_strict_sources",
+      "source_package_id": "phase36_batch06_llm_judge_preference_pair_supplemental_audit_package_20260609",
+      "decision": "accepted_for_draft",
+      "reason": "补证后可以升级为 accepted_for_draft。rewritten statement 已经与 candidate_id / normalized_claim 对齐，明确要求 LLM-as-judge 评估检查候选顺序/位置交换、输出格式变体、回答长度/冗余敏感性和裁判提示稳定性，并禁止把单次 judge 分数作为模型晋级、调参或交易 gating 的充分证据。Zheng et al. 2023 直接支持 position、verbosity、self-enhancement bias；Shi et al. 2024 直接支持 position consistency、repetition stability、preference fairness；output format bias 研究可作为 format variant / style sensitivity 的补充来源。该条仍需在正式 draft 中说明：format bias 来源不是专门的 LLM-as-judge format-bias 研究，judge_prompt_stability 也应作为 CEK-TA 内部评估字段或继续补更直接来源。",
+      "source_patch_notes": [
+        "将 Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena 设为主来源，用于支持 position bias、verbosity bias、self-enhancement bias 和单次 judge 局限。",
+        "将 Judging the Judges: A Systematic Study of Position Bias in LLM-as-a-Judge 设为主来源，用于支持 position swap、repetition stability、position consistency 和 preference fairness。",
+        "保留 LLMs Are Biased Towards Output Formats 作为 format variant / style sensitivity 的补充来源，但正式 draft 应注明该来源研究对象是 LLM 输出格式偏差，不完全等同于 LLM-as-judge format bias。",
+        "保留 OpenAI evals / evaluation best practices 作为通用 eval workflow 来源，但必须标注 Evals platform 退役时间线：2026-10-31 read-only，2026-11-30 shutdown；新实现应兼容 Datasets / 新评估流程。",
+        "保留 Model Cards 作为 intended use、limitations、evaluation procedure 和 risk disclosure 的 supporting source。",
+        "建议继续补一个更直接的 judge prompt sensitivity / rubric stability / evaluator prompt robustness 来源，作为 formal reviewed 前的增强证据。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：LLM-as-judge evals must test order/position swaps, formatting variants, verbosity/length sensitivity and judge-prompt stability before scores are used for promotion, tuning or gating evidence; a single judge score must not be sufficient for hard-gate promotion.",
+        "建议字段：judge_model_id、judge_prompt_version、judge_rubric_version、eval_dataset_id、candidate_order_randomized、position_swap_pass、format_variant_pass、verbosity_control_pass、repetition_stability_score、position_consistency_score、preference_fairness_score、human_calibration_ref、gold_set_ref。",
+        "增加 blocking rule：如果 position swap 后结论翻转、同内容不同格式导致显著分数差异、长度/冗余显著影响裁判、或 judge prompt 小改导致排名不稳定，则不能作为 promotion / tuning / gating 的充分证据。",
+        "将“裁判提示稳定性”明确为 CEK-TA 内部 regression check，而不是声称外部论文逐字要求所有 LLM judge 都必须做该项。",
+        "明确 LLM judge 分数只能作为 eval evidence 或 review signal，不能直接转成交易执行、仓位调整、止损止盈、交易阈值或订单动作。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 只定义 judge-bias evaluation、prompt/rubric stability、审计字段、promotion gate 和 Vue audit UI 展示。",
+        "LLM judge 评分不得直接影响实盘订单、仓位、止损止盈、broker action 或 Trading Engineering hard risk gate。",
+        "如果 judge 评分用于交易策略收益解释、策略优劣裁决、实盘阈值、风控阈值或执行优先级，必须路由 Trading Engineering 或项目 owner。",
+        "不得在该知识项中沉淀具体交易策略、买卖点、K 线信号、仓位、止损止盈、订单执行规则或账户参数。"
+      ],
+      "conflict_patch_notes": [
+        "与 eval.production_like_eval_required 是父子关系：production-like eval 规定评估环境，本条规定 LLM judge 偏差与稳定性审计。",
+        "与 eval.ablation_required_for_rag_prompt_model_components 互补：ablation 检查组件贡献，本条检查 judge/evaluator 是否可靠。",
+        "与 eval.score_calibration_required_before_gating 互补：calibration 处理 score 可解释性，本条处理 LLM judge 的排序/偏好偏差。",
+        "与 label_factory.inter_annotator_agreement_required / human consensus 相关：LLM judge 分数应尽量与人工或 gold set 校准。",
+        "未发现需要 rejected 的直接冲突；但 accepted_for_draft 仍不等于 approved。"
+      ],
+      "required_followups": [
+        "补 llm_judge_bias_audit_schema.json。",
+        "补 judge_prompt_stability_eval_case_set，覆盖 prompt wording swap、rubric wording swap、temperature/retry variance、same candidate repeated judging。",
+        "补 position_swap / format_variant / verbosity_control eval cases。",
+        "补 UI 展示字段：judge_prompt_version、judge_rubric_version、swap_result、format_variant_result、verbosity_control_result、human_calibration_ref。",
+        "正式 draft 中标注 source limitation：output format bias 来源不是专门的 LLM-as-judge format-bias 研究。"
+      ]
+    },
+    "approved_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "contribution": {
+    "contribution_id": null,
+    "source_project": null,
+    "sanitization_status": "not_applicable",
+    "private_data_removed": true,
+    "generic_mapping_notes": "Phase 36 public-source AI Engineering candidate; no project-private trading facts included."
+  },
+  "copyright": {
+    "stores_full_text": false,
+    "stores_long_quote": false,
+    "summary_only": true,
+    "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+    "reuse_risk": "low"
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于审计 AI Engineering、LLM 训练、RAG/MCP、部署、安全或治理链路。",
+      "用于提醒外接项目补齐来源、适用边界、冲突状态、审计记录和人工审批。",
+      "用于 reviewed/audit 模式下带 caveat 引用。"
+    ],
+    "not_allowed": [
+      "不得生成买卖点、仓位、杠杆、止损止盈或实盘执行指令。",
+      "不得覆盖确定性风控、交易执行系统或人工审批。",
+      "不得作为 approved/default guidance 直接返回。"
+    ],
+    "required_context": [
+      "project_type",
+      "task_type",
+      "mode",
+      "strategy_version",
+      "data_boundary",
+      "review_status"
+    ],
+    "fallback_behavior": "cite_with_caveat"
+  },
+  "machine_gate": {
+    "default_guidance": "caveat_only",
+    "reason": "reviewed only; accepted_for_draft is not approved; default guidance requires later human governance approval.",
+    "requires_human_escalation": true,
+    "blocking_reasons": [
+      "not_approved",
+      "phase36_batch_reviewed_only"
+    ],
+    "checked_at": "2026-06-09",
+    "gate_version": "1.0.0",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "recommended_extra_sources": [
+    {
+      "title": "将 Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena 设为主来源，用于支持 position bias、verbosity bias、self-enhancement bias 和单次 judge 局限。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_1"
+    },
+    {
+      "title": "将 Judging the Judges: A Systematic Study of Position Bias in LLM-as-a-Judge 设为主来源，用于支持 position swap、repetition stability、position consistency 和 preference fairness。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_2"
+    },
+    {
+      "title": "保留 LLMs Are Biased Towards Output Formats 作为 format variant / style sensitivity 的补充来源，但正式 draft 应注明该来源研究对象是 LLM 输出格式偏差，不完全等同于 LLM-as-judge format bias。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_3"
+    },
+    {
+      "title": "保留 OpenAI evals / evaluation best practices 作为通用 eval workflow 来源，但必须标注 Evals platform 退役时间线：2026-10-31 read-only，2026-11-30 shutdown；新实现应兼容 Datasets / 新评估流程。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_4"
+    },
+    {
+      "title": "保留 Model Cards 作为 intended use、limitations、evaluation procedure 和 risk disclosure 的 supporting source。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_5"
+    },
+    {
+      "title": "建议继续补一个更直接的 judge prompt sensitivity / rubric stability / evaluator prompt robustness 来源，作为 formal reviewed 前的增强证据。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_6"
+    }
+  ]
+}

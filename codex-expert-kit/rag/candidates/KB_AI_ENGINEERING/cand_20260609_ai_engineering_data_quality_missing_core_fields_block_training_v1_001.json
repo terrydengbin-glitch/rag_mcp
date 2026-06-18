@@ -1,0 +1,229 @@
+{
+  "schema_version": "1.0.0",
+  "candidate_id": "cand_20260609_ai_engineering_data_quality_missing_core_fields_block_training_v1_001",
+  "research_task_id": "RIT-P36-C-14",
+  "status": {
+    "review_status": "accepted",
+    "ingestion_decision": "convert_to_knowledge_item",
+    "decision_reason": "Phase 36 batch AI audit decision: accepted_for_draft. 该状态不是 approved。",
+    "created_at": "2026-06-09",
+    "updated_at": "2026-06-09"
+  },
+  "classification": {
+    "tree_node_id": "kt.llm_training.trading_scoring_gating_training",
+    "canonical_node_id": "kt.llm_training.trading_scoring_gating_training",
+    "tree_path": "CEK-TA / AI Engineering",
+    "related_nodes": [],
+    "partition_id": "KB_09_LLM_TRAINING",
+    "domain": "llm_training",
+    "subdomain": "trading_data_quality_gate",
+    "rule_type": "decision_rule",
+    "used_for": [
+      "llm_training",
+      "trading_gating_scoring",
+      "rag_engineering",
+      "mcp",
+      "vue_audit_ui"
+    ]
+  },
+  "claim": {
+    "claim_id": "claim_001",
+    "statement": "LLM 训练、评估或 gating/scoring 样本缺少核心 schema 字段时，必须触发 schema validation、block_training 或 needs_review；不得静默填充并进入正式训练。",
+    "normalized_claim": "data_quality.missing_core_fields_block_training.v1",
+    "evidence_summary": "TFDV、schema validation、OpenAI fine-tuning/evals 和模型风险治理资料支持在训练/评估前阻断缺失核心字段的数据。",
+    "interpretation_notes": "核心字段缺失会破坏时间边界、标签解释、来源追踪和可复现性。静默补空值会让模型学习到错误分布，也会让审计无法判断样本是否合规。",
+    "claim_strength": "high",
+    "performance_claim": false
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "general",
+    "data_granularity": "general",
+    "project_type": "trading_llm_assistant",
+    "applies_when": [
+      "样本缺少 strategy_id、strategy_version、source_mode、decision_timestamp、feature_timestamp、label、reason_codes、source_id 或 audit_trace_id。",
+      "数据准备进入训练池、评估池、黄金集、RAG index 或偏好训练。",
+      "外接项目需要判断样本应阻断、隔离还是人工复核。"
+    ],
+    "not_applicable_when": [
+      "缺失的是可选展示字段，且不影响训练、评估、审计和安全边界。",
+      "需要定义字段列表本体，应该路由到 dataset.schema_required。",
+      "需要定义交易规则或执行动作。"
+    ],
+    "assumptions": [
+      "外接项目提供项目事实、私有交易数据和策略上下文；CEK-TA 只沉淀可复用专业规则。",
+      "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+    ],
+    "limitations": [
+      "candidate 不是正式 approved 知识；只能作为候选或 reviewed 沉淀来源使用。",
+      "本条只描述 AI Engineering 的数据、训练、评估、RAG、MCP、部署或治理边界。",
+      "交易规则本体、K 线结构、买卖点、仓位、止损止盈、fill model 和实盘执行必须路由到 Trading Engineering。"
+    ]
+  },
+  "source_refs": [
+    {
+      "source_id": "src_tfdv",
+      "source_title": "TensorFlow Data Validation: Checking and analyzing your data",
+      "source_url": "https://tensorflow.github.io/tfx/guide/tfdv/",
+      "source_type": "official_doc",
+      "publisher": "TensorFlow / TFX",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "score": 82,
+      "relevance": "high",
+      "freshness": "time_sensitive",
+      "limitations": [],
+      "evidence_summary": "TFDV supports schema-based data validation, anomaly detection, and train/serve skew checks in ML pipelines.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_datasheets",
+      "source_title": "Datasheets for Datasets",
+      "source_url": "https://arxiv.org/abs/1803.09010",
+      "source_type": "paper",
+      "publisher": "arXiv",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "score": 88,
+      "relevance": "high",
+      "freshness": "stable",
+      "limitations": [],
+      "evidence_summary": "The paper supports documenting dataset motivation, composition, collection, intended use, maintenance, and limitations.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_sklearn_pitfalls",
+      "source_title": "Common pitfalls and recommended practices | scikit-learn",
+      "source_url": "https://scikit-learn.org/stable/common_pitfalls.html",
+      "source_type": "official_doc",
+      "publisher": "scikit-learn",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "score": 86,
+      "relevance": "high",
+      "freshness": "time_sensitive",
+      "limitations": [],
+      "evidence_summary": "scikit-learn documents inconsistent preprocessing and data leakage pitfalls, including fitting transformations only on training data.",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 85,
+    "score_version": "1.0.0",
+    "primary_source_count": 2,
+    "supporting_source_count": 1,
+    "low_reliability_source_count": 0,
+    "mandatory_downgrades": [],
+    "limitations": [
+      "来源支持通用 AI/ML/RAG/MCP/治理工程原则；正式知识转换时需补 CEK-TA 具体上下游引用和冲突链接。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "docs/contracts/ai_engineering_gating_scoring_contract.md",
+      "docs/contracts/ai_engineering_knowledge_item_policy.md",
+      "docs/tasks/phase36_ai_engineering_gating_scoring_knowledge.md"
+    ],
+    "conflicts": [],
+    "resolution_summary": "未发现与当前 CEK-TA formal knowledge 的直接冲突；候选不会进入默认指导。",
+    "approval_allowed": true
+  },
+  "review": {
+    "confidence": "medium",
+    "freshness": "time_sensitive",
+    "reviewer": "external_ai_and_codex_alignment",
+    "reviewed_at": "2026-06-09",
+    "open_questions": [
+      "审计时确认该候选是否应与相邻 AI Engineering 规则合并、拆分，或改路由到 Trading Engineering。"
+    ],
+    "audit_log": [
+      {
+        "at": "2026-06-09",
+        "actor": "codex",
+        "action": "created",
+        "reason": "Phase 36 bulk AI Engineering candidate expansion."
+      },
+      {
+        "at": "2026-06-09",
+        "actor": "external_ai",
+        "action": "phase36_batch_audit_result_received",
+        "reason": "方向成立。训练或评估数据缺少核心字段时，应通过 schema validation 阻断训练或降级为待补证据；TFDV、scikit-learn data leakage/pitfalls 和 dataset documentation 来源能够支持该类数据质量 gate。",
+        "audit_result_id": "audit_result_phase36_ai_engineering_batch_02_of_10_20260609_gpt55_pro_strict_sources"
+      },
+      {
+        "at": "2026-06-09",
+        "actor": "codex",
+        "action": "content_patch_applied",
+        "reason": "LLM 训练、评估或 gating/scoring 样本缺少核心 schema 字段时，必须触发 schema validation、block_training 或 needs_review；不得静默填充并进入正式训练。",
+        "audit_result_id": "audit_result_phase36_ai_engineering_batch_02_of_10_20260609_gpt55_pro_strict_sources"
+      }
+    ],
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase36_ai_engineering_batch_02_of_10_20260609_gpt55_pro_strict_sources",
+      "source_package_id": "phase36_ai_engineering_candidate_audit_batch_02_of_10_20260609",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立。训练或评估数据缺少核心字段时，应通过 schema validation 阻断训练或降级为待补证据；TFDV、scikit-learn data leakage/pitfalls 和 dataset documentation 来源能够支持该类数据质量 gate。",
+      "source_patch_notes": [
+        "保留 TFDV 作为 schema、required feature、anomaly detection、train/serve skew 来源。",
+        "保留 scikit-learn common pitfalls / cross-validation 作为避免训练评估污染和不一致处理的来源。",
+        "保留 Datasheets for Datasets 作为字段含义、组成、用途、限制文档化来源。",
+        "补 CEK-TA trade_sample_schema 或内部 schema contract 作为核心字段清单来源。"
+      ],
+      "content_patch_notes": [
+        "正式 draft 应只处理 missing core fields，不再包含 execution cost 或 source_mode 的完整规则。",
+        "建议核心字段：sample_id、trade_candidate_id、strategy_id、strategy_version、decision_timestamp、feature_timestamp_cutoff、source_mode、pool_type、input_snapshot_hash、label_schema_version、outcome_available、license_check_status、privacy_scan_status。",
+        "增加数据质量动作：block_training、exclude_from_eval、needs_more_evidence、human_review。",
+        "要求 validation_report_id 和 failed_fields 写入审计记录。"
+      ],
+      "boundary_patch_notes": [
+        "核心字段 schema 属于 AI Engineering 可复用治理层。",
+        "字段内容若涉及具体策略、账户、订单、K 线或成交细节，只保存引用、hash 或脱敏摘要。",
+        "具体交易样本生产逻辑和交易事实解释路由 Trading Engineering。"
+      ],
+      "conflict_patch_notes": [
+        "与 dataset_schema_required 正向重叠：本条是 trade sample core fields gate，dataset_schema_required 是通用 dataset schema rule。",
+        "与 data_privacy.no_secret_or_account_identifier_in_training 互补：字段完整性检查不能泄露敏感字段。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 core_fields_required.yaml 或 JSON Schema。",
+        "补 validation severity：error、warning、info。",
+        "补 UI 审计页展示：failed_fields、evidence_needed、owner、deadline。"
+      ],
+      "boundary": "accepted_for_draft 不是 approved；reviewed 不会进入默认指导。"
+    }
+  },
+  "copyright": {
+    "stores_full_text": false,
+    "stores_long_quote": false,
+    "summary_only": true,
+    "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+    "reuse_risk": "low"
+  },
+  "conversion_target": {
+    "proposed_knowledge_id": "kb_ai_engineering.data_quality.missing_core_fields_block_training.v1",
+    "target_schema": "cek_ta_knowledge_item",
+    "target_review_status": "draft",
+    "skill_candidate": false,
+    "eval_case_candidate": false
+  },
+  "workflow": {
+    "stage": "formalized_reviewed",
+    "queue_group": "formalized",
+    "formal_knowledge_id": "kb_ai_engineering.data_quality.missing_core_fields_block_training.v1",
+    "formal_review_status": "reviewed",
+    "ai_audit_result_id": "audit_result_phase36_ai_engineering_batch_02_of_10_20260609_gpt55_pro_strict_sources",
+    "hidden_from_default_queue": true,
+    "next_action": "none",
+    "formal_knowledge_path": "codex-expert-kit/rag/knowledge/KB_09_LLM_TRAINING/kb_ai_engineering.data_quality.missing_core_fields_block_training.v1.json"
+  }
+}

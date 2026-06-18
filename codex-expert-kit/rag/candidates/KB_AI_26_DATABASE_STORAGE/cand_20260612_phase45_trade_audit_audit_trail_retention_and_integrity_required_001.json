@@ -1,0 +1,365 @@
+{
+  "schema_version": "1.1.0-candidate",
+  "candidate_id": "cand_20260612_phase45_trade_audit_p45_b_aud05_001",
+  "research_task_id": "P45-B-AUD05",
+  "status": {
+    "review_status": "formalized",
+    "ingestion_decision": "formal_reviewed_created",
+    "decision_reason": "reviewed/caveat_only 准备审计通过，已创建 formal reviewed/caveat_only。",
+    "created_at": "2026-06-12",
+    "updated_at": "2026-06-12"
+  },
+  "classification": {
+    "tree_node_id": "kt.ai_engineering.database_storage_engineering.audit_log_ledger",
+    "canonical_node_id": "kt.ai_engineering.database_storage_engineering.audit_log_ledger",
+    "tree_path": "CEK-TA / AI Engineering / Database Data Contract And Storage Engineering / Audit Log Ledger",
+    "related_nodes": [
+      "kt.trading_engineering.data_engineering.audit_clock",
+      "kt.live_execution.audit_trail",
+      "kt.ai_engineering.database_storage_engineering.audit_log_ledger",
+      "kt.ai_engineering.database_storage_engineering.runtime_observability_trace"
+    ],
+    "partition_id": "KB_AI_26_DATABASE_STORAGE",
+    "domain": "storage_engineering",
+    "subdomain": "audit_log_ledger",
+    "rule_type": "audit_boundary_rule",
+    "claim_type": "audit_log_retention_integrity_rule",
+    "used_for": [
+      "trade_audit_trail_design",
+      "clock_sync_review",
+      "order_event_replay",
+      "external_project_rag_retrieval",
+      "ai_trader_project_design_audit"
+    ],
+    "classification_notes": "本条由 KB_AI_26_DATABASE_STORAGE / audit_log_ledger 承接存储完整性，本体仍服务 Trading Engineering audit trail；不得变成策略、执行或 AI Engineering hard gate。"
+  },
+  "claim": {
+    "claim_id": "claim_p45_b_aud05",
+    "title": "交易审计日志必须保留 retention 和完整性边界",
+    "statement": "交易审计日志、订单事件日志和监管报告中间产物必须声明 retention policy、record class、append-only 或 audit-trail alternative、integrity_check、checksum/hash、modification/deletion audit、access audit、archive_restore_path 和 legal/jurisdiction scope。普通应用日志不能在缺少修改/删除审计、保留策略和可重建原始记录能力时被当作可审计 ledger。",
+    "normalized_claim": "phase45_trade_audit.audit_trail_retention_and_integrity_required.v1",
+    "evidence_summary": "SEC Rule 17a-4 amendments 与 FINRA 17a-4 chart 支撑 WORM 或 audit-trail alternative；AWS Object Lock 作为对象存储 retention/immutability 实现示例；SEC Rule 613/NIST 继续作为交易审计和日志治理支撑。",
+    "interpretation_notes": "本候选只定义交易审计链、事件时间和日志治理边界，不输出买卖点、仓位、止损止盈、杠杆、风险阈值或实盘执行建议。",
+    "claim_strength": "medium_high",
+    "performance_claim": false
+  },
+  "applicability": {
+    "market": "general_with_jurisdiction_and_venue_caveats",
+    "asset": "general",
+    "timeframe": "event_time",
+    "data_granularity": "order_events_execution_reports_audit_logs",
+    "project_type": "trading_ai_support_layer",
+    "applies_when": [
+      "外接项目需要设计订单事件审计链、交易日志、监管报告输入或事件回放证据",
+      "AI IDE 需要区分 event_time、receive_time、log_time、manual entry time 和 electronic event timestamp",
+      "需要设计 client/broker/exchange ID 映射、幂等键、事件序列或审计日志完整性字段"
+    ],
+    "not_applicable_when": [
+      "用户要求具体交易动作、仓位、杠杆、止损止盈或风险阈值",
+      "需要法律合规结论时，应由对应司法辖区合规/法律 owner 判断",
+      "需要 broker/venue 私有订单事实时，应由外接项目事实层和 Live Execution owner 提供",
+      "只有普通应用日志且缺少事件时间、来源系统、actor、原因和完整性证据时，不能声称具备监管级审计链"
+    ],
+    "assumptions": [
+      "Audit Trail / Clock Sync 是交易工程审计上下文，不是策略信号。",
+      "所有 clock sync、timestamp precision 和 retention claim 必须声明适用市场、辖区、系统和事件类型。",
+      "候选通过外部审计前不能进入正式 reviewed 知识库。"
+    ],
+    "limitations": [
+      "SEC/CAT/FINRA 来源主要用于美国 NMS/CAT 语境；ESMA 来源主要用于 EU/MiFIR 语境。",
+      "NIST 日志管理来源是通用安全日志治理，不替代交易监管字段契约。",
+      "FIX 是协议语义来源，不替代 broker/venue 的真实订单事实。",
+      "不得输出具体保留年限作为通用硬规则；retention 取决于辖区、记录类型、broker/venue 和外接项目合规要求。"
+    ]
+  },
+  "source_refs": [
+    {
+      "source_title": "17 CFR 242.613: Consolidated audit trail",
+      "source_url": "https://www.ecfr.gov/current/title-17/chapter-II/part-242/subject-group-ECFRac68bdd026a46db/section-242.613",
+      "source_type": "regulatory_rule",
+      "publisher": "eCFR / U.S. SEC",
+      "reliability": "high",
+      "score": 94,
+      "freshness": "time_sensitive",
+      "evidence_summary": "17 CFR 242.613 describes accurate time-sequenced order records, reportable events, clock synchronization, timestamps, and electronic reporting to the central repository.",
+      "limitations": [
+        "Regulatory rule for CAT/NMS plan; use as audit-trail principle with jurisdiction caveat."
+      ],
+      "source_id": "src_001",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "FINRA 2023 Report: Consolidated Audit Trail",
+      "source_url": "https://www.finra.org/rules-guidance/guidance/reports/2023-finras-examination-and-risk-monitoring-program/cat",
+      "source_type": "regulatory_guidance",
+      "publisher": "FINRA",
+      "reliability": "high",
+      "score": 88,
+      "freshness": "time_sensitive",
+      "evidence_summary": "FINRA describes CAT rules covering reporting, clock synchronization, time stamps, connectivity, data transmission, recordkeeping, timeliness, accuracy, and completeness.",
+      "limitations": [
+        "FINRA member/CAT compliance context; not a global venue-agnostic standard."
+      ],
+      "source_id": "src_002",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "NIST SP 800-92: Guide to Computer Security Log Management",
+      "source_url": "https://csrc.nist.gov/pubs/sp/800/92/final",
+      "source_type": "standard_doc",
+      "publisher": "NIST",
+      "reliability": "high",
+      "score": 87,
+      "freshness": "stable",
+      "evidence_summary": "NIST SP 800-92 supports log management lifecycle, retention, protection, analysis, and operational log governance.",
+      "limitations": [
+        "General computer-security log management guidance; not trading-specific CAT field schema."
+      ],
+      "source_id": "src_003",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "Amendments to Electronic Recordkeeping Requirements for Broker-Dealers",
+      "source_url": "https://www.sec.gov/investment/amendments-electronic-recordkeeping-requirements-broker-dealers",
+      "source_type": "regulatory_doc",
+      "publisher": "U.S. SEC",
+      "reliability": "high",
+      "score": 92,
+      "freshness": "time_sensitive",
+      "relevance": "high",
+      "evidence_summary": "SEC explains Rule 17a-4 amendments allowing either WORM or an audit-trail alternative that can recreate original records if modified or deleted.",
+      "limitations": [
+        "Broker-dealer/SBS recordkeeping context; not a global universal retention rule."
+      ],
+      "source_id": "src_supp_001",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "Exchange Act Rule 17a-4 Amendments Chart of Significant Changes",
+      "source_url": "https://www.finra.org/sites/default/files/2022-12/rule-17a-4-amendments.pdf",
+      "source_type": "regulatory_guidance",
+      "publisher": "FINRA",
+      "reliability": "high",
+      "score": 88,
+      "freshness": "time_sensitive",
+      "relevance": "high",
+      "evidence_summary": "FINRA chart describes WORM and audit-trail alternatives, including time-stamped audit trail for modifications/deletions and prompt production obligations.",
+      "limitations": [
+        "FINRA interpretation aid; jurisdiction-specific."
+      ],
+      "source_id": "src_supp_002",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "Locking objects with Object Lock",
+      "source_url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-lock.html",
+      "source_type": "official_platform_doc",
+      "publisher": "AWS",
+      "reliability": "medium_high",
+      "score": 83,
+      "freshness": "time_sensitive",
+      "relevance": "medium_high",
+      "evidence_summary": "AWS Object Lock supports retention modes such as governance and compliance for protecting object versions from deletion or overwrite.",
+      "limitations": [
+        "Cloud storage implementation pattern; not CEK-TA mandatory storage."
+      ],
+      "source_id": "src_supp_003",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 88.67,
+    "score_version": "phase45_source_scoring_v1",
+    "primary_source_count": 6,
+    "supporting_source_count": 0,
+    "low_reliability_source_count": 0,
+    "mandatory_downgrades": [],
+    "limitations": [
+      "正式 reviewed 前必须由外部审计确认 claim 没有超出来源可证明范围。",
+      "监管资料按地区适用，不能自动泛化到 crypto、外汇、非美市场或全部 broker。",
+      "内部字段契约若后续用于 reviewed，需要提供 schema extract 或 contract hash。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "Phase 37 Data Engineering / Live Execution formal reviewed knowledge",
+      "Phase 42 Database/Storage contracts",
+      "Phase 45 runtime contract"
+    ],
+    "conflicts": [],
+    "resolution_summary": "未发现与现有正式知识的直接冲突；Audit Trail / Clock Sync 与 Database/Storage 的关系按 owner/reference 边界处理。",
+    "approval_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于提醒 AI IDE 设计订单事件审计链、时间戳字段、ID 映射和日志完整性检查。",
+      "用于生成 trade audit checklist、schema review、RAG 检索上下文和 reason code。",
+      "用于检查外接项目方案是否遗漏 clock sync、event sequencing、idempotency 或 retention 边界。"
+    ],
+    "not_allowed": [
+      "不得生成买卖点、仓位、杠杆、止损止盈、风险阈值或实盘执行建议。",
+      "不得把候选知识当作 approved 或默认指导。",
+      "不得把监管来源泛化为所有市场的通用硬规则。"
+    ]
+  },
+  "machine_gate": {
+    "default_guidance": "deny",
+    "reason": "Phase 45 candidate audit has not passed; formal reviewed requires later gate.",
+    "requires_human_escalation": true,
+    "hidden_from_default_queue": true,
+    "visible_in_default_guidance_queue": false,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "risk_threshold_advice_allowed": false
+  },
+  "review": {
+    "confidence": "medium",
+    "freshness": "mixed",
+    "reviewer": "codex_candidate_generation",
+    "reviewed_at": "2026-06-12",
+    "open_questions": [
+      "外部审计是否认为来源足以支撑该 audit trail / clock sync 边界？",
+      "是否需要补充交易所、broker 或内部 schema contract 来源？",
+      "是否存在与 Phase 37 formal reviewed 知识的重复，需要合并或拆分？"
+    ],
+    "audit_log": [
+      {
+        "at": "2026-06-12",
+        "actor": "codex",
+        "action": "created",
+        "reason": "根据 Phase 45 P45-B Audit Trail / Clock Sync 队列生成候选知识。"
+      },
+      {
+        "at": "2026-06-12",
+        "actor": "codex",
+        "action": "sourced",
+        "reason": "记录 SEC、eCFR、ESMA、FINRA、CAT、FIX 和 NIST 等来源摘要。"
+      },
+      {
+        "at": "2026-06-12",
+        "actor": "codex",
+        "action": "classified",
+        "reason": "归类到 KB_AI_26_DATABASE_STORAGE / kt.ai_engineering.database_storage_engineering.audit_log_ledger。"
+      },
+      {
+        "at": "2026-06-12",
+        "actor": "external_ai_strict_audit",
+        "action": "phase45_trade_audit_first_audit_imported",
+        "reason": "needs_more_evidence / confidence=medium",
+        "audit_result_id": "audit_phase45_trade_audit_p45_b_20260612_external_strict_v1"
+      },
+      {
+        "at": "2026-06-12",
+        "actor": "codex",
+        "action": "phase45_aud05_supplemented",
+        "reason": "按首轮审计要求补 SEC 17a-4、FINRA 17a-4 chart 和 AWS Object Lock 来源，收窄 retention/integrity 边界。"
+      },
+      {
+        "at": "2026-06-12",
+        "actor": "external_ai_strict_audit",
+        "action": "phase45_trade_audit_supplemental_reaudit_imported",
+        "reason": "accepted_for_draft / confidence=high",
+        "audit_result_id": "audit_phase45_trade_audit_supplemental_reaudit_20260612_v1"
+      },
+      {
+        "at": "2026-06-12",
+        "actor": "codex",
+        "action": "phase45_trade_audit_formal_reviewed_created",
+        "reason": "created formal reviewed/caveat_only from reviewed-preparation audit result",
+        "audit_result_id": "audit_phase45_trade_audit_reviewed_caveat_only_preparation_20260612_v1",
+        "formal_knowledge_id": "kb_phase45_trade_audit.audit_trail_retention_and_integrity_required.v1"
+      }
+    ],
+    "ai_audit": {
+      "audit_result_id": "audit_phase45_trade_audit_supplemental_reaudit_20260612_v1",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "required_followups": [
+        "不得输出具体保留年限作为通用规则。",
+        "SEC/FINRA 17a-4 是美国 broker-dealer / SBS recordkeeping 语境，不可泛化到所有市场。",
+        "AWS Object Lock 只是对象存储实现示例，不是 CEK-TA mandatory storage。",
+        "reviewed 前建议补充内部 storage contract：retention_policy、record_class、integrity_check、archive_restore_path、access_audit。"
+      ],
+      "patch_notes": {
+        "source": [
+          "SEC 17a-4 / FINRA chart 支撑 WORM 或 audit-trail alternative。",
+          "AWS Object Lock 支撑对象级 retention/immutability 实现示例。",
+          "SEC 613 / NIST 800-92 继续作为交易审计和日志治理 supporting source。"
+        ],
+        "content": [
+          "普通应用日志不能在缺少修改/删除审计、保留策略和可重建原始记录能力时被当作可审计 ledger 可以保留。"
+        ],
+        "boundary": [
+          "不得输出合规结论、通用保留年限或实盘硬规则。"
+        ],
+        "conflict": [
+          "KB_AI_26_DATABASE_STORAGE 承接 storage integrity，但服务 Trading Engineering audit trail。"
+        ]
+      }
+    }
+  },
+  "workflow": {
+    "stage": "formalized_reviewed",
+    "allowed_next_decisions": [
+      "reviewed_preparation",
+      "needs_more_evidence",
+      "rejected"
+    ],
+    "forbidden_next_decisions": [
+      "approved",
+      "default_guidance",
+      "hard_gate"
+    ],
+    "formal_knowledge_id": "kb_phase45_trade_audit.audit_trail_retention_and_integrity_required.v1",
+    "audit_package_id": "phase45_trade_audit_candidate_audit_package_20260612",
+    "queue_group": "formalized",
+    "conversion_target": {
+      "proposed_knowledge_id": "kb_phase45_trade_audit.audit_trail_retention_and_integrity_required.v1",
+      "target_review_status": "reviewed",
+      "target_machine_gate": "caveat_only",
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false
+    },
+    "formal_review_status": "reviewed",
+    "formal_knowledge_path": "codex-expert-kit/rag/knowledge/KB_AI_26_DATABASE_STORAGE/kb_phase45_trade_audit.audit_trail_retention_and_integrity_required.v1.json",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "risk_threshold_advice_allowed": false,
+    "legal_compliance_conclusion_allowed": false,
+    "hidden_from_default_queue": true,
+    "next_action": "none"
+  },
+  "contribution": {
+    "origin": "phase45_research_ingestion",
+    "private_data_removed": true,
+    "contains_project_private_strategy": false,
+    "contains_secret": false,
+    "notes": "通用 Trading Engineering 支持层候选知识，不包含外接项目私有交易事实。"
+  }
+}

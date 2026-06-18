@@ -1,0 +1,366 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_phase60_replay_simulation.scenario_library.versioned_required.v1",
+  "title": "replay / simulation scenario library 必须版本化",
+  "metadata": {
+    "partition_id": "KB_05_REPLAY_SIMULATION",
+    "domain": "replay_simulation",
+    "subdomain": "scenario_library",
+    "rule_type": "scenario_replay_governance_rule",
+    "claim_type": "versioned_test_evidence_requirement",
+    "content_type": "json",
+    "project_binding": "none",
+    "tree_node_id": "kt.replay_simulation",
+    "tree_path": "CEK-TA / Trading Engineering / Replay Simulation",
+    "canonical_node_id": "kt.replay_simulation",
+    "canonical_tree_path": "CEK-TA / Trading Engineering / Replay Simulation",
+    "related_nodes": [
+      "kt.trading_engineering",
+      "kt.replay_simulation",
+      "kt.live_execution",
+      "kt.risk_management",
+      "kt.data_engineering",
+      "kt.market_microstructure"
+    ],
+    "risk_level": "medium_high",
+    "used_for": [
+      "external_project_rag_retrieval",
+      "gap_report",
+      "mcp",
+      "replay_testing",
+      "searchlab",
+      "simulation_qa",
+      "vue_audit_ui"
+    ],
+    "classification_notes": "Phase 60 P1 增强环境治理候选；只用于 sandbox/replay/paper/canary 的测试、监控、晋级和 gap 审计，不接管策略、实盘执行或风控阈值。",
+    "source_candidate_id": "cand_20260617_phase60_p1_replay_scenario_library_versioned_001",
+    "research_task_id": "P60-P1-02",
+    "phase": "Phase 60",
+    "formalization_task_id": "CEK-TA-588",
+    "review_mode": "reviewed_caveat_only"
+  },
+  "applicability": {
+    "market": "general_with_platform_or_venue_specific_mapping",
+    "asset": "general",
+    "timeframe": "sandbox_replay_paper_or_live_canary_environment",
+    "data_granularity": "api_message_order_event_fill_event_health_metric_or_gap_report",
+    "project_type": "trading_ai_support_layer",
+    "applies_when": [
+      "外接项目设计 sandbox、UAT、testnet、replay、paper trading 或 live canary 环境治理",
+      "需要审计 adapter certification、scenario library、paper account state、runtime health、canary rollback 或 environment drift",
+      "需要把 Phase 60 P0 manifest/gap report 扩展为更完整的测试治理证据"
+    ],
+    "not_applicable_when": [
+      "需要生成买卖点、仓位、杠杆、止损止盈、风险阈值或实盘执行建议",
+      "需要直接证明策略有效、live-ready 或收益优势",
+      "没有平台、broker、exchange、API 版本、环境类型或数据来源证据"
+    ]
+  },
+  "content": {
+    "statement": "用于测试极端行情、停牌、auction、断线、拒单、部分成交、延迟和错误恢复的 replay / simulation scenario library 必须记录 scenario_id、dataset_version、event_clock、seed、assumption_hash 和 expected_observation；场景通过只能证明测试覆盖，不能证明未来收益。",
+    "rationale": "本候选是 Phase 60 P1 增强治理知识，只允许外部审计后进入 accepted_for_draft；不得直接 reviewed、approved、default guidance 或 hard gate。",
+    "procedure": [
+      "确认当前问题属于 sandbox、testnet、historical replay、realtime simulation、paper trading、live canary 或 live 环境治理。",
+      "要求外接项目提供 environment_manifest、gap_report、promotion_decision 或 order lifecycle mapping 的可审计证据。",
+      "返回来源、适用范围、不适用场景、owner 边界和 caveat，不返回交易执行许可。",
+      "遇到 live permission、risk threshold、hard gate 或实盘动作请求时，路由给外接项目 Live Execution / Risk Management owner。"
+    ],
+    "anti_patterns": [
+      "把 static API sandbox mocked response 当作真实市场行为。",
+      "把 testnet 订单、余额或成交写成 production fact。",
+      "把 paper trading 盈亏写成 live-ready 或策略有效。",
+      "把 historical replay fill 写成真实队列位置、真实 market impact 或 live 可成交性。",
+      "把 environment_manifest、promotion_decision 或 gap_report 写成实盘许可、自动晋级、自动拒单、自动停机或 hard gate。"
+    ],
+    "validation": [
+      "检查 source_evidence 是否至少包含官方/框架/标准/内部契约来源。",
+      "检查 conflict_audit.approval_allowed=false。",
+      "检查 machine_gate.default_guidance=caveat_only 且 approved/default/hard gate 均为 false。",
+      "检查内容没有买卖点、仓位、杠杆、止损止盈、风险阈值或 live permission。"
+    ],
+    "risk_notes": [
+      "P1 增强知识不能替代 P0 的 EnvironmentManifest、PromotionDecision 和 GapReport。",
+      "候选不能自动创建 reviewed、approved、default guidance 或 hard gate。",
+      "本候选不提供投资建议、订单建议、风险阈值或实盘许可。",
+      "不得收益证明。",
+      "不得 live-ready。",
+      "不得 hard gate。",
+      "不得交易许可。",
+      "reviewed/caveat_only 只允许作为审计上下文、RAG 检索和项目方案 review；不等于 approved。",
+      "平台、broker、exchange 和 framework 来源必须保留具体适用范围，不得泛化为所有市场。"
+    ],
+    "citation_notes": "The paper distinguishes market replay and multi-agent simulation as different methods for strategy evaluation.；NautilusTrader separates backtest, sandbox and live contexts while sharing core runtime architecture.；CEK-TA internal contract defines EnvironmentManifest fields, owner boundaries and machine gate restrictions.",
+    "required_followups": [
+      "正式写入 reviewed/caveat_only 时保留 scenario_result_not_profit_evidence=true。",
+      "保留 scenario_library_not_live_permission=true。",
+      "标注 DVC / MLflow / pytest 为通用工程来源，ABIDES 为研究模拟器来源。",
+      "与 Phase 37 replay/simulation 做 alias 或测试治理子项映射。"
+    ],
+    "audit_patch_notes": {
+      "source_patch_notes": [
+        "DVC 支撑数据版本和可复现 pipeline。",
+        "MLflow 支撑 dataset tracking、versioning 和 lineage。",
+        "pytest 支撑参数化场景测试。",
+        "ABIDES 支撑高保真市场模拟、可配置 latency 和 scenario-style experiment。"
+      ],
+      "content_patch_notes": [
+        "scenario library 是测试覆盖和复现证据，不是策略有效证据。",
+        "scenario schema 可以包含 scenario_id、dataset_version、event_clock、seed、assumption_hash、expected_observation。"
+      ],
+      "boundary_patch_notes": [
+        "不得收益证明。",
+        "不得 live-ready。",
+        "不得 hard gate。",
+        "不得交易许可。"
+      ],
+      "conflict_patch_notes": [
+        "与 Phase 37 replay/simulation 不冲突，应作为 replay 测试治理补充。"
+      ]
+    }
+  },
+  "assumptions": [
+    "候选用于 CEK-TA 通用支持层知识库，不包含外接项目私有策略参数。",
+    "每条候选都需要外部 AI/人工严格审计后才能进入 accepted_for_draft。",
+    "平台和工具来源只能作为 implementation pattern 或 supporting source。"
+  ],
+  "source_evidence": [
+    {
+      "source_id": "src_jpm_replay",
+      "source_title": "How to Evaluate Trading Strategies: Single Agent Market Replay or Multi-Agent Simulation",
+      "source_url": "https://www.jpmorgan.com/content/dam/jpm/cib/complex/content/technology/ai-research-publications/pdf-12.pdf",
+      "source_type": "research_paper",
+      "publisher": "J.P. Morgan AI Research",
+      "published_at": null,
+      "accessed_at": "2026-06-17",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "The paper distinguishes market replay and multi-agent simulation as different methods for strategy evaluation.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_nautilus_arch",
+      "source_title": "NautilusTrader Architecture",
+      "source_url": "https://nautilustrader.io/docs/latest/concepts/architecture/",
+      "source_type": "framework_doc",
+      "publisher": "NautilusTrader",
+      "published_at": null,
+      "accessed_at": "2026-06-17",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "NautilusTrader separates backtest, sandbox and live contexts while sharing core runtime architecture.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_phase60_env_contract",
+      "source_title": "Phase 60 Sandbox / Replay / Paper Environment Contract",
+      "source_url": "docs/contracts/phase60_sandbox_replay_paper_environment_contract.md",
+      "source_type": "internal_contract",
+      "publisher": "CEK-TA",
+      "published_at": null,
+      "accessed_at": "2026-06-17",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "CEK-TA internal contract defines EnvironmentManifest fields, owner boundaries and machine gate restrictions.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_dvc_reproducible_pipelines",
+      "source_title": "Get Started with DVC",
+      "source_url": "https://doc.dvc.org/start",
+      "source_type": "official_doc",
+      "publisher": "DVC",
+      "published_at": null,
+      "accessed_at": "2026-06-18",
+      "version": null,
+      "reliability": "high",
+      "relevance": "medium_high",
+      "evidence_summary": "DVC describes Git-based data and model versioning and reproducible data-driven pipelines.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_mlflow_dataset_tracking",
+      "source_title": "MLflow Dataset Tracking",
+      "source_url": "https://mlflow.org/docs/latest/ml/dataset/",
+      "source_type": "official_doc",
+      "publisher": "MLflow",
+      "published_at": null,
+      "accessed_at": "2026-06-18",
+      "version": null,
+      "reliability": "high",
+      "relevance": "medium_high",
+      "evidence_summary": "MLflow documents dataset tracking, versioning, management and lineage from raw data to model predictions.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_pytest_parametrize",
+      "source_title": "Parametrizing tests",
+      "source_url": "https://docs.pytest.org/en/7.1.x/example/parametrize.html",
+      "source_type": "official_doc",
+      "publisher": "pytest",
+      "published_at": null,
+      "accessed_at": "2026-06-18",
+      "version": null,
+      "reliability": "high",
+      "relevance": "medium",
+      "evidence_summary": "pytest documents parametrized tests, supporting repeatable scenario-style checks across input cases.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_abides_high_fidelity_market_simulation",
+      "source_title": "ABIDES: Towards High-Fidelity Market Simulation for AI Research",
+      "source_url": "https://arxiv.org/abs/1904.12066",
+      "source_type": "research_paper",
+      "publisher": "arXiv",
+      "published_at": null,
+      "accessed_at": "2026-06-18",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "ABIDES is an agent-based interactive discrete event simulation environment for market applications with configurable scenarios and latency assumptions.",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "medium_high",
+    "score": 84,
+    "source_count": 7,
+    "primary_source_count": 6,
+    "limitations": [
+      "候选来源需要外部严格审计；vendor/tool 文档不得过度泛化。"
+    ],
+    "source_quality_notes": [
+      "Reviewed/caveat_only sources support environment governance and audit boundaries, not strategy profitability or live permission.",
+      "Platform, broker, exchange and framework sources are implementation-pattern evidence and must retain scope caveats."
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "known_conflicts": [],
+    "potential_conflicts": [
+      "可能与 Phase 60 P0、Phase 58 环境等效链条、Phase 37 Replay/Live/Risk 知识重叠；正式转换前必须做重复和 owner 边界检查。"
+    ],
+    "resolution_summary": "Phase 60 P1 candidate audit accepted this item for draft only; reviewed/approved/default guidance/hard gate remain forbidden.",
+    "approval_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "approved_allowed": false
+  },
+  "review": {
+    "review_status": "reviewed",
+    "confidence": "medium_high",
+    "freshness": "mixed",
+    "reviewer": "external_ai_strict_audit_and_codex_backwrite",
+    "reviewed_at": "2026-06-18",
+    "source_candidate_id": "cand_20260617_phase60_p1_replay_scenario_library_versioned_001",
+    "ai_audit_result_id": "audit_result_phase60_p1_needs_evidence_supplemental_reaudit_20260618_strict_v1",
+    "approval_status": "not_requested",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase60_p1_needs_evidence_supplemental_reaudit_20260618_strict_v1",
+      "package_id": "phase60_p1_needs_evidence_supplemental_reaudit_package_20260618",
+      "candidate_id": "cand_20260617_phase60_p1_replay_scenario_library_versioned_001",
+      "research_task_id": "P60-P1-02",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "medium_high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "trade_execution_advice_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "live_permission_allowed": false,
+      "required_followups": [
+        "正式写入 reviewed/caveat_only 时保留 scenario_result_not_profit_evidence=true。",
+        "保留 scenario_library_not_live_permission=true。",
+        "标注 DVC / MLflow / pytest 为通用工程来源，ABIDES 为研究模拟器来源。",
+        "与 Phase 37 replay/simulation 做 alias 或测试治理子项映射。"
+      ],
+      "patch_notes": {
+        "source": [
+          "DVC 支撑数据版本和可复现 pipeline。",
+          "MLflow 支撑 dataset tracking、versioning 和 lineage。",
+          "pytest 支撑参数化场景测试。",
+          "ABIDES 支撑高保真市场模拟、可配置 latency 和 scenario-style experiment。"
+        ],
+        "content": [
+          "scenario library 是测试覆盖和复现证据，不是策略有效证据。",
+          "scenario schema 可以包含 scenario_id、dataset_version、event_clock、seed、assumption_hash、expected_observation。"
+        ],
+        "boundary": [
+          "不得收益证明。",
+          "不得 live-ready。",
+          "不得 hard gate。",
+          "不得交易许可。"
+        ],
+        "conflict": [
+          "与 Phase 37 replay/simulation 不冲突，应作为 replay 测试治理补充。"
+        ]
+      }
+    },
+    "audit_log": [
+      {
+        "at": "2026-06-18",
+        "actor": "external_ai_strict_audit",
+        "action": "phase60_reviewed_preparation_audit_passed",
+        "reason": "accepted_for_reviewed_caveat_only; approved/default/hard gate remain forbidden.",
+        "audit_result_id": "audit_result_phase60_p1_needs_evidence_supplemental_reaudit_20260618_strict_v1"
+      },
+      {
+        "at": "2026-06-18",
+        "actor": "codex",
+        "action": "formal_reviewed_caveat_only_created",
+        "reason": "CEK-TA-588 materialized formal reviewed/caveat_only knowledge."
+      }
+    ]
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于提醒外接项目记录环境治理证据和 gap report。",
+      "用于审计 sandbox/replay/paper/canary 是否保留 owner 和边界。",
+      "用于阻止 AI 把测试环境结果泛化为 live-ready。"
+    ],
+    "not_allowed": [
+      "不得生成买卖点、仓位、杠杆、止损止盈或风险阈值。",
+      "不得授权实盘、自动拒单、自动停机或 hard gate。",
+      "不得把 candidate 当作正式 reviewed 或 approved 知识。"
+    ]
+  },
+  "machine_gate": {
+    "default_guidance": "caveat_only",
+    "reason": "Formal reviewed/caveat_only only; not approved, not default guidance, not hard gate, not live permission.",
+    "requires_human_escalation": true,
+    "hidden_from_default_queue": true,
+    "visible_in_default_guidance_queue": false,
+    "reviewed_allowed": true,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "trade_execution_advice_allowed": false,
+    "risk_threshold_advice_allowed": false,
+    "live_permission_allowed": false
+  },
+  "contract_refs": [],
+  "workflow": {
+    "source_candidate_id": "cand_20260617_phase60_p1_replay_scenario_library_versioned_001",
+    "source_candidate_path": "codex-expert-kit/rag/candidates/KB_05_REPLAY_SIMULATION/cand_20260617_phase60_p1_replay_scenario_library_versioned_001.json",
+    "formalized_by_task_id": "CEK-TA-588",
+    "formalized_at": "2026-06-18",
+    "review_mode": "reviewed_caveat_only",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "live_permission_allowed": false
+  },
+  "contribution": {
+    "formalized_from_candidate": "cand_20260617_phase60_p1_replay_scenario_library_versioned_001",
+    "private_data_removed": true,
+    "contains_project_private_strategy": false,
+    "contains_secret": false,
+    "contains_account_facts": false
+  }
+}

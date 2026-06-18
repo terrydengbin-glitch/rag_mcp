@@ -1,0 +1,455 @@
+{
+  "audit_result_id": "audit_result_phase41_extended_p1_candidate_audit_package_20260610_strict_v1",
+  "source_package_id": "phase41_extended_p1_candidate_audit_package_20260610",
+  "audit_date": "2026-06-10",
+  "decision": "conditional_accept_for_formal_draft_queue",
+  "decisions": [
+    {
+      "candidate_id": "cand_20260610_phase41_p41_a04_catboost_001",
+      "research_task_id": "P41-A04",
+      "decision": "accepted_for_draft",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "CatBoost official documentation and paper support categorical-feature-aware GBDT; the candidate correctly treats CatBoost as a conditional enhancement, not a default POC dependency.",
+      "source_patch_notes": [],
+      "content_patch_notes": [
+        "Keep CatBoost conditional; trigger only when categorical variables, venue/symbol/strategy-version categories, or categorical preprocessing burden justify it."
+      ],
+      "boundary_patch_notes": [
+        "CatBoost remains a tabular scorer candidate; it must not become final gate or execution authority."
+      ],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false conflicts with package hard boundary that candidate knowledge must not enter default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before any draft conversion."
+      ],
+      "required_followups": []
+    },
+    {
+      "candidate_id": "cand_20260610_phase41_p41_a06_baseline_001",
+      "research_task_id": "P41-A06",
+      "decision": "accepted_for_draft",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "scikit-learn supports ensemble methods and the Phase 41 runtime contract supports auditability boundaries; acceptable as an enhancement rule if the vague slug is patched.",
+      "source_patch_notes": [],
+      "content_patch_notes": [
+        "Rename normalized_claim/proposed_knowledge_id from phase41.baseline.v1 to phase41.ensemble_after_single_model_baseline_insufficient.v1 before formal conversion.",
+        "Require a single-model baseline comparison report and an auditability impact report before ensemble adoption."
+      ],
+      "boundary_patch_notes": [
+        "Ensemble output remains scorer/review-priority signal only; it must not bypass calibrator, threshold policy, or deterministic final gate."
+      ],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false conflicts with package hard boundary that candidate knowledge must not enter default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before any draft conversion."
+      ],
+      "required_followups": [
+        "pre_conversion_slug_patch_required"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260610_phase41_p41_a07_feature_attribution_top_features_final_gate_001",
+      "research_task_id": "P41-A07",
+      "decision": "needs_more_evidence",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "The direction is correct, but current source_refs use generic SHAP/permutation-importance docs and NIST; the claim also says attribution is not causal and not final-gate evidence, which needs a direct SHAP causal-warning or causal-inference source and a Phase 41 final-gate boundary source.",
+      "source_patch_notes": [
+        "Add SHAP causal-warning source or causal inference/XAI limitation source.",
+        "Add Phase41 runtime/final-gate contract source stating attribution/top_features cannot decide final gate."
+      ],
+      "content_patch_notes": [
+        "Keep attribution/top_features as debugging/audit hints only; define causal_claim_allowed=false and final_gate_decision_allowed=false."
+      ],
+      "boundary_patch_notes": [],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false conflicts with package hard boundary that candidate knowledge must not enter default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before any draft conversion."
+      ],
+      "required_followups": [
+        "add_shap_causal_warning_source",
+        "add_final_gate_boundary_source"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260610_phase41_p41_b04_entity_group_split_split_001",
+      "research_task_id": "P41-B04",
+      "decision": "accepted_for_draft",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "scikit-learn grouped CV supports keeping groups out of both train and test folds; the internal runtime contract can map strategy/symbol/timeframe family to groups.",
+      "source_patch_notes": [],
+      "content_patch_notes": [
+        "Define group_key candidates: strategy_version_ref, symbol_group, venue_group, timeframe_family, and strategy_family_ref.",
+        "Require group_split_manifest_hash for reviewed conversion."
+      ],
+      "boundary_patch_notes": [
+        "Group split is an AI training/eval split rule; it is not a trading strategy or market-regime definition."
+      ],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false conflicts with package hard boundary that candidate knowledge must not enter default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before any draft conversion."
+      ],
+      "required_followups": []
+    },
+    {
+      "candidate_id": "cand_20260610_phase41_p41_b06_active_learning_hard_example_mining_gold_eval_001",
+      "research_task_id": "P41-B06",
+      "decision": "needs_more_evidence",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "Active learning is supported, but hard-example mining is not directly supported by the current sources; the claim also needs explicit random/stratified control sample and gold/eval isolation requirements.",
+      "source_patch_notes": [
+        "Add hard-example mining source or remove 'hard-example mining' from the claim.",
+        "Add source or internal contract for gold/eval isolation and sampling-bias control."
+      ],
+      "content_patch_notes": [
+        "Require active_learning_sample plus random_control_sample, stratified_sample, and no_gold_eval_contamination flag."
+      ],
+      "boundary_patch_notes": [],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false conflicts with package hard boundary that candidate knowledge must not enter default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before any draft conversion."
+      ],
+      "required_followups": [
+        "add_hard_example_mining_source_or_remove_term",
+        "add_sampling_bias_contract"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260610_phase41_p41_c04_platt_isotonic_001",
+      "research_task_id": "P41-C04",
+      "decision": "accepted_for_draft",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "scikit-learn calibration and the supervised calibration paper support Platt/sigmoid and isotonic calibration; accepted with sample-size and overfitting caveats.",
+      "source_patch_notes": [],
+      "content_patch_notes": [
+        "Require calibration_method, calibration_set_hash, sample_size, reliability_diagram_ref, Brier/ECE metrics, and overfit_risk_caveat.",
+        "State isotonic should be avoided or caveated when calibration samples are sparse."
+      ],
+      "boundary_patch_notes": [
+        "Calibration method selection improves probability quality only; it is not a trading return claim."
+      ],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false conflicts with package hard boundary that candidate knowledge must not enter default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before any draft conversion."
+      ],
+      "required_followups": []
+    },
+    {
+      "candidate_id": "cand_20260610_phase41_p41_c05_regime_strategy_family_timeframe_regime_strategy_timeframe_slice_label_ai_engineering_001",
+      "research_task_id": "P41-C05",
+      "decision": "accepted_for_draft",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "scikit-learn supports calibration checks and TFDV supports slicing/skew/drift style validation; the Phase 41 contract correctly keeps regime/strategy/timeframe as reference-only slice labels.",
+      "source_patch_notes": [],
+      "content_patch_notes": [
+        "Require per-slice minimum support; sparse slices may only emit warnings, not hard thresholds.",
+        "Store regime_ref, strategy_family_ref, and timeframe_ref as references only."
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering must not define market regime, strategy family logic, timeframe trading rules, execution cost, or final risk rules."
+      ],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false conflicts with package hard boundary that candidate knowledge must not enter default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before any draft conversion."
+      ],
+      "required_followups": []
+    },
+    {
+      "candidate_id": "cand_20260610_phase41_p41_c06_conformal_abstain_band_deterministic_final_gate_001",
+      "research_task_id": "P41-C06",
+      "decision": "accepted_for_draft",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "MAPIE and calibration sources support conformal/uncertainty as an enhancement layer; the claim correctly prevents it from replacing deterministic final gate.",
+      "source_patch_notes": [],
+      "content_patch_notes": [
+        "Add coverage_assumption, calibration_or_conformal_set_hash, coverage_metric, abstain_band_version, and sparse_slice_caveat fields."
+      ],
+      "boundary_patch_notes": [
+        "Conformal or abstain output may route to review/abstain only; it must not emit allow/block/reduce_size."
+      ],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false conflicts with package hard boundary that candidate knowledge must not enter default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before any draft conversion."
+      ],
+      "required_followups": []
+    },
+    {
+      "candidate_id": "cand_20260610_phase41_p41_d05_feast_feature_store_poc_manifest_001",
+      "research_task_id": "P41-D05",
+      "decision": "accepted_for_draft",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "Feast sources support feature retrieval and point-in-time/historical feature serving; acceptable as a conditional P1 feature-store adoption rule.",
+      "source_patch_notes": [],
+      "content_patch_notes": [
+        "Define trigger conditions: repeated offline/online parity failures, low-latency online feature serving requirement, or complex point-in-time joins.",
+        "POC can use versioned file manifests before feature-store adoption."
+      ],
+      "boundary_patch_notes": [
+        "Feature store adoption is infrastructure governance, not a trading rule."
+      ],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false conflicts with package hard boundary that candidate knowledge must not enter default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before any draft conversion."
+      ],
+      "required_followups": []
+    },
+    {
+      "candidate_id": "cand_20260610_phase41_p41_e04_thinking_mode_non_thinking_mode_chain_of_thought_strict_json_reason_code_citation_audit_summary_001",
+      "research_task_id": "P41-E04",
+      "decision": "accepted_for_draft",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "Qwen3 official docs support thinking and non-thinking modes, and the Phase41 runtime contract supports saving only structured audit outputs.",
+      "source_patch_notes": [],
+      "content_patch_notes": [
+        "Formal draft must forbid storing private chain-of-thought; only strict JSON, reason codes, citations, unsupported_claims, and audit_summary may be retained."
+      ],
+      "boundary_patch_notes": [
+        "Thinking mode is an inference/audit configuration; it does not make Qwen3 a fact source, scorer, or final gate."
+      ],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false conflicts with package hard boundary that candidate knowledge must not enter default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before any draft conversion."
+      ],
+      "required_followups": []
+    },
+    {
+      "candidate_id": "cand_20260610_phase41_p41_e06_dpo_preference_pair_pnl_001",
+      "research_task_id": "P41-E06",
+      "decision": "accepted_for_draft",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "TRL DPO documentation supports preference pairs with chosen/rejected completions; accepted if preferences are audit-quality labels, not PnL/return labels.",
+      "source_patch_notes": [],
+      "content_patch_notes": [
+        "Preference dimensions must be schema validity, citation completeness, reason-code consistency, safe abstain, and unsupported-claim avoidance.",
+        "Do not construct chosen/rejected pairs from PnL alone."
+      ],
+      "boundary_patch_notes": [
+        "DPO-trained Qwen3 remains audit assistant only; it must not produce final trading decisions."
+      ],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false conflicts with package hard boundary that candidate knowledge must not enter default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before any draft conversion."
+      ],
+      "required_followups": []
+    },
+    {
+      "candidate_id": "cand_20260610_phase41_p41_e07_rag_first_prompt_sft_lora_001",
+      "research_task_id": "P41-E07",
+      "decision": "needs_more_evidence",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "The project policy is directionally correct, but current sources are IBM engineering article + TRL + internal contract; direct evidence for 'RAG/prompt/eval before SFT' should include a model-optimization/eval source and RAG source.",
+      "source_patch_notes": [
+        "Add OpenAI model optimization or equivalent official model-optimization source covering evals, prompt engineering, retrieval/context, and fine-tuning.",
+        "Add RAG evaluation/retrieval source or formal Phase41 RAG eval contract."
+      ],
+      "content_patch_notes": [
+        "Rewrite as project governance: establish RAG + prompt + eval baseline first; use SFT/LoRA only after persistent schema/citation/reason-code failures."
+      ],
+      "boundary_patch_notes": [],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false conflicts with package hard boundary that candidate knowledge must not enter default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before any draft conversion."
+      ],
+      "required_followups": [
+        "add_model_optimization_source",
+        "add_rag_eval_source"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260610_phase41_p41_e08_vllm_qwen_serving_001",
+      "research_task_id": "P41-E08",
+      "decision": "accepted_for_draft",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "vLLM documentation directly supports online serving and throughput-oriented LLM serving; Qwen docs support local/Qwen usage, so this is acceptable as P1 conditional serving guidance.",
+      "source_patch_notes": [],
+      "content_patch_notes": [
+        "Require latency/throughput requirement, batch-audit workload justification, rollback plan, and fallback-to-non-LLM audit path before vLLM/local Qwen serving adoption."
+      ],
+      "boundary_patch_notes": [
+        "vLLM/Qwen serving is infrastructure only; it does not change Qwen3 audit-assistant permissions."
+      ],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false conflicts with package hard boundary that candidate knowledge must not enter default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before any draft conversion."
+      ],
+      "required_followups": []
+    },
+    {
+      "candidate_id": "cand_20260610_phase41_p41_f03_hybrid_scoring_audit_trace_scorer_calibrator_rag_qwen3_final_gate_001",
+      "research_task_id": "P41-F03",
+      "decision": "accepted_for_draft",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "The Phase41 runtime contract, NIST governance, and MLflow versioning support a replayable hybrid-scoring audit trace at draft level.",
+      "source_patch_notes": [],
+      "content_patch_notes": [
+        "Define audit trace fields: request_id, input_snapshot_ref, scorer_version, scorer_output_ref, calibrator_version, calibrated_probability, rag_refs, qwen_output_ref, threshold_policy_version, final_gate_decision_ref, latency_ms, fallback_path."
+      ],
+      "boundary_patch_notes": [
+        "Audit trace is for audit/replay only; it must not expose account secrets, raw private strategy bodies, or execution parameters."
+      ],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false conflicts with package hard boundary that candidate knowledge must not enter default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before any draft conversion."
+      ],
+      "required_followups": []
+    },
+    {
+      "candidate_id": "cand_20260610_phase41_p41_f04_champion_challenger_offline_shadow_paper_soft_gate_champion_paper_replay_fill_cost_execution_phase_37_ai_engineering_001",
+      "research_task_id": "P41-F04",
+      "decision": "needs_more_evidence",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "The boundary is correct, but current sources are mainly internal contracts and NIST. The broad claim spans offline, shadow, paper/soft gate, human approval, fill/cost/execution refs; it needs direct external evidence for shadow/canary/OPE/paper execution gaps and a Phase37 reference contract.",
+      "source_patch_notes": [
+        "Add Google SRE/AWS shadow/canary or equivalent source for staged release testing.",
+        "Add OPE/paper/replay source and Phase37 fill/cost/execution boundary contract."
+      ],
+      "content_patch_notes": [
+        "Split into promotion stages: offline_eval, shadow_eval, paper_or_replay_eval, soft_gate_eval, canary_plan, owner_approval_ref.",
+        "Require non-equivalence caveat for paper/replay vs live execution."
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering must not define fill model, fee, slippage, order-state, market impact, or execution latency."
+      ],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false conflicts with package hard boundary that candidate knowledge must not enter default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before any draft conversion."
+      ],
+      "required_followups": [
+        "add_shadow_canary_source",
+        "add_phase37_fill_cost_boundary"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260610_phase41_p41_f05_mlflow_registry_release_manifest_poc_registry_001",
+      "research_task_id": "P41-F05",
+      "decision": "accepted_for_draft",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "MLflow registry documentation supports versioning, aliases, tags and metadata; accepted as P1 conditional adoption with file-based registry allowed for POC.",
+      "source_patch_notes": [],
+      "content_patch_notes": [
+        "Define trigger threshold for MLflow adoption: multiple model versions, calibrator versions, prompt/RAG versions, or release manifest complexity beyond file registry."
+      ],
+      "boundary_patch_notes": [
+        "MLflow registry does not approve trading releases; owner approval and deterministic final gate remain separate."
+      ],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false conflicts with package hard boundary that candidate knowledge must not enter default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before any draft conversion."
+      ],
+      "required_followups": []
+    },
+    {
+      "candidate_id": "cand_20260610_phase41_p41_f06_ray_kubeflow_phase_41_001",
+      "research_task_id": "P41-F06",
+      "decision": "accepted_for_draft",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "Ray Train and Kubeflow Pipeline official docs support distributed training and workflow orchestration; accepted as P1 conditional platform guidance.",
+      "source_patch_notes": [],
+      "content_patch_notes": [
+        "Require distributed_training_need=true or pipeline_orchestration_need=true; otherwise keep POC file-based/simple runner approach."
+      ],
+      "boundary_patch_notes": [
+        "Ray/Kubeflow must not become default dependency or centralize private strategy bodies."
+      ],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false conflicts with package hard boundary that candidate knowledge must not enter default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before any draft conversion."
+      ],
+      "required_followups": []
+    },
+    {
+      "candidate_id": "cand_20260610_phase41_p41_f07_cek_ta_resolver_001",
+      "research_task_id": "P41-F07",
+      "decision": "needs_more_evidence",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "The claim is an internal CEK-TA platform boundary and the internal sources are relevant, but it has only internal contracts; add at least one external security/governance source for read-only, least-privilege, or prompt-injection/data-boundary rationale before draft conversion.",
+      "source_patch_notes": [
+        "Add external least-privilege / read-only access / LLM tool-security source, such as OWASP LLM guidance or NIST security governance reference."
+      ],
+      "content_patch_notes": [
+        "Define read_only=true, resolver_version, allowed_paths, forbidden_paths, no_write_back_to_cek_ta, and portable_config_ref."
+      ],
+      "boundary_patch_notes": [],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false conflicts with package hard boundary that candidate knowledge must not enter default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before any draft conversion."
+      ],
+      "required_followups": [
+        "add_external_security_source"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260610_phase41_p41_f08_hybrid_scoring_runtime_scorer_calibrator_rag_qwen3_final_gate_latency_budget_timeout_fallback_fail_to_review_fail_closed_001",
+      "research_task_id": "P41-F08",
+      "decision": "needs_more_evidence",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "The runtime fallback claim is important, but current sources do not directly support fail-to-review/fail-closed behavior across scorer, calibrator, RAG, Qwen3, and final gate. It needs SRE/incident-control or algorithmic-trading control evidence.",
+      "source_patch_notes": [
+        "Add SRE timeout/fallback/canary/incident source and, ideally, SEC Knight/FCA algorithmic trading controls as risk case evidence."
+      ],
+      "content_patch_notes": [
+        "Define per-component latency_budget_ms, timeout_ms, fallback_action, fail_closed_or_fail_to_review policy, and kill_switch_ref."
+      ],
+      "boundary_patch_notes": [
+        "Fallback may route to human review, rule baseline, or safe degradation; it must not create automatic allow/block without final-gate policy."
+      ],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false conflicts with package hard boundary that candidate knowledge must not enter default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before any draft conversion."
+      ],
+      "required_followups": [
+        "add_sre_fallback_source",
+        "add_algorithmic_control_case_source"
+      ]
+    }
+  ],
+  "batch_summary": {
+    "accepted_count": 13,
+    "needs_more_evidence_count": 6,
+    "rejected_count": 0,
+    "reviewed_allowed_count": 0,
+    "approved_allowed_count": 0,
+    "default_guidance_allowed_count": 0,
+    "hard_gate_allowed_count": 0,
+    "critical_conflicts": [
+      "All 19 source candidates have workflow.hidden_from_default_queue=false while the package hard boundary says candidates must not become default guidance.",
+      "P41-A06 normalized_claim/proposed_knowledge_id uses phase41.baseline.v1 for an ensemble-governance claim; patch the slug before formal conversion.",
+      "Several broad enhancement claims need claim-specific evidence before draft conversion: P41-A07, P41-B06, P41-E07, P41-F04, P41-F07, P41-F08."
+    ]
+  }
+}

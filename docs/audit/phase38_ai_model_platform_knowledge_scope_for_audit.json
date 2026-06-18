@@ -1,0 +1,224 @@
+{
+  "audit_package_id": "phase38_ai_model_platform_knowledge_scope_for_audit_20260610",
+  "schema_version": "cek_ta_scope_audit_v1",
+  "phase": "Phase 38",
+  "title": "AI 模型平台与交易 Gating/Scoring POC 知识范围审计包",
+  "created_at": "2026-06-10",
+  "audit_goal": "请审计 Phase 38 的 AI Engineering 子板块、66 条知识点范围、跨分支边界、来源策略和优先级是否适合支持外接交易 LLM gating/scoring POC。",
+  "scope_boundary": {
+    "in_scope": [
+      "Numeric Scoring / Meta-Labeling",
+      "Calibration & Threshold Policy",
+      "Decision-Time Feature & Leakage Gate",
+      "LLM Audit Assistant",
+      "Shadow / Paper / OPE Evaluation",
+      "Model Release / Lineage / Rollback",
+      "Trading AI RAG Pack & Citation Governance"
+    ],
+    "out_of_scope": [
+      "K 线形态和指标交易规则本体",
+      "回测、fill model、实盘执行和风控规则本体",
+      "真实模型训练",
+      "真实交易账户或密钥",
+      "把 reviewed 自动升级为 approved"
+    ],
+    "routing_rule": "AI Engineering 只保存训练、评分、检索、审计、治理方法；交易规则本体必须路由到 Phase 37 / Trading Engineering。"
+  },
+  "expected_count": {
+    "total": 66,
+    "p0_core": 43,
+    "p0_extended": 16,
+    "p1": 7
+  },
+  "subbranches": [
+    {
+      "canonical_node_id": "kt.ai_engineering.numeric_scoring",
+      "partition_id": "KB_AI_20_NUMERIC_SCORING",
+      "expected_items": 10,
+      "purpose": "数值 scorer、meta-labeling、baseline、模型候选和 scorer-not-executor 边界。"
+    },
+    {
+      "canonical_node_id": "kt.ai_engineering.calibration_threshold",
+      "partition_id": "KB_AI_21_CALIBRATION_THRESHOLD",
+      "expected_items": 10,
+      "purpose": "概率校准、Brier/ECE、成本矩阵、阈值策略和 false allow/false block 治理。"
+    },
+    {
+      "canonical_node_id": "kt.ai_engineering.decision_time_feature_contract",
+      "partition_id": "KB_AI_22_DECISION_TIME_FEATURES",
+      "expected_items": 10,
+      "purpose": "决策时特征、时间戳、泄漏单测、schema registry 和 training-serving parity。"
+    },
+    {
+      "canonical_node_id": "kt.ai_engineering.llm_audit_assistant",
+      "partition_id": "KB_AI_23_LLM_AUDIT_ASSISTANT",
+      "expected_items": 10,
+      "purpose": "LLM 审计助手 strict schema、citation resolver、unsupported claims、no-source abstain。"
+    },
+    {
+      "canonical_node_id": "kt.ai_engineering.shadow_paper_ope_eval",
+      "partition_id": "KB_AI_24_SHADOW_PAPER_OPE",
+      "expected_items": 10,
+      "purpose": "offline、shadow、paper/replay、OPE 和反事实评估边界。"
+    },
+    {
+      "canonical_node_id": "kt.ai_engineering.model_release_governance",
+      "partition_id": "KB_AI_25_MODEL_RELEASE_GOVERNANCE",
+      "expected_items": 10,
+      "purpose": "release manifest、model registry、rollback、kill switch、owner approval。"
+    },
+    {
+      "canonical_node_id": "kt.rag_engineering.trading_scoring_rag_pack",
+      "partition_id": "KB_10_RAG_ENGINEERING",
+      "expected_items": 6,
+      "purpose": "交易 AI 主动检索、machine gate、引用完整率、上下文预算和 no-hit 缺口治理。"
+    }
+  ],
+  "source_seed_catalog": [
+    {
+      "source_id": "src_sklearn_calibration",
+      "url": "https://scikit-learn.org/stable/modules/calibration.html",
+      "source_type": "official_doc",
+      "used_for": ["calibration", "probability"]
+    },
+    {
+      "source_id": "src_sklearn_brier",
+      "url": "https://scikit-learn.org/stable/modules/generated/sklearn.metrics.brier_score_loss.html",
+      "source_type": "official_doc",
+      "used_for": ["brier_score"]
+    },
+    {
+      "source_id": "src_lightgbm_docs",
+      "url": "https://lightgbm.readthedocs.io/",
+      "source_type": "official_doc",
+      "used_for": ["gbdt", "lightgbm"]
+    },
+    {
+      "source_id": "src_xgboost_docs",
+      "url": "https://xgboost.readthedocs.io/",
+      "source_type": "official_doc",
+      "used_for": ["gbdt", "xgboost"]
+    },
+    {
+      "source_id": "src_catboost_docs",
+      "url": "https://catboost.ai/",
+      "source_type": "official_doc",
+      "used_for": ["catboost", "categorical_features"]
+    },
+    {
+      "source_id": "src_trl_docs",
+      "url": "https://huggingface.co/docs/trl/en/index",
+      "source_type": "official_doc",
+      "used_for": ["sft", "dpo", "preference_training"]
+    },
+    {
+      "source_id": "src_mlflow_registry",
+      "url": "https://mlflow.org/docs/latest/ml/model-registry/",
+      "source_type": "official_doc",
+      "used_for": ["model_registry", "model_version"]
+    },
+    {
+      "source_id": "src_dvc_start",
+      "url": "https://doc.dvc.org/start",
+      "source_type": "official_doc",
+      "used_for": ["data_versioning"]
+    },
+    {
+      "source_id": "src_tfdv",
+      "url": "https://www.tensorflow.org/tfx/data_validation/get_started",
+      "source_type": "official_doc",
+      "used_for": ["schema", "skew", "drift"]
+    },
+    {
+      "source_id": "src_nist_ai_rmf",
+      "url": "https://www.nist.gov/itl/ai-risk-management-framework",
+      "source_type": "governance_framework",
+      "used_for": ["risk_governance"]
+    }
+  ],
+  "knowledge_topics": [
+    "P38-A01 scorer / soft gate / final gate 必须分权",
+    "P38-A02 deterministic rule baseline 必须先建立",
+    "P38-A03 Logistic Regression 作为透明 baseline",
+    "P38-A04 LightGBM 只能作为候选 scorer",
+    "P38-A05 XGBoost 应作为 strong baseline",
+    "P38-A06 meta-labeling 只能过滤候选，不能生成新交易机会",
+    "P38-A07 numeric scorer 输出必须是风险排序或质量评分，不是最终交易动作",
+    "P38-A08 CatBoost 仅在类别特征占比高时条件引入",
+    "P38-A09 feature attribution 只能辅助调试，不等于因果解释",
+    "P38-A10 ranking model 可作为 review_priority 增强项",
+    "P38-B01 scorer 概率必须经过独立校准检查",
+    "P38-B02 calibrator 不得使用 scorer 训练集拟合",
+    "P38-B03 Brier score 必须作为概率质量指标之一",
+    "P38-B04 reliability diagram / calibration curve 必须输出",
+    "P38-B05 threshold 不得固定 0.5，必须绑定成本策略",
+    "P38-B06 false allow / false block 必须进入 cost matrix",
+    "P38-B07 threshold_policy_version 必须进入 final gate trace",
+    "P38-B08 校准必须按 strategy/regime/horizon 切片检查",
+    "P38-B09 calibration drift 必须进入 shadow 监控",
+    "P38-B10 conformal / Bayesian calibration 只能作为增强层",
+    "P38-C01 每个样本必须有 decision_time",
+    "P38-C02 每个特征必须有 feature_available_time",
+    "P38-C03 feature_available_time 晚于 decision_time 必须阻断",
+    "P38-C04 post-trade outcome 不得进入 scorer 输入",
+    "P38-C05 label_observation_end_time 必须晚于真实可观察结果",
+    "P38-C06 feature lineage 必须记录 source_object",
+    "P38-C07 training-serving parity test 必须存在",
+    "P38-C08 feature schema registry 必须版本化",
+    "P38-C09 data quality expectation suite 应覆盖核心字段",
+    "P38-C10 多市场迁移时必须重新检查特征可用性",
+    "P38-D01 LLM audit assistant 必须输出 strict JSON schema",
+    "P38-D02 LLM recommendation 不能等于 final gate decision",
+    "P38-D03 knowledge_refs 必须能解析到 formal index",
+    "P38-D04 无来源或 no-hit 必须 abstain / neutral",
+    "P38-D05 unsupported_claims 不为空时不得默认放行",
+    "P38-D06 reason_codes 必须来自受控 taxonomy",
+    "P38-D07 RAG + prompt baseline 必须先于 SFT",
+    "P38-D08 SFT LoRA 仅用于稳定输出 schema 和 reason code",
+    "P38-D09 DPO 只优化审计偏好，不优化交易收益承诺",
+    "P38-D10 teacher model 只能作为审计 baseline，不作为事实来源",
+    "P38-E01 offline eval 只能评估已执行交易样本",
+    "P38-E02 blocked trade 不能直接标注为亏损",
+    "P38-E03 hard gate 前必须 shadow mode",
+    "P38-E04 paper/replay 评估必须声明 fill/cost 假设来自 Trading Engineering",
+    "P38-E05 OPE 必须声明 behavior policy 和目标策略假设",
+    "P38-E06 human_review_precision 必须作为 POC 指标",
+    "P38-E07 RAG/prompt/model/threshold 必须可 ablation",
+    "P38-E08 shadow 日志必须记录 no-hit/conflict/citation completeness",
+    "P38-E09 false block opportunity 必须用 paper/replay 或人工复核估计",
+    "P38-E10 active learning review sampling 只能作为增强",
+    "P38-F01 release_manifest 必须绑定数据、模型、prompt、RAG 和阈值版本",
+    "P38-F02 model registry 必须记录 model_version 和别名/发布状态",
+    "P38-F03 dataset_hash 和 split_manifest_hash 必须进入发布记录",
+    "P38-F04 rollback_target 必须在上线前定义",
+    "P38-F05 hard gate 开启必须有 owner approval",
+    "P38-F06 kill switch policy 必须纳入 release_manifest",
+    "P38-F07 incident freeze 必须冻结模型、prompt、RAG index 和 threshold",
+    "P38-F08 model card / dataset card 必须描述 intended use 和 out-of-scope use",
+    "P38-F09 latency budget 和 fallback 必须纳入发布验收",
+    "P38-F10 model compression 只能在不破坏审计和校准后考虑",
+    "P38-G01 scoring/gating 任务必须主动检索 CEK-TA",
+    "P38-G02 RAG context 默认是不可信输入",
+    "P38-G03 machine_gate 和 review_status 必须过滤默认指导",
+    "P38-G04 知识包必须裁剪字段，控制上下文预算",
+    "P38-G05 citation completeness 必须进入 shadow 指标",
+    "P38-G06 no-hit query 应进入知识缺口队列"
+  ],
+  "audit_questions": [
+    "是否同意 Phase 38 不新增顶级主枝，只在 AI Engineering 下新增子板块？",
+    "是否同意本轮 66 条范围和 P0-Core 上调为 43 条？",
+    "是否存在应移回 Phase 37 / Trading Engineering 的交易规则本体？",
+    "是否存在重复、矛盾或粒度过细的知识点？",
+    "是否需要把某些 P0-Extended 上调为 P0-Core？",
+    "是否同意本轮只做知识库、契约、候选和审计，不训练真实模型？"
+  ],
+  "expected_audit_output_schema": {
+    "audit_result": "accept | accept_with_patch | needs_more_evidence | reject",
+    "patch_notes": ["string"],
+    "misrouted_topics": ["string"],
+    "missing_topics": ["string"],
+    "priority_changes": ["string"],
+    "source_requirements": ["string"],
+    "final_recommendation": "string"
+  }
+}

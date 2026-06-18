@@ -1,0 +1,551 @@
+{
+  "package_id": "phase45_order_semantics_ord05_supplemental_reaudit_package_20260612",
+  "created_at": "2026-06-12",
+  "created_by": "codex",
+  "phase": "45",
+  "task_id": "CEK-TA-468",
+  "scope": {
+    "branch": "Trading Engineering / Live Execution / Order Semantics",
+    "partition": "KB_06_LIVE_EXECUTION",
+    "candidate_count": 1,
+    "target": "复审 ORD05 在补齐 market-to-limit / VWAP 官方来源后是否可进入 formal reviewed/caveat_only。"
+  },
+  "hard_boundaries": {
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "trade_execution_advice_allowed": false,
+    "routing_advice_allowed": false,
+    "fee_optimization_advice_allowed": false,
+    "must_not_generate": [
+      "买卖点",
+      "仓位",
+      "杠杆",
+      "止损止盈",
+      "订单提交许可",
+      "路由建议",
+      "费用套利",
+      "自动撤单",
+      "自动改单"
+    ]
+  },
+  "audit_instructions": [
+    "必须搜索相关的专业网站、官方文档、交易所/协议资料、broker/venue API 文档、案例和数据，对 ORD05 补证包进行严格审计。",
+    "最高只能输出 accepted_for_reviewed_caveat_only、needs_more_evidence、rejected 或 blocked。",
+    "重点检查 CME FirmSoft 是否足以支撑 market-to-limit / Market Limit 示例，IBKR 是否足以支撑 VWAP 作为 broker-specific execution algo 示例。",
+    "即使通过，也只能 formal reviewed/caveat_only，不能 approved/default guidance/hard gate。"
+  ],
+  "required_output_schema": {
+    "audit_result_id": "string",
+    "auditor": "string",
+    "audited_at": "YYYY-MM-DD",
+    "package_id": "phase45_order_semantics_ord05_supplemental_reaudit_package_20260612",
+    "summary": {
+      "total": 1,
+      "accepted_for_reviewed_caveat_only": 0,
+      "needs_more_evidence": 0,
+      "rejected": 0,
+      "blocked": 0
+    },
+    "candidate_results": [
+      {
+        "candidate_id": "string",
+        "research_task_id": "P45-F-ORD05",
+        "decision": "accepted_for_reviewed_caveat_only | needs_more_evidence | rejected | blocked",
+        "confidence": "low | medium | high",
+        "reviewed_allowed": "boolean",
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "trade_execution_advice_allowed": false,
+        "reasons": [
+          "string"
+        ],
+        "required_followups": [
+          "string"
+        ],
+        "patch_notes": {
+          "source": [
+            "string"
+          ],
+          "content": [
+            "string"
+          ],
+          "boundary": [
+            "string"
+          ],
+          "conflict": [
+            "string"
+          ]
+        }
+      }
+    ]
+  },
+  "quality_gate": {
+    "gate_id": "phase45_order_semantics_ord05_supplemental_reaudit_gate",
+    "checked_at": "2026-06-12",
+    "package_id": "phase45_order_semantics_ord05_supplemental_reaudit_package_20260612",
+    "candidate_count": 1,
+    "gate_status": "pass",
+    "failures": [],
+    "warnings": [
+      "本包只复审 ORD05 是否可从 needs_more_evidence 升级为 accepted_for_reviewed_caveat_only。",
+      "不得创建 approved、default guidance、hard gate、订单提交许可、路由建议、费用优化或自动撤改单。"
+    ]
+  },
+  "candidate": {
+    "schema_version": "1.1.0-candidate",
+    "candidate_id": "cand_20260612_phase45_order_semantics_p45_f_ord05_001",
+    "research_task_id": "P45-F-ORD05",
+    "status": {
+      "review_status": "needs_more_evidence",
+      "ingestion_decision": "needs_more_evidence",
+      "decision_reason": "reviewed/caveat_only 准备审计未通过；已补 market-to-limit / VWAP 官方来源，等待单条补证复审。",
+      "created_at": "2026-06-12",
+      "updated_at": "2026-06-12"
+    },
+    "classification": {
+      "tree_node_id": "kt.live_execution.order_semantics",
+      "canonical_node_id": "kt.live_execution.order_semantics",
+      "tree_path": "CEK-TA / Trading Engineering / Live Execution / Order Semantics",
+      "related_nodes": [
+        "kt.replay_simulation.order_semantics",
+        "kt.live_execution.order_state_machine",
+        "kt.live_execution.trade_audit_clock_sync",
+        "kt.trading_engineering.live_execution.execution_tca",
+        "kt.risk_management.layered_risk_controls"
+      ],
+      "partition_id": "KB_06_LIVE_EXECUTION",
+      "domain": "live_trading",
+      "subdomain": "order_semantics",
+      "rule_type": "order_semantics_boundary_rule",
+      "claim_type": "venue_specific_order_type_caveat_rule",
+      "used_for": [
+        "trading_ai_project_design_audit",
+        "execution_adapter_contract_review",
+        "order_semantics_checklist",
+        "external_project_rag_retrieval"
+      ],
+      "classification_notes": "P45-F 只补订单类型、TIF、post-only/reduce-only、STP/SMP、venue-specific order behavior 和 maker/taker fee 边界；不生成买卖点、仓位、费用优化建议、路由建议、交易许可或 hard gate。"
+    },
+    "claim": {
+      "claim_id": "claim_p45_f_ord05",
+      "title": "交易所特有订单类型不得泛化为通用语义",
+      "statement": "交易所特有订单类型和修饰符不得被泛化为通用语义；MOO/MOC/LOC、auction-only、peg、market-with-protection、market-to-limit、iceberg、RFQ、TWAP/VWAP、post-only、reduce-only 等示例必须保留 exchange、product、session、rulebook、API version 和 adapter caveat。外接项目不得把某个交易所或 crypto venue 的订单行为泛化为所有市场。",
+      "normalized_claim": "phase45_order_semantics.exchange_specific_order_type_caveat.v1",
+      "evidence_summary": "CME explains futures order types such as market, limit, stop and GTC-style validity and warns participants to understand available order conditions.；Nasdaq order type and modifier guide documents TIF behavior such as market-hours IOC, system-hours IOC and order-type availability caveats.；Coinbase trading rules define limit, market, stop, TWAP, TIF, post-only, maker/taker and fee behavior with platform caveats.；Binance Futures order API documents order type, timeInForce, reduceOnly, selfTradePreventionMode and GTD goodTillDate behavior.；Kraken futures API documents limit, post-only, IOC, market, stop, take-profit, trailing-stop and FOK order types, plus reduceOnly behavior.",
+      "interpretation_notes": "本候选只定义 live execution adapter / venue order semantics 的审计边界，不输出交易动作、费用优化或风控阈值。",
+      "claim_strength": "candidate",
+      "performance_claim": false,
+      "audit_patch_notes": {
+        "source": [
+          "保留 Nasdaq Opening/Closing Cross、NYSE auctions、NYSE Pillar、CME definitions、Coinbase、Binance、Kraken。",
+          "补 CME FirmSoft Market Limit 或其他 market-to-limit 官方来源。",
+          "补 VWAP 官方来源，或删除该示例。"
+        ],
+        "content": [
+          "本条应定位为 anti-generalization caveat，不应变成特殊订单类型百科。",
+          "正式文本中只能列出已 source_ref 覆盖的示例。"
+        ],
+        "boundary": [
+          "不得生成通用订单行为规则。",
+          "不得生成路由建议。",
+          "不得生成订单提交许可。"
+        ],
+        "conflict": []
+      },
+      "reviewed_preparation_contract": {
+        "contract_path": "docs/contracts/phase45_order_semantics_runtime_contract.md",
+        "contract_sections": [
+          "order_semantics_identity",
+          "order_type_mapping",
+          "time_in_force_mapping",
+          "post_reduce_constraints",
+          "stp_smp_mapping",
+          "fee_evidence"
+        ]
+      }
+    },
+    "applicability": {
+      "market": "general_with_venue_product_session_and_api_version_caveats",
+      "asset": "general",
+      "timeframe": "order_entry_execution_adapter_and_audit_context",
+      "data_granularity": "order_intent_order_event_execution_report_fill_fee_and_reject_events",
+      "project_type": "trading_ai_support_layer",
+      "applies_when": [
+        "外接项目需要设计交易所 adapter、订单状态机、订单事件审计、模拟与实盘订单语义映射。",
+        "AI IDE 需要检查 order type、TIF、post-only、reduce-only、STP/SMP 或 maker/taker fee 是否被误写成通用规则。",
+        "需要把 order intent、venue accepted order、execution report、fill、reject、expire、fee 和 audit trace 分开建模。"
+      ],
+      "not_applicable_when": [
+        "用户要求具体买卖点、下单价格、仓位、杠杆、止损止盈、路由选择、费用套利或实盘执行建议。",
+        "需要真实 broker/venue 当前订单事实、账户事实、费率表或交易权限时，应由外接项目事实层和 Live Execution owner 提供。",
+        "需要确定某个订单是否应该提交、撤销、修改或强制 reduce 时，应由外接项目 deterministic final gate / Risk Management owner 决定。"
+      ],
+      "assumptions": [
+        "Order Type / TIF / Venue Semantics 是执行 adapter 和审计契约上下文，不是策略 alpha。",
+        "所有交易所、broker、crypto venue 和 FIX 来源必须保留 venue、product、session、API version 和 account-mode caveat。",
+        "候选通过外部审计前不能进入 formal reviewed 知识库。"
+      ],
+      "limitations": [
+        "FIX 只定义协议字段语义，不替代 venue/broker 事实层或 rulebook。",
+        "交易所和 crypto venue 文档只证明该 venue/product/API 的行为，不能泛化为全部市场。",
+        "本候选不包含任何项目私有订单参数、账号、费率、仓位或策略配置。"
+      ]
+    },
+    "source_refs": [
+      {
+        "source_title": "CME Group Futures Order Types",
+        "source_url": "https://www.cmegroup.com/education/courses/things-to-know-before-trading-cme-futures/futures-order-types",
+        "source_type": "official_exchange_doc",
+        "publisher": "CME Group",
+        "reliability": "high",
+        "score": 86,
+        "freshness": "time_sensitive",
+        "evidence_summary": "CME explains futures order types such as market, limit, stop and GTC-style validity and warns participants to understand available order conditions.",
+        "limitations": [
+          "CME education source; product-specific Globex behavior still depends on CME technical/rulebook references."
+        ],
+        "source_id": "src_001",
+        "accessed_at": "2026-06-12",
+        "version": null,
+        "relevance": "high",
+        "quoted_excerpt_allowed": false
+      },
+      {
+        "source_title": "Nasdaq Order Types and Modifiers",
+        "source_url": "https://www.nasdaqtrader.com/content/productsservices/trading/ordertypesg.pdf",
+        "source_type": "official_exchange_doc",
+        "publisher": "Nasdaq Trader",
+        "reliability": "high",
+        "score": 86,
+        "freshness": "time_sensitive",
+        "evidence_summary": "Nasdaq order type and modifier guide documents TIF behavior such as market-hours IOC, system-hours IOC and order-type availability caveats.",
+        "limitations": [
+          "Nasdaq equities context; not directly portable to futures, options, crypto or non-U.S. venues."
+        ],
+        "source_id": "src_002",
+        "accessed_at": "2026-06-12",
+        "version": null,
+        "relevance": "high",
+        "quoted_excerpt_allowed": false
+      },
+      {
+        "source_title": "Coinbase Markets Trading Rules",
+        "source_url": "https://www.coinbase.com/legal/trading_rules",
+        "source_type": "official_platform_doc",
+        "publisher": "Coinbase",
+        "reliability": "high",
+        "score": 86,
+        "freshness": "time_sensitive",
+        "evidence_summary": "Coinbase trading rules define limit, market, stop, TWAP, TIF, post-only, maker/taker and fee behavior with platform caveats.",
+        "limitations": [
+          "Coinbase market/legal context; rules may differ by Coinbase entity, product and jurisdiction."
+        ],
+        "source_id": "src_003",
+        "accessed_at": "2026-06-12",
+        "version": null,
+        "relevance": "high",
+        "quoted_excerpt_allowed": false
+      },
+      {
+        "source_title": "Binance USD-M Futures New Order API",
+        "source_url": "https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api",
+        "source_type": "official_platform_doc",
+        "publisher": "Binance Developers",
+        "reliability": "high",
+        "score": 84,
+        "freshness": "time_sensitive",
+        "evidence_summary": "Binance Futures order API documents order type, timeInForce, reduceOnly, selfTradePreventionMode and GTD goodTillDate behavior.",
+        "limitations": [
+          "Binance USD-M futures API context; fields and behavior may differ across spot, options, coin-margined futures and other venues."
+        ],
+        "source_id": "src_004",
+        "accessed_at": "2026-06-12",
+        "version": null,
+        "relevance": "high",
+        "quoted_excerpt_allowed": false
+      },
+      {
+        "source_title": "Kraken Futures Send Order API",
+        "source_url": "https://docs.kraken.com/api-reference/order-management/send-order",
+        "source_type": "official_platform_doc",
+        "publisher": "Kraken",
+        "reliability": "high",
+        "score": 84,
+        "freshness": "time_sensitive",
+        "evidence_summary": "Kraken futures API documents limit, post-only, IOC, market, stop, take-profit, trailing-stop and FOK order types, plus reduceOnly behavior.",
+        "limitations": [
+          "Kraken futures context; not a universal crypto venue or equity/futures exchange rule."
+        ],
+        "source_id": "src_005",
+        "accessed_at": "2026-06-12",
+        "version": null,
+        "relevance": "high",
+        "quoted_excerpt_allowed": false
+      },
+      {
+        "source_title": "Nasdaq Opening and Closing Crosses FAQ",
+        "source_url": "https://nasdaqtrader.com/content/productsservices/trading/crosses/openclose_faqs.pdf",
+        "source_type": "official_exchange_doc",
+        "publisher": "Nasdaq Trader",
+        "reliability": "high",
+        "score": 86,
+        "freshness": "time_sensitive",
+        "relevance": "high",
+        "evidence_summary": "Nasdaq opening/closing crosses FAQ documents MOO/MOC, LOO/LOC, imbalance-only and auction-specific behavior and cutoffs.",
+        "limitations": [
+          "Nasdaq equity auction context; not universal to all venues or assets."
+        ],
+        "source_id": "src_reviewed_prep_nasdaq_open_close",
+        "accessed_at": "2026-06-12",
+        "version": null,
+        "quoted_excerpt_allowed": false
+      },
+      {
+        "source_title": "NYSE Opening and Closing Auctions Fact Sheet",
+        "source_url": "https://www.nyse.com/publicdocs/nyse/markets/nyse/NYSE_Opening_and_Closing_Auctions_Fact_Sheet.pdf",
+        "source_type": "official_exchange_doc",
+        "publisher": "NYSE",
+        "reliability": "high",
+        "score": 86,
+        "freshness": "time_sensitive",
+        "relevance": "high",
+        "evidence_summary": "NYSE auction fact sheet documents MOC/LOC order-entry cutoff and closing auction behavior.",
+        "limitations": [
+          "NYSE-specific auction context; not a global auction rule."
+        ],
+        "source_id": "src_reviewed_prep_nyse_auctions",
+        "accessed_at": "2026-06-12",
+        "version": null,
+        "quoted_excerpt_allowed": false
+      },
+      {
+        "source_title": "NYSE Pillar Order Type Differences",
+        "source_url": "https://www.nyse.com/publicdocs/nyse/markets/nyse/Pillar_Differences.pdf",
+        "source_type": "official_exchange_doc",
+        "publisher": "NYSE",
+        "reliability": "high",
+        "score": 84,
+        "freshness": "time_sensitive",
+        "relevance": "medium_high",
+        "evidence_summary": "NYSE Pillar documentation describes peg-order and auction participation differences as venue-specific behavior.",
+        "limitations": [
+          "NYSE Pillar-specific; not a universal peg-order definition."
+        ],
+        "source_id": "src_reviewed_prep_nyse_pillar",
+        "accessed_at": "2026-06-12",
+        "version": null,
+        "quoted_excerpt_allowed": false
+      },
+      {
+        "source_title": "CME Group Rulebook Definitions",
+        "source_url": "https://www.cmegroup.com/rulebook/NYMEX/1/NYMEX-COMEX_Definitions.pdf",
+        "source_type": "official_exchange_doc",
+        "publisher": "CME Group",
+        "reliability": "high",
+        "score": 86,
+        "freshness": "time_sensitive",
+        "relevance": "high",
+        "evidence_summary": "CME definitions cover limit order, market-with-protection order and hidden quantity order semantics.",
+        "limitations": [
+          "CME/NYMEX/COMEX rulebook context; not a universal futures/crypto/equity definition."
+        ],
+        "source_id": "src_reviewed_prep_cme_definitions",
+        "accessed_at": "2026-06-12",
+        "version": null,
+        "quoted_excerpt_allowed": false
+      },
+      {
+        "source_title": "CME Group FirmSoft Order Type Definitions",
+        "source_url": "https://www.cmegroup.com/tools-information/webhelp/cmeone-firmsoft/Content/OrderTypeDefinitions.html",
+        "source_type": "official_exchange_doc",
+        "publisher": "CME Group",
+        "reliability": "high",
+        "score": 88,
+        "freshness": "time_sensitive",
+        "evidence_summary": "CME FirmSoft order type definitions list MKL as Market Limit and support treating Market Limit / market-to-limit as CME-specific order semantics.",
+        "limitations": [
+          "CME FirmSoft / CME context; not universal across venues, products, brokers, or crypto exchanges."
+        ],
+        "source_id": "src_ord05_supplement_cme_firmsoft_market_limit",
+        "accessed_at": "2026-06-12",
+        "version": null,
+        "relevance": "high",
+        "quoted_excerpt_allowed": false
+      },
+      {
+        "source_title": "IBKR Order Types, Algos and Tools",
+        "source_url": "https://www.interactivebrokers.com/en/trading/ordertypes.php",
+        "source_type": "official_broker_doc",
+        "publisher": "Interactive Brokers",
+        "reliability": "high",
+        "score": 88,
+        "freshness": "time_sensitive",
+        "evidence_summary": "IBKR documents VWAP Best-Efforts as an IB Algo order type available for specified instruments and time periods, supporting VWAP as broker-specific execution algorithm semantics.",
+        "limitations": [
+          "IBKR-specific order/algo offering; not a universal VWAP order type or strategy signal."
+        ],
+        "source_id": "src_ord05_supplement_ibkr_vwap_algo",
+        "accessed_at": "2026-06-12",
+        "version": null,
+        "relevance": "high",
+        "quoted_excerpt_allowed": false
+      }
+    ],
+    "source_quality": {
+      "overall_reliability": "high",
+      "score": 85.82,
+      "score_version": "phase45_source_scoring_v1",
+      "primary_source_count": 11,
+      "supporting_source_count": 0,
+      "low_reliability_source_count": 0,
+      "mandatory_downgrades": [],
+      "limitations": [
+        "正式 reviewed 前必须由外部审计确认 claim 没有超出来源可证明范围。",
+        "CME/Nasdaq/Coinbase/Binance/Kraken/IBKR 等来源必须保留 venue、product、account mode、session 和 API version caveat。",
+        "若后续使用内部 order_semantics schema，需要提供 contract extract 或 hash。"
+      ]
+    },
+    "conflict_audit": {
+      "conflict_status": "none",
+      "checked_against": [
+        "Phase 37 Live Execution order state machine formal reviewed knowledge",
+        "Phase 37 Replay / Simulation order semantics formal reviewed knowledge",
+        "Phase 45 Execution TCA formal reviewed knowledge",
+        "Phase 45 Audit Trail / Clock Sync formal reviewed knowledge",
+        "Phase 45 Layered Risk formal reviewed knowledge"
+      ],
+      "conflicts": [],
+      "resolution_summary": "未发现与现有 formal reviewed 知识的直接冲突；P45-F 只补 live adapter 和 venue-specific order behavior 边界，不接管 Replay fill model、Risk hard gate 或 Trade Analysis 复盘本体。",
+      "approval_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "trade_execution_advice_allowed": false
+    },
+    "llm_usage_policy": {
+      "allowed": [
+        "用于提醒 AI IDE 区分 order type、TIF、venue adapter、execution report、fill/reject/expire 和 fee evidence。",
+        "用于生成 order semantics checklist、adapter contract review、simulation/live mapping review 和 RAG 检索上下文。",
+        "用于检查外接项目是否把 post-only、reduce-only、STP/SMP、maker/taker fee 或 venue-specific order type 误写成通用交易规则。"
+      ],
+      "not_allowed": [
+        "不得生成买卖点、仓位、杠杆、止损止盈、费用套利、路由建议或实盘执行建议。",
+        "不得把候选知识当作 approved 或默认指导。",
+        "不得替外接项目启用 hard gate、拒单、撤单、改单、reduce-only 强制动作或路由策略。"
+      ]
+    },
+    "machine_gate": {
+      "default_guidance": "deny",
+      "reason": "candidate only; pending external strict audit; no reviewed/approved/default/hard gate.",
+      "requires_human_escalation": false,
+      "hidden_from_default_queue": true,
+      "visible_in_default_guidance_queue": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "trade_execution_advice_allowed": false
+    },
+    "review": {
+      "review_status": "candidate_ready",
+      "review_mode": "external_strict_audit_required",
+      "confidence": "medium_high",
+      "freshness": "mixed",
+      "reviewer": null,
+      "reviewed_at": null,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "trade_execution_advice_allowed": false,
+      "audit_log": [
+        {
+          "at": "2026-06-12",
+          "actor": "codex",
+          "action": "phase45_order_semantics_candidate_generated",
+          "reason": "Generated from Phase 45 P45-F task queue with FIX, exchange, venue and professional sources."
+        },
+        {
+          "at": "2026-06-12",
+          "actor": "codex",
+          "action": "phase45_order_semantics_ord05_needs_more_evidence_supplemented",
+          "reason": "supplemented CME FirmSoft Market Limit and IBKR VWAP official sources for re-audit",
+          "audit_result_id": "audit_phase45_order_semantics_reviewed_preparation_20260612",
+          "supplemental_reaudit_package_id": "phase45_order_semantics_ord05_supplemental_reaudit_package_20260612"
+        }
+      ],
+      "ai_audit": {
+        "audit_result_id": "audit_phase45_order_semantics_reviewed_preparation_20260612",
+        "package_id": "phase45_order_semantics_reviewed_preparation_audit_package_20260612",
+        "decision": "needs_more_evidence",
+        "confidence": "medium_high",
+        "reviewed_allowed": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "trade_execution_advice_allowed": false,
+        "reasons": [
+          "anti-generalization caveat 方向正确，但当前 statement 仍列出 market-to-limit、VWAP 等示例。",
+          "当前 reviewed-preparation 包内 source_refs 没有足够直接的逐项来源。",
+          "必须补 market-to-limit / Market Limit 和 VWAP 官方来源，或删除未 source_ref 支撑的示例。"
+        ],
+        "patch_notes": {
+          "source": [
+            "保留 Nasdaq Opening/Closing Cross、NYSE auctions、NYSE Pillar、CME definitions、Coinbase、Binance、Kraken。",
+            "补 CME FirmSoft Market Limit 或其他 market-to-limit 官方来源。",
+            "补 VWAP 官方来源，或删除该示例。"
+          ],
+          "content": [
+            "本条应定位为 anti-generalization caveat，不应变成特殊订单类型百科。",
+            "正式文本中只能列出已 source_ref 覆盖的示例。"
+          ],
+          "boundary": [
+            "不得生成通用订单行为规则。",
+            "不得生成路由建议。",
+            "不得生成订单提交许可。"
+          ],
+          "conflict": []
+        }
+      }
+    },
+    "workflow": {
+      "stage": "needs_more_evidence",
+      "queue_group": "needs_more_evidence",
+      "source_phase": "45",
+      "source_task_id": "CEK-TA-467",
+      "batch": "P45-F Order Type / TIF / Venue Semantics",
+      "formal_knowledge_id": null,
+      "formal_knowledge_path": null,
+      "allowed_next_decisions": [
+        "accepted_for_reviewed_caveat_only",
+        "needs_more_evidence",
+        "rejected",
+        "blocked"
+      ],
+      "forbidden_next_decisions": [
+        "approved",
+        "default_guidance",
+        "hard_gate"
+      ],
+      "ai_audit_result_id": "audit_phase45_order_semantics_candidate_20260612_external_strict",
+      "reviewed_preparation_package_id": "phase45_order_semantics_reviewed_preparation_audit_package_20260612",
+      "formal_review_status": null,
+      "supplemental_reaudit_package_id": "phase45_order_semantics_ord05_supplemental_reaudit_package_20260612",
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "trade_execution_advice_allowed": false,
+      "next_action": "external_ai_or_human_inline_contract_reaudit"
+    },
+    "contribution": {
+      "source": "phase45_professional_research",
+      "private_data_removed": true,
+      "project_specific_details_removed": true,
+      "notes": "Generated for external strict audit; no project account, key, order, fee tier, threshold, position, or private strategy data included."
+    }
+  },
+  "supplemental_research_path": "docs/research/phase45_order_semantics_ord05_supplemental_research.md"
+}

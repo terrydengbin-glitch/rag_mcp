@@ -1,0 +1,413 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_ai_engineering.rag.no_hit_requires_neutral_or_review.v1",
+  "title": "如果任务要求检索 CEK-TA，但没有命中、来源覆盖不足，或没有符合 machine_gate 的可用知识，系统必须",
+  "metadata": {
+    "partition_id": "KB_AI_ENGINEERING",
+    "domain": "ai_engineering",
+    "subdomain": "rag_retrieval_governance",
+    "rule_type": "decision_rule",
+    "content_type": "json",
+    "project_binding": "none",
+    "tree_node_id": "kt.rag_engineering",
+    "tree_path": "CEK-TA / AI Engineering",
+    "canonical_node_id": "kt.rag_engineering",
+    "canonical_tree_path": "CEK-TA / AI Engineering",
+    "risk_level": "medium",
+    "used_for": [
+      "llm_training",
+      "trading_gating_scoring",
+      "rag_engineering",
+      "mcp",
+      "vue_audit_ui"
+    ],
+    "source_candidate_id": "cand_20260609_ai_engineering_rag_no_hit_requires_neutral_or_review_v1_001",
+    "research_task_id": "RIT-P36-C-26",
+    "claim_type": "rag_governance_rule",
+    "classification_notes": "Phase 36 AI Engineering reviewed knowledge; UI tree and canonical node are inherited from candidate classification. Trading rule bodies must remain in Trading Engineering."
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "general",
+    "data_granularity": "general",
+    "project_type": "trading_llm_assistant",
+    "applies_when": [
+      "外接项目的 scoring/gating、dataset review、incident review 或 SearchLab 查询标记为 retrieval_required。",
+      "CEK-TA 检索无命中、只有低质量命中、命中存在冲突、命中未通过 machine_gate，或 MCP/SearchLab 检索失败。"
+    ],
+    "not_applicable_when": [
+      "任务不依赖 CEK-TA 知识，且已有确定性规则或人工流程完成判断。",
+      "用户要求具体交易是否允许、是否下单、仓位、止损止盈或策略参数，应由 Trading Engineering 或 deterministic gate 决定。"
+    ]
+  },
+  "content": {
+    "statement": "如果任务要求检索 CEK-TA，但没有命中、来源覆盖不足，或没有符合 machine_gate 的可用知识，系统必须返回 neutral_score、abstain、needs_review 或 block_default_guidance，不得编造默认指导。",
+    "rationale": "本候选仅沉淀 AI Engineering 中训练、评估、RAG/MCP、安全、部署或治理规则；不定义 K 线信号、具体交易策略、订单执行规则或账户参数。 审计结论：补证后可以升级为 accepted_for_draft。rewritten statement 已与 candidate_id / normalized_claim 对齐，明确规定：如果任务要求检索 CEK-TA，但没有命中、来源覆盖不足，或没有符合 machine_gate 的可用知识，系统必须返回 neutral_score、abstain、needs_review 或 block_default_guidance，不得编造默认指导。OpenAI File Search 支持 RAG 检索和来源引用；Sufficient Context 研究直接支持 insufficient context 下需要 abstain / guided abstention；OWASP 支持把 retrieved content / tool output 当作不可信输入处理；NIST AI RMF 支持风险治理。该条可以进入 draft，但正式知识中应说明 fallback 枚举是 CEK-TA 内部 safe-default policy，不是外部来源逐字要求。",
+    "procedure": [
+      "确认项目事实匹配 applies_when，且没有命中 not_applicable_when。",
+      "按 source_patch_notes 检查来源是否足够支撑 statement。",
+      "按 content_patch_notes 补齐正式实现、schema、字段和 checklist。",
+      "按 boundary_patch_notes 确认没有把交易规则本体、项目私有参数或实盘执行规则写入 AI Engineering。",
+      "保留 required_followups，后续由来源增强或治理任务继续关闭。"
+    ],
+    "examples": [],
+    "anti_patterns": [
+      "把 reviewed 知识当作 approved 默认指导。",
+      "把 AI Engineering 规则扩写成具体交易阈值、仓位、买卖点或执行参数。",
+      "忽略审计结果中的来源限制、适用范围和后续补强要求。"
+    ],
+    "validation": [
+      "source_evidence 至少 2 条，且没有 low-only 来源。",
+      "conflict_status 为 none 或 resolved。",
+      "review_status 为 reviewed 时 machine_gate 必须是 caveat_only。",
+      "MCP/SearchLab 默认指导不得把本条当作 approved 返回。"
+    ],
+    "risk_notes": [
+      "本条仍是 candidate，需要外部 AI/人工审计确认来源充分性、适用边界和是否需要拆分。",
+      "AI Engineering 只定义 RAG no-hit、source coverage、machine_gate status、fallback_action 和 audit UI 字段。",
+      "交易是否继续评估、是否实盘允许、是否触发 deterministic gate 或人工复核，应由 Trading Engineering / deterministic final gate / human review 决定。",
+      "不得根据 RAG no-hit 自动生成买卖建议、仓位、止损止盈、策略阈值或订单动作。",
+      "不得把项目私有事实、账户、策略规则或订单上下文写入通用 RAG fallback 知识项。",
+      "与 rag.no_source_or_conflict_blocks_default_guidance 重叠但不等价：本条处理 no-hit / insufficient-context fallback，后者处理无来源或来源冲突时禁止默认指导。",
+      "与 rag.approved_machine_gate_allow_only_default_guidance 是父子关系：父项规定默认指导准入条件，本条规定无可用知识时的 safe fallback。",
+      "与 deployment.llm_timeout_or_mcp_failure_fallback_required 互链，特别是 RAG no-hit、source conflict、schema validation failure 和 MCP/search failure 场景。",
+      "未发现需要 rejected 的直接冲突；accepted_for_draft 仍不等于 approved。",
+      "补 rag_no_hit_fallback_policy.md。",
+      "补 fallback_action_enum.yaml：neutral_score、abstain、needs_review、block_default_guidance。",
+      "补 source_coverage_status enum：no_hit、insufficient_coverage、machine_gate_failed、source_conflict、retrieval_failed、eligible_source_available。",
+      "补 eval cases：no CEK-TA hit、only low-quality hit、machine_gate failed、conflicting sources、retrieval timeout。",
+      "补 Vue audit UI 展示：retrieval_hit_count、eligible_hit_count、source_coverage_status、fallback_action、review_status。"
+    ],
+    "citation_notes": "OpenAI File Search 支持 RAG 检索流程；OWASP 提醒检索内容和工具输出是不可信输入；Sufficient Context 研究说明上下文不足会导致 RAG 错误并需要 abstain；Contextual no-retrieval 文档支持显式定义无检索结果时的行为。",
+    "audit_patch_notes": {
+      "source_patch_notes": [
+        "保留 OpenAI File Search 作为 RAG / retrieval 工程来源，支持知识库检索、vector store 和 file citations。",
+        "保留 OWASP Prompt Injection Prevention Cheat Sheet，支持 retrieved content、tool output 和 agent workflow 的不可信输入处理。",
+        "保留 NIST AI RMF 作为 AI 风险治理 supporting source。",
+        "将 Sufficient Context: A New Lens on Retrieval Augmented Generation Systems 作为 no-hit / insufficient-context 的主要直接来源，用于支持上下文不足时不应强答、应允许 abstain。",
+        "Contextual AI no-retrieval system prompt 可作为中等可靠度补充来源，只说明供应商层面可配置 no-retrieval 行为，不应作为 CEK-TA fallback 枚举的主来源。",
+        "正式 draft 仍应补 CEK-TA 内部 rag_no_hit_fallback_policy.md，作为 fallback_action 枚举和 UI 行为的主契约。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议保留补充包写法：如果任务要求检索 CEK-TA，但没有命中、来源覆盖不足，或没有符合 machine_gate 的可用知识，系统必须返回 neutral_score、abstain、needs_review 或 block_default_guidance，不得编造默认指导。",
+        "建议字段：retrieval_required、retrieval_run_id、retrieval_hit_count、eligible_hit_count、source_coverage_status、machine_gate_status、no_hit_reason、fallback_action、review_queue_id、audit_event_id。",
+        "fallback_action 建议枚举：neutral_score、abstain、needs_review、block_default_guidance。",
+        "明确 no-hit 不是 reject 交易，也不是 block order；它只表示 AI guidance 证据不足，不能生成默认交易指导。",
+        "如果 no-hit 同时伴随 retrieval timeout、MCP failure 或 source conflict，应互链 deployment.llm_timeout_or_mcp_failure_fallback_required 和 rag.no_source_or_conflict_blocks_default_guidance。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 只定义 RAG no-hit、source coverage、machine_gate status、fallback_action 和 audit UI 字段。",
+        "交易是否继续评估、是否实盘允许、是否触发 deterministic gate 或人工复核，应由 Trading Engineering / deterministic final gate / human review 决定。",
+        "不得根据 RAG no-hit 自动生成买卖建议、仓位、止损止盈、策略阈值或订单动作。",
+        "不得把项目私有事实、账户、策略规则或订单上下文写入通用 RAG fallback 知识项。"
+      ],
+      "conflict_patch_notes": [
+        "与 rag.no_source_or_conflict_blocks_default_guidance 重叠但不等价：本条处理 no-hit / insufficient-context fallback，后者处理无来源或来源冲突时禁止默认指导。",
+        "与 rag.approved_machine_gate_allow_only_default_guidance 是父子关系：父项规定默认指导准入条件，本条规定无可用知识时的 safe fallback。",
+        "与 deployment.llm_timeout_or_mcp_failure_fallback_required 互链，特别是 RAG no-hit、source conflict、schema validation failure 和 MCP/search failure 场景。",
+        "未发现需要 rejected 的直接冲突；accepted_for_draft 仍不等于 approved。"
+      ],
+      "required_followups": [
+        "补 rag_no_hit_fallback_policy.md。",
+        "补 fallback_action_enum.yaml：neutral_score、abstain、needs_review、block_default_guidance。",
+        "补 source_coverage_status enum：no_hit、insufficient_coverage、machine_gate_failed、source_conflict、retrieval_failed、eligible_source_available。",
+        "补 eval cases：no CEK-TA hit、only low-quality hit、machine_gate failed、conflicting sources、retrieval timeout。",
+        "补 Vue audit UI 展示：retrieval_hit_count、eligible_hit_count、source_coverage_status、fallback_action、review_status。"
+      ]
+    }
+  },
+  "assumptions": [
+    "外接项目提供项目事实、私有交易数据和策略上下文；CEK-TA 只沉淀可复用专业规则。",
+    "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+  ],
+  "source_evidence": [
+    {
+      "source_id": "src_openai_file_search",
+      "source_title": "File search | OpenAI API",
+      "source_url": "https://platform.openai.com/docs/guides/tools-file-search?lang=javascript",
+      "source_type": "official_doc",
+      "publisher": "OpenAI",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "OpenAI file search documentation supports retrieval with annotations and controlled result selection for RAG workflows.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_owasp_prompt",
+      "source_title": "LLM Prompt Injection Prevention Cheat Sheet",
+      "source_url": "https://cheatsheetseries.owasp.org/cheatsheets/LLM_Prompt_Injection_Prevention_Cheat_Sheet.html",
+      "source_type": "standard_or_risk_framework",
+      "publisher": "OWASP",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "OWASP documents prompt injection risks and mitigations for user input, retrieved content, tool output, and agent workflows.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_nist",
+      "source_title": "AI Risk Management Framework | NIST",
+      "source_url": "https://www.nist.gov/itl/ai-risk-management-framework",
+      "source_type": "standard_or_risk_framework",
+      "publisher": "NIST",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "NIST AI RMF supports governance, mapping, measurement, and management of AI risks across design, deployment, and monitoring.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_sufficient_context_rag_2024",
+      "source_title": "Sufficient Context: A New Lens on Retrieval Augmented Generation Systems",
+      "source_url": "https://arxiv.org/abs/2411.06037",
+      "source_type": "paper",
+      "publisher": "arXiv / ICLR",
+      "published_at": "2024-11-09",
+      "accessed_at": "2026-06-09",
+      "version": "arXiv:2411.06037",
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "该论文指出 RAG 错误可来自检索上下文不足，并讨论在上下文不足时 abstain 的必要性，可直接支撑 no-hit/insufficient-context 不应编造答案。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_contextual_no_retrieval_system_prompt",
+      "source_title": "No Retrieval System Prompt - Contextual AI Documentation",
+      "source_url": "https://docs.contextual.ai/reference/no-retrieval-system-prompt",
+      "source_type": "official_doc",
+      "publisher": "Contextual AI",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "medium",
+      "relevance": "medium",
+      "evidence_summary": "该文档定义检索、重排和过滤后没有识别到相关知识时的 agent 行为，支撑 no-hit fallback 需要显式配置。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_occ_fed_fdic_revised_model_risk_2026",
+      "source_title": "Model Risk Management: Revised Guidance",
+      "source_url": "https://occ.gov/news-issuances/bulletins/2026/bulletin-2026-13.html",
+      "source_type": "standard_or_risk_framework",
+      "publisher": "OCC / Federal Reserve / FDIC",
+      "published_at": "2026-04-17",
+      "accessed_at": "2026-06-09",
+      "version": "OCC Bulletin 2026-13 / SR 26-2",
+      "reliability": "high",
+      "relevance": "medium",
+      "evidence_summary": "2026 年跨机构模型风险管理修订指南支持模型治理、验证、变更控制和风险分层；同时需注明 generative AI 和 agentic AI 不在其直接范围内，只能作为模型风险治理类比来源。",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 87,
+    "score_version": "1.0.0",
+    "primary_source_count": 2,
+    "supporting_source_count": 4,
+    "low_reliability_source_count": 0,
+    "limitations": [
+      "本条为 reviewed 知识，来源和审计补丁已记录；默认指导仍需后续人工治理升级 approved。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "docs/contracts/ai_engineering_gating_scoring_contract.md",
+      "docs/contracts/ai_engineering_knowledge_item_policy.md",
+      "docs/tasks/phase36_ai_engineering_gating_scoring_knowledge.md",
+      "kb_ai_engineering.deployment.llm_timeout_or_mcp_failure_fallback_required.v1",
+      "kb_ai_engineering.rag.no_source_or_conflict_blocks_default_guidance.v1"
+    ],
+    "conflicts": [],
+    "resolution_summary": "未发现与当前 CEK-TA formal knowledge 的直接冲突；候选不会进入默认指导。",
+    "default_recommendation": "caveat_only_until_approved"
+  },
+  "review": {
+    "confidence": "medium",
+    "freshness": "time_sensitive",
+    "review_status": "reviewed",
+    "reviewer": "codex",
+    "reviewed_at": "2026-06-09",
+    "created_at": "2026-06-09",
+    "updated_at": "2026-06-09",
+    "open_questions": [
+      "二审确认 no-hit fallback 枚举 neutral_score、abstain、needs_review、block_default_guidance 是否足够。",
+      "确认 Contextual no-retrieval 文档是否只作为补充来源，而 CEK-TA 内部 fallback policy 作为主契约。",
+      "补 rag_no_hit_fallback_policy.md。",
+      "补 fallback_action_enum.yaml：neutral_score、abstain、needs_review、block_default_guidance。",
+      "补 source_coverage_status enum：no_hit、insufficient_coverage、machine_gate_failed、source_conflict、retrieval_failed、eligible_source_available。",
+      "补 eval cases：no CEK-TA hit、only low-quality hit、machine_gate failed、conflicting sources、retrieval timeout。",
+      "补 Vue audit UI 展示：retrieval_hit_count、eligible_hit_count、source_coverage_status、fallback_action、review_status。"
+    ],
+    "decision_log": [
+      {
+        "at": "2026-06-09",
+        "actor": "external_ai",
+        "decision": "accepted_for_draft",
+        "reason": "补证后可以升级为 accepted_for_draft。rewritten statement 已与 candidate_id / normalized_claim 对齐，明确规定：如果任务要求检索 CEK-TA，但没有命中、来源覆盖不足，或没有符合 machine_gate 的可用知识，系统必须返回 neutral_score、abstain、needs_review 或 block_default_guidance，不得编造默认指导。OpenAI File Search 支持 RAG 检索和来源引用；Sufficient Context 研究直接支持 insufficient context 下需要 abstain / guided abstention；OWASP 支持把 retrieved content / tool output 当作不可信输入处理；NIST AI RMF 支持风险治理。该条可以进入 draft，但正式知识中应说明 fallback 枚举是 CEK-TA 内部 safe-default policy，不是外部来源逐字要求。",
+        "audit_result_id": "audit_result_phase36_batch07_rag_parameter_risk_ledger_supplemental_reaudit_20260609_gpt55_pro_strict_sources"
+      },
+      {
+        "at": "2026-06-09",
+        "actor": "codex",
+        "decision": "converted_to_reviewed",
+        "reason": "按 Phase 36 批量审计结果优化候选并转为 formal reviewed；未升级 approved。",
+        "audit_result_id": "audit_result_phase36_batch07_rag_parameter_risk_ledger_supplemental_reaudit_20260609_gpt55_pro_strict_sources"
+      }
+    ],
+    "approval_status": "not_requested",
+    "default_guidance_allowed": false,
+    "source_candidate_id": "cand_20260609_ai_engineering_rag_no_hit_requires_neutral_or_review_v1_001",
+    "ai_audit_result_id": "audit_result_phase36_batch07_rag_parameter_risk_ledger_supplemental_reaudit_20260609_gpt55_pro_strict_sources",
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase36_batch07_rag_parameter_risk_ledger_supplemental_reaudit_20260609_gpt55_pro_strict_sources",
+      "source_package_id": "phase36_batch07_rag_parameter_risk_ledger_supplemental_audit_package_20260609",
+      "decision": "accepted_for_draft",
+      "reason": "补证后可以升级为 accepted_for_draft。rewritten statement 已与 candidate_id / normalized_claim 对齐，明确规定：如果任务要求检索 CEK-TA，但没有命中、来源覆盖不足，或没有符合 machine_gate 的可用知识，系统必须返回 neutral_score、abstain、needs_review 或 block_default_guidance，不得编造默认指导。OpenAI File Search 支持 RAG 检索和来源引用；Sufficient Context 研究直接支持 insufficient context 下需要 abstain / guided abstention；OWASP 支持把 retrieved content / tool output 当作不可信输入处理；NIST AI RMF 支持风险治理。该条可以进入 draft，但正式知识中应说明 fallback 枚举是 CEK-TA 内部 safe-default policy，不是外部来源逐字要求。",
+      "source_patch_notes": [
+        "保留 OpenAI File Search 作为 RAG / retrieval 工程来源，支持知识库检索、vector store 和 file citations。",
+        "保留 OWASP Prompt Injection Prevention Cheat Sheet，支持 retrieved content、tool output 和 agent workflow 的不可信输入处理。",
+        "保留 NIST AI RMF 作为 AI 风险治理 supporting source。",
+        "将 Sufficient Context: A New Lens on Retrieval Augmented Generation Systems 作为 no-hit / insufficient-context 的主要直接来源，用于支持上下文不足时不应强答、应允许 abstain。",
+        "Contextual AI no-retrieval system prompt 可作为中等可靠度补充来源，只说明供应商层面可配置 no-retrieval 行为，不应作为 CEK-TA fallback 枚举的主来源。",
+        "正式 draft 仍应补 CEK-TA 内部 rag_no_hit_fallback_policy.md，作为 fallback_action 枚举和 UI 行为的主契约。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议保留补充包写法：如果任务要求检索 CEK-TA，但没有命中、来源覆盖不足，或没有符合 machine_gate 的可用知识，系统必须返回 neutral_score、abstain、needs_review 或 block_default_guidance，不得编造默认指导。",
+        "建议字段：retrieval_required、retrieval_run_id、retrieval_hit_count、eligible_hit_count、source_coverage_status、machine_gate_status、no_hit_reason、fallback_action、review_queue_id、audit_event_id。",
+        "fallback_action 建议枚举：neutral_score、abstain、needs_review、block_default_guidance。",
+        "明确 no-hit 不是 reject 交易，也不是 block order；它只表示 AI guidance 证据不足，不能生成默认交易指导。",
+        "如果 no-hit 同时伴随 retrieval timeout、MCP failure 或 source conflict，应互链 deployment.llm_timeout_or_mcp_failure_fallback_required 和 rag.no_source_or_conflict_blocks_default_guidance。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 只定义 RAG no-hit、source coverage、machine_gate status、fallback_action 和 audit UI 字段。",
+        "交易是否继续评估、是否实盘允许、是否触发 deterministic gate 或人工复核，应由 Trading Engineering / deterministic final gate / human review 决定。",
+        "不得根据 RAG no-hit 自动生成买卖建议、仓位、止损止盈、策略阈值或订单动作。",
+        "不得把项目私有事实、账户、策略规则或订单上下文写入通用 RAG fallback 知识项。"
+      ],
+      "conflict_patch_notes": [
+        "与 rag.no_source_or_conflict_blocks_default_guidance 重叠但不等价：本条处理 no-hit / insufficient-context fallback，后者处理无来源或来源冲突时禁止默认指导。",
+        "与 rag.approved_machine_gate_allow_only_default_guidance 是父子关系：父项规定默认指导准入条件，本条规定无可用知识时的 safe fallback。",
+        "与 deployment.llm_timeout_or_mcp_failure_fallback_required 互链，特别是 RAG no-hit、source conflict、schema validation failure 和 MCP/search failure 场景。",
+        "未发现需要 rejected 的直接冲突；accepted_for_draft 仍不等于 approved。"
+      ],
+      "required_followups": [
+        "补 rag_no_hit_fallback_policy.md。",
+        "补 fallback_action_enum.yaml：neutral_score、abstain、needs_review、block_default_guidance。",
+        "补 source_coverage_status enum：no_hit、insufficient_coverage、machine_gate_failed、source_conflict、retrieval_failed、eligible_source_available。",
+        "补 eval cases：no CEK-TA hit、only low-quality hit、machine_gate failed、conflicting sources、retrieval timeout。",
+        "补 Vue audit UI 展示：retrieval_hit_count、eligible_hit_count、source_coverage_status、fallback_action、review_status。"
+      ]
+    },
+    "approved_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "contribution": {
+    "contribution_id": null,
+    "source_project": null,
+    "sanitization_status": "not_applicable",
+    "private_data_removed": true,
+    "generic_mapping_notes": "Phase 36 public-source AI Engineering candidate; no project-private trading facts included."
+  },
+  "copyright": {
+    "stores_full_text": false,
+    "stores_long_quote": false,
+    "summary_only": true,
+    "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+    "reuse_risk": "low"
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于审计 AI Engineering、LLM 训练、RAG/MCP、部署、安全或治理链路。",
+      "用于提醒外接项目补齐来源、适用边界、冲突状态、审计记录和人工审批。",
+      "用于 reviewed/audit 模式下带 caveat 引用。"
+    ],
+    "not_allowed": [
+      "不得生成买卖点、仓位、杠杆、止损止盈或实盘执行指令。",
+      "不得覆盖确定性风控、交易执行系统或人工审批。",
+      "不得作为 approved/default guidance 直接返回。"
+    ],
+    "required_context": [
+      "project_type",
+      "task_type",
+      "mode",
+      "strategy_version",
+      "data_boundary",
+      "review_status"
+    ],
+    "fallback_behavior": "cite_with_caveat"
+  },
+  "machine_gate": {
+    "default_guidance": "caveat_only",
+    "reason": "reviewed only; accepted_for_draft is not approved; default guidance requires later human governance approval.",
+    "requires_human_escalation": true,
+    "blocking_reasons": [
+      "not_approved",
+      "phase36_batch_reviewed_only"
+    ],
+    "checked_at": "2026-06-09",
+    "gate_version": "1.0.0",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "recommended_extra_sources": [
+    {
+      "title": "保留 OpenAI File Search 作为 RAG / retrieval 工程来源，支持知识库检索、vector store 和 file citations。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_1"
+    },
+    {
+      "title": "保留 OWASP Prompt Injection Prevention Cheat Sheet，支持 retrieved content、tool output 和 agent workflow 的不可信输入处理。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_2"
+    },
+    {
+      "title": "保留 NIST AI RMF 作为 AI 风险治理 supporting source。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_3"
+    },
+    {
+      "title": "将 Sufficient Context: A New Lens on Retrieval Augmented Generation Systems 作为 no-hit / insufficient-context 的主要直接来源，用于支持上下文不足时不应强答、应允许 abstain。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_4"
+    },
+    {
+      "title": "Contextual AI no-retrieval system prompt 可作为中等可靠度补充来源，只说明供应商层面可配置 no-retrieval 行为，不应作为 CEK-TA fallback 枚举的主来源。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_5"
+    },
+    {
+      "title": "正式 draft 仍应补 CEK-TA 内部 rag_no_hit_fallback_policy.md，作为 fallback_action 枚举和 UI 行为的主契约。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_6"
+    }
+  ]
+}

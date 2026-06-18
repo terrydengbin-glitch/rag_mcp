@@ -1,0 +1,195 @@
+{
+  "audit_package_id": "phase43_external_project_ai_memory_scope_for_audit_20260611_patch_v2",
+  "phase": "Phase 43",
+  "title": "External Project AI Memory Layer",
+  "created_at": "2026-06-11",
+  "audit_goal": "请审计 Phase 43 patch 后范围是否可进入候选知识采集：AI Engineering 下 External Project AI Memory Layer 分支、10 个 L3 节点、29 条知识点、MemoryItem schema、Project Memory MCP/API、retention/privacy、write gate、retrieval budget、安全治理和 adapter 选型。",
+  "previous_audit_decision": "accept_with_patch",
+  "patch_summary": [
+    "新增 L3: memory_mcp_api_contract",
+    "新增 L3: memory_retention_privacy",
+    "P43-P0E-004 memory poisoning / prompt injection 上调为 P0",
+    "P43-P0E-005 rollback / integrity 上调为 P0",
+    "P43-P1-003 memory quality regression 上调为 P0E",
+    "拆分 PostgreSQL JSONB canonical store 与 pgvector optional semantic index",
+    "新增 Project Memory MCP/API minimal permission contract",
+    "新增 retention / deletion / export policy",
+    "新增 memory conflict resolution contract",
+    "新增 adapter portability test",
+    "P43-P0-013 增强 prompt_injection_scan / memory_poisoning_scan / untrusted_input flag"
+  ],
+  "hard_boundaries": {
+    "do_not_store_external_project_private_memory": true,
+    "do_not_create_real_database_in_cek_ta": true,
+    "do_not_bind_single_memory_vendor": true,
+    "do_not_auto_write_all_chat_to_long_term_memory": true,
+    "ai_can_only_propose_memory": true,
+    "active_memory_requires_controlled_review": true,
+    "do_not_treat_project_memory_as_cek_ta_professional_knowledge": true,
+    "do_not_use_memory_as_final_gate_or_trade_execution": true,
+    "candidate_is_not_formal_knowledge": true,
+    "reviewed_is_not_approved": true,
+    "approved_allowed_in_this_scope_audit": false,
+    "default_guidance_allowed_in_this_scope_audit": false,
+    "hard_gate_allowed_in_this_scope_audit": false
+  },
+  "proposed_l2_node": {
+    "node_id": "kt.ai_engineering.external_project_memory",
+    "parent_id": "kt.ai_engineering",
+    "partition_id": "KB_AI_27_PROJECT_MEMORY",
+    "domain": "ai_governance",
+    "subdomain": "external_project_memory",
+    "title": "External Project AI Memory Layer",
+    "summary": "Project memory contracts, memory lifecycle, write gates, retrieval budgets, security governance, and adapter selection for external AI projects using CEK-TA."
+  },
+  "proposed_l3_nodes": [
+    {
+      "node_id": "kt.ai_engineering.external_project_memory.memory_boundary",
+      "title": "Memory Boundary",
+      "purpose": "区分 CEK-TA 专业知识、外接项目记忆、私有项目事实和临时上下文。"
+    },
+    {
+      "node_id": "kt.ai_engineering.external_project_memory.memory_mcp_api_contract",
+      "title": "Memory MCP API Contract",
+      "purpose": "定义 Project Memory MCP/API 最小权限工具集、读写边界、错误结构和审计事件。"
+    },
+    {
+      "node_id": "kt.ai_engineering.external_project_memory.memory_schema_lifecycle",
+      "title": "Memory Schema Lifecycle",
+      "purpose": "定义 MemoryItem、memory_type、状态机、supersede、deprecated 和 review。"
+    },
+    {
+      "node_id": "kt.ai_engineering.external_project_memory.memory_event_log",
+      "title": "Memory Event Log",
+      "purpose": "定义 append-only event log、source_event_id、trace_id、source_hash 和审计追踪。"
+    },
+    {
+      "node_id": "kt.ai_engineering.external_project_memory.memory_write_gate",
+      "title": "Memory Write Gate",
+      "purpose": "定义 AI propose only、来源检查、脱敏、冲突检查、投毒防护和写入审批。"
+    },
+    {
+      "node_id": "kt.ai_engineering.external_project_memory.memory_retrieval_context",
+      "title": "Memory Retrieval Context",
+      "purpose": "定义 project_id、visibility、status、top-k、token budget 和默认注入范围。"
+    },
+    {
+      "node_id": "kt.ai_engineering.external_project_memory.memory_security_governance",
+      "title": "Memory Security Governance",
+      "purpose": "定义 prompt injection、memory poisoning、secret scan、rollback 和完整性校验。"
+    },
+    {
+      "node_id": "kt.ai_engineering.external_project_memory.memory_retention_privacy",
+      "title": "Memory Retention Privacy",
+      "purpose": "定义 retention、deletion、export、privacy minimization、tombstone 和生命周期证据。"
+    },
+    {
+      "node_id": "kt.ai_engineering.external_project_memory.memory_adapter_selection",
+      "title": "Memory Adapter Selection",
+      "purpose": "定义 PostgreSQL JSONB、pgvector、LangGraph、Letta、Mem0、Zep/Graphiti 的 adapter 边界。"
+    },
+    {
+      "node_id": "kt.ai_engineering.external_project_memory.memory_evaluation_regression",
+      "title": "Memory Evaluation Regression",
+      "purpose": "定义 retrieval regression、stale memory、permission、poisoning 和 rollback 测试。"
+    }
+  ],
+  "knowledge_point_count": {
+    "p0_core": 22,
+    "p0_extended": 4,
+    "p1": 3,
+    "total": 29
+  },
+  "memory_type_policy": {
+    "allowed_memory_types": [
+      "goal",
+      "task",
+      "decision",
+      "artifact",
+      "lesson",
+      "boundary"
+    ],
+    "not_memory_item": {
+      "process": "进入 append-only memory_event_log，不作为长期 MemoryItem。",
+      "future_plan": "并入 task，用 todo / blocked / deferred 表示状态。",
+      "error": "并入 lesson，记录 error_cause / fix / prevention。",
+      "audit_history": "默认不注入上下文，只能显式请求。"
+    }
+  },
+  "recommended_storage": {
+    "canonical_store": "PostgreSQL JSONB",
+    "semantic_index": "pgvector optional",
+    "event_log": "append-only memory_events",
+    "relation_table": "memory_links",
+    "notes": "canonical store 与 vector index 必须分离；vector hit 不是事实源。"
+  },
+  "adapter_policy": {
+    "allowed_as_adapter": [
+      "LangGraph",
+      "Letta",
+      "Mem0",
+      "Zep/Graphiti",
+      "custom Project Memory MCP"
+    ],
+    "not_allowed": [
+      "把第三方 memory engine 作为 CEK-TA 核心契约",
+      "把 vendor 内部状态直接当作 CEK-TA formal knowledge",
+      "绕过本地 write gate 和 retrieval policy"
+    ]
+  },
+  "knowledge_points": [
+    {"topic_id": "P43-P0-001", "priority": "P0", "title": "RAG Knowledge 与 Project Memory 必须分离", "canonical_node_id": "kt.ai_engineering.external_project_memory.memory_boundary", "claim_type": "boundary_rule"},
+    {"topic_id": "P43-P0-002", "priority": "P0", "title": "Project Memory 不能污染 CEK-TA 通用专业知识库", "canonical_node_id": "kt.ai_engineering.external_project_memory.memory_boundary", "claim_type": "governance_rule"},
+    {"topic_id": "P43-P0-003", "priority": "P0", "title": "CEK-TA 只定义 Memory Contract，不保存外接项目私有记忆", "canonical_node_id": "kt.ai_engineering.external_project_memory.memory_boundary", "claim_type": "ownership_boundary"},
+    {"topic_id": "P43-P0-004", "priority": "P0", "title": "外接 AI IDE 执行任务时应同时查询 CEK-TA MCP 与 Project Memory MCP", "canonical_node_id": "kt.ai_engineering.external_project_memory.memory_boundary", "claim_type": "integration_pattern"},
+    {"topic_id": "P43-P0-005", "priority": "P0", "title": "第一版 MemoryType 应压缩为 goal / task / decision / artifact / lesson / boundary", "canonical_node_id": "kt.ai_engineering.external_project_memory.memory_schema_lifecycle", "claim_type": "schema_rule"},
+    {"topic_id": "P43-P0-006", "priority": "P0", "title": "process 不应作为长期 MemoryItem，应进入 append-only memory_event_log", "canonical_node_id": "kt.ai_engineering.external_project_memory.memory_event_log", "claim_type": "lifecycle_rule"},
+    {"topic_id": "P43-P0-007", "priority": "P0", "title": "future_plan 应并入 task，用 todo / blocked / deferred 表示状态", "canonical_node_id": "kt.ai_engineering.external_project_memory.memory_schema_lifecycle", "claim_type": "schema_rule"},
+    {"topic_id": "P43-P0-008", "priority": "P0", "title": "error 应并入 lesson，并记录 error_cause / fix / prevention", "canonical_node_id": "kt.ai_engineering.external_project_memory.memory_schema_lifecycle", "claim_type": "schema_rule"},
+    {"topic_id": "P43-P0-009", "priority": "P0", "title": "MemoryItem 必须有 source_type、source_event_id 或 source_artifact_ref，并记录 source_hash、source_trust 和 write_origin", "canonical_node_id": "kt.ai_engineering.external_project_memory.memory_schema_lifecycle", "claim_type": "provenance_rule"},
+    {"topic_id": "P43-P0-010", "priority": "P0", "title": "MemoryItem 必须支持 supersede，不允许静默覆盖", "canonical_node_id": "kt.ai_engineering.external_project_memory.memory_schema_lifecycle", "claim_type": "versioning_rule"},
+    {"topic_id": "P43-P0-011", "priority": "P0", "title": "deprecated memory 只能作为历史参考，不能作为当前事实", "canonical_node_id": "kt.ai_engineering.external_project_memory.memory_schema_lifecycle", "claim_type": "freshness_rule"},
+    {"topic_id": "P43-P0-012", "priority": "P0", "title": "AI 只能 propose memory，不能直接写 active memory", "canonical_node_id": "kt.ai_engineering.external_project_memory.memory_write_gate", "claim_type": "write_gate_rule"},
+    {"topic_id": "P43-P0-013", "priority": "P0", "title": "长期记忆写入必须通过 source check、secret scan、prompt_injection_scan、memory_poisoning_scan、visibility check、conflict check 和 untrusted_input 标记", "canonical_node_id": "kt.ai_engineering.external_project_memory.memory_write_gate", "claim_type": "write_gate_rule"},
+    {"topic_id": "P43-P0-014", "priority": "P0", "title": "不能把所有聊天自动写入长期记忆", "canonical_node_id": "kt.ai_engineering.external_project_memory.memory_write_gate", "claim_type": "data_minimization_rule"},
+    {"topic_id": "P43-P0-015", "priority": "P0", "title": "用户明确记住、项目目标变化、架构决策、失败复盘和审计结论才适合进入长期记忆", "canonical_node_id": "kt.ai_engineering.external_project_memory.memory_write_gate", "claim_type": "write_whitelist_rule"},
+    {"topic_id": "P43-P0-016", "priority": "P0", "title": "普通对话、临时 debug、中间推断和短期日志只能进入 event_log 或不保存", "canonical_node_id": "kt.ai_engineering.external_project_memory.memory_write_gate", "claim_type": "write_blacklist_rule"},
+    {"topic_id": "P43-P0-017", "priority": "P0", "title": "Project Memory MCP/API 必须使用最小权限工具集，写入类工具必须经过 write gate", "canonical_node_id": "kt.ai_engineering.external_project_memory.memory_mcp_api_contract", "claim_type": "mcp_permission_rule"},
+    {"topic_id": "P43-P0-018", "priority": "P0", "title": "Memory retention / deletion / export policy 必须显式定义，不能无限期保留所有项目记忆", "canonical_node_id": "kt.ai_engineering.external_project_memory.memory_retention_privacy", "claim_type": "retention_policy"},
+    {"topic_id": "P43-P0-019", "priority": "P0", "title": "Memory conflict resolution 必须记录 conflict_status、conflict_reason、resolver 和 resolution_event_id", "canonical_node_id": "kt.ai_engineering.external_project_memory.memory_schema_lifecycle", "claim_type": "conflict_resolution_rule"},
+    {"topic_id": "P43-P0-020", "priority": "P0", "title": "长期记忆必须防 prompt injection / memory poisoning", "canonical_node_id": "kt.ai_engineering.external_project_memory.memory_security_governance", "claim_type": "security_rule"},
+    {"topic_id": "P43-P0-021", "priority": "P0", "title": "MemoryItem 必须可回滚、可完整性校验，并保留审计链", "canonical_node_id": "kt.ai_engineering.external_project_memory.memory_security_governance", "claim_type": "integrity_rule"},
+    {"topic_id": "P43-P0-022", "priority": "P0", "title": "PostgreSQL JSONB 是 v0.1 Project Memory canonical store 推荐基线", "canonical_node_id": "kt.ai_engineering.external_project_memory.memory_adapter_selection", "claim_type": "storage_recommendation"},
+    {"topic_id": "P43-P0E-001", "priority": "P0E", "title": "Memory recall 必须受 project_id、visibility、status、top-k 和 token budget 限制", "canonical_node_id": "kt.ai_engineering.external_project_memory.memory_retrieval_context", "claim_type": "retrieval_policy"},
+    {"topic_id": "P43-P0E-002", "priority": "P0E", "title": "默认上下文只注入 goal、current task、boundary 和 relevant lesson", "canonical_node_id": "kt.ai_engineering.external_project_memory.memory_retrieval_context", "claim_type": "context_budget_rule"},
+    {"topic_id": "P43-P0E-003", "priority": "P0E", "title": "长 process log、完整 audit history 和 deprecated memory 必须显式请求", "canonical_node_id": "kt.ai_engineering.external_project_memory.memory_retrieval_context", "claim_type": "retrieval_boundary"},
+    {"topic_id": "P43-P0E-004", "priority": "P0E", "title": "Memory quality 必须用 retrieval regression set、stale memory test、poisoning test 和 permission test 验证", "canonical_node_id": "kt.ai_engineering.external_project_memory.memory_evaluation_regression", "claim_type": "quality_gate"},
+    {"topic_id": "P43-P1-001", "priority": "P1", "title": "第三方 memory engine 只能作为 adapter，不能成为 CEK-TA 核心契约", "canonical_node_id": "kt.ai_engineering.external_project_memory.memory_adapter_selection", "claim_type": "adapter_boundary"},
+    {"topic_id": "P43-P1-002", "priority": "P1", "title": "pgvector 是可选 semantic index，不是事实源，也不是默认必须启用", "canonical_node_id": "kt.ai_engineering.external_project_memory.memory_adapter_selection", "claim_type": "storage_boundary"},
+    {"topic_id": "P43-P1-003", "priority": "P1", "title": "Adapter portability test 必须验证第三方 memory engine 可迁移回 CEK-TA Memory Contract", "canonical_node_id": "kt.ai_engineering.external_project_memory.memory_evaluation_regression", "claim_type": "portability_test"}
+  ],
+  "review_questions": [
+    "patch 后 10 个 L3 节点是否足够承接外接项目 AI Memory Layer？",
+    "29 条知识点是否适合作为候选采集范围？",
+    "P0-Core 22 / P0-Extended 4 / P1 3 的优先级是否合理？",
+    "是否仍存在把项目私有记忆、Trading 本体或数据库实现混进 AI Memory 的风险？",
+    "是否可以进入 Phase 43 candidate audit package generation？"
+  ],
+  "expected_audit_output_schema": {
+    "package_decision": "accepted | needs_revision | rejected",
+    "reviewed_allowed": false,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "knowledge_point_decisions": [
+      {
+        "topic_id": "string",
+        "decision": "accept | needs_revision | reject",
+        "patch_notes": ["string"],
+        "missing_sources": ["string"]
+      }
+    ],
+    "required_scope_changes": ["string"],
+    "overall_notes": "string"
+  }
+}

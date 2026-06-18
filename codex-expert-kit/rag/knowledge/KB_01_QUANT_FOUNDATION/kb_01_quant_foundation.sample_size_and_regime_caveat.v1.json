@@ -1,0 +1,341 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_01_quant_foundation.sample_size_and_regime_caveat.v1",
+  "title": "交易系统评价必须声明样本数量、样本时期、市场状态、资产范围和验证方式；样本过小、只覆盖单一 regime，或未处理金融市场 non-stationarity 时，不得泛化为跨市场、跨周期或跨状态规则。",
+  "metadata": {
+    "partition_id": "KB_01_QUANT_FOUNDATION",
+    "domain": "quant_trading",
+    "subdomain": "foundation",
+    "rule_type": "methodological_constraint",
+    "claim_type": "methodological_constraint",
+    "content_type": "json",
+    "project_binding": "none",
+    "tree_node_id": "kt.quant_foundation",
+    "tree_path": "CEK-TA / Trading Engineering / Quant Foundation",
+    "canonical_node_id": "kt.quant_foundation",
+    "canonical_tree_path": "CEK-TA / Trading Engineering / Quant Foundation",
+    "risk_level": "medium",
+    "used_for": [
+      "trading_knowledge_audit",
+      "ai_trader_project_design",
+      "trade_quality_scoring_context",
+      "external_project_rag_retrieval"
+    ],
+    "source_candidate_id": "cand_20260611_phase37_sample_size_and_regime_caveat_001",
+    "research_task_id": "P37-A-Q11",
+    "phase": "Phase 37",
+    "classification_notes": "Phase 37 Quant Foundation formal reviewed/caveat_only；这是 Trading Engineering 规则本体，不是 AI Engineering 训练/RAG/MCP 本体规则，也不是 approved/default guidance。"
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "general",
+    "data_granularity": "general",
+    "project_type": "trading_ai_support_layer",
+    "applies_when": [
+      "写策略报告、交易复盘、AI 训练标签说明或 RAG 知识卡",
+      "判断规则是否可跨市场复用"
+    ],
+    "not_applicable_when": [
+      "只是在记录单笔交易",
+      "外部项目已提供明确的样本和 regime 边界且当前知识只保存引用",
+      "需要具体交易策略参数、账户事实、交易所配置、密钥或实盘权限时，应由外接项目事实层处理。",
+      "AI Engineering 只能引用本规则，不得把本规则改写为模型训练、MCP 或 RAG 本体规则。"
+    ]
+  },
+  "content": {
+    "statement": "交易系统评价必须声明样本数量、样本时期、市场状态、资产范围和验证方式；样本过小、只覆盖单一 regime，或未处理金融市场 non-stationarity 时，不得泛化为跨市场、跨周期或跨状态规则。",
+    "rationale": "本条只定义方法论边界：单一样本或单一 regime 下的结果不能被 AI/RAG 写成跨市场、跨周期、跨状态的通用规则。",
+    "procedure": [
+      "确认当前问题属于 Quant Foundation / Trading Engineering 规则本体，而不是 AI Engineering 训练、RAG 或 MCP 本体。",
+      "返回本知识时必须携带 source_evidence、review_status、machine_gate、适用范围和不适用场景。",
+      "检查 sample_count、sample_period、asset_scope、regime_coverage 和 validation_method 是否齐全。",
+      "单一 regime 或未处理 non-stationarity 的结果只能作为局部证据，不能未经验证泛化。"
+    ],
+    "examples": [],
+    "anti_patterns": [
+      "把 caveat-only 知识当成 approved 默认指导。",
+      "把交易工程边界改写成买卖信号、仓位、杠杆或实盘执行动作。",
+      "忽略来源、适用边界、成本、样本、执行或验证条件就泛化结论。"
+    ],
+    "validation": [
+      "source_evidence 非空，且来源足以支撑 claim 的定义和边界。",
+      "conflict_status 只能是 none、resolved 或 none_known_in_visible_context。",
+      "machine_gate.default_guidance 必须为 caveat_only，review.default_guidance_allowed 必须为 false。"
+    ],
+    "risk_notes": [
+      "首批候选以公开专业资料、监管资料、论文和教育资料为来源，仍需要外部 AI/人工严格审计。",
+      "部分来源是教育或供应商文章，只能作为 supporting evidence，不能单独支撑 approved。",
+      "本候选不提供任何投资建议或实盘执行许可。",
+      "不定义统一 regime taxonomy，不定义统一最小样本量，不把 regime caveat 变成 hard gate。",
+      "本条为 formal reviewed/caveat_only，不是 approved；不得作为默认指导或 hard gate。",
+      "不得据此生成买卖点、仓位、杠杆、止损止盈或实盘执行建议。",
+      "AI Engineering 只能引用本 Trading Engineering 规则本体，不得复制改写为模型训练/RAG/MCP 本体规则。"
+    ],
+    "citation_notes": "Bailey et al. 支撑回测过拟合风险；LSEG 和 State Street 资料支撑 market regime 识别与资产表现差异；UCL 金融时间序列研究支撑金融系统结构随时间变化和 non-stationarity 对统计假设的挑战。",
+    "audit_patch_notes": {
+      "source": [
+        "保留 regime/non-stationarity 专业来源，不再只依赖过拟合或样本外资料间接支撑。"
+      ],
+      "content": [
+        "表述为未经验证不得泛化，而不是单一 regime 结果永远不能迁移。"
+      ],
+      "boundary": [
+        "不定义统一 regime taxonomy，不定义统一最小样本量，不把 regime caveat 变成 hard gate。"
+      ],
+      "conflict": [
+        "未发现买卖点、仓位、杠杆、止损止盈、实盘执行、项目私有参数或密钥污染。"
+      ]
+    }
+  },
+  "assumptions": [
+    "候选用于 CEK-TA 通用支持层知识库，而不是某个项目私有策略。",
+    "所有交易结论都必须保留市场、样本、成本、执行和验证边界。",
+    "候选通过外部审计前不能进入正式 reviewed 知识库。"
+  ],
+  "source_evidence": [
+    {
+      "source_id": "src_001",
+      "source_title": "The Practicalities and Psychology of Expected Value",
+      "source_url": "https://www.morganstanley.com/im/en-us/financial-advisor/insights/consilient-observer/probabilities-and-payoffs.html",
+      "source_type": "professional_article",
+      "publisher": "Morgan Stanley Investment Management",
+      "published_at": null,
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "medium_high",
+      "relevance": "high",
+      "evidence_summary": "The article explains expected value through probabilities and payoffs, supporting the separation of win probability from payoff magnitude.",
+      "quoted_excerpt_allowed": false,
+      "limitations": [
+        "Investment education article; use only for EV framing, not a trading-system validation claim."
+      ]
+    },
+    {
+      "source_id": "src_002",
+      "source_title": "The Probability of Backtest Overfitting",
+      "source_url": "https://www.davidhbailey.com/dhbpapers/backtest-prob.pdf",
+      "source_type": "research_paper",
+      "publisher": "Bailey et al.",
+      "published_at": "2014-01-01",
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "The paper proposes a framework for estimating the probability that backtest selection is overfit.",
+      "quoted_excerpt_allowed": false,
+      "limitations": [
+        "Supports overfitting risk assessment; it is not a complete validation process by itself."
+      ]
+    },
+    {
+      "source_id": "src_003",
+      "source_title": "Dangers of Backtesting",
+      "source_url": "https://portfoliooptimizationbook.com/book/8.3-dangers-backtesting.html",
+      "source_type": "book",
+      "publisher": "Portfolio Optimization Book",
+      "published_at": null,
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "medium_high",
+      "relevance": "high",
+      "evidence_summary": "Discusses backtesting dangers such as overfitting, data-snooping and unrealistic assumptions.",
+      "quoted_excerpt_allowed": false,
+      "limitations": [
+        "Book chapter summary; should be audited alongside primary papers."
+      ]
+    },
+    {
+      "source_id": "src_phase37_q11_lseg_market_regime_detection",
+      "source_title": "Market regime detection using Statistical and ML based approaches",
+      "source_url": "https://developers.lseg.com/en/article-catalog/article/market-regime-detection",
+      "source_type": "market_data_provider_research",
+      "publisher": "LSEG Developer Community",
+      "published_at": null,
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "medium_high",
+      "relevance": "high",
+      "evidence_summary": "说明金融市场微观结构行为会随时间变化，并可形成连续相似条件的 market regimes，需要识别 regime 及其 shifts。",
+      "quoted_excerpt_allowed": false,
+      "limitations": [
+        "方法示例文章；用于支撑 regime 概念和检测方法，不构成交易收益声明。"
+      ]
+    },
+    {
+      "source_id": "src_phase37_q11_ssga_decoding_market_regimes",
+      "source_title": "Decoding Market Regimes with Machine Learning",
+      "source_url": "https://www.ssga.com/library-content/assets/pdf/global/pc/2025/decoding-market-regimes-with-machine-learning.pdf",
+      "source_type": "institutional_research",
+      "publisher": "State Street Global Advisors",
+      "published_at": "2025-01-01",
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "该研究将 market-regime analysis 描述为金融研究的重要工具，识别 1995-2024 年多个市场 regime，并比较不同 regime 下资产表现，支撑按 market state 限定结论边界。",
+      "quoted_excerpt_allowed": false,
+      "limitations": [
+        "机构研究覆盖特定数据集和美国市场；不能直接泛化到所有资产或交易策略。"
+      ]
+    },
+    {
+      "source_id": "src_phase37_q11_ucl_nonstationarity_financial_timeseries",
+      "source_title": "Non Stationarity and Market Structure Dynamics in Financial Time Series",
+      "source_url": "https://discovery.ucl.ac.uk/10165624/1/Procacci_Thesis.pdf",
+      "source_type": "academic_thesis",
+      "publisher": "University College London",
+      "published_at": "2022-01-01",
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "研究指出金融系统结构会随时间变化，non-stationarity 是金融系统关键特征，并挑战经典统计假设。",
+      "quoted_excerpt_allowed": false,
+      "limitations": [
+        "博士论文；用于支撑 non-stationarity 与金融市场结构变化，不直接授权某个交易策略。"
+      ]
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 84,
+    "score_version": "phase37_source_scoring_v1",
+    "primary_source_count": 6,
+    "supporting_source_count": 0,
+    "low_reliability_source_count": 0,
+    "limitations": [
+      "正式入库前必须由外部审计确认 claim 没有超出来源可证明范围。",
+      "监管资料按地区适用，不能自动泛化到所有市场或交易所。",
+      "本轮 CEK-TA-381 只补 reviewed/caveat_only 准备证据，不授权 approved/default guidance/hard gate。",
+      "外部 AI 必须重新搜索专业网站、资料、案例和数据，确认补证是否足以进入 formal reviewed/caveat_only。",
+      "保留 regime/non-stationarity 专业来源，不再只依赖过拟合或样本外资料间接支撑。",
+      "本条为 formal reviewed/caveat_only；不是 approved，不得进入默认指导或 hard gate。",
+      "外部审计未提供完整 CEK-TA formal KB，因此冲突结论限于可见上下文。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "Phase 36/38/40/41 AI Engineering 知识边界",
+      "现有 KB_01_QUANT_FOUNDATION formal 知识"
+    ],
+    "conflicts": [],
+    "resolution_summary": "blocked supplemental re-audit passed; formal reviewed/caveat_only created by CEK-TA-382.",
+    "default_recommendation": "caveat_only_until_human_approval"
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于 AI IDE 或外接项目审计交易工程基础概念和边界。",
+      "用于提示用户补充来源、成本、样本、执行、风险和验证条件。",
+      "用于 RAG/MCP/SearchLab 以 caveat 方式返回来源和边界。"
+    ],
+    "not_allowed": [
+      "不得据此生成买卖点、仓位、杠杆、止损止盈或实盘执行建议。",
+      "不得把 reviewed/caveat_only 当作 approved 默认指导。",
+      "不得绕过外接项目事实层、风控 hard gate 或人工治理流程。"
+    ],
+    "required_context": [
+      "canonical_node_id=kt.quant_foundation",
+      "必须返回 source_evidence、review_status、conflict_status、machine_gate 和不适用场景。"
+    ],
+    "fallback_behavior": "cite_with_caveat"
+  },
+  "machine_gate": {
+    "default_guidance": "caveat_only",
+    "reason": "CEK-TA-382: strict re-audit allowed formal reviewed/caveat_only only; no approved/default/hard gate.",
+    "requires_human_escalation": true,
+    "blocking_reasons": [
+      "reviewed_not_approved",
+      "default_guidance_allowed_false",
+      "hard_gate_allowed_false"
+    ],
+    "checked_at": "2026-06-11",
+    "gate_version": "1.0.0",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "recommended_extra_sources": [],
+  "review": {
+    "confidence": "high",
+    "freshness": "mixed",
+    "review_status": "reviewed",
+    "reviewer": "codex",
+    "reviewed_at": "2026-06-11",
+    "created_at": "2026-06-11",
+    "updated_at": "2026-06-11",
+    "default_guidance_allowed": false,
+    "approved_allowed": false,
+    "hard_gate_allowed": false,
+    "approval_status": "not_requested",
+    "source_candidate_id": "cand_20260611_phase37_sample_size_and_regime_caveat_001",
+    "ai_audit_result_id": "audit_result_phase37_quant_foundation_blocked_supplemental_reaudit_20260611_strict_v3",
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase37_quant_foundation_blocked_supplemental_reaudit_20260611_strict_v3",
+      "source_package_id": "phase37_quant_foundation_blocked_supplemental_reaudit_package_20260611",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "required_patches": {
+        "source": [
+          "保留 regime/non-stationarity 专业来源，不再只依赖过拟合或样本外资料间接支撑。"
+        ],
+        "content": [
+          "表述为未经验证不得泛化，而不是单一 regime 结果永远不能迁移。"
+        ],
+        "boundary": [
+          "不定义统一 regime taxonomy，不定义统一最小样本量，不把 regime caveat 变成 hard gate。"
+        ],
+        "conflict": [
+          "未发现买卖点、仓位、杠杆、止损止盈、实盘执行、项目私有参数或密钥污染。"
+        ]
+      },
+      "required_extra_sources": [],
+      "formal_conversion_notes": [
+        "formal reviewed draft 必须拆清 sample_count、sample_period、asset_scope、regime_coverage、validation_method。",
+        "approved/default guidance/hard gate 均保持 false。"
+      ]
+    },
+    "open_questions": [],
+    "decision_log": [
+      {
+        "at": "2026-06-11",
+        "actor": "external_ai_strict_reaudit",
+        "decision": "accepted_for_reviewed_caveat_only",
+        "reason": "LSEG、State Street 和 UCL 来源补齐 market regime / non-stationarity 直接证据。"
+      },
+      {
+        "at": "2026-06-11",
+        "actor": "codex",
+        "decision": "reviewed",
+        "reason": "CEK-TA-382: formal reviewed/caveat_only created; approved/default guidance/hard gate all disabled."
+      }
+    ]
+  },
+  "contribution": {
+    "contribution_id": null,
+    "source_project": null,
+    "sanitization_status": "not_applicable",
+    "private_data_removed": true,
+    "generic_mapping_notes": "Generated from Phase 37 public-source Trading Engineering candidate; no project-private trading facts included."
+  },
+  "copyright": {
+    "stores_full_text": false,
+    "stores_long_quote": false,
+    "summary_only": true,
+    "license_notes": "仅保存来源链接、元数据和摘要，不保存长段原文。",
+    "reuse_risk": "low"
+  },
+  "phase37_conversion": {
+    "source_candidate_status": "needs_more_evidence",
+    "source_ingestion_decision": "needs_more_evidence",
+    "promoted_by_task": "CEK-TA-382",
+    "reviewed_allowed": true,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  }
+}

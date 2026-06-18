@@ -1,0 +1,418 @@
+{
+  "schema_version": "1.1.0-candidate",
+  "candidate_id": "cand_20260612_phase45_layered_risk_p45_c_risk05_001",
+  "research_task_id": "P45-C-RISK05",
+  "status": {
+    "review_status": "formalized",
+    "ingestion_decision": "formal_reviewed_created",
+    "decision_reason": "reviewed/caveat_only 准备审计通过，已创建 formal reviewed/caveat_only。",
+    "created_at": "2026-06-12",
+    "updated_at": "2026-06-12"
+  },
+  "classification": {
+    "tree_node_id": "kt.risk_management.layered_risk_controls",
+    "canonical_node_id": "kt.risk_management.layered_risk_controls",
+    "tree_path": "CEK-TA / Trading Engineering / Risk Management / Layered Risk Controls",
+    "related_nodes": [
+      "kt.live_execution.audit_trail",
+      "kt.trading_engineering.live_execution.execution_tca",
+      "kt.ai_engineering.database_storage_engineering.runtime_observability_trace"
+    ],
+    "partition_id": "KB_07_RISK_MANAGEMENT",
+    "domain": "risk_management",
+    "subdomain": "layered_risk_controls",
+    "rule_type": "risk_boundary_rule",
+    "claim_type": "margin_collateral_available_funds_boundary_rule",
+    "used_for": [
+      "trading_ai_project_design_audit",
+      "pre_trade_risk_checklist",
+      "external_project_rag_retrieval",
+      "risk_owner_boundary_review"
+    ],
+    "classification_notes": "P45-C 只补 Layered Risk / Credit / Margin 知识边界；不设置任何 CEK-TA 通用风险阈值，不启用 hard gate。"
+  },
+  "claim": {
+    "claim_id": "claim_p45_c_risk05",
+    "title": "margin、collateral 和 available funds 必须分开",
+    "statement": "保证金、清算所 performance bond、抵押品、账户 available funds、buying power、excess liquidity、wallet balance、margin balance 和策略资金预算是不同层级的约束。交易 AI 不得把任一字段默认为可交易现金，也不得在缺少 point-in-time account/margin/collateral evidence、broker/venue/account-mode 语义和 owner 边界时声称订单具备资金充足性。",
+    "normalized_claim": "phase45_layered_risk.margin_collateral_available_funds_boundary.v1",
+    "evidence_summary": "CME SPAN / performance bond 来源支撑 clearing margin；IBKR 来源补充 available funds、excess liquidity、buying power 和 margin requirement 字段区别；Binance Futures 来源补充 crypto venue account balance / available balance / margin balance 字段边界。",
+    "interpretation_notes": "本候选只定义分层风控、信用、保证金和 pre-trade/post-trade owner 边界，不输出风险阈值、交易参数或实盘执行建议。",
+    "claim_strength": "candidate",
+    "performance_claim": false
+  },
+  "applicability": {
+    "market": "general_with_jurisdiction_venue_and_broker_caveats",
+    "asset": "general",
+    "timeframe": "pre_trade_and_intraday_risk_context",
+    "data_granularity": "order_account_strategy_product_venue_margin_risk_events",
+    "project_type": "trading_ai_support_layer",
+    "applies_when": [
+      "外接项目需要设计 pre-trade controls、信用/资本限额、订单量/价格控制、消息节流、保证金/抵押品边界或 post-trade surveillance 分工。",
+      "AI IDE 需要判断风险字段、owner、证据和 gate 位置是否被混淆。",
+      "需要把策略信号、资金/信用约束、交易所控制和风险复核分开建模。"
+    ],
+    "not_applicable_when": [
+      "用户要求具体风险阈值、信用额度、保证金比例、仓位、杠杆、止损止盈或实盘交易动作。",
+      "需要外接 broker、clearing firm、exchange 或账户的实时事实时，应由外接项目事实层提供。",
+      "需要法律合规结论时，应由对应辖区合规/法律 owner 判断。"
+    ],
+    "assumptions": [
+      "Layered Risk Controls 是交易工程设计和审计上下文，不是策略 alpha。",
+      "所有 credit、margin、price band、message-rate 和 surveillance 来源必须声明 venue、broker、clearing、jurisdiction 或 platform caveat。",
+      "候选通过 reviewed 审计前不能进入正式 reviewed 知识库。"
+    ],
+    "limitations": [
+      "SEC Rule 15c3-5 主要适用于美国 broker-dealer market access 语境。",
+      "FIA 是行业最佳实践来源，不替代具体监管、交易所或 broker 规则。",
+      "CME 来源只证明 CME Globex/CME Clearing 相关机制，不得泛化为所有市场。",
+      "IBKR 字段和公式是 broker/account-type specific，不得泛化为所有 broker。",
+      "Binance Futures 字段是 crypto venue/API/product specific，不得泛化为股票、期货、外汇或全部 crypto venue。",
+      "CEK-TA 不输出可用资金判断、保证金比例、信用额度或下单许可。"
+    ]
+  },
+  "source_refs": [
+    {
+      "source_title": "CME SPAN Methodology Overview",
+      "source_url": "https://www.cmegroup.com/solutions/risk-management/performance-bonds-margins/span-methodology-overview.html",
+      "source_type": "official_exchange_doc",
+      "publisher": "CME Group",
+      "reliability": "high",
+      "score": 88,
+      "freshness": "time_sensitive",
+      "evidence_summary": "CME SPAN is a portfolio-risk methodology for calculating performance bond requirements using risk arrays and scenario-based portfolio loss estimates.",
+      "limitations": [
+        "CME margin methodology source; not a CEK-TA available-funds execution rule."
+      ],
+      "source_id": "src_001",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "CME Performance Bonds/Margins FAQ",
+      "source_url": "https://www.cmegroup.com/solutions/risk-management/performance-bonds-margins/faq-performance-bonds-margins.html",
+      "source_type": "official_exchange_doc",
+      "publisher": "CME Group",
+      "reliability": "high",
+      "score": 86,
+      "freshness": "time_sensitive",
+      "evidence_summary": "CME explains performance bonds/margins as deposits held at CME Clearing to ensure clearing members meet obligations; requirements vary by product and volatility.",
+      "limitations": [
+        "CME clearing source; not broker-specific cash availability or crypto collateral policy."
+      ],
+      "source_id": "src_002",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "CME Globex Credit Controls",
+      "source_url": "https://www.cmegroup.com/tools-information/webhelp/globex-credit-controls/Content/CME-Globex-Credit-Controls-Management.html",
+      "source_type": "official_exchange_doc",
+      "publisher": "CME Group",
+      "reliability": "high",
+      "score": 88,
+      "freshness": "time_sensitive",
+      "evidence_summary": "CME Globex Credit Controls provide pre-execution controls for clearing-firm risk administrators to set exposure and maximum quantity limits for Globex order/trade activity.",
+      "limitations": [
+        "CME clearing and Globex context; not a universal credit framework."
+      ],
+      "source_id": "src_003",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "Available for Trading Values",
+      "source_url": "https://www.ibkrguides.com/traderworkstation/available-for-trading.htm",
+      "source_type": "official_broker_doc",
+      "publisher": "Interactive Brokers",
+      "reliability": "high",
+      "score": 88,
+      "freshness": "time_sensitive",
+      "relevance": "high",
+      "evidence_summary": "IBKR distinguishes Available Funds, Excess Liquidity, Buying Power and related account values, explaining that each value has different trading or cushion semantics.",
+      "limitations": [
+        "IBKR-specific account terminology; not a universal broker/account schema."
+      ],
+      "source_id": "src_supp_001",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "Current Available Funds",
+      "source_url": "https://www.interactivebrokers.com/campus/glossary-terms/current-available-funds/",
+      "source_type": "official_broker_doc",
+      "publisher": "Interactive Brokers",
+      "reliability": "high",
+      "score": 87,
+      "freshness": "time_sensitive",
+      "relevance": "high",
+      "evidence_summary": "IBKR defines Current Available Funds as equity available for trading, calculated from Equity with Loan Value minus Initial Margin.",
+      "limitations": [
+        "IBKR account-segment formulas and terminology are broker-specific."
+      ],
+      "source_id": "src_supp_002",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "Margin Requirements",
+      "source_url": "https://www.ibkrguides.com/advisorportal/ug/marginrequirements.htm",
+      "source_type": "official_broker_doc",
+      "publisher": "Interactive Brokers",
+      "reliability": "high",
+      "score": 87,
+      "freshness": "time_sensitive",
+      "relevance": "high",
+      "evidence_summary": "IBKR margin documentation distinguishes margin requirement, available funds, excess liquidity and buying power.",
+      "limitations": [
+        "Broker-specific and account-type dependent; not a CEK-TA threshold source."
+      ],
+      "source_id": "src_supp_003",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "USDⓈ-M Futures Account Information V3",
+      "source_url": "https://developers.binance.com/docs/derivatives/usds-margined-futures/account/rest-api/Account-Information-V3",
+      "source_type": "official_platform_doc",
+      "publisher": "Binance Open Platform",
+      "reliability": "medium_high",
+      "score": 84,
+      "freshness": "time_sensitive",
+      "relevance": "medium_high",
+      "evidence_summary": "Binance Futures account information endpoint exposes account-level balance fields such as availableBalance, margin balances and wallet-related values depending on account mode.",
+      "limitations": [
+        "Crypto venue/API-specific; field names and semantics depend on product, account mode and jurisdiction availability."
+      ],
+      "source_id": "src_supp_004",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "What Is the Available Balance, Margin Balance, and Total Balance on Binance Futures?",
+      "source_url": "https://www.binance.com/en/blog/futures/457299340443288694",
+      "source_type": "official_platform_article",
+      "publisher": "Binance",
+      "reliability": "medium",
+      "score": 78,
+      "freshness": "time_sensitive",
+      "relevance": "medium",
+      "evidence_summary": "Binance explains that futures wallet balance, available balance, margin balance and total balance serve different purposes and reflect different funds/PnL views.",
+      "limitations": [
+        "Official educational article; supporting source only, not a universal account schema."
+      ],
+      "source_id": "src_supp_005",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_supp_006",
+      "source_title": "Futures Account Balance V2",
+      "source_url": "https://developers.binance.com/docs/derivatives/usds-margined-futures/account/rest-api/Futures-Account-Balance-V2",
+      "source_type": "official_platform_doc",
+      "publisher": "Binance Open Platform",
+      "accessed_at": "2026-06-12",
+      "reliability": "medium_high",
+      "score": 84,
+      "freshness": "time_sensitive",
+      "relevance": "medium_high",
+      "evidence_summary": "Binance USDⓈ-M Futures balance endpoint exposes wallet balance, cross wallet balance, availableBalance, maxWithdrawAmount and marginAvailable fields.",
+      "limitations": [
+        "Crypto venue/API-specific; field semantics depend on product, account mode and jurisdiction availability."
+      ],
+      "version": null,
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 85.56,
+    "score_version": "phase45_source_scoring_v1",
+    "primary_source_count": 8,
+    "supporting_source_count": 1,
+    "low_reliability_source_count": 0,
+    "mandatory_downgrades": [],
+    "limitations": [
+      "正式 reviewed 前必须由外部审计确认 claim 没有超出来源可证明范围。",
+      "监管、交易所、broker 和清算来源必须保留辖区、venue 和产品边界。",
+      "内部字段契约若后续用于 reviewed，需要提供 schema extract 或 contract hash。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "Phase 37 Risk Management formal reviewed knowledge",
+      "Phase 37 Live Execution formal reviewed knowledge",
+      "Phase 45 Execution TCA / Audit Trail formal reviewed knowledge",
+      "Phase 45 runtime contract"
+    ],
+    "conflicts": [],
+    "resolution_summary": "未发现与现有 formal reviewed 知识的直接冲突；P45-C 只补 P1/P2 分层风控和 owner 边界。",
+    "approval_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "risk_threshold_advice_allowed": false
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于提醒 AI IDE 区分 strategy risk、credit/capital limit、margin/collateral、venue price/size controls 和 post-trade surveillance。",
+      "用于生成风险设计 checklist、schema review、RAG 检索上下文和 owner boundary reason code。",
+      "用于检查外接项目方案是否把信用、保证金、pre-trade controls 和 post-trade surveillance 混成单一风险布尔值。"
+    ],
+    "not_allowed": [
+      "不得生成具体风险阈值、信用额度、保证金比例、买卖点、仓位、杠杆、止损止盈或实盘执行建议。",
+      "不得把候选知识当作 approved 或默认指导。",
+      "不得替外接项目启用 hard gate、拒单、停机、撤单或解锁流程。"
+    ]
+  },
+  "machine_gate": {
+    "default_guidance": "deny",
+    "reason": "candidate only; pending external strict audit; no reviewed/approved/default/hard gate.",
+    "requires_human_escalation": false,
+    "hidden_from_default_queue": true,
+    "visible_in_default_guidance_queue": false,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "risk_threshold_advice_allowed": false
+  },
+  "review": {
+    "review_status": "candidate_ready",
+    "review_mode": "external_strict_audit_required",
+    "confidence": "medium_high",
+    "freshness": "mixed",
+    "reviewer": null,
+    "reviewed_at": null,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "risk_threshold_advice_allowed": false,
+    "audit_log": [
+      {
+        "at": "2026-06-12",
+        "actor": "codex",
+        "action": "phase45_layered_risk_candidate_generated",
+        "reason": "Generated from Phase 45 P45-C task queue with professional/regulatory/exchange sources."
+      },
+      {
+        "at": "2026-06-12",
+        "actor": "external_ai_strict_audit",
+        "action": "phase45_layered_risk_first_audit_imported",
+        "reason": "needs_more_evidence / confidence=medium",
+        "audit_result_id": "audit_phase45_layered_risk_p45_c_20260612_external_strict_v1"
+      },
+      {
+        "at": "2026-06-12",
+        "actor": "codex",
+        "action": "phase45_risk05_supplemented",
+        "reason": "按首轮审计要求补 IBKR available funds / buying power / margin requirements 与 Binance Futures account balance 来源。"
+      },
+      {
+        "at": "2026-06-12",
+        "actor": "external_ai_strict_audit",
+        "action": "phase45_layered_risk_supplemental_reaudit_imported",
+        "reason": "accepted_for_draft / confidence=high",
+        "audit_result_id": "audit_phase45_layered_risk_supplemental_reaudit_20260612_v1"
+      },
+      {
+        "at": "2026-06-12",
+        "actor": "codex",
+        "action": "phase45_layered_risk_formal_reviewed_created",
+        "reason": "created formal reviewed/caveat_only from reviewed-preparation audit result",
+        "audit_result_id": "audit_phase45_layered_risk_reviewed_caveat_only_preparation_20260612_v1",
+        "formal_knowledge_id": "kb_phase45_layered_risk.margin_collateral_available_funds_boundary.v1"
+      }
+    ],
+    "ai_audit": {
+      "audit_result_id": "audit_phase45_layered_risk_supplemental_reaudit_20260612_v1",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "required_followups": [
+        "CME 只支撑 CME Clearing / CME Globex / SPAN / performance bond 语境，不得泛化为所有清算或保证金制度。",
+        "IBKR 字段只支撑 IBKR broker/account-type 语境，不得泛化为所有 broker。",
+        "Binance Futures 字段只支撑 Binance USDⓈ-M Futures/API/account-mode 语境，不得泛化为股票、传统期货、外汇或全部 crypto venue。",
+        "不得把任一字段默认为可交易现金应作为 CEK-TA 内部审计边界，而不是 CME/IBKR/Binance 的直接统一结论。",
+        "reviewed 前必须引用内部 schema extract 或 contract hash，定义 point-in-time account/margin/collateral evidence。"
+      ],
+      "patch_notes": {
+        "source": [
+          "CME SPAN / performance bond 来源支撑 clearing margin 层。",
+          "IBKR Available Funds / Excess Liquidity / Buying Power 来源支撑 broker account 字段层。",
+          "Binance Futures account/balance 来源支撑 crypto venue account balance 字段层。"
+        ],
+        "content": [
+          "claim 已正确拆分 margin、performance bond、collateral、available funds、buying power、wallet balance、margin balance、strategy capital budget。",
+          "保留 point-in-time account/margin/collateral evidence 要求。"
+        ],
+        "boundary": [
+          "不得输出保证金比例、信用额度、可用资金判断、下单许可、仓位、杠杆或实盘执行建议。",
+          "不得把 account field check 变成 CEK-TA hard gate。"
+        ],
+        "conflict": [
+          "分区正确：KB_07_RISK_MANAGEMENT / layered_risk_controls。",
+          "未发现与 Phase 37 Risk Management、Phase 45 Execution TCA / Audit Trail 或 runtime contract 的直接冲突。"
+        ]
+      }
+    }
+  },
+  "workflow": {
+    "stage": "formalized_reviewed",
+    "queue_group": "formalized",
+    "source_phase": "45",
+    "source_task_id": "CEK-TA-461",
+    "batch": "P45-C Layered Risk / Credit / Margin",
+    "formal_knowledge_id": "kb_phase45_layered_risk.margin_collateral_available_funds_boundary.v1",
+    "formal_knowledge_path": "codex-expert-kit/rag/knowledge/KB_07_RISK_MANAGEMENT/kb_phase45_layered_risk.margin_collateral_available_funds_boundary.v1.json",
+    "allowed_next_decisions": [
+      "reviewed_preparation",
+      "needs_more_evidence",
+      "rejected"
+    ],
+    "forbidden_next_decisions": [
+      "approved",
+      "default_guidance",
+      "hard_gate",
+      "risk_threshold_advice"
+    ],
+    "conversion_target": {
+      "proposed_knowledge_id": "kb_phase45_layered_risk.margin_collateral_available_funds_boundary.v1",
+      "target_review_status": "reviewed",
+      "target_machine_gate": "caveat_only",
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false
+    },
+    "formal_review_status": "reviewed",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "risk_threshold_advice_allowed": false,
+    "funding_sufficiency_conclusion_allowed": false,
+    "trade_execution_advice_allowed": false,
+    "hidden_from_default_queue": true,
+    "next_action": "none"
+  },
+  "contribution": {
+    "source": "phase45_professional_research",
+    "private_data_removed": true,
+    "project_specific_details_removed": true,
+    "notes": "Generated for external strict audit; no project account, key, position, threshold, or private strategy data included."
+  }
+}

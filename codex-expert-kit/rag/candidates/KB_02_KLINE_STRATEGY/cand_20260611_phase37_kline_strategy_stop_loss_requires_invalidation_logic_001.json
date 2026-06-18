@@ -1,0 +1,463 @@
+{
+  "schema_version": "1.1.0-candidate",
+  "candidate_id": "cand_20260611_phase37_kline_strategy_stop_loss_requires_invalidation_logic_001",
+  "research_task_id": "P37-C-K04",
+  "status": {
+    "review_status": "accepted",
+    "ingestion_decision": "accepted_for_draft",
+    "decision_reason": "Phase 37 Kline / Strategy Engineering 二审结论为 accepted_for_draft；不得 reviewed/approved/default guidance/hard gate。",
+    "created_at": "2026-06-11",
+    "updated_at": "2026-06-11"
+  },
+  "classification": {
+    "tree_node_id": "kt.kline_strategy.entry_exit",
+    "canonical_node_id": "kt.kline_strategy.entry_exit",
+    "tree_path": "CEK-TA / Trading Engineering / Kline Strategy / Entry Exit",
+    "related_nodes": [
+      "kt.trading_engineering",
+      "kt.kline_strategy",
+      "kt.trading_engineering.data_engineering",
+      "kt.ai_engineering.llm_training",
+      "kt.kline_strategy.entry_exit"
+    ],
+    "partition_id": "KB_02_KLINE_STRATEGY",
+    "domain": "kline_strategy",
+    "subdomain": "entry_exit",
+    "rule_type": "trading_method_boundary_rule",
+    "claim_type": "methodological_constraint",
+    "used_for": [
+      "strategy_design_audit",
+      "kline_signal_boundary",
+      "ai_trader_project_gap_audit",
+      "external_project_rag_retrieval"
+    ],
+    "classification_notes": "本候选主归属 KB_02_KLINE_STRATEGY / Trading Engineering / Kline Strategy。历史 Phase 37 范围文档曾使用 KB_03_STRATEGY_ENGINEERING 旧称；运行时以 knowledge_tree 和 schema 的 KB_02_KLINE_STRATEGY 为准。"
+  },
+  "claim": {
+    "claim_id": "claim_p37_c_k04",
+    "statement": "止损规则必须记录其风险管理目的、触发条件、执行假设和与交易假设失效之间的关系；若使用 stop/stop-limit/order-model 语义，必须说明 stop price、limit price、触发标准、跳空、滑点和未成交风险。",
+    "normalized_claim": "kline_strategy.stop_loss_requires_invalidation_logic.v1",
+    "evidence_summary": "FINRA explains stop orders and stop-limit orders, including that stop-limit orders may not execute and that volatile markets require careful consideration.; Investor.gov states that stop prices are not guaranteed execution prices and stop-limit orders may not execute if price moves away.; Interactive Brokers defines stop orders as market orders triggered by a stop price and notes that a specific execution price is not guaranteed.",
+    "interpretation_notes": "本候选只定义 K线/策略工程方法边界，不输出买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。 二审补丁：source: 保留 FINRA、Investor.gov、IBKR 作为 stop/stop-limit 触发和执行风险来源。；content: 不得回退为所有止损都必须绑定结构失效。；content: 正式 draft 应表述为止损规则必须记录风险目的、触发条件、执行假设，以及与交易假设失效的关系。；boundary: 若使用 stop、stop-limit 或 order-model 语义，必须声明 stop price、limit price、触发标准、跳空、滑点和未成交风险。；boundary: 不得输出具体止损价格、百分比或 R 参数。；conflict: 当前可见上下文内未发现可证冲突；进入 reviewed/caveat_only 前仍需完整 formal KB 冲突检查。",
+    "claim_strength": "medium_high",
+    "performance_claim": false
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "general",
+    "data_granularity": "kline",
+    "project_type": "trading_ai_support_layer",
+    "applies_when": [
+      "设计结构止损、ATR 止损、固定 R 止损或回测止损规则",
+      "审计策略是否把止损作为风险边界"
+    ],
+    "not_applicable_when": [
+      "只讨论账户级 kill switch 或日亏损风控",
+      "止损由交易所强制规则定义且策略不控制",
+      "需要具体买卖点、仓位、杠杆、止损止盈价格、交易所私有配置、账户事实或实盘权限时，应由外接项目事实层和风控层处理。",
+      "AI Engineering 只能引用本规则，不得把本规则改写为 LLM 训练、MCP、RAG 或模型部署本体规则。"
+    ],
+    "assumptions": [
+      "候选用于 CEK-TA 通用支持层知识库，而不是某个项目私有交易系统配置。",
+      "所有 K线/策略工程结论必须保留市场、周期、数据、成本、样本和验证边界。",
+      "候选通过外部审计前不能进入正式 reviewed 知识库。"
+    ],
+    "limitations": [
+      "本批来源包含论文、专业机构综述、交易平台文档和技术库文档，仍需要外部 AI/人工严格审计来源强度。",
+      "平台/框架文档只能支撑工程边界和例子，不能替代具体交易所、数据供应商或外接项目策略契约。",
+      "本候选不提供任何投资建议或实盘执行许可。"
+    ]
+  },
+  "source_refs": [
+    {
+      "source_title": "Stop Trading",
+      "source_url": "https://www.backtrader.com/blog/posts/2018-02-01-stop-trading/stop-trading/",
+      "source_type": "backtesting_framework_doc",
+      "publisher": "Backtrader",
+      "published_at": "2018-02-01",
+      "reliability": "medium",
+      "score": 70,
+      "freshness": "stable",
+      "evidence_summary": "Backtrader discusses stop-based strategy mechanisms for limiting losses or securing profits.",
+      "limitations": [
+        "Framework education source; does not define a universal stop-loss rule."
+      ],
+      "source_id": "src_001",
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "Orders - Brackets",
+      "source_url": "https://www.backtrader.com/docu/order-creation-execution/bracket/bracket/",
+      "source_type": "backtesting_framework_doc",
+      "publisher": "Backtrader",
+      "published_at": null,
+      "reliability": "medium",
+      "score": 72,
+      "freshness": "stable",
+      "evidence_summary": "Backtrader describes bracket orders with main order, stop-side order and limit-side order submitted together.",
+      "limitations": [
+        "Framework-specific order model; use for entry/exit dependency examples, not live-exchange guarantees."
+      ],
+      "source_id": "src_002",
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "Technical Analysis",
+      "source_url": "https://rpc.cfainstitute.org/sites/default/files/-/media/documents/book/rf-lit-review/2016/rflrv11n11.pdf",
+      "source_type": "professional_literature_review",
+      "publisher": "CFA Institute Research Foundation",
+      "published_at": "2016-11-01",
+      "reliability": "high",
+      "score": 86,
+      "freshness": "stable",
+      "evidence_summary": "CFA Institute discusses technical analysis, trend, support/resistance, indicators, oscillators, volume and risk-management context.",
+      "limitations": [
+        "Professional overview; formal candidates still need explicit market, timeframe, data and validation boundaries."
+      ],
+      "source_id": "src_003",
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "relevance": "medium_high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "Periods",
+      "source_url": "https://www.quantconnect.com/docs/v2/writing-algorithms/key-concepts/time-modeling/periods",
+      "source_type": "trading_engine_official_doc",
+      "publisher": "QuantConnect",
+      "published_at": null,
+      "reliability": "medium_high",
+      "score": 82,
+      "freshness": "time_sensitive",
+      "evidence_summary": "QuantConnect states that bars have start and end times and are passed to algorithms at end time to avoid unavailable-bar lookahead.",
+      "limitations": [
+        "LEAN-specific time model; external projects must map equivalent bar availability semantics."
+      ],
+      "source_id": "src_004",
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "relevance": "medium_high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "Stop Orders: Factors to Consider During Volatile Markets",
+      "source_url": "https://www.finra.org/investors/insights/stop-orders-factors-consider-during-volatile-markets",
+      "source_type": "regulator_guidance",
+      "publisher": "FINRA",
+      "published_at": null,
+      "reliability": "high",
+      "score": 88,
+      "freshness": "time_sensitive",
+      "evidence_summary": "FINRA explains stop orders and stop-limit orders, including that stop-limit orders may not execute and that volatile markets require careful consideration.",
+      "limitations": [
+        "Equity-investor guidance; use for order behavior and execution risk, not for K-line stop placement alpha."
+      ],
+      "source_id": "src_supp_005",
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "Investor Bulletin: Stop, Stop-Limit, and Trailing Stop Orders",
+      "source_url": "https://www.investor.gov/introduction-investing/general-resources/news-alerts/alerts-bulletins/investor-bulletins-15",
+      "source_type": "regulator_guidance",
+      "publisher": "SEC Investor.gov",
+      "published_at": "2017-07-13",
+      "reliability": "high",
+      "score": 88,
+      "freshness": "time_sensitive",
+      "evidence_summary": "Investor.gov states that stop prices are not guaranteed execution prices and stop-limit orders may not execute if price moves away.",
+      "limitations": [
+        "Investor education source; supports execution caveats but not structural invalidation methods."
+      ],
+      "source_id": "src_supp_006",
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "Stop Order",
+      "source_url": "https://www.interactivebrokers.com/campus/glossary-terms/stop-order/",
+      "source_type": "broker_official_doc",
+      "publisher": "Interactive Brokers",
+      "published_at": null,
+      "reliability": "medium_high",
+      "score": 82,
+      "freshness": "time_sensitive",
+      "evidence_summary": "Interactive Brokers defines stop orders as market orders triggered by a stop price and notes that a specific execution price is not guaranteed.",
+      "limitations": [
+        "Broker-specific order documentation; external projects must map their own broker/exchange order rules."
+      ],
+      "source_id": "src_supp_007",
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "Trade Strategy and Execution",
+      "source_url": "https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/trade-strategy-execution",
+      "source_type": "professional_body_reference",
+      "publisher": "CFA Institute",
+      "published_at": "2026",
+      "reliability": "high",
+      "score": 88,
+      "freshness": "time_sensitive",
+      "evidence_summary": "CFA Institute discusses trade cost analysis, market impact, execution risk, trading policy documents, and execution-quality improvement.",
+      "limitations": [
+        "Professional execution reference; does not define CEK-TA strategy-rule schema fields."
+      ],
+      "source_id": "src_supp_008",
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 82.0,
+    "score_version": "phase37_kline_strategy_supplemental_source_scoring_v1",
+    "primary_source_count": 3,
+    "supporting_source_count": 8,
+    "low_reliability_source_count": 0,
+    "mandatory_downgrades": [],
+    "limitations": [
+      "补证来源用于支撑候选进入二审，不代表 formal reviewed 或 approved。",
+      "平台、经纪商、供应商和框架文档只能支撑对应语义；外接项目必须映射自己的交易所、broker、数据供应商和执行模型。",
+      "source: 保留 FINRA、Investor.gov、IBKR 作为 stop/stop-limit 触发和执行风险来源。",
+      "content: 不得回退为所有止损都必须绑定结构失效。",
+      "content: 正式 draft 应表述为止损规则必须记录风险目的、触发条件、执行假设，以及与交易假设失效的关系。",
+      "boundary: 若使用 stop、stop-limit 或 order-model 语义，必须声明 stop price、limit price、触发标准、跳空、滑点和未成交风险。",
+      "boundary: 不得输出具体止损价格、百分比或 R 参数。",
+      "conflict: 当前可见上下文内未发现可证冲突；进入 reviewed/caveat_only 前仍需完整 formal KB 冲突检查。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "visible_context_no_conflict",
+    "checked_against": [
+      "Phase 36/38/40/41 AI Engineering 知识边界",
+      "现有 KB_02_KLINE_STRATEGY formal 知识",
+      "Phase 37 Trading 与 AI 跨分支引用契约"
+    ],
+    "conflicts": [],
+    "resolution_summary": "二审允许 accepted_for_draft；进入 formal reviewed/caveat_only 前仍需完整 formal KB 冲突、重复和 owner 边界检查。",
+    "approval_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于提醒 AI IDE 检索 Trading Engineering K线/策略工程边界。",
+      "用于审计交易项目方案中是否缺少周期、样本、成本、验证和执行边界。",
+      "用于辅助外接项目设计策略规则、信号版本、审计清单和 reason code。"
+    ],
+    "not_allowed": [
+      "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+      "不得把候选知识当作 reviewed、approved、default guidance 或 hard gate。",
+      "不得绕过外接项目事实层、数据契约、风控 hard gate 或人工治理流程。"
+    ]
+  },
+  "machine_gate": {
+    "default_guidance": "deny",
+    "reason": "Supplemental re-audit only allows accepted_for_draft; formal reviewed/default guidance/hard gate remain blocked.",
+    "requires_human_escalation": true,
+    "hidden_from_default_queue": true,
+    "visible_in_default_guidance_queue": false,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "review": {
+    "confidence": "medium_high",
+    "freshness": "mixed",
+    "reviewer": "external_ai_and_codex_alignment",
+    "reviewed_at": "2026-06-11",
+    "open_questions": [
+      "外部审计是否认为来源足以支撑该 claim？",
+      "是否需要补充更强的一手论文、专业协会资料、交易平台或回测框架资料？",
+      "是否存在与现有 Kline Strategy、Backtest、Replay 或 AI Engineering formal 知识的重叠，需要合并或拆分？",
+      "进入 reviewed/caveat_only 前仍需完整 formal KB 冲突、重复和 owner 边界检查。"
+    ],
+    "audit_log": [
+      {
+        "at": "2026-06-11",
+        "actor": "codex",
+        "action": "created",
+        "reason": "根据 Phase 37 P37-C Kline / Strategy Engineering 队列生成 Trading Engineering 候选知识。"
+      },
+      {
+        "at": "2026-06-11",
+        "actor": "codex",
+        "action": "sourced",
+        "reason": "记录论文、专业机构综述、交易平台文档、技术指标库和回测框架来源摘要。"
+      },
+      {
+        "at": "2026-06-11",
+        "actor": "codex",
+        "action": "classified",
+        "reason": "归类到 KB_02_KLINE_STRATEGY / kt.kline_strategy.entry_exit / entry_exit。"
+      },
+      {
+        "at": "2026-06-11",
+        "actor": "external_ai_strict_audit",
+        "action": "phase37_kline_strategy_first_audit_imported",
+        "reason": "needs_more_evidence / confidence=high",
+        "audit_result_id": "audit_result_phase37_kline_strategy_candidate_audit_20260611_strict_v1",
+        "patch_notes": [
+          "source: Add professional/academic sources on stop placement, invalidation logic, volatility-based stops, and execution risk.",
+          "source: Add broker/exchange/order-type documentation for stop/stop-limit/slippage/gap behavior.",
+          "source: Backtrader examples are framework-specific and insufficient as primary evidence.",
+          "content: Narrow claim to “stop rules should document rationale and execution assumptions” until stronger sources support structural invalidation language.",
+          "content: Separate Kline entry/exit methodology from Risk Management/Execution ownership.",
+          "boundary: No stop-loss price, percentage or parameter may be generated.",
+          "boundary: Do not imply a fixed stop method is invalid in every context; require documented rationale.",
+          "conflict: Likely overlaps with Risk Management and Live Execution; formal draft should cross-reference those modules rather than import their hard gates."
+        ]
+      },
+      {
+        "at": "2026-06-11",
+        "actor": "codex",
+        "action": "phase37_kline_strategy_supplemental_research_added",
+        "reason": "根据首轮严格审计 needs_more_evidence 补充专业来源、收窄 claim 并导出二审包。",
+        "patch_notes": [
+          "把原先较强的“必须绑定结构失效”收窄为“必须记录止损规则的风险目的、触发条件、执行假设和失效关系”。",
+          "新增 FINRA、Investor.gov、IBKR 和 CFA 来源支撑 stop/stop-limit 执行不确定性、交易成本和执行风险。",
+          "Backtrader 仅保留为框架例子，不作为主来源。"
+        ]
+      },
+      {
+        "at": "2026-06-11",
+        "actor": "external_ai_strict_reaudit",
+        "action": "phase37_kline_strategy_supplemental_reaudit_imported",
+        "reason": "accepted_for_draft / confidence=medium_high",
+        "audit_result_id": "audit_result_phase37_kline_strategy_supplemental_reaudit_20260611_strict_v1",
+        "patch_notes": [
+          "source: 保留 FINRA、Investor.gov、IBKR 作为 stop/stop-limit 触发和执行风险来源。",
+          "content: 不得回退为所有止损都必须绑定结构失效。",
+          "content: 正式 draft 应表述为止损规则必须记录风险目的、触发条件、执行假设，以及与交易假设失效的关系。",
+          "boundary: 若使用 stop、stop-limit 或 order-model 语义，必须声明 stop price、limit price、触发标准、跳空、滑点和未成交风险。",
+          "boundary: 不得输出具体止损价格、百分比或 R 参数。",
+          "conflict: 当前可见上下文内未发现可证冲突；进入 reviewed/caveat_only 前仍需完整 formal KB 冲突检查。"
+        ]
+      },
+      {
+        "at": "2026-06-11",
+        "actor": "external_ai_strict_reaudit",
+        "action": "phase37_kline_strategy_supplemental_reaudit_imported",
+        "reason": "accepted_for_draft / confidence=medium_high",
+        "audit_result_id": "audit_result_phase37_kline_strategy_supplemental_reaudit_20260611_strict_v1",
+        "patch_notes": [
+          "source: 保留 FINRA、Investor.gov、IBKR 作为 stop/stop-limit 触发和执行风险来源。",
+          "content: 不得回退为所有止损都必须绑定结构失效。",
+          "content: 正式 draft 应表述为止损规则必须记录风险目的、触发条件、执行假设，以及与交易假设失效的关系。",
+          "boundary: 若使用 stop、stop-limit 或 order-model 语义，必须声明 stop price、limit price、触发标准、跳空、滑点和未成交风险。",
+          "boundary: 不得输出具体止损价格、百分比或 R 参数。",
+          "conflict: 当前可见上下文内未发现可证冲突；进入 reviewed/caveat_only 前仍需完整 formal KB 冲突检查。"
+        ]
+      },
+      {
+        "at": "2026-06-11",
+        "actor": "codex",
+        "action": "phase37_kline_strategy_formal_reviewed_created",
+        "reason": "CEK-TA-400: formal reviewed/caveat_only written to codex-expert-kit/rag/knowledge/KB_02_KLINE_STRATEGY/kb_02_kline_strategy.stop_loss_requires_invalidation_logic.v1.json."
+      }
+    ],
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase37_kline_strategy_reviewed_preparation_20260611_strict_v1",
+      "source_package_id": "phase37_kline_strategy_reviewed_preparation_audit_package_20260611",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "required_patches": {
+        "source": [
+          "FINRA/Investor.gov 只支撑 stop order 风险与触发边界。"
+        ],
+        "content": [
+          "止损必须记录风险目的、触发条件、执行假设和交易假设失效关系。"
+        ],
+        "boundary": [
+          "不得输出具体止损价格、距离、仓位、杠杆或实盘执行建议。"
+        ],
+        "conflict": [
+          "与 Risk Management 和 Live Execution 交叉引用。"
+        ]
+      }
+    },
+    "supplemental_research": {
+      "task_id": "CEK-TA-397",
+      "status": "ready_for_reaudit",
+      "patch_notes": [
+        "把原先较强的“必须绑定结构失效”收窄为“必须记录止损规则的风险目的、触发条件、执行假设和失效关系”。",
+        "新增 FINRA、Investor.gov、IBKR 和 CFA 来源支撑 stop/stop-limit 执行不确定性、交易成本和执行风险。",
+        "Backtrader 仅保留为框架例子，不作为主来源。"
+      ],
+      "added_source_ids": [
+        "src_supp_005",
+        "src_supp_006",
+        "src_supp_007",
+        "src_supp_008"
+      ],
+      "added_source_urls": [
+        "https://www.finra.org/investors/insights/stop-orders-factors-consider-during-volatile-markets",
+        "https://www.investor.gov/introduction-investing/general-resources/news-alerts/alerts-bulletins/investor-bulletins-15",
+        "https://www.interactivebrokers.com/campus/glossary-terms/stop-order/",
+        "https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/trade-strategy-execution"
+      ]
+    }
+  },
+  "workflow": {
+    "stage": "formalized_reviewed",
+    "next_allowed_decisions": [
+      "accepted_for_draft",
+      "needs_more_evidence",
+      "rejected"
+    ],
+    "forbidden_decisions": [
+      "reviewed",
+      "approved",
+      "default_guidance",
+      "hard_gate"
+    ],
+    "formal_knowledge_id": "kb_02_kline_strategy.stop_loss_requires_invalidation_logic.v1",
+    "conversion_target": {
+      "proposed_knowledge_id": "kb_02_kline_strategy.stop_loss_requires_invalidation_logic.v1",
+      "target_review_status": "reviewed",
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reviewed_allowed": true,
+      "approved_allowed": false
+    },
+    "ai_audit_result_id": "audit_result_phase37_kline_strategy_reviewed_preparation_20260611_strict_v1",
+    "formal_review_status": "reviewed",
+    "default_guidance_allowed": false,
+    "approved_allowed": false,
+    "hard_gate_allowed": false,
+    "hidden_from_default_queue": true,
+    "visible_in_default_guidance_queue": false,
+    "formalization_allowed": true,
+    "queue_group": "formalized",
+    "next_action": "none",
+    "supplemental_research_status": "ready_for_reaudit",
+    "supplemental_package_id": "phase37_kline_strategy_supplemental_reaudit_package_20260611",
+    "knowledge_path": "codex-expert-kit/rag/knowledge/KB_02_KLINE_STRATEGY/kb_02_kline_strategy.stop_loss_requires_invalidation_logic.v1.json",
+    "formal_knowledge_path": "codex-expert-kit/rag/knowledge/KB_02_KLINE_STRATEGY/kb_02_kline_strategy.stop_loss_requires_invalidation_logic.v1.json"
+  },
+  "contribution": {
+    "source": "phase37_research_ingestion",
+    "private_data_removed": true,
+    "project_private_fields": [],
+    "external_project_backflow": false
+  }
+}

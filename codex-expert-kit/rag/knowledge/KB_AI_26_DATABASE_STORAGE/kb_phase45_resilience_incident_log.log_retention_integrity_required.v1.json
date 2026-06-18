@@ -1,0 +1,388 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_phase45_resilience_incident_log.log_retention_integrity_required.v1",
+  "title": "运行时日志必须声明 retention、完整性和关联 ID",
+  "metadata": {
+    "partition_id": "KB_AI_26_DATABASE_STORAGE",
+    "domain": "storage_engineering",
+    "subdomain": "audit_log_ledger",
+    "rule_type": "resilience_incident_boundary_rule",
+    "claim_type": "rag_governance_rule",
+    "content_type": "json",
+    "project_binding": "none",
+    "tree_node_id": "kt.ai_engineering.database_storage_engineering.audit_log_ledger",
+    "tree_path": "CEK-TA / AI Engineering / Database Data Contract And Storage Engineering / Audit Log Ledger",
+    "canonical_node_id": "kt.ai_engineering.database_storage_engineering.audit_log_ledger",
+    "canonical_tree_path": "CEK-TA / AI Engineering / Database Data Contract And Storage Engineering / Audit Log Ledger",
+    "risk_level": "high",
+    "used_for": [
+      "trading_system_resilience_design",
+      "incident_response_review",
+      "runtime_log_governance",
+      "external_project_rag_retrieval",
+      "ai_trader_project_design_audit"
+    ],
+    "source_candidate_id": "cand_20260612_phase45_resilience_incident_log_p45_d_ops06_001",
+    "research_task_id": "P45-D-OPS06",
+    "phase": "Phase 45",
+    "related_nodes": [
+      "kt.live_execution.audit_trail",
+      "kt.live_execution.order_state_machine",
+      "kt.ai_engineering.database_storage_engineering.runtime_observability_trace",
+      "kt.ai_engineering.database_storage_engineering.audit_log_ledger",
+      "kt.risk_management.layered_risk_controls"
+    ],
+    "classification_notes": "Phase 45 Resilience / Incident / Log formal reviewed/caveat_only；只用于系统韧性、事故响应、恢复/replay 边界和日志治理，不是 approved/default guidance/hard gate，不生成交易动作、阈值或法律合规结论。"
+  },
+  "applicability": {
+    "market": "general_with_jurisdiction_platform_and_venue_caveats",
+    "asset": "general",
+    "timeframe": "runtime_operations_and_incident_context",
+    "data_granularity": "system_events_order_events_incident_records_runtime_logs_telemetry",
+    "project_type": "trading_ai_support_layer",
+    "applies_when": [
+      "外接项目需要设计交易系统 BC/DR、降级模式、只读模式、故障切换、事故响应、事故复盘或日志治理。",
+      "AI IDE 需要检查交易系统方案是否遗漏恢复目标、关键依赖、owner、演练证据、事件 taxonomy 或日志完整性。",
+      "需要区分恢复/replay 的审计证据、模拟用途和真实订单动作边界。"
+    ],
+    "not_applicable_when": [
+      "用户要求具体买卖点、仓位、杠杆、止损止盈、风险阈值、停机阈值或实盘执行动作。",
+      "需要 broker、venue、账户、订单或资金的实时事实时，应由外接项目事实层提供。",
+      "需要法律/监管合规结论时，应由对应辖区合规或法律 owner 判断。"
+    ]
+  },
+  "content": {
+    "statement": "交易运行时日志、事故日志、遥测日志和审计账本必须声明 retention_policy_ref、jurisdiction_scope、完整性校验、访问/删除审计、关联 ID、时间源、归档恢复和最小必要字段。debug_log、telemetry_log、incident_log、audit_ledger 和 order_truth_source 必须分层；普通 debug 日志不能替代正式 audit ledger，audit ledger 也不能替代 broker/venue/order source of truth。",
+    "rationale": "本候选只定义系统韧性、事故响应、日志治理和恢复边界，不输出交易参数、风险阈值或实盘执行建议。",
+    "normalized_claim": "phase45_resilience_incident_log.log_retention_integrity_required.v1",
+    "claim_strength": "reviewed_caveat_only",
+    "performance_claim": false,
+    "procedure": [
+      "确认问题属于系统韧性、事故响应、降级/只读模式、恢复/replay、post-incident review 或运行时日志治理。",
+      "检查来源是否只在其辖区、平台、协议、数据库或工程实践边界内使用。",
+      "检查是否声明 owner、evidence、audit_trace、状态字段和不适用场景。",
+      "遇到 replay、recovery、read_only、incident label 或 log integrity 时，不得推导自动实盘动作或 hard gate。",
+      "返回知识时必须携带 source_evidence、review_status、machine_gate、适用范围、不适用场景和 owner 边界。"
+    ],
+    "anti_patterns": [
+      "把 reviewed/caveat_only 当作 approved 或 default guidance。",
+      "把事故标签、日志完整性、恢复回放、read-only mode 自动解释为拒单、撤单、重发订单、恢复交易或 hard gate。",
+      "输出停机阈值、恢复阈值、风险阈值、买卖点、仓位、杠杆、止损止盈或实盘执行建议。"
+    ],
+    "validation": [
+      "review.review_status 必须为 reviewed；approved/default guidance/hard gate 必须为 false。",
+      "machine_gate.default_guidance 必须为 caveat_only，且 visible_in_default_guidance_queue=false。",
+      "source_evidence 必须保留监管、标准、工程实践、协议、数据库或内部 contract 的适用边界。"
+    ],
+    "risk_notes": [
+      "本条只做系统韧性与事故治理知识，不代表交易系统可自动动作。",
+      "监管来源具有辖区边界；工程来源和协议来源具有实现边界。",
+      "本条不是 approved，不进入默认指导，不启用 hard gate。"
+    ],
+    "citation_notes": "NIST SP 800-92 supports log-management policies, infrastructure, analysis, retention, protection and operational processes.；Regulation SCI covers policies and procedures for SCI systems capacity, integrity, resiliency, availability and security, including SCI events, notification, corrective action and records.；NIST SP 800-61 Rev. 3 provides incident response considerations across preparation, detection, analysis, response, recovery and improvement activities.；OpenTelemetry is a vendor-neutral observability framework for generating, collecting and exporting telemetry such as traces, metrics and logs.；Rule 17a-4 supports broker-dealer records preservation and electronic recordkeeping audit-trail requirements.；FINRA Rule 4511 requires members to make and preserve books and records under FINRA rules, Exchange Act and applicable Exchange Act rules, and preserve records in a format/media compliant with SEA Rule 17a-4.；CFTC Regulation 1.31 supports regulatory records retention, authenticity, reliability, production and electronic regulatory record controls.；CEK-TA contract now defines incident_taxonomy, audit_ledger_event, log layer boundaries, runtime mode and replay boundary schemas.",
+    "audit_patch_notes": {
+      "source": [
+        "保留 SEC Rule 17a-4 / SEC electronic recordkeeping amendments。",
+        "保留 FINRA Rule 4511。",
+        "保留 CFTC Regulation 1.31。",
+        "保留 NIST SP 800-92 作为通用日志治理来源。",
+        "保留 OpenTelemetry 作为 telemetry/traces/metrics/logs 来源。",
+        "CEK-TA runtime contract 作为 audit_ledger_event schema 字段本体来源。"
+      ],
+      "content": [
+        "保留 retention_policy_ref、jurisdiction_scope、完整性校验、访问/删除审计、关联 ID、时间源、归档恢复和最小必要字段。",
+        "保留 debug_log、telemetry_log、incident_log、audit_ledger、order_truth_source 分层。",
+        "保留 audit ledger 不能替代 broker/venue/order source of truth。"
+      ],
+      "boundary": [
+        "不得写死 retention 数值。",
+        "不得输出交易许可。",
+        "不得触发 hard gate。",
+        "不得自动恢复、自动撤单或自动重发订单。"
+      ],
+      "conflict": []
+    }
+  },
+  "assumptions": [
+    "Resilience / Incident / Log Management 是交易工程运行时治理，不是策略 alpha。",
+    "所有 BC/DR、incident、log 和 telemetry 来源必须声明监管、平台、云服务、市场和系统适用边界。",
+    "候选通过外部审计前不能进入 formal reviewed 知识库。"
+  ],
+  "source_evidence": [
+    {
+      "source_title": "NIST SP 800-92: Guide to Computer Security Log Management",
+      "source_url": "https://csrc.nist.gov/pubs/sp/800/92/final",
+      "source_type": "standard_doc",
+      "publisher": "NIST",
+      "reliability": "high",
+      "score": 87,
+      "freshness": "stable",
+      "evidence_summary": "NIST SP 800-92 supports log-management policies, infrastructure, analysis, retention, protection and operational processes.",
+      "limitations": [
+        "General computer-security log management; not a trading audit-ledger schema."
+      ],
+      "source_id": "src_001",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "17 CFR Part 242 Regulation SCI",
+      "source_url": "https://www.ecfr.gov/current/title-17/chapter-II/part-242/subpart-ECFRe106e84e67e2bc9",
+      "source_type": "regulatory_rule",
+      "publisher": "eCFR / U.S. SEC",
+      "reliability": "high",
+      "score": 94,
+      "freshness": "time_sensitive",
+      "evidence_summary": "Regulation SCI covers policies and procedures for SCI systems capacity, integrity, resiliency, availability and security, including SCI events, notification, corrective action and records.",
+      "limitations": [
+        "U.S. SCI-entity regulatory context; not a universal global trading-system standard."
+      ],
+      "source_id": "src_002",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "NIST SP 800-61 Rev. 3: Incident Response Recommendations and Considerations",
+      "source_url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-61r3.pdf",
+      "source_type": "standard_doc",
+      "publisher": "NIST",
+      "reliability": "high",
+      "score": 90,
+      "freshness": "time_sensitive",
+      "evidence_summary": "NIST SP 800-61 Rev. 3 provides incident response considerations across preparation, detection, analysis, response, recovery and improvement activities.",
+      "limitations": [
+        "Cybersecurity incident-response source; must be mapped carefully to trading operations incidents."
+      ],
+      "source_id": "src_003",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "OpenTelemetry Documentation",
+      "source_url": "https://opentelemetry.io/docs/",
+      "source_type": "framework_doc",
+      "publisher": "OpenTelemetry",
+      "reliability": "medium_high",
+      "score": 80,
+      "freshness": "time_sensitive",
+      "evidence_summary": "OpenTelemetry is a vendor-neutral observability framework for generating, collecting and exporting telemetry such as traces, metrics and logs.",
+      "limitations": [
+        "Observability implementation pattern; not a formal trading audit or retention standard."
+      ],
+      "source_id": "src_004",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "17 CFR § 240.17a-4 Records to be preserved by certain exchange members, brokers and dealers",
+      "source_url": "https://www.law.cornell.edu/cfr/text/17/240.17a-4",
+      "source_type": "regulatory_rule",
+      "publisher": "Legal Information Institute / eCFR-derived CFR text",
+      "reliability": "high",
+      "score": 91,
+      "freshness": "time_sensitive",
+      "relevance": "high",
+      "evidence_summary": "Rule 17a-4 supports broker-dealer records preservation and electronic recordkeeping audit-trail requirements.",
+      "limitations": [
+        "U.S. broker-dealer recordkeeping context; not universal global retention policy."
+      ],
+      "source_id": "src_supp_reviewed_001",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "FINRA Rule 4511 General Requirements",
+      "source_url": "https://www.finra.org/rules-guidance/rulebooks/finra-rules/4511",
+      "source_type": "regulatory_rule",
+      "publisher": "FINRA",
+      "reliability": "high",
+      "score": 92,
+      "freshness": "time_sensitive",
+      "relevance": "high",
+      "evidence_summary": "FINRA Rule 4511 requires members to make and preserve books and records under FINRA rules, Exchange Act and applicable Exchange Act rules, and preserve records in a format/media compliant with SEA Rule 17a-4.",
+      "limitations": [
+        "FINRA member-firm context; not a universal global trading log standard."
+      ],
+      "source_id": "src_supp_reviewed_002",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "17 CFR § 1.31 Regulatory records; retention and production",
+      "source_url": "https://www.ecfr.gov/current/title-17/chapter-I/part-1/subject-group-ECFR26e2c365a191fa7/section-1.31",
+      "source_type": "regulatory_rule",
+      "publisher": "eCFR / CFTC",
+      "reliability": "high",
+      "score": 91,
+      "freshness": "time_sensitive",
+      "relevance": "high",
+      "evidence_summary": "CFTC Regulation 1.31 supports regulatory records retention, authenticity, reliability, production and electronic regulatory record controls.",
+      "limitations": [
+        "CFTC regulated records context; not universal for all products or jurisdictions."
+      ],
+      "source_id": "src_supp_reviewed_003",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "Phase 45 Resilience / Incident / Log Runtime Contract",
+      "source_url": "docs/contracts/phase45_resilience_incident_log_runtime_contract.md",
+      "source_type": "internal_contract",
+      "publisher": "CEK-TA",
+      "reliability": "high",
+      "score": 90,
+      "freshness": "current",
+      "relevance": "high",
+      "evidence_summary": "CEK-TA contract now defines incident_taxonomy, audit_ledger_event, log layer boundaries, runtime mode and replay boundary schemas.",
+      "limitations": [
+        "Internal CEK-TA contract; use with external supporting sources."
+      ],
+      "source_id": "src_supp_reviewed_004",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 89.38,
+    "score_version": "phase45_source_scoring_v1",
+    "primary_source_count": 8,
+    "supporting_source_count": 0,
+    "low_reliability_source_count": 0,
+    "mandatory_downgrades": [],
+    "limitations": [
+      "正式 reviewed 前必须由外部审计确认 claim 没有超出来源可证明范围。",
+      "监管、标准、云架构和 SRE 来源必须保留适用边界，不得写成交易执行许可。",
+      "内部字段契约若后续用于 reviewed，需要提供 schema extract、字段表或 contract hash。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "Phase 37 Live Execution formal reviewed knowledge",
+      "Phase 37 Risk Management formal reviewed knowledge",
+      "Phase 42 Database/Storage formal reviewed knowledge",
+      "Phase 45 Audit Trail / Layered Risk formal reviewed knowledge",
+      "Phase 45 runtime contract"
+    ],
+    "conflicts": [],
+    "resolution_summary": "reviewed/caveat_only 准备审计通过；formal creation 保持 caveat_only，不创建 approved、default guidance、hard gate、风险阈值、停机阈值或自动实盘动作。",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "risk_threshold_advice_allowed": false,
+    "automatic_live_action_allowed": false
+  },
+  "review": {
+    "review_status": "reviewed",
+    "review_mode": "caveat_only",
+    "confidence": "high",
+    "freshness": "mixed",
+    "reviewer": "external_ai_strict_audit_and_codex",
+    "reviewed_at": "2026-06-12",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "risk_threshold_advice_allowed": false,
+    "automatic_live_action_allowed": false,
+    "approved_at": null,
+    "ai_audit": {
+      "audit_result_id": "audit_phase45_resilience_incident_log_reviewed_blocked_supplemental_reaudit_20260612",
+      "package_id": "phase45_resilience_incident_log_reviewed_blocked_supplemental_reaudit_package_20260612",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "reasons": [
+        "上轮缺口已补齐：SEC Rule 17a-4、FINRA 4511、CFTC 1.31 已纳入，足以支撑金融记录保存、电子记录、audit trail、真实性、可靠性和生产要求的 caveat_only 边界。",
+        "NIST SP 800-92 被正确限定为通用 log management 来源。",
+        "OpenTelemetry 被正确限定为 observability/telemetry 来源，不再被误用为金融审计账本或 retention 标准。",
+        "CEK-TA runtime contract 提供 audit_ledger_event schema 和 log layer boundaries，外部监管/标准来源提供 supporting evidence，来源分工合理。",
+        "claim 已明确 debug_log、telemetry_log、incident_log、audit_ledger、order_truth_source 分层；普通 debug 日志不能替代 audit ledger，audit ledger 也不能替代 broker/venue/order source of truth。"
+      ],
+      "required_followups": [
+        "正式 reviewed/caveat_only 文本必须保留 jurisdiction_scope，不得给出统一 retention 数值。",
+        "正式文本必须保留：SEC/FINRA/CFTC 来源具有美国 broker-dealer、FINRA member、CFTC records entity 等适用边界。",
+        "正式文本必须保留：audit ledger 不得推导交易许可、不得触发 hard gate、自动恢复、自动撤单或自动重发。",
+        "如外接项目不受 SEC/FINRA/CFTC 管辖，应由其 jurisdiction/platform/compliance owner 提供等价记录保存规则。"
+      ],
+      "patch_notes": {
+        "source": [
+          "保留 SEC Rule 17a-4 / SEC electronic recordkeeping amendments。",
+          "保留 FINRA Rule 4511。",
+          "保留 CFTC Regulation 1.31。",
+          "保留 NIST SP 800-92 作为通用日志治理来源。",
+          "保留 OpenTelemetry 作为 telemetry/traces/metrics/logs 来源。",
+          "CEK-TA runtime contract 作为 audit_ledger_event schema 字段本体来源。"
+        ],
+        "content": [
+          "保留 retention_policy_ref、jurisdiction_scope、完整性校验、访问/删除审计、关联 ID、时间源、归档恢复和最小必要字段。",
+          "保留 debug_log、telemetry_log、incident_log、audit_ledger、order_truth_source 分层。",
+          "保留 audit ledger 不能替代 broker/venue/order source of truth。"
+        ],
+        "boundary": [
+          "不得写死 retention 数值。",
+          "不得输出交易许可。",
+          "不得触发 hard gate。",
+          "不得自动恢复、自动撤单或自动重发订单。"
+        ],
+        "conflict": []
+      }
+    },
+    "source_candidate_id": "cand_20260612_phase45_resilience_incident_log_p45_d_ops06_001",
+    "ai_audit_result_id": "audit_phase45_resilience_incident_log_reviewed_blocked_supplemental_reaudit_20260612"
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于提醒 AI IDE 设计系统韧性、事故响应、runtime mode、replay boundary、post-incident review 和日志治理。",
+      "用于生成运行时治理 checklist、schema review、RAG 检索上下文和审计 reason code。"
+    ],
+    "not_allowed": [
+      "不得生成买卖点、仓位、杠杆、止损止盈、风险阈值、停机阈值、恢复阈值或实盘执行建议。",
+      "不得把 reviewed/caveat_only 当作 approved 或默认指导。",
+      "不得替外接项目启用 hard gate、拒单、停机、撤单、重发订单、恢复交易或解锁流程。"
+    ],
+    "required_context": [
+      "必须同时返回 source_evidence、applicability、not_applicable_when、review_status、conflict_status 和 machine_gate。",
+      "若外接项目问题涉及实盘、法律、授权、资金或风控动作，必须要求项目事实层或人工 owner 复核。"
+    ],
+    "fallback_behavior": "cite_with_caveat"
+  },
+  "machine_gate": {
+    "default_guidance": "caveat_only",
+    "review_visibility": "reviewed_caveat_only",
+    "reason": "reviewed/caveat_only audit passed; approved/default guidance/hard gate/risk threshold advice remain disabled.",
+    "requires_human_escalation": false,
+    "hidden_from_default_queue": true,
+    "visible_in_default_guidance_queue": false,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "risk_threshold_advice_allowed": false,
+    "automatic_live_action_allowed": false,
+    "blocking_reasons": [],
+    "checked_at": "2026-06-13T10:29:14+00:00",
+    "gate_version": "1.0.0"
+  },
+  "contribution": {
+    "source": "phase45_professional_research",
+    "private_data_removed": true,
+    "project_specific_details_removed": true,
+    "notes": "Generated for external strict audit; no account, key, order, threshold, position or private strategy data included."
+  },
+  "recommended_extra_sources": []
+}

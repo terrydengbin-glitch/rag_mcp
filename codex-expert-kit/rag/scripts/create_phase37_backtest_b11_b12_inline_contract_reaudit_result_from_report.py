@@ -1,0 +1,130 @@
+"""Create the Phase 37 Backtest B11/B12 inline-contract reaudit result JSON."""
+
+from __future__ import annotations
+
+import json
+import sys
+from datetime import date
+from pathlib import Path
+from typing import Any
+
+
+CORE_DIR = Path(__file__).resolve().parents[2] / "core"
+if str(CORE_DIR) not in sys.path:
+    sys.path.insert(0, str(CORE_DIR))
+
+from path_resolver import resolve_repo_path  # noqa: E402
+
+
+TODAY = date(2026, 6, 11).isoformat()
+AUDIT_RESULT_ID = "audit_result_phase37_backtest_b11_b12_inline_contract_reaudit_20260611_strict_v1"
+PACKAGE_ID = "phase37_backtest_b11_b12_inline_contract_reaudit_package_20260611"
+OUTPUT_PATH = resolve_repo_path("docs", "audit", f"{AUDIT_RESULT_ID}.json", start_file=__file__)
+
+
+def write_json(path: Path, payload: dict[str, Any]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+
+def main() -> int:
+    result = {
+        "audit_result_id": AUDIT_RESULT_ID,
+        "package_id": PACKAGE_ID,
+        "auditor": "external_ai_strict_reaudit",
+        "audited_at": TODAY,
+        "quality_gate": {
+            "pass": True,
+            "candidate_count": 2,
+            "accepted_for_reviewed_caveat_only": 2,
+            "needs_more_evidence": 0,
+            "rejected": 0,
+            "blocked": 0,
+            "notes": [
+                "contract_inline.full_text、schema_extract、contract_sha256、字段表、required/optional 标记、字段语义、生成规则、校验规则和 cross-owner mapping 已补齐。",
+                "candidate 不是正式知识；本结果最多允许 formal reviewed/caveat_only。",
+                "approved、default guidance 和 hard gate 必须保持关闭。",
+            ],
+        },
+        "candidate_results": [
+            {
+                "candidate_id": "cand_20260611_phase37_backtest_reproducibility_package_required_001",
+                "research_task_id": "P37-E-B11",
+                "decision": "accepted_for_reviewed_caveat_only",
+                "confidence": "high",
+                "reviewed_allowed": True,
+                "approved_allowed": False,
+                "default_guidance_allowed": False,
+                "hard_gate_allowed": False,
+                "reasons": [
+                    "reproducibility_package 已以内联 schema extract 定义为 required。",
+                    "字段覆盖 code_repository、code_commit、dependency_lockfile_hash、container_image_digest、random_seed、config_file_hash、input_artifact_ids、output_artifact_ids、log_artifact_id、metric_report_id、lineage_id、replay_command_or_ci_job_id 和 known_non_determinism。",
+                    "MLflow/DVC 只作为实现语义示例，字段本体来源已经是 CEK-TA 内联 schema。",
+                ],
+                "required_followups": [],
+                "patch_notes": {
+                    "source": [
+                        "MLflow、DVC、QuantConnect 只能作为 implementation pattern 或 supporting source，不得写成 CEK-TA 或外接项目强制工具依赖。",
+                        "CEK-TA backtest_run_manifest schema extract 是字段本体主来源。",
+                    ],
+                    "content": [
+                        "B11 formal knowledge 必须保留 known_non_determinism 字段，避免非确定性运行差异无法解释。",
+                        "B11 只能描述回测证据包可复现边界，不证明策略有效。"
+                    ],
+                    "boundary": [
+                        "reviewed/caveat_only 不等于 approved，不进入 default guidance，不创建 hard gate。",
+                        "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。"
+                    ],
+                    "conflict": [
+                        "正式 materialize 前仍需完整 KB 冲突、重复和 owner 边界检查。"
+                    ],
+                },
+            },
+            {
+                "candidate_id": "cand_20260611_phase37_backtest_strategy_version_and_data_version_required_001",
+                "research_task_id": "P37-E-B12",
+                "decision": "accepted_for_reviewed_caveat_only",
+                "confidence": "high",
+                "reviewed_allowed": True,
+                "approved_allowed": False,
+                "default_guidance_allowed": False,
+                "hard_gate_allowed": False,
+                "reasons": [
+                    "内联 schema 已定义 strategy_identity、data_identity、market_calendar_identity 和 execution_assumption_identity。",
+                    "owner mapping 已明确 Strategy Engineering、Data Engineering、Market Microstructure、Replay/Simulation/Live Execution 与 Backtest 的边界。",
+                    "Backtest 只负责记录、绑定和审计一致性，不接管其他分支本体规则。",
+                ],
+                "required_followups": [],
+                "patch_notes": {
+                    "source": [
+                        "MLflow、DVC、QuantConnect 只能作为 implementation pattern 或 supporting source，不得替代 CEK-TA 字段契约。",
+                        "CEK-TA backtest_run_manifest schema extract 是 strategy/data/calendar/execution version 字段本体主来源。",
+                    ],
+                    "content": [
+                        "B12 formal materialization 前应把 evaluation_timestamp 显式加入 run_identity 或 audit_trace，或声明 run_identity.created_at 是 evaluation timestamp alias。",
+                        "B12 必须保留 strategy/data/calendar/execution assumption 的 owner mapping。"
+                    ],
+                    "boundary": [
+                        "reviewed/caveat_only 只表示带 caveat 的版本绑定方法边界，不代表策略有效或实盘许可。",
+                        "不得创建 approved、default guidance 或 hard gate。"
+                    ],
+                    "conflict": [
+                        "strategy_rule_version 归 Strategy Engineering；dataset_version 归 Data Engineering；calendar/session 归 Market Microstructure/Data Engineering；cost/fill/slippage 归 Replay/Simulation/Live Execution；Backtest 只记录、绑定和审计一致性。"
+                    ],
+                },
+            },
+        ],
+        "hard_boundaries": {
+            "approved_allowed": False,
+            "default_guidance_allowed": False,
+            "hard_gate_allowed": False,
+            "trade_execution_advice_allowed": False,
+        },
+    }
+    write_json(OUTPUT_PATH, result)
+    print(json.dumps({"audit_result": str(OUTPUT_PATH), "candidate_count": 2}, ensure_ascii=False))
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

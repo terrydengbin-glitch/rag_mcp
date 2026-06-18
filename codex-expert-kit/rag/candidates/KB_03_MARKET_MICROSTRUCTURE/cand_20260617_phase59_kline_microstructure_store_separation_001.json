@@ -1,0 +1,327 @@
+{
+  "schema_version": "1.1.0-candidate",
+  "candidate_id": "cand_20260617_phase59_kline_microstructure_store_separation_001",
+  "research_task_id": "P59-MFS-001",
+  "status": {
+    "review_status": "formalized",
+    "ingestion_decision": "formal_reviewed_created",
+    "decision_reason": "Phase 59 外部严格审计通过，可进入 accepted_for_draft；不得 reviewed/approved/default guidance/hard gate。",
+    "created_at": "2026-06-17",
+    "updated_at": "2026-06-17"
+  },
+  "classification": {
+    "tree_node_id": "kt.market_microstructure.order_flow",
+    "canonical_node_id": "kt.market_microstructure.order_flow",
+    "tree_path": "CEK-TA / Trading Engineering / Market Microstructure / Order Flow",
+    "related_nodes": [
+      "kt.trading_engineering.data_engineering",
+      "kt.ai_engineering.database_storage_engineering.feature_store_storage",
+      "kt.ai_engineering.database_storage_engineering.data_contract_lineage",
+      "kt.ai_engineering.database_storage_engineering.relational_core_schema"
+    ],
+    "partition_id": "KB_03_MARKET_MICROSTRUCTURE",
+    "domain": "market_microstructure",
+    "subdomain": "order_flow_storage_boundary",
+    "rule_type": "microstructure_data_boundary_rule",
+    "claim_type": "storage_architecture_constraint",
+    "used_for": [
+      "market_microstructure_data_design_audit",
+      "ai_trader_training_dataset_review",
+      "feature_store_boundary_review",
+      "external_project_rag_retrieval"
+    ],
+    "classification_notes": "本条主归属 Trading Engineering / Market Microstructure，因为它约束 tick、order book、trade prints、spread、depth、OFI、CVD 等 microstructure 数据与 K 线 snapshot 的本体边界；AI/Database Engineering 只消费其存储与 manifest 关系。"
+  },
+  "claim": {
+    "claim_id": "claim_p59_mfs_001",
+    "title": "Kline snapshot 与 microstructure 高频数据不应默认混成一个物理宽表",
+    "statement": "Kline snapshot、指标和 entry/exit snap 属于低频决策上下文；tick、order book、trade prints、spread、depth、OFI、CVD 等 microstructure 原始或高频聚合数据属于高写入、高粒度市场事件层。二者不应默认混入一个物理宽表；除非有明确的规模、写入频率、保留策略、查询模式、审计需求和成本评估证明宽表可控，否则应按数据粒度、写入频率、查询模式、保留策略和审计需求物理分层，再通过可追溯引用和 point-in-time manifest 组合到训练样本。",
+    "normalized_claim": "phase59.kline_microstructure_store_separation_required.v1",
+    "evidence_summary": "Feast 支撑 point-in-time feature retrieval 和离线/在线特征访问抽象；ClickHouse MergeTree 支撑高写入和大数据量场景；KX/kdb+ tick 体现实时/历史市场数据分层；Iceberg 支撑逻辑表与物理分区演进解耦。",
+    "interpretation_notes": "本条不是数据库选型建议，不强制 ClickHouse、kdb+、Feast、Iceberg 或任何单一技术；它只约束 K 线低频 snapshot 与 microstructure 高频事件的边界。",
+    "claim_strength": "medium_high",
+    "performance_claim": false
+  },
+  "applicability": {
+    "market": "general_with_venue_and_data_vendor_mapping",
+    "asset": "general",
+    "timeframe": "intraday_to_tick",
+    "data_granularity": "kline_snapshot_tick_order_book_trade_prints",
+    "project_type": "trading_ai_support_layer",
+    "applies_when": [
+      "外接项目同时使用 K 线 snapshot、技术指标、盘口、成交打印或订单流特征",
+      "AI IDE 设计交易训练数据、feature store、microstructure store 或 dataset snapshot manifest",
+      "需要区分低频决策上下文和高频市场事件存储"
+    ],
+    "not_applicable_when": [
+      "项目只有低频 K 线数据且没有任何 tick、order book、trade prints 或 microstructure feature",
+      "用户要求具体数据库 DDL、物理部署方案或性能调优参数",
+      "用户要求买卖点、仓位、杠杆、止损止盈或实盘执行建议"
+    ],
+    "assumptions": [
+      "外接项目必须定义自己的 venue、instrument、calendar、timestamp、data vendor 和 quality report。",
+      "microstructure 原始数据进入训练前必须先形成 decision-time feature，并通过 available_time / known_at 检查。",
+      "本候选通过严格审计前不得进入正式 reviewed 知识库。"
+    ],
+    "limitations": [
+      "ClickHouse、kdb+、Feast、Iceberg 都只是 implementation pattern 或 supporting source。",
+      "本条不替代 Phase 37 Market Microstructure 对 order flow、liquidity regime、latency 和 market impact 的本体知识。",
+      "不同市场和数据供应商的 microstructure 字段、粒度和保留策略需要单独映射。",
+      "小规模研究、临时 notebook、只读导出或离线特征展开表可以存在，但不得替代 canonical store、microstructure raw store 或 audit ledger。",
+      "训练样本可以是宽的 logical dataset view，但不代表底层必须是一个物理宽表。"
+    ]
+  },
+  "contract_refs": [
+    {
+      "contract_id": "phase59_microstructure_feature_store_hybrid_snapshot_contract",
+      "path": "docs/contracts/phase59_microstructure_feature_store_hybrid_snapshot_contract.md",
+      "sections": [
+        "4.3 kline_snapshot_identity",
+        "4.4 microstructure_store_identity",
+        "4.5 microstructure_feature_identity"
+      ]
+    },
+    {
+      "contract_id": "phase38_training_data_and_eval_contract",
+      "path": "docs/contracts/phase38_training_data_and_eval_contract.md",
+      "sections": [
+        "Decision-Time Feature Frame",
+        "Numeric Scorer Dataset"
+      ]
+    }
+  ],
+  "source_refs": [
+    {
+      "source_id": "src_p59_feast_point_in_time",
+      "source_title": "Point-in-time joins",
+      "source_url": "https://docs.feast.dev/getting-started/concepts/point-in-time-joins",
+      "source_type": "official_doc",
+      "publisher": "Feast",
+      "accessed_at": "2026-06-17",
+      "reliability": "high",
+      "score": 86,
+      "freshness": "time_sensitive",
+      "relevance": "high",
+      "evidence_summary": "Feast documents point-in-time correct feature sets for training data and leakage prevention.",
+      "limitations": [
+        "Feature store implementation pattern; does not define trading microstructure ontology."
+      ],
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_p59_clickhouse_mergetree",
+      "source_title": "MergeTree",
+      "source_url": "https://clickhouse.com/docs/engines/table-engines/mergetree-family/mergetree",
+      "source_type": "official_doc",
+      "publisher": "ClickHouse",
+      "accessed_at": "2026-06-17",
+      "reliability": "high",
+      "score": 84,
+      "freshness": "time_sensitive",
+      "relevance": "medium_high",
+      "evidence_summary": "ClickHouse documents MergeTree family for large data volumes and high ingestion workloads, supporting high-frequency event store as an implementation pattern.",
+      "limitations": [
+        "Not a CEK-TA mandatory database; supports storage pattern only."
+      ],
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_p59_kx_tick",
+      "source_title": "Tick data capture and analysis",
+      "source_url": "https://code.kx.com/q/learn/startingkdb/tick/",
+      "source_type": "official_doc",
+      "publisher": "KX",
+      "accessed_at": "2026-06-17",
+      "reliability": "high",
+      "score": 84,
+      "freshness": "stable",
+      "relevance": "medium_high",
+      "evidence_summary": "KX documents tick architecture patterns for real-time and historical market data capture, processing and analysis.",
+      "limitations": [
+        "Market-data architecture example; does not force kdb+ adoption."
+      ],
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_p59_iceberg_partitioning",
+      "source_title": "Partitioning",
+      "source_url": "https://iceberg.apache.org/docs/latest/partitioning/",
+      "source_type": "official_doc",
+      "publisher": "Apache Iceberg",
+      "accessed_at": "2026-06-17",
+      "reliability": "high",
+      "score": 84,
+      "freshness": "time_sensitive",
+      "relevance": "medium",
+      "evidence_summary": "Iceberg supports hidden partitioning and partition evolution, illustrating that logical datasets should not be locked to one physical layout.",
+      "limitations": [
+        "Table format pattern; not a trading-specific data model."
+      ],
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "medium_high",
+    "score": 84.5,
+    "score_version": "phase59_source_scoring_v1",
+    "primary_source_count": 4,
+    "supporting_source_count": 0,
+    "low_reliability_source_count": 0,
+    "mandatory_downgrades": [],
+    "limitations": [
+      "外部来源主要支撑工程模式；交易领域字段本体仍需 CEK-TA Market Microstructure 和 Data Engineering 契约承接。",
+      "进入 reviewed/caveat_only 前需要外部审计确认是否需要补更多 venue/data-vendor 案例。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none_known_in_visible_context",
+    "checked_against": [
+      "Phase 37 Market Microstructure reviewed knowledge",
+      "Phase 38 Training Data and Evaluation contract",
+      "Phase 42 Database / Storage contract"
+    ],
+    "conflicts": [],
+    "resolution_summary": "未发现与可见正式知识直接冲突；本条把 microstructure 本体归 Trading Engineering，把 feature store/manifest 归 AI/Database Engineering。",
+    "approval_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于审计外接项目是否把 K 线 snapshot 与 microstructure 高频事件混成一个不可审计宽表。",
+      "用于提醒 AI IDE 为 microstructure 原始数据、聚合特征和训练样本分别设计引用、版本和 lineage。",
+      "用于生成数据架构审计清单和 RAG 检索上下文。"
+    ],
+    "not_allowed": [
+      "不得把本候选当作数据库选型结论。",
+      "不得生成买卖点、仓位、杠杆、止损止盈或实盘执行建议。",
+      "不得进入默认指导或 hard gate。"
+    ]
+  },
+  "machine_gate": {
+    "default_guidance": "deny",
+    "reason": "Phase 59 strict audit accepted_for_draft only; reviewed/approved/default/hard gate remain forbidden.",
+    "requires_human_escalation": true,
+    "hidden_from_default_queue": true,
+    "visible_in_default_guidance_queue": false,
+    "reviewed_allowed": false,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "trade_execution_advice_allowed": false
+  },
+  "review": {
+    "confidence": "medium_high",
+    "freshness": "mixed",
+    "reviewer": "external_ai_strict_audit_and_codex_backwrite",
+    "reviewed_at": "2026-06-17",
+    "open_questions": [
+      "将“不应混成一个物理宽表”改为“不应默认混成一个物理宽表”。",
+      "补充 Binance market data streams、Databento/Kaiko/CoinAPI 等市场数据模型案例。",
+      "补充项目内部 Kline snapshot 与 micro event store 的读写频率、保留周期、查询模式和审计 trace 示例。",
+      "明确宽表例外：小规模研究、临时 notebook、只读导出、离线特征展开表可以存在，但不得替代 canonical store。"
+    ],
+    "audit_log": [
+      {
+        "at": "2026-06-17",
+        "actor": "codex",
+        "action": "created",
+        "reason": "根据 Phase 59 用户架构建议和专业资料搜索生成候选知识。"
+      },
+      {
+        "at": "2026-06-17",
+        "actor": "external_ai_strict_audit",
+        "action": "phase59_candidate_audit_imported",
+        "reason": "accepted_for_draft / confidence=medium_high",
+        "audit_result_id": "audit_result_phase59_microstructure_feature_store_candidate_20260617_strict_v1",
+        "patch_notes": {
+          "source": [
+            "Feast、Iceberg、ClickHouse、kdb+ 只能作为 implementation pattern，不得作为强制技术栈。",
+            "建议新增交易所官方 market data stream 资料作为市场数据粒度证据。"
+          ],
+          "content": [
+            "候选应强调 canonical raw/high-frequency store 与 low-frequency decision snapshot 分层。",
+            "训练样本可以是宽的 logical dataset view，但不代表底层必须是一个物理宽表。"
+          ],
+          "boundary": [
+            "不得输出 DDL。",
+            "不得输出 migration。",
+            "不得作为 default guidance。",
+            "不得作为 hard gate。"
+          ],
+          "conflict": [
+            "与 Phase 42 数据存储治理不冲突。",
+            "与 Phase 38 training data leakage control 一致。"
+          ]
+        }
+      },
+      {
+        "at": "2026-06-17",
+        "actor": "codex",
+        "action": "formal_reviewed_caveat_only_created",
+        "reason": "CEK-TA-570 created formal reviewed/caveat_only knowledge.",
+        "audit_result_id": "audit_result_phase59_reviewed_preparation_20260617_strict_v1",
+        "formal_knowledge_id": "kb_phase59_market_microstructure.kline_microstructure_store_separation_required.v1"
+      }
+    ],
+    "ai_audit": {
+      "candidate_id": "cand_20260617_phase59_kline_microstructure_store_separation_001",
+      "research_task_id": "P59-MFS-001",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "medium_high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "trade_execution_advice_allowed": false,
+      "ddl_or_migration_allowed": false,
+      "audit_result_id": "audit_result_phase59_reviewed_preparation_20260617_strict_v1",
+      "formal_knowledge_id": "kb_phase59_market_microstructure.kline_microstructure_store_separation_required.v1"
+    }
+  },
+  "workflow": {
+    "stage": "formalized_reviewed",
+    "queue_group": "formalized",
+    "current_task_id": "CEK-TA-570",
+    "next_action": "runtime_linkage_validation",
+    "next_allowed_decisions": [
+      "reviewed_preparation",
+      "needs_more_evidence",
+      "rejected",
+      "blocked"
+    ],
+    "forbidden_decisions": [
+      "reviewed_without_preparation_audit",
+      "approved",
+      "default_guidance",
+      "hard_gate",
+      "trade_execution_advice",
+      "ddl_or_migration"
+    ],
+    "formalization_allowed": true,
+    "conversion_target": {
+      "proposed_knowledge_id": "kb_phase59_market_microstructure.kline_microstructure_store_separation_required.v1",
+      "target_review_status": "reviewed_caveat_only",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false
+    },
+    "ai_audit_result_id": "audit_result_phase59_reviewed_preparation_20260617_strict_v1",
+    "formal_knowledge_id": "kb_phase59_market_microstructure.kline_microstructure_store_separation_required.v1",
+    "formal_knowledge_path": "codex-expert-kit/rag/knowledge/KB_03_MARKET_MICROSTRUCTURE/kb_phase59_market_microstructure.kline_microstructure_store_separation_required.v1.json",
+    "formal_review_status": "reviewed",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "hidden_from_default_queue": true,
+    "visible_in_default_guidance_queue": false
+  },
+  "contribution": {
+    "origin": "phase59_research_ingestion",
+    "private_data_removed": true,
+    "contains_project_private_strategy": false,
+    "contains_secret": false,
+    "contains_account_facts": false
+  }
+}

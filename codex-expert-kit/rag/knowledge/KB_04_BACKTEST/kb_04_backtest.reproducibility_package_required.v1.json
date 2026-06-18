@@ -1,0 +1,567 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_04_backtest.reproducibility_package_required.v1",
+  "title": "回测必须具备可复现实验包",
+  "metadata": {
+    "partition_id": "KB_04_BACKTEST",
+    "domain": "backtest",
+    "subdomain": "reproducibility",
+    "rule_type": "backtest_reliability_boundary_rule",
+    "claim_type": "backtest_validity_rule",
+    "content_type": "json",
+    "project_binding": "none",
+    "tree_node_id": "kt.trading_engineering.backtest",
+    "tree_path": "CEK-TA / Trading Engineering / Backtest",
+    "canonical_node_id": "kt.trading_engineering.backtest",
+    "canonical_tree_path": "CEK-TA / Trading Engineering / Backtest",
+    "risk_level": "medium",
+    "used_for": [
+      "backtest_review",
+      "strategy_validation_audit",
+      "ai_trader_project_gap_audit",
+      "external_project_rag_retrieval"
+    ],
+    "source_candidate_id": "cand_20260611_phase37_backtest_reproducibility_package_required_001",
+    "research_task_id": "P37-E-B11",
+    "phase": "Phase 37",
+    "classification_notes": "Phase 37 Backtest formal reviewed/caveat_only；只约束回测证据包、复现和版本绑定边界，不是 approved/default guidance。",
+    "related_nodes": [
+      "kt.trading_engineering",
+      "kt.trading_engineering.data_engineering",
+      "kt.kline_strategy",
+      "kt.market_microstructure",
+      "kt.replay_simulation",
+      "kt.live_execution",
+      "kt.risk_management",
+      "kt.ai_engineering.llm_training"
+    ]
+  },
+  "applicability": {
+    "market": "general_with_market_specific_mapping",
+    "asset": "general",
+    "timeframe": "historical_evaluation",
+    "data_granularity": "historical_market_data_and_orders",
+    "project_type": "trading_ai_support_layer",
+    "applies_when": [
+      "审计策略回测、参数搜索、指标解释、成本模型、fill 假设或复现实验包",
+      "把回测结果用于 AI scoring、策略筛选、paper/live 前置评估或研究报告"
+    ],
+    "not_applicable_when": [
+      "需要直接生成买卖点、仓位、杠杆、止损止盈或实盘执行建议",
+      "没有历史数据版本、策略规则版本或 evaluation timestamp",
+      "问题属于 live execution、risk hard gate 或交易所实盘订单规则，应由对应分支处理",
+      "需要买卖点、仓位、杠杆、止损止盈参数或实盘执行建议时，本知识不得使用。",
+      "需要自动 hard gate 或实盘许可时，应由 Risk Management / Live Execution owner 定义。"
+    ]
+  },
+  "content": {
+    "statement": "回测若要作为可复用研究证据，必须提供可复现实验包；该包至少绑定代码版本、依赖锁定、配置哈希、随机种子、输入输出 artifact、日志、metric_report、lineage 和 replay job。",
+    "rationale": "CEK-TA 内联 schema extract 定义 reproducibility_package 字段表；MLflow/DVC 支撑实验追踪和可复现 pipeline 的通用实现语义，但不替代 CEK-TA 字段契约。",
+    "normalized_claim": "backtest.reproducibility_package_required.v1",
+    "claim_strength": "reviewed_caveat_only",
+    "performance_claim": false,
+    "reviewed_patch_notes": {
+      "source": [
+        "MLflow、DVC、QuantConnect 只能作为 implementation pattern 或 supporting source，不得写成 CEK-TA 或外接项目强制工具依赖。",
+        "CEK-TA backtest_run_manifest schema extract 是字段本体主来源。"
+      ],
+      "content": [
+        "B11 formal knowledge 必须保留 known_non_determinism 字段，避免非确定性运行差异无法解释。",
+        "B11 只能描述回测证据包可复现边界，不证明策略有效。"
+      ],
+      "boundary": [
+        "reviewed/caveat_only 不等于 approved，不进入 default guidance，不创建 hard gate。",
+        "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。"
+      ],
+      "conflict": [
+        "正式 materialize 前仍需完整 KB 冲突、重复和 owner 边界检查。"
+      ]
+    },
+    "required_contract_fields": [
+      "code_repository",
+      "code_commit",
+      "dependency_lockfile_hash",
+      "container_image_digest",
+      "random_seed",
+      "config_file_hash",
+      "input_artifact_ids",
+      "output_artifact_ids",
+      "log_artifact_id",
+      "metric_report_id",
+      "lineage_id",
+      "replay_command_or_ci_job_id",
+      "known_non_determinism"
+    ],
+    "materialization_notes": [
+      "known_non_determinism 必须保留，用于解释非确定性运行差异。",
+      "MLflow/DVC 只是实现模式示例，字段本体以 CEK-TA schema extract 为准。"
+    ]
+  },
+  "contract_binding": {
+    "contract_path": "docs/contracts/phase37_backtest_run_manifest_contract.md",
+    "schema_extract_path": "docs/contracts/phase37_backtest_run_manifest_schema_extract.json",
+    "schema_extract_id": "phase37_backtest_run_manifest_schema_extract_v1",
+    "contract_sha256": "6698c0b2ec18dc12ebd85f46ace4c021c6b6d84e162ff45773c9a9e253289574",
+    "cross_owner_mapping": {
+      "strategy_rule_version": "Strategy Engineering owns strategy rule identity.",
+      "parameter_hash": "Strategy Engineering owns normalized parameter hashing; Backtest records it immutably.",
+      "dataset_version": "Data Engineering owns dataset/version/snapshot semantics.",
+      "calendar_version": "Market Microstructure/Data Engineering own session and calendar evidence.",
+      "cost_model_version": "Replay/Simulation and Execution owners define cost/fill/slippage assumptions.",
+      "fill_model_version": "Replay/Simulation owns fill model assumptions; Backtest records version only.",
+      "evaluation_timestamp": "Backtest owns evaluation timestamp and must separate parameter search from final evaluation."
+    }
+  },
+  "assumptions": [
+    "候选用于 CEK-TA 通用支持层知识库，不包含任何外接项目私有策略参数。",
+    "回测结论必须保留数据、成本、执行、样本、参数搜索、验证和复现边界。",
+    "候选通过外部审计前不能进入正式 reviewed 知识库。"
+  ],
+  "limitations": [
+    "论文和专业机构资料支持方法边界，不能证明任何特定策略有效。",
+    "平台文档只可作为实现语义示例，外接项目必须映射自己的 backtest engine、broker、交易所和数据供应商。",
+    "本候选不提供任何投资建议或实盘执行许可。",
+    "本候选只约束回测证据包完整性，不证明策略盈利能力。",
+    "本候选不生成买卖点、仓位、杠杆、止损止盈或实盘执行建议。",
+    "字段本体由 CEK-TA contract/schema extract 支撑，外部工具文档只支撑等价实现模式。",
+    "reviewed/caveat_only 不等于 approved，也不允许进入默认指导队列。",
+    "本知识不证明策略盈利能力、稳健性或实盘资格。",
+    "MLflow、DVC、QuantConnect 只能作为实现语义示例，不是 CEK-TA 或外接项目强制工具依赖。"
+  ],
+  "source_evidence": [
+    {
+      "source_id": "src_001",
+      "title": "MLflow Tracking",
+      "url": "https://mlflow.org/docs/latest/tracking.html",
+      "source_type": "framework_doc",
+      "publisher": "MLflow",
+      "published_at": null,
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "medium_high",
+      "relevance": "high",
+      "summary": "MLflow Tracking records parameters, metrics, artifacts and source/version metadata for reproducible experiments.",
+      "supports": [
+        "claim_statement",
+        "applicability_boundary",
+        "caveat_only_boundary"
+      ]
+    },
+    {
+      "source_id": "src_002",
+      "title": "DVC Pipelines",
+      "url": "https://dvc.org/doc/user-guide/pipelines",
+      "source_type": "framework_doc",
+      "publisher": "DVC",
+      "published_at": null,
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "medium_high",
+      "relevance": "high",
+      "summary": "DVC pipelines define stages, dependencies, outputs and reproducible data workflows.",
+      "supports": [
+        "claim_statement",
+        "applicability_boundary",
+        "caveat_only_boundary"
+      ]
+    },
+    {
+      "source_id": "src_003",
+      "title": "Backtesting & Simulation",
+      "url": "https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/backtesting-and-simulation",
+      "source_type": "professional_curriculum",
+      "publisher": "CFA Institute",
+      "published_at": "2026-01-01",
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "high",
+      "relevance": "medium_high",
+      "summary": "CFA Institute frames backtesting as approximating the real-life investment process, including rolling-window processes, rules, portfolio formation, rebalancing, performance and risk profiles.",
+      "supports": [
+        "claim_statement",
+        "applicability_boundary",
+        "caveat_only_boundary"
+      ]
+    },
+    {
+      "source_id": "src_004",
+      "title": "Backtesting Report",
+      "url": "https://www.quantconnect.com/docs/v2/cloud-platform/backtesting/report",
+      "source_type": "platform_doc",
+      "publisher": "QuantConnect",
+      "published_at": null,
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "medium_high",
+      "relevance": "medium_high",
+      "summary": "QuantConnect backtest reports show return distributions, cumulative returns, summary and risk information.",
+      "supports": [
+        "claim_statement",
+        "applicability_boundary",
+        "caveat_only_boundary"
+      ]
+    },
+    {
+      "source_id": "src_p37_backtest_contract_reproducibility_package",
+      "title": "Phase 37 Backtest Run Manifest Contract",
+      "url": "docs/contracts/phase37_backtest_run_manifest_contract.md",
+      "source_type": "internal_contract",
+      "publisher": "CEK-TA",
+      "published_at": "2026-06-11",
+      "accessed_at": "2026-06-11",
+      "version": "v1",
+      "reliability": "high",
+      "relevance": "high",
+      "summary": "定义 reproducibility_package 必填字段，包括 code_commit、dependency lockfile、config hash、input/output artifacts、日志、lineage 和 replay job。",
+      "supports": [
+        "claim_statement",
+        "applicability_boundary",
+        "caveat_only_boundary"
+      ]
+    },
+    {
+      "source_id": "src_mlflow_tracking",
+      "title": "MLflow Tracking",
+      "url": "https://mlflow.org/docs/latest/ml/tracking/",
+      "source_type": "framework_doc",
+      "publisher": "MLflow",
+      "published_at": null,
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "medium_high",
+      "relevance": "high",
+      "summary": "MLflow Tracking 支撑记录参数、代码版本、指标和输出文件。",
+      "supports": [
+        "claim_statement",
+        "applicability_boundary",
+        "caveat_only_boundary"
+      ]
+    },
+    {
+      "source_id": "src_dvc_pipelines",
+      "title": "Get Started: Data Pipelines",
+      "url": "https://doc.dvc.org/start/data-pipelines/data-pipelines",
+      "source_type": "framework_doc",
+      "publisher": "DVC",
+      "published_at": null,
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "medium_high",
+      "relevance": "high",
+      "summary": "DVC pipelines 支撑 versioned pipeline、dependencies、outputs 和 reproducible workflows。",
+      "supports": [
+        "claim_statement",
+        "applicability_boundary",
+        "caveat_only_boundary"
+      ]
+    },
+    {
+      "source_id": "src_p37_backtest_inline_contract_p37_e_b11",
+      "title": "Phase 37 Backtest Run Manifest Contract - inline schema extract",
+      "url": "docs/contracts/phase37_backtest_run_manifest_schema_extract.json",
+      "source_type": "internal_contract_schema_extract",
+      "publisher": "CEK-TA",
+      "published_at": "2026-06-11",
+      "accessed_at": "2026-06-11",
+      "version": "1.0.0",
+      "reliability": "high",
+      "relevance": "high",
+      "summary": "内联 backtest_run_manifest 字段表、required/optional 标记、字段语义、生成规则、校验规则和 contract sha256。",
+      "supports": [
+        "claim_statement",
+        "applicability_boundary",
+        "caveat_only_boundary"
+      ]
+    }
+  ],
+  "source_refs": [
+    {
+      "source_title": "MLflow Tracking",
+      "source_url": "https://mlflow.org/docs/latest/tracking.html",
+      "source_type": "framework_doc",
+      "publisher": "MLflow",
+      "published_at": null,
+      "reliability": "medium_high",
+      "score": 82,
+      "freshness": "time_sensitive",
+      "evidence_summary": "MLflow Tracking records parameters, metrics, artifacts and source/version metadata for reproducible experiments.",
+      "limitations": [
+        "Framework implementation example; not mandatory for CEK-TA."
+      ],
+      "source_id": "src_001",
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "DVC Pipelines",
+      "source_url": "https://dvc.org/doc/user-guide/pipelines",
+      "source_type": "framework_doc",
+      "publisher": "DVC",
+      "published_at": null,
+      "reliability": "medium_high",
+      "score": 82,
+      "freshness": "time_sensitive",
+      "evidence_summary": "DVC pipelines define stages, dependencies, outputs and reproducible data workflows.",
+      "limitations": [
+        "Framework implementation example; not mandatory for CEK-TA."
+      ],
+      "source_id": "src_002",
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "Backtesting & Simulation",
+      "source_url": "https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/backtesting-and-simulation",
+      "source_type": "professional_curriculum",
+      "publisher": "CFA Institute",
+      "published_at": "2026-01-01",
+      "reliability": "high",
+      "score": 88,
+      "freshness": "time_sensitive",
+      "evidence_summary": "CFA Institute frames backtesting as approximating the real-life investment process, including rolling-window processes, rules, portfolio formation, rebalancing, performance and risk profiles.",
+      "limitations": [
+        "Professional curriculum source; use for process and boundary, not for a specific trading edge."
+      ],
+      "source_id": "src_003",
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "relevance": "medium_high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "Backtesting Report",
+      "source_url": "https://www.quantconnect.com/docs/v2/cloud-platform/backtesting/report",
+      "source_type": "platform_doc",
+      "publisher": "QuantConnect",
+      "published_at": null,
+      "reliability": "medium_high",
+      "score": 80,
+      "freshness": "time_sensitive",
+      "evidence_summary": "QuantConnect backtest reports show return distributions, cumulative returns, summary and risk information.",
+      "limitations": [
+        "Report fields are platform-specific; use as example of metric context, not universal schema."
+      ],
+      "source_id": "src_004",
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "relevance": "medium_high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_p37_backtest_contract_reproducibility_package",
+      "source_title": "Phase 37 Backtest Run Manifest Contract",
+      "source_url": "docs/contracts/phase37_backtest_run_manifest_contract.md",
+      "source_type": "internal_contract",
+      "publisher": "CEK-TA",
+      "published_at": "2026-06-11",
+      "accessed_at": "2026-06-11",
+      "version": "v1",
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "定义 reproducibility_package 必填字段，包括 code_commit、dependency lockfile、config hash、input/output artifacts、日志、lineage 和 replay job。",
+      "limitations": [
+        "内部契约只定义 CEK-TA 逻辑字段，不指定外部项目必须使用 MLflow 或 DVC。"
+      ],
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_mlflow_tracking",
+      "source_title": "MLflow Tracking",
+      "source_url": "https://mlflow.org/docs/latest/ml/tracking/",
+      "source_type": "framework_doc",
+      "publisher": "MLflow",
+      "published_at": null,
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "medium_high",
+      "relevance": "high",
+      "evidence_summary": "MLflow Tracking 支撑记录参数、代码版本、指标和输出文件。",
+      "limitations": [
+        "框架实现示例，不是 CEK-TA 唯一工具要求。"
+      ],
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_dvc_pipelines",
+      "source_title": "Get Started: Data Pipelines",
+      "source_url": "https://doc.dvc.org/start/data-pipelines/data-pipelines",
+      "source_type": "framework_doc",
+      "publisher": "DVC",
+      "published_at": null,
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "medium_high",
+      "relevance": "high",
+      "evidence_summary": "DVC pipelines 支撑 versioned pipeline、dependencies、outputs 和 reproducible workflows。",
+      "limitations": [
+        "框架实现示例，不是 CEK-TA 唯一工具要求。"
+      ],
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_p37_backtest_inline_contract_p37_e_b11",
+      "source_title": "Phase 37 Backtest Run Manifest Contract - inline schema extract",
+      "source_url": "docs/contracts/phase37_backtest_run_manifest_schema_extract.json",
+      "source_type": "internal_contract_schema_extract",
+      "publisher": "CEK-TA",
+      "published_at": "2026-06-11",
+      "accessed_at": "2026-06-11",
+      "version": "1.0.0",
+      "reliability": "high",
+      "relevance": "high",
+      "score": 92,
+      "evidence_summary": "内联 backtest_run_manifest 字段表、required/optional 标记、字段语义、生成规则、校验规则和 contract sha256。",
+      "limitations": [
+        "只支撑 CEK-TA 内部逻辑字段；外部项目可映射等价字段，不要求相同物理表名。"
+      ],
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "medium_high",
+    "score": 83.0,
+    "score_version": "phase37_backtest_source_scoring_v1",
+    "primary_source_count": 3,
+    "supporting_source_count": 1,
+    "low_reliability_source_count": 0,
+    "mandatory_downgrades": [],
+    "limitations": [
+      "正式入库前必须由外部审计确认 claim 没有超出来源可证明范围。",
+      "平台文档只能证明平台语义，不能单独证明策略有效或实盘可执行。",
+      "本轮补证将 CEK-TA 内部 backtest_run_manifest 契约作为字段本体主来源，外部工具文档仅作实现语义示例。",
+      "CEK-TA 内部字段本体现在以 schema extract 和 contract sha256 形式进入再审包。",
+      "MLflow、DVC、QuantConnect 只能作为实现语义示例，不能替代 CEK-TA backtest_run_manifest 字段契约。",
+      "本轮仍只请求 reviewed/caveat_only，不请求 approved/default guidance/hard gate。"
+    ],
+    "supplemental_evidence_status": "ready_for_reaudit",
+    "supplemental_source_count": 3,
+    "internal_contract_evidence_status": "inline_schema_extract_added",
+    "internal_contract_sha256": "6698c0b2ec18dc12ebd85f46ace4c021c6b6d84e162ff45773c9a9e253289574",
+    "inline_contract_audit_result_id": "audit_result_phase37_backtest_b11_b12_inline_contract_reaudit_20260611_strict_v1",
+    "reviewed_preparation_confidence": "high",
+    "internal_contract_source": "CEK-TA backtest_run_manifest schema extract is the primary source for CEK-TA exact fields.",
+    "tool_doc_boundary": "MLflow/DVC/QuantConnect are implementation-pattern/supporting sources only."
+  },
+  "conflict_audit": {
+    "conflict_status": "none_known_in_visible_context",
+    "checked_against": [
+      "Phase 37 Trading 与 AI 跨分支引用契约",
+      "现有 Backtest formal seed 知识",
+      "Data Engineering / Replay / Live Execution / Risk Management owner 边界"
+    ],
+    "conflicts": [],
+    "resolution_summary": "Inline contract reaudit passed as reviewed/caveat_only; complete formal KB conflict and duplicate check remains required before any future approved/default governance.",
+    "approval_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "owner_mapping_boundary": {
+      "strategy_rule_version": "Strategy Engineering owns strategy rule identity.",
+      "parameter_hash": "Strategy Engineering owns normalized parameter hashing; Backtest records it immutably.",
+      "dataset_version": "Data Engineering owns dataset/version/snapshot semantics.",
+      "calendar_version": "Market Microstructure/Data Engineering own session and calendar evidence.",
+      "cost_model_version": "Replay/Simulation and Execution owners define cost/fill/slippage assumptions.",
+      "fill_model_version": "Replay/Simulation owns fill model assumptions; Backtest records version only.",
+      "evaluation_timestamp": "Backtest owns evaluation timestamp and must separate parameter search from final evaluation."
+    },
+    "patch_notes": [
+      "正式 materialize 前仍需完整 KB 冲突、重复和 owner 边界检查。"
+    ]
+  },
+  "review": {
+    "review_status": "reviewed",
+    "reviewed_at": "2026-06-11",
+    "reviewed_by": "codex_with_external_ai_reaudit",
+    "confidence": "high",
+    "freshness": "mixed",
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase37_backtest_b11_b12_inline_contract_reaudit_20260611_strict_v1",
+      "package_id": "phase37_backtest_b11_b12_inline_contract_reaudit_package_20260611",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "reproducibility_package 已以内联 schema extract 定义为 required。",
+        "字段覆盖 code_repository、code_commit、dependency_lockfile_hash、container_image_digest、random_seed、config_file_hash、input_artifact_ids、output_artifact_ids、log_artifact_id、metric_report_id、lineage_id、replay_command_or_ci_job_id 和 known_non_determinism。",
+        "MLflow/DVC 只作为实现语义示例，字段本体来源已经是 CEK-TA 内联 schema。"
+      ],
+      "patch_notes": {
+        "source": [
+          "MLflow、DVC、QuantConnect 只能作为 implementation pattern 或 supporting source，不得写成 CEK-TA 或外接项目强制工具依赖。",
+          "CEK-TA backtest_run_manifest schema extract 是字段本体主来源。"
+        ],
+        "content": [
+          "B11 formal knowledge 必须保留 known_non_determinism 字段，避免非确定性运行差异无法解释。",
+          "B11 只能描述回测证据包可复现边界，不证明策略有效。"
+        ],
+        "boundary": [
+          "reviewed/caveat_only 不等于 approved，不进入 default guidance，不创建 hard gate。",
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。"
+        ],
+        "conflict": [
+          "正式 materialize 前仍需完整 KB 冲突、重复和 owner 边界检查。"
+        ]
+      }
+    },
+    "open_questions": [],
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "source_candidate_id": "cand_20260611_phase37_backtest_reproducibility_package_required_001",
+    "ai_audit_result_id": "audit_result_phase37_backtest_b11_b12_inline_contract_reaudit_20260611_strict_v1"
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于提醒 AI IDE 检索 Backtest 可信度、偏差、成本、验证和复现边界。",
+      "用于审计交易项目方案中是否缺少回测证据、成本模型、样本外、walk-forward 或复现实验包。",
+      "用于辅助外接项目设计 backtest review checklist、reason code 和 evidence gate。"
+    ],
+    "not_allowed": [
+      "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+      "不得把候选知识当作 reviewed、approved、default guidance 或 hard gate。",
+      "不得绕过外接项目事实层、数据契约、执行适配器、风控 hard gate 或人工治理流程。",
+      "不得作为默认指导。",
+      "不得作为 approved 知识。",
+      "不得生成买卖点、仓位、杠杆、止损止盈或实盘执行建议。",
+      "不得启用 hard gate 或自动风控动作。"
+    ],
+    "requires_context": [
+      "backtest_run_manifest",
+      "strategy_identity",
+      "data_identity",
+      "market_calendar_identity",
+      "execution_assumption_identity",
+      "reproducibility_package"
+    ],
+    "required_context": [
+      "必须同时返回 source_evidence、applicability、not_applicable_when、review_status、conflict_status 和 machine_gate。",
+      "若外接项目问题涉及实盘、法律、授权、资金或风控动作，必须要求项目事实层或人工 owner 复核。"
+    ],
+    "fallback_behavior": "cite_with_caveat"
+  },
+  "machine_gate": {
+    "default_guidance": "caveat_only",
+    "reason": "reviewed/caveat_only only; approved/default guidance/hard gate are disabled.",
+    "requires_human_escalation": true,
+    "hidden_from_default_queue": true,
+    "visible_in_default_guidance_queue": false,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "blocking_reasons": [],
+    "checked_at": "2026-06-13T10:29:14+00:00",
+    "gate_version": "1.0.0"
+  },
+  "contribution": {
+    "source_type": "phase37_candidate_to_reviewed",
+    "source_candidate_id": "cand_20260611_phase37_backtest_reproducibility_package_required_001",
+    "audit_result_id": "audit_result_phase37_backtest_b11_b12_inline_contract_reaudit_20260611_strict_v1",
+    "private_data_removed": true
+  },
+  "recommended_extra_sources": []
+}

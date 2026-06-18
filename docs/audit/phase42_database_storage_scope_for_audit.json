@@ -1,0 +1,181 @@
+{
+  "audit_package_id": "phase42_database_storage_scope_for_audit_20260611",
+  "phase": "Phase 42",
+  "title": "Database / Data Contract / Storage Engineering for Trading AI",
+  "created_at": "2026-06-11",
+  "audit_goal": "请审计 Phase 42 是否应作为 AI Engineering 下的数据库、数据契约、存储工程知识分支；检查 12 个 L3 专题、34 条知识点、跨分支边界、禁止事项和后续采集顺序是否合理。",
+  "hard_boundaries": {
+    "do_not_create_real_database": true,
+    "do_not_execute_migration": true,
+    "do_not_modify_external_project_database": true,
+    "do_not_generate_trade_signal_or_execution_advice": true,
+    "do_not_mix_trading_body_knowledge": true,
+    "do_not_treat_vector_db_as_canonical_store": true,
+    "do_not_allow_llm_to_write_final_gate": true,
+    "candidate_is_not_formal_knowledge": true,
+    "reviewed_is_not_approved": true,
+    "approved_allowed_in_this_phase_scope_audit": false,
+    "default_guidance_allowed_in_this_phase_scope_audit": false,
+    "hard_gate_allowed_in_this_phase_scope_audit": false
+  },
+  "proposed_l2_node": {
+    "canonical_node_id": "kt.ai_engineering.database_storage_engineering",
+    "title": "Database Data Contract And Storage Engineering",
+    "partition_id": "KB_AI_26_DATABASE_STORAGE",
+    "parent_id": "kt.ai_engineering",
+    "domain": "storage_engineering",
+    "subdomain": "database_storage_engineering",
+    "purpose": "为交易 AI、LLM gating/scoring、RAG 检索和审计工作流提供数据库、数据契约、审计日志、向量库、迁移、备份恢复和数据生命周期治理知识。"
+  },
+  "proposed_l3_nodes": [
+    {
+      "canonical_node_id": "kt.ai_engineering.database_storage_engineering.relational_core_schema",
+      "title": "Relational Core Schema",
+      "scope": "核心关系表、主键、唯一键、外键、约束、JSONB 边界和幂等键。"
+    },
+    {
+      "canonical_node_id": "kt.ai_engineering.database_storage_engineering.data_contract_lineage",
+      "title": "Data Contract Lineage",
+      "scope": "decision_time、event_time、ingestion_time、label_time、schema hash、dataset hash 和 lineage。"
+    },
+    {
+      "canonical_node_id": "kt.ai_engineering.database_storage_engineering.migration_versioning",
+      "title": "Migration Versioning",
+      "scope": "Alembic、migration review、reversible migration、rollback 和兼容性检查。"
+    },
+    {
+      "canonical_node_id": "kt.ai_engineering.database_storage_engineering.indexing_query_performance",
+      "title": "Indexing Query Performance",
+      "scope": "查询模式驱动索引、复合索引、唯一索引、分区、分页和慢查询审计。"
+    },
+    {
+      "canonical_node_id": "kt.ai_engineering.database_storage_engineering.audit_log_ledger",
+      "title": "Audit Log Ledger",
+      "scope": "append-only ledger、actor、reason、audit_trace_id、row_hash/prev_hash 和防篡改证据。"
+    },
+    {
+      "canonical_node_id": "kt.ai_engineering.database_storage_engineering.feature_store_storage",
+      "title": "Feature Store Storage",
+      "scope": "offline/online parity、feature snapshot、feature manifest、point-in-time join 和 feature-store 条件引入。"
+    },
+    {
+      "canonical_node_id": "kt.ai_engineering.database_storage_engineering.vector_store_retrieval_storage",
+      "title": "Vector Store Retrieval Storage",
+      "scope": "pgvector/Qdrant、embedding version、chunk metadata、payload filter、source provenance 和 index version。"
+    },
+    {
+      "canonical_node_id": "kt.ai_engineering.database_storage_engineering.model_registry_release_storage",
+      "title": "Model Registry Release Storage",
+      "scope": "model release manifest、scorer、calibrator、threshold、prompt、RAG index、rollback target 和 model registry 条件引入。"
+    },
+    {
+      "canonical_node_id": "kt.ai_engineering.database_storage_engineering.runtime_observability_trace",
+      "title": "Runtime Observability Trace",
+      "scope": "request_id、audit_trace_id、latency、timeout、fallback、retrieval hit、citation completeness 和 error record。"
+    },
+    {
+      "canonical_node_id": "kt.ai_engineering.database_storage_engineering.data_lifecycle_retention",
+      "title": "Data Lifecycle Retention",
+      "scope": "retention、archive、delete、cold storage、dataset freeze、incident freeze 和 audit replay continuity。"
+    },
+    {
+      "canonical_node_id": "kt.ai_engineering.database_storage_engineering.security_privacy_access_control",
+      "title": "Security Privacy Access Control",
+      "scope": "least privilege、RLS、pgAudit、secret exclusion、PII/private field redaction 和 audited writes。"
+    },
+    {
+      "canonical_node_id": "kt.ai_engineering.database_storage_engineering.backup_restore_disaster_recovery",
+      "title": "Backup Restore Disaster Recovery",
+      "scope": "backup、restore drill、RPO/RTO、disaster recovery evidence 和恢复失败处理。"
+    }
+  ],
+  "knowledge_plan_summary": {
+    "total_topics": 34,
+    "p0_topics": 28,
+    "p1_topics": 6,
+    "review_target": "formal reviewed / caveat_only",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "p0_topics": [
+    "P42-P0-001 canonical records must live in PostgreSQL, not vector DB",
+    "P42-P0-002 every scoring/gating decision must have audit_trace_id",
+    "P42-P0-003 final_gate decision must be append-only",
+    "P42-P0-004 score_result must be versioned append-only",
+    "P42-P0-005 trade_candidate snapshot must contain only decision-time visible fields",
+    "P42-P0-006 outcome must be isolated from input features",
+    "P42-P0-007 feedback/outcome/label must be separated",
+    "P42-P0-008 labels must record label_policy_version and label_source",
+    "P42-P0-009 model_version/prompt_version/rag_index_version must be recorded together",
+    "P42-P0-010 LLM audit output must bind citations/source/version",
+    "P42-P0-011 vector search result must link back to source document and formal knowledge id",
+    "P42-P0-012 RAG chunks must store source_uri/license/hash/chunk_version",
+    "P42-P0-013 embedding_model_version must be stored with vector records",
+    "P42-P0-014 PostgreSQL constraints must enforce high-value invariants",
+    "P42-P0-015 high-value tables must use unique constraints and idempotency keys",
+    "P42-P0-016 Alembic migration must be reviewed and reversible",
+    "P42-P0-017 autogenerate migration must not be auto-applied",
+    "P42-P0-018 schema_version change must trigger compatibility check",
+    "P42-P0-019 event_time/decision_time/ingestion_time/label_time must be separated",
+    "P42-P0-020 point-in-time correctness is required for training datasets",
+    "P42-P0-021 feature_snapshot_manifest must store feature_schema_hash",
+    "P42-P0-022 dataset_snapshot_manifest must store dataset_hash",
+    "P42-P0-023 final_gate ledger must store actor/reason/before_after/trace_id",
+    "P42-P0-024 audit ledger must support row_hash/prev_hash or equivalent tamper evidence",
+    "P42-P0-025 delete/retention policy must not break audit replay",
+    "P42-P0-026 database credentials/secrets/private account fields must not be stored in business tables",
+    "P42-P0-027 backup restore must be tested, not only configured",
+    "P42-P0-028 DB permissions and write actions must be auditable"
+  ],
+  "p1_topics": [
+    "P42-P1-001 pgvector vs Qdrant selection boundary",
+    "P42-P1-002 HNSW vs IVFFlat selection boundary",
+    "P42-P1-003 Qdrant payload index / metadata filter rule",
+    "P42-P1-004 Feast adoption boundary after offline/online parity pressure",
+    "P42-P1-005 MLflow registry adoption boundary after release manifest complexity",
+    "P42-P1-006 RLS / pgAudit adoption boundary"
+  ],
+  "audit_questions": [
+    "是否同意新增 kt.ai_engineering.database_storage_engineering 作为 Phase 42 L2 节点？",
+    "12 个 L3 专题是否覆盖交易 AI 数据库、数据契约、审计日志、向量库、迁移、备份恢复和生命周期治理？",
+    "34 条知识点是否过多、过少或分类不当？",
+    "是否存在把 K 线、fill model、风控、仓位、实盘执行本体混入 AI Engineering 的问题？",
+    "是否需要新增或删除某些 storage_role？",
+    "是否应把某些 P1 提升为 P0？",
+    "是否存在可能误导 AI IDE 直接创建生产数据库或执行迁移的表述？",
+    "是否存在 reviewed/caveat_only 被误解为 approved/default guidance 的风险？"
+  ],
+  "expected_audit_output_schema": {
+    "decision": "accepted | needs_patch | rejected",
+    "reviewed_scope_allowed": "boolean",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "required_patches": [
+      {
+        "target": "scope | l2_node | l3_node | topic | boundary | task_queue",
+        "id": "string",
+        "issue": "string",
+        "patch": "string"
+      }
+    ],
+    "topic_level_decisions": [
+      {
+        "topic_id": "string",
+        "decision": "keep | merge | split | remove | reprioritize",
+        "reason": "string"
+      }
+    ],
+    "final_notes": "string"
+  },
+  "source_documents": [
+    "docs/tasks/phase42_database_data_contract_storage_engineering.md",
+    "docs/research/phase42_database_storage_scope.md",
+    "docs/contracts/phase42_database_storage_contract.md",
+    "docs/contracts/phase42_rag_vector_storage_contract.md",
+    "docs/research/phase42_database_storage_collection_matrix.md",
+    "docs/research/phase42_research_task_queue.md",
+    "codex-expert-kit/rag/knowledge_tree.md"
+  ]
+}

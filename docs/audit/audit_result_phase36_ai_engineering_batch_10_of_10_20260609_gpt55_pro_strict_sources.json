@@ -1,0 +1,372 @@
+{
+  "audit_result_id": "audit_result_phase36_ai_engineering_batch_10_of_10_20260609_gpt55_pro_strict_sources",
+  "source_package_id": "phase36_ai_engineering_candidate_audit_batch_10_of_10_20260609",
+  "decisions": [
+    {
+      "candidate_id": "cand_20260609_ai_engineering_trade_data_strategy_id_and_version_required_v1_001",
+      "decision": "needs_more_evidence",
+      "reason": "当前不应直接转 draft。candidate_id / normalized_claim 指向 trade_data.strategy_id_and_version_required，但 statement 是元治理占位句，只说该候选知识必须声明来源、适用边界、冲突状态和默认使用限制，并没有真正要求 trade data 包含 strategy_id、strategy_version_ref 或 strategy owner reference。source_refs 只有 OpenAI model optimization 与 NIST AI RMF，能支持通用任务定义和治理，但不能直接支撑交易数据策略版本字段规则。",
+      "source_patch_notes": [
+        "保留 OpenAI model optimization 与 NIST AI RMF 作为 method selection / governance supporting sources。",
+        "补 MLflow Tracking / DVC / release manifest 来源，支持 artifact、data、run 和 version lineage。",
+        "补 CEK-TA strategy_version_ref_contract.md 或 Trading Engineering strategy registry contract，定义 strategy_id、strategy_version_ref、owner、allowed_use。",
+        "互链 versioning.model_prompt_rag_strategy_snapshot_required、lineage.model_prompt_rag_data_strategy_bound_together、training_data.strategy_version_required。",
+        "如果该条只想表达元治理要求，应改 candidate_id；如果保留当前 candidate_id，必须重写 statement。"
+      ],
+      "content_patch_notes": [
+        "将 statement 改为：Trade data used for LLM training, eval, RAG, preference data or gate/scoring review must include strategy_id and strategy_version_ref, but must not store strategy logic in AI Engineering.",
+        "建议字段：trade_record_id、trade_candidate_id、strategy_id、strategy_version_ref、strategy_owner_ref、source_mode、allowed_use、review_status、lineage_manifest_id。",
+        "明确 strategy_version_ref 是外部引用，不是策略规则正文。",
+        "缺少 strategy_id 或 strategy_version_ref 时，应 block_training、exclude_from_eval 或 needs_more_evidence。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 只定义 strategy_id / strategy_version_ref 的字段、引用关系、缺失状态和审计要求。",
+        "Trading Engineering 管理策略本体、K 线逻辑、买卖条件、仓位、止损止盈、回测和实盘执行。",
+        "不得把策略参数、交易规则、账户配置或订单细节写入 AI Engineering 知识库。"
+      ],
+      "conflict_patch_notes": [
+        "与 training_data.strategy_version_required 高度相关，建议合并为 canonical rule：training_data.strategy_version_ref_required，或区分 trade_data 字段规则与 training_data 样本规则。",
+        "与 versioning.model_prompt_rag_strategy_snapshot_required 互补：本条管样本字段，versioning 条管 release/gate manifest。",
+        "当前 statement 与 normalized_claim 明显错配，直接 accepted 会污染知识库。"
+      ],
+      "required_followups": [
+        "重写 statement。",
+        "补 strategy_version_ref_contract.md。",
+        "补 trade_data_strategy_ref_schema.json。",
+        "补 eval cases：missing strategy_id、strategy_version_ref points to private strategy body、strategy version changed without new dataset version、LLM attempts to infer strategy rules。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_training_data_decision_timestamp_required_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立。statement 虽然同时覆盖策略版本、决策时间、特征截止时间和输入/目标分离，但 normalized_claim 指向 decision_timestamp_required，并且 statement 明确包含“决策时间”。Datasheets 支持数据集组成、采集、用途和限制记录；scikit-learn data leakage 来源支持不能使用预测时不可用信息；Feast 支持 point-in-time correctness 与 feature availability。可进入 draft，但应改写为 decision_timestamp 子规则。",
+      "source_patch_notes": [
+        "保留 Datasheets for Datasets。",
+        "保留 scikit-learn common pitfalls / data leakage 作为预测时不可用信息不得进入训练的主来源。",
+        "保留 Feast 作为 point-in-time correctness、feature timestamp 和 online/offline feature availability 来源。",
+        "互链 trade_candidate.decision_timestamp_required、feature_schema.decision_time_only、training_data.feature_timestamp_cutoff_required。",
+        "建议补 CEK-TA decision_timestamp_contract.json。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：Every training sample used for trade LLM scoring/gating must declare decision_timestamp, which anchors feature visibility, label availability, snapshot construction and post-trade field exclusion.",
+        "建议字段：sample_id、trade_candidate_id、decision_timestamp、timezone、market_calendar_ref、feature_timestamp_cutoff、snapshot_id、post_trade_fields_excluded。",
+        "明确 decision_timestamp 不等于 order timestamp、fill timestamp 或 post-trade review timestamp。",
+        "缺少 decision_timestamp 时，不得进入 training_pool、eval_pool 或 preference data。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 管理 timestamp 字段、可见性检查、schema 和审计记录。",
+        "交易 session、市场日历、订单时间、成交时间和策略时间窗由 Trading Engineering 或 project owner 提供。",
+        "不得在知识项中写入具体订单、账户、买卖点、策略参数或 K 线条件。"
+      ],
+      "conflict_patch_notes": [
+        "与第九批 trade_candidate.decision_timestamp_required 高度重叠；建议统一字段名，training_data 条作为样本层规则，trade_candidate 条作为候选交易 snapshot 层规则。",
+        "与 feature_timestamp_cutoff_required、labeling.no_future_information、outcome_schema.post_trade_fields_separated 强互链。",
+        "未发现需要 rejected 的直接冲突。"
+      ],
+      "required_followups": [
+        "补 decision_timestamp_schema.json。",
+        "补 timezone / market_calendar_ref 字段。",
+        "补 validation cases：missing decision_timestamp、timezone mismatch、feature timestamp after decision、post-trade outcome before decision。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_training_data_feature_timestamp_cutoff_required_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立。statement 明确包含“特征截止时间”，source_refs 中 scikit-learn 支持 data leakage 防护，Feast 支持 point-in-time correctness 与避免 future feature leakage，Datasheets 支持数据集字段和用途文档化。可进入 draft，但应与 feature_schema.feature_timestamp_cutoff_required 父规则互链。",
+      "source_patch_notes": [
+        "保留 Datasheets、scikit-learn common pitfalls、Feast。",
+        "补 TFDV 或 schema validation 来源，支持 feature_timestamp_cutoff 字段验证。",
+        "互链 feature_schema.feature_timestamp_cutoff_required、feature_schema.decision_time_only、serving_consistency.training_serving_parity_test_required。",
+        "建议补 CEK-TA feature_timestamp_cutoff_contract.json。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：Training samples must declare feature_timestamp_cutoff, and all input features must be available at or before that cutoff and at or before decision_timestamp.",
+        "建议字段：feature_timestamp_cutoff、feature_name、feature_timestamp、available_at_decision_time、availability_proof_ref、validation_rule_id。",
+        "如果 feature_timestamp 晚于 cutoff 或无法证明 decision-time availability，应 block_training 或 needs_more_evidence。",
+        "post-trade outcome、future_return、fill result、later human label 不得作为 input feature。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 只定义 cutoff 字段、availability check、schema 和 audit。",
+        "具体交易特征公式、K 线计算、市场数据延迟、session 定义由 Trading Engineering 或 project owner 提供。",
+        "不得保存真实交易样本、订单、账户或策略逻辑。"
+      ],
+      "conflict_patch_notes": [
+        "与第四批 feature_schema.feature_timestamp_cutoff_required 高度重叠；建议本条作为 training sample schema 子规则，第四批作为通用 feature schema 父规则。",
+        "与 labeling.no_future_information、leakage.label_in_input_forbidden、serving_consistency.train_like_serve_required 互补。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 feature_timestamp_cutoff_schema.json。",
+        "补 field-level validation：feature_timestamp <= feature_timestamp_cutoff <= decision_timestamp。",
+        "补 eval cases：feature timestamp after cutoff、delayed data available after decision、timezone mismatch、future field alias。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_training_data_strategy_version_required_v1_001",
+      "decision": "needs_more_evidence",
+      "reason": "方向合理，但当前不应直接转 draft。statement 包含“策略版本”，但 source_refs 主要支持数据文档化、data leakage 防护和 feature store metadata，不足以直接支撑 strategy_version_required 这个交易工程字段。该字段涉及 Trading Engineering 的 strategy registry / strategy_version_ref 边界，正式入库前需要补内部契约或 lineage 来源。",
+      "source_patch_notes": [
+        "保留 Datasheets 作为数据集字段与用途文档化 supporting source。",
+        "保留 scikit-learn data leakage 与 Feast point-in-time correctness 作为时间可见性 supporting sources。",
+        "补 MLflow / DVC / release manifest 来源，支持训练数据与 strategy_version_ref 的 lineage。",
+        "补 CEK-TA strategy_version_ref_contract.md 或 Trading Engineering strategy registry contract。",
+        "互链 trade_data.strategy_id_and_version_required、versioning.model_prompt_rag_strategy_snapshot_required。"
+      ],
+      "content_patch_notes": [
+        "将 statement 改为：Training samples must include strategy_version_ref as an external Trading Engineering reference; AI Engineering must not store strategy logic, thresholds or execution rules.",
+        "建议字段：sample_id、strategy_id、strategy_version_ref、strategy_owner_ref、strategy_registry_ref、dataset_version、lineage_manifest_id。",
+        "缺少 strategy_version_ref 时，不得用于 strategy-dependent scoring eval 或 gate promotion。",
+        "明确 strategy_version_ref 变更应触发 dataset version / eval rerun / release manifest update。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 只保存 strategy_version_ref、hash、owner 和审计字段。",
+        "Trading Engineering 管理策略本体、版本语义、K 线/信号逻辑、回测和执行规则。",
+        "不得把具体策略参数、阈值、仓位、止损止盈或订单规则写入 AI Engineering。"
+      ],
+      "conflict_patch_notes": [
+        "与 trade_data.strategy_id_and_version_required 高度重叠，应合并或父子化。",
+        "与 versioning.model_prompt_rag_strategy_snapshot_required 强互补。",
+        "当前来源不足以直接支撑 strategy_version 必填规则。"
+      ],
+      "required_followups": [
+        "补 strategy_version_ref_contract.md。",
+        "补 strategy_version_ref_schema.json。",
+        "补 lineage source：MLflow/DVC/release manifest。",
+        "补 eval cases：missing strategy_version_ref、strategy version changed without rerun、strategy body leaked into AI KB、LLM infers strategy logic from version name。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_training_data_trade_sample_schema_required_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立。statement 实际是 trade scoring/gating training sample 的最小 schema 父规则：策略版本、决策时间、特征截止时间、输入/目标分离。Datasheets、scikit-learn data leakage 和 Feast point-in-time correctness 足以支持进入 draft，但正式知识应补 TFDV / JSON Schema / CEK-TA schema contract，避免只停留在原则层。",
+      "source_patch_notes": [
+        "保留 Datasheets、scikit-learn common pitfalls、Feast。",
+        "补 TFDV / JSON Schema / Great Expectations / Pandera 作为 schema validation 来源。",
+        "补 CEK-TA trade_sample_schema_required.json 作为内部主契约。",
+        "互链 training_data.decision_timestamp_required、training_data.feature_timestamp_cutoff_required、training_example.input_target_separation、outcome_schema.post_trade_fields_separated。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：Every trade LLM training sample must have a versioned schema separating input features, target labels, outcome context and audit metadata.",
+        "建议字段：sample_id、trade_candidate_id、strategy_version_ref、decision_timestamp、feature_timestamp_cutoff、input_snapshot_hash、target_label_ref、outcome_context_ref、source_mode、pool_type、privacy_status、license_status。",
+        "缺少必填字段时，应 block_training 或 needs_more_evidence。",
+        "schema 变更应生成新 schema_version，并触发 validation report。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 定义 schema、字段角色、validation、hash 和审计状态。",
+        "Trading Engineering 管理具体交易样本事实、策略语义、订单/成交事实和执行上下文。",
+        "AI Engineering KB 只保存 schema、hash、外部引用和脱敏摘要。"
+      ],
+      "conflict_patch_notes": [
+        "与第二批 data_quality.missing_core_fields_block_training、dataset.schema_required 和第九批 raw_trade_record_required_fields 互补。",
+        "建议本条作为 training sample schema 父规则，decision_timestamp / feature_timestamp / input_target_separation / strategy_version_ref 作为子规则。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 trade_sample_schema_required.json。",
+        "补 field_role enum：input_feature、target_label、outcome_context、audit_metadata、external_ref。",
+        "补 schema_validation_report_id 字段。",
+        "补 eval cases：missing required field、input contains target、post-trade outcome mixed into input、strategy_version_ref missing。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_training_example_input_target_separation_v1_001",
+      "decision": "needs_more_evidence",
+      "reason": "当前不应直接转 draft。candidate_id / normalized_claim 指向 training_example.input_target_separation，但 statement 是元治理占位句，并没有描述 input、target、label、outcome 或 completion 的分离规则。source_refs 只有 OpenAI model optimization 和 NIST AI RMF，不能直接支撑 input/target separation。",
+      "source_patch_notes": [
+        "保留 OpenAI model optimization 与 NIST 作为 method/gov supporting sources。",
+        "补 scikit-learn common pitfalls / data leakage，支持 target、test data、未来字段不得进入 input。",
+        "补 OpenAI fine-tuning best practices 或 Hugging Face TRL SFTTrainer，支持 training example 的 prompt / completion / messages 结构。",
+        "补 TFDV / structured-output / schema validation 来源。",
+        "互链 leakage.label_in_input_forbidden、feature_schema.post_trade_fields_forbidden_in_input、training_data.trade_sample_schema_required。"
+      ],
+      "content_patch_notes": [
+        "将 statement 改为：Training examples must separate input prompt/features from target/completion/label/outcome fields; labels, post-trade outcomes and future information must not appear in the input side.",
+        "建议字段：example_id、input_fields、target_fields、completion_field、label_field、outcome_context_field、field_role、input_target_separation_check_id。",
+        "明确 completion / target 可以作为训练目标，但不能回流到 input prompt 或 RAG context。",
+        "缺少 input_target_separation_check 时，不得进入 SFT/DPO/preference training pool。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 定义 training example schema、字段角色和泄漏阻断规则。",
+        "交易标签语义、PnL/outcome 解释、订单/成交事实由 Trading Engineering 或 project owner 提供。",
+        "不得写入具体交易样本、策略参数、账户或订单细节。"
+      ],
+      "conflict_patch_notes": [
+        "与 leakage.label_in_input_forbidden 高度相关，应父子化。",
+        "与 training_data.trade_sample_schema_required 互补：trade sample schema 是父项，本条是 example-level input/target 分离子规则。",
+        "当前 statement 与 normalized_claim 明显错配。"
+      ],
+      "required_followups": [
+        "重写 statement。",
+        "补 input_target_separation_schema.json。",
+        "补 scikit-learn data leakage 与 SFT dataset format 直接来源。",
+        "补 eval cases：target label in prompt、future_return in input、completion copied into input、outcome_context used as input feature。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_training_example_sft_schema_required_v1_001",
+      "decision": "needs_more_evidence",
+      "reason": "当前不应直接转 draft。candidate_id / normalized_claim 指向 SFT schema required，但 statement 是元治理占位句，没有描述 SFT 样本结构、messages/prompt-completion、assistant target、output_schema_id 或 schema validation。OpenAI model optimization 与 NIST 只能支撑通用方法选择和治理，不能直接支撑 SFT schema。",
+      "source_patch_notes": [
+        "保留 OpenAI model optimization 作为 method selection supporting source，并标注 fine-tuning platform wind-down。",
+        "补 OpenAI fine-tuning best practices，支持 training/test split、training examples、messages 格式和 data quality。",
+        "补 Hugging Face TRL SFTTrainer，支持 language modeling、prompt-completion、standard 和 conversational dataset formats。",
+        "补 OpenAI Structured Outputs / JSON Schema validation，支持 output_schema consistency。",
+        "补 CEK-TA sft_training_example_schema.json。"
+      ],
+      "content_patch_notes": [
+        "将 statement 改为：SFT examples must use a versioned schema with prompt/messages, target assistant response or completion, output_schema_id, field-role separation, split_id and schema_validation_report_id.",
+        "建议字段：sft_example_id、messages_or_prompt、completion_or_assistant_target、output_schema_id、schema_version、split_id、source_ids、field_role_check_id、schema_validation_report_id。",
+        "明确 SFT schema 通过不等于可上线；仍需 held-out eval、RAG/prompt baseline、privacy/license check 和 leakage check。",
+        "SFT 不应用于写入具体交易策略规则或经常变化的知识。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 定义 SFT example schema、schema validation、split 和 audit。",
+        "具体交易样本、策略语义、标注真值、订单和账户事实由 Trading Engineering / project owner 管理。",
+        "不得把具体策略参数、买卖点、仓位、止损止盈或订单动作写入 SFT 样本规则。"
+      ],
+      "conflict_patch_notes": [
+        "与第九批 sft.output_schema_consistency_required、sft.when_to_use_and_not_use 高度相关；建议本条作为 training_example SFT schema 子规则。",
+        "与 training_example.input_target_separation 互补。",
+        "当前 statement 与 normalized_claim 明显错配。"
+      ],
+      "required_followups": [
+        "重写 statement。",
+        "补 sft_training_example_schema.json。",
+        "补 OpenAI fine-tuning best practices、Hugging Face TRL SFTTrainer、OpenAI Structured Outputs 来源。",
+        "补 eval cases：missing assistant target、invalid messages format、schema-invalid output target、train/test split missing、SFT sample contains private strategy rule。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_training_objective_rag_vs_finetune_boundary_required_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立。statement 明确要求在决定 fine-tuning 前建立 RAG-first 或 baseline-eval comparison。OpenAI model optimization 支持先写 evals 建立 baseline，再结合 prompt、fine-tuning 和代表真实输入的 test data 迭代；OpenAI 还说明 fine-tuning platform 正在 wind down，因此更应使用 vendor-neutral method selection 记录。可进入 draft。",
+      "source_patch_notes": [
+        "保留 OpenAI model optimization 作为主来源。",
+        "保留 OpenAI fine-tuning best practices 作为 data quality / train-test split / fine-tuning supporting source，并标注 platform wind-down。",
+        "补 method_selection.rag_first_baseline_required、no_finetune_before_eval_baseline 互链。",
+        "补 CEK-TA method_selection_decision_record_schema.json。",
+        "建议补 RAG/File Search 来源，支持 RAG-first baseline 的检索任务边界。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 可写为：Before choosing SFT/fine-tuning for trade LLM scoring/gating, the project must compare prompt/RAG/rule baselines against a representative eval baseline and record why fine-tuning is necessary.",
+        "建议字段：task_id、task_type、eval_baseline_id、prompt_baseline_id、rag_baseline_id、rule_baseline_id、fine_tune_reason、failure_case_ids、decision_owner。",
+        "明确 fine-tuning 不应替代 RAG、数据修复、schema validation、source citation 或 eval。",
+        "无 baseline comparison 时，应标记 needs_more_evidence。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 管理 method selection、baseline comparison、eval evidence 和 decision record。",
+        "涉及策略收益、风控阈值、执行逻辑或交易结果解释的任务目标由 Trading Engineering 提供。",
+        "不得用 fine-tuning 把私有交易规则、策略参数或账户事实沉淀进通用知识库。"
+      ],
+      "conflict_patch_notes": [
+        "与第六批 method_selection.no_finetune_before_eval_baseline 和 method_selection.rag_first_baseline_required 高度相关，建议父子化或合并。",
+        "与 sft.when_to_use_and_not_use、training_objective.task_definition_required 互补。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 method_selection_decision_record_schema.json。",
+        "补 task_type / baseline_type enum。",
+        "补 eval cases：direct fine-tune without eval、RAG baseline not tested、fine-tune chosen to hide data quality issue、fine-tune used for changing facts。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_training_objective_task_definition_required_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立。训练工作开始前必须声明 task objective、output schema、evaluation target 和 authority boundary，这是模型优化、SFT/DPO 方法选择、数据收集和上线治理的前置条件。OpenAI model optimization 支持先定义目标和 eval baseline，TRL 支持区分 SFT/DPO/reward modeling 等训练方法。可进入 draft。",
+      "source_patch_notes": [
+        "保留 OpenAI model optimization 作为主来源。",
+        "保留 Hugging Face TRL 作为 SFT/DPO/reward modeling 等 method taxonomy supporting source。",
+        "补 Model Cards 作为 intended use、limitations、evaluation context 的 supporting source。",
+        "互链 task_taxonomy.each_task_requires_schema_and_eval、training_objective.rag_vs_finetune_boundary_required、sft.when_to_use_and_not_use。",
+        "补 CEK-TA training_objective_contract.md。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 可写为：Before data collection, SFT, DPO or evaluation design starts, every LLM training effort must declare task objective, output schema, evaluation target, authority boundary, allowed sources and forbidden outputs.",
+        "建议字段：task_id、task_type、objective、output_schema_id、eval_target、authority_boundary、allowed_sources、forbidden_outputs、owner、review_status。",
+        "明确 task objective 不得是具体买卖点、仓位、止损止盈或实盘订单动作。",
+        "缺少 authority boundary 时，不得进入 training data collection 或 fine-tuning proposal。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 管理任务目标、schema、eval、authority boundary 和 training method selection。",
+        "Trading Engineering 管理交易策略、风险阈值、执行逻辑、K 线信号和实盘交易风控。",
+        "不得把训练目标写成具体交易策略优化或实盘收益承诺。"
+      ],
+      "conflict_patch_notes": [
+        "与第九批 task_taxonomy.each_task_requires_schema_and_eval 互补：task taxonomy 是任务分类矩阵，本条是训练工作启动前的目标定义门槛。",
+        "与 method_selection.no_finetune_before_eval_baseline、rag_vs_finetune_boundary_required 互链。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 training_objective_contract.md。",
+        "补 objective_type / authority_boundary enum。",
+        "补 eval cases：missing output schema、unclear task objective、training objective implies order execution、research task treated as live gate。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_training_run_config_and_hyperparameter_snapshot_required_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "方向充分成立。每次训练运行需要快照配置、超参数、数据版本、代码版本和产物，才能复现实验、追踪变更和审计结果。MLflow Tracking 直接支持 logging parameters、code versions、metrics、output files、run metadata 和 artifacts；DVC 支持 data/model versioning。可进入 draft。",
+      "source_patch_notes": [
+        "保留 MLflow Tracking 作为主来源。",
+        "保留 DVC documentation 作为 data/model versioning supporting source。",
+        "补 Git commit / environment lockfile / container image digest 的内部 schema。",
+        "互链 dataset.version_and_hash_required、versioning.model_prompt_rag_strategy_snapshot_required、audit.every_gate_decision_requires_trace。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 可写为：Every training run must snapshot config, hyperparameters, dataset versions, code version, environment, random seeds, model artifacts and evaluation outputs.",
+        "建议字段：training_run_id、model_id、config_hash、hyperparameter_json、dataset_version、dataset_hash、code_commit、environment_digest、random_seed、artifact_uri、eval_report_id。",
+        "缺少 snapshot 时，训练结果不得作为 promotion 或 gating evidence。",
+        "训练运行快照不等于 approved model card；仍需 eval、review 和 deployment approval。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 管理训练运行 metadata、hash、artifact refs 和审计字段。",
+        "训练数据中的交易样本、策略事实、账户、订单和私有信息不得写入通用知识库。",
+        "具体策略表现和交易收益解释由 Trading Engineering 提供。"
+      ],
+      "conflict_patch_notes": [
+        "与 versioning.model_prompt_rag_strategy_snapshot_required 互补：本条是 training run 级别，后者是 release/gate decision 级别。",
+        "与 dataset.version_and_hash_required、gold_set_immutable_required 互链。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 training_run_snapshot_schema.json。",
+        "补 hyperparameter_snapshot / environment_digest / code_commit 字段。",
+        "补 eval cases：run missing dataset hash、hyperparameter changed without new run、artifact overwritten、training run used without eval report。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_versioning_model_prompt_rag_strategy_snapshot_required_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "方向充分成立。模型、提示词、RAG index、数据快照、eval set 和 strategy_version_ref 需要绑定记录，才能复盘每次 gate/scoring 决策。MLflow 和 DVC 支持 run / artifact / data / model versioning，Model Cards 支持 intended use、limitations 和 evaluation context。可进入 draft，但 strategy 只能作为 strategy_version_ref，不得写入策略本体。",
+      "source_patch_notes": [
+        "保留 MLflow Tracking 作为 run、parameter、artifact 和 model lineage 主来源。",
+        "保留 DVC 作为 data/model versioning 来源。",
+        "保留 Model Cards 作为 intended use、limitations、evaluation context supporting source。",
+        "补 RAG index manifest / prompt registry / release_manifest_schema 内部契约。",
+        "互链 lineage.model_prompt_rag_data_strategy_bound_together、audit.every_gate_decision_requires_trace、training_run.config_and_hyperparameter_snapshot_required。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 可写为：Every gate/scoring release and decision trace must bind model_version, prompt_version, RAG_index_version, embedding_model_version, dataset_snapshot, eval_set_version and strategy_version_ref into a reproducible manifest.",
+        "建议字段：release_id、model_version、prompt_version、rag_index_version、embedding_model_version、dataset_snapshot_id、eval_set_version、strategy_version_ref、training_run_id、artifact_hashes、audit_event_id。",
+        "strategy_version_ref 只保存外部引用；策略逻辑和交易参数不得进入 AI Engineering。",
+        "manifest 变更应触发回归评估、approval 或 rollback plan 更新。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 管理 release manifest、artifact lineage、hash、version refs 和 audit UI。",
+        "Trading Engineering 管理 strategy_version_ref 指向的策略本体、交易逻辑、回测、风控和执行系统。",
+        "不得保存具体 K 线信号、买卖点、仓位、止损止盈、订单执行或账户配置。"
+      ],
+      "conflict_patch_notes": [
+        "与第五批 lineage.model_prompt_rag_data_strategy_bound_together 高度重叠，建议合并为 artifact_lineage.release_manifest_required family。",
+        "与 training_run.config_and_hyperparameter_snapshot_required 区分：training_run 管训练实验，release manifest 管上线/门控决策可复盘。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 release_manifest_schema.json。",
+        "补 prompt_registry_ref、rag_index_manifest_id、embedding_model_version 字段。",
+        "补 strategy_version_ref 边界说明。",
+        "补 eval cases：RAG index changed without manifest、prompt changed without eval、strategy_ref missing、manifest includes strategy body。"
+      ]
+    }
+  ]
+}

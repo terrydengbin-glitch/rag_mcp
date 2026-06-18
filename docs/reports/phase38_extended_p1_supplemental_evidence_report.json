@@ -1,0 +1,199 @@
+{
+  "report_id": "phase38_extended_p1_supplemental_evidence_report",
+  "generated_at": "2026-06-10",
+  "supplemented_count": 14,
+  "research_path": "docs/research/phase38_extended_p1_supplemental_research.md",
+  "audit_package_path": "docs/audit/phase38_extended_p1_supplemental_audit_package_20260610.json",
+  "items": [
+    {
+      "candidate_id": "cand_20260610_phase38_p38_a09_feature_attribution_001",
+      "research_task_id": "P38-A09",
+      "claim": "feature attribution 只能辅助调试，不等于因果解释",
+      "normalized_claim": "phase38.feature_attribution.v1",
+      "source_count": 4,
+      "patch_summary": "feature attribution 只能解释模型输出贡献或相关性模式，不能替代因果识别；若要写 causal explanation，必须另有 causal graph、干预或反事实设计。",
+      "source_ids": [
+        "src_shap_causal_warning",
+        "src_pearl_causal_inference_primer"
+      ],
+      "path": "codex-expert-kit/rag/candidates/KB_AI_ENGINEERING/cand_20260610_phase38_p38_a09_feature_attribution_001.json"
+    },
+    {
+      "candidate_id": "cand_20260610_phase38_p38_a10_ranking_model_review_priority_001",
+      "research_task_id": "P38-A10",
+      "claim": "ranking model 可作为 review_priority 增强项",
+      "normalized_claim": "phase38.ranking_model_review_priority.v1",
+      "source_count": 4,
+      "patch_summary": "ranking model 可用于 review_priority 排序增强，但输出只决定人工复核优先级，不得作为交易 gate 或收益承诺；必须用 NDCG/MAP 等排序指标独立评估。",
+      "source_ids": [
+        "src_sklearn_ndcg_score",
+        "src_lightgbm_lambdarank"
+      ],
+      "path": "codex-expert-kit/rag/candidates/KB_AI_ENGINEERING/cand_20260610_phase38_p38_a10_ranking_model_review_priority_001.json"
+    },
+    {
+      "candidate_id": "cand_20260610_phase38_p38_b10_conformal_bayesian_calibration_001",
+      "research_task_id": "P38-B10",
+      "claim": "conformal / Bayesian calibration 只能作为增强层",
+      "normalized_claim": "phase38.conformal_bayesian_calibration.v1",
+      "source_count": 4,
+      "patch_summary": "conformal / Bayesian calibration 只能作为不确定性或校准增强层；必须声明假设、校准集和覆盖率/校准指标，不能替代 deterministic final gate。",
+      "source_ids": [
+        "src_conformal_prediction_tutorial",
+        "src_sklearn_probability_calibration"
+      ],
+      "path": "codex-expert-kit/rag/candidates/KB_AI_ENGINEERING/cand_20260610_phase38_p38_b10_conformal_bayesian_calibration_001.json"
+    },
+    {
+      "candidate_id": "cand_20260610_phase38_p38_c10_cross_market_feature_availability_recheck_001",
+      "research_task_id": "P38-C10-R1",
+      "claim": "多市场迁移时必须重新检查特征可用性",
+      "normalized_claim": "phase38.cross_market_feature_availability_recheck.v1",
+      "source_count": 5,
+      "patch_summary": "跨市场迁移必须重新检查 point-in-time 特征可用性、training-serving skew、target domain 分布差异和 feature store AS-OF join；通过前不得进入 formal draft。",
+      "source_ids": [
+        "src_feast_point_in_time_joins",
+        "src_tfdv_training_serving_skew",
+        "src_domain_adaptation_transfer_learning_intro"
+      ],
+      "path": "codex-expert-kit/rag/candidates/KB_AI_ENGINEERING/cand_20260610_phase38_p38_c10_cross_market_feature_availability_recheck_001.json"
+    },
+    {
+      "candidate_id": "cand_20260610_phase38_p38_d07_rag_prompt_baseline_sft_001",
+      "research_task_id": "P38-D07",
+      "claim": "RAG + prompt baseline 必须先于 SFT",
+      "normalized_claim": "phase38.rag_prompt_baseline_sft.v1",
+      "source_count": 5,
+      "patch_summary": "RAG/prompt baseline 应先建立可审计基线；只有当检索、提示和结构化输出仍无法稳定满足 schema/reason code 时，才考虑 SFT/LoRA。",
+      "source_ids": [
+        "src_openai_model_optimization",
+        "src_rag_original_paper"
+      ],
+      "path": "codex-expert-kit/rag/candidates/KB_AI_ENGINEERING/cand_20260610_phase38_p38_d07_rag_prompt_baseline_sft_001.json"
+    },
+    {
+      "candidate_id": "cand_20260610_phase38_p38_d08_sft_lora_schema_reason_code_001",
+      "research_task_id": "P38-D08",
+      "claim": "SFT LoRA 仅用于稳定输出 schema 和 reason code",
+      "normalized_claim": "phase38.sft_lora_schema_reason_code.v1",
+      "source_count": 6,
+      "patch_summary": "SFT LoRA 仅用于稳定输出 schema、reason code 和审计格式；格式约束仍应由 JSON Schema/structured output 校验，LoRA 不提供事实来源。",
+      "source_ids": [
+        "src_hf_peft_lora",
+        "src_hf_structured_output",
+        "src_json_schema_docs"
+      ],
+      "path": "codex-expert-kit/rag/candidates/KB_AI_ENGINEERING/cand_20260610_phase38_p38_d08_sft_lora_schema_reason_code_001.json"
+    },
+    {
+      "candidate_id": "cand_20260610_phase38_p38_d10_teacher_model_baseline_001",
+      "research_task_id": "P38-D10",
+      "claim": "teacher model 只能作为审计 baseline，不作为事实来源",
+      "normalized_claim": "phase38.teacher_model_baseline.v1",
+      "source_count": 5,
+      "patch_summary": "teacher model 可作审计 baseline 或 judge 辅助，但事实必须来自 citation resolver 和 formal knowledge；teacher 输出不得作为无来源事实。",
+      "source_ids": [
+        "src_ragas_faithfulness",
+        "src_langfuse_llm_as_judge",
+        "src_cek_ta_phase38_rag_citation_reason_contract"
+      ],
+      "path": "codex-expert-kit/rag/candidates/KB_AI_ENGINEERING/cand_20260610_phase38_p38_d10_teacher_model_baseline_001.json"
+    },
+    {
+      "candidate_id": "cand_20260610_phase38_p38_e07_rag_prompt_model_threshold_ablation_001",
+      "research_task_id": "P38-E07",
+      "claim": "RAG/prompt/model/threshold 必须可 ablation",
+      "normalized_claim": "phase38.rag_prompt_model_threshold_ablation.v1",
+      "source_count": 5,
+      "patch_summary": "RAG、prompt、model、threshold 的改动必须通过隔离 ablation 比较；每次只改变一个主要变量，并记录参数、指标、artifact 和版本。",
+      "source_ids": [
+        "src_pykeen_ablation_study",
+        "src_mlflow_tracking"
+      ],
+      "path": "codex-expert-kit/rag/candidates/KB_AI_ENGINEERING/cand_20260610_phase38_p38_e07_rag_prompt_model_threshold_ablation_001.json"
+    },
+    {
+      "candidate_id": "cand_20260610_phase38_p38_e08_shadow_no_hit_conflict_citation_completeness_001",
+      "research_task_id": "P38-E08",
+      "claim": "shadow 日志必须记录 no-hit/conflict/citation completeness",
+      "normalized_claim": "phase38.shadow_no_hit_conflict_citation_completeness.v1",
+      "source_count": 4,
+      "patch_summary": "shadow 记录必须包含 no-hit、conflict、citation completeness 和 faithfulness 相关字段，用于发现 RAG 覆盖缺口，不得自动放行交易。",
+      "source_ids": [
+        "src_ragas_faithfulness",
+        "src_cek_ta_phase38_rag_citation_reason_contract"
+      ],
+      "path": "codex-expert-kit/rag/candidates/KB_AI_ENGINEERING/cand_20260610_phase38_p38_e08_shadow_no_hit_conflict_citation_completeness_001.json"
+    },
+    {
+      "candidate_id": "cand_20260610_phase38_p38_e09_false_block_opportunity_paper_replay_001",
+      "research_task_id": "P38-E09",
+      "claim": "false block opportunity 必须用 paper/replay 或人工复核估计",
+      "normalized_claim": "phase38.false_block_opportunity_paper_replay.v1",
+      "source_count": 4,
+      "patch_summary": "false block opportunity 可用 paper/replay/OPE/人工复核估计，但 fill、slippage、fee、latency 和成本假设必须引用 Trading Engineering，不得由 AI Engineering 自行定义。",
+      "source_ids": [
+        "src_open_bandit_pipeline",
+        "src_cek_ta_phase37_fill_cost_boundary"
+      ],
+      "path": "codex-expert-kit/rag/candidates/KB_AI_ENGINEERING/cand_20260610_phase38_p38_e09_false_block_opportunity_paper_replay_001.json"
+    },
+    {
+      "candidate_id": "cand_20260610_phase38_p38_e10_active_learning_review_sampling_001",
+      "research_task_id": "P38-E10",
+      "claim": "active learning review sampling 只能作为增强",
+      "normalized_claim": "phase38.active_learning_review_sampling.v1",
+      "source_count": 3,
+      "patch_summary": "active learning review sampling 只能用于提高人工标注/复核效率；采样策略要平衡 uncertainty、diversity 和代表性，不能用作收益承诺或自动 gate。",
+      "source_ids": [
+        "src_deep_active_learning_survey"
+      ],
+      "path": "codex-expert-kit/rag/candidates/KB_AI_ENGINEERING/cand_20260610_phase38_p38_e10_active_learning_review_sampling_001.json"
+    },
+    {
+      "candidate_id": "cand_20260610_phase38_p38_f10_model_compression_001",
+      "research_task_id": "P38-F10",
+      "claim": "model compression 只能在不破坏审计和校准后考虑",
+      "normalized_claim": "phase38.model_compression.v1",
+      "source_count": 4,
+      "patch_summary": "model compression、quantization、distillation 只能在不破坏 schema、citation、校准、latency 和审计指标后考虑；压缩模型必须重新跑评估和回滚预案。",
+      "source_ids": [
+        "src_llm_compression_survey",
+        "src_model_compression_survey_frontiers"
+      ],
+      "path": "codex-expert-kit/rag/candidates/KB_AI_ENGINEERING/cand_20260610_phase38_p38_f10_model_compression_001.json"
+    },
+    {
+      "candidate_id": "cand_20260610_phase38_p38_g05_citation_completeness_shadow_001",
+      "research_task_id": "P38-G05",
+      "claim": "citation completeness 必须进入 shadow 指标",
+      "normalized_claim": "phase38.citation_completeness_shadow.v1",
+      "source_count": 4,
+      "patch_summary": "citation completeness 应进入 shadow 指标，衡量每条审计结论是否能解析到正式知识和来源；低完整率必须触发 no-hit/补证/人工复核。",
+      "source_ids": [
+        "src_ragas_faithfulness",
+        "src_cek_ta_phase38_rag_citation_reason_contract"
+      ],
+      "path": "codex-expert-kit/rag/candidates/KB_AI_ENGINEERING/cand_20260610_phase38_p38_g05_citation_completeness_shadow_001.json"
+    },
+    {
+      "candidate_id": "cand_20260610_phase38_p38_g06_no_hit_query_001",
+      "research_task_id": "P38-G06",
+      "claim": "no-hit query 应进入知识缺口队列",
+      "normalized_claim": "phase38.no_hit_query.v1",
+      "source_count": 4,
+      "patch_summary": "no-hit query 必须进入知识缺口队列，并记录 query、scope、requested_decision、missing_node 和下游影响；不得由 AI 现场编造规则。",
+      "source_ids": [
+        "src_cek_ta_phase35_active_retrieval_protocol",
+        "src_cek_ta_phase38_rag_citation_reason_contract"
+      ],
+      "path": "codex-expert-kit/rag/candidates/KB_AI_ENGINEERING/cand_20260610_phase38_p38_g06_no_hit_query_001.json"
+    }
+  ],
+  "boundary": {
+    "formal_reviewed_created": false,
+    "approved_created": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  }
+}

@@ -1,0 +1,318 @@
+{
+  "schema_version": "1.1.0-candidate",
+  "candidate_id": "cand_20260611_phase37_market_microstructure_thin_market_execution_risk_001",
+  "research_task_id": "P37-D-M11",
+  "status": {
+    "review_status": "accepted",
+    "ingestion_decision": "accepted_for_draft",
+    "decision_reason": "Phase 37 Market Microstructure 首轮严格审计结论为 accepted_for_draft；不允许 reviewed/approved/default guidance/hard gate。",
+    "created_at": "2026-06-11",
+    "updated_at": "2026-06-11"
+  },
+  "classification": {
+    "tree_node_id": "kt.market_microstructure",
+    "canonical_node_id": "kt.market_microstructure",
+    "tree_path": "CEK-TA / Trading Engineering / Market Microstructure",
+    "related_nodes": [
+      "kt.trading_engineering",
+      "kt.market_microstructure",
+      "kt.trading_engineering.data_engineering",
+      "kt.kline_strategy",
+      "kt.backtest",
+      "kt.replay_simulation",
+      "kt.live_execution",
+      "kt.risk_management",
+      "kt.ai_engineering.llm_training"
+    ],
+    "partition_id": "KB_03_MARKET_MICROSTRUCTURE",
+    "domain": "market_microstructure",
+    "subdomain": "thin_market",
+    "rule_type": "trading_microstructure_boundary_rule",
+    "claim_type": "methodological_constraint",
+    "used_for": [
+      "market_microstructure_audit",
+      "strategy_design_audit",
+      "execution_cost_boundary",
+      "ai_trader_project_gap_audit",
+      "external_project_rag_retrieval"
+    ],
+    "classification_notes": "本候选主归属 Trading Engineering / Market Microstructure。AI Engineering 只能引用本规则，不得把盘口、订单流、滑点、funding/OI 或市场影响本体改写为模型训练规则。"
+  },
+  "claim": {
+    "claim_id": "claim_p37_d_m11",
+    "title": "薄市场执行风险必须显式降级或要求复核",
+    "statement": "在薄市场、低深度、宽价差、事件冲击或流动性枯竭场景下，微观结构信号必须显式降级为风险提示或要求人工/风控复核；不能把正常市场假设沿用到 thin market 执行，也不能在本候选中创建自动 hard gate。",
+    "normalized_claim": "microstructure.thin_market_execution_risk.v1",
+    "evidence_summary": "ECB defines market liquidity as the ability to rapidly execute large transactions at low cost and limited price impact, and distinguishes it from funding liquidity.；Brunnermeier and Pedersen model how market liquidity and funding liquidity can reinforce each other and can dry up under stress.；CFA Institute frames trading decisions around liquidity needs, market conditions, execution risk, opportunity cost, market impact and trade cost analysis.",
+    "interpretation_notes": "本候选只定义市场微观结构解释、数据和执行边界，不输出买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+    "claim_strength": "medium_high",
+    "performance_claim": false
+  },
+  "applicability": {
+    "market": "general_with_market_specific_mapping",
+    "asset": "general",
+    "timeframe": "event_to_intraday",
+    "data_granularity": "order_book_trades_or_derivatives_market_data",
+    "project_type": "trading_ai_support_layer",
+    "applies_when": [
+      "低流动性品种、盘前盘后、重大事件、市场压力或异常价差状态",
+      "设计 final gate 前的风险提示、降级或人工复核规则"
+    ],
+    "not_applicable_when": [
+      "没有行情质量、深度、成交量或事件上下文",
+      "把风险提示直接写成自动交易许可",
+      "需要具体买卖点、仓位、杠杆、止损止盈价格、交易所私有配置、账户事实或实盘权限时，应由外接项目事实层、执行层和风控层处理。",
+      "AI Engineering 只能引用本规则，不得把本规则改写为 LLM 训练、MCP、RAG 或模型部署本体规则。"
+    ],
+    "assumptions": [
+      "候选用于 CEK-TA 通用支持层知识库，不包含任何外接项目私有策略参数。",
+      "微观结构结论必须保留市场、交易所、数据源、时间戳、粒度、执行和验证边界。",
+      "候选通过外部审计前不能进入正式 reviewed 知识库。"
+    ],
+    "limitations": [
+      "官方文档和平台文档只能支撑数据字段、接口语义和工程边界，不能证明交易优势。",
+      "论文或专业机构资料支持方法边界，不能替代具体交易所、数据供应商或外接项目契约。",
+      "本候选不提供任何投资建议或实盘执行许可。"
+    ]
+  },
+  "source_refs": [
+    {
+      "source_title": "Gauging the interplay between market liquidity and funding liquidity",
+      "source_url": "https://www.ecb.europa.eu/press/financial-stability-publications/fsr/special/html/ecb.fsrart202305_01~830184261b.en.html",
+      "source_type": "central_bank_research",
+      "publisher": "European Central Bank",
+      "published_at": "2023-05-31",
+      "reliability": "high",
+      "score": 86,
+      "freshness": "stable",
+      "evidence_summary": "ECB defines market liquidity as the ability to rapidly execute large transactions at low cost and limited price impact, and distinguishes it from funding liquidity.",
+      "limitations": [
+        "Macro/financial-stability framing; use for liquidity definitions and stress caveats."
+      ],
+      "source_id": "src_001",
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "Market Liquidity and Funding Liquidity",
+      "source_url": "https://www.nber.org/system/files/working_papers/w12939/w12939.pdf",
+      "source_type": "academic_paper",
+      "publisher": "NBER",
+      "published_at": "2007-02-01",
+      "reliability": "high",
+      "score": 88,
+      "freshness": "stable",
+      "evidence_summary": "Brunnermeier and Pedersen model how market liquidity and funding liquidity can reinforce each other and can dry up under stress.",
+      "limitations": [
+        "Theoretical liquidity-stress source; does not define a trading signal or venue-specific field."
+      ],
+      "source_id": "src_002",
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "Trade Strategy and Execution",
+      "source_url": "https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/trade-strategy-execution",
+      "source_type": "professional_curriculum",
+      "publisher": "CFA Institute",
+      "published_at": "2026-01-01",
+      "reliability": "high",
+      "score": 88,
+      "freshness": "time_sensitive",
+      "evidence_summary": "CFA Institute frames trading decisions around liquidity needs, market conditions, execution risk, opportunity cost, market impact and trade cost analysis.",
+      "limitations": [
+        "Professional curriculum source; it supports execution and cost boundaries, not any profitable microstructure signal."
+      ],
+      "source_id": "src_003",
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "relevance": "medium_high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "Responses to Frequently Asked Questions Concerning Risk Management Controls for Brokers or Dealers with Market Access",
+      "source_url": "https://www.sec.gov/rules-regulations/staff-guidance/trading-markets-frequently-asked-questions/divisionsmarketregfaq-0",
+      "source_type": "regulatory_guidance",
+      "publisher": "U.S. Securities and Exchange Commission",
+      "published_at": "2013-04-15",
+      "reliability": "high",
+      "score": 88,
+      "freshness": "stable",
+      "evidence_summary": "SEC Rule 15c3-5 guidance requires risk management controls and supervisory procedures for market access to be reviewed regularly for effectiveness.",
+      "limitations": [
+        "Broker-dealer market-access regulation; use as risk-control context rather than microstructure signal proof."
+      ],
+      "source_id": "src_004",
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "relevance": "medium_high",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "medium_high",
+    "score": 87.5,
+    "score_version": "phase37_market_microstructure_source_scoring_v1",
+    "primary_source_count": 4,
+    "supporting_source_count": 0,
+    "low_reliability_source_count": 0,
+    "mandatory_downgrades": [],
+    "limitations": [
+      "正式入库前必须由外部审计确认 claim 没有超出来源可证明范围。",
+      "供应商、交易平台和交易所接口文档只可作为数据语义与工程边界证据，不能单独证明信号有效。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none_known_in_visible_context",
+    "checked_against": [
+      "Phase 36/38/40/41 AI Engineering 知识边界",
+      "现有 Trading Engineering formal 知识",
+      "Phase 37 Trading 与 AI 跨分支引用契约"
+    ],
+    "conflicts": [],
+    "resolution_summary": "未发现与可见正式知识的直接冲突；本候选只定义 Trading Engineering 市场微观结构规则本体，AI Engineering 只能引用。",
+    "approval_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于提醒 AI IDE 检索 Trading Engineering 市场微观结构边界。",
+      "用于审计交易项目方案中是否缺少盘口、订单流、流动性、滑点、延迟、市场影响和数据源边界。",
+      "用于辅助外接项目设计数据契约、特征边界、审计清单和 reason code。"
+    ],
+    "not_allowed": [
+      "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+      "不得把候选知识当作 reviewed、approved、default guidance 或 hard gate。",
+      "不得绕过外接项目事实层、数据契约、执行适配器、风控 hard gate 或人工治理流程。"
+    ]
+  },
+  "machine_gate": {
+    "default_guidance": "deny",
+    "reason": "Phase 37 Market Microstructure first audit does not allow default guidance; formal reviewed requires a later reviewed-preparation gate.",
+    "requires_human_escalation": true,
+    "hidden_from_default_queue": true,
+    "visible_in_default_guidance_queue": false,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "review": {
+    "confidence": "medium_high",
+    "freshness": "mixed",
+    "reviewer": "external_ai_and_codex_alignment",
+    "reviewed_at": "2026-06-11",
+    "open_questions": [
+      "外部审计是否认为来源足以支撑该 claim？",
+      "是否需要补充更强的一手论文、监管材料、交易所规范或数据供应商字段级证据？",
+      "是否存在与现有 Data Engineering、Backtest、Replay、Live Execution、Risk Management 或 AI Engineering formal 知识的重叠，需要合并或拆分？"
+    ],
+    "audit_log": [
+      {
+        "at": "2026-06-11",
+        "actor": "codex",
+        "action": "created",
+        "reason": "根据 Phase 37 P37-D Market Microstructure 队列生成 Trading Engineering 候选知识。"
+      },
+      {
+        "at": "2026-06-11",
+        "actor": "codex",
+        "action": "sourced",
+        "reason": "记录专业机构、监管、交易所/API、数据供应商和论文来源摘要。"
+      },
+      {
+        "at": "2026-06-11",
+        "actor": "external_ai_strict_audit",
+        "action": "phase37_market_microstructure_first_audit_imported",
+        "reason": "accepted_for_draft / confidence=medium_high",
+        "audit_result_id": "audit_result_phase37_market_microstructure_candidate_audit_20260611_strict_v1",
+        "patch_notes": [
+          "source: SEC Rule 15c3-5 是 broker-dealer market access 风控语境，不能直接当作 CEK-TA 自动 hard gate 来源。",
+          "content: 标题建议改为“薄市场执行风险必须显式降级或复核”；正文保留 risk prompt/manual/risk review，不写自动阻断规则。",
+          "content: M11 标题已从 `薄市场执行风险必须显式阻断或降级` 改为 `薄市场执行风险必须显式降级或要求复核`，避免机器误读为 hard gate。",
+          "boundary: 薄市场信号只能降级为风险提示或要求外接项目风控层复核；不得在本候选中创建 hard gate。",
+          "boundary: M11 保留 hard_gate_allowed=false；真正阻断只能由外接项目 Risk/Live Execution 风控层定义。",
+          "conflict: 必须与 Risk Management/Live Execution owner 边界拆分：本条只给 microstructure caveat，真正阻断由外接项目风控层定义。"
+        ]
+      },
+      {
+        "at": "2026-06-11",
+        "actor": "codex",
+        "action": "phase37_market_microstructure_formal_reviewed_created",
+        "reason": "CEK-TA-408: formal reviewed/caveat_only written to codex-expert-kit/rag/knowledge/KB_03_MARKET_MICROSTRUCTURE/kb_03_market_microstructure.thin_market_execution_risk.v1.json."
+      }
+    ],
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase37_market_microstructure_reviewed_preparation_20260611_strict_v1",
+      "source_package_id": "phase37_market_microstructure_reviewed_preparation_audit_package_20260611",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "patch_notes": {
+        "source": [
+          "SEC Rule 15c3-5 是 broker-dealer market access 风控语境，不能直接作为 CEK-TA 自动 hard gate 来源。"
+        ],
+        "content": [
+          "正文只允许 risk prompt、manual/risk review、降级或复核语义，不写自动阻断规则。"
+        ],
+        "boundary": [
+          "薄市场信号只能降级为风险提示或要求外接项目风控层复核；不得在本候选中创建 hard gate。"
+        ],
+        "conflict": [
+          "Risk Management/Live Execution 是真正阻断 owner；本条只给 microstructure caveat。"
+        ]
+      },
+      "reason": "本包已将标题从“阻断/降级”修正为“降级或要求复核”，并保持 hard_gate_allowed=false；ECB/NBER/CFA/SEC 来源支撑薄市场和压力流动性风险 caveat。"
+    }
+  },
+  "workflow": {
+    "stage": "formalized_reviewed",
+    "queue_group": "formalized",
+    "current_task_id": "CEK-TA-402",
+    "next_action": "none",
+    "next_allowed_decisions": [
+      "accepted_for_draft",
+      "needs_more_evidence",
+      "rejected"
+    ],
+    "forbidden_decisions": [
+      "reviewed",
+      "approved",
+      "default_guidance",
+      "hard_gate"
+    ],
+    "formalization_allowed": false,
+    "conversion_target": {
+      "proposed_knowledge_id": "kb_03_market_microstructure.thin_market_execution_risk.v1",
+      "target_review_status": "reviewed",
+      "target_default_guidance": "deny",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false
+    },
+    "ai_audit_result_id": "audit_result_phase37_market_microstructure_reviewed_preparation_20260611_strict_v1",
+    "formal_knowledge_id": "kb_03_market_microstructure.thin_market_execution_risk.v1",
+    "formal_review_status": "reviewed",
+    "default_guidance_allowed": false,
+    "approved_allowed": false,
+    "hard_gate_allowed": false,
+    "hidden_from_default_queue": true,
+    "visible_in_default_guidance_queue": false,
+    "knowledge_path": "codex-expert-kit/rag/knowledge/KB_03_MARKET_MICROSTRUCTURE/kb_03_market_microstructure.thin_market_execution_risk.v1.json",
+    "formal_knowledge_path": "codex-expert-kit/rag/knowledge/KB_03_MARKET_MICROSTRUCTURE/kb_03_market_microstructure.thin_market_execution_risk.v1.json"
+  },
+  "contribution": {
+    "origin": "codex_research_ingestion_phase37",
+    "private_data_removed": true,
+    "contains_account_facts": false,
+    "contains_secret": false,
+    "contains_project_private_strategy": false
+  }
+}

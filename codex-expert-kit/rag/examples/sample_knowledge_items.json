@@ -1,0 +1,349 @@
+{
+  "schema_version": "1.0.0",
+  "items": [
+    {
+      "schema_version": "1.0.0",
+      "knowledge_id": "kb_04_backtest.bias.lookahead_boundary.v1",
+      "title": "Lookahead Bias Must Be Blocked Before Backtest Conclusions",
+      "metadata": {
+        "partition_id": "KB_04_BACKTEST",
+        "tree_node_id": "kt.backtest.bias",
+        "tree_path": "CEK-TA / Trading Engineering / Backtest / Bias",
+        "related_nodes": ["kt.backtest.data_quality"],
+        "domain": "backtest",
+        "subdomain": "bias",
+        "rule_type": "anti_pattern",
+        "content_type": "json",
+        "project_binding": "none",
+        "used_for": ["backtest_review", "strategy_iteration", "rag_engineering"]
+      },
+      "applicability": {
+        "market": "general",
+        "asset": "general",
+        "timeframe": "general",
+        "data_granularity": "general",
+        "project_type": "general",
+        "applies_when": [
+          "A strategy evaluation uses historical data to estimate future performance.",
+          "Features, labels, fills, or filters may accidentally include information unavailable at decision time."
+        ],
+        "not_applicable_when": [
+          "The task is only documenting a known historical event and not using it for predictive evaluation."
+        ]
+      },
+      "content": {
+        "statement": "A backtest is not credible until lookahead paths are checked and blocked for features, labels, fills, and filters.",
+        "rationale": "Using information that was not available at the simulated decision time can make performance appear better than it would have been in live use.",
+        "procedure": [
+          "Identify the decision timestamp for every signal.",
+          "Check that every feature is computed only from data available before or at that timestamp.",
+          "Check labels and future returns are not joined back into feature rows.",
+          "Check fill logic does not use future candle extremes without a deterministic assumption."
+        ],
+        "examples": [
+          "A next-bar return column must not be available as an input feature."
+        ],
+        "anti_patterns": [
+          "Merging future labels into the feature frame before train/test splitting.",
+          "Using full-candle high/low to prove an intrabar entry without an explicit fill model."
+        ],
+        "validation": [
+          "Run timestamp monotonicity checks.",
+          "Run feature availability checks.",
+          "Review joins between labels and features."
+        ],
+        "risk_notes": [
+          "Lookahead bias can survive high-level metric review and must be checked at data lineage level."
+        ],
+        "citation_notes": "This sample uses CEK-TA internal schema as an example source; replace with public/primary sources before broad professional approval."
+      },
+      "assumptions": ["No additional assumptions identified beyond the stated backtest setting."],
+      "source_evidence": [
+        {
+          "source_id": "src_cek_ta_backtest_schema",
+          "source_title": "CEK-TA Backtest Partition and Knowledge Schema",
+          "source_url": null,
+          "source_type": "internal_report",
+          "publisher": "CEK-TA",
+          "published_at": "2026-06-08",
+          "accessed_at": "2026-06-08",
+          "version": "1.0.0",
+          "reliability": "medium",
+          "relevance": "high",
+          "evidence_summary": "The CEK-TA backtest partition requires bias checks, sample scope, assumptions, and conflict checks.",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "medium",
+        "score": 70,
+        "score_version": "1.0.0",
+        "primary_source_count": 0,
+        "supporting_source_count": 1,
+        "limitations": ["Example item should be replaced or supported with external source-backed knowledge in Phase 17."]
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "checked_against": [],
+        "conflicts": [],
+        "resolution_summary": "No conflict in sample set.",
+        "default_recommendation": "Use as sample retrieval guidance only."
+      },
+      "review": {
+        "confidence": "medium",
+        "freshness": "stable",
+        "review_status": "approved",
+        "reviewer": "codex",
+        "reviewed_at": "2026-06-08",
+        "created_at": "2026-06-08",
+        "updated_at": "2026-06-08",
+        "open_questions": ["Add public source-backed references before treating as final seed knowledge."],
+        "decision_log": [
+          {
+            "at": "2026-06-08",
+            "actor": "codex",
+            "decision": "approved",
+            "reason": "Approved as Phase 13 sample data with internal evidence and explicit limitations."
+          }
+        ]
+      },
+      "contribution": {
+        "contribution_id": null,
+        "source_project": null,
+        "sanitization_status": "not_applicable",
+        "private_data_removed": true,
+        "generic_mapping_notes": null
+      }
+    },
+    {
+      "schema_version": "1.0.0",
+      "knowledge_id": "kb_05_replay_simulation.fill_model.same_candle_boundary.v1",
+      "title": "Same-Candle TP/SL Requires Explicit Fill Ordering",
+      "metadata": {
+        "partition_id": "KB_05_REPLAY_SIMULATION",
+        "tree_node_id": "kt.replay_simulation.fill_model",
+        "tree_path": "CEK-TA / Trading Engineering / Replay And Simulation / Fill Model",
+        "related_nodes": ["kt.backtest.bias"],
+        "domain": "replay_simulation",
+        "subdomain": "fill_model",
+        "rule_type": "principle",
+        "content_type": "json",
+        "project_binding": "none",
+        "used_for": ["backtest_review", "replay", "simulation"]
+      },
+      "applicability": {
+        "market": "general",
+        "asset": "general",
+        "timeframe": "general",
+        "data_granularity": "kline",
+        "project_type": "general",
+        "applies_when": [
+          "A candle's high and low both cross take-profit and stop-loss levels.",
+          "The available data does not reveal intrabar event order."
+        ],
+        "not_applicable_when": [
+          "Tick, trade, or order-book replay data provides deterministic event ordering."
+        ]
+      },
+      "content": {
+        "statement": "When TP and SL are both touched inside the same candle, a backtest or simulator must use an explicit deterministic fill-order rule and report that assumption.",
+        "rationale": "OHLC candles do not encode the sequence of intrabar prices, so assuming a favorable order can overstate performance.",
+        "procedure": [
+          "Detect candles where both TP and SL are reachable.",
+          "Apply the configured deterministic ordering rule.",
+          "Report how many trades depend on same-candle ordering.",
+          "Run sensitivity checks under conservative and optimistic ordering if needed."
+        ],
+        "examples": [
+          "A conservative model may choose stop-first when sequence is unknown."
+        ],
+        "anti_patterns": [
+          "Always choosing TP first without documenting the assumption."
+        ],
+        "validation": [
+          "Count same-candle ambiguous exits.",
+          "Compare metrics under alternate fill-order policies."
+        ],
+        "risk_notes": [
+          "This rule is assumption-sensitive and should not be merged with tick-data execution rules."
+        ],
+        "citation_notes": "This sample is based on CEK-TA fill model contract and should gain external sources in Phase 17."
+      },
+      "assumptions": ["Only OHLC/K-line data is available for the ambiguous candle."],
+      "source_evidence": [
+        {
+          "source_id": "src_cek_ta_fill_model_spec",
+          "source_title": "CEK-TA Fill Model Spec",
+          "source_url": null,
+          "source_type": "internal_report",
+          "publisher": "CEK-TA",
+          "published_at": "2026-06-08",
+          "accessed_at": "2026-06-08",
+          "version": "1.0.0",
+          "reliability": "medium",
+          "relevance": "high",
+          "evidence_summary": "The CEK-TA fill model spec requires deterministic assumptions for ambiguous fill ordering.",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "medium",
+        "score": 70,
+        "score_version": "1.0.0",
+        "primary_source_count": 0,
+        "supporting_source_count": 1,
+        "limitations": ["Example item requires external source support before broad professional approval."]
+      },
+      "conflict_audit": {
+        "conflict_status": "potential",
+        "checked_against": ["kb_04_backtest.bias.lookahead_boundary.v1"],
+        "conflicts": [
+          {
+            "knowledge_id": "kb_04_backtest.bias.lookahead_boundary.v1",
+            "conflict_type": "granularity_conflict",
+            "severity": "informational",
+            "resolution": "This item applies to OHLC/K-line ambiguity; tick replay with event ordering belongs to a different scope.",
+            "applicability_boundary": "Use only when intrabar sequence is unavailable."
+          }
+        ],
+        "resolution_summary": "Potential conflict is resolved by data granularity boundary.",
+        "default_recommendation": "Cite with caveat and show fill-order assumption."
+      },
+      "review": {
+        "confidence": "medium",
+        "freshness": "stable",
+        "review_status": "reviewed",
+        "reviewer": "codex",
+        "reviewed_at": "2026-06-08",
+        "created_at": "2026-06-08",
+        "updated_at": "2026-06-08",
+        "open_questions": ["Add public source-backed references in Phase 17."],
+        "decision_log": [
+          {
+            "at": "2026-06-08",
+            "actor": "codex",
+            "decision": "reviewed",
+            "reason": "Reviewed as Phase 13 sample data with explicit conflict boundary."
+          }
+        ]
+      },
+      "contribution": {
+        "contribution_id": null,
+        "source_project": null,
+        "sanitization_status": "not_applicable",
+        "private_data_removed": true,
+        "generic_mapping_notes": null
+      }
+    },
+    {
+      "schema_version": "1.0.0",
+      "knowledge_id": "kb_10_project_runbooks.adapter.read_only_boundary.v1",
+      "title": "External Project Adapter Must Keep CEK-TA Tooling Read-Only By Default",
+      "metadata": {
+        "partition_id": "KB_10_PROJECT_RUNBOOKS",
+        "tree_node_id": "kt.project_integration.adapter",
+        "tree_path": "CEK-TA / Project Integration / Project Adapter",
+        "related_nodes": ["kt.project_integration.healthcheck", "kt.project_integration.contribution"],
+        "domain": "project_runbooks",
+        "subdomain": "project_adapter",
+        "rule_type": "adapter_rule",
+        "content_type": "json",
+        "project_binding": "none",
+        "used_for": ["project_integration", "mcp", "rag_engineering"]
+      },
+      "applicability": {
+        "market": "general",
+        "asset": "general",
+        "timeframe": "general",
+        "data_granularity": "general",
+        "project_type": "general",
+        "applies_when": [
+          "A business project uses CEK-TA through AGENTS.md, Project Adapter, Skills, MCP, or contribution templates."
+        ],
+        "not_applicable_when": [
+          "A separate approved task card explicitly grants a narrower write permission."
+        ]
+      },
+      "content": {
+        "statement": "External projects must treat CEK-TA MCP/RAG tools as read-only by default and submit reusable experience only through proposed contribution files.",
+        "rationale": "CEK-TA is a support layer; it must not read secrets, place trades, or write approved knowledge from a business project context.",
+        "procedure": [
+          "Declare allowed_cek_ta_tools and blocked_cek_ta_tools in the Project Adapter.",
+          "Run the external project healthcheck.",
+          "Submit reusable findings to contributions/proposed/."
+        ],
+        "examples": [
+          "search_expert_knowledge is allowed; write_approved_knowledge is blocked."
+        ],
+        "anti_patterns": [
+          "Letting an external project directly edit CEK-TA approved knowledge."
+        ],
+        "validation": [
+          "Check Project Adapter permission profile.",
+          "Check contribution initial status is proposed."
+        ],
+        "risk_notes": [
+          "Permission creep can leak project-private data or pollute reusable knowledge."
+        ],
+        "citation_notes": "Based on CEK-TA Phase 10 runtime integration templates."
+      },
+      "assumptions": ["External project has not been separately granted write permission."],
+      "source_evidence": [
+        {
+          "source_id": "src_cek_ta_phase10_adapter",
+          "source_title": "CEK-TA Phase 10 External Project Runtime Integration",
+          "source_url": null,
+          "source_type": "task_card",
+          "publisher": "CEK-TA",
+          "published_at": "2026-06-08",
+          "accessed_at": "2026-06-08",
+          "version": "1.0.0",
+          "reliability": "medium",
+          "relevance": "high",
+          "evidence_summary": "Phase 10 defines adapter, healthcheck, and contribution boundaries for external projects.",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "medium",
+        "score": 75,
+        "score_version": "1.0.0",
+        "primary_source_count": 0,
+        "supporting_source_count": 1,
+        "limitations": ["Internal governance rule; external source is not required for this project-integration contract."]
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "checked_against": [],
+        "conflicts": [],
+        "resolution_summary": "No conflict in sample set.",
+        "default_recommendation": "Use as project integration guidance."
+      },
+      "review": {
+        "confidence": "medium",
+        "freshness": "stable",
+        "review_status": "approved",
+        "reviewer": "codex",
+        "reviewed_at": "2026-06-08",
+        "created_at": "2026-06-08",
+        "updated_at": "2026-06-08",
+        "open_questions": [],
+        "decision_log": [
+          {
+            "at": "2026-06-08",
+            "actor": "codex",
+            "decision": "approved",
+            "reason": "Approved as Phase 13 sample project-integration knowledge."
+          }
+        ]
+      },
+      "contribution": {
+        "contribution_id": null,
+        "source_project": null,
+        "sanitization_status": "not_applicable",
+        "private_data_removed": true,
+        "generic_mapping_notes": null
+      }
+    }
+  ]
+}

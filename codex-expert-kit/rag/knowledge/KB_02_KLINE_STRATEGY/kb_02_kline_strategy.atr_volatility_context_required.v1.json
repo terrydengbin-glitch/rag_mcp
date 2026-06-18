@@ -1,0 +1,320 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_02_kline_strategy.atr_volatility_context_required.v1",
+  "title": "kline_strategy.atr_volatility_context_required.v1",
+  "metadata": {
+    "partition_id": "KB_02_KLINE_STRATEGY",
+    "domain": "kline_strategy",
+    "subdomain": "indicators",
+    "rule_type": "trading_method_boundary_rule",
+    "claim_type": "methodological_constraint",
+    "content_type": "json",
+    "project_binding": "none",
+    "tree_node_id": "kt.kline_strategy.indicators",
+    "tree_path": "CEK-TA / Trading Engineering / Kline Strategy / Indicators",
+    "canonical_node_id": "kt.kline_strategy.indicators",
+    "canonical_tree_path": "CEK-TA / Trading Engineering / Kline Strategy / Indicators",
+    "risk_level": "medium",
+    "used_for": [
+      "strategy_design_audit",
+      "kline_signal_boundary",
+      "ai_trader_project_gap_audit",
+      "external_project_rag_retrieval"
+    ],
+    "source_candidate_id": "cand_20260611_phase37_kline_strategy_atr_volatility_context_required_001",
+    "research_task_id": "P37-C-K08",
+    "phase": "Phase 37",
+    "classification_notes": "Phase 37 Kline / Strategy Engineering formal reviewed/caveat_only；这是 Trading Engineering K线/策略工程方法边界，不是 AI Engineering 训练/RAG/MCP 本体规则，也不是 approved/default guidance。",
+    "related_nodes": [
+      "kt.trading_engineering",
+      "kt.kline_strategy",
+      "kt.trading_engineering.data_engineering",
+      "kt.ai_engineering.llm_training",
+      "kt.kline_strategy.indicators"
+    ]
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "general",
+    "data_granularity": "kline",
+    "project_type": "trading_ai_support_layer",
+    "applies_when": [
+      "用 ATR 设定止损、过滤波动状态、归一化目标或构造训练特征",
+      "审计策略是否把波动率误写成方向预测"
+    ],
+    "not_applicable_when": [
+      "讨论期权隐含波动率定价本体",
+      "只处理账户级风险限额而不使用 K 线波动指标",
+      "需要具体买卖点、仓位、杠杆、止损止盈价格、交易所私有配置、账户事实或实盘权限时，应由外接项目事实层和风控层处理。",
+      "AI Engineering 只能引用本规则，不得把本规则改写为 LLM 训练、MCP、RAG 或模型部署本体规则。"
+    ]
+  },
+  "content": {
+    "statement": "ATR 等波动率指标只能说明历史区间波动或止损/仓位/过滤的候选上下文；必须声明品种、周期、窗口和用途，不能直接声称价格方向或交易胜率。",
+    "rationale": "本候选只定义 K线/策略工程方法边界，不输出买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+    "procedure": [
+      "确认当前问题属于 Trading Engineering / Kline Strategy 方法边界，而不是 AI Engineering、RAG、MCP 或实盘执行本体。",
+      "检查市场、品种、周期、样本、数据可用时间、指标参数、成本、执行和验证边界。",
+      "若问题涉及仓位、风控、fill、滑点、订单状态或数据层契约，必须 cross-reference 对应 Trading 分支，不在 Kline 条目中复制 hard gate。",
+      "返回知识时必须携带 source_evidence、review_status、machine_gate、适用范围和不适用场景。"
+    ],
+    "examples": [],
+    "anti_patterns": [
+      "把 K线形态、指标阈值或成交量确认直接写成买卖点。",
+      "只凭主观看图命名趋势、支撑阻力、突破或反转，不给可测试规则和样本边界。",
+      "把平台/供应商文档当成跨所有市场的强制事实。",
+      "把 reviewed/caveat_only 知识说成 approved 默认指导。"
+    ],
+    "validation": [
+      "source_evidence 非空，且来源没有被用来支撑超出语境的 claim。",
+      "conflict_status 只能是 none、resolved、none_known_in_visible_context 或 visible_context_no_conflict。",
+      "machine_gate.default_guidance 必须为 caveat_only，review.default_guidance_allowed 必须为 false。",
+      "不得出现买卖点、仓位、杠杆、止损止盈价格或实盘执行建议。"
+    ],
+    "risk_notes": [
+      "本批来源包含论文、专业机构综述、交易平台文档和技术库文档，仍需要外部 AI/人工严格审计来源强度。",
+      "平台/框架文档只能支撑工程边界和例子，不能替代具体交易所、数据供应商或外接项目策略契约。",
+      "本候选不提供任何投资建议或实盘执行许可。",
+      "不得输出止损距离、仓位、杠杆或实盘交易指令。",
+      "本条为 formal reviewed/caveat_only，不是 approved；不得作为默认指导或 hard gate。",
+      "不得据此生成买卖点、仓位、杠杆、止损止盈价格或实盘执行建议。",
+      "Kline Strategy 只拥有 K线/策略工程方法边界，不拥有完整交易决策 hard gate。",
+      "AI Engineering 只能通过 canonical_node_id 引用本规则，不得复制改写为 AI 训练、RAG、MCP 或模型部署本体规则。"
+    ],
+    "citation_notes": "TA-Lib documents a large catalog of technical indicators, including RSI, ATR, moving averages and candlestick pattern recognition.; TA-Lib Python documents common indicators and market-data inputs used by trading software developers.; Fidelity categorizes trend, momentum, volume and volatility indicators and frames them as tools requiring context and risk management.",
+    "audit_patch_notes": {
+      "source": [
+        "必须把 Fidelity ATR 或同等级 ATR-specific 来源写入正式 source_evidence。"
+      ],
+      "content": [
+        "ATR 只能用于波动过滤、归一化或候选上下文，不能声称方向、胜率或 edge。"
+      ],
+      "boundary": [
+        "不得输出止损距离、仓位、杠杆或实盘交易指令。"
+      ],
+      "conflict": [
+        "与 Risk Management position sizing 交叉引用，不复制仓位规则。"
+      ]
+    }
+  },
+  "assumptions": [
+    "候选用于 CEK-TA 通用支持层知识库，而不是某个项目私有交易系统配置。",
+    "所有 K线/策略工程结论必须保留市场、周期、数据、成本、样本和验证边界。",
+    "候选通过外部审计前不能进入正式 reviewed 知识库。"
+  ],
+  "source_evidence": [
+    {
+      "source_id": "src_001",
+      "source_title": "TA-Lib Technical Analysis Library",
+      "source_url": "https://ta-lib.org/",
+      "source_type": "technical_library_official_doc",
+      "publisher": "TA-Lib",
+      "published_at": null,
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "medium_high",
+      "relevance": "high",
+      "evidence_summary": "TA-Lib documents a large catalog of technical indicators, including RSI, ATR, moving averages and candlestick pattern recognition.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_002",
+      "source_title": "TA-Lib Python wrapper documentation",
+      "source_url": "https://ta-lib.github.io/ta-lib-python/",
+      "source_type": "technical_library_doc",
+      "publisher": "TA-Lib Python",
+      "published_at": null,
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "medium_high",
+      "relevance": "high",
+      "evidence_summary": "TA-Lib Python documents common indicators and market-data inputs used by trading software developers.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_003",
+      "source_title": "Understanding Indicators in Technical Analysis",
+      "source_url": "https://www.fidelity.com/bin-public/060_www_fidelity_com/documents/learning-center/Understanding-Indicators-TA.pdf",
+      "source_type": "brokerage_education_reference",
+      "publisher": "Fidelity Investments",
+      "published_at": null,
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "medium_high",
+      "relevance": "medium_high",
+      "evidence_summary": "Fidelity categorizes trend, momentum, volume and volatility indicators and frames them as tools requiring context and risk management.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_004",
+      "source_title": "Technical Analysis",
+      "source_url": "https://rpc.cfainstitute.org/sites/default/files/-/media/documents/book/rf-lit-review/2016/rflrv11n11.pdf",
+      "source_type": "professional_literature_review",
+      "publisher": "CFA Institute Research Foundation",
+      "published_at": "2016-11-01",
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "high",
+      "relevance": "medium_high",
+      "evidence_summary": "CFA Institute discusses technical analysis, trend, support/resistance, indicators, oscillators, volume and risk-management context.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_audit_fidelity_atr",
+      "source_title": "What Is Average True Range?",
+      "source_url": "https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/atr",
+      "source_type": "brokerage_education_reference",
+      "publisher": "Fidelity Investments",
+      "published_at": null,
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "medium_high",
+      "relevance": "high",
+      "evidence_summary": "说明 ATR 衡量波动率而非价格方向，支撑 ATR 只能作为波动上下文而非方向信号。",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "medium_high",
+    "score": 79.5,
+    "score_version": "phase37_kline_strategy_reviewed_preparation_source_scoring_v1",
+    "primary_source_count": 1,
+    "supporting_source_count": 4,
+    "low_reliability_source_count": 0,
+    "limitations": [
+      "正式入库前必须由外部审计确认 claim 没有超出来源可证明范围。",
+      "教育、平台和框架文档只能作为 supporting evidence，不能单独证明交易信号有效性。",
+      "必须把 Fidelity ATR 或同等级 ATR-specific 来源写入正式 source_evidence。",
+      "本条为 formal reviewed/caveat_only；不是 approved，不得进入默认指导或 hard gate。",
+      "平台、框架、供应商文档只能按其语境使用；外接项目必须映射自己的交易所、broker、数据供应商和执行模型。",
+      "外部审计未提供完整 CEK-TA formal KB，因此冲突结论限于可见上下文和本次本地索引检查。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none_known_in_visible_context",
+    "checked_against": [
+      "Phase 36/38/40/41 AI Engineering 知识边界",
+      "现有 KB_02_KLINE_STRATEGY formal 知识",
+      "Phase 37 Trading 与 AI 跨分支引用契约"
+    ],
+    "conflicts": [],
+    "resolution_summary": "reviewed/caveat_only preparation audit passed; full formal KB duplicate/conflict/owner boundary check was executed during materialization and should be rerun after each index rebuild.",
+    "default_recommendation": "caveat_only_until_human_approval",
+    "owner_boundary": "Kline Strategy owns method boundaries; Quant Foundation, Data Engineering, Replay/Simulation, Live Execution and Risk Management own their hard-gate rules."
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于 AI IDE 或外接项目审计 K线/策略工程方法边界。",
+      "用于提示用户补充市场、周期、样本、数据可用时间、指标参数、成本、执行和验证条件。",
+      "用于 RAG/MCP/SearchLab 以 caveat 方式返回来源、边界和 cross-reference。"
+    ],
+    "not_allowed": [
+      "不得据此生成买卖点、仓位、杠杆、止损止盈价格或实盘执行建议。",
+      "不得把 reviewed/caveat_only 当作 approved 默认指导。",
+      "不得绕过外接项目事实层、数据契约、执行模型、风控 hard gate 或人工治理流程。"
+    ],
+    "required_context": [
+      "canonical_node_id=kt.kline_strategy.indicators",
+      "必须返回 source_evidence、review_status、conflict_status、machine_gate 和不适用场景。"
+    ],
+    "fallback_behavior": "cite_with_caveat"
+  },
+  "machine_gate": {
+    "default_guidance": "caveat_only",
+    "reason": "CEK-TA-400: reviewed-preparation audit allowed formal reviewed/caveat_only only; no approved/default/hard gate.",
+    "requires_human_escalation": true,
+    "blocking_reasons": [
+      "reviewed_not_approved",
+      "default_guidance_allowed_false",
+      "hard_gate_allowed_false",
+      "trade_execution_advice_forbidden"
+    ],
+    "checked_at": "2026-06-11",
+    "gate_version": "1.0.0",
+    "hidden_from_default_queue": true,
+    "visible_in_default_guidance_queue": false,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "recommended_extra_sources": [],
+  "review": {
+    "confidence": "medium_high",
+    "freshness": "mixed",
+    "review_status": "reviewed",
+    "reviewer": "codex",
+    "reviewed_at": "2026-06-11",
+    "created_at": "2026-06-11",
+    "updated_at": "2026-06-11",
+    "default_guidance_allowed": false,
+    "approved_allowed": false,
+    "hard_gate_allowed": false,
+    "approval_status": "not_requested",
+    "source_candidate_id": "cand_20260611_phase37_kline_strategy_atr_volatility_context_required_001",
+    "ai_audit_result_id": "audit_result_phase37_kline_strategy_reviewed_preparation_20260611_strict_v1",
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase37_kline_strategy_reviewed_preparation_20260611_strict_v1",
+      "source_package_id": "phase37_kline_strategy_reviewed_preparation_audit_package_20260611",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "required_patches": {
+        "source": [
+          "必须把 Fidelity ATR 或同等级 ATR-specific 来源写入正式 source_evidence。"
+        ],
+        "content": [
+          "ATR 只能用于波动过滤、归一化或候选上下文，不能声称方向、胜率或 edge。"
+        ],
+        "boundary": [
+          "不得输出止损距离、仓位、杠杆或实盘交易指令。"
+        ],
+        "conflict": [
+          "与 Risk Management position sizing 交叉引用，不复制仓位规则。"
+        ]
+      }
+    },
+    "open_questions": [
+      "若未来申请 approved/default guidance，必须另起人工治理任务并重新审计完整 formal KB 冲突与默认指导风险。"
+    ],
+    "decision_log": [
+      {
+        "at": "2026-06-11",
+        "actor": "external_ai_strict_audit",
+        "decision": "accepted_for_reviewed_caveat_only",
+        "reason": "Fidelity ATR 资料明确 ATR 衡量波动而非方向，可支撑 ATR 只作为波动上下文。"
+      },
+      {
+        "at": "2026-06-11",
+        "actor": "codex",
+        "decision": "reviewed",
+        "reason": "CEK-TA-400: formal reviewed/caveat_only created; approved/default guidance/hard gate all disabled."
+      }
+    ]
+  },
+  "contribution": {
+    "contribution_id": null,
+    "source_project": null,
+    "sanitization_status": "not_applicable",
+    "private_data_removed": true,
+    "generic_mapping_notes": "Generated from Phase 37 public-source Trading Engineering Kline / Strategy candidate; no project-private trading facts included."
+  },
+  "copyright": {
+    "stores_full_text": false,
+    "stores_long_quote": false,
+    "summary_only": true,
+    "license_notes": "仅保存来源链接、元数据和摘要，不保存长段原文。",
+    "reuse_risk": "low"
+  },
+  "phase37_conversion": {
+    "source_candidate_status": "accepted",
+    "source_ingestion_decision": "accepted_for_draft",
+    "promoted_by_task": "CEK-TA-400",
+    "reviewed_allowed": true,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  }
+}

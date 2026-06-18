@@ -1,0 +1,44 @@
+# CEK-TA Knowledge MCP config example for a business project's .codex/config.toml
+#
+# Phase 56 note:
+# - This is a read-only knowledge retrieval example.
+# - It must not grant trading, account, secret, approval, or write-knowledge permissions.
+# - CEK-TA provides a dependency-free local runtime entrypoint at codex-expert-kit/mcp/server.py.
+# - Keep enabled = false until the business project adapter and healthcheck pass.
+# - Healthcheck means --info, --list-tools, and one search_expert_knowledge smoke query all pass.
+# - Replace the example paths with your installed CEK-TA root.
+# - Runtime code resolves internal paths through codex-expert-kit/core/path_resolver.py.
+# - Prefer setting CEK_TA_ROOT and CEK_TA_KNOWLEDGE_ITEMS_PATH instead of hardcoding paths in project code.
+
+[mcp_servers.cek_ta_knowledge]
+enabled = false
+command = "python"
+args = ["E:\\collector\\rag\\codex-expert-kit\\mcp\\server.py"]
+startup_timeout_sec = 20
+tool_timeout_sec = 60
+
+[mcp_servers.cek_ta_knowledge.env]
+CEK_TA_ROOT = "E:\\collector\\rag"
+CEK_TA_MCP_MODE = "read_only"
+# Optional override. By default the runtime uses the formal Phase 21 aggregate:
+# E:\collector\rag\codex-expert-kit\rag\indexes\knowledge_items.json
+# Keep this value aligned with CEK_TA_ROOT, or regenerate it after moving CEK-TA.
+CEK_TA_KNOWLEDGE_ITEMS_PATH = "E:\\collector\\rag\\codex-expert-kit\\rag\\indexes\\knowledge_items.json"
+
+# Expected read-only tools from codex-expert-kit/mcp/mcp_server_spec.md:
+#
+# search_expert_knowledge
+# get_knowledge_item
+# get_conflict_audit
+# get_source_profile
+# list_kb_partitions
+# browse_knowledge_tree
+#
+# Forbidden capabilities:
+#
+# write_knowledge
+# approve_knowledge
+# submit_contribution
+# trade
+# read_account
+# read_secret

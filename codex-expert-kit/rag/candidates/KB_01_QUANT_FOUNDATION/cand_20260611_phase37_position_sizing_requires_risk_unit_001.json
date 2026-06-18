@@ -1,0 +1,412 @@
+{
+  "schema_version": "1.1.0-candidate",
+  "candidate_id": "cand_20260611_phase37_position_sizing_requires_risk_unit_001",
+  "research_task_id": "P37-A-Q06",
+  "status": {
+    "review_status": "accepted",
+    "ingestion_decision": "accepted_for_draft",
+    "decision_reason": "CEK-TA-382: strict re-audit accepted for formal reviewed/caveat_only.",
+    "created_at": "2026-06-11",
+    "updated_at": "2026-06-11"
+  },
+  "classification": {
+    "tree_node_id": "kt.quant_foundation.position_sizing",
+    "canonical_node_id": "kt.quant_foundation.position_sizing",
+    "tree_path": "CEK-TA / Trading Engineering / Quant Foundation",
+    "related_nodes": [
+      "kt.trading_engineering",
+      "kt.ai_engineering",
+      "kt.ai_engineering.llm_training"
+    ],
+    "partition_id": "KB_01_QUANT_FOUNDATION",
+    "domain": "quant_trading",
+    "subdomain": "position_sizing",
+    "rule_type": "procedure_boundary",
+    "claim_type": "procedure_boundary",
+    "used_for": [
+      "trading_knowledge_audit",
+      "ai_trader_project_design",
+      "trade_quality_scoring_context",
+      "external_project_rag_retrieval"
+    ],
+    "classification_notes": "本候选主归属 Trading Engineering / Quant Foundation；AI Engineering 只能通过 knowledge_refs 引用，不得复制交易规则本体。"
+  },
+  "claim": {
+    "claim_id": "claim_p37_a_q06",
+    "statement": "仓位 sizing 的交易规则本体应限定为：进入仓位计算前必须有账户风险预算、单笔风险单位、止损或失效边界、最大暴露和杠杆/保证金边界；AI/RAG 只能提示缺字段或路由人工复核，不能自行推导仓位。",
+    "normalized_claim": "phase37_position_sizing_requires_explicit_risk_unit_and_ai_missing_field_boundary",
+    "evidence_summary": "Investopedia 和 CrossTrade 支撑仓位 sizing 需要账户风险、交易风险/止损距离和风险百分比；Investor.gov/SEC 支撑保证金会放大损失；CEK-TA Phase 38 runtime contract 支撑缺字段时 LLM audit 只能提示/降级，不能作为 final gate。",
+    "interpretation_notes": "本条拆成两个边界：Trading Engineering 保存仓位 sizing 事实；AI Engineering 只保存缺字段提示、schema 校验和 human_review/needs_more_evidence 路由，不得输出具体仓位。",
+    "claim_strength": "medium_high",
+    "performance_claim": false
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "general",
+    "data_granularity": "general",
+    "project_type": "trading_ai_support_layer",
+    "applies_when": [
+      "设计交易计划 schema",
+      "检查 AI 是否错误生成仓位",
+      "把交易事实转为训练样本前检查 risk fields"
+    ],
+    "not_applicable_when": [
+      "用户明确要求交易建议或真实仓位计算",
+      "没有账户事实或项目级风险预算",
+      "实盘 broker margin 规则未接入",
+      "需要具体交易策略参数、账户事实、交易所配置、密钥或实盘权限时，应由外接项目事实层处理。",
+      "AI Engineering 只能引用本规则，不得把本规则改写为模型训练、MCP 或 RAG 本体规则。"
+    ],
+    "assumptions": [
+      "候选用于 CEK-TA 通用支持层知识库，而不是某个项目私有策略。",
+      "所有交易结论都必须保留市场、样本、成本、执行和验证边界。",
+      "候选通过外部审计前不能进入正式 reviewed 知识库。"
+    ],
+    "limitations": [
+      "首批候选以公开专业资料、监管资料、论文和教育资料为来源，仍需要外部 AI/人工严格审计。",
+      "部分来源是教育或供应商文章，只能作为 supporting evidence，不能单独支撑 approved。",
+      "本候选不提供任何投资建议或实盘执行许可。"
+    ]
+  },
+  "source_refs": [
+    {
+      "source_id": "src_001",
+      "source_title": "Position Sizing: Definition, Strategies, Importance in Trading",
+      "source_url": "https://www.investopedia.com/terms/p/positionsizing.asp",
+      "source_type": "financial_education",
+      "publisher": "Investopedia",
+      "published_at": null,
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "medium",
+      "score": 72,
+      "relevance": "high",
+      "freshness": "stable",
+      "limitations": [
+        "Educational source; project-level risk limits must be defined separately."
+      ],
+      "evidence_summary": "Describes position sizing as determining how much capital to allocate to a trade in relation to risk.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_002",
+      "source_title": "What Are R-Multiples? The Key Metric Every Trader Should Know",
+      "source_url": "https://trademetria.com/blog/what-are-r-multiples-the-key-metric-every-trader-should-know/",
+      "source_type": "trading_journal_article",
+      "publisher": "Trademetria",
+      "published_at": null,
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "medium",
+      "score": 70,
+      "relevance": "high",
+      "freshness": "stable",
+      "limitations": [
+        "Vendor education article; use as supporting source, not sole authority."
+      ],
+      "evidence_summary": "Explains R-multiple as expressing trade outcomes relative to initial risk.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_003",
+      "source_title": "Understanding Margin Accounts",
+      "source_url": "https://www.sec.gov/investor/alerts/ib_marginaccounts.pdf",
+      "source_type": "regulatory_guidance",
+      "publisher": "U.S. Securities and Exchange Commission",
+      "published_at": null,
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "high",
+      "score": 88,
+      "relevance": "high",
+      "freshness": "time_sensitive",
+      "limitations": [
+        "U.S. securities margin guidance; crypto/futures/CFD venues may differ."
+      ],
+      "evidence_summary": "SEC investor guidance explains margin risks, including amplified losses and obligations beyond deposited cash.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_004",
+      "source_title": "Measuring and Managing Market Risk",
+      "source_url": "https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/measuring-managing-market-risk",
+      "source_type": "professional_body",
+      "publisher": "CFA Institute",
+      "published_at": "2026-01-01",
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "high",
+      "score": 86,
+      "relevance": "high",
+      "freshness": "time_sensitive",
+      "limitations": [
+        "Market-risk overview; it does not define a trading strategy's full validation protocol."
+      ],
+      "evidence_summary": "CFA Institute frames market-risk management around risk measurement, limits, stress, and portfolio exposure.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_phase37_q06_investor_gov_margin_larger_losses",
+      "source_title": "Investor Bulletin: Understanding Margin Accounts",
+      "source_url": "https://www.investor.gov/introduction-investing/general-resources/news-alerts-bulletins/investor-bulletins-29",
+      "source_type": "regulatory_guidance",
+      "publisher": "Investor.gov / U.S. SEC",
+      "published_at": null,
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "high",
+      "score": 88,
+      "relevance": "high",
+      "freshness": "time_sensitive",
+      "limitations": [
+        "美国证券保证金投资者教育材料；不同市场、交易所、期货、CFD 或 crypto 规则不同。",
+        "用于支撑杠杆/保证金风险边界，不用于计算具体仓位。"
+      ],
+      "evidence_summary": "Investor.gov 说明 margin 会提高购买力，同时暴露于更大损失风险。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_phase37_q06_cek_ta_phase38_runtime_contract_missing_field",
+      "source_title": "CEK-TA Phase 38 AI scoring gate runtime contract",
+      "source_url": "docs/contracts/phase38_ai_scoring_gate_runtime_contract.md",
+      "source_type": "internal_contract",
+      "publisher": "CEK-TA",
+      "published_at": "2026-06-10",
+      "accessed_at": "2026-06-11",
+      "version": "phase38_runtime_contract_v1",
+      "reliability": "high",
+      "score": 90,
+      "relevance": "high",
+      "freshness": "current",
+      "limitations": [
+        "内部治理契约只能支撑 AI 行为边界，不能替代外部交易仓位 sizing 来源。",
+        "用于 reviewed/caveat_only，不授权 approved/default/hard gate。"
+      ],
+      "evidence_summary": "该契约定义 LLM audit 负责解释 scorer 输出、生成 reason code、missing field 与人工复核摘要；unsupported_claims 不为空时 final gate 不得因 LLM 输出而放行。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_phase37_q06_crosstrade_position_sizing_risk_stop",
+      "source_title": "Position Sizing",
+      "source_url": "https://crosstrade.io/learn/risk-management/position-sizing",
+      "source_type": "trading_education",
+      "publisher": "CrossTrade",
+      "published_at": null,
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "medium",
+      "score": 70,
+      "relevance": "high",
+      "freshness": "stable",
+      "limitations": [
+        "交易教育资料；只能作为 supporting source。",
+        "具体风控阈值必须由外接项目 owner 定义。"
+      ],
+      "evidence_summary": "支持按账户风险、止损距离和合约/资产波动来确定仓位 sizing，而不是 AI 自行推导。",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 84,
+    "score_version": "phase37_source_scoring_v1",
+    "primary_source_count": 2,
+    "supporting_source_count": 2,
+    "low_reliability_source_count": 0,
+    "mandatory_downgrades": [],
+    "limitations": [
+      "正式入库前必须由外部审计确认 claim 没有超出来源可证明范围。",
+      "监管资料按地区适用，不能自动泛化到所有市场或交易所。",
+      "本轮 CEK-TA-381 只补 reviewed/caveat_only 准备证据，不授权 approved/default guidance/hard gate。",
+      "外部 AI 必须重新搜索专业网站、资料、案例和数据，确认补证是否足以进入 formal reviewed/caveat_only。"
+    ],
+    "supplemented_for_reviewed_preparation": true,
+    "supplemental_source_count": 3
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "Phase 36/38/40/41 AI Engineering 知识边界",
+      "现有 KB_01_QUANT_FOUNDATION formal 知识"
+    ],
+    "conflicts": [],
+    "resolution_summary": "未发现与现有正式知识的直接冲突；与 AI Engineering 中 risk/reward、cost、label 相关知识属于 owner/reference 边界互补。",
+    "approval_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于提醒 AI IDE 检索 Trading Engineering 规则本体。",
+      "用于审计交易项目方案中是否缺少成本、风险、样本和验证边界。",
+      "用于辅助外接项目设计 schema、label、reason code 和 review checklist。"
+    ],
+    "not_allowed": [
+      "不得生成买卖点、仓位、杠杆、止损止盈或实盘执行建议。",
+      "不得把候选知识当作 approved 或默认指导。",
+      "不得绕过外接项目事实、风控 hard gate 或人工治理流程。"
+    ]
+  },
+  "machine_gate": {
+    "default_guidance": "deny",
+    "reason": "CEK-TA-381 supplemented for external re-audit only; no reviewed/approved/default/hard gate until audit result is imported.",
+    "requires_human_escalation": true,
+    "hidden_from_default_queue": true
+  },
+  "review": {
+    "confidence": "high",
+    "freshness": "mixed",
+    "reviewer": "codex_cec_ta_381_supplemental_research",
+    "reviewed_at": "2026-06-11",
+    "open_questions": [
+      "外部审计是否认为来源足以支撑该 claim？",
+      "是否需要补充更强的一手来源、交易所规则、教材或论文？",
+      "是否存在与现有 Trading Engineering formal 知识的重叠，需要合并或拆分？",
+      "将外部规则限定为仓位 sizing 需要风险预算、风险单位、失效边界和最大暴露。",
+      "将“AI 只能提示缺字段，不能推导仓位”拆为 CEK-TA 内部 AI governance/schema 规则，并补内部正式来源。",
+      "外部再审是否认为本轮补证足以进入 formal reviewed/caveat_only？",
+      "是否仍需页码级、监管、机构或论文级证据？",
+      "是否存在和完整 CEK-TA formal KB 的冲突或重复？"
+    ],
+    "audit_log": [
+      {
+        "at": "2026-06-11",
+        "actor": "codex",
+        "action": "created",
+        "reason": "根据 Phase 37 P37-A Quant Foundation 队列生成首批 Trading Engineering 候选知识。"
+      },
+      {
+        "at": "2026-06-11",
+        "actor": "codex",
+        "action": "sourced",
+        "reason": "记录公开专业资料、监管资料、论文和教育资料的来源摘要。"
+      },
+      {
+        "at": "2026-06-11",
+        "actor": "codex",
+        "action": "classified",
+        "reason": "归类到 KB_01_QUANT_FOUNDATION / kt.quant_foundation.position_sizing / position_sizing。"
+      },
+      {
+        "at": "2026-06-11",
+        "actor": "external_ai_strict_audit",
+        "action": "phase37_quant_foundation_first_audit_imported",
+        "reason": "accepted_for_draft / confidence=medium",
+        "audit_result_id": "audit_result_phase37_quant_foundation_candidate_audit_20260611_strict_v1"
+      },
+      {
+        "at": "2026-06-11",
+        "actor": "codex",
+        "action": "phase37_quant_foundation_reviewed_preparation_needs_more_evidence",
+        "reason": "CEK-TA-380: 需要拆分 Trading Engineering 仓位 sizing 外部金融事实与 CEK-TA AI governance 内部规则。"
+      },
+      {
+        "at": "2026-06-11",
+        "actor": "codex",
+        "action": "phase37_quant_foundation_reviewed_preparation_needs_more_evidence",
+        "reason": "CEK-TA-380: 需要拆分 Trading Engineering 仓位 sizing 外部金融事实与 CEK-TA AI governance 内部规则。"
+      },
+      {
+        "at": "2026-06-11",
+        "actor": "codex",
+        "action": "phase37_quant_foundation_reviewed_preparation_needs_more_evidence",
+        "reason": "CEK-TA-380: 需要拆分 Trading Engineering 仓位 sizing 外部金融事实与 CEK-TA AI governance 内部规则。"
+      },
+      {
+        "at": "2026-06-11",
+        "actor": "codex",
+        "action": "phase37_quant_foundation_blocked_supplemental_reaudit_prepared",
+        "reason": "CEK-TA-381: 仓位 sizing 交易规则与 AI 治理边界拆分；保持 candidate-only，等待外部严格再审。",
+        "audit_package": "phase37_quant_foundation_blocked_supplemental_reaudit_package_20260611"
+      },
+      {
+        "at": "2026-06-11",
+        "actor": "codex",
+        "action": "phase37_quant_foundation_blocked_supplemental_reaudit_prepared",
+        "reason": "CEK-TA-381: 仓位 sizing 交易规则与 AI 治理边界拆分；保持 candidate-only，等待外部严格再审。",
+        "audit_package": "phase37_quant_foundation_blocked_supplemental_reaudit_package_20260611"
+      },
+      {
+        "at": "2026-06-11",
+        "actor": "codex",
+        "action": "phase37_blocked_supplemental_reaudit_formalized",
+        "reason": "CEK-TA-382: external strict re-audit accepted this candidate for formal reviewed/caveat_only.",
+        "audit_result_id": "audit_result_phase37_quant_foundation_blocked_supplemental_reaudit_20260611_strict_v3",
+        "formal_knowledge_id": "kb_01_quant_foundation.position_sizing_requires_risk_unit.v1"
+      }
+    ],
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase37_quant_foundation_blocked_supplemental_reaudit_20260611_strict_v3",
+      "source_package_id": "phase37_quant_foundation_blocked_supplemental_reaudit_package_20260611",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "required_patches": {
+        "source": [
+          "外部来源只支撑交易仓位 sizing 前置事实；AI 缺字段行为边界来自 CEK-TA 内部治理契约。"
+        ],
+        "content": [
+          "正式知识分成 Trading Engineering prerequisite fields 和 AI governance behavior 两段。"
+        ],
+        "boundary": [
+          "禁止具体仓位公式、百分比风险建议、杠杆倍数建议、止损/止盈建议、订单动作和账户级实盘执行判断。"
+        ],
+        "conflict": [
+          "Trading Engineering 保存交易规则本体；AI Engineering 只保存引用和治理边界。"
+        ]
+      },
+      "formal_conversion_notes": [
+        "只作为字段前置条件和 AI 行为边界，不作为 position sizing 教程或实盘风控规则。",
+        "approved/default guidance/hard gate 均保持 false。"
+      ]
+    },
+    "supplemental_reaudit": {
+      "task_id": "CEK-TA-381",
+      "package_id": "phase37_quant_foundation_blocked_supplemental_reaudit_package_20260611",
+      "target_decision": "reviewed/caveat_only 准备再审",
+      "supplemental_notes": [
+        "将原 claim 拆为 Trading Engineering 外部事实和 AI Engineering 内部治理边界。",
+        "AI 只能提示缺字段、触发 needs_more_evidence/human_review，不得生成具体仓位、杠杆或订单动作。"
+      ],
+      "reviewed_allowed_before_reaudit": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false
+    }
+  },
+  "copyright": {
+    "stores_full_text": false,
+    "stores_long_quote": false,
+    "summary_only": true,
+    "license_notes": "仅保存来源链接、元数据和摘要，不保存长段原文。",
+    "reuse_risk": "low"
+  },
+  "conversion_target": {
+    "proposed_knowledge_id": "kb_01_quant_foundation.position_sizing_requires_risk_unit.v1",
+    "target_schema": "cek_ta_knowledge_item_schema_v1_1",
+    "target_review_status": "reviewed",
+    "target_machine_gate": "caveat_only",
+    "skill_candidate": false,
+    "eval_case_candidate": true,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "workflow": {
+    "stage": "formalized_reviewed",
+    "queue_group": "formalized",
+    "formal_knowledge_id": "kb_01_quant_foundation.position_sizing_requires_risk_unit.v1",
+    "formal_review_status": "reviewed",
+    "default_guidance_allowed": false,
+    "approved_allowed": false,
+    "hard_gate_allowed": false,
+    "hidden_from_default_queue": true,
+    "next_action": "none",
+    "ai_audit_result_id": "audit_result_phase37_quant_foundation_blocked_supplemental_reaudit_20260611_strict_v3",
+    "visible_in_default_guidance_queue": false,
+    "formal_knowledge_path": "codex-expert-kit/rag/knowledge/KB_01_QUANT_FOUNDATION/kb_01_quant_foundation.position_sizing_requires_risk_unit.v1.json",
+    "reviewed_allowed": true
+  }
+}

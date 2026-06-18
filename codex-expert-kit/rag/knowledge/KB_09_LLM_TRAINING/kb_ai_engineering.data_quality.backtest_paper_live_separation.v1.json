@@ -1,0 +1,380 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_ai_engineering.data_quality.backtest_paper_live_separation.v1",
+  "title": "回测、模拟盘、影子和实盘数据必须分层标识",
+  "metadata": {
+    "partition_id": "KB_09_LLM_TRAINING",
+    "domain": "llm_training",
+    "subdomain": "trading_data_quality_gate",
+    "rule_type": "decision_rule",
+    "content_type": "json",
+    "project_binding": "none",
+    "tree_node_id": "kt.llm_training.trading_scoring_gating_training",
+    "tree_path": "CEK-TA / AI Engineering",
+    "canonical_node_id": "kt.llm_training.trading_scoring_gating_training",
+    "canonical_tree_path": "CEK-TA / AI Engineering",
+    "risk_level": "medium",
+    "used_for": [
+      "llm_training",
+      "trading_gating_scoring",
+      "rag_engineering",
+      "mcp",
+      "vue_audit_ui"
+    ],
+    "source_candidate_id": "cand_20260609_ai_engineering_data_quality_backtest_paper_live_separation_v1_001",
+    "research_task_id": "RIT-P36-C-12",
+    "claim_type": "ai_governance_rule",
+    "classification_notes": "Phase 36 AI Engineering reviewed knowledge；本条只沉淀 AI/LLM/RAG/MCP/训练数据、评估、部署或治理规则，交易规则本体必须路由到 Trading Engineering。"
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "general",
+    "data_granularity": "general",
+    "project_type": "trading_llm_assistant",
+    "applies_when": [
+      "训练样本来自回测、回放、模拟盘、影子运行或实盘日志。",
+      "模型质量指标要跨 source_mode 比较。",
+      "外接项目需要判断某条样本是否可用于训练、评估、shadow 或 incident review。"
+    ],
+    "not_applicable_when": [
+      "需要定义具体 backtest fill model、滑点或撮合逻辑，应路由到 Trading Engineering。",
+      "需要处理实盘订单状态、broker 回报、仓位同步或 kill switch，应路由到 Live Execution。",
+      "只是普通数据集版本管理，应该路由到 dataset.version_and_hash_required。"
+    ]
+  },
+  "content": {
+    "statement": "交易 LLM scoring/gating 数据必须显式记录 source_mode，并区分 backtest、paper、shadow 和 live；不同来源模式不得混在一起训练、评估或解释指标。",
+    "rationale": "回测、模拟盘、影子和实盘数据的成交机制、成本、延迟、风险和标签可靠性不同，混用会让模型学到错误质量信号或高估实盘效果。",
+    "procedure": [
+      "确认当前项目事实命中适用范围，且没有命中不适用场景。",
+      "按本知识项 required_fields 或字段清单补齐数据、训练、评估或部署契约。",
+      "执行 schema、来源、冲突、隐私和边界检查；失败时进入 block、quarantine 或 needs_review。",
+      "保留 source_evidence、audit_trace_id、review_status 和 machine_gate 结果，供 MCP、SearchLab、Vue3 审计界面和外接项目引用。"
+    ],
+    "examples": [],
+    "anti_patterns": [
+      "把 reviewed 知识当作 approved 默认指导。",
+      "把 AI Engineering 规则扩写成具体买卖点、仓位、止损止盈、策略参数或实盘执行动作。",
+      "缺少来源、schema、适用范围、冲突检查或审计记录仍进入训练、评估、RAG promotion 或默认指导。"
+    ],
+    "validation": [
+      "source_evidence 至少存在 2 条，且没有 unresolved conflict。",
+      "review_status 为 reviewed 时 machine_gate.default_guidance 必须是 caveat_only。",
+      "外接项目调用时必须返回 knowledge_id、source_refs、review_status、machine_gate 和适用边界。",
+      "前端候选页和知识树不得显示乱码、问号占位或英文 demo 文案。"
+    ],
+    "risk_notes": [
+      "本条为 formal reviewed 知识，不等于 approved；默认指导需要后续人工治理。",
+      "本知识项只处理 AI Engineering 边界，不沉淀项目私有交易数据和交易规则本体。",
+      "若项目事实涉及具体策略、实盘订单、风控阈值或市场结构，应路由到 Trading Engineering 对应分支。"
+    ],
+    "citation_notes": "回测与实盘存在执行、成本和延迟差异；模型风险治理和 ML 数据质量规则支持把来源模式作为训练/评估边界字段。",
+    "audit_patch_notes": {
+      "source_patch_notes": [
+        "保留 TFDV 作为 schema validation、anomaly detection、drift/skew、train/serve skew 的工程来源。",
+        "保留 Datasheets for Datasets 作为数据来源、组成、用途、限制和维护信息文档化来源。",
+        "补 QuantConnect Paper Trading 或同类专业资料，支持 paper/live 环境区分和真实资金前验证。",
+        "补 QuantConnect Reality Modeling、fees、slippage、fills 资料，说明回测、paper 和 live 的执行假设不同。",
+        "补 FINRA 15-09 或 FCA algorithmic trading control 作为上线前测试、系统验证和监督来源。"
+      ],
+      "content_patch_notes": [
+        "将正式 statement 改为：trade scoring/gating 训练或评估样本必须记录 source_mode，且 backtest、paper、shadow、live 数据不得无审计混用。",
+        "建议字段：sample_id、source_mode、environment、capture_time、decision_timestamp、feature_timestamp_cutoff、fill_source、label_source、allowed_use、prohibited_use、pool_type。",
+        "增加规则：source_mode 缺失、模式不一致或 lineage 不可追踪时，fallback_action 应为 block_training、needs_more_evidence 或 human_review。",
+        "避免继续与 execution_cost_required、missing_core_fields_block_training 共用同一句 generic statement。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 只沉淀 source_mode、数据 provenance、训练/评估隔离和 gating 数据质量规则。",
+        "具体回测模型、fill model、K 线、成交模型、交易成本模型、策略参数和实盘执行路由到 Trading Engineering。",
+        "不得在本知识项中写入项目私有策略规则、账户参数或真实订单细节。"
+      ],
+      "conflict_patch_notes": [
+        "与 data_quality.execution_cost_required、data_quality.missing_core_fields_block_training 存在重复，应拆成父规则 data_quality.trade_sample_minimum_quality_gate 和三个子规则。",
+        "与 dataset.source_lineage_required、dataset.version_and_hash_required、data_asset.eval_pool_must_not_train 建立互链。",
+        "未发现需要 rejected 的直接冲突。"
+      ],
+      "required_followups": [
+        "新增 source_mode 枚举：backtest、paper、shadow、live、synthetic、incident_replay。",
+        "补 source_mode transition policy，例如 live_to_train 需要审批、脱敏、license check、leakage check。",
+        "补 backtest/paper/live 混用检测用例和 UI audit warning。"
+      ]
+    },
+    "required_fields": [
+      "source_mode",
+      "strategy_id",
+      "strategy_version",
+      "execution_context_id",
+      "cost_model_id",
+      "latency_profile",
+      "data_capture_time"
+    ]
+  },
+  "assumptions": [
+    "外接项目提供项目事实、私有交易数据和策略上下文；CEK-TA 只沉淀可复用专业规则。",
+    "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+  ],
+  "source_evidence": [
+    {
+      "source_id": "src_tfdv",
+      "source_title": "TensorFlow Data Validation: Checking and analyzing your data",
+      "source_url": "https://tensorflow.github.io/tfx/guide/tfdv/",
+      "source_type": "official_doc",
+      "publisher": "TensorFlow / TFX",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "TFDV supports schema-based data validation, anomaly detection, and train/serve skew checks in ML pipelines.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_datasheets",
+      "source_title": "Datasheets for Datasets",
+      "source_url": "https://arxiv.org/abs/1803.09010",
+      "source_type": "paper",
+      "publisher": "arXiv",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "The paper supports documenting dataset motivation, composition, collection, intended use, maintenance, and limitations.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_sklearn_pitfalls",
+      "source_title": "Common pitfalls and recommended practices | scikit-learn",
+      "source_url": "https://scikit-learn.org/stable/common_pitfalls.html",
+      "source_type": "official_doc",
+      "publisher": "scikit-learn",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "scikit-learn documents inconsistent preprocessing and data leakage pitfalls, including fitting transformations only on training data.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_occ_fed_fdic_revised_model_risk_2026",
+      "source_title": "Model Risk Management: Revised Guidance",
+      "source_url": "https://occ.gov/news-issuances/bulletins/2026/bulletin-2026-13.html",
+      "source_type": "standard_or_risk_framework",
+      "publisher": "OCC / Federal Reserve / FDIC",
+      "published_at": "2026-04-17",
+      "accessed_at": "2026-06-09",
+      "version": "OCC Bulletin 2026-13 / SR 26-2",
+      "reliability": "high",
+      "relevance": "medium",
+      "evidence_summary": "2026 年跨机构模型风险管理修订指南支持模型治理、验证、变更控制和风险分层；同时需注明 generative AI 和 agentic AI 不在其直接范围内，只能作为模型风险治理类比来源。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_finra_regulatory_notice_15_09",
+      "source_title": "FINRA Regulatory Notice 15-09",
+      "source_url": "https://www.finra.org/industry/notices/15-09",
+      "source_type": "standard_or_risk_framework",
+      "publisher": "FINRA",
+      "published_at": "2015-03-01",
+      "accessed_at": "2026-06-09",
+      "version": "Regulatory Notice 15-09",
+      "reliability": "high",
+      "relevance": "medium",
+      "evidence_summary": "FINRA 15-09 支持自动化交易系统的监督、测试、控制、变更和合规治理要求，适合作为交易自动化治理类来源。",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 90,
+    "score_version": "1.0.0",
+    "primary_source_count": 2,
+    "supporting_source_count": 3,
+    "low_reliability_source_count": 0,
+    "limitations": [
+      "本条为 reviewed 知识，来源和审计补丁已记录；默认指导仍需后续人工治理升级 approved。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "docs/contracts/ai_engineering_gating_scoring_contract.md",
+      "docs/contracts/ai_engineering_knowledge_item_policy.md",
+      "docs/tasks/phase36_ai_engineering_gating_scoring_knowledge.md"
+    ],
+    "conflicts": [],
+    "resolution_summary": "未发现与当前 CEK-TA formal knowledge 的直接冲突；候选不会进入默认指导。",
+    "default_recommendation": "caveat_only_until_approved"
+  },
+  "review": {
+    "confidence": "medium",
+    "freshness": "time_sensitive",
+    "review_status": "reviewed",
+    "reviewer": "codex",
+    "reviewed_at": "2026-06-09",
+    "created_at": "2026-06-09",
+    "updated_at": "2026-06-09",
+    "open_questions": [
+      "审计时确认该候选是否应与相邻 AI Engineering 规则合并、拆分，或改路由到 Trading Engineering。",
+      "新增 source_mode 枚举：backtest、paper、shadow、live、synthetic、incident_replay。",
+      "补 source_mode transition policy，例如 live_to_train 需要审批、脱敏、license check、leakage check。",
+      "补 backtest/paper/live 混用检测用例和 UI audit warning。"
+    ],
+    "decision_log": [
+      {
+        "at": "2026-06-09",
+        "actor": "external_ai",
+        "decision": "accepted_for_draft",
+        "reason": "方向成立，但当前 statement 与 normalized_claim 不完全匹配：statement 是“核心字段、执行成本或数据来源模式缺失时阻断训练或降级”，normalized_claim 是 backtest/paper/live separation。正式 draft 应聚焦为 source_mode 分离规则：训练、评估、shadow 和上线分析样本必须标明 backtest、paper、shadow、live 等来源模式，来源模式缺失时不得进入训练或默认评估。",
+        "audit_result_id": "audit_result_phase36_ai_engineering_batch_02_of_10_20260609_gpt55_pro_strict_sources"
+      },
+      {
+        "at": "2026-06-09",
+        "actor": "codex",
+        "decision": "converted_to_reviewed",
+        "reason": "按 Phase 36 批量审计结果优化候选并转为 formal reviewed；未升级 approved。",
+        "audit_result_id": "audit_result_phase36_ai_engineering_batch_02_of_10_20260609_gpt55_pro_strict_sources"
+      },
+      {
+        "at": "2026-06-09",
+        "actor": "codex",
+        "decision": "content_patch_applied",
+        "reason": "交易 LLM scoring/gating 数据必须显式记录 source_mode，并区分 backtest、paper、shadow 和 live；不同来源模式不得混在一起训练、评估或解释指标。",
+        "audit_result_id": "audit_result_phase36_ai_engineering_batch_02_of_10_20260609_gpt55_pro_strict_sources"
+      }
+    ],
+    "approval_status": "not_requested",
+    "default_guidance_allowed": false,
+    "source_candidate_id": "cand_20260609_ai_engineering_data_quality_backtest_paper_live_separation_v1_001",
+    "ai_audit_result_id": "audit_result_phase36_ai_engineering_batch_02_of_10_20260609_gpt55_pro_strict_sources",
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase36_ai_engineering_batch_02_of_10_20260609_gpt55_pro_strict_sources",
+      "source_package_id": "phase36_ai_engineering_candidate_audit_batch_02_of_10_20260609",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立，但当前 statement 与 normalized_claim 不完全匹配：statement 是“核心字段、执行成本或数据来源模式缺失时阻断训练或降级”，normalized_claim 是 backtest/paper/live separation。正式 draft 应聚焦为 source_mode 分离规则：训练、评估、shadow 和上线分析样本必须标明 backtest、paper、shadow、live 等来源模式，来源模式缺失时不得进入训练或默认评估。",
+      "source_patch_notes": [
+        "保留 TFDV 作为 schema validation、anomaly detection、drift/skew、train/serve skew 的工程来源。",
+        "保留 Datasheets for Datasets 作为数据来源、组成、用途、限制和维护信息文档化来源。",
+        "补 QuantConnect Paper Trading 或同类专业资料，支持 paper/live 环境区分和真实资金前验证。",
+        "补 QuantConnect Reality Modeling、fees、slippage、fills 资料，说明回测、paper 和 live 的执行假设不同。",
+        "补 FINRA 15-09 或 FCA algorithmic trading control 作为上线前测试、系统验证和监督来源。"
+      ],
+      "content_patch_notes": [
+        "将正式 statement 改为：trade scoring/gating 训练或评估样本必须记录 source_mode，且 backtest、paper、shadow、live 数据不得无审计混用。",
+        "建议字段：sample_id、source_mode、environment、capture_time、decision_timestamp、feature_timestamp_cutoff、fill_source、label_source、allowed_use、prohibited_use、pool_type。",
+        "增加规则：source_mode 缺失、模式不一致或 lineage 不可追踪时，fallback_action 应为 block_training、needs_more_evidence 或 human_review。",
+        "避免继续与 execution_cost_required、missing_core_fields_block_training 共用同一句 generic statement。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 只沉淀 source_mode、数据 provenance、训练/评估隔离和 gating 数据质量规则。",
+        "具体回测模型、fill model、K 线、成交模型、交易成本模型、策略参数和实盘执行路由到 Trading Engineering。",
+        "不得在本知识项中写入项目私有策略规则、账户参数或真实订单细节。"
+      ],
+      "conflict_patch_notes": [
+        "与 data_quality.execution_cost_required、data_quality.missing_core_fields_block_training 存在重复，应拆成父规则 data_quality.trade_sample_minimum_quality_gate 和三个子规则。",
+        "与 dataset.source_lineage_required、dataset.version_and_hash_required、data_asset.eval_pool_must_not_train 建立互链。",
+        "未发现需要 rejected 的直接冲突。"
+      ],
+      "required_followups": [
+        "新增 source_mode 枚举：backtest、paper、shadow、live、synthetic、incident_replay。",
+        "补 source_mode transition policy，例如 live_to_train 需要审批、脱敏、license check、leakage check。",
+        "补 backtest/paper/live 混用检测用例和 UI audit warning。"
+      ]
+    },
+    "approved_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "contribution": {
+    "contribution_id": null,
+    "source_project": null,
+    "sanitization_status": "not_applicable",
+    "private_data_removed": true,
+    "generic_mapping_notes": "Phase 36 public-source AI Engineering candidate; no project-private trading facts included."
+  },
+  "copyright": {
+    "stores_full_text": false,
+    "stores_long_quote": false,
+    "summary_only": true,
+    "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+    "reuse_risk": "low"
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于外接项目进行 AI Engineering、LLM 训练、RAG/MCP、数据治理、评估或部署审计。",
+      "用于 reviewed/audit 模式下带来源和 caveat 引用。",
+      "用于提示外接项目补齐 schema、来源、边界、冲突检查和审计记录。"
+    ],
+    "not_allowed": [
+      "不得生成买卖点、仓位、杠杆、止损止盈或实盘执行指令。",
+      "不得覆盖确定性风控、交易执行系统或人工审批。",
+      "不得作为 approved/default guidance 直接返回。"
+    ],
+    "required_context": [
+      "project_type",
+      "task_type",
+      "mode",
+      "strategy_version",
+      "data_boundary",
+      "review_status"
+    ],
+    "fallback_behavior": "cite_with_caveat"
+  },
+  "machine_gate": {
+    "default_guidance": "caveat_only",
+    "reason": "reviewed only; not approved; default guidance requires later human governance approval.",
+    "requires_human_escalation": true,
+    "blocking_reasons": [
+      "not_approved",
+      "phase36_reviewed_only"
+    ],
+    "checked_at": "2026-06-09",
+    "gate_version": "1.0.0",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "recommended_extra_sources": [
+    {
+      "title": "保留 TFDV 作为 schema validation、anomaly detection、drift/skew、train/serve skew 的工程来源。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_1"
+    },
+    {
+      "title": "保留 Datasheets for Datasets 作为数据来源、组成、用途、限制和维护信息文档化来源。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_2"
+    },
+    {
+      "title": "补 QuantConnect Paper Trading 或同类专业资料，支持 paper/live 环境区分和真实资金前验证。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_3"
+    },
+    {
+      "title": "补 QuantConnect Reality Modeling、fees、slippage、fills 资料，说明回测、paper 和 live 的执行假设不同。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_4"
+    },
+    {
+      "title": "补 FINRA 15-09 或 FCA algorithmic trading control 作为上线前测试、系统验证和监督来源。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_5"
+    }
+  ]
+}

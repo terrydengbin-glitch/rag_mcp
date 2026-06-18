@@ -1,0 +1,103 @@
+{
+  "audit_result_id": "audit_result_phase41_reviewed_preparation_supplemental_reaudit_20260610_strict_v1",
+  "source_package_id": "phase41_reviewed_preparation_supplemental_reaudit_package_20260610",
+  "audited_at": "2026-06-10",
+  "phase": "41",
+  "task_id": "CEK-TA-326",
+  "decision": "conditional_accept_for_formal_reviewed_preparation",
+  "batch_summary": {
+    "accepted_for_reviewed_count": 2,
+    "needs_more_evidence_count": 0,
+    "rejected_count": 0,
+    "reviewed_allowed_count": 2,
+    "approved_allowed_count": 0,
+    "default_guidance_allowed_count": 0,
+    "hard_gate_allowed_count": 0,
+    "misrouted_to_trading_count": 0
+  },
+  "hard_boundaries": [
+    "reviewed_allowed=true 只表示允许后续 Codex 生成 formal reviewed draft，不表示本次已经 reviewed。",
+    "formal reviewed 只能 caveat_only。",
+    "approved_allowed 必须 false。",
+    "default_guidance_allowed 必须 false。",
+    "hard_gate_allowed 必须 false。",
+    "Qwen3 / RAG 输出只能作为 audit evidence。",
+    "deterministic final gate 仍是最终交易权限来源。",
+    "Trading PnL / fill / slippage / fee / K 线 / 仓位 / 实盘执行本体继续归 Trading Engineering。"
+  ],
+  "decisions": [
+    {
+      "candidate_id": "cand_20260610_phase41_p41_b05_dataset_hash_split_manifest_hash_feature_schema_version_label_policy_version_001",
+      "research_task_id": "P41-B05",
+      "decision": "accepted_for_draft",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "review_mode": "caveat_only",
+      "reason": "TrainingDatasetManifest 内部契约已补足，覆盖 dataset_hash、split_manifest_hash、feature_schema_version、label_policy_version、lineage_manifest_ref、source_snapshot_refs、forbidden_fields_scan_ref、owner 和 hard gates，足以进入 caveat-only formal reviewed preparation。",
+      "source_patch_notes": [
+        "保留 src_phase41_training_dataset_manifest_contract 作为直接内部契约证据。",
+        "保留 DVC、MLflow、NIST 等外部来源作为版本治理、模型 registry 和 AI 风险治理的背景证据。"
+      ],
+      "content_patch_notes": [
+        "formal reviewed draft 必须写清 TrainingDatasetManifest 是训练数据治理、lineage、reproducibility 契约。",
+        "不得把 TrainingDatasetManifest 写成交易收益、交易信号、交易策略或 final gate 依据。",
+        "最小 schema 应包含 dataset_hash、split_manifest_hash、feature_schema_version、label_policy_version、lineage_manifest_ref、source_snapshot_refs、forbidden_fields_scan_ref、owner、created_at 和 hard_gate_review_status。"
+      ],
+      "boundary_patch_notes": [
+        "保持 AI Engineering / Trading Engineering 边界。",
+        "不定义 Trading PnL、fill、slippage、fee、K 线、仓位、止损止盈或实盘执行本体。",
+        "Qwen3 和 RAG 输出只能作为审计证据；deterministic final gate 仍是最终交易权限来源。"
+      ],
+      "conflict_patch_notes": [
+        "生成 formal reviewed 时 machine_gate.default_guidance 必须为 caveat_only。",
+        "hidden_from_default_queue=true 且 visible_in_default_guidance_queue=false。",
+        "approved_allowed、default_guidance_allowed、hard_gate_allowed 均不得被候选源字段覆盖。"
+      ],
+      "required_followups": [
+        "manifest_required_test",
+        "forbidden_fields_scan_test",
+        "split_manifest_hash_test",
+        "label_policy_version_test"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260610_phase41_p41_d03_feature_lineage_source_object_ref_lineage_ref_schema_version_001",
+      "research_task_id": "P41-D03",
+      "decision": "accepted_for_draft",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "review_mode": "caveat_only",
+      "reason": "FeatureLineageRecord 内部契约已补足，覆盖 source_object_ref、lineage_ref、feature_schema_version、missing_value_policy、owner 和 deprecation_policy，且边界仍保持 AI Engineering，不混入 Trading Engineering。",
+      "source_patch_notes": [
+        "保留 src_phase41_feature_lineage_record_contract 作为直接内部契约证据。",
+        "保留 DVC、Feast、MLflow 等外部来源作为数据版本、feature store 和 registry 的背景证据。",
+        "Feast 不是完整端到端 lineage 方案，因此必须保留 CEK-TA FeatureLineageRecord 内部契约。"
+      ],
+      "content_patch_notes": [
+        "formal reviewed draft 必须写清 FeatureLineageRecord 只证明特征在决策时可见、来源可追踪、schema 可复现。",
+        "不得把 feature lineage 写成因果解释、交易信号或 final gate 决策依据。",
+        "最小 schema 应包含 feature_id、feature_name、source_object_ref、lineage_ref、feature_schema_version、missing_value_policy、owner、deprecation_policy、feature_available_time_policy 和 source_snapshot_ref。"
+      ],
+      "boundary_patch_notes": [
+        "保持 AI Engineering / Trading Engineering 边界。",
+        "不定义 Trading PnL、fill、slippage、fee、K 线、仓位、止损止盈或实盘执行本体。",
+        "Qwen3 和 RAG 输出只能作为审计证据；deterministic final gate 仍是最终交易权限来源。"
+      ],
+      "conflict_patch_notes": [
+        "生成 formal reviewed 时 machine_gate.default_guidance 必须为 caveat_only。",
+        "hidden_from_default_queue=true 且 visible_in_default_guidance_queue=false。",
+        "approved_allowed、default_guidance_allowed、hard_gate_allowed 均不得被候选源字段覆盖。"
+      ],
+      "required_followups": [
+        "feature_lineage_required_test",
+        "missing_value_policy_version_test",
+        "source_object_ref_resolution_test",
+        "feature_lineage_not_causality_test"
+      ]
+    }
+  ]
+}

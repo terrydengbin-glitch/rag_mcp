@@ -1,0 +1,129 @@
+{
+  "audit_result_id": "audit_result_phase37_quant_foundation_blocked_supplemental_reaudit_20260611_strict_v3",
+  "package_id": "phase37_quant_foundation_blocked_supplemental_reaudit_package_20260611",
+  "audited_at": "2026-06-11",
+  "auditor": "external_ai_strict_reaudit",
+  "quality_gate": {
+    "pass": true,
+    "candidate_count": 3,
+    "notes": [
+      "3 条全部允许进入 formal reviewed/caveat_only。",
+      "不得 approved、不得 default guidance、不得 hard gate。",
+      "不得生成买卖点、具体仓位、杠杆、止损止盈或实盘执行建议。"
+    ]
+  },
+  "summary": {
+    "accepted_for_reviewed_caveat_only": 3,
+    "needs_more_evidence": 0,
+    "rejected": 0,
+    "reviewed_allowed": 3,
+    "approved_allowed": 0,
+    "default_guidance_allowed": 0,
+    "hard_gate_allowed": 0
+  },
+  "decisions": [
+    {
+      "candidate_id": "cand_20260611_phase37_r_multiple_definition_001",
+      "research_task_id": "P37-A-Q02",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "medium_high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "Van Tharp Institute 概念页直接支撑 R、R-multiple distribution、expectancy 和 R-value。",
+        "Van Tharp position sizing 书籍 TOC 页码线索足以支撑 caveat-only reviewed preparation。",
+        "主分类已调整为 risk_normalized_metrics，position_sizing 仅作为 related dependency。"
+      ],
+      "required_patches": {
+        "source": [
+          "保留 Van Tharp 概念页和 Position Sizing 书籍 TOC 页码线索；approved 前仍需人工核验合法正文页。"
+        ],
+        "content": [
+          "R-multiple 只能表达风险归一化交易结果，不是 edge、盈利能力、稳健性或实盘资格证明。"
+        ],
+        "boundary": [
+          "不得用 R-multiple 单独替代成本、滑点、回撤、样本量和样本外验证。",
+          "不得输出仓位、止损距离、杠杆或下单许可。"
+        ],
+        "conflict": [
+          "未发现买卖点、仓位、杠杆、止损止盈、实盘执行、项目私有参数或密钥污染。"
+        ]
+      },
+      "required_extra_sources": [],
+      "formal_conversion_notes": [
+        "formal reviewed draft 必须保留 caveat_only。",
+        "approved/default guidance/hard gate 均保持 false。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_position_sizing_requires_risk_unit_001",
+      "research_task_id": "P37-A-Q06",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "medium_high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "候选已拆分 Trading Engineering 外部事实和 CEK-TA AI governance 内部规则。",
+        "CFA/SEC/Investor.gov/CrossTrade 可支撑风险预算、暴露、保证金和仓位 sizing 前置字段边界。",
+        "CEK-TA Phase 38 runtime contract 可支撑 AI 只能提示缺字段、路由 human_review/needs_more_evidence，不能自行推导仓位。"
+      ],
+      "required_patches": {
+        "source": [
+          "外部来源只支撑交易仓位 sizing 前置事实；AI 缺字段行为边界来自 CEK-TA 内部治理契约。"
+        ],
+        "content": [
+          "正式知识分成 Trading Engineering prerequisite fields 和 AI governance behavior 两段。"
+        ],
+        "boundary": [
+          "禁止具体仓位公式、百分比风险建议、杠杆倍数建议、止损/止盈建议、订单动作和账户级实盘执行判断。"
+        ],
+        "conflict": [
+          "Trading Engineering 保存交易规则本体；AI Engineering 只保存引用和治理边界。"
+        ]
+      },
+      "required_extra_sources": [],
+      "formal_conversion_notes": [
+        "只作为字段前置条件和 AI 行为边界，不作为 position sizing 教程或实盘风控规则。",
+        "approved/default guidance/hard gate 均保持 false。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_sample_size_and_regime_caveat_001",
+      "research_task_id": "P37-A-Q11",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "LSEG、State Street 和 UCL 来源补齐 market regime / non-stationarity 直接证据。",
+        "Bailey et al. 等来源继续支撑 backtest overfitting 和样本外验证风险。",
+        "补证已能支撑单一 regime 证据不得未经验证泛化为跨市场、跨周期或跨状态规则。"
+      ],
+      "required_patches": {
+        "source": [
+          "保留 regime/non-stationarity 专业来源，不再只依赖过拟合或样本外资料间接支撑。"
+        ],
+        "content": [
+          "表述为未经验证不得泛化，而不是单一 regime 结果永远不能迁移。"
+        ],
+        "boundary": [
+          "不定义统一 regime taxonomy，不定义统一最小样本量，不把 regime caveat 变成 hard gate。"
+        ],
+        "conflict": [
+          "未发现买卖点、仓位、杠杆、止损止盈、实盘执行、项目私有参数或密钥污染。"
+        ]
+      },
+      "required_extra_sources": [],
+      "formal_conversion_notes": [
+        "formal reviewed draft 必须拆清 sample_count、sample_period、asset_scope、regime_coverage、validation_method。",
+        "approved/default guidance/hard gate 均保持 false。"
+      ]
+    }
+  ]
+}

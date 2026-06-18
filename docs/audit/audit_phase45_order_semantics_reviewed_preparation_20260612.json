@@ -1,0 +1,206 @@
+{
+  "audit_result_id": "audit_phase45_order_semantics_reviewed_preparation_20260612",
+  "auditor": "GPT-5.5 Thinking",
+  "audited_at": "2026-06-12",
+  "package_id": "phase45_order_semantics_reviewed_preparation_audit_package_20260612",
+  "summary": {
+    "total": 6,
+    "accepted_for_reviewed_caveat_only": 5,
+    "needs_more_evidence": 1,
+    "rejected": 0,
+    "blocked": 0
+  },
+  "candidate_results": [
+    {
+      "candidate_id": "",
+      "research_task_id": "P45-F-ORD01",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "trade_execution_advice_allowed": false,
+      "reasons": [
+        "FIX ExecutionReport 和 FIX order state guidance 足以支撑订单生命周期、状态、fill、cancel、replace、reject 的事件证据边界。",
+        "CME、Coinbase、Kraken 来源足以支撑不同 venue/product/API 的 order type 行为不能只用字符串枚举表示。",
+        "内部 order_semantics contract 已提供 order_semantics_identity、order_type_mapping 和 execution_report_mapping 字段本体。"
+      ],
+      "patch_notes": {
+        "source": [
+          "保留 FIX Trading Community、FIX ExecutionReport、FIX order-state changes、CME、Coinbase、Kraken。",
+          "CME education source 只能作为辅助，不替代 product-level technical spec。"
+        ],
+        "content": [
+          "保留 order_intent、venue_order_request、venue_order_ack、execution_report、fill/reject/expire 分层。"
+        ],
+        "boundary": [
+          "不得生成订单提交许可。",
+          "不得生成撤单/改单动作。",
+          "不得生成交易建议。"
+        ],
+        "conflict": []
+      }
+    },
+    {
+      "candidate_id": "",
+      "research_task_id": "P45-F-ORD02",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "medium_high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "trade_execution_advice_allowed": false,
+      "reasons": [
+        "Nasdaq、Coinbase、Binance、FIX 来源足以支撑 TIF 必须绑定 venue、session、expire/cancel、partial fill 和 order-event 语义。",
+        "Binance goodTillDate 秒级精度和 GTD 延迟 caveat 支撑 good-till 时间精度和系统时钟边界。",
+        "内部 contract 已提供 time_in_force_mapping 字段本体。"
+      ],
+      "patch_notes": {
+        "source": [
+          "保留 Nasdaq Equity 4、Coinbase Exchange Trading Concepts、Binance USD-M Futures New Order、FIX order-state changes。",
+          "CME sandbox source 不得作为 reviewed 主证据。"
+        ],
+        "content": [
+          "保留 expire_time、expire_time_precision、clock_source、partial_fill_behavior、cancel_or_expire_event_ref。"
+        ],
+        "boundary": [
+          "不得生成自动撤单。",
+          "不得生成订单提交许可。",
+          "不得生成 session hard gate。"
+        ],
+        "conflict": []
+      }
+    },
+    {
+      "candidate_id": "",
+      "research_task_id": "P45-F-ORD03",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "trade_execution_advice_allowed": false,
+      "reasons": [
+        "Binance Spot、Binance Futures、Kraken Futures、Coinbase 来源足以支撑 post-only / reduce-only 是 venue-specific execution constraint。",
+        "claim 明确 post-only / reduce-only 不等于成交保证、费用节省保证、风险安全保证或交易许可。",
+        "内部 contract 已提供 post_reduce_constraints 字段本体。"
+      ],
+      "patch_notes": {
+        "source": [
+          "保留 Binance Spot、Binance USD-M Futures、Kraken Futures、Coinbase。"
+        ],
+        "content": [
+          "保留 post_only_flag、reduce_only_flag、position_source_ref、existing_open_orders_policy、failure_event_ref。"
+        ],
+        "boundary": [
+          "不得生成费用节省保证。",
+          "不得生成安全保证。",
+          "不得生成强制 reduce-only 动作。",
+          "不得生成交易许可。"
+        ],
+        "conflict": []
+      }
+    },
+    {
+      "candidate_id": "",
+      "research_task_id": "P45-F-ORD04",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "trade_execution_advice_allowed": false,
+      "reasons": [
+        "CME、Coinbase、Binance 来源足以支撑 STP/SMP 必须声明账户/firm/group 范围、mode、cancel/decrement/reject 行为和 order-event 映射。",
+        "claim 明确 STP/SMP 不等于防操纵合规结论、成交质量保证或跨 venue 通用规则。",
+        "内部 contract 已提供 stp_smp_mapping，并明确 compliance_boundary=not_a_market_abuse_conclusion。"
+      ],
+      "patch_notes": {
+        "source": [
+          "保留 CME SMP FAQ、Coinbase STP、Coinbase International rules、Binance Futures API。"
+        ],
+        "content": [
+          "保留 stp_smp_enabled、scope、mode、mode_source_ref、event_mapping_ref、compliance_boundary。"
+        ],
+        "boundary": [
+          "不得替外接项目启用自动拒单。",
+          "不得生成防操纵合规结论。",
+          "不得生成成交质量保证。"
+        ],
+        "conflict": []
+      }
+    },
+    {
+      "candidate_id": "",
+      "research_task_id": "P45-F-ORD05",
+      "decision": "needs_more_evidence",
+      "confidence": "medium_high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "trade_execution_advice_allowed": false,
+      "reasons": [
+        "anti-generalization caveat 方向正确，但当前 statement 仍列出 market-to-limit、VWAP 等示例。",
+        "当前 reviewed-preparation 包内 source_refs 没有足够直接的逐项来源。",
+        "必须补 market-to-limit / Market Limit 和 VWAP 官方来源，或删除未 source_ref 支撑的示例。"
+      ],
+      "patch_notes": {
+        "source": [
+          "保留 Nasdaq Opening/Closing Cross、NYSE auctions、NYSE Pillar、CME definitions、Coinbase、Binance、Kraken。",
+          "补 CME FirmSoft Market Limit 或其他 market-to-limit 官方来源。",
+          "补 VWAP 官方来源，或删除该示例。"
+        ],
+        "content": [
+          "本条应定位为 anti-generalization caveat，不应变成特殊订单类型百科。",
+          "正式文本中只能列出已 source_ref 覆盖的示例。"
+        ],
+        "boundary": [
+          "不得生成通用订单行为规则。",
+          "不得生成路由建议。",
+          "不得生成订单提交许可。"
+        ],
+        "conflict": []
+      }
+    },
+    {
+      "candidate_id": "",
+      "research_task_id": "P45-F-ORD06",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "trade_execution_advice_allowed": false,
+      "reasons": [
+        "SEC EMSAC、CFA、CME fee docs、Coinbase trading rules 足以支撑 maker/taker、add/remove liquidity、exchange fee、transaction type 必须按成交结果和 fee schedule 审计。",
+        "Coinbase 明确同一订单可部分 maker、部分 taker，支撑 limit/post-only 不自动等于 maker 成交。",
+        "内部 contract 已提供 fee_evidence 字段本体。"
+      ],
+      "patch_notes": {
+        "source": [
+          "保留 SEC EMSAC、CFA Institute、CME fees、Coinbase trading rules。"
+        ],
+        "content": [
+          "保留 venue_fee_schedule_ref、fee_schedule_version、fill_event_ref、liquidity_flag、transaction_type、fee_tier_source、fee_amount_source。"
+        ],
+        "boundary": [
+          "不得输出费用套利。",
+          "不得输出路由建议。",
+          "不得输出真实费率或费用优化策略。",
+          "不得将 fee 事件写成策略 alpha。"
+        ],
+        "conflict": []
+      }
+    }
+  ],
+  "global_required_patches": [
+    "ORD05 需补 market-to-limit / VWAP 直接来源或缩窄 formal reviewed 文本。",
+    "所有条目不得创建 approved、default guidance、hard gate、订单提交许可、路由建议、费用优化、自动撤单/改单。"
+  ]
+}

@@ -1,0 +1,438 @@
+{
+  "schema_version": "1.1.0-candidate",
+  "candidate_id": "cand_20260611_phase37_kline_strategy_strategy_rule_version_required_001",
+  "research_task_id": "P37-C-K12",
+  "status": {
+    "review_status": "accepted",
+    "ingestion_decision": "accepted_for_draft",
+    "decision_reason": "Phase 37 Kline / Strategy Engineering 二审结论为 accepted_for_draft；不得 reviewed/approved/default guidance/hard gate。",
+    "created_at": "2026-06-11",
+    "updated_at": "2026-06-11"
+  },
+  "classification": {
+    "tree_node_id": "kt.kline_strategy",
+    "canonical_node_id": "kt.kline_strategy",
+    "tree_path": "CEK-TA / Trading Engineering / Kline Strategy",
+    "related_nodes": [
+      "kt.trading_engineering",
+      "kt.kline_strategy",
+      "kt.trading_engineering.data_engineering",
+      "kt.ai_engineering.llm_training"
+    ],
+    "partition_id": "KB_02_KLINE_STRATEGY",
+    "domain": "kline_strategy",
+    "subdomain": "strategy_rule_contract",
+    "rule_type": "trading_method_boundary_rule",
+    "claim_type": "methodological_constraint",
+    "used_for": [
+      "strategy_design_audit",
+      "kline_signal_boundary",
+      "ai_trader_project_gap_audit",
+      "external_project_rag_retrieval"
+    ],
+    "classification_notes": "本候选主归属 KB_02_KLINE_STRATEGY / Trading Engineering / Kline Strategy。历史 Phase 37 范围文档曾使用 KB_03_STRATEGY_ENGINEERING 旧称；运行时以 knowledge_tree 和 schema 的 KB_02_KLINE_STRATEGY 为准。"
+  },
+  "claim": {
+    "claim_id": "claim_p37_c_k12",
+    "statement": "K线策略规则进入回测、模拟、AI 训练或人工审计前，必须记录策略规则版本、参数、代码/信号计算版本、数据集或数据版本、评估输出和变更原因；否则无法复现、比较或审计规则变更。",
+    "normalized_claim": "kline_strategy.strategy_rule_version_required.v1",
+    "evidence_summary": "MLflow Tracking logs parameters, code versions, metrics and output files for later visualization and comparison.; MLflow Dataset Tracking tracks and versions datasets used in training, validation and evaluation with lineage from raw data to predictions.; DVC pipelines capture, organize, version and reproduce data science and ML workflows, including pipeline stages and parameters.",
+    "interpretation_notes": "本候选只定义 K线/策略工程方法边界，不输出买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。 二审补丁：source: 保留 MLflow、DVC、White Reality Check 的来源分工：前两者支撑版本追踪，White 支撑规则搜索/数据复用风险。；content: strategy_rule_version、参数、代码版本、信号计算版本、数据版本、评估输出和变更原因应写成 CEK-TA 策略规则复现/审计契约字段。；boundary: MLflow、DVC、Git 只能作为等价实现来源，不得被强制为唯一工具。；boundary: 不得把版本契约写成外部法规或所有平台强制实现。；conflict: 当前可见上下文内未发现可证冲突；进入 reviewed/caveat_only 前仍需完整 formal KB 冲突检查。",
+    "claim_strength": "medium_high",
+    "performance_claim": false
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "general",
+    "data_granularity": "kline",
+    "project_type": "trading_ai_support_layer",
+    "applies_when": [
+      "策略进入回测、回放、模拟盘、AI 训练或人工审计",
+      "比较不同策略版本或参数搜索结果"
+    ],
+    "not_applicable_when": [
+      "一次性图表观察且不沉淀为知识或策略",
+      "只处理下游订单执行日志而无策略规则",
+      "需要具体买卖点、仓位、杠杆、止损止盈价格、交易所私有配置、账户事实或实盘权限时，应由外接项目事实层和风控层处理。",
+      "AI Engineering 只能引用本规则，不得把本规则改写为 LLM 训练、MCP、RAG 或模型部署本体规则。"
+    ],
+    "assumptions": [
+      "候选用于 CEK-TA 通用支持层知识库，而不是某个项目私有交易系统配置。",
+      "所有 K线/策略工程结论必须保留市场、周期、数据、成本、样本和验证边界。",
+      "候选通过外部审计前不能进入正式 reviewed 知识库。"
+    ],
+    "limitations": [
+      "本批来源包含论文、专业机构综述、交易平台文档和技术库文档，仍需要外部 AI/人工严格审计来源强度。",
+      "平台/框架文档只能支撑工程边界和例子，不能替代具体交易所、数据供应商或外接项目策略契约。",
+      "本候选不提供任何投资建议或实盘执行许可。"
+    ]
+  },
+  "source_refs": [
+    {
+      "source_title": "Data-Snooping, Technical Trading Rule Performance, and the Bootstrap",
+      "source_url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=65140",
+      "source_type": "peer_reviewed_paper",
+      "publisher": "SSRN / Journal of Finance",
+      "published_at": "1999-10-01",
+      "reliability": "high",
+      "score": 90,
+      "freshness": "stable",
+      "evidence_summary": "The paper evaluates technical trading rules while accounting for data-snooping bias across a universe of rules.",
+      "limitations": [
+        "Supports multiple-testing and validation boundaries; does not define individual K-line entries or exits."
+      ],
+      "source_id": "src_001",
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "A Reality Check for Data Snooping",
+      "source_url": "https://onlinelibrary.wiley.com/doi/abs/10.1111/1468-0262.00152",
+      "source_type": "peer_reviewed_paper",
+      "publisher": "Econometrica / Wiley",
+      "published_at": "2000-09-01",
+      "reliability": "high",
+      "score": 90,
+      "freshness": "stable",
+      "evidence_summary": "White defines data snooping as reusing the same data for inference or model selection and provides a reality-check framework.",
+      "limitations": [
+        "Supports research validation boundaries, not trade execution decisions."
+      ],
+      "source_id": "src_002",
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "Periods",
+      "source_url": "https://www.quantconnect.com/docs/v2/writing-algorithms/key-concepts/time-modeling/periods",
+      "source_type": "trading_engine_official_doc",
+      "publisher": "QuantConnect",
+      "published_at": null,
+      "reliability": "medium_high",
+      "score": 82,
+      "freshness": "time_sensitive",
+      "evidence_summary": "QuantConnect states that bars have start and end times and are passed to algorithms at end time to avoid unavailable-bar lookahead.",
+      "limitations": [
+        "LEAN-specific time model; external projects must map equivalent bar availability semantics."
+      ],
+      "source_id": "src_003",
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "relevance": "medium_high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "Foundations of Technical Analysis: Computational Algorithms, Statistical Inference, and Empirical Implementation",
+      "source_url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=228099",
+      "source_type": "peer_reviewed_paper",
+      "publisher": "SSRN / Journal of Finance",
+      "published_at": "2000-08-01",
+      "reliability": "high",
+      "score": 90,
+      "freshness": "stable",
+      "evidence_summary": "Lo, Mamaysky and Wang formalize technical pattern recognition and emphasize statistical inference and empirical implementation for technical-analysis claims.",
+      "limitations": [
+        "Supports technical-analysis methodology and validation boundaries, not any universal profitable K-line rule."
+      ],
+      "source_id": "src_004",
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "relevance": "medium_high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "ML Experiment Tracking",
+      "source_url": "https://mlflow.org/docs/latest/ml/tracking/",
+      "source_type": "mlops_official_doc",
+      "publisher": "MLflow",
+      "published_at": null,
+      "reliability": "high",
+      "score": 86,
+      "freshness": "time_sensitive",
+      "evidence_summary": "MLflow Tracking logs parameters, code versions, metrics and output files for later visualization and comparison.",
+      "limitations": [
+        "ML experiment tracking source; strategy-rule fields still need CEK-TA-specific naming."
+      ],
+      "source_id": "src_supp_005",
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "MLflow Dataset Tracking",
+      "source_url": "https://mlflow.org/docs/latest/ml/dataset/",
+      "source_type": "mlops_official_doc",
+      "publisher": "MLflow",
+      "published_at": null,
+      "reliability": "high",
+      "score": 86,
+      "freshness": "time_sensitive",
+      "evidence_summary": "MLflow Dataset Tracking tracks and versions datasets used in training, validation and evaluation with lineage from raw data to predictions.",
+      "limitations": [
+        "ML dataset source; trading strategy rules must map strategy inputs and signal versions explicitly."
+      ],
+      "source_id": "src_supp_006",
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "Get Started: Data Pipelines",
+      "source_url": "https://doc.dvc.org/start/data-pipelines/data-pipelines",
+      "source_type": "data_versioning_official_doc",
+      "publisher": "DVC",
+      "published_at": null,
+      "reliability": "high",
+      "score": 84,
+      "freshness": "time_sensitive",
+      "evidence_summary": "DVC pipelines capture, organize, version and reproduce data science and ML workflows, including pipeline stages and parameters.",
+      "limitations": [
+        "DVC-specific workflow source; CEK-TA does not require DVC as the only implementation."
+      ],
+      "source_id": "src_supp_007",
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 86.86,
+    "score_version": "phase37_kline_strategy_supplemental_source_scoring_v1",
+    "primary_source_count": 6,
+    "supporting_source_count": 7,
+    "low_reliability_source_count": 0,
+    "mandatory_downgrades": [],
+    "limitations": [
+      "补证来源用于支撑候选进入二审，不代表 formal reviewed 或 approved。",
+      "平台、经纪商、供应商和框架文档只能支撑对应语义；外接项目必须映射自己的交易所、broker、数据供应商和执行模型。",
+      "source: 保留 MLflow、DVC、White Reality Check 的来源分工：前两者支撑版本追踪，White 支撑规则搜索/数据复用风险。",
+      "content: strategy_rule_version、参数、代码版本、信号计算版本、数据版本、评估输出和变更原因应写成 CEK-TA 策略规则复现/审计契约字段。",
+      "boundary: MLflow、DVC、Git 只能作为等价实现来源，不得被强制为唯一工具。",
+      "boundary: 不得把版本契约写成外部法规或所有平台强制实现。",
+      "conflict: 当前可见上下文内未发现可证冲突；进入 reviewed/caveat_only 前仍需完整 formal KB 冲突检查。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "visible_context_no_conflict",
+    "checked_against": [
+      "Phase 36/38/40/41 AI Engineering 知识边界",
+      "现有 KB_02_KLINE_STRATEGY formal 知识",
+      "Phase 37 Trading 与 AI 跨分支引用契约"
+    ],
+    "conflicts": [],
+    "resolution_summary": "二审允许 accepted_for_draft；进入 formal reviewed/caveat_only 前仍需完整 formal KB 冲突、重复和 owner 边界检查。",
+    "approval_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于提醒 AI IDE 检索 Trading Engineering K线/策略工程边界。",
+      "用于审计交易项目方案中是否缺少周期、样本、成本、验证和执行边界。",
+      "用于辅助外接项目设计策略规则、信号版本、审计清单和 reason code。"
+    ],
+    "not_allowed": [
+      "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+      "不得把候选知识当作 reviewed、approved、default guidance 或 hard gate。",
+      "不得绕过外接项目事实层、数据契约、风控 hard gate 或人工治理流程。"
+    ]
+  },
+  "machine_gate": {
+    "default_guidance": "deny",
+    "reason": "Supplemental re-audit only allows accepted_for_draft; formal reviewed/default guidance/hard gate remain blocked.",
+    "requires_human_escalation": true,
+    "hidden_from_default_queue": true,
+    "visible_in_default_guidance_queue": false,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "review": {
+    "confidence": "medium_high",
+    "freshness": "mixed",
+    "reviewer": "external_ai_and_codex_alignment",
+    "reviewed_at": "2026-06-11",
+    "open_questions": [
+      "外部审计是否认为来源足以支撑该 claim？",
+      "是否需要补充更强的一手论文、专业协会资料、交易平台或回测框架资料？",
+      "是否存在与现有 Kline Strategy、Backtest、Replay 或 AI Engineering formal 知识的重叠，需要合并或拆分？",
+      "进入 reviewed/caveat_only 前仍需完整 formal KB 冲突、重复和 owner 边界检查。"
+    ],
+    "audit_log": [
+      {
+        "at": "2026-06-11",
+        "actor": "codex",
+        "action": "created",
+        "reason": "根据 Phase 37 P37-C Kline / Strategy Engineering 队列生成 Trading Engineering 候选知识。"
+      },
+      {
+        "at": "2026-06-11",
+        "actor": "codex",
+        "action": "sourced",
+        "reason": "记录论文、专业机构综述、交易平台文档、技术指标库和回测框架来源摘要。"
+      },
+      {
+        "at": "2026-06-11",
+        "actor": "codex",
+        "action": "classified",
+        "reason": "归类到 KB_02_KLINE_STRATEGY / kt.kline_strategy / strategy_rule_contract。"
+      },
+      {
+        "at": "2026-06-11",
+        "actor": "external_ai_strict_audit",
+        "action": "phase37_kline_strategy_first_audit_imported",
+        "reason": "needs_more_evidence / confidence=high",
+        "audit_result_id": "audit_result_phase37_kline_strategy_candidate_audit_20260611_strict_v1",
+        "patch_notes": [
+          "source: Add MLflow/DVC/Git/experiment-tracking or internal CEK-TA strategy_rule_contract schema sources.",
+          "source: Add backtesting framework/project documentation that records parameters, code version, data version and run metadata.",
+          "content: Split into CEK-TA internal reproducibility/experiment-governance contract and external technical-analysis validation evidence.",
+          "content: Define required fields as CEK-TA schema, not universal trading-platform law.",
+          "boundary: Do not let versioned rule records imply default guidance, approved status, or live eligibility.",
+          "conflict: Overlaps with Data Engineering versioning and AI training dataset lineage; assign owner or cross-reference."
+        ]
+      },
+      {
+        "at": "2026-06-11",
+        "actor": "codex",
+        "action": "phase37_kline_strategy_supplemental_research_added",
+        "reason": "根据首轮严格审计 needs_more_evidence 补充专业来源、收窄 claim 并导出二审包。",
+        "patch_notes": [
+          "新增 MLflow Tracking、MLflow Dataset Tracking 和 DVC pipeline 来源支撑参数、代码版本、数据版本、输出文件、lineage 和可复现工作流。",
+          "White Reality Check 继续作为多次规则搜索和数据复用风险来源，不再单独支撑版本字段本体。",
+          "明确 CEK-TA 不强制 MLflow/DVC，只要求等价的版本追踪字段。"
+        ]
+      },
+      {
+        "at": "2026-06-11",
+        "actor": "external_ai_strict_reaudit",
+        "action": "phase37_kline_strategy_supplemental_reaudit_imported",
+        "reason": "accepted_for_draft / confidence=high",
+        "audit_result_id": "audit_result_phase37_kline_strategy_supplemental_reaudit_20260611_strict_v1",
+        "patch_notes": [
+          "source: 保留 MLflow、DVC、White Reality Check 的来源分工：前两者支撑版本追踪，White 支撑规则搜索/数据复用风险。",
+          "content: strategy_rule_version、参数、代码版本、信号计算版本、数据版本、评估输出和变更原因应写成 CEK-TA 策略规则复现/审计契约字段。",
+          "boundary: MLflow、DVC、Git 只能作为等价实现来源，不得被强制为唯一工具。",
+          "boundary: 不得把版本契约写成外部法规或所有平台强制实现。",
+          "conflict: 当前可见上下文内未发现可证冲突；进入 reviewed/caveat_only 前仍需完整 formal KB 冲突检查。"
+        ]
+      },
+      {
+        "at": "2026-06-11",
+        "actor": "external_ai_strict_reaudit",
+        "action": "phase37_kline_strategy_supplemental_reaudit_imported",
+        "reason": "accepted_for_draft / confidence=high",
+        "audit_result_id": "audit_result_phase37_kline_strategy_supplemental_reaudit_20260611_strict_v1",
+        "patch_notes": [
+          "source: 保留 MLflow、DVC、White Reality Check 的来源分工：前两者支撑版本追踪，White 支撑规则搜索/数据复用风险。",
+          "content: strategy_rule_version、参数、代码版本、信号计算版本、数据版本、评估输出和变更原因应写成 CEK-TA 策略规则复现/审计契约字段。",
+          "boundary: MLflow、DVC、Git 只能作为等价实现来源，不得被强制为唯一工具。",
+          "boundary: 不得把版本契约写成外部法规或所有平台强制实现。",
+          "conflict: 当前可见上下文内未发现可证冲突；进入 reviewed/caveat_only 前仍需完整 formal KB 冲突检查。"
+        ]
+      },
+      {
+        "at": "2026-06-11",
+        "actor": "codex",
+        "action": "phase37_kline_strategy_formal_reviewed_created",
+        "reason": "CEK-TA-400: formal reviewed/caveat_only written to codex-expert-kit/rag/knowledge/KB_02_KLINE_STRATEGY/kb_02_kline_strategy.strategy_rule_version_required.v1.json."
+      }
+    ],
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase37_kline_strategy_reviewed_preparation_20260611_strict_v1",
+      "source_package_id": "phase37_kline_strategy_reviewed_preparation_audit_package_20260611",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "required_patches": {
+        "source": [
+          "MLflow、DVC、Git 只能作为等价实现来源，不得被强制为唯一工具。"
+        ],
+        "content": [
+          "策略规则版本、参数、信号计算版本、数据版本、评估输出和变更原因应写成 CEK-TA 审计契约字段。"
+        ],
+        "boundary": [
+          "不得把版本契约写成外部法规或所有平台强制实现。"
+        ],
+        "conflict": [
+          "与 Data Engineering versioning 和 AI training dataset lineage 交叉引用。"
+        ]
+      }
+    },
+    "supplemental_research": {
+      "task_id": "CEK-TA-397",
+      "status": "ready_for_reaudit",
+      "patch_notes": [
+        "新增 MLflow Tracking、MLflow Dataset Tracking 和 DVC pipeline 来源支撑参数、代码版本、数据版本、输出文件、lineage 和可复现工作流。",
+        "White Reality Check 继续作为多次规则搜索和数据复用风险来源，不再单独支撑版本字段本体。",
+        "明确 CEK-TA 不强制 MLflow/DVC，只要求等价的版本追踪字段。"
+      ],
+      "added_source_ids": [
+        "src_supp_005",
+        "src_supp_006",
+        "src_supp_007",
+        "src_supp_008"
+      ],
+      "added_source_urls": [
+        "https://mlflow.org/docs/latest/ml/tracking/",
+        "https://mlflow.org/docs/latest/ml/dataset/",
+        "https://doc.dvc.org/start/data-pipelines/data-pipelines",
+        "https://onlinelibrary.wiley.com/doi/abs/10.1111/1468-0262.00152"
+      ]
+    }
+  },
+  "workflow": {
+    "stage": "formalized_reviewed",
+    "next_allowed_decisions": [
+      "accepted_for_draft",
+      "needs_more_evidence",
+      "rejected"
+    ],
+    "forbidden_decisions": [
+      "reviewed",
+      "approved",
+      "default_guidance",
+      "hard_gate"
+    ],
+    "formal_knowledge_id": "kb_02_kline_strategy.strategy_rule_version_required.v1",
+    "conversion_target": {
+      "proposed_knowledge_id": "kb_02_kline_strategy.strategy_rule_version_required.v1",
+      "target_review_status": "reviewed",
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reviewed_allowed": true,
+      "approved_allowed": false
+    },
+    "ai_audit_result_id": "audit_result_phase37_kline_strategy_reviewed_preparation_20260611_strict_v1",
+    "formal_review_status": "reviewed",
+    "default_guidance_allowed": false,
+    "approved_allowed": false,
+    "hard_gate_allowed": false,
+    "hidden_from_default_queue": true,
+    "visible_in_default_guidance_queue": false,
+    "formalization_allowed": true,
+    "queue_group": "formalized",
+    "next_action": "none",
+    "supplemental_research_status": "ready_for_reaudit",
+    "supplemental_package_id": "phase37_kline_strategy_supplemental_reaudit_package_20260611",
+    "knowledge_path": "codex-expert-kit/rag/knowledge/KB_02_KLINE_STRATEGY/kb_02_kline_strategy.strategy_rule_version_required.v1.json",
+    "formal_knowledge_path": "codex-expert-kit/rag/knowledge/KB_02_KLINE_STRATEGY/kb_02_kline_strategy.strategy_rule_version_required.v1.json"
+  },
+  "contribution": {
+    "source": "phase37_research_ingestion",
+    "private_data_removed": true,
+    "project_private_fields": [],
+    "external_project_backflow": false
+  }
+}

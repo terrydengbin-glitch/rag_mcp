@@ -1,0 +1,332 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_ai_engineering.mcp.read_only_knowledge_access.v1",
+  "title": "MCP 知识工具默认只读，权限、参数、错误和来源返回必须由服务端契约强制。",
+  "metadata": {
+    "partition_id": "KB_AI_ENGINEERING",
+    "domain": "ai_engineering",
+    "subdomain": "mcp_tool_contract",
+    "rule_type": "decision_rule",
+    "content_type": "json",
+    "project_binding": "none",
+    "tree_node_id": "kt.mcp",
+    "tree_path": "CEK-TA / AI Engineering",
+    "canonical_node_id": "kt.mcp",
+    "canonical_tree_path": "CEK-TA / AI Engineering",
+    "risk_level": "medium",
+    "used_for": [
+      "llm_training",
+      "trading_gating_scoring",
+      "rag_engineering",
+      "mcp",
+      "vue_audit_ui"
+    ],
+    "source_candidate_id": "cand_20260609_ai_engineering_mcp_read_only_knowledge_access_v1_001",
+    "research_task_id": "RIT-P36-C-27",
+    "claim_type": "mcp_contract_rule",
+    "classification_notes": "Phase 36 AI Engineering reviewed knowledge; UI tree and canonical node are inherited from candidate classification. Trading rule bodies must remain in Trading Engineering."
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "general",
+    "data_granularity": "general",
+    "project_type": "trading_llm_assistant",
+    "applies_when": [
+      "外接项目正在构建或审计交易 LLM gating/scoring、训练数据、评估、RAG/MCP、部署或治理链路。",
+      "该规则用于阻断数据泄漏、权限越界、无来源默认指导、训练/评估污染或上线前治理缺口。"
+    ],
+    "not_applicable_when": [
+      "用户需要具体买卖点、仓位、止损止盈、策略参数或实盘订单执行。",
+      "知识点主要描述 K 线结构、市场微观结构、回测模型、fill model 或交易风控本体，应路由到 Trading Engineering。"
+    ]
+  },
+  "content": {
+    "statement": "MCP 知识工具默认只读，权限、参数、错误和来源返回必须由服务端契约强制。",
+    "rationale": "本候选仅沉淀 AI Engineering 中训练、评估、RAG/MCP、安全、部署或治理规则；不定义 K 线信号、具体交易策略、订单执行规则或账户参数。 审计结论：方向成立。MCP 知识工具默认只读、只返回来源和审计可用元数据，是合理的 AI Engineering 安全边界。MCP security best practices、MCP tools spec 和 OWASP least privilege 均支持工具访问权限、参数校验、错误处理和最小权限原则。",
+    "procedure": [
+      "确认项目事实匹配 applies_when，且没有命中 not_applicable_when。",
+      "按 source_patch_notes 检查来源是否足够支撑 statement。",
+      "按 content_patch_notes 补齐正式实现、schema、字段和 checklist。",
+      "按 boundary_patch_notes 确认没有把交易规则本体、项目私有参数或实盘执行规则写入 AI Engineering。",
+      "保留 required_followups，后续由来源增强或治理任务继续关闭。"
+    ],
+    "examples": [],
+    "anti_patterns": [
+      "把 reviewed 知识当作 approved 默认指导。",
+      "把 AI Engineering 规则扩写成具体交易阈值、仓位、买卖点或执行参数。",
+      "忽略审计结果中的来源限制、适用范围和后续补强要求。"
+    ],
+    "validation": [
+      "source_evidence 至少 2 条，且没有 low-only 来源。",
+      "conflict_status 为 none 或 resolved。",
+      "review_status 为 reviewed 时 machine_gate 必须是 caveat_only。",
+      "MCP/SearchLab 默认指导不得把本条当作 approved 返回。"
+    ],
+    "risk_notes": [
+      "本条仍是 candidate，需要外部 AI/人工审计确认来源充分性、适用边界和是否需要拆分。",
+      "AI Engineering 管理 MCP knowledge tool read-only contract。",
+      "项目私有数据、账户、密钥、订单、交易规则不得通过知识工具写入或修改。",
+      "涉及 broker action 或策略配置写入的工具不得归入 AI Engineering knowledge MCP。",
+      "与 mcp.server_side_permission_enforcement_required 是父子关系：本条定义默认只读，后者定义服务端强制。",
+      "与 no_direct_order_execution、safety_no_tool_permission_escalation、rag_no_source_or_conflict_blocks_default_guidance 互链。",
+      "未发现直接冲突。",
+      "补 mcp_read_only_knowledge_tool_contract.json。",
+      "补 allowed_resource_scope enum。",
+      "补 read-only violation red-team eval case。"
+    ],
+    "citation_notes": "MCP specification defines protocol-level contracts for exposing resources and tools to LLM applications.；MCP security best practices support least privilege, token scope control, and authorization boundaries for tool and resource access.",
+    "audit_patch_notes": {
+      "source_patch_notes": [
+        "保留 MCP specification / tools spec。",
+        "保留 MCP Security Best Practices。",
+        "补 OWASP Prompt Injection Prevention Cheat Sheet 作为 least privilege、read-only database accounts、tool permission validation 的 supporting source。",
+        "建议补内部 MCP knowledge tool contract。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：MCP knowledge tools must default to read-only access and return source IDs, confidence, errors and permission status without allowing write, trade, broker or project-secret mutation.",
+        "建议字段：mcp_server_id、tool_name、access_mode、read_only、allowed_resource_scopes、source_ids_returned、permission_status、error_contract_version。",
+        "明确 read-only knowledge access 不等于 Trading Engineering 数据写入权限。",
+        "对 RAG 知识查询工具要求返回 source_id / chunk_id / freshness / conflict status。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 管理 MCP knowledge tool read-only contract。",
+        "项目私有数据、账户、密钥、订单、交易规则不得通过知识工具写入或修改。",
+        "涉及 broker action 或策略配置写入的工具不得归入 AI Engineering knowledge MCP。"
+      ],
+      "conflict_patch_notes": [
+        "与 mcp.server_side_permission_enforcement_required 是父子关系：本条定义默认只读，后者定义服务端强制。",
+        "与 no_direct_order_execution、safety_no_tool_permission_escalation、rag_no_source_or_conflict_blocks_default_guidance 互链。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 mcp_read_only_knowledge_tool_contract.json。",
+        "补 allowed_resource_scope enum。",
+        "补 read-only violation red-team eval case。"
+      ]
+    }
+  },
+  "assumptions": [
+    "外接项目提供项目事实、私有交易数据和策略上下文；CEK-TA 只沉淀可复用专业规则。",
+    "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+  ],
+  "source_evidence": [
+    {
+      "source_id": "src_mcp_spec",
+      "source_title": "Specification - Model Context Protocol",
+      "source_url": "https://modelcontextprotocol.io/specification/latest",
+      "source_type": "official_doc",
+      "publisher": "Model Context Protocol",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "MCP specification defines protocol-level contracts for exposing resources and tools to LLM applications.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_mcp_security",
+      "source_title": "Security Best Practices - Model Context Protocol",
+      "source_url": "https://modelcontextprotocol.io/specification/2025-06-18/basic/security_best_practices",
+      "source_type": "official_doc",
+      "publisher": "Model Context Protocol",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "MCP security best practices support least privilege, token scope control, and authorization boundaries for tool and resource access.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_occ_fed_fdic_revised_model_risk_2026",
+      "source_title": "Model Risk Management: Revised Guidance",
+      "source_url": "https://occ.gov/news-issuances/bulletins/2026/bulletin-2026-13.html",
+      "source_type": "standard_or_risk_framework",
+      "publisher": "OCC / Federal Reserve / FDIC",
+      "published_at": "2026-04-17",
+      "accessed_at": "2026-06-09",
+      "version": "OCC Bulletin 2026-13 / SR 26-2",
+      "reliability": "high",
+      "relevance": "medium",
+      "evidence_summary": "2026 年跨机构模型风险管理修订指南支持模型治理、验证、变更控制和风险分层；同时需注明 generative AI 和 agentic AI 不在其直接范围内，只能作为模型风险治理类比来源。",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 90,
+    "score_version": "1.0.0",
+    "primary_source_count": 2,
+    "supporting_source_count": 1,
+    "low_reliability_source_count": 0,
+    "limitations": [
+      "本条为 reviewed 知识，来源和审计补丁已记录；默认指导仍需后续人工治理升级 approved。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "docs/contracts/ai_engineering_gating_scoring_contract.md",
+      "docs/contracts/ai_engineering_knowledge_item_policy.md",
+      "docs/tasks/phase36_ai_engineering_gating_scoring_knowledge.md"
+    ],
+    "conflicts": [],
+    "resolution_summary": "未发现与当前 CEK-TA formal knowledge 的直接冲突；候选不会进入默认指导。",
+    "default_recommendation": "caveat_only_until_approved"
+  },
+  "review": {
+    "confidence": "medium",
+    "freshness": "time_sensitive",
+    "review_status": "reviewed",
+    "reviewer": "codex",
+    "reviewed_at": "2026-06-09",
+    "created_at": "2026-06-09",
+    "updated_at": "2026-06-09",
+    "open_questions": [
+      "审计时确认该候选是否应与相邻 AI Engineering 规则合并、拆分，或改路由到 Trading Engineering。",
+      "补 mcp_read_only_knowledge_tool_contract.json。",
+      "补 allowed_resource_scope enum。",
+      "补 read-only violation red-team eval case。"
+    ],
+    "decision_log": [
+      {
+        "at": "2026-06-09",
+        "actor": "external_ai",
+        "decision": "accepted_for_draft",
+        "reason": "方向成立。MCP 知识工具默认只读、只返回来源和审计可用元数据，是合理的 AI Engineering 安全边界。MCP security best practices、MCP tools spec 和 OWASP least privilege 均支持工具访问权限、参数校验、错误处理和最小权限原则。",
+        "audit_result_id": "audit_result_phase36_ai_engineering_batch_06_of_10_20260609_gpt55_pro_strict_sources"
+      },
+      {
+        "at": "2026-06-09",
+        "actor": "codex",
+        "decision": "converted_to_reviewed",
+        "reason": "按 Phase 36 批量审计结果优化候选并转为 formal reviewed；未升级 approved。",
+        "audit_result_id": "audit_result_phase36_ai_engineering_batch_06_of_10_20260609_gpt55_pro_strict_sources"
+      }
+    ],
+    "approval_status": "not_requested",
+    "default_guidance_allowed": false,
+    "source_candidate_id": "cand_20260609_ai_engineering_mcp_read_only_knowledge_access_v1_001",
+    "ai_audit_result_id": "audit_result_phase36_ai_engineering_batch_06_of_10_20260609_gpt55_pro_strict_sources",
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase36_ai_engineering_batch_06_of_10_20260609_gpt55_pro_strict_sources",
+      "source_package_id": "phase36_ai_engineering_candidate_audit_batch_06_of_10_20260609",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立。MCP 知识工具默认只读、只返回来源和审计可用元数据，是合理的 AI Engineering 安全边界。MCP security best practices、MCP tools spec 和 OWASP least privilege 均支持工具访问权限、参数校验、错误处理和最小权限原则。",
+      "source_patch_notes": [
+        "保留 MCP specification / tools spec。",
+        "保留 MCP Security Best Practices。",
+        "补 OWASP Prompt Injection Prevention Cheat Sheet 作为 least privilege、read-only database accounts、tool permission validation 的 supporting source。",
+        "建议补内部 MCP knowledge tool contract。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：MCP knowledge tools must default to read-only access and return source IDs, confidence, errors and permission status without allowing write, trade, broker or project-secret mutation.",
+        "建议字段：mcp_server_id、tool_name、access_mode、read_only、allowed_resource_scopes、source_ids_returned、permission_status、error_contract_version。",
+        "明确 read-only knowledge access 不等于 Trading Engineering 数据写入权限。",
+        "对 RAG 知识查询工具要求返回 source_id / chunk_id / freshness / conflict status。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 管理 MCP knowledge tool read-only contract。",
+        "项目私有数据、账户、密钥、订单、交易规则不得通过知识工具写入或修改。",
+        "涉及 broker action 或策略配置写入的工具不得归入 AI Engineering knowledge MCP。"
+      ],
+      "conflict_patch_notes": [
+        "与 mcp.server_side_permission_enforcement_required 是父子关系：本条定义默认只读，后者定义服务端强制。",
+        "与 no_direct_order_execution、safety_no_tool_permission_escalation、rag_no_source_or_conflict_blocks_default_guidance 互链。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 mcp_read_only_knowledge_tool_contract.json。",
+        "补 allowed_resource_scope enum。",
+        "补 read-only violation red-team eval case。"
+      ]
+    },
+    "approved_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "contribution": {
+    "contribution_id": null,
+    "source_project": null,
+    "sanitization_status": "not_applicable",
+    "private_data_removed": true,
+    "generic_mapping_notes": "Phase 36 public-source AI Engineering candidate; no project-private trading facts included."
+  },
+  "copyright": {
+    "stores_full_text": false,
+    "stores_long_quote": false,
+    "summary_only": true,
+    "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+    "reuse_risk": "low"
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于审计 AI Engineering、LLM 训练、RAG/MCP、部署、安全或治理链路。",
+      "用于提醒外接项目补齐来源、适用边界、冲突状态、审计记录和人工审批。",
+      "用于 reviewed/audit 模式下带 caveat 引用。"
+    ],
+    "not_allowed": [
+      "不得生成买卖点、仓位、杠杆、止损止盈或实盘执行指令。",
+      "不得覆盖确定性风控、交易执行系统或人工审批。",
+      "不得作为 approved/default guidance 直接返回。"
+    ],
+    "required_context": [
+      "project_type",
+      "task_type",
+      "mode",
+      "strategy_version",
+      "data_boundary",
+      "review_status"
+    ],
+    "fallback_behavior": "cite_with_caveat"
+  },
+  "machine_gate": {
+    "default_guidance": "caveat_only",
+    "reason": "reviewed only; accepted_for_draft is not approved; default guidance requires later human governance approval.",
+    "requires_human_escalation": true,
+    "blocking_reasons": [
+      "not_approved",
+      "phase36_batch_reviewed_only"
+    ],
+    "checked_at": "2026-06-09",
+    "gate_version": "1.0.0",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "recommended_extra_sources": [
+    {
+      "title": "保留 MCP specification / tools spec。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_1"
+    },
+    {
+      "title": "保留 MCP Security Best Practices。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_2"
+    },
+    {
+      "title": "补 OWASP Prompt Injection Prevention Cheat Sheet 作为 least privilege、read-only database accounts、tool permission validation 的 supporting source。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_3"
+    },
+    {
+      "title": "建议补内部 MCP knowledge tool contract。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_4"
+    }
+  ]
+}

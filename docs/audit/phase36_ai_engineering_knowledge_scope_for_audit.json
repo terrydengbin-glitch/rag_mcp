@@ -1,0 +1,560 @@
+{
+  "package_id": "phase36_ai_engineering_knowledge_scope_for_audit_20260609",
+  "package_type": "knowledge_scope_audit",
+  "project": "CEK-TA",
+  "phase": "Phase 36",
+  "title": "AI Engineering 交易 LLM Gating/Scoring 知识库采集范围审计清单",
+  "language": "zh-CN",
+  "created_at": "2026-06-09",
+  "purpose": "供人工或外部 AI 审计评估 Phase 36 AI Engineering 需要收集的知识库分区、知识点范围、边界、缺口和优先级。",
+  "important_boundary": {
+    "not_formal_knowledge": true,
+    "not_default_guidance": true,
+    "not_approved": true,
+    "description": "本 JSON 只是知识采集范围和审计清单，不是正式知识卡，不得作为 MCP/SearchLab/外部项目默认指导。所有知识点必须后续经过联网采集、来源评分、冲突审计、候选审核、formal reviewed/approved 治理流程。"
+  },
+  "branch_boundary_policy": {
+    "core_rule": "AI Engineering 只沉淀 AI/LLM/RAG/MCP/训练数据 schema/评估/部署/治理知识，不沉淀 K 线、策略、回测、实盘执行、风控等交易专业规则本体。",
+    "why": "交易专业知识需要进入 Trading Engineering 对应分支，AI Engineering 只定义如何检索、引用、转换、训练、评估和治理这些知识，避免知识树边界混乱。",
+    "ai_engineering_may_include": [
+      "LLM/ML 训练工程规则",
+      "RAG 检索治理和引用规则",
+      "MCP/Agent 工具契约和权限边界",
+      "交易数据到训练样本的 schema 转换规则",
+      "TradeCandidate / LabelingRecord / EvalCase 这类训练接口 schema",
+      "LLM gating/scoring 的输出 schema、评估方法、校准策略和治理流程",
+      "业务验收、标签工厂、数据资产分层、模型部署、反馈治理"
+    ],
+    "ai_engineering_must_not_include": [
+      "K 线形态本体规则，例如趋势结构、突破、回踩、反转、指标解释",
+      "具体入场、止损、止盈、仓位策略",
+      "回测偏差、fill model、滑点模型等交易工程规则本体",
+      "订单状态机、执行适配器、实盘 kill switch 等执行/风控规则本体",
+      "市场微观结构解释规则本体",
+      "某个外部项目的私有策略参数、交易样本细节或账户事实"
+    ],
+    "routing_rules": [
+      {
+        "knowledge_type": "K 线结构、指标、方向、入场、止损、止盈",
+        "primary_branch": "Trading Engineering / Kline Strategy",
+        "primary_partition": "KB_02_KLINE_STRATEGY",
+        "ai_engineering_usage": "只作为 retrieved_knowledge 或 feature/context 引用，不在 AI Engineering 里重写规则本体。"
+      },
+      {
+        "knowledge_type": "回测可信度、过拟合、lookahead、成本模型、指标解释",
+        "primary_branch": "Trading Engineering / Backtest",
+        "primary_partition": "KB_04_BACKTEST",
+        "ai_engineering_usage": "只定义训练/eval 如何引用这些规则，以及如何阻断泄漏和污染。"
+      },
+      {
+        "knowledge_type": "回放、模拟盘、fill model、同根 K TP/SL、滑点延迟",
+        "primary_branch": "Trading Engineering / Replay And Simulation",
+        "primary_partition": "KB_05_REPLAY_SIMULATION",
+        "ai_engineering_usage": "只定义样本 source_mode、execution_context 和 eval case 的记录方式。"
+      },
+      {
+        "knowledge_type": "实盘订单、执行适配器、仓位同步、kill switch、硬风控",
+        "primary_branch": "Trading Engineering / Live Execution",
+        "primary_partition": "KB_06_LIVE_EXECUTION",
+        "ai_engineering_usage": "只定义 LLM 不可越权、runtime gate 位置、权限和审计。"
+      },
+      {
+        "knowledge_type": "交易复盘、坏例 taxonomy、R/R 分解、交易质量归因",
+        "primary_branch": "Trading Engineering / Trade Analysis",
+        "primary_partition": "KB_07_TRADE_ANALYSIS",
+        "ai_engineering_usage": "只定义 label factory、process quality label 和 eval schema 如何使用这些标签。"
+      },
+      {
+        "knowledge_type": "RAG、MCP、LLM 训练、模型部署、反馈治理",
+        "primary_branch": "AI Engineering",
+        "primary_partition": "KB_09 到 KB_AI_18",
+        "ai_engineering_usage": "由 AI Engineering 直接沉淀。"
+      }
+    ],
+    "audit_check": "审计时如果发现某个 P0 item 要写具体交易规则，应把该 item 拆分：交易规则本体进入 Trading Engineering；AI Engineering 只保留引用、schema、gate、eval 或治理规则。"
+  },
+  "audit_instructions": {
+    "auditor_goal": "评估当前 AI Engineering 知识采集范围是否完整、是否存在重复、是否有缺失、是否有不适合进入通用 CEK-TA 知识库的项目私有内容。",
+    "auditor_should_check": [
+      "分区是否覆盖训练一个可上线、可审计、不会越权的 LLM 交易质量审计助手所需知识。",
+      "P0 知识点是否过宽、过窄、重复或命名不清。",
+      "是否缺少关键业务流、schema、评估、治理、上线、安全、反馈闭环知识。",
+      "是否存在会鼓励 LLM 直接交易、预测价格、绕过风控或自动修改策略的危险表述。",
+      "是否存在把 K 线、策略、回测、实盘风控等交易知识本体误放进 AI Engineering 的情况。",
+      "是否已明确交易知识本体应路由到 Trading Engineering 对应分支，AI Engineering 只做引用、训练、schema、eval 和治理。",
+      "是否有知识点应合并、拆分、降级为 P1，或新增为 P0。",
+      "是否需要补充来源类型要求，例如官方文档、论文、工程文档、模型治理框架、交易系统实践。"
+    ],
+    "auditor_output_expected": {
+      "overall_verdict": "pass | pass_with_changes | needs_major_revision",
+      "missing_topics": [],
+      "duplicate_or_overlapping_topics": [],
+      "risky_topics": [],
+      "rename_suggestions": [],
+      "priority_changes": [],
+      "recommended_new_p0_items": "评估 12 条新增硬门是否应进入 P0-Core。",
+      "recommended_p1_items": [],
+      "notes": [],
+      "priority_rebalance": "判断 P0-Core / P0-Extended / P1 分层是否合理。",
+      "downgrade_to_p1": "列出应从 P0 降为 P1 的具体 rubric、monitoring、risk ledger 或 research feedback 细项。"
+    }
+  },
+  "business_context": {
+    "first_external_project": "训练 LLM 进行交易 gating/scoring，提高交易质量，包括 R/R、胜率、PnL、坏交易过滤、风险识别和复盘归因。",
+    "core_role": "LLM 是交易候选解释器、质量评分器、风险门控辅助器、异常拦截器和审计助手。",
+    "forbidden_role": [
+      "LLM 不是最终交易执行者。",
+      "LLM 不能直接下单。",
+      "LLM 不能绕过 deterministic risk engine。",
+      "LLM 不能直接修改策略参数并上线。",
+      "LLM 不能把 live result 或自身输出自动变成训练标签。"
+    ],
+    "target_business_loop": [
+      "业务目标定义",
+      "交易任务分类",
+      "数据资产治理",
+      "标签工厂",
+      "训练方法选择",
+      "离线评估",
+      "模拟盘 shadow",
+      "实盘辅助",
+      "事故复盘",
+      "知识/数据/模型回灌"
+    ]
+  },
+  "knowledge_tree": [
+    {
+      "node_id": "kt.llm_training",
+      "partition_id": "KB_09_LLM_TRAINING",
+      "title": "LLM Training",
+      "level": 2,
+      "purpose": "覆盖通用模型训练工程、交易数据到训练数据 schema 转换、交易 LLM 任务分类、训练方法选择和交易 gating/scoring 训练约束。",
+      "children": [
+        {
+          "node_id": "kt.llm_training.model_training_engineering",
+          "topic_code": "KB_09A",
+          "title": "Model Training Engineering",
+          "purpose": "通用 LLM/ML 训练工程地基。"
+        },
+        {
+          "node_id": "kt.llm_training.training_dataset_schema_engineering",
+          "topic_code": "KB_09C",
+          "title": "Training Dataset Schema Engineering",
+          "purpose": "交易数据到训练样本、偏好样本和评估样本的转换链路。"
+        },
+        {
+          "node_id": "kt.llm_training.trading_llm_task_taxonomy",
+          "topic_code": "KB_09D",
+          "title": "Trading LLM Task Taxonomy",
+          "purpose": "拆分交易 LLM 的不同任务，避免 scoring/gating/review/research 混成一个训练任务。"
+        },
+        {
+          "node_id": "kt.llm_training.training_method_selection",
+          "topic_code": "KB_09E",
+          "title": "Training Method Selection",
+          "purpose": "定义什么时候 RAG、什么时候 SFT、什么时候 DPO，以及何时禁止训练。"
+        },
+        {
+          "node_id": "kt.llm_training.trading_scoring_gating_training",
+          "topic_code": "KB_09B",
+          "title": "Trading Scoring And Gating Training",
+          "purpose": "交易 scoring/gating 专用训练目标、标签、rubric、eval 和安全约束。"
+        }
+      ]
+    },
+    {
+      "node_id": "kt.rag_engineering",
+      "partition_id": "KB_10_RAG_ENGINEERING",
+      "title": "RAG Engineering",
+      "level": 2,
+      "purpose": "覆盖主动检索、machine_gate、token/context budget、交易 scoring RAG pack、引用和检索质量评估。"
+    },
+    {
+      "node_id": "kt.mcp",
+      "partition_id": "KB_11_MCP_ENGINEERING",
+      "title": "MCP And Agent Engineering",
+      "level": 2,
+      "purpose": "覆盖 MCP tool contract、服务端只读权限、外部 AI 调用协议、agent flow、降级和非授权边界。"
+    },
+    {
+      "node_id": "kt.llmops_deployment",
+      "partition_id": "KB_AI_12_LLMOPS_DEPLOYMENT",
+      "title": "LLMOps And Deployment",
+      "level": 2,
+      "purpose": "覆盖离线评估、shadow/paper/live rollout、artifact lineage、release control、monitoring、rollback 和 readiness gate。"
+    },
+    {
+      "node_id": "kt.ai_governance_audit",
+      "partition_id": "KB_AI_13_GOVERNANCE_AUDIT",
+      "title": "AI Governance And Audit",
+      "level": 2,
+      "purpose": "覆盖训练数据治理、知识使用权限、人工审核、外部贡献回灌、模型输出审计、dataset/model card、incident governance 和审批责任人。"
+    },
+    {
+      "node_id": "kt.trading_ai_safety",
+      "partition_id": "KB_AI_14_TRADING_AI_SAFETY",
+      "title": "Trading AI Safety And Risk Control",
+      "level": 2,
+      "purpose": "覆盖 deterministic risk gate 优先级、false allow/block 成本、kill switch、human escalation、live permission 和红队压力测试。"
+    },
+    {
+      "node_id": "kt.ai_business_objective",
+      "partition_id": "KB_AI_15_BUSINESS_OBJECTIVE",
+      "title": "Business Objective And Acceptance Criteria",
+      "level": 2,
+      "purpose": "定义什么叫合格 LLM 交易质量审计助手、质量改善指标、业务成本指标和上线验收标准。"
+    },
+    {
+      "node_id": "kt.ai_label_factory",
+      "partition_id": "KB_AI_16_LABEL_FACTORY",
+      "title": "Label Factory And Annotation Workflow",
+      "level": 2,
+      "purpose": "定义 auto label、human label、冲突处理、gold set 和 label quality score。"
+    },
+    {
+      "node_id": "kt.ai_data_asset_management",
+      "partition_id": "KB_AI_17_DATA_ASSET_MANAGEMENT",
+      "title": "Data Asset Management",
+      "level": 2,
+      "purpose": "定义 research/training/eval/gold/shadow/incident 数据资产池及隔离规则。"
+    },
+    {
+      "node_id": "kt.ai_feedback_governance",
+      "partition_id": "KB_AI_18_FEEDBACK_GOVERNANCE",
+      "title": "Continuous Learning And Feedback Governance",
+      "level": 2,
+      "purpose": "定义 live feedback、retraining dataset release、knowledge backfill 和 feedback loop risk。"
+    },
+    {
+      "partition_id": "KB_AI_19_SECURITY_PRIVACY_COMPLIANCE",
+      "title": "AI Security Privacy And Compliance",
+      "level": 2,
+      "purpose": "定义 prompt injection、RAG 非可信上下文、工具输出非可信、密钥/账户标识脱敏、交易数据清洗、市场数据 license、第三方数据授权和训练数据导出审批。"
+    }
+  ],
+  "p0_summary": {
+    "total": 101,
+    "groups": [
+      {
+        "group_id": "A",
+        "title": "通用模型训练工程 P0",
+        "count": 20
+      },
+      {
+        "group_id": "B",
+        "title": "训练专属 schema 工程 P0",
+        "count": 20
+      },
+      {
+        "group_id": "C",
+        "title": "交易 gating/scoring P0",
+        "count": 36
+      },
+      {
+        "group_id": "D",
+        "title": "业务闭环治理 P0",
+        "count": 25
+      }
+    ]
+  },
+  "p0_items": [
+    {
+      "group_id": "A",
+      "group_title": "通用模型训练工程 P0",
+      "items": [
+        "T01. training_objective.task_definition_required.v1",
+        "T02. training_objective.rag_vs_finetune_boundary_required.v1",
+        "T03. dataset.schema_required.v1",
+        "T04. dataset.source_lineage_required.v1",
+        "T05. dataset.version_and_hash_required.v1",
+        "T06. dataset.train_validation_test_split_required.v1",
+        "T07. dataset.deduplication_required.v1",
+        "T08. dataset.dataset_card_required.v1",
+        "T09. leakage.train_test_contamination_block.v1",
+        "T10. leakage.label_in_input_forbidden.v1",
+        "T11. sft.when_to_use_and_not_use.v1",
+        "T12. sft.output_schema_consistency_required.v1",
+        "T13. preference_training.preference_pair_schema_required.v1",
+        "T14. preference_training.chosen_rejected_reason_required.v1",
+        "T15. dpo.preference_data_quality_required.v1",
+        "T16. eval.holdout_test_set_required.v1",
+        "T17. eval.production_like_eval_required.v1",
+        "T18. training_run.config_and_hyperparameter_snapshot_required.v1",
+        "T19. serving_consistency.train_like_serve_required.v1",
+        "T20. safety.no_tool_permission_escalation.v1"
+      ]
+    },
+    {
+      "group_id": "B",
+      "group_title": "训练专属 schema 工程 P0",
+      "items": [
+        "S01. trade_data.raw_trade_record_required_fields.v1",
+        "S02. trade_data.strategy_id_and_version_required.v1",
+        "S03. trade_data.source_mode_required.v1",
+        "S04. trade_data.fee_slippage_execution_cost_required.v1",
+        "S05. trade_candidate.snapshot_required_before_scoring.v1",
+        "S06. trade_candidate.decision_timestamp_required.v1",
+        "S07. trade_candidate.market_risk_execution_context_required.v1",
+        "S08. feature_schema.decision_time_only.v1",
+        "S09. feature_schema.feature_timestamp_cutoff_required.v1",
+        "S10. feature_schema.post_trade_fields_forbidden_in_input.v1",
+        "S11. outcome_schema.post_trade_fields_separated.v1",
+        "S12. label_schema.no_pnl_only_label.v1",
+        "S13. label_schema.good_loss_bad_win_required.v1",
+        "S14. label_schema.multi_dimensional_trade_quality.v1",
+        "S15. label_schema.label_reason_codes_required.v1",
+        "S16. training_example.sft_schema_required.v1",
+        "S17. training_example.input_target_separation.v1",
+        "S18. preference_pair.not_based_on_pnl_only.v1",
+        "S19. eval_case.time_strategy_regime_split_required.v1",
+        "S20. eval_case.no_training_overlap_required.v1"
+      ]
+    },
+    {
+      "group_id": "C",
+      "group_title": "交易 gating/scoring P0",
+      "items": [
+        "01. llm_role_boundary.scorer_not_executor.v1",
+        "02. llm_role_boundary.no_direct_order_execution.v1",
+        "03. llm_role_boundary.cannot_override_hard_risk_gate.v1",
+        "04. training_data.trade_sample_schema_required.v1",
+        "05. training_data.strategy_version_required.v1",
+        "06. training_data.decision_timestamp_required.v1",
+        "07. training_data.feature_timestamp_cutoff_required.v1",
+        "08. labeling.no_future_information.v1",
+        "09. labeling.no_pnl_only_labeling.v1",
+        "10. labeling.good_loss_bad_win_distinction.v1",
+        "11. labeling.ambiguous_trade_needs_human_review.v1",
+        "12. data_quality.backtest_paper_live_separation.v1",
+        "13. data_quality.execution_cost_required.v1",
+        "14. data_quality.missing_core_fields_block_training.v1",
+        "15. scoring_rubric.setup_quality.v1",
+        "16. scoring_rubric.risk_reward_quality.v1",
+        "17. scoring_rubric.market_regime_fit.v1",
+        "18. scoring_rubric.rule_compliance.v1",
+        "19. scoring_rubric.uncertainty_penalty.v1",
+        "20. scoring_rubric.reason_code_required.v1",
+        "21. gating.low_confidence_cannot_allow.v1",
+        "22. gating.false_allow_more_dangerous_than_false_block.v1",
+        "23. rag.retrieval_required_before_trade_scoring.v1",
+        "24. rag.approved_machine_gate_allow_only_default_guidance.v1",
+        "25. rag.no_source_or_conflict_blocks_default_guidance.v1",
+        "26. rag.no_hit_requires_neutral_or_review.v1",
+        "27. mcp.read_only_knowledge_access.v1",
+        "28. mcp.server_side_permission_enforcement_required.v1",
+        "29. deployment.shadow_mode_before_live.v1",
+        "30. deployment.llm_timeout_or_mcp_failure_fallback_required.v1",
+        "31. versioning.model_prompt_rag_strategy_snapshot_required.v1",
+        "32. audit.every_gate_decision_requires_trace.v1",
+        "33. eval.time_split_walk_forward_required.v1",
+        "34. eval.score_calibration_required_before_gating.v1",
+        "35. llm_judge.position_and_format_bias_check_required.v1",
+        "36. governance.dataset_card_and_model_card_required.v1"
+      ]
+    },
+    {
+      "group_id": "D",
+      "group_title": "业务闭环治理 P0",
+      "items": [
+        "B01. business_objective.llm_trader_acceptance_criteria_required.v1",
+        "B02. business_objective.success_metric_not_only_pnl.v1",
+        "B03. task_taxonomy.pre_trade_post_trade_task_separation.v1",
+        "B04. task_taxonomy.each_task_requires_schema_and_eval.v1",
+        "B05. label_factory.label_guideline_required.v1",
+        "B06. label_factory.gold_set_required.v1",
+        "B07. label_factory.label_conflict_resolution_required.v1",
+        "B08. data_asset.eval_pool_must_not_train.v1",
+        "B09. data_asset.gold_set_immutable_required.v1",
+        "B10. method_selection.rag_first_baseline_required.v1",
+        "B11. method_selection.no_finetune_before_eval_baseline.v1",
+        "B12. capability_boundary.llm_not_primary_price_predictor.v1",
+        "B13. capability_boundary.numeric_model_vs_llm_role_split.v1",
+        "B14. research_feedback.llm_suggestion_is_hypothesis_only.v1",
+        "B15. research_feedback.no_auto_strategy_parameter_update.v1",
+        "B16. runtime.llm_gate_is_suggestion_not_final_authority.v1",
+        "B17. runtime.final_gate_deterministic_engine_required.v1",
+        "B18. calibration.llm_score_not_probability.v1",
+        "B19. calibration.threshold_requires_shadow_data.v1",
+        "B20. risk_ledger.false_allow_cost_record_required.v1",
+        "B21. lineage.model_prompt_rag_data_strategy_bound_together.v1",
+        "B22. redteam.hard_gate_override_attempt_test.v1",
+        "B23. approval.hard_gate_enable_requires_approval.v1",
+        "B24. readiness.offline_eval_pass_not_equal_live_ready.v1",
+        "B25. feedback.model_output_cannot_label_itself.v1"
+      ]
+    }
+  ],
+  "hard_boundaries": [
+    "K 线、策略、回测、实盘执行、交易风控等交易专业规则本体必须进入 Trading Engineering 对应分支。",
+    "AI Engineering 只负责训练、检索、schema、eval、MCP/Agent、部署和治理，不重写交易规则本体。",
+    "交易数据不能直接变成训练数据。",
+    "Raw Trade Record 可以包含完整事后结果，但不能直接作为模型输入。",
+    "Trade Candidate Snapshot 只能包含 decision_timestamp 当时可见的信息。",
+    "Outcome / Post-Trade Record 只能用于 label、eval、复盘和审计。",
+    "PnL 不能作为唯一标签。",
+    "Preference Pair 不能只按盈利/亏损选择 chosen/rejected。",
+    "Eval Case 必须与训练集隔离。",
+    "LLM gate 是建议，不是最终裁决。",
+    "最终裁决必须由 deterministic final gate 完成。",
+    "LLM score 不是胜率概率。",
+    "LLM suggestion 只能是 research hypothesis，不能自动改策略或参数。",
+    "模型输出不能给自己贴标签。",
+    "live result 不能自动进入训练集。",
+    "RAG context 和工具输出默认视为非可信输入，不能覆盖系统策略或风控边界。",
+    "被阻断交易缺少真实执行结果，不能直接标注为亏损或坏交易。",
+    "市场数据、第三方数据和实盘数据进入训练集前必须检查 license、授权和脱敏。",
+    "gate_suggestion 不能命名为最终 hard_block 裁决，最终裁决必须属于 deterministic final gate。"
+  ],
+  "recommended_audit_questions": [
+    "是否应该把 KB_AI_15-18 保持为 L2，还是合并到 Governance/LLMOps 下？",
+    "原 101 条采集池加 12 条新增硬门后，是否应拆成 P0-Core / P0-Extended / P1？",
+    "KB_09D 和 KB_09E 是否应作为 KB_09 的 L3 专题，还是独立 L2？",
+    "是否缺少模型安全、提示注入、数据隐私、许可证、合规或交易所规则相关知识点？",
+    "是否需要为每个 P0 item 指定最低来源数量和来源类型？",
+    "是否需要新增用于外接项目的 TradeCandidate / LabelingRecord / EvalCase JSON schema 合约？"
+  ],
+  "source_requirements_for_future_collection": {
+    "minimum_source_count_per_item": 2,
+    "preferred_source_types": [
+      "official_doc",
+      "paper",
+      "framework_doc",
+      "engineering_article",
+      "standard_or_risk_framework"
+    ],
+    "must_check_conflicts": true,
+    "must_define_applicability": true,
+    "must_define_not_applicable_when": true,
+    "must_define_llm_usage_policy": true,
+    "must_define_machine_gate": true,
+    "source_type_by_area": {
+      "model_training": [
+        "OpenAI/Hugging Face/MLflow/Google ML official docs",
+        "SFT/DPO/eval/model card/datasheet papers"
+      ],
+      "schema_engineering": [
+        "ML data validation docs",
+        "time-series validation docs",
+        "dataset card/datasheet papers"
+      ],
+      "trading_gating_scoring": [
+        "SEC/CFTC/CME or exchange risk materials",
+        "backtest overfitting/data snooping papers",
+        "execution/fill model official docs"
+      ],
+      "rag_mcp_agent": [
+        "OpenAI retrieval/file search docs",
+        "MCP specification",
+        "RAG evaluation frameworks",
+        "OWASP LLM prompt injection guidance"
+      ],
+      "governance_llmops": [
+        "NIST AI RMF",
+        "ISO/IEC 42001",
+        "MLflow Model Registry",
+        "model cards/datasheets"
+      ]
+    }
+  },
+  "related_files": [
+    "docs/tasks/phase36_ai_engineering_gating_scoring_knowledge.md",
+    "docs/research/phase36_ai_engineering_knowledge_framework.md",
+    "codex-expert-kit/rag/knowledge_tree.md",
+    "docs/index_tasks.md",
+    "docs/audit/phase36_ai_engineering_knowledge_scope_for_audit.json"
+  ],
+  "audit_fusion_result": {
+    "overall_verdict": "pass_with_changes",
+    "summary": "Phase 36 范围方向正确，但原 101 条 P0 过重。融合后保留原 101 条作为采集池，新增 12 条安全启动硬门，并拆成 P0-Core、P0-Extended、P1，避免第一批采集过重和优先级失真。",
+    "must_keep_boundaries": [
+      "交易数据不能直接变成训练数据。",
+      "Trade Candidate Snapshot 只能包含决策时可见信息。",
+      "PnL 不能作为唯一标签。",
+      "LLM gate 只能输出建议，不能成为最终裁决。",
+      "模型输出不能给自己贴标签。",
+      "live result 不能自动进入训练集。"
+    ],
+    "missing_topics_added": [
+      "counterfactual/off-policy evaluation for blocked trades",
+      "RAG prompt injection and tool-output-untrusted security",
+      "data privacy, secret redaction, market data license",
+      "deterministic baseline and ablation",
+      "inter-annotator agreement and label drift",
+      "feature schema registry and training-serving parity"
+    ],
+    "risky_terms_replaced": {
+      "LLM 交易员": "LLM 交易质量审计助手",
+      "hard_block": "hard_block_recommendation / gate_suggestion"
+    }
+  },
+  "priority_model_v2": {
+    "original_collection_pool_count": 101,
+    "new_hard_gate_count": 12,
+    "collection_pool_total_after_fusion": 113,
+    "tiers": [
+      {
+        "tier": "P0-Core",
+        "meaning": "安全启动硬门；缺失或违反时，训练、评估、上线或默认指导必须阻断。",
+        "target_size": "45-55",
+        "must_include_types": [
+          "角色边界和直接下单禁止",
+          "确定性风控不可覆盖",
+          "TradeCandidate Snapshot?decision_timestamp?feature_timestamp_cutoff",
+          "未来信息禁止和 PnL-only 标签禁止",
+          "train/eval/gold 隔离",
+          "RAG approved-only default guidance 和 no-source/conflict 阻断",
+          "MCP server-side read-only enforcement",
+          "shadow mode before live",
+          "timeout / MCP failure fallback",
+          "model + prompt + RAG + strategy snapshot",
+          "every gate decision trace",
+          "dataset card / model card",
+          "counterfactual/off-policy evaluation",
+          "prompt injection / RAG security",
+          "privacy/license check",
+          "deterministic baseline and ablation",
+          "training-serving parity"
+        ]
+      },
+      {
+        "tier": "P0-Extended",
+        "meaning": "第一轮工程建设必需，用于补齐上线前评估、治理、追踪和审计能力。",
+        "target_size": "25-35"
+      },
+      {
+        "tier": "P1",
+        "meaning": "优化增强项，包括具体 rubric 维度、更多 drift 指标、更多 risk ledger 细项和训练方法深挖。",
+        "target_size": "remaining"
+      }
+    ],
+    "recommended_new_p0_items": [
+      "N01. eval.counterfactual_outcome_missing_for_blocked_trades.v1",
+      "N02. eval.off_policy_evaluation_required_for_gate_policy.v1",
+      "N03. eval.blocked_trade_cannot_be_labeled_as_loss.v1",
+      "N04. security.rag_context_is_untrusted_input.v1",
+      "N05. security.prompt_injection_test_required_for_trade_context.v1",
+      "N06. data_privacy.no_secret_or_account_identifier_in_training.v1",
+      "N07. data_license.market_data_license_check_required.v1",
+      "N08. eval.deterministic_baseline_required_before_llm_gate.v1",
+      "N09. eval.ablation_required_for_rag_prompt_model_components.v1",
+      "N10. label_factory.inter_annotator_agreement_required.v1",
+      "N11. feature_store.feature_schema_registry_required.v1",
+      "N12. serving_consistency.training_serving_parity_test_required.v1"
+    ],
+    "downgrade_to_p1_candidates": [
+      "scoring_rubric.setup_quality.v1",
+      "scoring_rubric.risk_reward_quality.v1",
+      "scoring_rubric.market_regime_fit.v1",
+      "scoring_rubric.rule_compliance.v1",
+      "scoring_rubric.uncertainty_penalty.v1",
+      "部分 risk_ledger 细项",
+      "部分 monitoring drift 细项",
+      "部分 research_feedback 细项"
+    ],
+    "deduplication_rules": [
+      "B 组 schema 负责字段定义，C 组 gating/scoring 负责缺字段时的阻断、降级或人工复核。",
+      "no_pnl_only_label 保留为统一命名，schema 卡写字段结构，training/gating 卡写阻断规则。",
+      "dataset / eval / eval_case / time_split 可以共存，但必须建立 depends_on，不能重复表达同一规则。"
+    ]
+  }
+}

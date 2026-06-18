@@ -1,0 +1,328 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_03_market_microstructure.order_flow_proxy_boundary.v1",
+  "title": "订单流代理指标不能替代真实订单簿事实",
+  "metadata": {
+    "partition_id": "KB_03_MARKET_MICROSTRUCTURE",
+    "domain": "market_microstructure",
+    "subdomain": "order_flow",
+    "rule_type": "trading_microstructure_boundary_rule",
+    "claim_type": "methodological_constraint",
+    "content_type": "json",
+    "project_binding": "none",
+    "tree_node_id": "kt.market_microstructure.order_flow",
+    "tree_path": "CEK-TA / Trading Engineering / Market Microstructure / Order Flow",
+    "canonical_node_id": "kt.market_microstructure.order_flow",
+    "canonical_tree_path": "CEK-TA / Trading Engineering / Market Microstructure / Order Flow",
+    "risk_level": "medium",
+    "used_for": [
+      "market_microstructure_audit",
+      "strategy_design_audit",
+      "execution_cost_boundary",
+      "ai_trader_project_gap_audit",
+      "external_project_rag_retrieval"
+    ],
+    "source_candidate_id": "cand_20260611_phase37_market_microstructure_order_flow_proxy_boundary_001",
+    "research_task_id": "P37-D-M04",
+    "phase": "Phase 37",
+    "classification_notes": "Phase 37 Market Microstructure formal reviewed/caveat_only；这是 Trading Engineering 市场微观结构方法边界，不是 AI Engineering 训练/RAG/MCP 本体规则，也不是 approved/default guidance。",
+    "related_nodes": [
+      "kt.trading_engineering",
+      "kt.market_microstructure",
+      "kt.trading_engineering.data_engineering",
+      "kt.kline_strategy",
+      "kt.backtest",
+      "kt.replay_simulation",
+      "kt.live_execution",
+      "kt.risk_management",
+      "kt.ai_engineering.llm_training"
+    ]
+  },
+  "applicability": {
+    "market": "general_with_market_specific_mapping",
+    "asset": "general",
+    "timeframe": "event_to_intraday",
+    "data_granularity": "order_book_trades_or_derivatives_market_data",
+    "project_type": "trading_ai_support_layer",
+    "applies_when": [
+      "构造 order flow proxy、OFI、signed volume 或 imbalance 特征",
+      "把订单流代理接入 AI scoring 或交易复盘"
+    ],
+    "not_applicable_when": [
+      "需要重建真实队列位置但只有聚合或 OHLCV 数据",
+      "没有声明采样窗口、重采样规则和方向推断方法",
+      "需要具体买卖点、仓位、杠杆、止损止盈价格、交易所私有配置、账户事实或实盘权限时，应由外接项目事实层、执行层和风控层处理。",
+      "AI Engineering 只能引用本规则，不得把本规则改写为 LLM 训练、MCP、RAG 或模型部署本体规则。"
+    ]
+  },
+  "content": {
+    "statement": "Order flow proxy、imbalance、signed volume 或 OFI 类指标必须声明输入数据、采样窗口、方向推断和归一化方式；代理指标不能替代真实订单、取消、修改和成交事件事实。",
+    "rationale": "本候选只定义市场微观结构解释、数据和执行边界，不输出买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+    "procedure": [
+      "确认当前问题属于 Trading Engineering / Market Microstructure 方法边界，而不是 AI Engineering 或实盘执行本体。",
+      "检查市场、venue、instrument、数据源、timestamp、session、深度、成交方向、流动性状态、滑点、延迟和市场影响边界。",
+      "若问题涉及订单状态、成交、仓位、风险阻断或实盘执行许可，必须 cross-reference Live Execution / Risk Management，不在本条中创建 hard gate。",
+      "返回知识时必须携带 source_evidence、review_status、machine_gate、适用范围和不适用场景。"
+    ],
+    "examples": [],
+    "anti_patterns": [
+      "把盘口、订单流、CVD、OFI、funding/OI 或价差变化直接写成买卖方向。",
+      "把单一交易所、供应商、venue 或资产类别的字段语义泛化成全市场事实。",
+      "把 reviewed/caveat_only 知识说成 approved 默认指导。"
+    ],
+    "validation": [
+      "source_evidence 非空，且来源没有被用来支撑超出语境的 claim。",
+      "conflict_status 只能是 none、resolved、none_known_in_visible_context 或 visible_context_no_conflict。",
+      "machine_gate.default_guidance 必须为 caveat_only，review.default_guidance_allowed 必须为 false。",
+      "不得出现买卖点、仓位、杠杆、止损止盈价格或实盘执行建议。"
+    ],
+    "risk_notes": [
+      "官方文档和平台文档只能支撑数据字段、接口语义和工程边界，不能证明交易优势。",
+      "论文或专业机构资料支持方法边界，不能替代具体交易所、数据供应商或外接项目契约。",
+      "本候选不提供任何投资建议或实盘执行许可。",
+      "OFI/imbalance/signed volume 不能替代真实 add/cancel/modify/trade/fill 事件事实，也不能单独证明 edge。",
+      "本条为 formal reviewed/caveat_only，不是 approved；不得作为默认指导或 hard gate。",
+      "不得据此生成买卖点、仓位、杠杆、止损止盈价格或实盘执行建议。",
+      "Market Microstructure 只拥有盘口、订单流、流动性、滑点、延迟和市场影响的 caveat 边界；Execution/Risk 分支拥有执行许可和阻断规则。",
+      "AI Engineering 只能通过 canonical_node_id 引用本规则，不得复制改写为 AI 训练、RAG、MCP 或模型部署本体规则。"
+    ],
+    "citation_notes": "Databento MBO provides every order book event across every price level keyed by order ID, including adds, cancels, modifies, trades and fills; it is commonly called L3 data.；Databento MBP-10 provides order-book events across the top ten price levels, with trade events and aggregate market depth by price; it is commonly called L2 data.；Databento trades records include a side field for the side that initiates the trade, with bid/ask/none semantics depending on availability.",
+    "audit_patch_notes": {
+      "source": [
+        "formal source_refs 必须补 Cont/Kukanov/Stoikov OFI、Multi-level OFI 或 LOB imbalance 论文；Databento/CFA alone 不应作为 OFI reviewed 主来源。"
+      ],
+      "content": [
+        "proxy 必须声明 input data、sampling window、side inference、normalization、aggregation 和 loss of information。"
+      ],
+      "boundary": [
+        "OFI/imbalance/signed volume 不能替代真实 add/cancel/modify/trade/fill 事件事实，也不能单独证明 edge。"
+      ],
+      "conflict": [
+        "与 Feature Engineering/AI scoring 特征规则只引用，不改写。"
+      ]
+    }
+  },
+  "assumptions": [
+    "候选用于 CEK-TA 通用支持层知识库，不包含任何外接项目私有策略参数。",
+    "微观结构结论必须保留市场、交易所、数据源、时间戳、粒度、执行和验证边界。",
+    "候选通过外部审计前不能进入正式 reviewed 知识库。"
+  ],
+  "source_evidence": [
+    {
+      "source_id": "src_001",
+      "source_title": "Market by order (MBO)",
+      "source_url": "https://databento.com/docs/schemas-and-data-formats/mbo",
+      "source_type": "official_data_vendor_doc",
+      "publisher": "Databento",
+      "published_at": null,
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "medium_high",
+      "relevance": "high",
+      "evidence_summary": "Databento MBO provides every order book event across every price level keyed by order ID, including adds, cancels, modifies, trades and fills; it is commonly called L3 data.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_002",
+      "source_title": "Market by price (MBP-10)",
+      "source_url": "https://databento.com/docs/schemas-and-data-formats/mbp-10",
+      "source_type": "official_data_vendor_doc",
+      "publisher": "Databento",
+      "published_at": null,
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "medium_high",
+      "relevance": "high",
+      "evidence_summary": "Databento MBP-10 provides order-book events across the top ten price levels, with trade events and aggregate market depth by price; it is commonly called L2 data.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_003",
+      "source_title": "Trades schema",
+      "source_url": "https://databento.com/docs/schemas-and-data-formats/trades",
+      "source_type": "official_data_vendor_doc",
+      "publisher": "Databento",
+      "published_at": null,
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "medium_high",
+      "relevance": "medium_high",
+      "evidence_summary": "Databento trades records include a side field for the side that initiates the trade, with bid/ask/none semantics depending on availability.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_004",
+      "source_title": "Trading Costs and Electronic Markets",
+      "source_url": "https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/trading-costs-and-electronic-markets",
+      "source_type": "professional_curriculum",
+      "publisher": "CFA Institute",
+      "published_at": "2026-01-01",
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "high",
+      "relevance": "medium_high",
+      "evidence_summary": "CFA Institute explains explicit and implicit trading costs, transaction cost estimation, electronic trading, speed needs, market monitoring and systemic-risk caveats.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_reviewed_cont_kukanov_stoikov_ofi",
+      "source_title": "The Price Impact of Order Book Events",
+      "source_url": "https://arxiv.org/abs/1011.6402",
+      "source_type": "academic_paper",
+      "publisher": "arXiv",
+      "published_at": "2010-11-29",
+      "accessed_at": "2026-06-11",
+      "version": "arXiv:1011.6402",
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "Cont, Kukanov and Stoikov propose order-flow imbalance from limit order book events, supporting OFI/imbalance as a proxy that must declare input events and aggregation assumptions.",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "medium_high",
+    "score": 83.5,
+    "score_version": "phase37_market_microstructure_reviewed_preparation_source_scoring_v1",
+    "primary_source_count": 1,
+    "supporting_source_count": 4,
+    "low_reliability_source_count": 0,
+    "limitations": [
+      "正式入库前必须由外部审计确认 claim 没有超出来源可证明范围。",
+      "供应商、交易平台和交易所接口文档只可作为数据语义与工程边界证据，不能单独证明信号有效。",
+      "formal source_refs 必须补 Cont/Kukanov/Stoikov OFI、Multi-level OFI 或 LOB imbalance 论文；Databento/CFA alone 不应作为 OFI reviewed 主来源。",
+      "本条为 formal reviewed/caveat_only；不是 approved，不得进入默认指导或 hard gate。",
+      "交易所、供应商、broker、监管和论文来源只能按其语境使用；外接项目必须映射自己的 venue、数据契约和执行模型。",
+      "外部审计未提供完整 CEK-TA formal KB，因此冲突结论限于可见上下文和本次本地索引检查。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none_known_in_visible_context",
+    "checked_against": [
+      "Phase 36/38/40/41 AI Engineering 知识边界",
+      "现有 Trading Engineering formal 知识",
+      "Phase 37 Trading 与 AI 跨分支引用契约"
+    ],
+    "conflicts": [],
+    "resolution_summary": "reviewed/caveat_only preparation audit passed for this item; full formal KB duplicate/conflict/owner boundary check should be rerun after each index rebuild.",
+    "default_recommendation": "caveat_only_until_human_approval",
+    "owner_boundary": "Market Microstructure owns caveat boundaries; Live Execution and Risk Management own execution permission and hard-gate rules.",
+    "audit_conflict_patches": [
+      "与 Feature Engineering/AI scoring 特征规则只引用，不改写。"
+    ]
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于 AI IDE 或外接项目审计市场微观结构方法边界。",
+      "用于提示用户补充 venue、instrument、数据源、timestamp、session、深度、成交方向、流动性状态、滑点、延迟和市场影响条件。",
+      "用于 RAG/MCP/SearchLab 以 caveat 方式返回来源、边界和 cross-reference。"
+    ],
+    "not_allowed": [
+      "不得据此生成买卖点、仓位、杠杆、止损止盈价格或实盘执行建议。",
+      "不得把 reviewed/caveat_only 当作 approved 默认指导。",
+      "不得绕过外接项目事实层、数据契约、执行模型、风控 hard gate 或人工治理流程。"
+    ],
+    "required_context": [
+      "canonical_node_id=kt.market_microstructure.order_flow",
+      "必须返回 source_evidence、review_status、conflict_status、machine_gate 和不适用场景。"
+    ],
+    "fallback_behavior": "cite_with_caveat"
+  },
+  "machine_gate": {
+    "default_guidance": "caveat_only",
+    "reason": "CEK-TA-408: reviewed-preparation audit allowed formal reviewed/caveat_only only; no approved/default/hard gate.",
+    "requires_human_escalation": true,
+    "blocking_reasons": [
+      "reviewed_not_approved",
+      "default_guidance_allowed_false",
+      "hard_gate_allowed_false",
+      "trade_execution_advice_forbidden"
+    ],
+    "checked_at": "2026-06-11",
+    "gate_version": "1.0.0",
+    "hidden_from_default_queue": true,
+    "visible_in_default_guidance_queue": false,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "recommended_extra_sources": [],
+  "review": {
+    "confidence": "medium_high",
+    "freshness": "mixed",
+    "review_status": "reviewed",
+    "reviewer": "codex",
+    "reviewed_at": "2026-06-11",
+    "created_at": "2026-06-11",
+    "updated_at": "2026-06-11",
+    "default_guidance_allowed": false,
+    "approved_allowed": false,
+    "hard_gate_allowed": false,
+    "approval_status": "not_requested",
+    "source_candidate_id": "cand_20260611_phase37_market_microstructure_order_flow_proxy_boundary_001",
+    "ai_audit_result_id": "audit_result_phase37_market_microstructure_reviewed_preparation_20260611_strict_v1",
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase37_market_microstructure_reviewed_preparation_20260611_strict_v1",
+      "source_package_id": "phase37_market_microstructure_reviewed_preparation_audit_package_20260611",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "patch_notes": {
+        "source": [
+          "formal source_refs 必须补 Cont/Kukanov/Stoikov OFI、Multi-level OFI 或 LOB imbalance 论文；Databento/CFA alone 不应作为 OFI reviewed 主来源。"
+        ],
+        "content": [
+          "proxy 必须声明 input data、sampling window、side inference、normalization、aggregation 和 loss of information。"
+        ],
+        "boundary": [
+          "OFI/imbalance/signed volume 不能替代真实 add/cancel/modify/trade/fill 事件事实，也不能单独证明 edge。"
+        ],
+        "conflict": [
+          "与 Feature Engineering/AI scoring 特征规则只引用，不改写。"
+        ]
+      },
+      "reason": "Databento MBO/MBP/trades 字段支持 proxy 与真实 order events 不是同一层；外部 OFI/LOB 论文进一步支撑 OFI/imbalance 是 order-flow proxy，可 caveat-only。"
+    },
+    "open_questions": [
+      "若未来申请 approved/default guidance，必须另起人工治理任务并重新审计完整 formal KB 冲突与默认指导风险。"
+    ],
+    "decision_log": [
+      {
+        "at": "2026-06-11",
+        "actor": "external_ai_strict_audit",
+        "decision": "accepted_for_reviewed_caveat_only",
+        "reason": "Databento MBO/MBP/trades 字段支持 proxy 与真实 order events 不是同一层；外部 OFI/LOB 论文进一步支撑 OFI/imbalance 是 order-flow proxy，可 caveat-only。"
+      },
+      {
+        "at": "2026-06-11",
+        "actor": "codex",
+        "decision": "reviewed",
+        "reason": "CEK-TA-408: formal reviewed/caveat_only created; approved/default guidance/hard gate all disabled."
+      }
+    ]
+  },
+  "contribution": {
+    "contribution_id": null,
+    "source_project": null,
+    "sanitization_status": "not_applicable",
+    "private_data_removed": true,
+    "generic_mapping_notes": "Generated from Phase 37 public-source Trading Engineering Market Microstructure candidate; no project-private trading facts included."
+  },
+  "copyright": {
+    "stores_full_text": false,
+    "stores_long_quote": false,
+    "summary_only": true,
+    "license_notes": "仅保存来源链接、元数据和摘要，不保存长段原文。",
+    "reuse_risk": "low"
+  },
+  "phase37_conversion": {
+    "source_candidate_status": "accepted",
+    "source_ingestion_decision": "accepted_for_draft",
+    "promoted_by_task": "CEK-TA-408",
+    "reviewed_allowed": true,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  }
+}

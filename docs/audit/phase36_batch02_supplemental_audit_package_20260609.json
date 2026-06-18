@@ -1,0 +1,970 @@
+{
+  "package_id": "phase36_batch02_supplemental_audit_package_20260609",
+  "package_type": "candidate_ai_audit_package",
+  "created_at": "2026-06-09",
+  "created_by": "codex",
+  "phase": "Phase 36",
+  "task_ids": [
+    "CEK-TA-203",
+    "CEK-TA-204"
+  ],
+  "source_audit_result_id": "audit_result_phase36_ai_engineering_batch_02_of_10_20260609_gpt55_pro_strict_sources",
+  "purpose": "对 Phase 36 第二批 AI Engineering 中 2 条 needs_more_evidence 候选进行补证后二次审计。",
+  "workflow_boundary": {
+    "candidate_is_not_formal_knowledge": true,
+    "accepted_for_draft_is_not_approved": true,
+    "reviewed_is_not_approved": true,
+    "do_not_set_approved": true,
+    "current_required_decision": "accepted_for_draft | needs_more_evidence | rejected"
+  },
+  "auditor_instructions": {
+    "language": "中文",
+    "review_focus": [
+      "补证后的 rewritten statement 是否与 candidate_id、normalized_claim 和 source_refs 对齐。",
+      "来源是否能直接支撑该具体规则，而不是只支撑泛化评估或泛化治理。",
+      "AI Engineering 与 Trading Engineering 边界是否清楚。",
+      "如 accepted_for_draft，只代表可转 formal reviewed，不代表 approved。"
+    ],
+    "required_output_schema": {
+      "audit_result_id": "string",
+      "source_package_id": "phase36_batch02_supplemental_audit_package_20260609",
+      "items": [
+        {
+          "candidate_id": "string",
+          "decision": "accepted_for_draft | needs_more_evidence | rejected",
+          "reason": "string",
+          "source_patch_notes": [
+            "string"
+          ],
+          "content_patch_notes": [
+            "string"
+          ],
+          "boundary_patch_notes": [
+            "string"
+          ],
+          "conflict_patch_notes": [
+            "string"
+          ],
+          "required_followups": [
+            "string"
+          ]
+        }
+      ]
+    }
+  },
+  "repair_notes": [
+    "2026-06-09 使用 UTF-8 从干净候选源文件重建，修复历史审计包中的问号占位型乱码。",
+    "该文件是审计追踪资产；不会把候选直接升级为 approved 或默认指导。"
+  ],
+  "candidates": [
+    {
+      "schema_version": "1.0.0",
+      "candidate_id": "cand_20260609_ai_engineering_dataset_deduplication_required_v1_001",
+      "research_task_id": "RIT-P36-A-T07",
+      "status": {
+        "review_status": "needs_more_evidence",
+        "ingestion_decision": "needs_more_evidence",
+        "decision_reason": "该审计包用于补证后二次审计；候选不是正式知识，accepted_for_draft 不是 approved。",
+        "created_at": "2026-06-09",
+        "updated_at": "2026-06-09"
+      },
+      "classification": {
+        "tree_node_id": "kt.llm_training.model_training_engineering",
+        "canonical_node_id": "kt.llm_training.model_training_engineering",
+        "tree_path": "CEK-TA / AI Engineering",
+        "related_nodes": [],
+        "partition_id": "KB_09_LLM_TRAINING",
+        "domain": "llm_training",
+        "subdomain": "dataset_governance",
+        "rule_type": "checklist",
+        "used_for": [
+          "llm_training",
+          "trading_gating_scoring",
+          "rag_engineering",
+          "mcp",
+          "vue_audit_ui"
+        ]
+      },
+      "claim": {
+        "claim_id": "claim_001",
+        "statement": "Training、eval、gold、shadow、RAG 和 preference datasets 在进入训练、评估或检索 promotion 前，必须执行 exact duplicate、near-duplicate 和 split-contamination 检查；未完成检查的数据集不得进入正式训练、评估、黄金集、RAG 索引或偏好训练。",
+        "normalized_claim": "dataset.deduplication_required.v1",
+        "evidence_summary": "ACL 2022 去重研究支持重复与近重复会影响语言模型记忆和 train-test overlap；BigCode 数据集工程提供 decontamination 与 near-deduplication 实践；scikit-learn data leakage 文档支持 train/test 隔离原则；Datasheets、OpenAI fine-tuning 和 TFDV 作为数据文档化、质量和 schema 校验的 supporting sources。",
+        "interpretation_notes": "本候选已通过二次审计，正式知识卡聚焦数据集重复检测、split contamination、promotion gate 和审计字段；不包含交易规则本体。",
+        "claim_strength": "medium",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general",
+        "asset": "general",
+        "timeframe": "general",
+        "data_granularity": "general",
+        "project_type": "trading_llm_assistant",
+        "applies_when": [
+          "外接项目准备把样本放入 train_pool、eval_pool、gold_set、shadow_pool、RAG index、SFT 数据集或 preference training 数据集。",
+          "项目需要确认训练、评估、黄金集、影子集、偏好样本、RAG chunk 之间是否存在 exact duplicate、near-duplicate 或 benchmark contamination。",
+          "项目需要为数据集 promotion 提供可审计的 dedupe_run_id、split_id、overlap_count、action_taken 和 reviewer。"
+        ],
+        "not_applicable_when": [
+          "只是在定义 dataset schema、source lineage、version/hash 或 dataset card，而没有执行重复与污染检查。",
+          "需要判断两笔交易在业务上是否等价、是否应作为有效重复模式保留；该判断应由 data owner 或 Trading Engineering 给出解释。",
+          "需要沉淀具体 K 线形态、买卖点、仓位、止损止盈、fill model 或策略参数。"
+        ],
+        "assumptions": [
+          "外接项目提供项目事实、私有交易数据和策略上下文；CEK-TA 只沉淀可复用专业规则。",
+          "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+        ],
+        "limitations": [
+          "accepted_for_draft 不是 approved；本条只能作为 formal reviewed 知识进入审计和检索，默认指导仍需后续人工治理。",
+          "near-duplicate 阈值不能由 CEK-TA 单独替外接项目拍板；AI Engineering 可定义技术字段，业务等价解释由 data owner 或 Trading Engineering 负责。",
+          "本知识项只保存 hash、duplicate_group_id、脱敏摘要和外部 dataset reference，不保存私有交易样本正文。",
+          "本条与 dataset_schema_required、dataset_source_lineage_required、dataset_version_and_hash_required 分工不同：本条负责重复/污染检测门禁。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_id": "src_datasheets",
+          "source_title": "Datasheets for Datasets",
+          "source_url": "https://arxiv.org/abs/1803.09010",
+          "source_type": "paper",
+          "publisher": "arXiv",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 88,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "The paper supports documenting dataset motivation, composition, collection, intended use, maintenance, and limitations.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_openai_ft",
+          "source_title": "Fine-tuning best practices | OpenAI API",
+          "source_url": "https://platform.openai.com/docs/guides/fine-tuning-best-practices",
+          "source_type": "official_doc",
+          "publisher": "OpenAI",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 88,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "OpenAI fine-tuning guidance emphasizes data quality, held-out eval data, and task-specific examples for model improvement.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_tfdv",
+          "source_title": "TensorFlow Data Validation: Checking and analyzing your data",
+          "source_url": "https://tensorflow.github.io/tfx/guide/tfdv/",
+          "source_type": "official_doc",
+          "publisher": "TensorFlow / TFX",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 82,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "TFDV supports schema-based data validation, anomaly detection, and train/serve skew checks in ML pipelines.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_acl_2022_deduplicating_training_data",
+          "source_title": "Deduplicating Training Data Makes Language Models Better",
+          "source_url": "https://arxiv.org/abs/2107.06499",
+          "source_type": "paper",
+          "publisher": "arXiv / ACL 2022",
+          "published_at": "2021-07-14",
+          "accessed_at": "2026-06-09",
+          "version": "ACL 2022 accepted version",
+          "reliability": "high",
+          "score": 90,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [
+            "该来源支持 LLM 训练数据去重和评估污染边界，但具体阈值仍需结合项目数据类型定义。"
+          ],
+          "evidence_summary": "ACL 2022 去重研究说明重复和近重复数据会增加模型记忆风险，并影响 train-test overlap 与评估准确性，直接支持训练数据去重和污染检查。",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_bigcode_dataset_decontamination_deduplication",
+          "source_title": "BigCode Dataset decontamination and near-deduplication pipeline",
+          "source_url": "https://github.com/bigcode-project/bigcode-dataset",
+          "source_type": "official_repo",
+          "publisher": "BigCode Project",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 84,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [
+            "该来源来自代码数据集工程实践，不能直接替代交易数据的业务等价判断。"
+          ],
+          "evidence_summary": "BigCode 数据集仓库包含 decontamination 与 near_deduplication 流水线，可作为 benchmark decontamination 和近重复检测的工程实践来源。",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_sklearn_common_pitfalls_data_leakage",
+          "source_title": "Common pitfalls and recommended practices | scikit-learn",
+          "source_url": "https://scikit-learn.org/stable/common_pitfalls.html#data-leakage",
+          "source_type": "official_doc",
+          "publisher": "scikit-learn",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 86,
+          "relevance": "medium",
+          "freshness": "time_sensitive",
+          "limitations": [
+            "该来源是通用 ML 方法论来源，不专门面向 LLM 或交易数据。"
+          ],
+          "evidence_summary": "scikit-learn common pitfalls 文档警示 data leakage，支持 train/eval/gold split 污染检查和隔离原则。",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "high",
+        "score": 88,
+        "score_version": "1.0.0",
+        "primary_source_count": 3,
+        "supporting_source_count": 3,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "该候选已完成补证并进入 accepted_for_draft；正式知识仍只能作为 reviewed 使用。",
+          "near-duplicate 阈值、保留例外和业务等价判断需要 data owner 或 Trading Engineering 参与。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "checked_against": [
+          "docs/contracts/ai_engineering_gating_scoring_contract.md",
+          "docs/contracts/ai_engineering_knowledge_item_policy.md",
+          "docs/tasks/phase36_ai_engineering_gating_scoring_knowledge.md"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与当前 CEK-TA formal knowledge 的直接冲突；候选不会进入默认指导。",
+        "approval_allowed": true
+      },
+      "review": {
+        "confidence": "medium",
+        "freshness": "time_sensitive",
+        "reviewer": "external_ai_and_codex_alignment",
+        "reviewed_at": "2026-06-09",
+        "open_questions": [
+          "是否需要新增 dedupe_report_schema.json？",
+          "exact duplicate 与 near-duplicate 的默认阈值和 owner 是否需要按外接项目类型拆分？",
+          "是否需要与 leakage.train_test_contamination_block 建立更明确的阻断动作链路？"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-09",
+            "actor": "codex",
+            "action": "created",
+            "reason": "Phase 36 bulk AI Engineering candidate expansion."
+          },
+          {
+            "at": "2026-06-09",
+            "actor": "external_ai",
+            "action": "phase36_batch_audit_result_received",
+            "reason": "当前候选不应直接转 draft。candidate_id 和 normalized_claim 是 deduplication_required，但 statement 实际是“训练或评估数据集必须具备 schema、来源、版本、用途和限制”，source_refs 也主要支持 datasheet、fine-tuning data quality 和 TFDV schema，不直接支持去重、near-duplicate detection 或 contamination prevention。方向合理，但必须先重写 claim 并补直接来源。",
+            "audit_result_id": "audit_result_phase36_ai_engineering_batch_02_of_10_20260609_gpt55_pro_strict_sources"
+          },
+          {
+            "at": "2026-06-09",
+            "actor": "codex",
+            "action": "supplemental_research_added",
+            "reason": "Phase 36 补证二次审计确认该候选已经从泛数据治理规则收敛为 deduplication 与 split contamination 专项规则，可转入 formal reviewed；该状态不是 approved。",
+            "audit_result_id": "audit_result_phase36_ai_engineering_batch_02_of_10_20260609_gpt55_pro_strict_sources",
+            "research_doc": "docs/research/phase36_batch02_supplemental_research.md",
+            "audit_package": "docs/audit/phase36_batch02_supplemental_audit_package_20260609.json"
+          },
+          {
+            "at": "2026-06-09",
+            "actor": "external_ai",
+            "action": "phase36_batch_audit_result_received",
+            "reason": "补充后的 candidate_id、normalized_claim、statement 和 source_refs 已基本对齐。该候选已经从原来的泛 dataset schema/governance 规则，改写为 exact duplicate、near-duplicate、train/eval/gold/shadow/preference contamination 检查规则。补充来源包含 ACL 2022 Deduplicating Training Data Makes Language Models Better、BigCode dataset decontamination / near_deduplication pipeline、scikit-learn data leakage guidance，并保留 Datasheets、OpenAI fine-tuning、TFDV 作为 supporting sources，已经足够进入 formal draft。但 accepted_for_draft 仍不是 approved，正式 draft 需要写清检测方法、阈值 owner、例外保留策略和 split isolation。",
+            "audit_result_id": "audit_result_phase36_batch02_supplemental_reaudit_20260609_gpt55_pro_strict_sources"
+          }
+        ],
+        "ai_audit": {
+          "audit_result_id": "audit_result_phase36_batch02_supplemental_reaudit_20260609_gpt55_pro_strict_sources",
+          "source_package_id": "phase36_batch02_supplemental_audit_package_20260609",
+          "decision": "accepted_for_draft",
+          "reason": "补充后的 candidate_id、normalized_claim、statement 和 source_refs 已基本对齐。该候选已经从原来的泛 dataset schema/governance 规则，改写为 exact duplicate、near-duplicate、train/eval/gold/shadow/preference contamination 检查规则。补充来源包含 ACL 2022 Deduplicating Training Data Makes Language Models Better、BigCode dataset decontamination / near_deduplication pipeline、scikit-learn data leakage guidance，并保留 Datasheets、OpenAI fine-tuning、TFDV 作为 supporting sources，已经足够进入 formal draft。但 accepted_for_draft 仍不是 approved，正式 draft 需要写清检测方法、阈值 owner、例外保留策略和 split isolation。",
+          "source_patch_notes": [
+            "将 ACL 2022 Deduplicating Training Data Makes Language Models Better 设为主来源之一，用于支持近重复、memorization、train-test overlap 和 dedup 对评估准确性的影响。",
+            "将 BigCode dataset repo 中 decontamination 与 near_deduplication pipeline 设为工程实践来源，用于支持 benchmark decontamination 和 near-dedup pipeline 的可执行性。",
+            "保留 scikit-learn common pitfalls / data leakage 作为 train/test leakage 和 split contamination 的通用 ML 方法论来源。",
+            "保留 Datasheets for Datasets、OpenAI fine-tuning best practices、TFDV 作为支持性来源；这些来源支撑数据文档化、数据质量、schema validation，但不应作为 deduplication 的主来源。",
+            "建议补内部来源：CEK-TA dataset_split_manifest、dedupe_run_report、leakage_check_report 的 schema 或 contract。"
+          ],
+          "content_patch_notes": [
+            "正式 statement 建议写为：Training、eval、gold、shadow、RAG 和 preference datasets must run exact duplicate、near-duplicate and split-contamination checks before training/evaluation/RAG promotion。",
+            "建议字段：dedupe_run_id、dataset_id、dataset_version、pool_type、split_id、dedupe_method、hash_algorithm、exact_hash_match_count、near_duplicate_method、near_duplicate_threshold、near_duplicate_group_id、train_eval_overlap_count、gold_overlap_count、benchmark_contamination_count、action_taken、reviewer、reviewed_at。",
+            "明确 deduplication 不等于无条件删除所有重复：业务上合理重复、hard negative、重复 incident pattern 可以保留，但必须记录 reason、weighting policy、split isolation 和 reviewer。",
+            "增加 promotion gate：未完成 dedupe / contamination check 的数据集不得进入 train_pool、eval_pool、gold_set、RAG index 或 preference training。",
+            "增加 leakage link：如果发现 eval/gold/preference 与 train pool exact 或 near duplicate，应触发 leakage_train_test_contamination_block 或 new split version。"
+          ],
+          "boundary_patch_notes": [
+            "AI Engineering 只定义重复检测、污染检测、promotion gate、metadata schema 和审计字段。",
+            "原始交易文本、截图、订单记录、账户信息、策略细节、K 线样本不得写入 AI Engineering KB；只保存 hash、duplicate_group_id、脱敏摘要和外部 dataset reference。",
+            "判断两个交易样本是否业务上等价、是否允许作为重复样本保留，应由项目 data owner 或 Trading Engineering 提供解释。",
+            "不得把具体交易规则、买卖点、仓位、止损止盈、fill model 或策略参数沉淀进本知识项。"
+          ],
+          "conflict_patch_notes": [
+            "与 dataset_schema_required、dataset_source_lineage_required、dataset_version_and_hash_required 不再是重复关系：本条聚焦 dedup / contamination gate，那三条分别负责 schema、lineage、version/hash。",
+            "与 leakage_train_test_contamination_block 后续候选高度相关，建议建立 canonical family：dataset.deduplication_required 负责检测，leakage.train_test_contamination_block 负责阻断动作。",
+            "与 eval_case_no_training_overlap_required、eval_holdout_test_set_required、data_asset_eval_pool_must_not_train 应互链。",
+            "未发现需要 rejected 的直接冲突。"
+          ],
+          "required_followups": [
+            "补 dedupe_report_schema.json。",
+            "补 near_duplicate_threshold 的 owner 规则：默认由 AI Engineering 定义技术阈值，由 data owner / Trading Engineering 解释业务等价。",
+            "补 dedupe action enum：drop、quarantine、keep_with_reason、move_to_incident_pool、reassign_split、needs_human_review。",
+            "补 UI audit 字段：duplicate_group_id、overlap_pool、evidence_hash、action_taken、reviewer。",
+            "补 eval case：train/eval exact duplicate、near duplicate paraphrase、gold contamination、preference pair duplicate、RAG chunk duplicate。"
+          ],
+          "boundary": "accepted_for_draft 不是 approved；reviewed 不会进入默认指导。"
+        }
+      },
+      "copyright": {
+        "stores_full_text": false,
+        "stores_long_quote": false,
+        "summary_only": true,
+        "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+        "reuse_risk": "low"
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_ai_engineering.dataset.deduplication_required.v1",
+        "target_schema": "cek_ta_knowledge_item",
+        "target_review_status": "draft",
+        "skill_candidate": false,
+        "eval_case_candidate": false
+      },
+      "workflow": {
+        "stage": "needs_more_evidence",
+        "queue_group": "needs_more_evidence",
+        "formal_knowledge_id": "kb_ai_engineering.dataset.deduplication_required.v1",
+        "formal_review_status": "reviewed",
+        "ai_audit_result_id": "audit_result_phase36_batch02_supplemental_reaudit_20260609_gpt55_pro_strict_sources",
+        "hidden_from_default_queue": false,
+        "next_action": "export_ai_audit"
+      },
+      "source_evidence_for_audit": [
+        {
+          "source_id": "src_datasheets",
+          "source_title": "Datasheets for Datasets",
+          "source_url": "https://arxiv.org/abs/1803.09010",
+          "source_type": "paper",
+          "publisher": "arXiv",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 88,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "The paper supports documenting dataset motivation, composition, collection, intended use, maintenance, and limitations.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_openai_ft",
+          "source_title": "Fine-tuning best practices | OpenAI API",
+          "source_url": "https://platform.openai.com/docs/guides/fine-tuning-best-practices",
+          "source_type": "official_doc",
+          "publisher": "OpenAI",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 88,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "OpenAI fine-tuning guidance emphasizes data quality, held-out eval data, and task-specific examples for model improvement.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_tfdv",
+          "source_title": "TensorFlow Data Validation: Checking and analyzing your data",
+          "source_url": "https://tensorflow.github.io/tfx/guide/tfdv/",
+          "source_type": "official_doc",
+          "publisher": "TensorFlow / TFX",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 82,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "TFDV supports schema-based data validation, anomaly detection, and train/serve skew checks in ML pipelines.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_acl_2022_deduplicating_training_data",
+          "source_title": "Deduplicating Training Data Makes Language Models Better",
+          "source_url": "https://arxiv.org/abs/2107.06499",
+          "source_type": "paper",
+          "publisher": "arXiv / ACL 2022",
+          "published_at": "2021-07-14",
+          "accessed_at": "2026-06-09",
+          "version": "ACL 2022 accepted version",
+          "reliability": "high",
+          "score": 90,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [
+            "该来源支持 LLM 训练数据去重和评估污染边界，但具体阈值仍需结合项目数据类型定义。"
+          ],
+          "evidence_summary": "ACL 2022 去重研究说明重复和近重复数据会增加模型记忆风险，并影响 train-test overlap 与评估准确性，直接支持训练数据去重和污染检查。",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_bigcode_dataset_decontamination_deduplication",
+          "source_title": "BigCode Dataset decontamination and near-deduplication pipeline",
+          "source_url": "https://github.com/bigcode-project/bigcode-dataset",
+          "source_type": "official_repo",
+          "publisher": "BigCode Project",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 84,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [
+            "该来源来自代码数据集工程实践，不能直接替代交易数据的业务等价判断。"
+          ],
+          "evidence_summary": "BigCode 数据集仓库包含 decontamination 与 near_deduplication 流水线，可作为 benchmark decontamination 和近重复检测的工程实践来源。",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_sklearn_common_pitfalls_data_leakage",
+          "source_title": "Common pitfalls and recommended practices | scikit-learn",
+          "source_url": "https://scikit-learn.org/stable/common_pitfalls.html#data-leakage",
+          "source_type": "official_doc",
+          "publisher": "scikit-learn",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 86,
+          "relevance": "medium",
+          "freshness": "time_sensitive",
+          "limitations": [
+            "该来源是通用 ML 方法论来源，不专门面向 LLM 或交易数据。"
+          ],
+          "evidence_summary": "scikit-learn common pitfalls 文档警示 data leakage，支持 train/eval/gold split 污染检查和隔离原则。",
+          "quoted_excerpt_allowed": false
+        }
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "candidate_id": "cand_20260609_ai_engineering_deployment_llm_timeout_or_mcp_failure_fallback_required_v1_001",
+      "research_task_id": "RIT-P36-C-30",
+      "status": {
+        "review_status": "needs_more_evidence",
+        "ingestion_decision": "needs_more_evidence",
+        "decision_reason": "该审计包用于补证后二次审计；候选不是正式知识，accepted_for_draft 不是 approved。",
+        "created_at": "2026-06-09",
+        "updated_at": "2026-06-09"
+      },
+      "classification": {
+        "tree_node_id": "kt.llmops_deployment",
+        "canonical_node_id": "kt.llmops_deployment",
+        "tree_path": "CEK-TA / AI Engineering",
+        "related_nodes": [],
+        "partition_id": "KB_AI_ENGINEERING",
+        "domain": "ai_engineering",
+        "subdomain": "llmops_deployment",
+        "rule_type": "decision_rule",
+        "used_for": [
+          "llm_training",
+          "trading_gating_scoring",
+          "rag_engineering",
+          "mcp",
+          "vue_audit_ui"
+        ]
+      },
+      "claim": {
+        "claim_id": "claim_001",
+        "statement": "LLM/MCP 出现 timeout、rate limit、tool execution error、protocol error、permission failure、RAG no-hit、source conflict、schema validation failure 或 invalid output schema 时，必须降级为 abstain、neutral_score、needs_review、block_default_guidance、degraded_read_only_response、retry_with_backoff、open_circuit 或 fail_closed_for_hard_gate；在确定性风控门禁之前不得 hard allow。",
+        "normalized_claim": "deployment.llm_timeout_or_mcp_failure_fallback_required.v1",
+        "evidence_summary": "OpenAI rate limit 文档支持 transient failure 的 exponential backoff；AWS retry/backoff、circuit breaker 和 graceful degradation 文档支持有限重试、fail fast、断路器和降级响应；MCP tools spec 支持 protocol errors 与 tool execution errors 的区分、isError、input validation、access controls、rate limiting、output sanitization、timeout 和 audit；MCP runtime fault taxonomy 是较新的补充研究来源，不作为唯一主来源。",
+        "interpretation_notes": "本候选已通过二次审计，正式知识卡聚焦 LLM/MCP 运行时故障分类、有限重试、安全降级和审计追踪；不定义交易执行动作。",
+        "claim_strength": "high",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general",
+        "asset": "general",
+        "timeframe": "general",
+        "data_granularity": "general",
+        "project_type": "trading_llm_assistant",
+        "applies_when": [
+          "外接项目在 LLM scoring/gating、RAG 检索、MCP tool 调用或知识审计中遇到 timeout、rate limit、provider error、tool execution error、permission failure、schema validation failure、RAG no-hit 或 source conflict。",
+          "LLM/MCP 输出会影响交易评分、门禁建议、默认知识指导或人工审计队列。",
+          "系统需要记录 retry_policy、fallback_action、safe_default、review_queue_id 和 audit_event_id。"
+        ],
+        "not_applicable_when": [
+          "任务讨论的是上线前 offline eval、shadow mode 或 paper readiness，应路由到 deployment.shadow_mode_before_live。",
+          "任务需要定义实盘订单取消、broker action、仓位调整、kill switch、止损止盈或风控阈值，应路由到 Trading Engineering / Live Execution / Risk Management。",
+          "任务只是普通 UI 展示错误，且不会影响交易评分、门禁、默认指导或审计结论。"
+        ],
+        "assumptions": [
+          "外接项目提供项目事实、私有交易数据和策略上下文；CEK-TA 只沉淀可复用专业规则。",
+          "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+        ],
+        "limitations": [
+          "accepted_for_draft 不是 approved；本条只能作为 formal reviewed 知识进入审计和检索，默认指导仍需后续人工治理。",
+          "OpenAI、AWS 和 MCP 来源支持 retry/backoff、circuit breaker、graceful degradation、MCP 错误结构和工具安全，但 safe default 是 CEK-TA 针对高风险交易 gating 的内部治理规则。",
+          "AI Engineering 负责 failure taxonomy、retry policy、safe default、fallback_action、审计 trace 和 Vue audit UI 展示。",
+          "Trading Engineering / Live Execution / Risk Management 负责实盘订单状态、kill switch、broker action、仓位调整、止损止盈、风控阈值和执行引擎处理。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_id": "src_fed_model_risk",
+          "source_title": "Supervisory Guidance on Model Risk Management",
+          "source_url": "https://www.federalreserve.gov/frrs/guidance/supervisory-guidance-on-model-risk-management.htm",
+          "source_type": "standard_or_risk_framework",
+          "publisher": "Federal Reserve",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 84,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "Model risk guidance supports independent validation, governance, change control, and risk-based model oversight.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_rules_ml",
+          "source_title": "Rules of Machine Learning",
+          "source_url": "https://martin.zinkevich.org/rules_of_ml/rules_of_ml.pdf",
+          "source_type": "paper",
+          "publisher": "Google / Martin Zinkevich",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "medium",
+          "score": 78,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "Rules of ML discusses train/serve consistency, baselines, monitoring, and production ML safeguards.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_openai_evals",
+          "source_title": "Working with evals | OpenAI API",
+          "source_url": "https://platform.openai.com/docs/guides/evals?api-mode=chat",
+          "source_type": "official_doc",
+          "publisher": "OpenAI",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 86,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "OpenAI evals documentation supports programmatic evaluation setup and workflow-specific quality checks before relying on model behavior.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_openai_rate_limits_exponential_backoff",
+          "source_title": "Rate limits | OpenAI API",
+          "source_url": "https://developers.openai.com/api/docs/guides/rate-limits",
+          "source_type": "official_doc",
+          "publisher": "OpenAI",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 88,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [
+            "该来源支持 LLM API transient failure 处理，但 CEK-TA 的 fail-closed/hard-gate 规则属于本项目风险治理边界。"
+          ],
+          "evidence_summary": "OpenAI rate limit 文档支持对 429/rate limit 等瞬时失败使用 exponential backoff，同时提示需要 retry budget 和安全降级。",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_aws_retry_with_backoff_pattern",
+          "source_title": "Retry with backoff pattern - AWS Prescriptive Guidance",
+          "source_url": "https://docs.aws.amazon.com/prescriptive-guidance/latest/cloud-design-patterns/retry-backoff.html",
+          "source_type": "official_doc",
+          "publisher": "AWS",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 86,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [
+            "该来源是通用云可靠性模式，需要结合 LLM/MCP 调用链路映射到具体 fallback_action。"
+          ],
+          "evidence_summary": "AWS Retry with Backoff Pattern 支持对 transient error、429、timeout 做有限重试，并指出非 transient error 应 fail fast 或使用其他保护模式。",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_aws_circuit_breaker_pattern",
+          "source_title": "Circuit breaker pattern - AWS Prescriptive Guidance",
+          "source_url": "https://docs.aws.amazon.com/prescriptive-guidance/latest/cloud-design-patterns/circuit-breaker.html",
+          "source_type": "official_doc",
+          "publisher": "AWS",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 86,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [
+            "该来源支持故障保护模式，但不定义交易系统的 kill switch 或订单处理动作。"
+          ],
+          "evidence_summary": "AWS circuit breaker pattern 支持在重复 timeout/failure 时打开断路器，避免继续调用不健康依赖，可支撑 LLM/MCP open_circuit 处理。",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_mcp_tools_error_handling",
+          "source_title": "Tools - Model Context Protocol",
+          "source_url": "https://modelcontextprotocol.io/specification/draft/server/tools",
+          "source_type": "official_doc",
+          "publisher": "Model Context Protocol",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": "draft server/tools",
+          "reliability": "high",
+          "score": 88,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [
+            "该来源来自 MCP draft，需要跟随 MCP 规范版本变化持续复核。"
+          ],
+          "evidence_summary": "MCP tools spec 区分 protocol errors 与 tool execution errors，并要求工具执行错误通过 isError 或等价结构返回可操作反馈。",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_arxiv_2026_mcp_runtime_fault_taxonomy",
+          "source_title": "A Taxonomy of Runtime Faults in Model Context Protocol Servers",
+          "source_url": "https://arxiv.org/abs/2606.05339",
+          "source_type": "paper",
+          "publisher": "arXiv",
+          "published_at": "2026-06-03",
+          "accessed_at": "2026-06-09",
+          "version": "v1",
+          "reliability": "medium",
+          "score": 78,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [
+            "该来源是较新的 arXiv/preprint 研究，不应作为唯一主来源。"
+          ],
+          "evidence_summary": "MCP runtime fault taxonomy 覆盖 tool invocation、schema enforcement、security validation、timeouts/cancellations 等故障类型，可作为补充证据。",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "high",
+        "score": 86,
+        "score_version": "1.0.0",
+        "primary_source_count": 3,
+        "supporting_source_count": 5,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "该候选已完成补证并进入 accepted_for_draft；正式知识仍只能作为 reviewed 使用。",
+          "safe default 和 fail-closed 策略属于 CEK-TA 针对高风险交易 gating 的内部治理规则。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "checked_against": [
+          "docs/contracts/ai_engineering_gating_scoring_contract.md",
+          "docs/contracts/ai_engineering_knowledge_item_policy.md",
+          "docs/tasks/phase36_ai_engineering_gating_scoring_knowledge.md"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与当前 CEK-TA formal knowledge 的直接冲突；候选不会进入默认指导。",
+        "approval_allowed": true
+      },
+      "review": {
+        "confidence": "medium",
+        "freshness": "time_sensitive",
+        "reviewer": "external_ai_and_codex_alignment",
+        "reviewed_at": "2026-06-09",
+        "open_questions": [
+          "是否需要新增 llm_mcp_failure_taxonomy.yaml？",
+          "是否需要新增 fallback_action_enum.yaml 和 retry_policy_schema.json？",
+          "failure injection、chaos test 和 red-team eval case 是否需要单独形成后续任务？"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-09",
+            "actor": "codex",
+            "action": "created",
+            "reason": "Phase 36 bulk AI Engineering candidate expansion."
+          },
+          {
+            "at": "2026-06-09",
+            "actor": "external_ai",
+            "action": "phase36_batch_audit_result_received",
+            "reason": "当前候选不应直接转 draft。normalized_claim 指向 LLM timeout 或 MCP failure fallback，但 statement 实际是“上线前必须经过离线评估、shadow/paper 阶段和失败降级策略，不能直接进入实盘硬门”。原始 sources 支持通用模型风险、评估和生产 ML safeguard，但不足以直接支持 timeout、MCP failure、tool failure、permission failure 的具体 fallback 规则。",
+            "audit_result_id": "audit_result_phase36_ai_engineering_batch_02_of_10_20260609_gpt55_pro_strict_sources"
+          },
+          {
+            "at": "2026-06-09",
+            "actor": "codex",
+            "action": "supplemental_research_added",
+            "reason": "Phase 36 补证二次审计确认该候选已经从上线前 readiness 规则收敛为 LLM/MCP runtime failure fallback 专项规则，可转入 formal reviewed；该状态不是 approved。",
+            "audit_result_id": "audit_result_phase36_ai_engineering_batch_02_of_10_20260609_gpt55_pro_strict_sources",
+            "research_doc": "docs/research/phase36_batch02_supplemental_research.md",
+            "audit_package": "docs/audit/phase36_batch02_supplemental_audit_package_20260609.json"
+          },
+          {
+            "at": "2026-06-09",
+            "actor": "external_ai",
+            "action": "phase36_batch_audit_result_received",
+            "reason": "补充后的 candidate_id、normalized_claim、statement 和 source_refs 已对齐。该候选已经从原来的 offline eval / shadow / paper deployment readiness 规则，改写为 LLM/MCP timeout、tool error、permission failure、RAG no-hit、source conflict、schema validation failure 的 runtime failure fallback 规则。补充来源覆盖 OpenAI rate limit/backoff、AWS retry/backoff、AWS circuit breaker、AWS graceful degradation、MCP tool error handling 和 MCP runtime fault taxonomy，足够支撑进入 draft。但正式 draft 必须声明 safe default 是 CEK-TA 内部高风险 gating 安全规则，不是外部文档逐字要求。",
+            "audit_result_id": "audit_result_phase36_batch02_supplemental_reaudit_20260609_gpt55_pro_strict_sources"
+          }
+        ],
+        "ai_audit": {
+          "audit_result_id": "audit_result_phase36_batch02_supplemental_reaudit_20260609_gpt55_pro_strict_sources",
+          "source_package_id": "phase36_batch02_supplemental_audit_package_20260609",
+          "decision": "accepted_for_draft",
+          "reason": "补充后的 candidate_id、normalized_claim、statement 和 source_refs 已对齐。该候选已经从原来的 offline eval / shadow / paper deployment readiness 规则，改写为 LLM/MCP timeout、tool error、permission failure、RAG no-hit、source conflict、schema validation failure 的 runtime failure fallback 规则。补充来源覆盖 OpenAI rate limit/backoff、AWS retry/backoff、AWS circuit breaker、AWS graceful degradation、MCP tool error handling 和 MCP runtime fault taxonomy，足够支撑进入 draft。但正式 draft 必须声明 safe default 是 CEK-TA 内部高风险 gating 安全规则，不是外部文档逐字要求。",
+          "source_patch_notes": [
+            "将 OpenAI rate limit / exponential backoff 官方帮助文档作为 LLM API transient failure 与 retry budget 的主来源之一。",
+            "将 AWS Retry with Backoff Pattern 作为 transient error、429、timeout、limited retries 的可靠性来源。",
+            "将 AWS Circuit Breaker Pattern 和 AWS Well-Architected graceful degradation 作为 repeated timeout/failure、fail fast、degraded response 的可靠性来源。",
+            "将 MCP official tools spec 作为 protocol errors、tool execution errors、isError=true、tool input validation、access controls、rate limiting、sanitize outputs、timeout 和 audit 的主来源。",
+            "将 arXiv 2026 MCP runtime fault taxonomy 作为补充证据；正式 draft 应标注其为新研究 / preprint，不作为唯一主来源。",
+            "保留 model risk guidance、Rules of ML、OpenAI evals 作为支持 deployment governance 的辅助来源，不再让它们承担 timeout/MCP failure 的主证据角色。"
+          ],
+          "content_patch_notes": [
+            "正式 statement 建议写为：LLM/MCP timeout、rate limit、tool execution error、protocol error、permission failure、RAG no-hit、source conflict、schema validation failure or invalid output schema must fallback to abstain、neutral_score、needs_review、block_default_guidance or degraded_read_only_response; it must never hard allow before deterministic risk gate。",
+            "建议字段：failure_event_id、failure_type、provider、model_id、mcp_server_id、tool_name、tool_call_id、error_code、http_status、isError、timeout_ms、retry_policy_id、retry_count、circuit_state、fallback_action、safe_default、deterministic_gate_result、review_queue_id、audit_event_id。",
+            "增加 failure_type enum：llm_timeout、rate_limit、provider_error、mcp_protocol_error、mcp_tool_execution_error、permission_denied、rag_no_hit、source_conflict、schema_validation_error、output_parse_error、policy_violation、unknown_error。",
+            "增加 fallback_action enum：abstain、neutral_score、needs_human_review、block_default_guidance、degraded_read_only_response、retry_with_backoff、open_circuit、fail_closed_for_hard_gate。",
+            "明确 retry 与 fallback 的关系：transient error 可有限重试；non-transient error、permission failure、schema violation、source conflict 不应无限重试，应 fail closed 或进入 review。",
+            "明确 hard gate 场景默认 fail closed；非 hard gate 的解释型 UI 可以 degraded_read_only_response，但不得生成默认交易指导。"
+          ],
+          "boundary_patch_notes": [
+            "AI Engineering 负责 LLM/MCP failure taxonomy、retry policy、safe default、fallback_action、审计 trace 和 Vue audit UI 展示。",
+            "Trading Engineering / Live Execution / Risk Management 负责实盘订单状态、kill switch、broker action、仓位调整、止损止盈、风控阈值和执行引擎处理。",
+            "本知识项不得定义具体交易执行动作、仓位、订单取消逻辑、止损止盈或策略阈值。",
+            "如果 LLM/MCP failure 影响 live order、risk gate 或 execution engine，只能记录引用和审计事件，具体处理路由到 Trading Engineering。",
+            "不得记录 API key、账号标识、broker token、私有订单详情或完整交易上下文。"
+          ],
+          "conflict_patch_notes": [
+            "与 deployment_shadow_mode_before_live 不再是重复关系：本条处理 runtime failure fallback；deployment_shadow_mode_before_live 处理上线前 offline/shadow/paper readiness。",
+            "应与 rag_no_hit_requires_neutral_or_review、rag_no_source_or_conflict_blocks_default_guidance、mcp_server_side_permission_enforcement_required、safety_no_tool_permission_escalation、runtime_final_gate_deterministic_engine_required 互链。",
+            "与 audit_every_gate_decision_requires_trace 正向依赖：每次 fallback 都必须记录 failure_event_id、fallback_action 和 audit_event_id。",
+            "与 approval_hard_gate_enable_requires_approval 互补：fallback policy 变更或 fail-closed 行为变更应走审批。",
+            "未发现需要 rejected 的直接冲突。"
+          ],
+          "required_followups": [
+            "补 llm_mcp_failure_taxonomy.yaml。",
+            "补 fallback_action_enum.yaml。",
+            "补 retry_policy_schema.json，至少包含 max_retries、backoff_strategy、jitter、timeout_ms、retryable_error_types、non_retryable_error_types。",
+            "补 circuit_breaker_state 字段：closed、open、half_open、disabled。",
+            "补 failure injection / chaos test / red-team eval case：LLM timeout、429、MCP isError=true、permission denied、RAG no-hit、source conflict、invalid schema、tool returns unsafe action。",
+            "补 Vue audit UI 展示：failure_type、source_refs、fallback_action、deterministic_gate_result、review_status。"
+          ],
+          "boundary": "accepted_for_draft 不是 approved；reviewed 不会进入默认指导。"
+        }
+      },
+      "copyright": {
+        "stores_full_text": false,
+        "stores_long_quote": false,
+        "summary_only": true,
+        "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+        "reuse_risk": "low"
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_ai_engineering.deployment.llm_timeout_or_mcp_failure_fallback_required.v1",
+        "target_schema": "cek_ta_knowledge_item",
+        "target_review_status": "draft",
+        "skill_candidate": false,
+        "eval_case_candidate": false
+      },
+      "workflow": {
+        "stage": "needs_more_evidence",
+        "queue_group": "needs_more_evidence",
+        "formal_knowledge_id": "kb_ai_engineering.deployment.llm_timeout_or_mcp_failure_fallback_required.v1",
+        "formal_review_status": "reviewed",
+        "ai_audit_result_id": "audit_result_phase36_batch02_supplemental_reaudit_20260609_gpt55_pro_strict_sources",
+        "hidden_from_default_queue": false,
+        "next_action": "export_ai_audit"
+      },
+      "source_evidence_for_audit": [
+        {
+          "source_id": "src_fed_model_risk",
+          "source_title": "Supervisory Guidance on Model Risk Management",
+          "source_url": "https://www.federalreserve.gov/frrs/guidance/supervisory-guidance-on-model-risk-management.htm",
+          "source_type": "standard_or_risk_framework",
+          "publisher": "Federal Reserve",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 84,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "Model risk guidance supports independent validation, governance, change control, and risk-based model oversight.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_rules_ml",
+          "source_title": "Rules of Machine Learning",
+          "source_url": "https://martin.zinkevich.org/rules_of_ml/rules_of_ml.pdf",
+          "source_type": "paper",
+          "publisher": "Google / Martin Zinkevich",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "medium",
+          "score": 78,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "Rules of ML discusses train/serve consistency, baselines, monitoring, and production ML safeguards.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_openai_evals",
+          "source_title": "Working with evals | OpenAI API",
+          "source_url": "https://platform.openai.com/docs/guides/evals?api-mode=chat",
+          "source_type": "official_doc",
+          "publisher": "OpenAI",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 86,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "OpenAI evals documentation supports programmatic evaluation setup and workflow-specific quality checks before relying on model behavior.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_openai_rate_limits_exponential_backoff",
+          "source_title": "Rate limits | OpenAI API",
+          "source_url": "https://developers.openai.com/api/docs/guides/rate-limits",
+          "source_type": "official_doc",
+          "publisher": "OpenAI",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 88,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [
+            "该来源支持 LLM API transient failure 处理，但 CEK-TA 的 fail-closed/hard-gate 规则属于本项目风险治理边界。"
+          ],
+          "evidence_summary": "OpenAI rate limit 文档支持对 429/rate limit 等瞬时失败使用 exponential backoff，同时提示需要 retry budget 和安全降级。",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_aws_retry_with_backoff_pattern",
+          "source_title": "Retry with backoff pattern - AWS Prescriptive Guidance",
+          "source_url": "https://docs.aws.amazon.com/prescriptive-guidance/latest/cloud-design-patterns/retry-backoff.html",
+          "source_type": "official_doc",
+          "publisher": "AWS",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 86,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [
+            "该来源是通用云可靠性模式，需要结合 LLM/MCP 调用链路映射到具体 fallback_action。"
+          ],
+          "evidence_summary": "AWS Retry with Backoff Pattern 支持对 transient error、429、timeout 做有限重试，并指出非 transient error 应 fail fast 或使用其他保护模式。",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_aws_circuit_breaker_pattern",
+          "source_title": "Circuit breaker pattern - AWS Prescriptive Guidance",
+          "source_url": "https://docs.aws.amazon.com/prescriptive-guidance/latest/cloud-design-patterns/circuit-breaker.html",
+          "source_type": "official_doc",
+          "publisher": "AWS",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 86,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [
+            "该来源支持故障保护模式，但不定义交易系统的 kill switch 或订单处理动作。"
+          ],
+          "evidence_summary": "AWS circuit breaker pattern 支持在重复 timeout/failure 时打开断路器，避免继续调用不健康依赖，可支撑 LLM/MCP open_circuit 处理。",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_mcp_tools_error_handling",
+          "source_title": "Tools - Model Context Protocol",
+          "source_url": "https://modelcontextprotocol.io/specification/draft/server/tools",
+          "source_type": "official_doc",
+          "publisher": "Model Context Protocol",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": "draft server/tools",
+          "reliability": "high",
+          "score": 88,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [
+            "该来源来自 MCP draft，需要跟随 MCP 规范版本变化持续复核。"
+          ],
+          "evidence_summary": "MCP tools spec 区分 protocol errors 与 tool execution errors，并要求工具执行错误通过 isError 或等价结构返回可操作反馈。",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_arxiv_2026_mcp_runtime_fault_taxonomy",
+          "source_title": "A Taxonomy of Runtime Faults in Model Context Protocol Servers",
+          "source_url": "https://arxiv.org/abs/2606.05339",
+          "source_type": "paper",
+          "publisher": "arXiv",
+          "published_at": "2026-06-03",
+          "accessed_at": "2026-06-09",
+          "version": "v1",
+          "reliability": "medium",
+          "score": 78,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [
+            "该来源是较新的 arXiv/preprint 研究，不应作为唯一主来源。"
+          ],
+          "evidence_summary": "MCP runtime fault taxonomy 覆盖 tool invocation、schema enforcement、security validation、timeouts/cancellations 等故障类型，可作为补充证据。",
+          "quoted_excerpt_allowed": false
+        }
+      ]
+    }
+  ]
+}

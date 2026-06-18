@@ -1,0 +1,65 @@
+{
+  "schema_version": "phase59_candidate_audit_import_report.v1",
+  "report_id": "phase59_candidate_audit_import_report",
+  "generated_at": "2026-06-17",
+  "phase": "Phase 59",
+  "task_id": "CEK-TA-568",
+  "audit_result_path": "docs/audit/audit_result_phase59_microstructure_feature_store_candidate_20260617_strict_v1.json",
+  "summary": {
+    "total": 3,
+    "accepted_for_draft": 3,
+    "needs_more_evidence": 0,
+    "rejected": 0,
+    "blocked": 0,
+    "formal_reviewed_created": 0,
+    "approved_created": 0,
+    "default_guidance_enabled": 0,
+    "hard_gate_enabled": 0
+  },
+  "candidate_updates": [
+    {
+      "candidate_id": "cand_20260617_phase59_kline_microstructure_store_separation_001",
+      "research_task_id": "P59-MFS-001",
+      "decision": "accepted_for_draft",
+      "patch_applied": [
+        "将“不应混成一个物理宽表”收窄为“不应默认混成一个物理宽表”。",
+        "补充宽表例外：小规模研究、临时 notebook、只读导出、离线特征展开表可以存在，但不得替代 canonical store。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260617_phase59_hybrid_training_dataset_snapshot_manifest_001",
+      "research_task_id": "P59-MFS-002",
+      "decision": "accepted_for_draft",
+      "patch_applied": [
+        "补充 prediction_time、feature_known_at、label_known_at、late_arrival_policy 等 reviewed 前必须补齐或声明不适用的字段。",
+        "补充 readiness 不代表模型质量、上线许可或交易许可的边界。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260617_phase59_canonical_registry_not_per_trader_db_001",
+      "research_task_id": "P59-MFS-003",
+      "decision": "accepted_for_draft",
+      "patch_applied": [
+        "标题与 statement 改为中央 registry 默认集中治理、AI Trader 默认逻辑隔离、物理分库作为例外。",
+        "补充合规隔离、客户密钥、监管边界、地域隔离、超大规模和运维约束例外。",
+        "补充 tenant isolation policy、cross-database lineage reconciliation 和全局 audit trace 边界。"
+      ]
+    }
+  ],
+  "contract_updates": [
+    "docs/contracts/phase59_microstructure_feature_store_hybrid_snapshot_contract.md 增加 prediction_time、feature_known_at、label_known_at、feature_ttl_policy、join_tolerance_policy、null_feature_policy、tenant_isolation_policy 等字段。",
+    "契约中将“禁止宽表/物理分库”的绝对表述改为“禁止默认混成/默认分库”，并保留审计例外。"
+  ],
+  "quality_gate": {
+    "pass": true,
+    "candidate_stage_only": true,
+    "formal_index_unchanged": true,
+    "reviewed_allowed": false,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "trade_execution_advice_allowed": false,
+    "ddl_or_migration_allowed": false
+  },
+  "next_action": "如需沉淀为 formal reviewed/caveat_only，下一步必须另行导出 reviewed-preparation 审计包，不得直接从 accepted_for_draft 创建 reviewed 或 approved。"
+}

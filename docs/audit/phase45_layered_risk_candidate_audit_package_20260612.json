@@ -1,0 +1,1520 @@
+{
+  "package_id": "phase45_layered_risk_candidate_audit_package_20260612",
+  "created_at": "2026-06-12",
+  "created_by": "codex",
+  "phase": "45",
+  "task_id": "CEK-TA-462",
+  "scope": {
+    "branch": "Trading Engineering / Risk Management",
+    "partition": "KB_07_RISK_MANAGEMENT",
+    "batch": "P45-C Layered Risk / Credit / Margin / 分层风控、信用与保证金",
+    "candidate_count": 6,
+    "target": "审计 Layered Risk / Credit / Margin 候选，包括分层 pre-trade controls、信用边界、最大订单量/价格 collar、消息节流、margin/collateral/available funds 和 post-trade surveillance 边界。"
+  },
+  "hard_boundaries": {
+    "candidate_not_formal": true,
+    "accepted_for_draft_not_reviewed": true,
+    "reviewed_not_approved": true,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "trade_execution_advice_allowed": false,
+    "risk_threshold_advice_allowed": false,
+    "must_not_create_formal_knowledge": true,
+    "must_not_generate": [
+      "买卖点",
+      "仓位",
+      "杠杆",
+      "止损止盈参数",
+      "实盘执行建议",
+      "风险阈值数值",
+      "信用额度",
+      "保证金比例"
+    ]
+  },
+  "audit_instructions": [
+    "必须搜索相关的专业网站、官方文档、监管资料、交易所文档、专业协会资料、案例和数据，对本审计包进行严格审计。",
+    "逐条检查来源是否足以支撑 claim；SEC 15c3-5、FIA、CME 不得被过度泛化。",
+    "检查 Layered Risk / Credit / Margin 是否正确归入 Risk Management，不得把策略 alpha、执行 TCA、审计日志、AI Engineering 或 Database 本体混进本分支。",
+    "检查每条候选是否清楚声明适用范围、不适用场景、假设、限制、来源质量和 AI 使用边界。",
+    "重点审计 layered pre-trade controls、credit vs strategy risk、max order size / price collar、message throttle / cancel rate、margin/collateral/available funds、post-trade surveillance vs pre-trade gate。",
+    "检查是否有中文乱码、mock/test 污染、项目私有策略参数、账户事实、密钥、交易所私有配置、真实阈值或实盘敏感信息。",
+    "输出只能是 accepted_for_draft、needs_more_evidence、rejected 或 blocked；不得输出 reviewed、approved、default guidance 或 hard gate。"
+  ],
+  "required_output_schema": {
+    "audit_result_id": "string",
+    "auditor": "string",
+    "audited_at": "YYYY-MM-DD",
+    "package_id": "phase45_layered_risk_candidate_audit_package_20260612",
+    "summary": {
+      "total": 6,
+      "accepted_for_draft": 0,
+      "needs_more_evidence": 0,
+      "rejected": 0,
+      "blocked": 0
+    },
+    "candidate_results": [
+      {
+        "candidate_id": "string",
+        "research_task_id": "string",
+        "decision": "accepted_for_draft | needs_more_evidence | rejected | blocked",
+        "confidence": "low | medium | high",
+        "reviewed_allowed": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "risk_threshold_advice_allowed": false,
+        "reasons": [
+          "string"
+        ],
+        "required_followups": [
+          "string"
+        ],
+        "patch_notes": {
+          "source": [
+            "string"
+          ],
+          "content": [
+            "string"
+          ],
+          "boundary": [
+            "string"
+          ],
+          "conflict": [
+            "string"
+          ]
+        },
+        "source_assessment": {
+          "source_count": 0,
+          "missing_sources": [
+            "string"
+          ],
+          "weak_sources": [
+            "string"
+          ],
+          "recommended_extra_sources": [
+            "string"
+          ]
+        },
+        "classification_assessment": {
+          "is_correct_branch": true,
+          "expected_branch": "Trading Engineering / Risk Management / Layered Risk Controls",
+          "misplaced_topics": [
+            "string"
+          ]
+        }
+      }
+    ]
+  },
+  "quality_gate": {
+    "gate_id": "phase45_layered_risk_candidate_audit_package_quality_gate",
+    "checked_at": "2026-06-12",
+    "phase": "45",
+    "task_id": "CEK-TA-462",
+    "package_id": "phase45_layered_risk_candidate_audit_package_20260612",
+    "candidate_count": 6,
+    "expected_count": 6,
+    "partition": "KB_07_RISK_MANAGEMENT",
+    "gate_status": "pass",
+    "failures": [],
+    "warnings": [
+      "本包只审计 candidate；不得直接创建 reviewed、approved、default guidance 或 hard gate。",
+      "Layered Risk / Credit / Margin 只能用于 owner、证据、pre/post-trade 分工和边界审计，不得输出风险阈值。",
+      "SEC/FIA/CME 来源具有辖区、venue、broker、clearing 和 implementation caveat。"
+    ]
+  },
+  "candidates": [
+    {
+      "schema_version": "1.1.0-candidate",
+      "candidate_id": "cand_20260612_phase45_layered_risk_p45_c_risk01_001",
+      "research_task_id": "P45-C-RISK01",
+      "status": {
+        "review_status": "candidate_ready",
+        "ingestion_decision": "candidate_ready",
+        "decision_reason": "Phase 45 P45-C Layered Risk / Credit / Margin 候选，等待外部严格审计。",
+        "created_at": "2026-06-12",
+        "updated_at": "2026-06-12"
+      },
+      "classification": {
+        "tree_node_id": "kt.risk_management.layered_risk_controls",
+        "canonical_node_id": "kt.risk_management.layered_risk_controls",
+        "tree_path": "CEK-TA / Trading Engineering / Risk Management / Layered Risk Controls",
+        "related_nodes": [
+          "kt.live_execution.audit_trail",
+          "kt.trading_engineering.live_execution.execution_tca",
+          "kt.ai_engineering.database_storage_engineering.runtime_observability_trace"
+        ],
+        "partition_id": "KB_07_RISK_MANAGEMENT",
+        "domain": "risk_management",
+        "subdomain": "layered_risk_controls",
+        "rule_type": "risk_boundary_rule",
+        "claim_type": "layered_pre_trade_controls_rule",
+        "used_for": [
+          "trading_ai_project_design_audit",
+          "pre_trade_risk_checklist",
+          "external_project_rag_retrieval",
+          "risk_owner_boundary_review"
+        ],
+        "classification_notes": "P45-C 只补 Layered Risk / Credit / Margin 知识边界；不设置任何 CEK-TA 通用风险阈值，不启用 hard gate。"
+      },
+      "claim": {
+        "claim_id": "claim_p45_c_risk01",
+        "title": "pre-trade controls 必须分层声明",
+        "statement": "交易系统的 pre-trade controls 必须按订单级、账户级、策略级、产品/venue 级、信用/保证金级和系统级分层声明；不能用单一 allow/block 布尔值替代分层风险检查、owner、证据和例外流程。",
+        "normalized_claim": "phase45_layered_risk.layered_pre_trade_controls_required.v1",
+        "evidence_summary": "SEC Rule 15c3-5 requires market-access broker-dealers to maintain financial and regulatory risk-management controls, including pre-set credit/capital thresholds and erroneous-order controls.；SEC FAQ explains that controls should systematically limit financial exposure, prevent orders beyond credit/capital thresholds, reject orders beyond price/size parameters, and keep financial controls under broker-dealer control.；FIA best-practice paper covers pre-trade risk management, exchange volatility controls, post-trade analysis, testing, conformance, and system safeguards for automated trading.；CME describes pre-trade risk tools including order blocking, cancel open orders, cancel-on-disconnect, self-match prevention, duplicate order checks, and real-time activity monitoring.",
+        "interpretation_notes": "本候选只定义分层风控、信用、保证金和 pre-trade/post-trade owner 边界，不输出风险阈值、交易参数或实盘执行建议。",
+        "claim_strength": "candidate",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general_with_jurisdiction_venue_and_broker_caveats",
+        "asset": "general",
+        "timeframe": "pre_trade_and_intraday_risk_context",
+        "data_granularity": "order_account_strategy_product_venue_margin_risk_events",
+        "project_type": "trading_ai_support_layer",
+        "applies_when": [
+          "外接项目需要设计 pre-trade controls、信用/资本限额、订单量/价格控制、消息节流、保证金/抵押品边界或 post-trade surveillance 分工。",
+          "AI IDE 需要判断风险字段、owner、证据和 gate 位置是否被混淆。",
+          "需要把策略信号、资金/信用约束、交易所控制和风险复核分开建模。"
+        ],
+        "not_applicable_when": [
+          "用户要求具体风险阈值、信用额度、保证金比例、仓位、杠杆、止损止盈或实盘交易动作。",
+          "需要外接 broker、clearing firm、exchange 或账户的实时事实时，应由外接项目事实层提供。",
+          "需要法律合规结论时，应由对应辖区合规/法律 owner 判断。"
+        ],
+        "assumptions": [
+          "Layered Risk Controls 是交易工程设计和审计上下文，不是策略 alpha。",
+          "所有 credit、margin、price band、message-rate 和 surveillance 来源必须声明 venue、broker、clearing、jurisdiction 或 platform caveat。",
+          "候选通过 reviewed 审计前不能进入正式 reviewed 知识库。"
+        ],
+        "limitations": [
+          "SEC Rule 15c3-5 主要适用于美国 broker-dealer market access 语境。",
+          "FIA 是行业最佳实践来源，不替代具体监管、交易所或 broker 规则。",
+          "CME 来源只证明 CME Globex/CME Clearing 相关机制，不得泛化为所有市场。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_title": "Risk Management Controls for Brokers or Dealers with Market Access",
+          "source_url": "https://www.sec.gov/files/rules/final/2010/34-63241-secg.htm",
+          "source_type": "regulatory_rule",
+          "publisher": "U.S. SEC",
+          "reliability": "high",
+          "score": 94,
+          "freshness": "time_sensitive",
+          "evidence_summary": "SEC Rule 15c3-5 requires market-access broker-dealers to maintain financial and regulatory risk-management controls, including pre-set credit/capital thresholds and erroneous-order controls.",
+          "limitations": [
+            "U.S. broker-dealer market access rule; not a universal global trading-system standard."
+          ],
+          "source_id": "src_001",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "SEC Market Access Rule FAQ",
+          "source_url": "https://www.sec.gov/rules-regulations/staff-guidance/trading-markets-frequently-asked-questions/divisionsmarketregfaq-0",
+          "source_type": "regulatory_guidance",
+          "publisher": "U.S. SEC",
+          "reliability": "high",
+          "score": 92,
+          "freshness": "time_sensitive",
+          "evidence_summary": "SEC FAQ explains that controls should systematically limit financial exposure, prevent orders beyond credit/capital thresholds, reject orders beyond price/size parameters, and keep financial controls under broker-dealer control.",
+          "limitations": [
+            "FAQ guidance for SEC Rule 15c3-5; not a source for CEK-TA-specific field names."
+          ],
+          "source_id": "src_002",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Best Practices for Automated Trading Risk Controls and System Safeguards",
+          "source_url": "https://www.fia.org/sites/default/files/2024-07/FIA_WP_AUTOMATED%20TRADING%20RISK%20CONTROLS_FINAL_0.pdf",
+          "source_type": "professional_body",
+          "publisher": "FIA",
+          "reliability": "high",
+          "score": 90,
+          "freshness": "time_sensitive",
+          "evidence_summary": "FIA best-practice paper covers pre-trade risk management, exchange volatility controls, post-trade analysis, testing, conformance, and system safeguards for automated trading.",
+          "limitations": [
+            "Industry best practices; not a binding rule and not a CEK-TA threshold source."
+          ],
+          "source_id": "src_003",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "CME Globex Pre-Trade Risk Management",
+          "source_url": "https://www.cmegroup.com/solutions/market-access/globex/trade-on-globex/pre-trade-risk-management.html",
+          "source_type": "official_exchange_doc",
+          "publisher": "CME Group",
+          "reliability": "high",
+          "score": 88,
+          "freshness": "time_sensitive",
+          "evidence_summary": "CME describes pre-trade risk tools including order blocking, cancel open orders, cancel-on-disconnect, self-match prevention, duplicate order checks, and real-time activity monitoring.",
+          "limitations": [
+            "CME Globex-specific toolset; not applicable to all venues."
+          ],
+          "source_id": "src_004",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "high",
+        "score": 91.0,
+        "score_version": "phase45_source_scoring_v1",
+        "primary_source_count": 4,
+        "supporting_source_count": 0,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "正式 reviewed 前必须由外部审计确认 claim 没有超出来源可证明范围。",
+          "监管、交易所、broker 和清算来源必须保留辖区、venue 和产品边界。",
+          "内部字段契约若后续用于 reviewed，需要提供 schema extract 或 contract hash。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "checked_against": [
+          "Phase 37 Risk Management formal reviewed knowledge",
+          "Phase 37 Live Execution formal reviewed knowledge",
+          "Phase 45 Execution TCA / Audit Trail formal reviewed knowledge",
+          "Phase 45 runtime contract"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与现有 formal reviewed 知识的直接冲突；P45-C 只补 P1/P2 分层风控和 owner 边界。",
+        "approval_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "risk_threshold_advice_allowed": false
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 区分 strategy risk、credit/capital limit、margin/collateral、venue price/size controls 和 post-trade surveillance。",
+          "用于生成风险设计 checklist、schema review、RAG 检索上下文和 owner boundary reason code。",
+          "用于检查外接项目方案是否把信用、保证金、pre-trade controls 和 post-trade surveillance 混成单一风险布尔值。"
+        ],
+        "not_allowed": [
+          "不得生成具体风险阈值、信用额度、保证金比例、买卖点、仓位、杠杆、止损止盈或实盘执行建议。",
+          "不得把候选知识当作 approved 或默认指导。",
+          "不得替外接项目启用 hard gate、拒单、停机、撤单或解锁流程。"
+        ]
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "candidate only; pending external strict audit; no reviewed/approved/default/hard gate.",
+        "requires_human_escalation": false,
+        "hidden_from_default_queue": true,
+        "visible_in_default_guidance_queue": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "risk_threshold_advice_allowed": false
+      },
+      "review": {
+        "review_status": "candidate_ready",
+        "review_mode": "external_strict_audit_required",
+        "confidence": "medium_high",
+        "freshness": "mixed",
+        "reviewer": null,
+        "reviewed_at": null,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "risk_threshold_advice_allowed": false,
+        "audit_log": [
+          {
+            "at": "2026-06-12",
+            "actor": "codex",
+            "action": "phase45_layered_risk_candidate_generated",
+            "reason": "Generated from Phase 45 P45-C task queue with professional/regulatory/exchange sources."
+          }
+        ]
+      },
+      "workflow": {
+        "stage": "pending_external_audit",
+        "queue_group": "pending",
+        "source_phase": "45",
+        "source_task_id": "CEK-TA-461",
+        "batch": "P45-C Layered Risk / Credit / Margin",
+        "formal_knowledge_id": null,
+        "formal_knowledge_path": null,
+        "allowed_next_decisions": [
+          "accepted_for_draft",
+          "needs_more_evidence",
+          "rejected",
+          "blocked"
+        ],
+        "forbidden_next_decisions": [
+          "reviewed",
+          "approved",
+          "default_guidance",
+          "hard_gate"
+        ]
+      },
+      "contribution": {
+        "source": "phase45_professional_research",
+        "private_data_removed": true,
+        "project_specific_details_removed": true,
+        "notes": "Generated for external strict audit; no project account, key, position, threshold, or private strategy data included."
+      }
+    },
+    {
+      "schema_version": "1.1.0-candidate",
+      "candidate_id": "cand_20260612_phase45_layered_risk_p45_c_risk02_001",
+      "research_task_id": "P45-C-RISK02",
+      "status": {
+        "review_status": "candidate_ready",
+        "ingestion_decision": "candidate_ready",
+        "decision_reason": "Phase 45 P45-C Layered Risk / Credit / Margin 候选，等待外部严格审计。",
+        "created_at": "2026-06-12",
+        "updated_at": "2026-06-12"
+      },
+      "classification": {
+        "tree_node_id": "kt.risk_management.layered_risk_controls",
+        "canonical_node_id": "kt.risk_management.layered_risk_controls",
+        "tree_path": "CEK-TA / Trading Engineering / Risk Management / Layered Risk Controls",
+        "related_nodes": [
+          "kt.live_execution.audit_trail",
+          "kt.trading_engineering.live_execution.execution_tca",
+          "kt.ai_engineering.database_storage_engineering.runtime_observability_trace"
+        ],
+        "partition_id": "KB_07_RISK_MANAGEMENT",
+        "domain": "risk_management",
+        "subdomain": "layered_risk_controls",
+        "rule_type": "risk_boundary_rule",
+        "claim_type": "credit_limit_boundary_rule",
+        "used_for": [
+          "trading_ai_project_design_audit",
+          "pre_trade_risk_checklist",
+          "external_project_rag_retrieval",
+          "risk_owner_boundary_review"
+        ],
+        "classification_notes": "P45-C 只补 Layered Risk / Credit / Margin 知识边界；不设置任何 CEK-TA 通用风险阈值，不启用 hard gate。"
+      },
+      "claim": {
+        "claim_id": "claim_p45_c_risk02",
+        "title": "credit limit 不是策略风险限额",
+        "statement": "信用/资本/清算限额是 market access、broker、clearing 或 account exposure 边界，不等同于策略级亏损阈值、仓位 sizing 或 alpha 风险偏好；AI IDE 必须把 credit limit owner 与 strategy risk owner 分开。",
+        "normalized_claim": "phase45_layered_risk.credit_limit_not_strategy_risk_limit.v1",
+        "evidence_summary": "SEC FAQ explains that controls should systematically limit financial exposure, prevent orders beyond credit/capital thresholds, reject orders beyond price/size parameters, and keep financial controls under broker-dealer control.；CME Globex Credit Controls provide pre-execution controls for clearing-firm risk administrators to set exposure and maximum quantity limits for Globex order/trade activity.；CME account-level controls include credit, long/short quantity limits and order-submission controls by product group and product.",
+        "interpretation_notes": "本候选只定义分层风控、信用、保证金和 pre-trade/post-trade owner 边界，不输出风险阈值、交易参数或实盘执行建议。",
+        "claim_strength": "candidate",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general_with_jurisdiction_venue_and_broker_caveats",
+        "asset": "general",
+        "timeframe": "pre_trade_and_intraday_risk_context",
+        "data_granularity": "order_account_strategy_product_venue_margin_risk_events",
+        "project_type": "trading_ai_support_layer",
+        "applies_when": [
+          "外接项目需要设计 pre-trade controls、信用/资本限额、订单量/价格控制、消息节流、保证金/抵押品边界或 post-trade surveillance 分工。",
+          "AI IDE 需要判断风险字段、owner、证据和 gate 位置是否被混淆。",
+          "需要把策略信号、资金/信用约束、交易所控制和风险复核分开建模。"
+        ],
+        "not_applicable_when": [
+          "用户要求具体风险阈值、信用额度、保证金比例、仓位、杠杆、止损止盈或实盘交易动作。",
+          "需要外接 broker、clearing firm、exchange 或账户的实时事实时，应由外接项目事实层提供。",
+          "需要法律合规结论时，应由对应辖区合规/法律 owner 判断。"
+        ],
+        "assumptions": [
+          "Layered Risk Controls 是交易工程设计和审计上下文，不是策略 alpha。",
+          "所有 credit、margin、price band、message-rate 和 surveillance 来源必须声明 venue、broker、clearing、jurisdiction 或 platform caveat。",
+          "候选通过 reviewed 审计前不能进入正式 reviewed 知识库。"
+        ],
+        "limitations": [
+          "SEC Rule 15c3-5 主要适用于美国 broker-dealer market access 语境。",
+          "FIA 是行业最佳实践来源，不替代具体监管、交易所或 broker 规则。",
+          "CME 来源只证明 CME Globex/CME Clearing 相关机制，不得泛化为所有市场。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_title": "SEC Market Access Rule FAQ",
+          "source_url": "https://www.sec.gov/rules-regulations/staff-guidance/trading-markets-frequently-asked-questions/divisionsmarketregfaq-0",
+          "source_type": "regulatory_guidance",
+          "publisher": "U.S. SEC",
+          "reliability": "high",
+          "score": 92,
+          "freshness": "time_sensitive",
+          "evidence_summary": "SEC FAQ explains that controls should systematically limit financial exposure, prevent orders beyond credit/capital thresholds, reject orders beyond price/size parameters, and keep financial controls under broker-dealer control.",
+          "limitations": [
+            "FAQ guidance for SEC Rule 15c3-5; not a source for CEK-TA-specific field names."
+          ],
+          "source_id": "src_001",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "CME Globex Credit Controls",
+          "source_url": "https://www.cmegroup.com/tools-information/webhelp/globex-credit-controls/Content/CME-Globex-Credit-Controls-Management.html",
+          "source_type": "official_exchange_doc",
+          "publisher": "CME Group",
+          "reliability": "high",
+          "score": 88,
+          "freshness": "time_sensitive",
+          "evidence_summary": "CME Globex Credit Controls provide pre-execution controls for clearing-firm risk administrators to set exposure and maximum quantity limits for Globex order/trade activity.",
+          "limitations": [
+            "CME clearing and Globex context; not a universal credit framework."
+          ],
+          "source_id": "src_002",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "CME Account Manager Credit Controls",
+          "source_url": "https://www.cmegroup.com/tools-information/webhelp/account-manager-service/Content/credit-controls.html",
+          "source_type": "official_exchange_doc",
+          "publisher": "CME Group",
+          "reliability": "high",
+          "score": 86,
+          "freshness": "time_sensitive",
+          "evidence_summary": "CME account-level controls include credit, long/short quantity limits and order-submission controls by product group and product.",
+          "limitations": [
+            "CME product/account implementation source; not a general CEK-TA schema."
+          ],
+          "source_id": "src_003",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "high",
+        "score": 88.67,
+        "score_version": "phase45_source_scoring_v1",
+        "primary_source_count": 3,
+        "supporting_source_count": 0,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "正式 reviewed 前必须由外部审计确认 claim 没有超出来源可证明范围。",
+          "监管、交易所、broker 和清算来源必须保留辖区、venue 和产品边界。",
+          "内部字段契约若后续用于 reviewed，需要提供 schema extract 或 contract hash。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "checked_against": [
+          "Phase 37 Risk Management formal reviewed knowledge",
+          "Phase 37 Live Execution formal reviewed knowledge",
+          "Phase 45 Execution TCA / Audit Trail formal reviewed knowledge",
+          "Phase 45 runtime contract"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与现有 formal reviewed 知识的直接冲突；P45-C 只补 P1/P2 分层风控和 owner 边界。",
+        "approval_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "risk_threshold_advice_allowed": false
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 区分 strategy risk、credit/capital limit、margin/collateral、venue price/size controls 和 post-trade surveillance。",
+          "用于生成风险设计 checklist、schema review、RAG 检索上下文和 owner boundary reason code。",
+          "用于检查外接项目方案是否把信用、保证金、pre-trade controls 和 post-trade surveillance 混成单一风险布尔值。"
+        ],
+        "not_allowed": [
+          "不得生成具体风险阈值、信用额度、保证金比例、买卖点、仓位、杠杆、止损止盈或实盘执行建议。",
+          "不得把候选知识当作 approved 或默认指导。",
+          "不得替外接项目启用 hard gate、拒单、停机、撤单或解锁流程。"
+        ]
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "candidate only; pending external strict audit; no reviewed/approved/default/hard gate.",
+        "requires_human_escalation": false,
+        "hidden_from_default_queue": true,
+        "visible_in_default_guidance_queue": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "risk_threshold_advice_allowed": false
+      },
+      "review": {
+        "review_status": "candidate_ready",
+        "review_mode": "external_strict_audit_required",
+        "confidence": "medium_high",
+        "freshness": "mixed",
+        "reviewer": null,
+        "reviewed_at": null,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "risk_threshold_advice_allowed": false,
+        "audit_log": [
+          {
+            "at": "2026-06-12",
+            "actor": "codex",
+            "action": "phase45_layered_risk_candidate_generated",
+            "reason": "Generated from Phase 45 P45-C task queue with professional/regulatory/exchange sources."
+          }
+        ]
+      },
+      "workflow": {
+        "stage": "pending_external_audit",
+        "queue_group": "pending",
+        "source_phase": "45",
+        "source_task_id": "CEK-TA-461",
+        "batch": "P45-C Layered Risk / Credit / Margin",
+        "formal_knowledge_id": null,
+        "formal_knowledge_path": null,
+        "allowed_next_decisions": [
+          "accepted_for_draft",
+          "needs_more_evidence",
+          "rejected",
+          "blocked"
+        ],
+        "forbidden_next_decisions": [
+          "reviewed",
+          "approved",
+          "default_guidance",
+          "hard_gate"
+        ]
+      },
+      "contribution": {
+        "source": "phase45_professional_research",
+        "private_data_removed": true,
+        "project_specific_details_removed": true,
+        "notes": "Generated for external strict audit; no project account, key, position, threshold, or private strategy data included."
+      }
+    },
+    {
+      "schema_version": "1.1.0-candidate",
+      "candidate_id": "cand_20260612_phase45_layered_risk_p45_c_risk03_001",
+      "research_task_id": "P45-C-RISK03",
+      "status": {
+        "review_status": "candidate_ready",
+        "ingestion_decision": "candidate_ready",
+        "decision_reason": "Phase 45 P45-C Layered Risk / Credit / Margin 候选，等待外部严格审计。",
+        "created_at": "2026-06-12",
+        "updated_at": "2026-06-12"
+      },
+      "classification": {
+        "tree_node_id": "kt.risk_management.layered_risk_controls",
+        "canonical_node_id": "kt.risk_management.layered_risk_controls",
+        "tree_path": "CEK-TA / Trading Engineering / Risk Management / Layered Risk Controls",
+        "related_nodes": [
+          "kt.live_execution.audit_trail",
+          "kt.trading_engineering.live_execution.execution_tca",
+          "kt.ai_engineering.database_storage_engineering.runtime_observability_trace"
+        ],
+        "partition_id": "KB_07_RISK_MANAGEMENT",
+        "domain": "risk_management",
+        "subdomain": "layered_risk_controls",
+        "rule_type": "risk_boundary_rule",
+        "claim_type": "max_order_size_price_collar_rule",
+        "used_for": [
+          "trading_ai_project_design_audit",
+          "pre_trade_risk_checklist",
+          "external_project_rag_retrieval",
+          "risk_owner_boundary_review"
+        ],
+        "classification_notes": "P45-C 只补 Layered Risk / Credit / Margin 知识边界；不设置任何 CEK-TA 通用风险阈值，不启用 hard gate。"
+      },
+      "claim": {
+        "claim_id": "claim_p45_c_risk03",
+        "title": "最大订单量和价格 collar 必须独立于策略信号",
+        "statement": "最大订单数量、价格 band/collar、fat-finger 检查和明显错误订单过滤是订单准入与市场完整性控制，必须声明数据源、venue/product 适用范围、拒单/复核行为和 owner；不能把策略信号强度当作绕过价格或数量控制的理由。",
+        "normalized_claim": "phase45_layered_risk.max_order_size_and_price_collar_required.v1",
+        "evidence_summary": "SEC FAQ explains that controls should systematically limit financial exposure, prevent orders beyond credit/capital thresholds, reject orders beyond price/size parameters, and keep financial controls under broker-dealer control.；CME price banding subjects orders to price validation and rejects orders outside the given band to prevent erroneous or market-moving orders.；CME describes pre-trade risk tools including order blocking, cancel open orders, cancel-on-disconnect, self-match prevention, duplicate order checks, and real-time activity monitoring.；FIA best-practice paper covers pre-trade risk management, exchange volatility controls, post-trade analysis, testing, conformance, and system safeguards for automated trading.",
+        "interpretation_notes": "本候选只定义分层风控、信用、保证金和 pre-trade/post-trade owner 边界，不输出风险阈值、交易参数或实盘执行建议。",
+        "claim_strength": "candidate",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general_with_jurisdiction_venue_and_broker_caveats",
+        "asset": "general",
+        "timeframe": "pre_trade_and_intraday_risk_context",
+        "data_granularity": "order_account_strategy_product_venue_margin_risk_events",
+        "project_type": "trading_ai_support_layer",
+        "applies_when": [
+          "外接项目需要设计 pre-trade controls、信用/资本限额、订单量/价格控制、消息节流、保证金/抵押品边界或 post-trade surveillance 分工。",
+          "AI IDE 需要判断风险字段、owner、证据和 gate 位置是否被混淆。",
+          "需要把策略信号、资金/信用约束、交易所控制和风险复核分开建模。"
+        ],
+        "not_applicable_when": [
+          "用户要求具体风险阈值、信用额度、保证金比例、仓位、杠杆、止损止盈或实盘交易动作。",
+          "需要外接 broker、clearing firm、exchange 或账户的实时事实时，应由外接项目事实层提供。",
+          "需要法律合规结论时，应由对应辖区合规/法律 owner 判断。"
+        ],
+        "assumptions": [
+          "Layered Risk Controls 是交易工程设计和审计上下文，不是策略 alpha。",
+          "所有 credit、margin、price band、message-rate 和 surveillance 来源必须声明 venue、broker、clearing、jurisdiction 或 platform caveat。",
+          "候选通过 reviewed 审计前不能进入正式 reviewed 知识库。"
+        ],
+        "limitations": [
+          "SEC Rule 15c3-5 主要适用于美国 broker-dealer market access 语境。",
+          "FIA 是行业最佳实践来源，不替代具体监管、交易所或 broker 规则。",
+          "CME 来源只证明 CME Globex/CME Clearing 相关机制，不得泛化为所有市场。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_title": "SEC Market Access Rule FAQ",
+          "source_url": "https://www.sec.gov/rules-regulations/staff-guidance/trading-markets-frequently-asked-questions/divisionsmarketregfaq-0",
+          "source_type": "regulatory_guidance",
+          "publisher": "U.S. SEC",
+          "reliability": "high",
+          "score": 92,
+          "freshness": "time_sensitive",
+          "evidence_summary": "SEC FAQ explains that controls should systematically limit financial exposure, prevent orders beyond credit/capital thresholds, reject orders beyond price/size parameters, and keep financial controls under broker-dealer control.",
+          "limitations": [
+            "FAQ guidance for SEC Rule 15c3-5; not a source for CEK-TA-specific field names."
+          ],
+          "source_id": "src_001",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "CME Globex Price Banding",
+          "source_url": "https://cmegroupclientsite.atlassian.net/wiki/spaces/EPICSANDBOX/pages/457317722/Limits%2Band%2BBanding",
+          "source_type": "official_exchange_doc",
+          "publisher": "CME Group",
+          "reliability": "medium_high",
+          "score": 84,
+          "freshness": "time_sensitive",
+          "evidence_summary": "CME price banding subjects orders to price validation and rejects orders outside the given band to prevent erroneous or market-moving orders.",
+          "limitations": [
+            "CME documentation; price bands are venue/product specific and not CEK-TA default thresholds."
+          ],
+          "source_id": "src_002",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "CME Globex Pre-Trade Risk Management",
+          "source_url": "https://www.cmegroup.com/solutions/market-access/globex/trade-on-globex/pre-trade-risk-management.html",
+          "source_type": "official_exchange_doc",
+          "publisher": "CME Group",
+          "reliability": "high",
+          "score": 88,
+          "freshness": "time_sensitive",
+          "evidence_summary": "CME describes pre-trade risk tools including order blocking, cancel open orders, cancel-on-disconnect, self-match prevention, duplicate order checks, and real-time activity monitoring.",
+          "limitations": [
+            "CME Globex-specific toolset; not applicable to all venues."
+          ],
+          "source_id": "src_003",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Best Practices for Automated Trading Risk Controls and System Safeguards",
+          "source_url": "https://www.fia.org/sites/default/files/2024-07/FIA_WP_AUTOMATED%20TRADING%20RISK%20CONTROLS_FINAL_0.pdf",
+          "source_type": "professional_body",
+          "publisher": "FIA",
+          "reliability": "high",
+          "score": 90,
+          "freshness": "time_sensitive",
+          "evidence_summary": "FIA best-practice paper covers pre-trade risk management, exchange volatility controls, post-trade analysis, testing, conformance, and system safeguards for automated trading.",
+          "limitations": [
+            "Industry best practices; not a binding rule and not a CEK-TA threshold source."
+          ],
+          "source_id": "src_004",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "high",
+        "score": 88.5,
+        "score_version": "phase45_source_scoring_v1",
+        "primary_source_count": 4,
+        "supporting_source_count": 0,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "正式 reviewed 前必须由外部审计确认 claim 没有超出来源可证明范围。",
+          "监管、交易所、broker 和清算来源必须保留辖区、venue 和产品边界。",
+          "内部字段契约若后续用于 reviewed，需要提供 schema extract 或 contract hash。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "checked_against": [
+          "Phase 37 Risk Management formal reviewed knowledge",
+          "Phase 37 Live Execution formal reviewed knowledge",
+          "Phase 45 Execution TCA / Audit Trail formal reviewed knowledge",
+          "Phase 45 runtime contract"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与现有 formal reviewed 知识的直接冲突；P45-C 只补 P1/P2 分层风控和 owner 边界。",
+        "approval_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "risk_threshold_advice_allowed": false
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 区分 strategy risk、credit/capital limit、margin/collateral、venue price/size controls 和 post-trade surveillance。",
+          "用于生成风险设计 checklist、schema review、RAG 检索上下文和 owner boundary reason code。",
+          "用于检查外接项目方案是否把信用、保证金、pre-trade controls 和 post-trade surveillance 混成单一风险布尔值。"
+        ],
+        "not_allowed": [
+          "不得生成具体风险阈值、信用额度、保证金比例、买卖点、仓位、杠杆、止损止盈或实盘执行建议。",
+          "不得把候选知识当作 approved 或默认指导。",
+          "不得替外接项目启用 hard gate、拒单、停机、撤单或解锁流程。"
+        ]
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "candidate only; pending external strict audit; no reviewed/approved/default/hard gate.",
+        "requires_human_escalation": false,
+        "hidden_from_default_queue": true,
+        "visible_in_default_guidance_queue": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "risk_threshold_advice_allowed": false
+      },
+      "review": {
+        "review_status": "candidate_ready",
+        "review_mode": "external_strict_audit_required",
+        "confidence": "medium_high",
+        "freshness": "mixed",
+        "reviewer": null,
+        "reviewed_at": null,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "risk_threshold_advice_allowed": false,
+        "audit_log": [
+          {
+            "at": "2026-06-12",
+            "actor": "codex",
+            "action": "phase45_layered_risk_candidate_generated",
+            "reason": "Generated from Phase 45 P45-C task queue with professional/regulatory/exchange sources."
+          }
+        ]
+      },
+      "workflow": {
+        "stage": "pending_external_audit",
+        "queue_group": "pending",
+        "source_phase": "45",
+        "source_task_id": "CEK-TA-461",
+        "batch": "P45-C Layered Risk / Credit / Margin",
+        "formal_knowledge_id": null,
+        "formal_knowledge_path": null,
+        "allowed_next_decisions": [
+          "accepted_for_draft",
+          "needs_more_evidence",
+          "rejected",
+          "blocked"
+        ],
+        "forbidden_next_decisions": [
+          "reviewed",
+          "approved",
+          "default_guidance",
+          "hard_gate"
+        ]
+      },
+      "contribution": {
+        "source": "phase45_professional_research",
+        "private_data_removed": true,
+        "project_specific_details_removed": true,
+        "notes": "Generated for external strict audit; no project account, key, position, threshold, or private strategy data included."
+      }
+    },
+    {
+      "schema_version": "1.1.0-candidate",
+      "candidate_id": "cand_20260612_phase45_layered_risk_p45_c_risk04_001",
+      "research_task_id": "P45-C-RISK04",
+      "status": {
+        "review_status": "candidate_ready",
+        "ingestion_decision": "candidate_ready",
+        "decision_reason": "Phase 45 P45-C Layered Risk / Credit / Margin 候选，等待外部严格审计。",
+        "created_at": "2026-06-12",
+        "updated_at": "2026-06-12"
+      },
+      "classification": {
+        "tree_node_id": "kt.risk_management.layered_risk_controls",
+        "canonical_node_id": "kt.risk_management.layered_risk_controls",
+        "tree_path": "CEK-TA / Trading Engineering / Risk Management / Layered Risk Controls",
+        "related_nodes": [
+          "kt.live_execution.audit_trail",
+          "kt.trading_engineering.live_execution.execution_tca",
+          "kt.ai_engineering.database_storage_engineering.runtime_observability_trace"
+        ],
+        "partition_id": "KB_07_RISK_MANAGEMENT",
+        "domain": "risk_management",
+        "subdomain": "layered_risk_controls",
+        "rule_type": "risk_boundary_rule",
+        "claim_type": "message_throttle_cancel_rate_rule",
+        "used_for": [
+          "trading_ai_project_design_audit",
+          "pre_trade_risk_checklist",
+          "external_project_rag_retrieval",
+          "risk_owner_boundary_review"
+        ],
+        "classification_notes": "P45-C 只补 Layered Risk / Credit / Margin 知识边界；不设置任何 CEK-TA 通用风险阈值，不启用 hard gate。"
+      },
+      "claim": {
+        "claim_id": "claim_p45_c_risk04",
+        "title": "消息节流和 cancel-rate controls 必须可审计",
+        "statement": "自动交易系统必须声明消息速率、撤单率、quote/cancel 限制、burst 行为、超限动作和恢复流程；不能只用成交风险指标衡量系统对交易所或市场的消息压力。",
+        "normalized_claim": "phase45_layered_risk.message_throttle_and_cancel_rate_controls.v1",
+        "evidence_summary": "FIA best-practice paper covers pre-trade risk management, exchange volatility controls, post-trade analysis, testing, conformance, and system safeguards for automated trading.；CME messaging controls are designed to protect participants from excessive messaging in iLink order entry.；CME describes pre-trade risk tools including order blocking, cancel open orders, cancel-on-disconnect, self-match prevention, duplicate order checks, and real-time activity monitoring.",
+        "interpretation_notes": "本候选只定义分层风控、信用、保证金和 pre-trade/post-trade owner 边界，不输出风险阈值、交易参数或实盘执行建议。",
+        "claim_strength": "candidate",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general_with_jurisdiction_venue_and_broker_caveats",
+        "asset": "general",
+        "timeframe": "pre_trade_and_intraday_risk_context",
+        "data_granularity": "order_account_strategy_product_venue_margin_risk_events",
+        "project_type": "trading_ai_support_layer",
+        "applies_when": [
+          "外接项目需要设计 pre-trade controls、信用/资本限额、订单量/价格控制、消息节流、保证金/抵押品边界或 post-trade surveillance 分工。",
+          "AI IDE 需要判断风险字段、owner、证据和 gate 位置是否被混淆。",
+          "需要把策略信号、资金/信用约束、交易所控制和风险复核分开建模。"
+        ],
+        "not_applicable_when": [
+          "用户要求具体风险阈值、信用额度、保证金比例、仓位、杠杆、止损止盈或实盘交易动作。",
+          "需要外接 broker、clearing firm、exchange 或账户的实时事实时，应由外接项目事实层提供。",
+          "需要法律合规结论时，应由对应辖区合规/法律 owner 判断。"
+        ],
+        "assumptions": [
+          "Layered Risk Controls 是交易工程设计和审计上下文，不是策略 alpha。",
+          "所有 credit、margin、price band、message-rate 和 surveillance 来源必须声明 venue、broker、clearing、jurisdiction 或 platform caveat。",
+          "候选通过 reviewed 审计前不能进入正式 reviewed 知识库。"
+        ],
+        "limitations": [
+          "SEC Rule 15c3-5 主要适用于美国 broker-dealer market access 语境。",
+          "FIA 是行业最佳实践来源，不替代具体监管、交易所或 broker 规则。",
+          "CME 来源只证明 CME Globex/CME Clearing 相关机制，不得泛化为所有市场。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_title": "Best Practices for Automated Trading Risk Controls and System Safeguards",
+          "source_url": "https://www.fia.org/sites/default/files/2024-07/FIA_WP_AUTOMATED%20TRADING%20RISK%20CONTROLS_FINAL_0.pdf",
+          "source_type": "professional_body",
+          "publisher": "FIA",
+          "reliability": "high",
+          "score": 90,
+          "freshness": "time_sensitive",
+          "evidence_summary": "FIA best-practice paper covers pre-trade risk management, exchange volatility controls, post-trade analysis, testing, conformance, and system safeguards for automated trading.",
+          "limitations": [
+            "Industry best practices; not a binding rule and not a CEK-TA threshold source."
+          ],
+          "source_id": "src_001",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "CME Globex Messaging Controls",
+          "source_url": "https://cmegroupclientsite.atlassian.net/wiki/spaces/EPICSANDBOX/pages/457317540/Messaging%2BControls",
+          "source_type": "official_exchange_doc",
+          "publisher": "CME Group",
+          "reliability": "medium_high",
+          "score": 84,
+          "freshness": "time_sensitive",
+          "evidence_summary": "CME messaging controls are designed to protect participants from excessive messaging in iLink order entry.",
+          "limitations": [
+            "CME iLink context; not a universal throttle/cancel-rate threshold source."
+          ],
+          "source_id": "src_002",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "CME Globex Pre-Trade Risk Management",
+          "source_url": "https://www.cmegroup.com/solutions/market-access/globex/trade-on-globex/pre-trade-risk-management.html",
+          "source_type": "official_exchange_doc",
+          "publisher": "CME Group",
+          "reliability": "high",
+          "score": 88,
+          "freshness": "time_sensitive",
+          "evidence_summary": "CME describes pre-trade risk tools including order blocking, cancel open orders, cancel-on-disconnect, self-match prevention, duplicate order checks, and real-time activity monitoring.",
+          "limitations": [
+            "CME Globex-specific toolset; not applicable to all venues."
+          ],
+          "source_id": "src_003",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "high",
+        "score": 87.33,
+        "score_version": "phase45_source_scoring_v1",
+        "primary_source_count": 3,
+        "supporting_source_count": 0,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "正式 reviewed 前必须由外部审计确认 claim 没有超出来源可证明范围。",
+          "监管、交易所、broker 和清算来源必须保留辖区、venue 和产品边界。",
+          "内部字段契约若后续用于 reviewed，需要提供 schema extract 或 contract hash。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "checked_against": [
+          "Phase 37 Risk Management formal reviewed knowledge",
+          "Phase 37 Live Execution formal reviewed knowledge",
+          "Phase 45 Execution TCA / Audit Trail formal reviewed knowledge",
+          "Phase 45 runtime contract"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与现有 formal reviewed 知识的直接冲突；P45-C 只补 P1/P2 分层风控和 owner 边界。",
+        "approval_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "risk_threshold_advice_allowed": false
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 区分 strategy risk、credit/capital limit、margin/collateral、venue price/size controls 和 post-trade surveillance。",
+          "用于生成风险设计 checklist、schema review、RAG 检索上下文和 owner boundary reason code。",
+          "用于检查外接项目方案是否把信用、保证金、pre-trade controls 和 post-trade surveillance 混成单一风险布尔值。"
+        ],
+        "not_allowed": [
+          "不得生成具体风险阈值、信用额度、保证金比例、买卖点、仓位、杠杆、止损止盈或实盘执行建议。",
+          "不得把候选知识当作 approved 或默认指导。",
+          "不得替外接项目启用 hard gate、拒单、停机、撤单或解锁流程。"
+        ]
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "candidate only; pending external strict audit; no reviewed/approved/default/hard gate.",
+        "requires_human_escalation": false,
+        "hidden_from_default_queue": true,
+        "visible_in_default_guidance_queue": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "risk_threshold_advice_allowed": false
+      },
+      "review": {
+        "review_status": "candidate_ready",
+        "review_mode": "external_strict_audit_required",
+        "confidence": "medium_high",
+        "freshness": "mixed",
+        "reviewer": null,
+        "reviewed_at": null,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "risk_threshold_advice_allowed": false,
+        "audit_log": [
+          {
+            "at": "2026-06-12",
+            "actor": "codex",
+            "action": "phase45_layered_risk_candidate_generated",
+            "reason": "Generated from Phase 45 P45-C task queue with professional/regulatory/exchange sources."
+          }
+        ]
+      },
+      "workflow": {
+        "stage": "pending_external_audit",
+        "queue_group": "pending",
+        "source_phase": "45",
+        "source_task_id": "CEK-TA-461",
+        "batch": "P45-C Layered Risk / Credit / Margin",
+        "formal_knowledge_id": null,
+        "formal_knowledge_path": null,
+        "allowed_next_decisions": [
+          "accepted_for_draft",
+          "needs_more_evidence",
+          "rejected",
+          "blocked"
+        ],
+        "forbidden_next_decisions": [
+          "reviewed",
+          "approved",
+          "default_guidance",
+          "hard_gate"
+        ]
+      },
+      "contribution": {
+        "source": "phase45_professional_research",
+        "private_data_removed": true,
+        "project_specific_details_removed": true,
+        "notes": "Generated for external strict audit; no project account, key, position, threshold, or private strategy data included."
+      }
+    },
+    {
+      "schema_version": "1.1.0-candidate",
+      "candidate_id": "cand_20260612_phase45_layered_risk_p45_c_risk05_001",
+      "research_task_id": "P45-C-RISK05",
+      "status": {
+        "review_status": "candidate_ready",
+        "ingestion_decision": "candidate_ready",
+        "decision_reason": "Phase 45 P45-C Layered Risk / Credit / Margin 候选，等待外部严格审计。",
+        "created_at": "2026-06-12",
+        "updated_at": "2026-06-12"
+      },
+      "classification": {
+        "tree_node_id": "kt.risk_management.layered_risk_controls",
+        "canonical_node_id": "kt.risk_management.layered_risk_controls",
+        "tree_path": "CEK-TA / Trading Engineering / Risk Management / Layered Risk Controls",
+        "related_nodes": [
+          "kt.live_execution.audit_trail",
+          "kt.trading_engineering.live_execution.execution_tca",
+          "kt.ai_engineering.database_storage_engineering.runtime_observability_trace"
+        ],
+        "partition_id": "KB_07_RISK_MANAGEMENT",
+        "domain": "risk_management",
+        "subdomain": "layered_risk_controls",
+        "rule_type": "risk_boundary_rule",
+        "claim_type": "margin_collateral_available_funds_boundary_rule",
+        "used_for": [
+          "trading_ai_project_design_audit",
+          "pre_trade_risk_checklist",
+          "external_project_rag_retrieval",
+          "risk_owner_boundary_review"
+        ],
+        "classification_notes": "P45-C 只补 Layered Risk / Credit / Margin 知识边界；不设置任何 CEK-TA 通用风险阈值，不启用 hard gate。"
+      },
+      "claim": {
+        "claim_id": "claim_p45_c_risk05",
+        "title": "margin、collateral 和 available funds 必须分开",
+        "statement": "保证金、抵押品、可用资金、清算所 performance bond、broker buying power 和策略资金预算是不同层级的约束；交易 AI 不得把任一字段默认为可交易现金，也不得在缺少 point-in-time margin/collateral evidence 时声称订单具备资金充足性。",
+        "normalized_claim": "phase45_layered_risk.margin_collateral_available_funds_boundary.v1",
+        "evidence_summary": "CME SPAN is a portfolio-risk methodology for calculating performance bond requirements using risk arrays and scenario-based portfolio loss estimates.；CME explains performance bonds/margins as deposits held at CME Clearing to ensure clearing members meet obligations; requirements vary by product and volatility.；CME Globex Credit Controls provide pre-execution controls for clearing-firm risk administrators to set exposure and maximum quantity limits for Globex order/trade activity.",
+        "interpretation_notes": "本候选只定义分层风控、信用、保证金和 pre-trade/post-trade owner 边界，不输出风险阈值、交易参数或实盘执行建议。",
+        "claim_strength": "candidate",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general_with_jurisdiction_venue_and_broker_caveats",
+        "asset": "general",
+        "timeframe": "pre_trade_and_intraday_risk_context",
+        "data_granularity": "order_account_strategy_product_venue_margin_risk_events",
+        "project_type": "trading_ai_support_layer",
+        "applies_when": [
+          "外接项目需要设计 pre-trade controls、信用/资本限额、订单量/价格控制、消息节流、保证金/抵押品边界或 post-trade surveillance 分工。",
+          "AI IDE 需要判断风险字段、owner、证据和 gate 位置是否被混淆。",
+          "需要把策略信号、资金/信用约束、交易所控制和风险复核分开建模。"
+        ],
+        "not_applicable_when": [
+          "用户要求具体风险阈值、信用额度、保证金比例、仓位、杠杆、止损止盈或实盘交易动作。",
+          "需要外接 broker、clearing firm、exchange 或账户的实时事实时，应由外接项目事实层提供。",
+          "需要法律合规结论时，应由对应辖区合规/法律 owner 判断。"
+        ],
+        "assumptions": [
+          "Layered Risk Controls 是交易工程设计和审计上下文，不是策略 alpha。",
+          "所有 credit、margin、price band、message-rate 和 surveillance 来源必须声明 venue、broker、clearing、jurisdiction 或 platform caveat。",
+          "候选通过 reviewed 审计前不能进入正式 reviewed 知识库。"
+        ],
+        "limitations": [
+          "SEC Rule 15c3-5 主要适用于美国 broker-dealer market access 语境。",
+          "FIA 是行业最佳实践来源，不替代具体监管、交易所或 broker 规则。",
+          "CME 来源只证明 CME Globex/CME Clearing 相关机制，不得泛化为所有市场。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_title": "CME SPAN Methodology Overview",
+          "source_url": "https://www.cmegroup.com/solutions/risk-management/performance-bonds-margins/span-methodology-overview.html",
+          "source_type": "official_exchange_doc",
+          "publisher": "CME Group",
+          "reliability": "high",
+          "score": 88,
+          "freshness": "time_sensitive",
+          "evidence_summary": "CME SPAN is a portfolio-risk methodology for calculating performance bond requirements using risk arrays and scenario-based portfolio loss estimates.",
+          "limitations": [
+            "CME margin methodology source; not a CEK-TA available-funds execution rule."
+          ],
+          "source_id": "src_001",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "CME Performance Bonds/Margins FAQ",
+          "source_url": "https://www.cmegroup.com/solutions/risk-management/performance-bonds-margins/faq-performance-bonds-margins.html",
+          "source_type": "official_exchange_doc",
+          "publisher": "CME Group",
+          "reliability": "high",
+          "score": 86,
+          "freshness": "time_sensitive",
+          "evidence_summary": "CME explains performance bonds/margins as deposits held at CME Clearing to ensure clearing members meet obligations; requirements vary by product and volatility.",
+          "limitations": [
+            "CME clearing source; not broker-specific cash availability or crypto collateral policy."
+          ],
+          "source_id": "src_002",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "CME Globex Credit Controls",
+          "source_url": "https://www.cmegroup.com/tools-information/webhelp/globex-credit-controls/Content/CME-Globex-Credit-Controls-Management.html",
+          "source_type": "official_exchange_doc",
+          "publisher": "CME Group",
+          "reliability": "high",
+          "score": 88,
+          "freshness": "time_sensitive",
+          "evidence_summary": "CME Globex Credit Controls provide pre-execution controls for clearing-firm risk administrators to set exposure and maximum quantity limits for Globex order/trade activity.",
+          "limitations": [
+            "CME clearing and Globex context; not a universal credit framework."
+          ],
+          "source_id": "src_003",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "high",
+        "score": 87.33,
+        "score_version": "phase45_source_scoring_v1",
+        "primary_source_count": 3,
+        "supporting_source_count": 0,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "正式 reviewed 前必须由外部审计确认 claim 没有超出来源可证明范围。",
+          "监管、交易所、broker 和清算来源必须保留辖区、venue 和产品边界。",
+          "内部字段契约若后续用于 reviewed，需要提供 schema extract 或 contract hash。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "checked_against": [
+          "Phase 37 Risk Management formal reviewed knowledge",
+          "Phase 37 Live Execution formal reviewed knowledge",
+          "Phase 45 Execution TCA / Audit Trail formal reviewed knowledge",
+          "Phase 45 runtime contract"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与现有 formal reviewed 知识的直接冲突；P45-C 只补 P1/P2 分层风控和 owner 边界。",
+        "approval_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "risk_threshold_advice_allowed": false
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 区分 strategy risk、credit/capital limit、margin/collateral、venue price/size controls 和 post-trade surveillance。",
+          "用于生成风险设计 checklist、schema review、RAG 检索上下文和 owner boundary reason code。",
+          "用于检查外接项目方案是否把信用、保证金、pre-trade controls 和 post-trade surveillance 混成单一风险布尔值。"
+        ],
+        "not_allowed": [
+          "不得生成具体风险阈值、信用额度、保证金比例、买卖点、仓位、杠杆、止损止盈或实盘执行建议。",
+          "不得把候选知识当作 approved 或默认指导。",
+          "不得替外接项目启用 hard gate、拒单、停机、撤单或解锁流程。"
+        ]
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "candidate only; pending external strict audit; no reviewed/approved/default/hard gate.",
+        "requires_human_escalation": false,
+        "hidden_from_default_queue": true,
+        "visible_in_default_guidance_queue": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "risk_threshold_advice_allowed": false
+      },
+      "review": {
+        "review_status": "candidate_ready",
+        "review_mode": "external_strict_audit_required",
+        "confidence": "medium_high",
+        "freshness": "mixed",
+        "reviewer": null,
+        "reviewed_at": null,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "risk_threshold_advice_allowed": false,
+        "audit_log": [
+          {
+            "at": "2026-06-12",
+            "actor": "codex",
+            "action": "phase45_layered_risk_candidate_generated",
+            "reason": "Generated from Phase 45 P45-C task queue with professional/regulatory/exchange sources."
+          }
+        ]
+      },
+      "workflow": {
+        "stage": "pending_external_audit",
+        "queue_group": "pending",
+        "source_phase": "45",
+        "source_task_id": "CEK-TA-461",
+        "batch": "P45-C Layered Risk / Credit / Margin",
+        "formal_knowledge_id": null,
+        "formal_knowledge_path": null,
+        "allowed_next_decisions": [
+          "accepted_for_draft",
+          "needs_more_evidence",
+          "rejected",
+          "blocked"
+        ],
+        "forbidden_next_decisions": [
+          "reviewed",
+          "approved",
+          "default_guidance",
+          "hard_gate"
+        ]
+      },
+      "contribution": {
+        "source": "phase45_professional_research",
+        "private_data_removed": true,
+        "project_specific_details_removed": true,
+        "notes": "Generated for external strict audit; no project account, key, position, threshold, or private strategy data included."
+      }
+    },
+    {
+      "schema_version": "1.1.0-candidate",
+      "candidate_id": "cand_20260612_phase45_layered_risk_p45_c_risk06_001",
+      "research_task_id": "P45-C-RISK06",
+      "status": {
+        "review_status": "candidate_ready",
+        "ingestion_decision": "candidate_ready",
+        "decision_reason": "Phase 45 P45-C Layered Risk / Credit / Margin 候选，等待外部严格审计。",
+        "created_at": "2026-06-12",
+        "updated_at": "2026-06-12"
+      },
+      "classification": {
+        "tree_node_id": "kt.risk_management.layered_risk_controls",
+        "canonical_node_id": "kt.risk_management.layered_risk_controls",
+        "tree_path": "CEK-TA / Trading Engineering / Risk Management / Layered Risk Controls",
+        "related_nodes": [
+          "kt.live_execution.audit_trail",
+          "kt.trading_engineering.live_execution.execution_tca",
+          "kt.ai_engineering.database_storage_engineering.runtime_observability_trace"
+        ],
+        "partition_id": "KB_07_RISK_MANAGEMENT",
+        "domain": "risk_management",
+        "subdomain": "layered_risk_controls",
+        "rule_type": "risk_boundary_rule",
+        "claim_type": "post_trade_surveillance_boundary_rule",
+        "used_for": [
+          "trading_ai_project_design_audit",
+          "pre_trade_risk_checklist",
+          "external_project_rag_retrieval",
+          "risk_owner_boundary_review"
+        ],
+        "classification_notes": "P45-C 只补 Layered Risk / Credit / Margin 知识边界；不设置任何 CEK-TA 通用风险阈值，不启用 hard gate。"
+      },
+      "claim": {
+        "claim_id": "claim_p45_c_risk06",
+        "title": "post-trade surveillance 不能替代 pre-trade gate",
+        "statement": "post-trade surveillance、execution report review、异常复盘和合规监控只能发现或解释已发生风险，不能替代订单进入市场前的 pre-trade controls；若外接项目需要阻断订单，必须由 Risk Management / Live Execution owner 定义 deterministic gate。",
+        "normalized_claim": "phase45_layered_risk.post_trade_surveillance_not_pre_trade_gate.v1",
+        "evidence_summary": "SEC FAQ explains that controls should systematically limit financial exposure, prevent orders beyond credit/capital thresholds, reject orders beyond price/size parameters, and keep financial controls under broker-dealer control.；FIA best-practice paper covers pre-trade risk management, exchange volatility controls, post-trade analysis, testing, conformance, and system safeguards for automated trading.；CME describes pre-trade risk tools including order blocking, cancel open orders, cancel-on-disconnect, self-match prevention, duplicate order checks, and real-time activity monitoring.",
+        "interpretation_notes": "本候选只定义分层风控、信用、保证金和 pre-trade/post-trade owner 边界，不输出风险阈值、交易参数或实盘执行建议。",
+        "claim_strength": "candidate",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general_with_jurisdiction_venue_and_broker_caveats",
+        "asset": "general",
+        "timeframe": "pre_trade_and_intraday_risk_context",
+        "data_granularity": "order_account_strategy_product_venue_margin_risk_events",
+        "project_type": "trading_ai_support_layer",
+        "applies_when": [
+          "外接项目需要设计 pre-trade controls、信用/资本限额、订单量/价格控制、消息节流、保证金/抵押品边界或 post-trade surveillance 分工。",
+          "AI IDE 需要判断风险字段、owner、证据和 gate 位置是否被混淆。",
+          "需要把策略信号、资金/信用约束、交易所控制和风险复核分开建模。"
+        ],
+        "not_applicable_when": [
+          "用户要求具体风险阈值、信用额度、保证金比例、仓位、杠杆、止损止盈或实盘交易动作。",
+          "需要外接 broker、clearing firm、exchange 或账户的实时事实时，应由外接项目事实层提供。",
+          "需要法律合规结论时，应由对应辖区合规/法律 owner 判断。"
+        ],
+        "assumptions": [
+          "Layered Risk Controls 是交易工程设计和审计上下文，不是策略 alpha。",
+          "所有 credit、margin、price band、message-rate 和 surveillance 来源必须声明 venue、broker、clearing、jurisdiction 或 platform caveat。",
+          "候选通过 reviewed 审计前不能进入正式 reviewed 知识库。"
+        ],
+        "limitations": [
+          "SEC Rule 15c3-5 主要适用于美国 broker-dealer market access 语境。",
+          "FIA 是行业最佳实践来源，不替代具体监管、交易所或 broker 规则。",
+          "CME 来源只证明 CME Globex/CME Clearing 相关机制，不得泛化为所有市场。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_title": "SEC Market Access Rule FAQ",
+          "source_url": "https://www.sec.gov/rules-regulations/staff-guidance/trading-markets-frequently-asked-questions/divisionsmarketregfaq-0",
+          "source_type": "regulatory_guidance",
+          "publisher": "U.S. SEC",
+          "reliability": "high",
+          "score": 92,
+          "freshness": "time_sensitive",
+          "evidence_summary": "SEC FAQ explains that controls should systematically limit financial exposure, prevent orders beyond credit/capital thresholds, reject orders beyond price/size parameters, and keep financial controls under broker-dealer control.",
+          "limitations": [
+            "FAQ guidance for SEC Rule 15c3-5; not a source for CEK-TA-specific field names."
+          ],
+          "source_id": "src_001",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Best Practices for Automated Trading Risk Controls and System Safeguards",
+          "source_url": "https://www.fia.org/sites/default/files/2024-07/FIA_WP_AUTOMATED%20TRADING%20RISK%20CONTROLS_FINAL_0.pdf",
+          "source_type": "professional_body",
+          "publisher": "FIA",
+          "reliability": "high",
+          "score": 90,
+          "freshness": "time_sensitive",
+          "evidence_summary": "FIA best-practice paper covers pre-trade risk management, exchange volatility controls, post-trade analysis, testing, conformance, and system safeguards for automated trading.",
+          "limitations": [
+            "Industry best practices; not a binding rule and not a CEK-TA threshold source."
+          ],
+          "source_id": "src_002",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "CME Globex Pre-Trade Risk Management",
+          "source_url": "https://www.cmegroup.com/solutions/market-access/globex/trade-on-globex/pre-trade-risk-management.html",
+          "source_type": "official_exchange_doc",
+          "publisher": "CME Group",
+          "reliability": "high",
+          "score": 88,
+          "freshness": "time_sensitive",
+          "evidence_summary": "CME describes pre-trade risk tools including order blocking, cancel open orders, cancel-on-disconnect, self-match prevention, duplicate order checks, and real-time activity monitoring.",
+          "limitations": [
+            "CME Globex-specific toolset; not applicable to all venues."
+          ],
+          "source_id": "src_003",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "high",
+        "score": 90.0,
+        "score_version": "phase45_source_scoring_v1",
+        "primary_source_count": 3,
+        "supporting_source_count": 0,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "正式 reviewed 前必须由外部审计确认 claim 没有超出来源可证明范围。",
+          "监管、交易所、broker 和清算来源必须保留辖区、venue 和产品边界。",
+          "内部字段契约若后续用于 reviewed，需要提供 schema extract 或 contract hash。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "checked_against": [
+          "Phase 37 Risk Management formal reviewed knowledge",
+          "Phase 37 Live Execution formal reviewed knowledge",
+          "Phase 45 Execution TCA / Audit Trail formal reviewed knowledge",
+          "Phase 45 runtime contract"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与现有 formal reviewed 知识的直接冲突；P45-C 只补 P1/P2 分层风控和 owner 边界。",
+        "approval_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "risk_threshold_advice_allowed": false
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 区分 strategy risk、credit/capital limit、margin/collateral、venue price/size controls 和 post-trade surveillance。",
+          "用于生成风险设计 checklist、schema review、RAG 检索上下文和 owner boundary reason code。",
+          "用于检查外接项目方案是否把信用、保证金、pre-trade controls 和 post-trade surveillance 混成单一风险布尔值。"
+        ],
+        "not_allowed": [
+          "不得生成具体风险阈值、信用额度、保证金比例、买卖点、仓位、杠杆、止损止盈或实盘执行建议。",
+          "不得把候选知识当作 approved 或默认指导。",
+          "不得替外接项目启用 hard gate、拒单、停机、撤单或解锁流程。"
+        ]
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "candidate only; pending external strict audit; no reviewed/approved/default/hard gate.",
+        "requires_human_escalation": false,
+        "hidden_from_default_queue": true,
+        "visible_in_default_guidance_queue": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "risk_threshold_advice_allowed": false
+      },
+      "review": {
+        "review_status": "candidate_ready",
+        "review_mode": "external_strict_audit_required",
+        "confidence": "medium_high",
+        "freshness": "mixed",
+        "reviewer": null,
+        "reviewed_at": null,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "risk_threshold_advice_allowed": false,
+        "audit_log": [
+          {
+            "at": "2026-06-12",
+            "actor": "codex",
+            "action": "phase45_layered_risk_candidate_generated",
+            "reason": "Generated from Phase 45 P45-C task queue with professional/regulatory/exchange sources."
+          }
+        ]
+      },
+      "workflow": {
+        "stage": "pending_external_audit",
+        "queue_group": "pending",
+        "source_phase": "45",
+        "source_task_id": "CEK-TA-461",
+        "batch": "P45-C Layered Risk / Credit / Margin",
+        "formal_knowledge_id": null,
+        "formal_knowledge_path": null,
+        "allowed_next_decisions": [
+          "accepted_for_draft",
+          "needs_more_evidence",
+          "rejected",
+          "blocked"
+        ],
+        "forbidden_next_decisions": [
+          "reviewed",
+          "approved",
+          "default_guidance",
+          "hard_gate"
+        ]
+      },
+      "contribution": {
+        "source": "phase45_professional_research",
+        "private_data_removed": true,
+        "project_specific_details_removed": true,
+        "notes": "Generated for external strict audit; no project account, key, position, threshold, or private strategy data included."
+      }
+    }
+  ]
+}

@@ -1,0 +1,723 @@
+{
+  "audit_result_id": "audit_result_phase37_backtest_candidate_audit_20260611_strict_v1",
+  "auditor": "external_ai_strict_audit_from_user_report",
+  "audited_at": "2026-06-11",
+  "package_id": "phase37_backtest_candidate_audit_package_20260611",
+  "quality_gate": {
+    "pass": true,
+    "reason": "12 条 Backtest 候选严格审计均 accepted_for_draft；本轮不允许 reviewed/approved/default/hard gate。"
+  },
+  "summary": {
+    "total": 12,
+    "accepted_for_draft": 12,
+    "needs_more_evidence": 0,
+    "rejected": 0,
+    "blocked": 0
+  },
+  "hard_boundaries": {
+    "reviewed_allowed": false,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "trade_execution_advice_allowed": false
+  },
+  "global_patch_notes": {
+    "source": [
+      "平台文档只能作为实现语义示例，不得泛化为所有 backtest engine。",
+      "B03 需补 survivorship bias / delisted assets / historical universe / contract expiry-rollover 的直接来源。",
+      "B10 需补 profit factor、drawdown、收益回撤比的专业定义和局限来源。",
+      "B11/B12 需补 CEK-TA backtest_run_manifest 或 reproducibility_package schema。"
+    ],
+    "content": [
+      "把 block/阻断改写为 evidence invalidation：该回测不得作为策略有效性证据。",
+      "所有回测结论必须声明数据版本、策略版本、参数、成本、滑点、fill model、样本划分和评估时间。",
+      "gross result、net result、research result、validation result 必须分开。"
+    ],
+    "boundary": [
+      "不得创建 reviewed、approved、default guidance 或 hard gate。",
+      "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+      "样本外、walk-forward 或成本建模通过，也不等于实盘许可。"
+    ],
+    "conflict": [
+      "与 Quant Foundation、Data Engineering、Market Microstructure、Replay、Live Execution、Risk Management、AI Engineering 只做引用和 owner 边界拆分。"
+    ]
+  },
+  "candidate_results": [
+    {
+      "candidate_id": "cand_20260611_phase37_backtest_cost_model_required_001",
+      "research_task_id": "P37-E-B07",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "成本模型边界成立；CFA execution/TCA 与 QuantConnect fee/slippage/fill 文档支持交易成本、market impact、opportunity cost、费用、滑点和成交模型语义。"
+      ],
+      "required_followups": [],
+      "patch_notes": {
+        "source": [
+          "平台文档只能作为实现语义示例，不得泛化为所有 backtest engine。",
+          "B03 需补 survivorship bias / delisted assets / historical universe / contract expiry-rollover 的直接来源。",
+          "B10 需补 profit factor、drawdown、收益回撤比的专业定义和局限来源。",
+          "B11/B12 需补 CEK-TA backtest_run_manifest 或 reproducibility_package schema。"
+        ],
+        "content": [
+          "把 block/阻断改写为 evidence invalidation：该回测不得作为策略有效性证据。",
+          "所有回测结论必须声明数据版本、策略版本、参数、成本、滑点、fill model、样本划分和评估时间。",
+          "gross result、net result、research result、validation result 必须分开。"
+        ],
+        "boundary": [
+          "不得创建 reviewed、approved、default guidance 或 hard gate。",
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+          "样本外、walk-forward 或成本建模通过，也不等于实盘许可。"
+        ],
+        "conflict": [
+          "与 Quant Foundation、Data Engineering、Market Microstructure、Replay、Live Execution、Risk Management、AI Engineering 只做引用和 owner 边界拆分。"
+        ]
+      },
+      "source_assessment": {
+        "source_count": 4,
+        "missing_sources": [],
+        "weak_sources": [
+          "平台/框架文档只能作为实现示例"
+        ],
+        "recommended_extra_sources": []
+      },
+      "classification_assessment": {
+        "correct_partition": true,
+        "expected_partition": "KB_04_BACKTEST",
+        "correct_tree_node": true,
+        "notes": "归类到 Trading Engineering / Backtest；其他分支只做引用和 owner 边界拆分。"
+      },
+      "boundary_assessment": {
+        "no_trade_advice": true,
+        "candidate_only": true,
+        "requires_external_project_facts": true,
+        "notes": "本轮不能 reviewed/approved/default/hard gate，也不能产生交易执行建议。"
+      }
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_backtest_data_leakage_block_001",
+      "research_task_id": "P37-E-B02",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "数据泄漏不得进入特征或规则选择流程；该结果不得作为有效性证据，但不得解释为 hard gate。"
+      ],
+      "required_followups": [],
+      "patch_notes": {
+        "source": [
+          "平台文档只能作为实现语义示例，不得泛化为所有 backtest engine。",
+          "B03 需补 survivorship bias / delisted assets / historical universe / contract expiry-rollover 的直接来源。",
+          "B10 需补 profit factor、drawdown、收益回撤比的专业定义和局限来源。",
+          "B11/B12 需补 CEK-TA backtest_run_manifest 或 reproducibility_package schema。"
+        ],
+        "content": [
+          "把 block/阻断改写为 evidence invalidation：该回测不得作为策略有效性证据。",
+          "所有回测结论必须声明数据版本、策略版本、参数、成本、滑点、fill model、样本划分和评估时间。",
+          "gross result、net result、research result、validation result 必须分开。",
+          "B01/B02 的 block/阻断只能表示证据失效，不得被机器消费为 hard gate。"
+        ],
+        "boundary": [
+          "不得创建 reviewed、approved、default guidance 或 hard gate。",
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+          "样本外、walk-forward 或成本建模通过，也不等于实盘许可。"
+        ],
+        "conflict": [
+          "与 Quant Foundation、Data Engineering、Market Microstructure、Replay、Live Execution、Risk Management、AI Engineering 只做引用和 owner 边界拆分。"
+        ]
+      },
+      "source_assessment": {
+        "source_count": 4,
+        "missing_sources": [],
+        "weak_sources": [],
+        "recommended_extra_sources": []
+      },
+      "classification_assessment": {
+        "correct_partition": true,
+        "expected_partition": "KB_04_BACKTEST",
+        "correct_tree_node": true,
+        "notes": "归类到 Trading Engineering / Backtest；其他分支只做引用和 owner 边界拆分。"
+      },
+      "boundary_assessment": {
+        "no_trade_advice": true,
+        "candidate_only": true,
+        "requires_external_project_facts": true,
+        "notes": "本轮不能 reviewed/approved/default/hard gate，也不能产生交易执行建议。"
+      }
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_backtest_lookahead_bias_block_001",
+      "research_task_id": "P37-E-B01",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "lookahead bias 破坏 decision_time 可见性；回测结果不能作为策略有效性证据。"
+      ],
+      "required_followups": [
+        "reviewed 前补 point-in-time / available_time / bar availability 来源。"
+      ],
+      "patch_notes": {
+        "source": [
+          "平台文档只能作为实现语义示例，不得泛化为所有 backtest engine。",
+          "B03 需补 survivorship bias / delisted assets / historical universe / contract expiry-rollover 的直接来源。",
+          "B10 需补 profit factor、drawdown、收益回撤比的专业定义和局限来源。",
+          "B11/B12 需补 CEK-TA backtest_run_manifest 或 reproducibility_package schema。"
+        ],
+        "content": [
+          "把 block/阻断改写为 evidence invalidation：该回测不得作为策略有效性证据。",
+          "所有回测结论必须声明数据版本、策略版本、参数、成本、滑点、fill model、样本划分和评估时间。",
+          "gross result、net result、research result、validation result 必须分开。",
+          "B01/B02 的 block/阻断只能表示证据失效，不得被机器消费为 hard gate。"
+        ],
+        "boundary": [
+          "不得创建 reviewed、approved、default guidance 或 hard gate。",
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+          "样本外、walk-forward 或成本建模通过，也不等于实盘许可。"
+        ],
+        "conflict": [
+          "与 Quant Foundation、Data Engineering、Market Microstructure、Replay、Live Execution、Risk Management、AI Engineering 只做引用和 owner 边界拆分。"
+        ]
+      },
+      "source_assessment": {
+        "source_count": 4,
+        "missing_sources": [
+          "reviewed 前补 point-in-time / available_time / bar availability 来源。"
+        ],
+        "weak_sources": [],
+        "recommended_extra_sources": [
+          "reviewed 前补 point-in-time / available_time / bar availability 来源。"
+        ]
+      },
+      "classification_assessment": {
+        "correct_partition": true,
+        "expected_partition": "KB_04_BACKTEST",
+        "correct_tree_node": true,
+        "notes": "归类到 Trading Engineering / Backtest；其他分支只做引用和 owner 边界拆分。"
+      },
+      "boundary_assessment": {
+        "no_trade_advice": true,
+        "candidate_only": true,
+        "requires_external_project_facts": true,
+        "notes": "本轮不能 reviewed/approved/default/hard gate，也不能产生交易执行建议。"
+      }
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_backtest_metric_interpretation_boundary_001",
+      "research_task_id": "P37-E-B09",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "Sharpe、Sortino、profit factor、win rate、drawdown、turnover 等指标必须结合成本、样本、交易次数、尾部风险、非正态与选择偏差解释。"
+      ],
+      "required_followups": [],
+      "patch_notes": {
+        "source": [
+          "平台文档只能作为实现语义示例，不得泛化为所有 backtest engine。",
+          "B03 需补 survivorship bias / delisted assets / historical universe / contract expiry-rollover 的直接来源。",
+          "B10 需补 profit factor、drawdown、收益回撤比的专业定义和局限来源。",
+          "B11/B12 需补 CEK-TA backtest_run_manifest 或 reproducibility_package schema。"
+        ],
+        "content": [
+          "把 block/阻断改写为 evidence invalidation：该回测不得作为策略有效性证据。",
+          "所有回测结论必须声明数据版本、策略版本、参数、成本、滑点、fill model、样本划分和评估时间。",
+          "gross result、net result、research result、validation result 必须分开。"
+        ],
+        "boundary": [
+          "不得创建 reviewed、approved、default guidance 或 hard gate。",
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+          "样本外、walk-forward 或成本建模通过，也不等于实盘许可。"
+        ],
+        "conflict": [
+          "与 Quant Foundation、Data Engineering、Market Microstructure、Replay、Live Execution、Risk Management、AI Engineering 只做引用和 owner 边界拆分。"
+        ]
+      },
+      "source_assessment": {
+        "source_count": 4,
+        "missing_sources": [],
+        "weak_sources": [],
+        "recommended_extra_sources": []
+      },
+      "classification_assessment": {
+        "correct_partition": true,
+        "expected_partition": "KB_04_BACKTEST",
+        "correct_tree_node": true,
+        "notes": "归类到 Trading Engineering / Backtest；其他分支只做引用和 owner 边界拆分。"
+      },
+      "boundary_assessment": {
+        "no_trade_advice": true,
+        "candidate_only": true,
+        "requires_external_project_facts": true,
+        "notes": "本轮不能 reviewed/approved/default/hard gate，也不能产生交易执行建议。"
+      }
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_backtest_out_of_sample_required_001",
+      "research_task_id": "P37-E-B06",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "样本内表现不能单独证明策略有效性；样本外、时间后推或独立周期验证边界成立。"
+      ],
+      "required_followups": [],
+      "patch_notes": {
+        "source": [
+          "平台文档只能作为实现语义示例，不得泛化为所有 backtest engine。",
+          "B03 需补 survivorship bias / delisted assets / historical universe / contract expiry-rollover 的直接来源。",
+          "B10 需补 profit factor、drawdown、收益回撤比的专业定义和局限来源。",
+          "B11/B12 需补 CEK-TA backtest_run_manifest 或 reproducibility_package schema。"
+        ],
+        "content": [
+          "把 block/阻断改写为 evidence invalidation：该回测不得作为策略有效性证据。",
+          "所有回测结论必须声明数据版本、策略版本、参数、成本、滑点、fill model、样本划分和评估时间。",
+          "gross result、net result、research result、validation result 必须分开。"
+        ],
+        "boundary": [
+          "不得创建 reviewed、approved、default guidance 或 hard gate。",
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+          "样本外、walk-forward 或成本建模通过，也不等于实盘许可。"
+        ],
+        "conflict": [
+          "与 Quant Foundation、Data Engineering、Market Microstructure、Replay、Live Execution、Risk Management、AI Engineering 只做引用和 owner 边界拆分。"
+        ]
+      },
+      "source_assessment": {
+        "source_count": 4,
+        "missing_sources": [],
+        "weak_sources": [],
+        "recommended_extra_sources": []
+      },
+      "classification_assessment": {
+        "correct_partition": true,
+        "expected_partition": "KB_04_BACKTEST",
+        "correct_tree_node": true,
+        "notes": "归类到 Trading Engineering / Backtest；其他分支只做引用和 owner 边界拆分。"
+      },
+      "boundary_assessment": {
+        "no_trade_advice": true,
+        "candidate_only": true,
+        "requires_external_project_facts": true,
+        "notes": "本轮不能 reviewed/approved/default/hard gate，也不能产生交易执行建议。"
+      }
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_backtest_parameter_search_separate_from_final_eval_001",
+      "research_task_id": "P37-E-B04",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "参数搜索、特征选择、模型选择与最终评估样本必须分离，避免 data snooping / multiple testing 风险。"
+      ],
+      "required_followups": [],
+      "patch_notes": {
+        "source": [
+          "平台文档只能作为实现语义示例，不得泛化为所有 backtest engine。",
+          "B03 需补 survivorship bias / delisted assets / historical universe / contract expiry-rollover 的直接来源。",
+          "B10 需补 profit factor、drawdown、收益回撤比的专业定义和局限来源。",
+          "B11/B12 需补 CEK-TA backtest_run_manifest 或 reproducibility_package schema。"
+        ],
+        "content": [
+          "把 block/阻断改写为 evidence invalidation：该回测不得作为策略有效性证据。",
+          "所有回测结论必须声明数据版本、策略版本、参数、成本、滑点、fill model、样本划分和评估时间。",
+          "gross result、net result、research result、validation result 必须分开。"
+        ],
+        "boundary": [
+          "不得创建 reviewed、approved、default guidance 或 hard gate。",
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+          "样本外、walk-forward 或成本建模通过，也不等于实盘许可。"
+        ],
+        "conflict": [
+          "与 Quant Foundation、Data Engineering、Market Microstructure、Replay、Live Execution、Risk Management、AI Engineering 只做引用和 owner 边界拆分。"
+        ]
+      },
+      "source_assessment": {
+        "source_count": 4,
+        "missing_sources": [],
+        "weak_sources": [],
+        "recommended_extra_sources": []
+      },
+      "classification_assessment": {
+        "correct_partition": true,
+        "expected_partition": "KB_04_BACKTEST",
+        "correct_tree_node": true,
+        "notes": "归类到 Trading Engineering / Backtest；其他分支只做引用和 owner 边界拆分。"
+      },
+      "boundary_assessment": {
+        "no_trade_advice": true,
+        "candidate_only": true,
+        "requires_external_project_facts": true,
+        "notes": "本轮不能 reviewed/approved/default/hard gate，也不能产生交易执行建议。"
+      }
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_backtest_profit_factor_drawdown_context_required_001",
+      "research_task_id": "P37-E-B10",
+      "decision": "accepted_for_draft",
+      "confidence": "medium",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "profit factor 不能单独证明策略质量成立；reviewed 前必须补 profit factor、drawdown 和收益回撤比的专业定义与局限来源。"
+      ],
+      "required_followups": [
+        "reviewed 前补 profit factor、drawdown、收益回撤比的专业定义和局限来源。"
+      ],
+      "patch_notes": {
+        "source": [
+          "平台文档只能作为实现语义示例，不得泛化为所有 backtest engine。",
+          "B03 需补 survivorship bias / delisted assets / historical universe / contract expiry-rollover 的直接来源。",
+          "B10 需补 profit factor、drawdown、收益回撤比的专业定义和局限来源。",
+          "B11/B12 需补 CEK-TA backtest_run_manifest 或 reproducibility_package schema。"
+        ],
+        "content": [
+          "把 block/阻断改写为 evidence invalidation：该回测不得作为策略有效性证据。",
+          "所有回测结论必须声明数据版本、策略版本、参数、成本、滑点、fill model、样本划分和评估时间。",
+          "gross result、net result、research result、validation result 必须分开。"
+        ],
+        "boundary": [
+          "不得创建 reviewed、approved、default guidance 或 hard gate。",
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+          "样本外、walk-forward 或成本建模通过，也不等于实盘许可。"
+        ],
+        "conflict": [
+          "与 Quant Foundation、Data Engineering、Market Microstructure、Replay、Live Execution、Risk Management、AI Engineering 只做引用和 owner 边界拆分。"
+        ]
+      },
+      "source_assessment": {
+        "source_count": 4,
+        "missing_sources": [
+          "reviewed 前补 profit factor、drawdown、收益回撤比的专业定义和局限来源。"
+        ],
+        "weak_sources": [],
+        "recommended_extra_sources": [
+          "reviewed 前补 profit factor、drawdown、收益回撤比的专业定义和局限来源。"
+        ]
+      },
+      "classification_assessment": {
+        "correct_partition": true,
+        "expected_partition": "KB_04_BACKTEST",
+        "correct_tree_node": true,
+        "notes": "归类到 Trading Engineering / Backtest；其他分支只做引用和 owner 边界拆分。"
+      },
+      "boundary_assessment": {
+        "no_trade_advice": true,
+        "candidate_only": true,
+        "requires_external_project_facts": true,
+        "notes": "本轮不能 reviewed/approved/default/hard gate，也不能产生交易执行建议。"
+      }
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_backtest_reproducibility_package_required_001",
+      "research_task_id": "P37-E-B11",
+      "decision": "accepted_for_draft",
+      "confidence": "medium",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "MLflow/DVC 支撑实验参数、代码版本、指标、artifact、pipeline stage、依赖和输出追踪；reviewed 前需要 CEK-TA backtest package schema 补强。"
+      ],
+      "required_followups": [
+        "reviewed 前补 CEK-TA backtest_run_manifest 或 reproducibility_package schema。"
+      ],
+      "patch_notes": {
+        "source": [
+          "平台文档只能作为实现语义示例，不得泛化为所有 backtest engine。",
+          "B03 需补 survivorship bias / delisted assets / historical universe / contract expiry-rollover 的直接来源。",
+          "B10 需补 profit factor、drawdown、收益回撤比的专业定义和局限来源。",
+          "B11/B12 需补 CEK-TA backtest_run_manifest 或 reproducibility_package schema。"
+        ],
+        "content": [
+          "把 block/阻断改写为 evidence invalidation：该回测不得作为策略有效性证据。",
+          "所有回测结论必须声明数据版本、策略版本、参数、成本、滑点、fill model、样本划分和评估时间。",
+          "gross result、net result、research result、validation result 必须分开。"
+        ],
+        "boundary": [
+          "不得创建 reviewed、approved、default guidance 或 hard gate。",
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+          "样本外、walk-forward 或成本建模通过，也不等于实盘许可。"
+        ],
+        "conflict": [
+          "与 Quant Foundation、Data Engineering、Market Microstructure、Replay、Live Execution、Risk Management、AI Engineering 只做引用和 owner 边界拆分。"
+        ]
+      },
+      "source_assessment": {
+        "source_count": 4,
+        "missing_sources": [
+          "reviewed 前补 CEK-TA backtest_run_manifest 或 reproducibility_package schema。"
+        ],
+        "weak_sources": [
+          "平台/框架文档只能作为实现示例"
+        ],
+        "recommended_extra_sources": [
+          "reviewed 前补 CEK-TA backtest_run_manifest 或 reproducibility_package schema。"
+        ]
+      },
+      "classification_assessment": {
+        "correct_partition": true,
+        "expected_partition": "KB_04_BACKTEST",
+        "correct_tree_node": true,
+        "notes": "归类到 Trading Engineering / Backtest；其他分支只做引用和 owner 边界拆分。"
+      },
+      "boundary_assessment": {
+        "no_trade_advice": true,
+        "candidate_only": true,
+        "requires_external_project_facts": true,
+        "notes": "本轮不能 reviewed/approved/default/hard gate，也不能产生交易执行建议。"
+      }
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_backtest_slippage_fee_spread_required_001",
+      "research_task_id": "P37-E-B08",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "fill price、slippage、fee、spread、partial fill 和 order type 假设必须声明。"
+      ],
+      "required_followups": [],
+      "patch_notes": {
+        "source": [
+          "平台文档只能作为实现语义示例，不得泛化为所有 backtest engine。",
+          "B03 需补 survivorship bias / delisted assets / historical universe / contract expiry-rollover 的直接来源。",
+          "B10 需补 profit factor、drawdown、收益回撤比的专业定义和局限来源。",
+          "B11/B12 需补 CEK-TA backtest_run_manifest 或 reproducibility_package schema。"
+        ],
+        "content": [
+          "把 block/阻断改写为 evidence invalidation：该回测不得作为策略有效性证据。",
+          "所有回测结论必须声明数据版本、策略版本、参数、成本、滑点、fill model、样本划分和评估时间。",
+          "gross result、net result、research result、validation result 必须分开。"
+        ],
+        "boundary": [
+          "不得创建 reviewed、approved、default guidance 或 hard gate。",
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+          "样本外、walk-forward 或成本建模通过，也不等于实盘许可。"
+        ],
+        "conflict": [
+          "与 Quant Foundation、Data Engineering、Market Microstructure、Replay、Live Execution、Risk Management、AI Engineering 只做引用和 owner 边界拆分。"
+        ]
+      },
+      "source_assessment": {
+        "source_count": 4,
+        "missing_sources": [],
+        "weak_sources": [
+          "平台/框架文档只能作为实现示例"
+        ],
+        "recommended_extra_sources": []
+      },
+      "classification_assessment": {
+        "correct_partition": true,
+        "expected_partition": "KB_04_BACKTEST",
+        "correct_tree_node": true,
+        "notes": "归类到 Trading Engineering / Backtest；其他分支只做引用和 owner 边界拆分。"
+      },
+      "boundary_assessment": {
+        "no_trade_advice": true,
+        "candidate_only": true,
+        "requires_external_project_facts": true,
+        "notes": "本轮不能 reviewed/approved/default/hard gate，也不能产生交易执行建议。"
+      }
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_backtest_strategy_version_and_data_version_required_001",
+      "research_task_id": "P37-E-B12",
+      "decision": "accepted_for_draft",
+      "confidence": "medium",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "MLflow/DVC 支撑参数、代码、artifact、数据/模型版本和 pipeline tracking；CEK-TA 专用版本字段 reviewed 前需 schema 补强。"
+      ],
+      "required_followups": [
+        "reviewed 前补 CEK-TA strategy_rule_version / calendar_session_version / cost_fill_model_version schema。"
+      ],
+      "patch_notes": {
+        "source": [
+          "平台文档只能作为实现语义示例，不得泛化为所有 backtest engine。",
+          "B03 需补 survivorship bias / delisted assets / historical universe / contract expiry-rollover 的直接来源。",
+          "B10 需补 profit factor、drawdown、收益回撤比的专业定义和局限来源。",
+          "B11/B12 需补 CEK-TA backtest_run_manifest 或 reproducibility_package schema。"
+        ],
+        "content": [
+          "把 block/阻断改写为 evidence invalidation：该回测不得作为策略有效性证据。",
+          "所有回测结论必须声明数据版本、策略版本、参数、成本、滑点、fill model、样本划分和评估时间。",
+          "gross result、net result、research result、validation result 必须分开。"
+        ],
+        "boundary": [
+          "不得创建 reviewed、approved、default guidance 或 hard gate。",
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+          "样本外、walk-forward 或成本建模通过，也不等于实盘许可。"
+        ],
+        "conflict": [
+          "与 Quant Foundation、Data Engineering、Market Microstructure、Replay、Live Execution、Risk Management、AI Engineering 只做引用和 owner 边界拆分。"
+        ]
+      },
+      "source_assessment": {
+        "source_count": 4,
+        "missing_sources": [
+          "reviewed 前补 CEK-TA strategy_rule_version / calendar_session_version / cost_fill_model_version schema。"
+        ],
+        "weak_sources": [
+          "平台/框架文档只能作为实现示例"
+        ],
+        "recommended_extra_sources": [
+          "reviewed 前补 CEK-TA strategy_rule_version / calendar_session_version / cost_fill_model_version schema。"
+        ]
+      },
+      "classification_assessment": {
+        "correct_partition": true,
+        "expected_partition": "KB_04_BACKTEST",
+        "correct_tree_node": true,
+        "notes": "归类到 Trading Engineering / Backtest；其他分支只做引用和 owner 边界拆分。"
+      },
+      "boundary_assessment": {
+        "no_trade_advice": true,
+        "candidate_only": true,
+        "requires_external_project_facts": true,
+        "notes": "本轮不能 reviewed/approved/default/hard gate，也不能产生交易执行建议。"
+      }
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_backtest_survivorship_selection_bias_check_001",
+      "research_task_id": "P37-E-B03",
+      "decision": "accepted_for_draft",
+      "confidence": "medium",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "选择偏差由 White/DSR/STW 支撑；reviewed 前需要幸存者偏差、退市资产、过期合约和 historical universe 直接来源。"
+      ],
+      "required_followups": [
+        "reviewed 前补 survivorship bias / delisted assets / historical universe / contract expiry-rollover 的直接来源。"
+      ],
+      "patch_notes": {
+        "source": [
+          "平台文档只能作为实现语义示例，不得泛化为所有 backtest engine。",
+          "B03 需补 survivorship bias / delisted assets / historical universe / contract expiry-rollover 的直接来源。",
+          "B10 需补 profit factor、drawdown、收益回撤比的专业定义和局限来源。",
+          "B11/B12 需补 CEK-TA backtest_run_manifest 或 reproducibility_package schema。"
+        ],
+        "content": [
+          "把 block/阻断改写为 evidence invalidation：该回测不得作为策略有效性证据。",
+          "所有回测结论必须声明数据版本、策略版本、参数、成本、滑点、fill model、样本划分和评估时间。",
+          "gross result、net result、research result、validation result 必须分开。"
+        ],
+        "boundary": [
+          "不得创建 reviewed、approved、default guidance 或 hard gate。",
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+          "样本外、walk-forward 或成本建模通过，也不等于实盘许可。"
+        ],
+        "conflict": [
+          "与 Quant Foundation、Data Engineering、Market Microstructure、Replay、Live Execution、Risk Management、AI Engineering 只做引用和 owner 边界拆分。"
+        ]
+      },
+      "source_assessment": {
+        "source_count": 4,
+        "missing_sources": [
+          "reviewed 前补 survivorship bias / delisted assets / historical universe / contract expiry-rollover 的直接来源。"
+        ],
+        "weak_sources": [],
+        "recommended_extra_sources": [
+          "reviewed 前补 survivorship bias / delisted assets / historical universe / contract expiry-rollover 的直接来源。"
+        ]
+      },
+      "classification_assessment": {
+        "correct_partition": true,
+        "expected_partition": "KB_04_BACKTEST",
+        "correct_tree_node": true,
+        "notes": "归类到 Trading Engineering / Backtest；其他分支只做引用和 owner 边界拆分。"
+      },
+      "boundary_assessment": {
+        "no_trade_advice": true,
+        "candidate_only": true,
+        "requires_external_project_facts": true,
+        "notes": "本轮不能 reviewed/approved/default/hard gate，也不能产生交易执行建议。"
+      }
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_backtest_walk_forward_validation_required_001",
+      "research_task_id": "P37-E-B05",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "CFA rolling-window backtesting、Bailey PBO、White data snooping 和 metadata 来源支持训练窗口、验证窗口、步长、重优化频率、参数冻结点和数据可用时间边界。"
+      ],
+      "required_followups": [],
+      "patch_notes": {
+        "source": [
+          "平台文档只能作为实现语义示例，不得泛化为所有 backtest engine。",
+          "B03 需补 survivorship bias / delisted assets / historical universe / contract expiry-rollover 的直接来源。",
+          "B10 需补 profit factor、drawdown、收益回撤比的专业定义和局限来源。",
+          "B11/B12 需补 CEK-TA backtest_run_manifest 或 reproducibility_package schema。"
+        ],
+        "content": [
+          "把 block/阻断改写为 evidence invalidation：该回测不得作为策略有效性证据。",
+          "所有回测结论必须声明数据版本、策略版本、参数、成本、滑点、fill model、样本划分和评估时间。",
+          "gross result、net result、research result、validation result 必须分开。"
+        ],
+        "boundary": [
+          "不得创建 reviewed、approved、default guidance 或 hard gate。",
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+          "样本外、walk-forward 或成本建模通过，也不等于实盘许可。"
+        ],
+        "conflict": [
+          "与 Quant Foundation、Data Engineering、Market Microstructure、Replay、Live Execution、Risk Management、AI Engineering 只做引用和 owner 边界拆分。"
+        ]
+      },
+      "source_assessment": {
+        "source_count": 4,
+        "missing_sources": [],
+        "weak_sources": [],
+        "recommended_extra_sources": []
+      },
+      "classification_assessment": {
+        "correct_partition": true,
+        "expected_partition": "KB_04_BACKTEST",
+        "correct_tree_node": true,
+        "notes": "归类到 Trading Engineering / Backtest；其他分支只做引用和 owner 边界拆分。"
+      },
+      "boundary_assessment": {
+        "no_trade_advice": true,
+        "candidate_only": true,
+        "requires_external_project_facts": true,
+        "notes": "本轮不能 reviewed/approved/default/hard gate，也不能产生交易执行建议。"
+      }
+    }
+  ]
+}

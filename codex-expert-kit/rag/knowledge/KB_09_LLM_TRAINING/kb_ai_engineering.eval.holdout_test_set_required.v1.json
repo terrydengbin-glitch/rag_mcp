@@ -1,0 +1,340 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_ai_engineering.eval.holdout_test_set_required.v1",
+  "title": "LLM Gate/Scoring 必须保留独立 Holdout 测试集",
+  "metadata": {
+    "partition_id": "KB_09_LLM_TRAINING",
+    "domain": "llm_training",
+    "subdomain": "eval",
+    "rule_type": "eval_case",
+    "content_type": "json",
+    "project_binding": "none",
+    "tree_node_id": "kt.llm_training.model_training_engineering",
+    "tree_path": "CEK-TA / AI Engineering",
+    "canonical_node_id": "kt.llm_training.model_training_engineering",
+    "canonical_tree_path": "CEK-TA / AI Engineering",
+    "risk_level": "medium",
+    "used_for": [
+      "llm_training",
+      "rag_engineering",
+      "mcp",
+      "vue_audit_ui"
+    ],
+    "source_candidate_id": "cand_20260609_ai_engineering_eval_holdout_test_set_required_v1_001",
+    "research_task_id": "RIT-P36-A-T16",
+    "claim_type": "llm_eval_rule",
+    "classification_notes": "Phase 36 AI Engineering reviewed knowledge；本条只沉淀 AI/LLM/RAG/MCP/训练数据、评估、部署或治理规则。交易规则本体、K 线、策略、实盘执行和风控阈值必须路由到 Trading Engineering。"
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "general",
+    "data_granularity": "general",
+    "project_type": "trading_llm_assistant",
+    "applies_when": [
+      "外接项目准备用 holdout 结果判断模型、prompt、RAG、阈值或 gating policy 是否可 promotion。",
+      "holdout 数据来自交易候选、复盘、审计样本、RAG 任务或偏好训练池。",
+      "评估结果会进入报告、SearchLab、MCP、知识树或上线审批。"
+    ],
+    "not_applicable_when": [
+      "数据集明确是 validation set 或 tuning set，不声明为 final holdout。",
+      "只是检查 eval case 是否与训练集重叠，应同时引用 no_training_overlap 规则。",
+      "需要定义交易收益口径或策略表现，应由 Trading Engineering 提供或审核。"
+    ]
+  },
+  "content": {
+    "statement": "LLM gate/scoring 的 holdout test/eval 数据不得用于 training、prompt selection、fine-tuning、DPO selection、threshold calibration、RAG index construction 或 model selection。",
+    "rationale": "final holdout 的作用是检验模型、prompt、RAG 和阈值在未见数据上的表现；一旦参与调参或选择模型，该数据集就不再是最终独立评估。",
+    "procedure": [
+      "记录 holdout_dataset_id、holdout_version 和 holdout_hash。",
+      "声明 prohibited_use，并确保 used_for_final_eval_only=true。",
+      "记录 access_control_group，避免被训练、prompt tuning、RAG construction 或 threshold calibration 使用。",
+      "若 holdout 已被调 prompt、调阈值或选模型使用，降级为 validation set，并创建新的 holdout。",
+      "保留 contamination_check_id、reviewer 和 holdout_use_audit_log。"
+    ],
+    "examples": [],
+    "anti_patterns": [
+      "把 reviewed 知识当作 approved 默认指导。",
+      "把 AI Engineering 规则扩写成具体交易阈值、仓位、买卖点、止损止盈或执行参数。",
+      "缺少来源、schema、适用范围、冲突检查或审计记录仍进入训练、评估、RAG promotion 或默认指导。"
+    ],
+    "validation": [
+      "source_evidence 至少存在 2 条，且没有 unresolved conflict。",
+      "review_status 为 reviewed 时 machine_gate.default_guidance 必须是 caveat_only。",
+      "外接项目调用时必须返回 knowledge_id、source_refs、review_status、machine_gate 和适用边界。",
+      "前端候选页、知识树和 SearchLab 不得显示乱码或未解释的英文 demo 文案。"
+    ],
+    "risk_notes": [
+      "accepted_for_draft 不是 approved；本条只能作为 formal reviewed 知识进入审计和检索。",
+      "本知识项只处理 AI Engineering 边界，不沉淀项目私有交易数据和交易规则本体。",
+      "若项目事实涉及具体策略、实盘订单、风控阈值或市场结构，应路由到 Trading Engineering 对应分支。"
+    ],
+    "citation_notes": "scikit-learn cross-validation/common pitfalls 和 OpenAI fine-tuning/evals 资料支持 held-out evaluation、训练/评估分离和避免 data leakage。",
+    "audit_patch_notes": {
+      "source_patch_notes": [
+        "保留 scikit-learn cross-validation 作为 held-out evaluation 和 repeated test-set tuning 风险来源。",
+        "保留 OpenAI fine-tuning best practices 作为 training/test examples 拆分和用 test set 评估模型的来源，但注明 fine-tuning platform 相关页面存在迁移 / winding down freshness 风险。",
+        "补 scikit-learn common pitfalls / data leakage 作为 test data 不得参与 fit / preprocessing / tuning 的来源。",
+        "建议互链 dataset.train_validation_test_split_required、data_asset.eval_pool_must_not_train、gold_set_immutable_required。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：Holdout test/eval data for LLM gate/scoring must not be used for training, prompt selection, fine-tuning, DPO selection, threshold calibration, RAG index construction or model selection.",
+        "建议字段：holdout_dataset_id、holdout_version、holdout_hash、prohibited_use、used_for_final_eval_only、contamination_check_id、access_control_group、reviewer。",
+        "增加污染动作：如果 holdout 被用于调 prompt、调阈值或选择模型版本，则必须废弃该版本或降级为 validation set，并创建新 holdout。",
+        "明确 validation set 与 final holdout set 角色不同。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 管理 holdout set 的用途限制、hash、版本和污染检测。",
+        "原始交易样本、账户数据和策略细节保留在项目私有数据域，只在 AI Engineering 中记录引用和脱敏摘要。",
+        "与交易收益口径相关的评估由 Trading Engineering 提供或审核。"
+      ],
+      "conflict_patch_notes": [
+        "与 eval_case.no_training_overlap_required 正向重叠：本条是 holdout policy，后者是 eval case overlap check。",
+        "与 dataset.train_validation_test_split_required、data_asset.eval_pool_must_not_train、gold_set_immutable_required 互补。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 holdout_dataset_policy.md。",
+        "补 holdout_use_audit_log schema。",
+        "补污染处理流程：reclassify_as_validation、new_holdout_required、block_promotion。"
+      ]
+    },
+    "required_fields": [
+      "holdout_dataset_id",
+      "holdout_version",
+      "holdout_hash",
+      "prohibited_use",
+      "used_for_final_eval_only",
+      "contamination_check_id",
+      "access_control_group",
+      "reviewer"
+    ],
+    "linked_rules": [
+      "dataset.train_validation_test_split_required.v1",
+      "eval_case.no_training_overlap_required.v1",
+      "data_asset.eval_pool_must_not_train.v1",
+      "gold_set_immutable_required.v1"
+    ]
+  },
+  "assumptions": [
+    "External projects provide project facts and private data; CEK-TA stores only generalized reusable knowledge."
+  ],
+  "source_evidence": [
+    {
+      "source_id": "src_006",
+      "source_title": "Cross-validation: evaluating estimator performance",
+      "source_url": "https://scikit-learn.org/stable/modules/cross_validation.html",
+      "source_type": "official_doc",
+      "publisher": "scikit-learn",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "scikit-learn documents evaluation with held-out data and warns against repeated test-set tuning.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_002",
+      "source_title": "Fine-tuning best practices | OpenAI API",
+      "source_url": "https://platform.openai.com/docs/guides/fine-tuning-best-practices",
+      "source_type": "official_doc",
+      "publisher": "OpenAI",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "OpenAI fine-tuning guidance distinguishes training and test/eval data and emphasizes data quality for model improvement.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_occ_fed_fdic_revised_model_risk_2026",
+      "source_title": "Model Risk Management: Revised Guidance",
+      "source_url": "https://occ.gov/news-issuances/bulletins/2026/bulletin-2026-13.html",
+      "source_type": "standard_or_risk_framework",
+      "publisher": "OCC / Federal Reserve / FDIC",
+      "published_at": "2026-04-17",
+      "accessed_at": "2026-06-09",
+      "version": "OCC Bulletin 2026-13 / SR 26-2",
+      "reliability": "high",
+      "relevance": "medium",
+      "evidence_summary": "2026 年跨机构模型风险管理修订指南支持模型治理、验证、变更控制和风险分层；同时需注明 generative AI 和 agentic AI 不在其直接范围内，只能作为模型风险治理类比来源。",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 90,
+    "score_version": "1.0.0",
+    "primary_source_count": 2,
+    "supporting_source_count": 1,
+    "low_reliability_source_count": 0,
+    "limitations": [
+      "本条为 reviewed 知识，来源和审计补丁已记录；默认指导仍需后续人工治理升级 approved。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "docs/contracts/ai_engineering_gating_scoring_contract.md",
+      "docs/contracts/ai_engineering_knowledge_item_policy.md"
+    ],
+    "conflicts": [],
+    "resolution_summary": "No direct conflict found in current CEK-TA formal knowledge. Candidate is not default guidance.",
+    "default_recommendation": "caveat_only_until_approved"
+  },
+  "review": {
+    "confidence": "medium",
+    "freshness": "stable",
+    "review_status": "reviewed",
+    "reviewer": "codex",
+    "reviewed_at": "2026-06-09",
+    "created_at": "2026-06-09",
+    "updated_at": "2026-06-09",
+    "open_questions": [
+      "Should this candidate be split or merged with adjacent AI Engineering policy cards during formal draft conversion?",
+      "补 holdout_dataset_policy.md。",
+      "补 holdout_use_audit_log schema。",
+      "补污染处理流程：reclassify_as_validation、new_holdout_required、block_promotion。"
+    ],
+    "decision_log": [
+      {
+        "at": "2026-06-09",
+        "actor": "external_ai",
+        "decision": "accepted_for_draft",
+        "reason": "方向充分成立。LLM trade quality scoring/gating 需要 holdout test/eval set，且该 set 不得用于训练、prompt selection、fine-tuning、threshold calibration 或其他会污染最终评估的过程。scikit-learn 和 OpenAI fine-tuning best practices 均直接支持训练/评估数据分离和 held-out evaluation。",
+        "audit_result_id": "audit_result_phase36_ai_engineering_batch_03_of_10_20260609_gpt55_pro_strict_sources"
+      },
+      {
+        "at": "2026-06-09",
+        "actor": "codex",
+        "decision": "converted_to_reviewed",
+        "reason": "按 Phase 36 批量审计结果优化候选并转为 formal reviewed；未升级 approved。",
+        "audit_result_id": "audit_result_phase36_ai_engineering_batch_03_of_10_20260609_gpt55_pro_strict_sources"
+      }
+    ],
+    "approval_status": "not_requested",
+    "default_guidance_allowed": false,
+    "source_candidate_id": "cand_20260609_ai_engineering_eval_holdout_test_set_required_v1_001",
+    "ai_audit_result_id": "audit_result_phase36_ai_engineering_batch_03_of_10_20260609_gpt55_pro_strict_sources",
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase36_ai_engineering_batch_03_of_10_20260609_gpt55_pro_strict_sources",
+      "source_package_id": "phase36_ai_engineering_candidate_audit_batch_03_of_10_20260609",
+      "decision": "accepted_for_draft",
+      "reason": "方向充分成立。LLM trade quality scoring/gating 需要 holdout test/eval set，且该 set 不得用于训练、prompt selection、fine-tuning、threshold calibration 或其他会污染最终评估的过程。scikit-learn 和 OpenAI fine-tuning best practices 均直接支持训练/评估数据分离和 held-out evaluation。",
+      "source_patch_notes": [
+        "保留 scikit-learn cross-validation 作为 held-out evaluation 和 repeated test-set tuning 风险来源。",
+        "保留 OpenAI fine-tuning best practices 作为 training/test examples 拆分和用 test set 评估模型的来源，但注明 fine-tuning platform 相关页面存在迁移 / winding down freshness 风险。",
+        "补 scikit-learn common pitfalls / data leakage 作为 test data 不得参与 fit / preprocessing / tuning 的来源。",
+        "建议互链 dataset.train_validation_test_split_required、data_asset.eval_pool_must_not_train、gold_set_immutable_required。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：Holdout test/eval data for LLM gate/scoring must not be used for training, prompt selection, fine-tuning, DPO selection, threshold calibration, RAG index construction or model selection.",
+        "建议字段：holdout_dataset_id、holdout_version、holdout_hash、prohibited_use、used_for_final_eval_only、contamination_check_id、access_control_group、reviewer。",
+        "增加污染动作：如果 holdout 被用于调 prompt、调阈值或选择模型版本，则必须废弃该版本或降级为 validation set，并创建新 holdout。",
+        "明确 validation set 与 final holdout set 角色不同。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 管理 holdout set 的用途限制、hash、版本和污染检测。",
+        "原始交易样本、账户数据和策略细节保留在项目私有数据域，只在 AI Engineering 中记录引用和脱敏摘要。",
+        "与交易收益口径相关的评估由 Trading Engineering 提供或审核。"
+      ],
+      "conflict_patch_notes": [
+        "与 eval_case.no_training_overlap_required 正向重叠：本条是 holdout policy，后者是 eval case overlap check。",
+        "与 dataset.train_validation_test_split_required、data_asset.eval_pool_must_not_train、gold_set_immutable_required 互补。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 holdout_dataset_policy.md。",
+        "补 holdout_use_audit_log schema。",
+        "补污染处理流程：reclassify_as_validation、new_holdout_required、block_promotion。"
+      ]
+    },
+    "approved_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "contribution": {
+    "contribution_id": null,
+    "source_project": null,
+    "sanitization_status": "not_applicable",
+    "private_data_removed": true,
+    "generic_mapping_notes": "Phase 36 public-source AI Engineering candidate; no project-private trading facts included."
+  },
+  "copyright": {
+    "stores_full_text": false,
+    "stores_long_quote": false,
+    "summary_only": true,
+    "license_notes": "Only source links and short summaries are stored.",
+    "reuse_risk": "low"
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于审计 AI Engineering、LLM 训练、RAG/MCP、部署、安全或治理链路。",
+      "用于提醒外接项目补齐来源、适用边界、冲突状态、审计记录和人工审批。",
+      "用于 reviewed/audit 模式下带 caveat 引用。"
+    ],
+    "not_allowed": [
+      "不得生成买卖点、仓位、杠杆、止损止盈或实盘执行指令。",
+      "不得覆盖确定性风控、交易执行系统或人工审批。",
+      "不得作为 approved/default guidance 直接返回。"
+    ],
+    "required_context": [
+      "project_type",
+      "task_type",
+      "mode",
+      "strategy_version",
+      "data_boundary",
+      "review_status"
+    ],
+    "fallback_behavior": "cite_with_caveat"
+  },
+  "machine_gate": {
+    "default_guidance": "caveat_only",
+    "reason": "reviewed only; accepted_for_draft is not approved; default guidance requires later human governance approval.",
+    "requires_human_escalation": true,
+    "blocking_reasons": [
+      "not_approved",
+      "phase36_batch03_reviewed_only"
+    ],
+    "checked_at": "2026-06-09",
+    "gate_version": "1.0.0",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "recommended_extra_sources": [
+    {
+      "title": "保留 scikit-learn cross-validation 作为 held-out evaluation 和 repeated test-set tuning 风险来源。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_1"
+    },
+    {
+      "title": "保留 OpenAI fine-tuning best practices 作为 training/test examples 拆分和用 test set 评估模型的来源，但注明 fine-tuning platform 相关页面存在迁移 / winding down freshness 风险。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_2"
+    },
+    {
+      "title": "补 scikit-learn common pitfalls / data leakage 作为 test data 不得参与 fit / preprocessing / tuning 的来源。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_3"
+    },
+    {
+      "title": "建议互链 dataset.train_validation_test_split_required、data_asset.eval_pool_must_not_train、gold_set_immutable_required。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_4"
+    }
+  ]
+}

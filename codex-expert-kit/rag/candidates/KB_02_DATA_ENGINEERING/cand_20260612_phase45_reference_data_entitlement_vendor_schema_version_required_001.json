@@ -1,0 +1,476 @@
+{
+  "schema_version": "1.1.0-candidate",
+  "candidate_id": "cand_20260612_phase45_reference_data_entitlement_p45_g_data05_001",
+  "research_task_id": "P45-G-DATA05",
+  "status": {
+    "review_status": "formalized",
+    "ingestion_decision": "formal_reviewed_created",
+    "decision_reason": "reviewed/caveat_only 准备审计通过，已创建 formal reviewed 知识；不得 approved/default/hard gate。",
+    "created_at": "2026-06-12",
+    "updated_at": "2026-06-12"
+  },
+  "classification": {
+    "tree_node_id": "kt.trading_engineering.data_engineering.reference_data_entitlement",
+    "canonical_node_id": "kt.trading_engineering.data_engineering.reference_data_entitlement",
+    "tree_path": "CEK-TA / Trading Engineering / Data Engineering / Reference Data Entitlement",
+    "related_nodes": [
+      "kt.trading_engineering.data_engineering.data_quality",
+      "kt.trading_engineering.market_microstructure.session_calendar",
+      "kt.trading_engineering.strategy_engineering.feature_boundary",
+      "kt.ai_engineering.training_dataset_boundary"
+    ],
+    "partition_id": "KB_02_DATA_ENGINEERING",
+    "domain": "data_engineering",
+    "subdomain": "reference_data_entitlement",
+    "rule_type": "market_data_reference_boundary_rule",
+    "claim_type": "vendor_schema_versioning_rule",
+    "used_for": [
+      "trading_ai_project_design_audit",
+      "market_data_contract_review",
+      "reference_data_schema_review",
+      "external_project_rag_retrieval"
+    ],
+    "classification_notes": "P45-G 只补市场数据授权、reference data、point-in-time 元数据、数据覆盖和 schema 版本边界；不定义交易信号或执行许可。"
+  },
+  "claim": {
+    "claim_id": "claim_p45_g_data05",
+    "title": "供应商 schema 和解析版本必须可追踪",
+    "statement": "市场数据 ingestion、解析、标准化和导出必须记录 vendor、dataset、venue、schema_version、field_dictionary_ref、parser_version、parser_code_hash、normalization_version、normalization_code_hash、raw_snapshot_uri、raw_snapshot_digest、lineage_id、input_dataset_version 和 output_dataset_version；供应商字段、单位、枚举或语义变化不得静默影响回测、训练、TCA 或实盘审计。",
+    "normalized_claim": "phase45_reference_data_entitlement.vendor_schema_version_required.v1",
+    "evidence_summary": "Databento / Nasdaq 来源支撑 vendor schema 和字段字典；CEK-TA internal contract 定义 parser_version、normalization_version、raw_snapshot_digest 和 lineage_id；OpenLineage、MLflow Dataset Tracking、Iceberg 和 DVC 支撑数据血缘、dataset digest、snapshot 和可复现 pipeline 模式。",
+    "interpretation_notes": "本候选只定义数据授权、reference data 与时点一致性边界，不输出交易参数、买卖点、训练许可或数据授权法律结论。",
+    "claim_strength": "candidate",
+    "performance_claim": false,
+    "audit_patch_notes": {
+      "source": [
+        "保留 Databento、Nasdaq、CEK-TA lineage contract、OpenLineage、MLflow、Iceberg、DVC。"
+      ],
+      "content": [
+        "保留 vendor_id、dataset_id、schema_version、field_dictionary_ref、parser_version、parser_code_hash、normalization_version、normalization_code_hash、raw_snapshot_uri、raw_snapshot_digest、lineage_id。"
+      ],
+      "boundary": [
+        "不得输出法律授权结论。",
+        "不得输出训练授权结论。",
+        "不得输出数据再分发许可。",
+        "不得生成 hard gate。"
+      ],
+      "conflict": []
+    }
+  },
+  "applicability": {
+    "market": "general_with_vendor_exchange_license_and_dataset_caveats",
+    "asset": "general",
+    "timeframe": "historical_realtime_backtest_replay_training_and_audit_context",
+    "data_granularity": "market_data_reference_data_instrument_definitions_statistics_schema_metadata",
+    "project_type": "trading_ai_support_layer",
+    "applies_when": [
+      "外接项目需要采集、存储、解析、训练、回测、重放、检索或展示市场数据与 reference data。",
+      "AI IDE 需要检查数据授权、数据覆盖、instrument definition、tick/lot/price-limit 和 schema version 是否被显式声明。",
+      "需要避免 current metadata 回填历史样本、授权边界被 RAG/LLM 默认绕过或 reference data 被误写成 alpha。"
+    ],
+    "not_applicable_when": [
+      "用户要求法律意见、合同解释或市场数据授权结论；这必须由项目 owner/legal/vendor agreement 判断。",
+      "用户要求买卖点、仓位、杠杆、止损止盈、交易许可、风控阈值或实盘执行动作。",
+      "需要特定交易所、供应商或账户的实时授权事实时，应由外接项目事实层提供。"
+    ],
+    "assumptions": [
+      "Market data entitlement 和 reference data 是数据工程与治理边界，不是交易策略。",
+      "授权、schema、覆盖范围和 point-in-time 元数据必须保留 vendor、venue、dataset、product 和时间边界。",
+      "候选通过外部审计前不能进入 formal reviewed 知识库。"
+    ],
+    "limitations": [
+      "交易所、供应商和政策页面会随时间变化，正式 reviewed 前必须由审计确认活跃政策和可引用版本。",
+      "官方技术文档只能证明对应 vendor/venue 的字段语义，不能替代外接项目合同、license 或 legal review。",
+      "本候选不包含任何项目私有数据、账号信息、密钥、实盘授权状态或交易参数。",
+      "OpenLineage、MLflow、Iceberg、DVC 只作为 lineage / digest / snapshot / reproducibility 模式来源，不是强制工具依赖。",
+      "CEK-TA internal contract 支撑字段本体，但不产生市场数据授权、训练授权或再分发许可。"
+    ]
+  },
+  "source_refs": [
+    {
+      "source_title": "Databento Schemas and Data Formats",
+      "source_url": "https://databento.com/docs/schemas-and-data-formats",
+      "source_type": "official_vendor_doc",
+      "publisher": "Databento",
+      "reliability": "high",
+      "score": 87,
+      "freshness": "time_sensitive",
+      "evidence_summary": "Databento documents supported market-data schemas and field dictionaries such as MBO, MBP, trades, bars, definitions and statistics.",
+      "limitations": [
+        "Vendor-specific schema documentation; not a universal market-data schema standard."
+      ],
+      "source_id": "src_001",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "Databento Instrument Definitions",
+      "source_url": "https://databento.com/docs/schemas-and-data-formats/instrument-definitions",
+      "source_type": "official_vendor_doc",
+      "publisher": "Databento",
+      "reliability": "high",
+      "score": 88,
+      "freshness": "time_sensitive",
+      "evidence_summary": "Databento instrument definitions provide point-in-time reference information including symbol, name, listing, expiration, tick size and strike price.",
+      "limitations": [
+        "Databento schema context; field coverage and semantics depend on dataset, venue and vendor version."
+      ],
+      "source_id": "src_002",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "Databento Statistics Schema",
+      "source_url": "https://databento.com/docs/schemas-and-data-formats/statistics",
+      "source_type": "official_vendor_doc",
+      "publisher": "Databento",
+      "reliability": "high",
+      "score": 86,
+      "freshness": "time_sensitive",
+      "evidence_summary": "Databento statistics include session fields such as upper and lower price limits, settlement and venue-specific volume/price fields.",
+      "limitations": [
+        "Statistics schema availability and meaning depend on venue and dataset."
+      ],
+      "source_id": "src_003",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "Nasdaq Symbol Directory Data Fields and Definitions",
+      "source_url": "https://www.nasdaqtrader.com/trader.aspx?id=symboldirdefs",
+      "source_type": "official_exchange_doc",
+      "publisher": "Nasdaq Trader",
+      "reliability": "high",
+      "score": 85,
+      "freshness": "time_sensitive",
+      "evidence_summary": "Nasdaq Symbol Directory defines fields such as round lot size, test issue and symbol directory metadata.",
+      "limitations": [
+        "Nasdaq symbol directory context; not a universal reference-data schema."
+      ],
+      "source_id": "src_004",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "Phase 45 Market Data Ingestion Lineage Contract",
+      "source_url": "docs/contracts/phase45_market_data_ingestion_lineage_contract.md",
+      "source_type": "internal_contract",
+      "publisher": "CEK-TA",
+      "reliability": "high",
+      "score": 88,
+      "freshness": "stable",
+      "relevance": "high",
+      "evidence_summary": "CEK-TA internal contract defines vendor_id, dataset_id, schema_version, parser_version, normalization_version, raw_snapshot_uri, raw_snapshot_digest and lineage_id.",
+      "limitations": [
+        "Internal contract; reviewed import still needs external audit and must not imply market-data license permission."
+      ],
+      "source_id": "src_supp_data05_001",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "OpenLineage Dataset Facets",
+      "source_url": "https://openlineage.io/docs/spec/facets/dataset-facets/",
+      "source_type": "official_spec",
+      "publisher": "OpenLineage",
+      "reliability": "high",
+      "score": 86,
+      "freshness": "stable",
+      "relevance": "high",
+      "evidence_summary": "OpenLineage dataset facets support attaching common, input and output metadata to datasets for lineage events.",
+      "limitations": [
+        "Lineage standard pattern; not a CEK-TA market-data schema by itself."
+      ],
+      "source_id": "src_supp_data05_002",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "OpenLineage Object Model",
+      "source_url": "https://openlineage.io/docs/spec/object-model/",
+      "source_type": "official_spec",
+      "publisher": "OpenLineage",
+      "reliability": "high",
+      "score": 86,
+      "freshness": "stable",
+      "relevance": "high",
+      "evidence_summary": "OpenLineage object model links jobs, runs and input/output datasets to create lineage graphs across platforms.",
+      "limitations": [
+        "General lineage model; field names must be mapped to CEK-TA contract."
+      ],
+      "source_id": "src_supp_data05_003",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "MLflow Dataset Tracking",
+      "source_url": "https://mlflow.org/docs/latest/ml/dataset/",
+      "source_type": "official_framework_doc",
+      "publisher": "MLflow",
+      "reliability": "high",
+      "score": 86,
+      "freshness": "time_sensitive",
+      "relevance": "high",
+      "evidence_summary": "MLflow Dataset Tracking supports tracking, versioning and managing datasets for training, validation and evaluation with lineage from raw data to predictions.",
+      "limitations": [
+        "MLflow implementation pattern; not required as CEK-TA's only storage tool."
+      ],
+      "source_id": "src_supp_data05_004",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "MLflow Dataset API",
+      "source_url": "https://mlflow.org/docs/latest/python_api/mlflow.data.html",
+      "source_type": "official_framework_doc",
+      "publisher": "MLflow",
+      "reliability": "high",
+      "score": 86,
+      "freshness": "time_sensitive",
+      "relevance": "high",
+      "evidence_summary": "MLflow Dataset includes name, digest, schema, profile and source information for a dataset.",
+      "limitations": [
+        "MLflow data model; CEK-TA still requires parser and normalizer version fields."
+      ],
+      "source_id": "src_supp_data05_005",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "Apache Iceberg Specification",
+      "source_url": "https://iceberg.apache.org/spec/",
+      "source_type": "official_spec",
+      "publisher": "Apache Iceberg",
+      "reliability": "high",
+      "score": 86,
+      "freshness": "stable",
+      "relevance": "medium_high",
+      "evidence_summary": "Iceberg snapshots and manifest lists record table state and metadata about manifests and data files.",
+      "limitations": [
+        "Table format pattern; not a requirement to use Iceberg in CEK-TA."
+      ],
+      "source_id": "src_supp_data05_006",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "DVC Data Pipelines",
+      "source_url": "https://doc.dvc.org/start/data-pipelines/data-pipelines",
+      "source_type": "official_framework_doc",
+      "publisher": "DVC",
+      "reliability": "high",
+      "score": 84,
+      "freshness": "stable",
+      "relevance": "medium_high",
+      "evidence_summary": "DVC pipelines capture, organize, version and reproduce data science and machine learning workflows.",
+      "limitations": [
+        "Workflow versioning pattern; not a market-data entitlement or vendor schema source."
+      ],
+      "source_id": "src_supp_data05_007",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 86.18,
+    "score_version": "phase45_source_scoring_v1",
+    "primary_source_count": 11,
+    "supporting_source_count": 0,
+    "low_reliability_source_count": 0,
+    "mandatory_downgrades": [],
+    "limitations": [
+      "正式 reviewed 前必须由外部审计确认 claim 没有超出来源可证明范围。",
+      "交易所/供应商市场数据政策和 schema 文档必须保留 active agreement、product、venue、dataset、jurisdiction 和版本 caveat。",
+      "若后续使用内部 entitlement 或 reference_data schema，需要提供 contract extract 或 hash。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "Phase 37 Data Engineering formal reviewed knowledge",
+      "Phase 37 Market Microstructure formal reviewed knowledge",
+      "Phase 38/41 AI Engineering training-data boundary knowledge",
+      "Phase 45 Audit Trail / Clock Sync formal reviewed knowledge"
+    ],
+    "conflicts": [],
+    "resolution_summary": "未发现与现有 formal reviewed 知识的直接冲突；P45-G 补数据授权、reference data、point-in-time 元数据和 vendor schema 边界。",
+    "approval_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "trade_execution_advice_allowed": false,
+    "risk_threshold_advice_allowed": false
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于提醒 AI IDE 检查市场数据授权、非展示、衍生、训练、再分发和 retention 边界。",
+      "用于生成 reference data、instrument definition、schema version、coverage universe 和 point-in-time 元数据 checklist。",
+      "用于检查外接项目是否把 reference data 误写成交易信号、实盘许可或默认训练授权。"
+    ],
+    "not_allowed": [
+      "不得输出法律授权结论、合同解释、买卖点、仓位、杠杆、止损止盈、交易许可或实盘执行建议。",
+      "不得把候选知识当作 approved 或默认指导。",
+      "不得替外接项目启用 hard gate、拒单、停机、撤单、数据再分发或训练授权。"
+    ]
+  },
+  "machine_gate": {
+    "default_guidance": "deny",
+    "reason": "candidate only; pending external strict audit; no reviewed/approved/default/hard gate.",
+    "requires_human_escalation": false,
+    "hidden_from_default_queue": true,
+    "visible_in_default_guidance_queue": false,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "trade_execution_advice_allowed": false,
+    "risk_threshold_advice_allowed": false,
+    "legal_license_conclusion_allowed": false
+  },
+  "review": {
+    "review_status": "candidate_ready",
+    "review_mode": "external_strict_audit_required",
+    "confidence": "medium_high",
+    "freshness": "mixed",
+    "reviewer": null,
+    "reviewed_at": null,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "trade_execution_advice_allowed": false,
+    "risk_threshold_advice_allowed": false,
+    "audit_log": [
+      {
+        "at": "2026-06-12",
+        "actor": "codex",
+        "action": "phase45_reference_data_entitlement_candidate_generated",
+        "reason": "Generated from Phase 45 P45-G task queue with official exchange, market-data policy and vendor schema sources."
+      },
+      {
+        "at": "2026-06-12",
+        "actor": "external_ai_strict_audit",
+        "action": "phase45_p2_first_audit_imported",
+        "reason": "needs_more_evidence / confidence=medium",
+        "audit_result_id": "audit_phase45_p2_candidate_20260612_external_strict"
+      },
+      {
+        "at": "2026-06-12",
+        "actor": "codex",
+        "action": "phase45_p2_candidate_supplemented",
+        "reason": "按首轮审计要求补证并导出二审包。"
+      },
+      {
+        "at": "2026-06-12",
+        "actor": "external_ai_strict_audit",
+        "action": "phase45_p2_supplemental_reaudit_imported",
+        "reason": "P45-G-DATA05 accepted_for_draft / confidence=high",
+        "audit_result_id": "audit_phase45_p2_needs_evidence_supplemental_reaudit_20260612"
+      },
+      {
+        "at": "2026-06-12",
+        "actor": "external_ai_strict_audit",
+        "action": "phase45_p2_reviewed_preparation_imported",
+        "reason": "accepted_for_reviewed_caveat_only",
+        "audit_result_id": "audit_phase45_p2_reviewed_preparation_20260612"
+      }
+    ],
+    "ai_audit": {
+      "audit_result_id": "audit_phase45_p2_reviewed_preparation_20260612",
+      "package_id": "phase45_p2_reviewed_preparation_audit_package_20260612",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "trade_execution_advice_allowed": false,
+      "legal_license_conclusion_allowed": false,
+      "reasons": [
+        "包内已提供 CEK-TA lineage contract hash，足以支撑 parser_version、normalization_version、raw_snapshot_digest、lineage_id 等字段本体。"
+      ],
+      "required_followups": [
+        "正式文本必须区分 vendor_schema_version 与 internal parser_version / normalization_version。",
+        "OpenLineage、MLflow、Iceberg、DVC 不得写成强制技术栈。",
+        "market-data license、training use、redistribution permission 继续由 legal/vendor agreement owner 判断。"
+      ],
+      "patch_notes": {
+        "source": [
+          "保留 Databento、Nasdaq、CEK-TA lineage contract、OpenLineage、MLflow、Iceberg、DVC。"
+        ],
+        "content": [
+          "保留 vendor_id、dataset_id、schema_version、field_dictionary_ref、parser_version、parser_code_hash、normalization_version、normalization_code_hash、raw_snapshot_uri、raw_snapshot_digest、lineage_id。"
+        ],
+        "boundary": [
+          "不得输出法律授权结论。",
+          "不得输出训练授权结论。",
+          "不得输出数据再分发许可。",
+          "不得生成 hard gate。"
+        ],
+        "conflict": []
+      }
+    }
+  },
+  "workflow": {
+    "stage": "formalized_reviewed",
+    "queue_group": "formalized",
+    "source_phase": "45",
+    "source_task_id": "CEK-TA-469",
+    "batch": "P45-G Market Data Entitlement / Reference Data",
+    "formal_knowledge_id": "kb_phase45_p2.vendor_schema_version_required.v1",
+    "formal_knowledge_path": "codex-expert-kit/rag/knowledge/KB_02_DATA_ENGINEERING/kb_phase45_p2.vendor_schema_version_required.v1.json",
+    "allowed_next_decisions": [
+      "reviewed_preparation",
+      "needs_more_evidence",
+      "rejected"
+    ],
+    "forbidden_next_decisions": [
+      "approved",
+      "default_guidance",
+      "hard_gate",
+      "legal_license_conclusion",
+      "risk_threshold_advice",
+      "trade_execution_advice"
+    ],
+    "conversion_target": {
+      "proposed_knowledge_id": "kb_phase45_p2.vendor_schema_version_required.v1",
+      "target_review_status": "reviewed",
+      "target_machine_gate": "caveat_only",
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "trade_execution_advice_allowed": false,
+      "legal_license_conclusion_allowed": false
+    },
+    "formal_review_status": "reviewed",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "risk_threshold_advice_allowed": false,
+    "trade_execution_advice_allowed": false,
+    "legal_license_conclusion_allowed": false,
+    "next_action": "none",
+    "hidden_from_default_queue": true
+  },
+  "contribution": {
+    "source": "phase45_professional_research",
+    "private_data_removed": true,
+    "project_specific_details_removed": true,
+    "notes": "Generated for external strict audit; no project account, license agreement text, key, position, threshold, or private strategy data included."
+  }
+}

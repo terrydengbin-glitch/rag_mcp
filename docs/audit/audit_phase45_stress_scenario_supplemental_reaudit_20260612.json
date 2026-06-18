@@ -1,0 +1,136 @@
+{
+  "audit_result_id": "audit_phase45_stress_scenario_supplemental_reaudit_20260612",
+  "auditor": "external_ai_strict_audit",
+  "audited_at": "2026-06-12",
+  "package_id": "phase45_stress_scenario_supplemental_reaudit_package_20260612",
+  "summary": {
+    "total": 3,
+    "accepted_for_draft": 2,
+    "needs_more_evidence": 1,
+    "rejected": 0,
+    "blocked": 0
+  },
+  "hard_boundaries": {
+    "reviewed_allowed": false,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "risk_threshold_advice_allowed": false,
+    "trade_execution_advice_allowed": false
+  },
+  "candidate_results": [
+    {
+      "candidate_id": "cand_20260612_phase45_stress_scenario_p45_e_stress03_001",
+      "research_task_id": "P45-E-STRESS03",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reasons": [
+        "wrong-way risk、concentration risk、correlation breakdown 直接证据已补入。",
+        "claim 已将相关性上升、结构改变、反转或 breakdown 收窄为 scenario assumptions，而不是确定性规律。",
+        "claim 明确不得生成相关性阈值、降仓、拒单或 hard gate，风险边界正确。"
+      ],
+      "required_followups": [
+        "保留 caveat：BCBS / FDIC 来源主要是银行或 counterparty credit risk 语境。",
+        "保留 caveat：BIS correlation breakdown 研究只能支撑风险假设和 scenario design，不能生成交易动作。",
+        "如后续进入 reviewed，需要补 CEK-TA stress_result schema 或 scenario_assumption schema。"
+      ],
+      "patch_notes": {
+        "source": [
+          "保留 BCBS stress testing principles、CPMI-IOSCO CCP resilience、CME stress testing。",
+          "新增 BCBS sound stress testing practices、BIS correlation breakdown、FDIC interagency CCR guidance。"
+        ],
+        "content": [
+          "保留常态样本相关性只能作为输入证据之一，不能证明压力时期仍然分散。",
+          "保留相关性反转或 breakdown 必须标注为情景假设。"
+        ],
+        "boundary": [
+          "不得输出相关性阈值。",
+          "不得生成降仓、拒单、交易许可或 hard gate。"
+        ],
+        "conflict": []
+      },
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false
+    },
+    {
+      "candidate_id": "cand_20260612_phase45_stress_scenario_p45_e_stress04_001",
+      "research_task_id": "P45-E-STRESS04",
+      "decision": "needs_more_evidence",
+      "confidence": "medium_high",
+      "reasons": [
+        "halt/pause、reopening auction、session close/open、holiday/early-close、gap risk 的直接证据已补强。",
+        "claim 已区分传统交易所、期货 session 与 crypto 24/7 市场，方向正确。",
+        "但 claim 仍包含保证金/融资变化，当前 source_refs 没有 broker、venue、clearing 或 exchange margin/funding 直接来源支撑。"
+      ],
+      "required_followups": [
+        "补 broker / exchange / clearing margin documentation，例如 futures initial/maintenance margin change、overnight margin、holiday margin、funding/financing source。",
+        "如不补来源，则将保证金/融资变化改为 optional dimension 或删除。",
+        "明确 crypto 24/7 下的非连续风险更多来自 venue outage、funding settlement、maintenance window、liquidity gap，而非传统 exchange close/open。",
+        "不得输出隔夜持仓建议、止损止盈、仓位调整、session 阈值或 hard gate。"
+      ],
+      "patch_notes": {
+        "source": [
+          "保留 Nasdaq halt/pause order handling、NYSE MWCB FAQ、CME trading hours、gap risk supporting source。",
+          "FIA / CME / BCBS 只能作为风险控制和压力测试背景来源。",
+          "必须补 broker/venue/clearing margin-funding direct source，或删除 claim 中相关字段。"
+        ],
+        "content": [
+          "把不可交易窗口、开盘/复牌 auction、订单接受规则、假日/early-close 日历、数据可用边界保留。",
+          "保证金/融资变化暂不应作为已支撑 claim 主体。"
+        ],
+        "boundary": [
+          "不得输出隔夜持仓建议。",
+          "不得输出止损止盈、仓位调整、session 风险阈值或 hard gate。"
+        ],
+        "conflict": []
+      },
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false
+    },
+    {
+      "candidate_id": "cand_20260612_phase45_stress_scenario_p45_e_stress05_001",
+      "research_task_id": "P45-E-STRESS05",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reasons": [
+        "Expected Shortfall、VaR/ES、liquidity horizon、liquidity-adjusted tail loss 直接证据已补入。",
+        "Basel market risk standard 和 MAR33 足以支撑 Expected Shortfall 与 liquidity horizon 在市场风险框架中的使用。",
+        "Acerbi-Tasche 支撑 Expected Shortfall 作为 worst-tail average loss 风险度量。",
+        "claim 已明确 PF、胜率、均值和普通回撤只是绩效/回测指标，不能替代尾部风险评估。",
+        "claim 明确不得输出 VaR/ES 阈值、交易许可、降仓、停机或 hard gate。"
+      ],
+      "required_followups": [
+        "保留 caveat：Basel / MAR33 是银行监管资本和市场风险模型语境，不是 CEK-TA 交易阈值来源。",
+        "将 VaR、Expected Shortfall、scenario loss、liquidity horizon、liquidity-adjusted loss 拆成 tail_loss_review schema 字段。",
+        "如后续进入 reviewed，需要补内部 stress_result / tail_loss_review contract extract。"
+      ],
+      "patch_notes": {
+        "source": [
+          "保留 BCBS stress testing principles、PFMI、DTCC stress testing。",
+          "新增 Basel Minimum Capital Requirements for Market Risk、Basel MAR33、Acerbi-Tasche Expected Shortfall。"
+        ],
+        "content": [
+          "保留 VaR、Expected Shortfall、scenario loss、最大单日/多日损失、liquidity horizon、liquidity-adjusted loss、模型外事件和样本外覆盖字段。",
+          "保留 performance/backtest metrics 与 tail risk metrics 的边界。"
+        ],
+        "boundary": [
+          "不得输出 VaR/ES 阈值。",
+          "不得把尾部亏损复核结果变成交易许可。",
+          "不得生成降仓、停机或 hard gate。"
+        ],
+        "conflict": []
+      },
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false
+    }
+  ]
+}

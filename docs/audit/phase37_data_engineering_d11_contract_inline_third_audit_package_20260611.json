@@ -1,0 +1,862 @@
+{
+  "package_id": "phase37_data_engineering_d11_contract_inline_third_audit_package_20260611",
+  "package_type": "candidate_contract_inline_third_audit_package",
+  "schema_version": "1.0.0",
+  "generated_at": "2026-06-11",
+  "task_id": "CEK-TA-392",
+  "language": "zh-CN",
+  "phase": "37",
+  "title": "Phase 37 Data Engineering D11 契约内联三审包",
+  "purpose": "严格复审 P37-B-D11 在内联 CEK-TA 数据层契约和补充 lineage 来源后，是否可进入 formal reviewed/caveat_only。",
+  "strict_boundaries": [
+    "candidate 不是正式知识。",
+    "本次审计最多只能允许 accepted_for_reviewed_caveat_only。",
+    "不得创建 approved。",
+    "不得启用 default guidance。",
+    "不得启用 hard gate。",
+    "不得生成买卖点、仓位、杠杆、止损止盈或实盘执行建议。"
+  ],
+  "audit_instructions": [
+    "必须搜索相关的专业网站、资料、案例和数据，对审计报告进行严格审计。",
+    "重点检查内联 CEK-TA contract 是否足以支撑 exact layer names、raw write-protection、feature-ready、label-ready 和 transformation manifest。",
+    "重点检查 OpenLineage、ML Metadata、Feast lineage 来源是否足以支撑 lineage manifest 字段，而不是被误用为 CEK-TA 层名来源。",
+    "检查 source_quality 是否保守：内部 contract 支撑内部层名，外部标准/工具只支撑通用 pattern 和 lineage。",
+    "若发现仍缺少来源、契约、边界、冲突审计或字段一致性，必须返回 needs_more_evidence 或 blocked。"
+  ],
+  "required_output_schema": {
+    "audit_result_id": "string",
+    "package_id": "phase37_data_engineering_d11_contract_inline_third_audit_package_20260611",
+    "auditor": "string",
+    "audited_at": "YYYY-MM-DD",
+    "quality_gate": {
+      "pass": "boolean",
+      "candidate_count": 1,
+      "notes": [
+        "string"
+      ]
+    },
+    "decisions": [
+      {
+        "candidate_id": "cand_20260611_phase37_data_engineering_raw_vs_adjusted_data_boundary_001",
+        "research_task_id": "P37-B-D11",
+        "decision": "accepted_for_reviewed_caveat_only | needs_more_evidence | rejected | blocked",
+        "confidence": "low | medium | high",
+        "reviewed_allowed": "boolean",
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "reasons": [
+          "string"
+        ],
+        "required_patches": {
+          "source": [
+            "string"
+          ],
+          "content": [
+            "string"
+          ],
+          "boundary": [
+            "string"
+          ],
+          "conflict": [
+            "string"
+          ]
+        },
+        "formal_conversion_notes": [
+          "string"
+        ]
+      }
+    ]
+  },
+  "contract_inline": {
+    "path": "docs/contracts/phase37_data_engineering_dataset_layers_contract.md",
+    "full_text": "# Phase 37 Data Engineering Dataset Layers Contract\n\n生成日期：2026-06-11\n\n## 目标\n\n本契约为 CEK-TA Trading Engineering / Data Engineering 的数据层命名、写入边界、血缘字段和审计字段提供内部规范。它用于补强 `P37-B-D11 raw_vs_adjusted_data_boundary`，但不创建正式知识、不创建 approved，也不改变外部项目自己的数据库实现。\n\n## 上游\n\n```text\n交易所或数据供应商原始行情\n成交、盘口、bar、reference data、corporate action、contract rollover 和 vendor correction\n外接项目的数据接入器、数据质量报告、特征生成器和标签生成器\n```\n\n## 下游\n\n```text\n回测数据集\n训练数据集\n特征表\n标签表\n质量审计报告\nRAG 知识审计与 AI IDE 方案审计\n```\n\n## CEK-TA 数据层\n\n| 层级 | 语义 | 写入边界 | 典型字段 |\n| --- | --- | --- | --- |\n| raw | 原始供应商/交易所事实记录，保留 source provenance 和接收时间 | append-only；不得被清洗、复权、特征或标签回写覆盖 | source_id, instrument_id, event_time, receive_time, raw_payload_hash, vendor_sequence |\n| cleaned | 对 raw 做校验、去重、隔离、修复候选和质量标记后的可计算层 | 只能从 raw 派生；必须记录质量规则、隔离记录和修复记录 | quality_flags, quarantine_reason, repair_policy_id, quality_report_id |\n| adjusted | 复权、合约换月、连续合约映射或 back-adjusted 数据层 | 只能从 raw/cleaned 派生；必须记录 adjustment_policy_id 和版本 | adjustment_policy_id, adjustment_factor, roll_rule_id, adjusted_price |\n| feature_ready | 点时正确的特征层，不包含未来标签 | 必须记录 feature_version、available_time 和输入数据版本 | feature_name, feature_value, feature_version, available_time, source_dataset_version |\n| label_ready | 训练/评估标签层，记录 horizon、label policy 和泄漏边界 | 不得回写 raw/cleaned/adjusted；只能作为训练或评估下游输入 | label_name, label_value, horizon, label_policy_id, label_generated_at |\n\n## 转换清单\n\n每次跨层转换必须生成 transformation manifest：\n\n```text\ninput_layer\noutput_layer\nsource_dataset_version\nsource_table_snapshot\ncode_version\nparameter_hash\nproduced_at\nactor\nquality_report_id\nlineage_id\nrollback_pointer\n```\n\n## 强制边界\n\n```text\n1. downstream layer 不得回写污染 raw layer。\n2. raw 修正必须以 correction record 或新 dataset version 体现，不得静默覆盖。\n3. adjusted 数据不能替代 raw 数据；回测/训练必须声明使用 raw、cleaned、adjusted、feature_ready 还是 label_ready。\n4. feature_ready 必须有 available_time，不能含未来标签。\n5. label_ready 必须声明 horizon 和 label policy，不能作为特征源回写。\n6. AI Engineering 只能通过 knowledge_refs 引用本契约，不得把本契约改写为模型训练或交易执行规则本体。\n```\n\n## 不做什么\n\n```text\n不指定具体数据库产品。\n不要求所有外接项目必须使用同一物理表名。\n不提供买卖点、仓位、杠杆、止损止盈或实盘执行建议。\n不把 candidate 直接升级为 reviewed/approved/default guidance。\n```\n",
+    "schema_extract": {
+      "layers": [
+        {
+          "name": "raw",
+          "semantics": "原始供应商/交易所事实记录，保留 source provenance 和接收时间。",
+          "write_boundary": "append-only；不得被清洗、复权、特征或标签回写覆盖。",
+          "typical_fields": [
+            "source_id",
+            "instrument_id",
+            "event_time",
+            "receive_time",
+            "raw_payload_hash",
+            "vendor_sequence"
+          ]
+        },
+        {
+          "name": "cleaned",
+          "semantics": "对 raw 做校验、去重、隔离、修复候选和质量标记后的可计算层。",
+          "write_boundary": "只能从 raw 派生；必须记录质量规则、隔离记录和修复记录。",
+          "typical_fields": [
+            "quality_flags",
+            "quarantine_reason",
+            "repair_policy_id",
+            "quality_report_id"
+          ]
+        },
+        {
+          "name": "adjusted",
+          "semantics": "复权、合约换月、连续合约映射或 back-adjusted 数据层。",
+          "write_boundary": "只能从 raw/cleaned 派生；必须记录 adjustment_policy_id 和版本。",
+          "typical_fields": [
+            "adjustment_policy_id",
+            "adjustment_factor",
+            "roll_rule_id",
+            "adjusted_price"
+          ]
+        },
+        {
+          "name": "feature_ready",
+          "semantics": "点时正确的特征层，不包含未来标签。",
+          "write_boundary": "必须记录 feature_version、available_time 和输入数据版本。",
+          "typical_fields": [
+            "feature_name",
+            "feature_value",
+            "feature_version",
+            "available_time",
+            "source_dataset_version"
+          ]
+        },
+        {
+          "name": "label_ready",
+          "semantics": "训练/评估标签层，记录 horizon、label policy 和泄漏边界。",
+          "write_boundary": "不得回写 raw/cleaned/adjusted；只能作为训练或评估下游输入。",
+          "typical_fields": [
+            "label_name",
+            "label_value",
+            "horizon",
+            "label_policy_id",
+            "label_generated_at"
+          ]
+        }
+      ],
+      "transformation_manifest_required_fields": [
+        "input_layer",
+        "output_layer",
+        "source_dataset_version",
+        "source_table_snapshot",
+        "code_version",
+        "parameter_hash",
+        "produced_at",
+        "actor",
+        "quality_report_id",
+        "lineage_id",
+        "rollback_pointer"
+      ],
+      "hard_boundaries": [
+        "downstream layer 不得回写污染 raw layer。",
+        "raw 修正必须以 correction record 或新 dataset version 体现，不得静默覆盖。",
+        "adjusted 数据不能替代 raw 数据；回测/训练必须声明使用的数据层。",
+        "feature_ready 必须有 available_time，不能含未来标签。",
+        "label_ready 必须声明 horizon 和 label policy，不能作为特征源回写。",
+        "AI Engineering 只能通过 knowledge_refs 引用本契约，不得改写为模型训练或交易执行规则本体。"
+      ]
+    }
+  },
+  "source_review_notes": {
+    "external_pattern_sources": [
+      "Databricks medallion supports layered raw/validated/enriched style architecture.",
+      "Feast point-in-time and OpenLineage integration support feature-ready lineage and leakage boundary.",
+      "OpenLineage and ML Metadata support lineage/metadata object models for transformations and ML workflows."
+    ],
+    "internal_contract_source": "CEK-TA contract supports exact raw/cleaned/adjusted/feature-ready/label-ready names and write boundaries.",
+    "source_quality_boundary": "Do not count tool-specific implementation docs as universal platform requirements."
+  },
+  "candidates": [
+    {
+      "schema_version": "1.1.0-candidate",
+      "candidate_id": "cand_20260611_phase37_data_engineering_raw_vs_adjusted_data_boundary_001",
+      "research_task_id": "P37-B-D11",
+      "status": {
+        "review_status": "needs_more_evidence",
+        "ingestion_decision": "needs_more_evidence",
+        "decision_reason": "CEK-TA-392 已内联 CEK-TA 数据层契约正文并补 OpenLineage/ML Metadata/Feast lineage 来源；仍需三审确认是否可进入 formal reviewed/caveat_only。",
+        "created_at": "2026-06-11",
+        "updated_at": "2026-06-11"
+      },
+      "classification": {
+        "tree_node_id": "kt.trading_engineering.data_engineering",
+        "canonical_node_id": "kt.trading_engineering.data_engineering",
+        "tree_path": "CEK-TA / Trading Engineering / Data Engineering",
+        "related_nodes": [
+          "kt.trading_engineering",
+          "kt.ai_engineering.decision_time_feature_contract",
+          "kt.ai_engineering.external_project_memory.memory_schema_lifecycle"
+        ],
+        "partition_id": "KB_02_DATA_ENGINEERING",
+        "domain": "trading_engineering",
+        "subdomain": "raw_adjusted_boundary",
+        "rule_type": "data_boundary_rule",
+        "claim_type": "data_boundary_rule",
+        "used_for": [
+          "trading_data_contract",
+          "backtest_data_audit",
+          "ai_training_dataset_boundary",
+          "external_project_rag_retrieval"
+        ],
+        "classification_notes": "本候选主归属 Trading Engineering / Data Engineering；AI Engineering 只能通过 knowledge_refs 引用，不得复制市场数据工程规则本体。"
+      },
+      "claim": {
+        "claim_id": "claim_p37_b_d11",
+        "statement": "外部数据平台可以采用 raw/validated/enriched 或等价分层架构；CEK-TA 内部数据契约则明确使用 raw、cleaned、adjusted、feature-ready 和 label-ready 层名，并要求调整、清洗、特征和标签产物不得回写污染 raw 层。",
+        "normalized_claim": "data_engineering.raw_vs_adjusted_data_boundary.v1",
+        "evidence_summary": "Databricks 支撑通用 layered data architecture；Feast 与 MLflow 支撑 point-in-time feature、dataset lineage 和训练/评估数据追踪；OpenLineage 与 ML Metadata 支撑 Run/Job/Dataset、facets、Artifact/Execution/Context 等 lineage 元数据；CEK-TA 内联契约正文定义 exact layer names、write boundaries、transformation manifest、feature-ready 和 label-ready 判定字段。",
+        "interpretation_notes": "CEK-TA exact layer names 是内部知识库契约，不是所有外部平台强制物理表名；本轮只导出三审包，外部 AI/人工返回 reviewed_allowed=true 前不得创建 formal reviewed。",
+        "claim_strength": "medium_high_with_internal_contract_caveat",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general",
+        "asset": "general",
+        "timeframe": "general",
+        "data_granularity": "event_or_bar",
+        "project_type": "trading_ai_support_layer",
+        "applies_when": [
+          "外接项目建立行情湖、研究数据集、回测缓存、特征表、训练集或标签表时",
+          "需要把外部 raw/validated/enriched 分层映射到 CEK-TA raw/cleaned/adjusted/feature-ready/label-ready 契约时",
+          "需要为跨层转换保留 source_dataset_version、source_table_snapshot、code_version、parameter_hash、lineage_id 和 rollback_pointer 时"
+        ],
+        "not_applicable_when": [
+          "只保存单次人工下载文件且不做下游训练、回测或审计复用时",
+          "外部事实层已经以只读方式提供不可变 raw layer，且项目只引用不改写时",
+          "外部数据库已有等价分层契约时，可映射到 CEK-TA 层名而不是强制复制物理表名",
+          "需要具体交易策略参数、账户事实、交易所私有配置、密钥或实盘权限时，应由外接项目事实层处理",
+          "AI Engineering 只能引用本规则，不得把本规则改写为模型训练、MCP 或 RAG 本体规则"
+        ],
+        "assumptions": [
+          "候选用于 CEK-TA 通用支持层知识库，而不是某个项目私有数据源配置。",
+          "所有数据工程结论必须保留来源、时间戳、版本、schema、修复和验证边界。",
+          "候选通过外部审计前不能进入正式 reviewed 知识库。"
+        ],
+        "limitations": [
+          "本批来源包含数据供应商、数据库、数据质量框架、特征存储和交易所/指数/参考数据资料，仍需要外部 AI/人工严格审计。",
+          "供应商和框架文档只能支撑通用工程边界，不能替代具体外接项目的数据契约。",
+          "本候选不提供任何投资建议或实盘执行许可。",
+          "OpenLineage、ML Metadata、Feast、MLflow 和 Databricks 资料支撑 lineage/feature/dataset pattern，不直接规定 CEK-TA exact layer names。",
+          "CEK-TA 内部契约现在已内联到三审包，但仍需要外部 AI/人工确认它与正式知识库无冲突。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_title": "Apache Iceberg Table Spec",
+          "source_url": "https://iceberg.apache.org/spec/",
+          "source_type": "storage_table_format_spec",
+          "publisher": "Apache Iceberg",
+          "published_at": null,
+          "reliability": "high",
+          "score": 86,
+          "freshness": "time_sensitive",
+          "evidence_summary": "Apache Iceberg specifies snapshots, manifests, data files, and file-level metrics used to track table versions.",
+          "limitations": [
+            "Storage-table format spec; not mandatory for all CEK-TA projects."
+          ],
+          "source_id": "src_001",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Versioning data and models",
+          "source_url": "https://doc.dvc.org/example-scenarios/versioning-data-and-models",
+          "source_type": "data_versioning_tool_doc",
+          "publisher": "DVC",
+          "published_at": null,
+          "reliability": "medium_high",
+          "score": 80,
+          "freshness": "time_sensitive",
+          "evidence_summary": "DVC explains capturing data/model versions in Git commits while storing larger contents outside Git.",
+          "limitations": [
+            "Tool-specific workflow; large lakehouse projects may prefer table-format versioning."
+          ],
+          "source_id": "src_002",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Try Great Expectations",
+          "source_url": "https://docs.greatexpectations.io/docs/core/introduction/try_gx/",
+          "source_type": "data_quality_framework_doc",
+          "publisher": "Great Expectations",
+          "published_at": null,
+          "reliability": "high",
+          "score": 84,
+          "freshness": "time_sensitive",
+          "evidence_summary": "Great Expectations documents expectations, validation results, failed counts and percentages, and generated Data Docs.",
+          "limitations": [
+            "Framework-specific quality checks; project-specific thresholds and market calendars must be defined separately."
+          ],
+          "source_id": "src_003",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Corporate Actions and Events Manual Equities",
+          "source_url": "https://indexes.nasdaqomx.com/docs/Corporate_Actions_and_Events_Manual_Equities.pdf",
+          "source_type": "index_provider_manual",
+          "publisher": "Nasdaq",
+          "published_at": null,
+          "reliability": "high",
+          "score": 84,
+          "freshness": "time_sensitive",
+          "evidence_summary": "Nasdaq manual documents equity corporate action and event treatment in index data contexts.",
+          "limitations": [
+            "Index-provider methodology; not a universal adjustment rule for every trading dataset."
+          ],
+          "source_id": "src_004",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_005",
+          "source_title": "Medallion lakehouse architecture",
+          "source_url": "https://docs.databricks.com/aws/en/lakehouse/medallion",
+          "source_type": "framework_doc",
+          "publisher": "Databricks",
+          "published_at": null,
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "reliability": "high",
+          "score": 88,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [
+            "Databricks naming is a pattern, not mandatory CEK-TA physical schema."
+          ],
+          "evidence_summary": "Databricks documents bronze raw, silver validated, and gold enriched layers as progressively higher-quality data layers.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_006",
+          "source_title": "What is Medallion Architecture?",
+          "source_url": "https://www.databricks.com/blog/what-is-medallion-architecture",
+          "source_type": "framework_doc",
+          "publisher": "Databricks",
+          "published_at": null,
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "reliability": "medium_high",
+          "score": 82,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [
+            "Product blog; supporting evidence for layered-data pattern."
+          ],
+          "evidence_summary": "Databricks blog explains bronze as raw, silver as clean/standardized, and gold as aggregates/features ready for analytics and ML.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_007",
+          "source_title": "Point-in-time joins",
+          "source_url": "https://docs.feast.dev/getting-started/concepts/point-in-time-joins",
+          "source_type": "framework_doc",
+          "publisher": "Feast",
+          "published_at": null,
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "reliability": "high",
+          "score": 86,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [
+            "Feature-store specific; supports feature-ready boundary and leakage control."
+          ],
+          "evidence_summary": "Feast documents point-in-time correct joins that reproduce feature state for a specific past point.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_008",
+          "source_title": "Feature View",
+          "source_url": "https://docs.feast.dev/getting-started/concepts/feature-view",
+          "source_type": "framework_doc",
+          "publisher": "Feast",
+          "published_at": null,
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "reliability": "medium_high",
+          "score": 82,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [
+            "Tool-specific; external projects may implement equivalent contracts without Feast."
+          ],
+          "evidence_summary": "Feast feature views define feature data and optional schema validation for consistent online/offline usage.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_009",
+          "source_title": "Dataset Tracking",
+          "source_url": "https://mlflow.org/docs/latest/ml/dataset/",
+          "source_type": "framework_doc",
+          "publisher": "MLflow",
+          "published_at": null,
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "reliability": "high",
+          "score": 84,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [
+            "MLflow-specific; supports lineage requirement rather than a mandatory platform choice."
+          ],
+          "evidence_summary": "MLflow documents tracking, versioning, and managing datasets for training, validation and evaluation lineage.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_010",
+          "source_title": "Delta Lake Time Travel",
+          "source_url": "https://delta.io/blog/2023-02-01-delta-lake-time-travel/",
+          "source_type": "framework_doc",
+          "publisher": "Delta Lake",
+          "published_at": null,
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "reliability": "medium_high",
+          "score": 80,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [
+            "Storage-format specific; supports versioned data access boundary."
+          ],
+          "evidence_summary": "Delta Lake explains time travel by table version or timestamp and transaction-log based historical access.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_011",
+          "source_title": "Phase 37 Data Engineering Dataset Layers Contract",
+          "source_url": "docs/contracts/phase37_data_engineering_dataset_layers_contract.md",
+          "source_type": "internal_contract",
+          "publisher": "CEK-TA",
+          "published_at": null,
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "reliability": "high",
+          "score": 90,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [
+            "Internal CEK-TA contract; must be paired with external architecture/feature-lineage sources."
+          ],
+          "evidence_summary": "CEK-TA internal contract defines raw, cleaned, adjusted, feature-ready and label-ready layer semantics, write boundaries, lineage and transformation manifest fields.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_012",
+          "source_title": "Object Model",
+          "source_url": "https://openlineage.io/docs/spec/object-model/",
+          "source_type": "lineage_standard_doc",
+          "publisher": "OpenLineage",
+          "published_at": null,
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "reliability": "high",
+          "score": 88,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [
+            "Open lineage standard; supports manifest/lineage requirements, not CEK-TA exact physical table names."
+          ],
+          "evidence_summary": "OpenLineage object model defines lineage around Run, Job, Dataset and lineage events as datasets are created and transformed.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_013",
+          "source_title": "Facets & Extensibility",
+          "source_url": "https://openlineage.io/docs/spec/facets/",
+          "source_type": "lineage_standard_doc",
+          "publisher": "OpenLineage",
+          "published_at": null,
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "reliability": "high",
+          "score": 86,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [
+            "Facet vocabulary must be mapped into CEK-TA transformation manifest fields by implementation."
+          ],
+          "evidence_summary": "OpenLineage facets attach structured metadata to Run, Job and Dataset entities, supporting extensible audit context.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_014",
+          "source_title": "Dataset Facets",
+          "source_url": "https://openlineage.io/docs/spec/facets/dataset-facets/",
+          "source_type": "lineage_standard_doc",
+          "publisher": "OpenLineage",
+          "published_at": null,
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "reliability": "high",
+          "score": 85,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [
+            "Dataset facets support metadata capture; they do not prescribe trading-specific raw/adjusted semantics."
+          ],
+          "evidence_summary": "OpenLineage dataset facets provide schema, version, ownership or other dataset-specific metadata for inputs and outputs.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_015",
+          "source_title": "ML Metadata",
+          "source_url": "https://www.tensorflow.org/tfx/guide/mlmd",
+          "source_type": "ml_metadata_doc",
+          "publisher": "TensorFlow / TFX",
+          "published_at": null,
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "reliability": "high",
+          "score": 86,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [
+            "ML workflow metadata model; supports feature/label dataset lineage but not market-data layer naming by itself."
+          ],
+          "evidence_summary": "ML Metadata records and retrieves metadata for ML workflows and models artifacts, executions, contexts and lineage.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_016",
+          "source_title": "OpenLineage Integration",
+          "source_url": "https://docs.feast.dev/reference/openlineage",
+          "source_type": "feature_store_lineage_doc",
+          "publisher": "Feast",
+          "published_at": null,
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "reliability": "high",
+          "score": 84,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [
+            "Feature-store implementation detail; useful for feature-ready lineage, not a universal requirement to use Feast."
+          ],
+          "evidence_summary": "Feast OpenLineage integration documents automatic lineage tracking for ML feature engineering workflows.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_017",
+          "source_title": "Tracking Feature Lineage with OpenLineage",
+          "source_url": "https://feast.dev/blog/feast-openlineage-integration/",
+          "source_type": "feature_store_lineage_doc",
+          "publisher": "Feast",
+          "published_at": null,
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "reliability": "medium_high",
+          "score": 80,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [
+            "Product/engineering blog; supporting evidence only, not a normative contract source."
+          ],
+          "evidence_summary": "Feast engineering post explains using OpenLineage for feature-store operations and feature lineage visibility.",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "medium_high",
+        "score": 83.0,
+        "score_version": "phase37_data_engineering_d11_contract_inline_source_scoring_v1",
+        "primary_source_count": 5,
+        "supporting_source_count": 12,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "CEK-TA 内部 contract 正文已内联，可审计 exact layer names 与 write boundary。",
+          "OpenLineage / ML Metadata / Feast lineage 来源支撑 transformation manifest 和 feature lineage，但不替代 CEK-TA 内部契约。",
+          "Databricks/Feast/MLflow/Delta/Iceberg/DVC 均按 implementation-pattern 或 tool-specific evidence 使用，不得泛化为所有平台强制实现。",
+          "正式 reviewed/caveat_only 仍需外部 AI/人工严格审计返回 reviewed_allowed=true。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none_known_in_visible_context",
+        "checked_against": [
+          "Phase 36/38/40/41 AI Engineering 知识边界",
+          "现有 KB_01_QUANT_FOUNDATION formal 知识",
+          "Phase 37 Trading 与 AI 跨分支引用契约"
+        ],
+        "conflicts": [],
+        "resolution_summary": "内联契约后未发现与可见 formal knowledge 的直接冲突；但完整 CEK-TA formal KB 仍需三审方检查。D11 仍为 Trading Engineering 数据工程规则本体，AI Engineering 只能通过 knowledge_refs 引用。",
+        "approval_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 检索 Trading Engineering 数据工程规则本体。",
+          "用于审计交易项目方案中是否缺少时间戳、schema、版本、数据质量和调整边界。",
+          "用于辅助外接项目设计数据契约、质量报告、训练集和回测数据审计清单。"
+        ],
+        "not_allowed": [
+          "不得生成买卖点、仓位、杠杆、止损止盈或实盘执行建议。",
+          "不得把候选知识当作 approved、default guidance 或 hard gate。",
+          "不得绕过外接项目事实、数据供应商契约、风控 hard gate 或人工治理流程。"
+        ]
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "D11 已补内联契约并等待三审；不得作为默认指导。",
+        "requires_human_escalation": true,
+        "hidden_from_default_queue": true
+      },
+      "review": {
+        "confidence": "medium_high",
+        "freshness": "mixed",
+        "reviewer": "external_ai_and_codex_alignment",
+        "reviewed_at": "2026-06-11",
+        "open_questions": [
+          "三审是否认可内联 CEK-TA contract 足以支撑 exact layer names 和 raw write-protection？",
+          "三审是否认可 OpenLineage / ML Metadata / Feast lineage 来源足以支撑 transformation manifest 与 feature-ready lineage 字段？",
+          "三审是否发现与现有 Data Engineering 或 AI Engineering formal 知识的冲突、重叠或需要拆分的 L3 专题？"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-11",
+            "actor": "codex",
+            "action": "created",
+            "reason": "根据 Phase 37 P37-B Data Engineering 队列生成 Trading Engineering 候选知识。"
+          },
+          {
+            "at": "2026-06-11",
+            "actor": "codex",
+            "action": "sourced",
+            "reason": "记录公开专业资料、官方文档、交易所/指数/参考数据资料和数据质量框架来源摘要。"
+          },
+          {
+            "at": "2026-06-11",
+            "actor": "codex",
+            "action": "classified",
+            "reason": "归类到 KB_02_DATA_ENGINEERING / kt.trading_engineering.data_engineering / raw_adjusted_boundary。"
+          },
+          {
+            "at": "2026-06-11",
+            "actor": "external_ai_strict_audit",
+            "action": "phase37_data_engineering_first_audit_imported",
+            "reason": "accepted_for_draft / confidence=medium_high",
+            "audit_result_id": "audit_result_phase37_data_engineering_candidate_audit_20260611_strict_v1",
+            "patch_notes": [
+              "将 raw、cleaned、adjusted、feature-ready、label-ready 定义为 CEK-TA 数据契约层级；不要声称所有平台必须采用这些确切层名。",
+              "补 medallion architecture、feature store lineage、label store 或 internal dataset layer schema 作为主来源；Nasdaq corporate action 只能支持 adjusted 数据的一部分。"
+            ]
+          },
+          {
+            "at": "2026-06-11",
+            "actor": "external_ai_strict_audit",
+            "action": "phase37_data_engineering_first_audit_imported",
+            "reason": "accepted_for_draft / confidence=medium",
+            "audit_result_id": "audit_result_phase37_data_engineering_candidate_audit_20260611_strict_v1_schema_patched",
+            "patch_notes": [
+              "将 raw、cleaned、adjusted、feature-ready、label-ready 定义为 CEK-TA 数据契约层级；不要声称所有平台必须采用这些确切层名。",
+              "补 medallion architecture、feature store lineage、label store 或 internal dataset layer schema 作为主来源；Nasdaq corporate action 只能支持 adjusted 数据的一部分。"
+            ]
+          },
+          {
+            "at": "2026-06-11",
+            "actor": "codex",
+            "action": "phase37_data_engineering_reviewed_preparation_needs_more_evidence",
+            "reason": "CEK-TA-389: 不能进入 reviewed/caveat_only。当前 source_refs 主要支撑版本/快照、GX 验证和部分 corporate action；对 raw/cleaned/adjusted/feature-ready/label-ready 层级本体和“不得回写污染 raw”的直接证据不足。; 外部 Databricks medallion 来源可补 raw/validated/enriched 分层，但不能单独证明 CEK-TA 的 feature-ready/label-ready 层名和回写禁止规则。"
+          },
+          {
+            "at": "2026-06-11",
+            "actor": "codex",
+            "action": "phase37_data_engineering_blocked_evidence_supplemented",
+            "reason": "CEK-TA-390: 根据 reviewed-preparation 审计阻断点补充专业来源、CEK-TA 内部数据层契约和边界说明，并导出再审包。"
+          },
+          {
+            "at": "2026-06-11",
+            "actor": "codex",
+            "action": "phase37_data_engineering_blocked_evidence_supplemented",
+            "reason": "CEK-TA-390: 根据 reviewed-preparation 审计阻断点补充专业来源、CEK-TA 内部数据层契约和边界说明，并导出再审包。",
+            "audit_result_id": "pending_phase37_data_engineering_blocked_supplemental_reaudit"
+          },
+          {
+            "at": "2026-06-11",
+            "actor": "codex",
+            "action": "phase37_data_engineering_supplemental_reaudit_needs_more_evidence",
+            "reason": "CEK-TA-391: 外部补证已显著增强：Databricks medallion architecture 支持 raw/validated/enriched layered design；Feast 支持 point-in-time feature retrieval；MLflow Dataset Tracking 支持 dataset lineage、source、schema、digest 与 training/evaluation context；Delta Lake/Iceberg/DVC 支持 versioning/time-travel/snapshot/reproducibility。; 但该候选的核心强 claim 依赖 CEK-TA-specific 层名 raw/cleaned/adjusted/feature-ready/label-ready 以及“不得回写污染 raw”的内部写入边界；上传包只提供 contract path 与 source_ref 摘要，没有提供 docs/contracts/phase37_data_engineering_dataset_layers_contract.md 正文或机器可校验 schema。",
+            "audit_result_id": "audit_result_phase37_data_engineering_blocked_supplemental_reaudit_20260611_strict_v1"
+          },
+          {
+            "at": "2026-06-11",
+            "actor": "codex",
+            "action": "phase37_data_engineering_d11_contract_inline_supplemented",
+            "reason": "CEK-TA-392: 内联 CEK-TA 数据层契约正文，补 OpenLineage/ML Metadata/Feast lineage 来源，并导出 D11 三审包。",
+            "audit_result_id": "pending_phase37_data_engineering_d11_contract_inline_third_audit_package_20260611"
+          }
+        ],
+        "ai_audit": {
+          "audit_result_id": "pending_phase37_data_engineering_d11_contract_inline_third_audit_package_20260611",
+          "source_package_id": "phase37_data_engineering_d11_contract_inline_third_audit_package_20260611",
+          "decision": "pending_third_reaudit",
+          "reviewed_allowed": false,
+          "approved_allowed": false,
+          "default_guidance_allowed": false,
+          "hard_gate_allowed": false,
+          "required_checks": [
+            "contract_inline_full_text_present",
+            "contract_schema_extract_present",
+            "lineage_sources_present",
+            "source_quality_not_overstated",
+            "workflow_hidden_from_default_queue_true"
+          ]
+        }
+      },
+      "workflow": {
+        "stage": "supplemented_for_third_reaudit",
+        "allowed_next_decisions": [
+          "accepted_for_reviewed_caveat_only",
+          "needs_more_evidence",
+          "rejected",
+          "blocked"
+        ],
+        "forbidden_decisions": [
+          "reviewed",
+          "approved",
+          "default_guidance",
+          "hard_gate"
+        ],
+        "formal_knowledge_id": null,
+        "formalization_allowed": false,
+        "formalization_notes": "只有外部 AI/人工严格审计通过后，才能按 Phase 32 流程转 formal reviewed/caveat_only。",
+        "ai_audit_result_id": "pending_phase37_data_engineering_d11_contract_inline_third_audit_package_20260611",
+        "formal_review_status": null,
+        "default_guidance_allowed": false,
+        "approved_allowed": false,
+        "hard_gate_allowed": false,
+        "hidden_from_default_queue": true,
+        "visible_in_default_guidance_queue": false,
+        "queue_group": "needs_more_evidence",
+        "next_action": "external_ai_or_human_third_reaudit"
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_02_data_engineering.raw_vs_adjusted_data_boundary.v1",
+        "target_partition_id": "KB_02_DATA_ENGINEERING",
+        "target_tree_node_id": "kt.trading_engineering.data_engineering",
+        "target_review_status": "blocked_until_contract_inline_third_reaudit",
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "reviewed_allowed": false
+      },
+      "contribution": {
+        "source": "codex_research_ingestion",
+        "private_data_removed": true,
+        "contains_project_private_facts": false,
+        "contains_trade_secrets": false
+      },
+      "_third_audit_contract_inline": {
+        "contract_path": "docs/contracts/phase37_data_engineering_dataset_layers_contract.md",
+        "contract_text_sha_scope": "full_text_in_audit_package",
+        "contract_schema_extract": {
+          "layers": [
+            {
+              "name": "raw",
+              "semantics": "原始供应商/交易所事实记录，保留 source provenance 和接收时间。",
+              "write_boundary": "append-only；不得被清洗、复权、特征或标签回写覆盖。",
+              "typical_fields": [
+                "source_id",
+                "instrument_id",
+                "event_time",
+                "receive_time",
+                "raw_payload_hash",
+                "vendor_sequence"
+              ]
+            },
+            {
+              "name": "cleaned",
+              "semantics": "对 raw 做校验、去重、隔离、修复候选和质量标记后的可计算层。",
+              "write_boundary": "只能从 raw 派生；必须记录质量规则、隔离记录和修复记录。",
+              "typical_fields": [
+                "quality_flags",
+                "quarantine_reason",
+                "repair_policy_id",
+                "quality_report_id"
+              ]
+            },
+            {
+              "name": "adjusted",
+              "semantics": "复权、合约换月、连续合约映射或 back-adjusted 数据层。",
+              "write_boundary": "只能从 raw/cleaned 派生；必须记录 adjustment_policy_id 和版本。",
+              "typical_fields": [
+                "adjustment_policy_id",
+                "adjustment_factor",
+                "roll_rule_id",
+                "adjusted_price"
+              ]
+            },
+            {
+              "name": "feature_ready",
+              "semantics": "点时正确的特征层，不包含未来标签。",
+              "write_boundary": "必须记录 feature_version、available_time 和输入数据版本。",
+              "typical_fields": [
+                "feature_name",
+                "feature_value",
+                "feature_version",
+                "available_time",
+                "source_dataset_version"
+              ]
+            },
+            {
+              "name": "label_ready",
+              "semantics": "训练/评估标签层，记录 horizon、label policy 和泄漏边界。",
+              "write_boundary": "不得回写 raw/cleaned/adjusted；只能作为训练或评估下游输入。",
+              "typical_fields": [
+                "label_name",
+                "label_value",
+                "horizon",
+                "label_policy_id",
+                "label_generated_at"
+              ]
+            }
+          ],
+          "transformation_manifest_required_fields": [
+            "input_layer",
+            "output_layer",
+            "source_dataset_version",
+            "source_table_snapshot",
+            "code_version",
+            "parameter_hash",
+            "produced_at",
+            "actor",
+            "quality_report_id",
+            "lineage_id",
+            "rollback_pointer"
+          ],
+          "hard_boundaries": [
+            "downstream layer 不得回写污染 raw layer。",
+            "raw 修正必须以 correction record 或新 dataset version 体现，不得静默覆盖。",
+            "adjusted 数据不能替代 raw 数据；回测/训练必须声明使用的数据层。",
+            "feature_ready 必须有 available_time，不能含未来标签。",
+            "label_ready 必须声明 horizon 和 label policy，不能作为特征源回写。",
+            "AI Engineering 只能通过 knowledge_refs 引用本契约，不得改写为模型训练或交易执行规则本体。"
+          ]
+        },
+        "contract_text_preview": "# Phase 37 Data Engineering Dataset Layers Contract\n\n生成日期：2026-06-11\n\n## 目标\n\n本契约为 CEK-TA Trading Engineering / Data Engineering 的数据层命名、写入边界、血缘字段和审计字段提供内部规范。它用于补强 `P37-B-D11 raw_vs_adjusted_data_boundary`，但不创建正式知识、不创建 approved，也不改变外部项目自己的数据库实现。\n\n## 上游\n\n```text\n交易所或数据供应商原始行情\n成交、盘口、bar、reference data、corporate action、contract rollover 和 vendor correction\n外接项目的数据接入器、数据质量报告、特征生成器和标签生成器\n```\n\n## 下游\n\n```text\n回测数据集\n训练数据集\n特征表\n标签表\n质量审计报告\nRAG 知识审计与 AI IDE 方案审计\n```\n\n## CEK-TA 数据层\n\n| 层级 | 语义 | 写入边界 | 典型字段 |\n| --- | --- | --- | --- |\n| raw | 原始供应商/交易所事实记录，保留 source provenance 和接收时间 | append-only；不得被清洗、复权、特征或标签回写覆盖 | source_id, instrument_id, event_time, receive_time, raw_payload_hash, vendor_sequence |\n| cleaned | 对 raw 做校验、去重、隔离、修复候选和质量标记后的可计算层 | 只能从 raw 派生；必须记录质量规则、隔离记录和修复记录 | quality_flags, quarantine_reason, repair_policy_id, quality_report_id |\n| adjusted | 复权、合约换月、连续合约映射或 back-adjusted 数据层 | 只能从 raw/cleaned 派生；必须记录 adjustment_policy_id 和版本 | adjustment_policy_id, adjustment_factor, roll_rule_id"
+      }
+    }
+  ],
+  "quality_gate": {
+    "gate_id": "phase37_data_engineering_d11_contract_inline_third_audit_quality_gate",
+    "generated_at": "2026-06-11",
+    "task_id": "CEK-TA-392",
+    "candidate_count": 1,
+    "failure_count": 0,
+    "failures": [],
+    "gate_status": "pass",
+    "formal_reviewed_created": 0,
+    "approved_created": 0,
+    "default_guidance_created": 0,
+    "hard_gate_created": 0
+  }
+}

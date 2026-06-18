@@ -1,0 +1,3618 @@
+{
+  "package_id": "phase37_trade_analysis_blocked_supplemental_reaudit_package_20260612",
+  "generated_at": "2026-06-12",
+  "task_id": "CEK-TA-447",
+  "package_type": "blocked_supplemental_reviewed_caveat_only_reaudit",
+  "scope": {
+    "phase": "Phase 37",
+    "branch": "Trading Engineering",
+    "partition_id": "KB_07_TRADE_ANALYSIS",
+    "tree_node_id": "kt.trade_analysis",
+    "candidate_count": 12,
+    "prior_audit_result_id": "audit_result_phase37_trade_analysis_reviewed_preparation_20260612_strict_v1",
+    "target": "复核 12 条 Trade Analysis needs_more_evidence 候选在补充 CEK-TA 内部契约后，是否可转 formal reviewed/caveat_only。"
+  },
+  "hard_boundaries": {
+    "candidate_is_not_formal_knowledge": true,
+    "this_package_may_allow_reviewed_caveat_only": true,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "risk_threshold_advice_allowed": false,
+    "trade_execution_advice_allowed": false,
+    "must_not_generate": [
+      "买卖点",
+      "仓位",
+      "杠杆",
+      "止损止盈参数",
+      "实盘执行建议",
+      "风险阈值数值"
+    ]
+  },
+  "audit_instructions": [
+    "必须搜索相关的专业网站、论文、官方文档、资料、案例和数据，对本补证再审包进行严格审计。",
+    "本轮重点检查 contract_inline.full_text、schema_extract 和 contract_sha256 是否足以补齐上一轮 12 条 needs_more_evidence 缺口。",
+    "逐条判断是否可进入 formal reviewed/caveat_only；不得允许 approved、default guidance、hard gate 或风险阈值建议。",
+    "检查 Trade Analysis 是否只负责 post-trade 复盘、标签、reason code、质量归因、bad-case taxonomy 和 research hypothesis。",
+    "检查 Quant Foundation、Strategy、Data、Replay、Live Execution、Risk Management、AI Engineering owner 边界是否清晰。",
+    "检查是否有中文乱码、mock/test 污染、项目私有参数、账户事实、密钥、交易所私有配置或实盘敏感信息。"
+  ],
+  "contract_inline": {
+    "contract_id": "phase37_trade_analysis_review_contract",
+    "version": "1.0.0",
+    "path": "E:/collector/rag/docs/contracts/phase37_trade_analysis_review_contract.md",
+    "sha256": "34988013572b5cadff6e1fef27b0accd10f502c5c740cfbcc4c613ef90b9319d",
+    "full_text": "# Phase 37 Trade Analysis Review Contract\n\n```text\ncontract_id: phase37_trade_analysis_review_contract\nversion: 1.0.0\nstatus: reviewed_preparation_evidence\nowner: Trading Engineering / Trade Analysis\ncreated_at: 2026-06-12\nencoding: UTF-8\n```\n\n## 目标\n\n本契约为 Phase 37 Trade Analysis 12 条候选提供 reviewed/caveat_only 所需的 CEK-TA 内部字段本体、owner 边界和校验规则。\n\n本契约只服务：\n\n```text\npost_trade_review\ntrade_quality_attribution\nlabel_design\nreason_code\nbad_case_taxonomy\nresearch_hypothesis_generation\n```\n\n本契约不服务：\n\n```text\n买卖点生成\n仓位建议\n杠杆建议\n止损止盈参数建议\n实盘执行许可\n风险阈值数值\ndefault guidance\nhard gate\n```\n\n## Owner 边界\n\n```text\nQuant Foundation:\n  负责 R、R-multiple、EV、R/R、成本调整期望值等本体定义。\n\nTrade Analysis:\n  负责交易完成后的复盘记录、质量归因、reason code、坏例分类、标签候选和研究假设。\n\nStrategy Engineering:\n  负责策略规则、信号、入场/出场规则版本和策略假设。\n\nData Engineering:\n  负责行情、交易日志、订单日志、数据版本、时间戳、数据质量报告。\n\nReplay / Simulation:\n  负责模拟成交、fill model、MAE/MFE 路径证据、paper/live gap 的模拟侧解释。\n\nLive Execution:\n  负责真实订单、成交、费用、延迟、拒单、撤单、账户/经纪商事实和执行日志。\n\nRisk Management:\n  负责风险政策、仓位限制、暴露、亏损限制、最终风控动作和 hard gate。\n\nAI Engineering:\n  只能引用 Trade Analysis 字段作为 label、eval case、reason code、RAG 检索或 scoring 解释上下文。\n```\n\nTrade Analysis 不得接管 Strategy、Replay、Live Execution 或 Risk Management 的 owner 字段，只能通过 `*_ref`、`*_version`、`*_trace_id` 记录引用关系。\n\n## 通用记录：TradeReviewRecord\n\n每一条交易复盘记录必须包含以下字段。\n\n| 字段 | 必填 | 类型 | 说明 | owner |\n| --- | --- | --- | --- | --- |\n| review_id | 是 | string | 复盘记录唯一 ID | Trade Analysis |\n| trade_id | 是 | string | 交易记录 ID | Trade Analysis |\n| trade_plan_id | 是 | string | 入场前交易计划 ID | Strategy / Trade Analysis |\n| strategy_id | 是 | string | 策略 ID | Strategy Engineering |\n| strategy_rule_version | 是 | string | 策略规则版本 | Strategy Engineering |\n| data_version | 是 | string | 复盘使用的数据版本 | Data Engineering |\n| market_context_id | 是 | string | 市场上下文引用 | Data / Microstructure |\n| market_regime_id | 否 | string | 市场状态/流动性状态引用 | Market Microstructure |\n| risk_policy_id | 是 | string | 风险政策引用 | Risk Management |\n| order_trace_id | 否 | string | 订单链路追踪 ID | Live Execution |\n| fill_trace_id | 否 | string | 成交链路追踪 ID | Live Execution |\n| replay_trace_id | 否 | string | 回放/模拟链路 ID | Replay / Simulation |\n| reviewer_id | 是 | string | 复盘人或复盘系统 ID | Trade Analysis |\n| reviewed_at | 是 | datetime | 复盘时间 | Trade Analysis |\n| audit_trace_id | 是 | string | 审计链路 ID | Trade Analysis |\n| schema_version | 是 | string | 本记录 schema 版本 | Trade Analysis |\n\n校验规则：\n\n```text\n1. trade_plan_id 必须早于真实入场或模拟入场产生。\n2. strategy_rule_version、data_version、risk_policy_id 不允许为空。\n3. order_trace_id、fill_trace_id 如不存在，必须声明 missing_reason。\n4. audit_trace_id 必须可追踪到来源、计算、人工/系统复盘动作。\n5. 不得只保存 PnL 而不保存计划、实际、风险、执行、市场状态和规则符合性上下文。\n```\n\n## T01：Planned vs Realized R Decomposition\n\n字段表：\n\n| 字段 | 必填 | 类型 | 说明 |\n| --- | --- | --- | --- |\n| planned_initial_risk_amount | 是 | decimal | 入场前计划的初始风险金额 |\n| planned_initial_risk_unit | 是 | string | 初始风险单位，如 account_currency、quote_currency |\n| planned_reward_r | 否 | decimal | 入场前计划收益目标的 R 倍数 |\n| planned_risk_reward_ratio | 否 | decimal | 入场前计划 R/R |\n| actual_gross_pnl | 是 | decimal | 未扣成本前盈亏 |\n| actual_net_pnl | 是 | decimal | 扣除费用、滑点、资金费等后的净盈亏 |\n| realized_r | 是 | decimal | actual_net_pnl / planned_initial_risk_amount |\n| fee_amount | 否 | decimal | 费用 |\n| slippage_amount | 否 | decimal | 滑点或成交偏离 |\n| risk_basis | 是 | enum | initial_stop / policy_risk / manual_declared_r |\n| cost_basis | 是 | enum | net_of_fees / gross_only / partial_cost |\n| exit_basis | 是 | enum | planned_exit / stop / target / manual_exit / risk_exit / system_exit |\n| calculation_currency | 是 | string | 计算币种 |\n| calculation_trace_id | 是 | string | 计算链路 |\n\n校验规则：\n\n```text\n1. realized_r 必须使用入场前计划的 initial risk 作为分母。\n2. 若 planned_initial_risk_amount 缺失，不得计算 realized_r，只能标记 insufficient_plan.\n3. actual_net_pnl 必须声明成本范围；不能只用最终 PnL 判断执行质量。\n4. 本分解只能用于复盘和标签，不能推导下一笔交易的买卖点、仓位或止损止盈。\n```\n\n## T02：MAE / MFE Calculation Contract\n\n字段表：\n\n| 字段 | 必填 | 类型 | 说明 |\n| --- | --- | --- | --- |\n| price_path_source_id | 是 | string | 价格路径来源 |\n| path_granularity | 是 | enum | tick / quote / order_book / bar |\n| path_start_time | 是 | datetime | 路径开始时间 |\n| path_end_time | 是 | datetime | 路径结束时间 |\n| entry_price | 是 | decimal | 入场价格 |\n| exit_price | 是 | decimal | 出场价格 |\n| mae_price | 否 | decimal | 持仓期间最大不利价格 |\n| mfe_price | 否 | decimal | 持仓期间最大有利价格 |\n| mae_r | 否 | decimal | MAE 折算成 R |\n| mfe_r | 否 | decimal | MFE 折算成 R |\n| missing_path_policy | 是 | enum | block_metric / approximate_with_bar / unknown |\n| path_quality_flag | 是 | enum | complete / partial / missing / approximated |\n\n校验规则：\n\n```text\n1. MAE/MFE 只能在交易结束后计算。\n2. path_granularity 为 bar 时必须声明无法证明 bar 内真实路径。\n3. 缺失 tick/quote/order path 时不得声称真实 MAE/MFE。\n4. MAE/MFE 不得作为事前已知路径或实盘许可。\n```\n\n## T03：Bad Trade Taxonomy\n\n基础分类：\n\n```text\nplan_violation\nrisk_violation\nexecution_error\ndata_quality_issue\nregime_mismatch\ncost_or_slippage_mismatch\nrule_ambiguity\nmanual_override\ninsufficient_context\ngood_process_bad_outcome\nbad_process_good_outcome\n```\n\n字段表：\n\n| 字段 | 必填 | 类型 | 说明 |\n| --- | --- | --- | --- |\n| taxonomy_version | 是 | string | 分类版本 |\n| labels | 是 | array[string] | 可多标签 |\n| primary_label | 是 | string | 主分类 |\n| severity | 是 | enum | low / medium / high |\n| evidence_refs | 是 | array[string] | 证据引用 |\n| owner | 是 | enum | trade_analysis / strategy / data / replay / live_execution / risk |\n| reviewer_note | 否 | string | 复盘说明 |\n\n校验规则：\n\n```text\n1. bad trade 标签必须基于证据，不得只根据亏损判定。\n2. 多标签允许，但必须指定 primary_label。\n3. owner 指向其他分支时，Trade Analysis 只记录引用，不接管本体修复。\n```\n\n## T04：Good Loss / Bad Win Policy\n\n字段表：\n\n| 字段 | 必填 | 类型 | 说明 |\n| --- | --- | --- | --- |\n| outcome_class | 是 | enum | good_loss / bad_win / good_win / bad_loss / inconclusive |\n| plan_compliance | 是 | enum | compliant / violated / ambiguous |\n| risk_compliance | 是 | enum | compliant / violated / ambiguous |\n| execution_quality | 是 | enum | good / degraded / failed / unknown |\n| market_context_fit | 是 | enum | fit / mismatch / unknown |\n| evidence_refs | 是 | array[string] | 支撑证据 |\n\n校验规则：\n\n```text\n1. good_loss 不能等于可复制亏损，bad_win 不能等于必须禁止盈利交易。\n2. outcome_class 只用于复盘和训练标签，不得直接改变实时交易规则。\n```\n\n## T05-T08：Entry / Exit / Risk / Execution Quality Review\n\n四类质量复盘共享以下结构。\n\n| 字段 | 必填 | 类型 | 说明 |\n| --- | --- | --- | --- |\n| quality_dimension | 是 | enum | entry / exit / risk / execution |\n| planned_ref | 是 | string | 计划引用 |\n| actual_ref | 是 | string | 实际执行引用 |\n| rule_ref | 是 | string | 策略或风险规则引用 |\n| compliance_status | 是 | enum | compliant / violated / ambiguous / not_applicable |\n| deviation_type | 否 | string | 偏离类型 |\n| deviation_magnitude | 否 | decimal | 偏离幅度，必须有单位 |\n| evidence_refs | 是 | array[string] | 证据引用 |\n| owner_ref | 是 | enum | strategy / risk / live_execution / replay / trade_analysis |\n\n额外要求：\n\n```text\nentry:\n  必须记录 signal_ref、trigger_condition、timeframe、regime、planned_entry、actual_entry。\n\nexit:\n  必须记录 planned_exit、actual_exit、exit_reason、path_evidence、MAE/MFE window。\n\nrisk:\n  必须记录 initial_R、actual_R、position_ref、stop_execution、risk_change_log、risk_policy_ref。\n\nexecution:\n  必须引用 Live Execution order/fill/audit log，不重复定义真实执行 owner。\n```\n\n校验规则：\n\n```text\n1. quality review 不得只看 PnL。\n2. execution_quality 涉及真实订单或成交时，必须引用 Live Execution owner 产物。\n3. risk_quality 涉及风险政策或 hard gate 时，必须引用 Risk Management owner 产物。\n```\n\n## T09：Rule Compliance Schema\n\n字段表：\n\n| 字段 | 必填 | 类型 | 说明 |\n| --- | --- | --- | --- |\n| strategy_rule_version | 是 | string | 策略规则版本 |\n| entry_rule_ref | 否 | string | 入场规则 |\n| exit_rule_ref | 否 | string | 出场规则 |\n| risk_rule_ref | 否 | string | 风险规则 |\n| manual_override | 是 | boolean | 是否人工覆盖 |\n| violation_type | 否 | enum | missing_plan / early_entry / late_entry / stop_violation / target_violation / size_violation / rule_ambiguity |\n| reviewer_id | 是 | string | 复盘人 |\n| evidence_refs | 是 | array[string] | 证据引用 |\n\n校验规则：\n\n```text\n1. 规则符合性必须绑定 strategy_rule_version。\n2. rule_ambiguity 不能自动归咎为违规，必须进入规则修订或研究假设。\n```\n\n## T10：Regime Fit Review Contract\n\n字段表：\n\n| 字段 | 必填 | 类型 | 说明 |\n| --- | --- | --- | --- |\n| market_regime_id | 是 | string | 市场状态引用 |\n| liquidity_regime_id | 否 | string | 流动性状态引用 |\n| volatility_regime_id | 否 | string | 波动状态引用 |\n| session_context_id | 否 | string | 交易时段上下文 |\n| strategy_regime_assumption | 是 | string | 策略预期状态 |\n| observed_regime | 是 | string | 观测状态 |\n| fit_status | 是 | enum | fit / mismatch / unknown |\n| mismatch_reason | 否 | string | 不匹配原因 |\n\n校验规则：\n\n```text\n1. regime_fit 只能描述交易发生时的上下文匹配，不预测未来状态。\n2. 市场状态本体归 Market Microstructure / Data Engineering，Trade Analysis 只记录引用。\n```\n\n## T11：Reason Code Taxonomy\n\n字段表：\n\n| 字段 | 必填 | 类型 | 说明 |\n| --- | --- | --- | --- |\n| reason_code_id | 是 | string | reason code 唯一 ID |\n| taxonomy_version | 是 | string | taxonomy 版本 |\n| category | 是 | enum | plan / risk / execution / market_regime / data_quality / psychology_or_manual / research |\n| severity | 是 | enum | info / low / medium / high |\n| owner | 是 | enum | trade_analysis / strategy / risk / live_execution / replay / data / ai |\n| multi_label_allowed | 是 | boolean | 是否允许多标签 |\n| migration_rule | 否 | string | 版本迁移规则 |\n\n校验规则：\n\n```text\n1. reason code 必须有版本。\n2. reason code 不等于交易执行动作。\n3. category=ai 只能表示 AI 解释或标签问题，不得控制交易。\n```\n\n## T12：Research Hypothesis Lifecycle\n\n字段表：\n\n| 字段 | 必填 | 类型 | 说明 |\n| --- | --- | --- | --- |\n| hypothesis_id | 是 | string | 研究假设 ID |\n| source_trade_set_id | 是 | string | 来源交易集合 |\n| hypothesis_statement | 是 | string | 假设描述 |\n| validation_protocol_id | 是 | string | 验证协议 |\n| oos_required | 是 | boolean | 是否需要样本外 |\n| cost_check_required | 是 | boolean | 是否需要成本检查 |\n| regime_check_required | 是 | boolean | 是否需要分状态检查 |\n| promotion_criteria | 是 | string | 进入策略规则修订的条件 |\n| status | 是 | enum | proposed / testing / rejected / validated / promoted |\n| promoted_strategy_rule_version | 否 | string | 若提升为策略规则，记录版本 |\n\n校验规则：\n\n```text\n1. 复盘发现必须先进入 hypothesis，再由 Strategy / Backtest / Replay / Risk 等分支验证。\n2. status=validated 不等于可实盘。\n3. promoted 前必须有独立验证、成本、样本、状态和 owner 审计。\n```\n\n## 跨分支冲突处理\n\n```text\n1. 如果 trade_analysis 字段与 Quant Foundation 的 R 定义冲突，以 Quant Foundation 为准。\n2. 如果 trade_analysis 字段与 Live Execution 的真实订单/成交冲突，以 Live Execution 事实层为准。\n3. 如果 trade_analysis 字段与 Risk Management 的风控状态冲突，以 Risk Management policy/audit 为准。\n4. 如果 trade_analysis 复盘结论与 Strategy 规则冲突，生成 research_hypothesis，不直接改策略。\n5. 如果 AI Engineering 使用 Trade Analysis 标签，必须引用 reason_code_id、taxonomy_version 和 review_id。\n```\n\n## Machine Gate\n\n```json\n{\n  \"default_guidance\": \"caveat_only\",\n  \"approved_allowed\": false,\n  \"default_guidance_allowed\": false,\n  \"hard_gate_allowed\": false,\n  \"risk_threshold_advice_allowed\": false,\n  \"trade_execution_advice_allowed\": false,\n  \"requires_human_escalation\": true\n}\n```\n\n## Reviewed/Caveat 允许条件\n\n候选知识进入 formal reviewed/caveat_only 前必须满足：\n\n```text\n1. 至少 3 个来源或 1 个 CEK-TA 内部字段契约 + 2 个外部支撑来源。\n2. source_evidence 不为空。\n3. conflict_status 不得为 unresolved。\n4. 字段 owner 清晰。\n5. 不输出交易建议、风险阈值或 hard gate。\n6. machine_gate.default_guidance 只能是 caveat_only。\n7. approved_allowed/default_guidance_allowed/hard_gate_allowed 必须全部为 false。\n```\n",
+    "schema_extract": {
+      "base_record": [
+        "review_id",
+        "trade_id",
+        "trade_plan_id",
+        "strategy_id",
+        "strategy_rule_version",
+        "data_version",
+        "market_context_id",
+        "risk_policy_id",
+        "order_trace_id",
+        "fill_trace_id",
+        "reviewer_id",
+        "reviewed_at",
+        "audit_trace_id",
+        "schema_version"
+      ],
+      "r_decomposition": [
+        "planned_initial_risk_amount",
+        "planned_initial_risk_unit",
+        "planned_reward_r",
+        "planned_risk_reward_ratio",
+        "actual_gross_pnl",
+        "actual_net_pnl",
+        "realized_r",
+        "fee_amount",
+        "slippage_amount",
+        "risk_basis",
+        "cost_basis",
+        "exit_basis",
+        "calculation_trace_id"
+      ],
+      "mae_mfe": [
+        "price_path_source_id",
+        "path_granularity",
+        "path_start_time",
+        "path_end_time",
+        "mae_price",
+        "mfe_price",
+        "mae_r",
+        "mfe_r",
+        "missing_path_policy",
+        "path_quality_flag"
+      ],
+      "taxonomy_and_reason_code": [
+        "taxonomy_version",
+        "labels",
+        "primary_label",
+        "severity",
+        "reason_code_id",
+        "category",
+        "owner",
+        "multi_label_allowed",
+        "migration_rule"
+      ],
+      "quality_review": [
+        "quality_dimension",
+        "planned_ref",
+        "actual_ref",
+        "rule_ref",
+        "compliance_status",
+        "deviation_type",
+        "evidence_refs",
+        "owner_ref"
+      ],
+      "hypothesis_lifecycle": [
+        "hypothesis_id",
+        "source_trade_set_id",
+        "hypothesis_statement",
+        "validation_protocol_id",
+        "oos_required",
+        "cost_check_required",
+        "regime_check_required",
+        "promotion_criteria",
+        "status"
+      ]
+    },
+    "owner_boundary_summary": {
+      "trade_analysis_owns": [
+        "post_trade_review",
+        "trade_quality_attribution",
+        "reason_code",
+        "bad_case_taxonomy",
+        "label_candidate",
+        "research_hypothesis_generation"
+      ],
+      "trade_analysis_does_not_own": [
+        "R/R-multiple core definition",
+        "strategy rule source of truth",
+        "market data source of truth",
+        "real orders/fills/account facts",
+        "risk thresholds/hard gates",
+        "LLM model training authority"
+      ]
+    }
+  },
+  "required_output_schema": {
+    "audit_result_id": "string",
+    "package_id": "phase37_trade_analysis_blocked_supplemental_reaudit_package_20260612",
+    "quality_gate": {
+      "pass": "boolean",
+      "reason": "string"
+    },
+    "summary": {
+      "total": 12,
+      "accepted_for_reviewed_caveat_only": 0,
+      "needs_more_evidence": 0,
+      "rejected": 0,
+      "blocked": 0
+    },
+    "candidate_results": [
+      {
+        "candidate_id": "string",
+        "research_task_id": "string",
+        "decision": "accepted_for_reviewed_caveat_only | needs_more_evidence | rejected | blocked",
+        "confidence": "low | medium | high",
+        "reviewed_allowed": "boolean",
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "risk_threshold_advice_allowed": false,
+        "reasons": [
+          "string"
+        ],
+        "required_followups": [
+          "string"
+        ],
+        "patch_notes": {
+          "source": [
+            "string"
+          ],
+          "content": [
+            "string"
+          ],
+          "boundary": [
+            "string"
+          ],
+          "conflict": [
+            "string"
+          ]
+        }
+      }
+    ]
+  },
+  "quality_gate": {
+    "gate_id": "phase37_trade_analysis_blocked_supplemental_gate",
+    "generated_at": "2026-06-12",
+    "task_id": "CEK-TA-447",
+    "candidate_count": 12,
+    "status_counts": {
+      "needs_more_evidence": 12
+    },
+    "contract_id": "phase37_trade_analysis_review_contract",
+    "contract_sha256": "34988013572b5cadff6e1fef27b0accd10f502c5c740cfbcc4c613ef90b9319d",
+    "gate_status": "pass",
+    "failures": [],
+    "warnings": [
+      "本包只请求 reviewed/caveat_only；不得创建 approved、default guidance、hard gate 或风险阈值建议。",
+      "Trade Analysis 只做 post-trade 复盘、标签、reason code、质量归因、坏例 taxonomy 和研究假设。",
+      "复盘发现不能直接改实时交易规则，必须进入 research hypothesis 并经独立验证。"
+    ]
+  },
+  "candidates": [
+    {
+      "candidate_id": "cand_20260612_phase37_trade_analysis_planned_vs_realized_r_required_001",
+      "research_task_id": "P37-H-T01",
+      "current_status": {
+        "review_status": "needs_more_evidence",
+        "ingestion_decision": "needs_more_evidence",
+        "workflow_stage": "reviewed_preparation_needs_more_evidence",
+        "queue_group": "needs_more_evidence",
+        "reviewed_preparation_audit_result_id": "audit_result_phase37_trade_analysis_reviewed_preparation_20260612_strict_v1"
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_07_trade_analysis.planned_vs_realized_r_required.v1",
+        "target_review_status": "blocked_until_supplemented",
+        "default_guidance_after_conversion": "deny_until_reviewed_caveat_only_audit",
+        "formalization_blockers": [
+          "requires_reviewed_preparation_audit",
+          "requires_trade_analysis_contract_schema_inline_evidence"
+        ],
+        "reviewed_allowed": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "risk_threshold_advice_allowed": false
+      },
+      "classification": {
+        "tree_node_id": "kt.trade_analysis",
+        "canonical_node_id": "kt.trade_analysis",
+        "tree_path": "CEK-TA / Trading Engineering / Trade Analysis",
+        "related_nodes": [
+          "kt.trading_engineering",
+          "kt.trade_analysis",
+          "kt.quant_foundation.risk_normalized_metrics",
+          "kt.risk_management.pre_trade_gates",
+          "kt.live_execution",
+          "kt.ai_engineering.llm_training"
+        ],
+        "partition_id": "KB_07_TRADE_ANALYSIS",
+        "domain": "trade_analysis",
+        "subdomain": "r_decomposition",
+        "rule_type": "trade_analysis_boundary_rule",
+        "claim_type": "trade_review_boundary_rule",
+        "used_for": [
+          "trade_review",
+          "llm_scoring_label_design",
+          "bad_case_taxonomy",
+          "external_project_rag_retrieval",
+          "ai_trader_project_gap_audit"
+        ],
+        "classification_notes": "本候选主归属 Trading Engineering / Trade Analysis。AI Engineering 只能引用本规则设计标签、reason code 和 eval case，不得把复盘指标直接改写成交易执行规则。"
+      },
+      "claim": {
+        "claim_id": "claim_p37_h_t01",
+        "title": "复盘必须区分计划 R 与实际 R",
+        "statement": "交易复盘必须区分入场前计划的 risk/reward 或计划 R 与出场后的 realized R；不能只用最终 PnL 判断执行质量。",
+        "normalized_claim": "trade_analysis.planned_vs_realized_r_required.v1",
+        "evidence_summary": "Van Tharp concepts define initial risk R, R-multiple distributions, expectancy, and SQN-style analysis.；TradeZella distinguishes planned risk/reward before a trade from R-multiple after exit.；CFA explains trade evaluation, execution quality, transaction costs, opportunity cost, and benchmark-based trade cost analysis.",
+        "interpretation_notes": "本候选只定义交易复盘、标签、reason code、质量归因和研究假设边界，不输出买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+        "claim_strength": "medium_high",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general_with_strategy_and_venue_context",
+        "asset": "general",
+        "timeframe": "post_trade_review_and_research",
+        "data_granularity": "trade_log_order_log_fill_log_risk_log_market_context",
+        "project_type": "trading_ai_support_layer",
+        "applies_when": [
+          "审计外接项目的交易复盘、LLM scoring 标签、坏例 taxonomy、reason code、交易质量归因或训练样本描述",
+          "把交易日志、订单日志、成交日志、风险日志和市场上下文整理成可复盘、可审计、可训练的数据"
+        ],
+        "not_applicable_when": [
+          "需要生成买卖点、仓位、杠杆、止损止盈或实盘执行建议",
+          "问题属于实时风控 gate、订单路由、回测统计或数据工程本体，应由对应分支处理",
+          "没有 trade plan、actual execution、market context、risk context 或 audit trace 上下文"
+        ],
+        "assumptions": [
+          "候选用于 CEK-TA 通用支持层知识库，不包含外接项目私有账户事实、密钥或策略参数。",
+          "复盘字段必须从交易计划、订单/成交、风险、市场上下文和人工审计记录中可追溯生成。",
+          "候选通过外部审计前不能进入正式 reviewed 知识库。"
+        ],
+        "limitations": [
+          "交易日志和 journal vendor 资料只能支持复盘模式，不能证明策略有效或可盈利。",
+          "复盘结论不能直接改变实盘规则；必须转成 research hypothesis 并经过独立验证。",
+          "本候选不提供任何投资建议、实盘许可或风险阈值建议。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_title": "Tharp Think Trading Concepts",
+          "source_url": "https://vantharpinstitute.com/tharp-think-trading-concepts/",
+          "source_type": "professional_training_concept",
+          "publisher": "Van Tharp Institute",
+          "reliability": "medium_high",
+          "score": 82,
+          "freshness": "stable",
+          "evidence_summary": "Van Tharp concepts define initial risk R, R-multiple distributions, expectancy, and SQN-style analysis.",
+          "limitations": [
+            "Training concept page; reviewed knowledge should avoid treating it as a formal academic standard."
+          ],
+          "source_id": "src_001",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Risk-Reward Ratio: How to Calculate and Use It",
+          "source_url": "https://www.tradezella.com/blog/risk-reward-ratio",
+          "source_type": "trading_journal_vendor_education",
+          "publisher": "TradeZella",
+          "reliability": "medium",
+          "score": 70,
+          "freshness": "time_sensitive",
+          "evidence_summary": "TradeZella distinguishes planned risk/reward before a trade from R-multiple after exit.",
+          "limitations": [
+            "Vendor education; use as supporting source for planned-vs-realized review terminology only."
+          ],
+          "source_id": "src_002",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Trade Strategy and Execution",
+          "source_url": "https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/trade-strategy-execution",
+          "source_type": "professional_body_reading",
+          "publisher": "CFA Institute",
+          "reliability": "high",
+          "score": 90,
+          "freshness": "time_sensitive",
+          "evidence_summary": "CFA explains trade evaluation, execution quality, transaction costs, opportunity cost, and benchmark-based trade cost analysis.",
+          "limitations": [
+            "Execution-quality source; does not define retail journal taxonomy or CEK-TA reason-code fields."
+          ],
+          "source_id": "src_003",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Backtesting Results",
+          "source_url": "https://www.quantconnect.com/docs/v2/cloud-platform/backtesting/results",
+          "source_type": "platform_doc",
+          "publisher": "QuantConnect",
+          "reliability": "medium_high",
+          "score": 78,
+          "freshness": "time_sensitive",
+          "evidence_summary": "QuantConnect backtest results include charts, orders, logs, statistics and reports, supporting audit-trace and multi-metric review needs.",
+          "limitations": [
+            "Platform-specific reporting semantics; not CEK-TA mandatory tooling."
+          ],
+          "source_id": "src_004",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "medium_high",
+        "score": 80.0,
+        "score_version": "phase37_trade_analysis_source_scoring_v1",
+        "primary_source_count": 3,
+        "supporting_source_count": 4,
+        "low_reliability_source_count": 1,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "正式入库前必须由外部审计确认 vendor journal sources 没有被过度使用。",
+          "CFA、论文和平台文档只能支持执行质量、归因和验证边界；CEK-TA 字段契约后续需要 reviewed-preparation 再审确认。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none_known_in_visible_context",
+        "checked_against": [
+          "Phase 37 Trading 与 AI 跨分支引用契约",
+          "Quant Foundation R/R 与 R-multiple 边界",
+          "Live Execution / Risk Management owner 边界",
+          "AI Engineering LLM scoring / label governance 边界"
+        ],
+        "conflicts": [],
+        "resolution_summary": "Trade Analysis 首轮审计内容层 accepted_for_draft；candidate 不是 formal knowledge，不得创建 reviewed、approved、default guidance 或 hard gate。",
+        "approval_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 设计交易复盘、坏例 taxonomy、reason code、标签和 eval case 时必须保留计划、实际、风险、执行和市场上下文。",
+          "用于审计 LLM scoring / gating 项目是否把 PnL 当作唯一标签或把复盘结论直接写成交易规则。",
+          "用于阻止 AI 把复盘指标当作事前路径、实盘许可或默认交易建议。"
+        ],
+        "not_allowed": [
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘订单。",
+          "不得把候选知识当作 reviewed、approved、default guidance 或 hard gate。",
+          "不得根据单笔交易复盘直接宣布策略有效、无效或可实盘。"
+        ],
+        "requires_context": [
+          "trade_plan_id",
+          "strategy_rule_version",
+          "risk_policy_id",
+          "order_trace_id",
+          "fill_trace_id",
+          "market_regime",
+          "reason_code",
+          "reviewer"
+        ]
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "reviewed-preparation 审计未通过；补 Trade Analysis 内部契约/schema 前不得 formal reviewed、approved、default guidance、hard gate 或风险阈值建议。",
+        "requires_human_escalation": true,
+        "hidden_from_default_queue": false,
+        "visible_in_default_guidance_queue": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "risk_threshold_advice_allowed": false
+      },
+      "prior_reviewed_preparation_audit": {
+        "audit_result_id": "audit_result_phase37_trade_analysis_reviewed_preparation_20260612_strict_v1",
+        "package_id": "phase37_trade_analysis_reviewed_preparation_audit_package_20260612",
+        "decision": "needs_more_evidence",
+        "reviewed_allowed": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "risk_threshold_advice_allowed": false,
+        "reasons": [
+          "首轮 candidate 方向可接受，但本包没有提供可审计的 internal contract / schema 正文、schema_extract、字段表或 hash；仅列出需要检查的 contract 名称与 warning。",
+          "reviewed/caveat_only 需要字段本体和 owner 边界；当前外部来源只能支撑方法边界或 vendor workflow，不能替代 CEK-TA Trade Analysis 字段契约。"
+        ],
+        "required_followups": [
+          "reviewed 前补 CEK-TA trade_review_r_decomposition schema，明确 planned_R、realized_R、risk_basis、cost_basis、exit_basis 和 audit_trace。"
+        ],
+        "patch_notes": {
+          "source": [
+            "CFA、论文、QuantConnect 等只能支撑执行质量、归因、验证和报告边界。",
+            "TradeZella、TradesViz、TraderSync、Trademetria 等 journal vendor 只能作为 workflow/terminology supporting source，不得单独支撑 reviewed 字段本体。",
+            "Van Tharp R/R-multiple 可支撑 R 归一化复盘概念，但不得写成正式学术标准或策略有效性证明。"
+          ],
+          "content": [
+            "Trade Analysis 只负责 post-trade 复盘、标签、reason code、质量归因、bad-case taxonomy 和 research hypothesis 生成。",
+            "PnL 不得作为唯一标签；必须保留计划、实际、风险、执行、市场状态和规则符合性上下文。",
+            "复盘结论不得直接改写实时交易规则，必须转成 research hypothesis 并经过独立验证。"
+          ],
+          "boundary": [
+            "needs_more_evidence 不等于 rejected；说明内容方向仍可作为 draft，但不能进入 formal reviewed/caveat_only。",
+            "不得生成买卖点、仓位、杠杆、止损止盈参数、实盘执行建议或风险阈值数值。",
+            "MAE/MFE、planned/realized R、good loss/bad win、reason code 均为 post-trade/research labeling 边界，不得作为事前路径、实盘许可或 default guidance。"
+          ],
+          "conflict": [
+            "Quant Foundation 负责 R/R-multiple 本体；Trade Analysis 只消费这些指标做复盘标签。",
+            "Live Execution / Risk Management 拥有真实订单、成交、风险动作和 hard gate；Trade Analysis 不接管实时执行或风控动作。",
+            "AI Engineering 只能引用字段设计 LLM scoring 标签、eval case 和 RAG 检索，不得把复盘结论改写成模型训练本体或交易执行规则。"
+          ]
+        },
+        "schema_contract_assessment": {
+          "required_contracts_present": false,
+          "missing_contracts": [
+            "reviewed_requires_trade_review_r_decomposition_schema"
+          ],
+          "field_level_gaps": [
+            "reviewed 前补 CEK-TA trade_review_r_decomposition schema，明确 planned_R、realized_R、risk_basis、cost_basis、exit_basis 和 audit_trace。"
+          ]
+        }
+      },
+      "required_contract_evidence": {
+        "contract_id": "phase37_trade_analysis_review_contract",
+        "covers_missing_contracts": [
+          "reviewed_requires_trade_review_r_decomposition_schema"
+        ],
+        "field_level_gaps_from_prior_audit": [
+          "reviewed 前补 CEK-TA trade_review_r_decomposition schema，明确 planned_R、realized_R、risk_basis、cost_basis、exit_basis 和 audit_trace。"
+        ]
+      },
+      "requested_audit_decision": [
+        "accepted_for_reviewed_caveat_only",
+        "needs_more_evidence",
+        "rejected",
+        "blocked"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260612_phase37_trade_analysis_mae_mfe_for_post_trade_only_001",
+      "research_task_id": "P37-H-T02",
+      "current_status": {
+        "review_status": "needs_more_evidence",
+        "ingestion_decision": "needs_more_evidence",
+        "workflow_stage": "reviewed_preparation_needs_more_evidence",
+        "queue_group": "needs_more_evidence",
+        "reviewed_preparation_audit_result_id": "audit_result_phase37_trade_analysis_reviewed_preparation_20260612_strict_v1"
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_07_trade_analysis.mae_mfe_for_post_trade_only.v1",
+        "target_review_status": "blocked_until_supplemented",
+        "default_guidance_after_conversion": "deny_until_reviewed_caveat_only_audit",
+        "formalization_blockers": [
+          "requires_reviewed_preparation_audit",
+          "requires_trade_analysis_contract_schema_inline_evidence"
+        ],
+        "reviewed_allowed": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "risk_threshold_advice_allowed": false
+      },
+      "classification": {
+        "tree_node_id": "kt.trade_analysis",
+        "canonical_node_id": "kt.trade_analysis",
+        "tree_path": "CEK-TA / Trading Engineering / Trade Analysis",
+        "related_nodes": [
+          "kt.trading_engineering",
+          "kt.trade_analysis",
+          "kt.quant_foundation.risk_normalized_metrics",
+          "kt.risk_management.pre_trade_gates",
+          "kt.live_execution",
+          "kt.ai_engineering.llm_training"
+        ],
+        "partition_id": "KB_07_TRADE_ANALYSIS",
+        "domain": "trade_analysis",
+        "subdomain": "mae_mfe",
+        "rule_type": "trade_analysis_boundary_rule",
+        "claim_type": "post_trade_metric_boundary",
+        "used_for": [
+          "trade_review",
+          "llm_scoring_label_design",
+          "bad_case_taxonomy",
+          "external_project_rag_retrieval",
+          "ai_trader_project_gap_audit"
+        ],
+        "classification_notes": "本候选主归属 Trading Engineering / Trade Analysis。AI Engineering 只能引用本规则设计标签、reason code 和 eval case，不得把复盘指标直接改写成交易执行规则。"
+      },
+      "claim": {
+        "claim_id": "claim_p37_h_t02",
+        "title": "MAE/MFE 只能用于复盘和研究",
+        "statement": "MAE/MFE 应作为 post-trade 复盘、止损止盈研究和执行质量分析指标；不能在事前被当作已知路径或直接生成入场/出场建议。",
+        "normalized_claim": "trade_analysis.mae_mfe_for_post_trade_only.v1",
+        "evidence_summary": "MAE and MFE are described as post-trade metrics for the worst adverse and best favorable move during a trade.；TraderSync explains price and position MAE/MFE as trade-journal analytics, not as entry signals.；CFA explains trade evaluation, execution quality, transaction costs, opportunity cost, and benchmark-based trade cost analysis.",
+        "interpretation_notes": "本候选只定义交易复盘、标签、reason code、质量归因和研究假设边界，不输出买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+        "claim_strength": "medium_high",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general_with_strategy_and_venue_context",
+        "asset": "general",
+        "timeframe": "post_trade_review_and_research",
+        "data_granularity": "trade_log_order_log_fill_log_risk_log_market_context",
+        "project_type": "trading_ai_support_layer",
+        "applies_when": [
+          "审计外接项目的交易复盘、LLM scoring 标签、坏例 taxonomy、reason code、交易质量归因或训练样本描述",
+          "把交易日志、订单日志、成交日志、风险日志和市场上下文整理成可复盘、可审计、可训练的数据"
+        ],
+        "not_applicable_when": [
+          "需要生成买卖点、仓位、杠杆、止损止盈或实盘执行建议",
+          "问题属于实时风控 gate、订单路由、回测统计或数据工程本体，应由对应分支处理",
+          "没有 trade plan、actual execution、market context、risk context 或 audit trace 上下文"
+        ],
+        "assumptions": [
+          "候选用于 CEK-TA 通用支持层知识库，不包含外接项目私有账户事实、密钥或策略参数。",
+          "复盘字段必须从交易计划、订单/成交、风险、市场上下文和人工审计记录中可追溯生成。",
+          "候选通过外部审计前不能进入正式 reviewed 知识库。"
+        ],
+        "limitations": [
+          "交易日志和 journal vendor 资料只能支持复盘模式，不能证明策略有效或可盈利。",
+          "复盘结论不能直接改变实盘规则；必须转成 research hypothesis 并经过独立验证。",
+          "本候选不提供任何投资建议、实盘许可或风险阈值建议。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_title": "Understanding MAE and MFE Metrics",
+          "source_url": "https://trademetria.com/blog/understanding-mae-and-mfe-metrics-a-guide-for-traders/",
+          "source_type": "trading_journal_vendor_education",
+          "publisher": "Trademetria",
+          "reliability": "medium",
+          "score": 70,
+          "freshness": "time_sensitive",
+          "evidence_summary": "MAE and MFE are described as post-trade metrics for the worst adverse and best favorable move during a trade.",
+          "limitations": [
+            "Vendor education; use only as supporting evidence for journal metric semantics."
+          ],
+          "source_id": "src_001",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "MFE and MAE Metrics",
+          "source_url": "https://tradersync.com/mfe-and-mae-metrics/",
+          "source_type": "trading_journal_vendor_education",
+          "publisher": "TraderSync",
+          "reliability": "medium",
+          "score": 70,
+          "freshness": "time_sensitive",
+          "evidence_summary": "TraderSync explains price and position MAE/MFE as trade-journal analytics, not as entry signals.",
+          "limitations": [
+            "Vendor source; should not be used as sole source for formal reviewed claims."
+          ],
+          "source_id": "src_002",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Trade Strategy and Execution",
+          "source_url": "https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/trade-strategy-execution",
+          "source_type": "professional_body_reading",
+          "publisher": "CFA Institute",
+          "reliability": "high",
+          "score": 90,
+          "freshness": "time_sensitive",
+          "evidence_summary": "CFA explains trade evaluation, execution quality, transaction costs, opportunity cost, and benchmark-based trade cost analysis.",
+          "limitations": [
+            "Execution-quality source; does not define retail journal taxonomy or CEK-TA reason-code fields."
+          ],
+          "source_id": "src_003",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "The Probability of Backtest Overfitting",
+          "source_url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2326253",
+          "source_type": "paper",
+          "publisher": "SSRN",
+          "reliability": "high",
+          "score": 88,
+          "freshness": "stable",
+          "evidence_summary": "Bailey et al. discuss backtest overfitting risk, supporting that research hypotheses and performance claims require validation rather than anecdotal trade examples.",
+          "limitations": [
+            "Backtest-overfitting paper; supports validation boundary, not trade-journal UI fields."
+          ],
+          "source_id": "src_004",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "medium_high",
+        "score": 79.5,
+        "score_version": "phase37_trade_analysis_source_scoring_v1",
+        "primary_source_count": 2,
+        "supporting_source_count": 4,
+        "low_reliability_source_count": 2,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "正式入库前必须由外部审计确认 vendor journal sources 没有被过度使用。",
+          "CFA、论文和平台文档只能支持执行质量、归因和验证边界；CEK-TA 字段契约后续需要 reviewed-preparation 再审确认。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none_known_in_visible_context",
+        "checked_against": [
+          "Phase 37 Trading 与 AI 跨分支引用契约",
+          "Quant Foundation R/R 与 R-multiple 边界",
+          "Live Execution / Risk Management owner 边界",
+          "AI Engineering LLM scoring / label governance 边界"
+        ],
+        "conflicts": [],
+        "resolution_summary": "Trade Analysis 首轮审计内容层 accepted_for_draft；candidate 不是 formal knowledge，不得创建 reviewed、approved、default guidance 或 hard gate。",
+        "approval_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 设计交易复盘、坏例 taxonomy、reason code、标签和 eval case 时必须保留计划、实际、风险、执行和市场上下文。",
+          "用于审计 LLM scoring / gating 项目是否把 PnL 当作唯一标签或把复盘结论直接写成交易规则。",
+          "用于阻止 AI 把复盘指标当作事前路径、实盘许可或默认交易建议。"
+        ],
+        "not_allowed": [
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘订单。",
+          "不得把候选知识当作 reviewed、approved、default guidance 或 hard gate。",
+          "不得根据单笔交易复盘直接宣布策略有效、无效或可实盘。"
+        ],
+        "requires_context": [
+          "trade_plan_id",
+          "strategy_rule_version",
+          "risk_policy_id",
+          "order_trace_id",
+          "fill_trace_id",
+          "market_regime",
+          "reason_code",
+          "reviewer"
+        ]
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "reviewed-preparation 审计未通过；补 Trade Analysis 内部契约/schema 前不得 formal reviewed、approved、default guidance、hard gate 或风险阈值建议。",
+        "requires_human_escalation": true,
+        "hidden_from_default_queue": false,
+        "visible_in_default_guidance_queue": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "risk_threshold_advice_allowed": false
+      },
+      "prior_reviewed_preparation_audit": {
+        "audit_result_id": "audit_result_phase37_trade_analysis_reviewed_preparation_20260612_strict_v1",
+        "package_id": "phase37_trade_analysis_reviewed_preparation_audit_package_20260612",
+        "decision": "needs_more_evidence",
+        "reviewed_allowed": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "risk_threshold_advice_allowed": false,
+        "reasons": [
+          "首轮 candidate 方向可接受，但本包没有提供可审计的 internal contract / schema 正文、schema_extract、字段表或 hash；仅列出需要检查的 contract 名称与 warning。",
+          "reviewed/caveat_only 需要字段本体和 owner 边界；当前外部来源只能支撑方法边界或 vendor workflow，不能替代 CEK-TA Trade Analysis 字段契约。"
+        ],
+        "required_followups": [
+          "reviewed 前补 CEK-TA MAE/MFE 字段定义、价格路径来源、bar/tick 粒度、计算窗口和缺失路径处理。"
+        ],
+        "patch_notes": {
+          "source": [
+            "CFA、论文、QuantConnect 等只能支撑执行质量、归因、验证和报告边界。",
+            "TradeZella、TradesViz、TraderSync、Trademetria 等 journal vendor 只能作为 workflow/terminology supporting source，不得单独支撑 reviewed 字段本体。",
+            "Van Tharp R/R-multiple 可支撑 R 归一化复盘概念，但不得写成正式学术标准或策略有效性证明。"
+          ],
+          "content": [
+            "Trade Analysis 只负责 post-trade 复盘、标签、reason code、质量归因、bad-case taxonomy 和 research hypothesis 生成。",
+            "PnL 不得作为唯一标签；必须保留计划、实际、风险、执行、市场状态和规则符合性上下文。",
+            "复盘结论不得直接改写实时交易规则，必须转成 research hypothesis 并经过独立验证。"
+          ],
+          "boundary": [
+            "needs_more_evidence 不等于 rejected；说明内容方向仍可作为 draft，但不能进入 formal reviewed/caveat_only。",
+            "不得生成买卖点、仓位、杠杆、止损止盈参数、实盘执行建议或风险阈值数值。",
+            "MAE/MFE、planned/realized R、good loss/bad win、reason code 均为 post-trade/research labeling 边界，不得作为事前路径、实盘许可或 default guidance。"
+          ],
+          "conflict": [
+            "Quant Foundation 负责 R/R-multiple 本体；Trade Analysis 只消费这些指标做复盘标签。",
+            "Live Execution / Risk Management 拥有真实订单、成交、风险动作和 hard gate；Trade Analysis 不接管实时执行或风控动作。",
+            "AI Engineering 只能引用字段设计 LLM scoring 标签、eval case 和 RAG 检索，不得把复盘结论改写成模型训练本体或交易执行规则。"
+          ]
+        },
+        "schema_contract_assessment": {
+          "required_contracts_present": false,
+          "missing_contracts": [
+            "reviewed_requires_mae_mfe_calculation_contract_and_post_trade_boundary"
+          ],
+          "field_level_gaps": [
+            "reviewed 前补 CEK-TA MAE/MFE 字段定义、价格路径来源、bar/tick 粒度、计算窗口和缺失路径处理。"
+          ]
+        }
+      },
+      "required_contract_evidence": {
+        "contract_id": "phase37_trade_analysis_review_contract",
+        "covers_missing_contracts": [
+          "reviewed_requires_mae_mfe_calculation_contract_and_post_trade_boundary"
+        ],
+        "field_level_gaps_from_prior_audit": [
+          "reviewed 前补 CEK-TA MAE/MFE 字段定义、价格路径来源、bar/tick 粒度、计算窗口和缺失路径处理。"
+        ]
+      },
+      "requested_audit_decision": [
+        "accepted_for_reviewed_caveat_only",
+        "needs_more_evidence",
+        "rejected",
+        "blocked"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260612_phase37_trade_analysis_bad_trade_taxonomy_required_001",
+      "research_task_id": "P37-H-T03",
+      "current_status": {
+        "review_status": "needs_more_evidence",
+        "ingestion_decision": "needs_more_evidence",
+        "workflow_stage": "reviewed_preparation_needs_more_evidence",
+        "queue_group": "needs_more_evidence",
+        "reviewed_preparation_audit_result_id": "audit_result_phase37_trade_analysis_reviewed_preparation_20260612_strict_v1"
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_07_trade_analysis.bad_trade_taxonomy_required.v1",
+        "target_review_status": "blocked_until_supplemented",
+        "default_guidance_after_conversion": "deny_until_reviewed_caveat_only_audit",
+        "formalization_blockers": [
+          "requires_reviewed_preparation_audit",
+          "requires_trade_analysis_contract_schema_inline_evidence"
+        ],
+        "reviewed_allowed": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "risk_threshold_advice_allowed": false
+      },
+      "classification": {
+        "tree_node_id": "kt.trade_analysis.bad_case_taxonomy",
+        "canonical_node_id": "kt.trade_analysis.bad_case_taxonomy",
+        "tree_path": "CEK-TA / Trading Engineering / Trade Analysis / Bad Case Taxonomy",
+        "related_nodes": [
+          "kt.trading_engineering",
+          "kt.trade_analysis",
+          "kt.quant_foundation.risk_normalized_metrics",
+          "kt.risk_management.pre_trade_gates",
+          "kt.live_execution",
+          "kt.ai_engineering.llm_training"
+        ],
+        "partition_id": "KB_07_TRADE_ANALYSIS",
+        "domain": "trade_analysis",
+        "subdomain": "bad_case_taxonomy",
+        "rule_type": "trade_analysis_boundary_rule",
+        "claim_type": "taxonomy_rule",
+        "used_for": [
+          "trade_review",
+          "llm_scoring_label_design",
+          "bad_case_taxonomy",
+          "external_project_rag_retrieval",
+          "ai_trader_project_gap_audit"
+        ],
+        "classification_notes": "本候选主归属 Trading Engineering / Trade Analysis。AI Engineering 只能引用本规则设计标签、reason code 和 eval case，不得把复盘指标直接改写成交易执行规则。"
+      },
+      "claim": {
+        "claim_id": "claim_p37_h_t03",
+        "title": "坏交易必须有 taxonomy",
+        "statement": "交易复盘必须把坏交易按计划错误、规则破坏、入场质量、出场质量、风险质量、执行质量、市场状态不匹配和数据/系统问题分类，而不是只标记亏损。",
+        "normalized_claim": "trade_analysis.bad_trade_taxonomy_required.v1",
+        "evidence_summary": "TradesViz discusses tagging trades by plan/checklist completion and comparing metrics by trade setup, conditions, and rule adherence.；CFA explains trade evaluation, execution quality, transaction costs, opportunity cost, and benchmark-based trade cost analysis.；QuantConnect backtest results include charts, orders, logs, statistics and reports, supporting audit-trace and multi-metric review needs.",
+        "interpretation_notes": "本候选只定义交易复盘、标签、reason code、质量归因和研究假设边界，不输出买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+        "claim_strength": "medium_high",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general_with_strategy_and_venue_context",
+        "asset": "general",
+        "timeframe": "post_trade_review_and_research",
+        "data_granularity": "trade_log_order_log_fill_log_risk_log_market_context",
+        "project_type": "trading_ai_support_layer",
+        "applies_when": [
+          "审计外接项目的交易复盘、LLM scoring 标签、坏例 taxonomy、reason code、交易质量归因或训练样本描述",
+          "把交易日志、订单日志、成交日志、风险日志和市场上下文整理成可复盘、可审计、可训练的数据"
+        ],
+        "not_applicable_when": [
+          "需要生成买卖点、仓位、杠杆、止损止盈或实盘执行建议",
+          "问题属于实时风控 gate、订单路由、回测统计或数据工程本体，应由对应分支处理",
+          "没有 trade plan、actual execution、market context、risk context 或 audit trace 上下文"
+        ],
+        "assumptions": [
+          "候选用于 CEK-TA 通用支持层知识库，不包含外接项目私有账户事实、密钥或策略参数。",
+          "复盘字段必须从交易计划、订单/成交、风险、市场上下文和人工审计记录中可追溯生成。",
+          "候选通过外部审计前不能进入正式 reviewed 知识库。"
+        ],
+        "limitations": [
+          "交易日志和 journal vendor 资料只能支持复盘模式，不能证明策略有效或可盈利。",
+          "复盘结论不能直接改变实盘规则；必须转成 research hypothesis 并经过独立验证。",
+          "本候选不提供任何投资建议、实盘许可或风险阈值建议。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_title": "Mastering Your Trading with R-Value and Profit Factor in TradesViz",
+          "source_url": "https://www.tradesviz.com/blog/what-is-r-value-profit-factor/",
+          "source_type": "trading_journal_vendor_education",
+          "publisher": "TradesViz",
+          "reliability": "medium",
+          "score": 68,
+          "freshness": "time_sensitive",
+          "evidence_summary": "TradesViz discusses tagging trades by plan/checklist completion and comparing metrics by trade setup, conditions, and rule adherence.",
+          "limitations": [
+            "Vendor workflow example; not a universal trading-quality taxonomy."
+          ],
+          "source_id": "src_001",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Trade Strategy and Execution",
+          "source_url": "https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/trade-strategy-execution",
+          "source_type": "professional_body_reading",
+          "publisher": "CFA Institute",
+          "reliability": "high",
+          "score": 90,
+          "freshness": "time_sensitive",
+          "evidence_summary": "CFA explains trade evaluation, execution quality, transaction costs, opportunity cost, and benchmark-based trade cost analysis.",
+          "limitations": [
+            "Execution-quality source; does not define retail journal taxonomy or CEK-TA reason-code fields."
+          ],
+          "source_id": "src_002",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Backtesting Results",
+          "source_url": "https://www.quantconnect.com/docs/v2/cloud-platform/backtesting/results",
+          "source_type": "platform_doc",
+          "publisher": "QuantConnect",
+          "reliability": "medium_high",
+          "score": 78,
+          "freshness": "time_sensitive",
+          "evidence_summary": "QuantConnect backtest results include charts, orders, logs, statistics and reports, supporting audit-trace and multi-metric review needs.",
+          "limitations": [
+            "Platform-specific reporting semantics; not CEK-TA mandatory tooling."
+          ],
+          "source_id": "src_003",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Return-Based, Holdings-Based and Transaction-Based Performance Attribution",
+          "source_url": "https://analystprep.com/study-notes/cfa-level-iii/return-based-holdings-based-and-transaction-based-performance-attribution-2/",
+          "source_type": "cfa_study_note",
+          "publisher": "AnalystPrep / CFA Level III study note",
+          "reliability": "medium_high",
+          "score": 78,
+          "freshness": "time_sensitive",
+          "evidence_summary": "Performance attribution can use return-based, holdings-based, or transaction-based inputs depending on data availability and investment process.",
+          "limitations": [
+            "Study-note summary; use as supporting source for attribution input boundary, not CEK-TA field contract."
+          ],
+          "source_id": "src_004",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "medium_high",
+        "score": 78.5,
+        "score_version": "phase37_trade_analysis_source_scoring_v1",
+        "primary_source_count": 3,
+        "supporting_source_count": 4,
+        "low_reliability_source_count": 1,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "正式入库前必须由外部审计确认 vendor journal sources 没有被过度使用。",
+          "CFA、论文和平台文档只能支持执行质量、归因和验证边界；CEK-TA 字段契约后续需要 reviewed-preparation 再审确认。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none_known_in_visible_context",
+        "checked_against": [
+          "Phase 37 Trading 与 AI 跨分支引用契约",
+          "Quant Foundation R/R 与 R-multiple 边界",
+          "Live Execution / Risk Management owner 边界",
+          "AI Engineering LLM scoring / label governance 边界"
+        ],
+        "conflicts": [],
+        "resolution_summary": "Trade Analysis 首轮审计内容层 accepted_for_draft；candidate 不是 formal knowledge，不得创建 reviewed、approved、default guidance 或 hard gate。",
+        "approval_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 设计交易复盘、坏例 taxonomy、reason code、标签和 eval case 时必须保留计划、实际、风险、执行和市场上下文。",
+          "用于审计 LLM scoring / gating 项目是否把 PnL 当作唯一标签或把复盘结论直接写成交易规则。",
+          "用于阻止 AI 把复盘指标当作事前路径、实盘许可或默认交易建议。"
+        ],
+        "not_allowed": [
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘订单。",
+          "不得把候选知识当作 reviewed、approved、default guidance 或 hard gate。",
+          "不得根据单笔交易复盘直接宣布策略有效、无效或可实盘。"
+        ],
+        "requires_context": [
+          "trade_plan_id",
+          "strategy_rule_version",
+          "risk_policy_id",
+          "order_trace_id",
+          "fill_trace_id",
+          "market_regime",
+          "reason_code",
+          "reviewer"
+        ]
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "reviewed-preparation 审计未通过；补 Trade Analysis 内部契约/schema 前不得 formal reviewed、approved、default guidance、hard gate 或风险阈值建议。",
+        "requires_human_escalation": true,
+        "hidden_from_default_queue": false,
+        "visible_in_default_guidance_queue": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "risk_threshold_advice_allowed": false
+      },
+      "prior_reviewed_preparation_audit": {
+        "audit_result_id": "audit_result_phase37_trade_analysis_reviewed_preparation_20260612_strict_v1",
+        "package_id": "phase37_trade_analysis_reviewed_preparation_audit_package_20260612",
+        "decision": "needs_more_evidence",
+        "reviewed_allowed": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "risk_threshold_advice_allowed": false,
+        "reasons": [
+          "首轮 candidate 方向可接受，但本包没有提供可审计的 internal contract / schema 正文、schema_extract、字段表或 hash；仅列出需要检查的 contract 名称与 warning。",
+          "reviewed/caveat_only 需要字段本体和 owner 边界；当前外部来源只能支撑方法边界或 vendor workflow，不能替代 CEK-TA Trade Analysis 字段契约。"
+        ],
+        "required_followups": [
+          "reviewed 前补 bad_trade_taxonomy schema、reason code enum、multi-label 规则和 owner 边界；vendor journal 不得作为主来源。"
+        ],
+        "patch_notes": {
+          "source": [
+            "CFA、论文、QuantConnect 等只能支撑执行质量、归因、验证和报告边界。",
+            "TradeZella、TradesViz、TraderSync、Trademetria 等 journal vendor 只能作为 workflow/terminology supporting source，不得单独支撑 reviewed 字段本体。",
+            "Van Tharp R/R-multiple 可支撑 R 归一化复盘概念，但不得写成正式学术标准或策略有效性证明。"
+          ],
+          "content": [
+            "Trade Analysis 只负责 post-trade 复盘、标签、reason code、质量归因、bad-case taxonomy 和 research hypothesis 生成。",
+            "PnL 不得作为唯一标签；必须保留计划、实际、风险、执行、市场状态和规则符合性上下文。",
+            "复盘结论不得直接改写实时交易规则，必须转成 research hypothesis 并经过独立验证。"
+          ],
+          "boundary": [
+            "needs_more_evidence 不等于 rejected；说明内容方向仍可作为 draft，但不能进入 formal reviewed/caveat_only。",
+            "不得生成买卖点、仓位、杠杆、止损止盈参数、实盘执行建议或风险阈值数值。",
+            "MAE/MFE、planned/realized R、good loss/bad win、reason code 均为 post-trade/research labeling 边界，不得作为事前路径、实盘许可或 default guidance。"
+          ],
+          "conflict": [
+            "Quant Foundation 负责 R/R-multiple 本体；Trade Analysis 只消费这些指标做复盘标签。",
+            "Live Execution / Risk Management 拥有真实订单、成交、风险动作和 hard gate；Trade Analysis 不接管实时执行或风控动作。",
+            "AI Engineering 只能引用字段设计 LLM scoring 标签、eval case 和 RAG 检索，不得把复盘结论改写成模型训练本体或交易执行规则。"
+          ]
+        },
+        "schema_contract_assessment": {
+          "required_contracts_present": false,
+          "missing_contracts": [
+            "reviewed_requires_bad_trade_taxonomy_schema"
+          ],
+          "field_level_gaps": [
+            "reviewed 前补 bad_trade_taxonomy schema、reason code enum、multi-label 规则和 owner 边界；vendor journal 不得作为主来源。"
+          ]
+        }
+      },
+      "required_contract_evidence": {
+        "contract_id": "phase37_trade_analysis_review_contract",
+        "covers_missing_contracts": [
+          "reviewed_requires_bad_trade_taxonomy_schema"
+        ],
+        "field_level_gaps_from_prior_audit": [
+          "reviewed 前补 bad_trade_taxonomy schema、reason code enum、multi-label 规则和 owner 边界；vendor journal 不得作为主来源。"
+        ]
+      },
+      "requested_audit_decision": [
+        "accepted_for_reviewed_caveat_only",
+        "needs_more_evidence",
+        "rejected",
+        "blocked"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260612_phase37_trade_analysis_good_loss_bad_win_distinction_001",
+      "research_task_id": "P37-H-T04",
+      "current_status": {
+        "review_status": "needs_more_evidence",
+        "ingestion_decision": "needs_more_evidence",
+        "workflow_stage": "reviewed_preparation_needs_more_evidence",
+        "queue_group": "needs_more_evidence",
+        "reviewed_preparation_audit_result_id": "audit_result_phase37_trade_analysis_reviewed_preparation_20260612_strict_v1"
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_07_trade_analysis.good_loss_bad_win_distinction.v1",
+        "target_review_status": "blocked_until_supplemented",
+        "default_guidance_after_conversion": "deny_until_reviewed_caveat_only_audit",
+        "formalization_blockers": [
+          "requires_reviewed_preparation_audit",
+          "requires_trade_analysis_contract_schema_inline_evidence"
+        ],
+        "reviewed_allowed": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "risk_threshold_advice_allowed": false
+      },
+      "classification": {
+        "tree_node_id": "kt.trade_analysis.bad_case_taxonomy",
+        "canonical_node_id": "kt.trade_analysis.bad_case_taxonomy",
+        "tree_path": "CEK-TA / Trading Engineering / Trade Analysis / Bad Case Taxonomy",
+        "related_nodes": [
+          "kt.trading_engineering",
+          "kt.trade_analysis",
+          "kt.quant_foundation.risk_normalized_metrics",
+          "kt.risk_management.pre_trade_gates",
+          "kt.live_execution",
+          "kt.ai_engineering.llm_training"
+        ],
+        "partition_id": "KB_07_TRADE_ANALYSIS",
+        "domain": "trade_analysis",
+        "subdomain": "trade_quality_taxonomy",
+        "rule_type": "trade_analysis_boundary_rule",
+        "claim_type": "trade_quality_taxonomy_rule",
+        "used_for": [
+          "trade_review",
+          "llm_scoring_label_design",
+          "bad_case_taxonomy",
+          "external_project_rag_retrieval",
+          "ai_trader_project_gap_audit"
+        ],
+        "classification_notes": "本候选主归属 Trading Engineering / Trade Analysis。AI Engineering 只能引用本规则设计标签、reason code 和 eval case，不得把复盘指标直接改写成交易执行规则。"
+      },
+      "claim": {
+        "claim_id": "claim_p37_h_t04",
+        "title": "好亏损和坏盈利必须区分",
+        "statement": "复盘必须区分遵守规则但亏损的 good loss 与违反计划但盈利的 bad win；不能把盈利自动标记为好交易，也不能把亏损自动标记为坏交易。",
+        "normalized_claim": "trade_analysis.good_loss_bad_win_distinction.v1",
+        "evidence_summary": "TradesViz discusses tagging trades by plan/checklist completion and comparing metrics by trade setup, conditions, and rule adherence.；TradeZella distinguishes planned risk/reward before a trade from R-multiple after exit.；Van Tharp concepts define initial risk R, R-multiple distributions, expectancy, and SQN-style analysis.",
+        "interpretation_notes": "本候选只定义交易复盘、标签、reason code、质量归因和研究假设边界，不输出买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+        "claim_strength": "medium_high",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general_with_strategy_and_venue_context",
+        "asset": "general",
+        "timeframe": "post_trade_review_and_research",
+        "data_granularity": "trade_log_order_log_fill_log_risk_log_market_context",
+        "project_type": "trading_ai_support_layer",
+        "applies_when": [
+          "审计外接项目的交易复盘、LLM scoring 标签、坏例 taxonomy、reason code、交易质量归因或训练样本描述",
+          "把交易日志、订单日志、成交日志、风险日志和市场上下文整理成可复盘、可审计、可训练的数据"
+        ],
+        "not_applicable_when": [
+          "需要生成买卖点、仓位、杠杆、止损止盈或实盘执行建议",
+          "问题属于实时风控 gate、订单路由、回测统计或数据工程本体，应由对应分支处理",
+          "没有 trade plan、actual execution、market context、risk context 或 audit trace 上下文"
+        ],
+        "assumptions": [
+          "候选用于 CEK-TA 通用支持层知识库，不包含外接项目私有账户事实、密钥或策略参数。",
+          "复盘字段必须从交易计划、订单/成交、风险、市场上下文和人工审计记录中可追溯生成。",
+          "候选通过外部审计前不能进入正式 reviewed 知识库。"
+        ],
+        "limitations": [
+          "交易日志和 journal vendor 资料只能支持复盘模式，不能证明策略有效或可盈利。",
+          "复盘结论不能直接改变实盘规则；必须转成 research hypothesis 并经过独立验证。",
+          "本候选不提供任何投资建议、实盘许可或风险阈值建议。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_title": "Mastering Your Trading with R-Value and Profit Factor in TradesViz",
+          "source_url": "https://www.tradesviz.com/blog/what-is-r-value-profit-factor/",
+          "source_type": "trading_journal_vendor_education",
+          "publisher": "TradesViz",
+          "reliability": "medium",
+          "score": 68,
+          "freshness": "time_sensitive",
+          "evidence_summary": "TradesViz discusses tagging trades by plan/checklist completion and comparing metrics by trade setup, conditions, and rule adherence.",
+          "limitations": [
+            "Vendor workflow example; not a universal trading-quality taxonomy."
+          ],
+          "source_id": "src_001",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Risk-Reward Ratio: How to Calculate and Use It",
+          "source_url": "https://www.tradezella.com/blog/risk-reward-ratio",
+          "source_type": "trading_journal_vendor_education",
+          "publisher": "TradeZella",
+          "reliability": "medium",
+          "score": 70,
+          "freshness": "time_sensitive",
+          "evidence_summary": "TradeZella distinguishes planned risk/reward before a trade from R-multiple after exit.",
+          "limitations": [
+            "Vendor education; use as supporting source for planned-vs-realized review terminology only."
+          ],
+          "source_id": "src_002",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Tharp Think Trading Concepts",
+          "source_url": "https://vantharpinstitute.com/tharp-think-trading-concepts/",
+          "source_type": "professional_training_concept",
+          "publisher": "Van Tharp Institute",
+          "reliability": "medium_high",
+          "score": 82,
+          "freshness": "stable",
+          "evidence_summary": "Van Tharp concepts define initial risk R, R-multiple distributions, expectancy, and SQN-style analysis.",
+          "limitations": [
+            "Training concept page; reviewed knowledge should avoid treating it as a formal academic standard."
+          ],
+          "source_id": "src_003",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Backtesting Results",
+          "source_url": "https://www.quantconnect.com/docs/v2/cloud-platform/backtesting/results",
+          "source_type": "platform_doc",
+          "publisher": "QuantConnect",
+          "reliability": "medium_high",
+          "score": 78,
+          "freshness": "time_sensitive",
+          "evidence_summary": "QuantConnect backtest results include charts, orders, logs, statistics and reports, supporting audit-trace and multi-metric review needs.",
+          "limitations": [
+            "Platform-specific reporting semantics; not CEK-TA mandatory tooling."
+          ],
+          "source_id": "src_004",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "medium_high",
+        "score": 74.5,
+        "score_version": "phase37_trade_analysis_source_scoring_v1",
+        "primary_source_count": 2,
+        "supporting_source_count": 4,
+        "low_reliability_source_count": 2,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "正式入库前必须由外部审计确认 vendor journal sources 没有被过度使用。",
+          "CFA、论文和平台文档只能支持执行质量、归因和验证边界；CEK-TA 字段契约后续需要 reviewed-preparation 再审确认。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none_known_in_visible_context",
+        "checked_against": [
+          "Phase 37 Trading 与 AI 跨分支引用契约",
+          "Quant Foundation R/R 与 R-multiple 边界",
+          "Live Execution / Risk Management owner 边界",
+          "AI Engineering LLM scoring / label governance 边界"
+        ],
+        "conflicts": [],
+        "resolution_summary": "Trade Analysis 首轮审计内容层 accepted_for_draft；candidate 不是 formal knowledge，不得创建 reviewed、approved、default guidance 或 hard gate。",
+        "approval_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 设计交易复盘、坏例 taxonomy、reason code、标签和 eval case 时必须保留计划、实际、风险、执行和市场上下文。",
+          "用于审计 LLM scoring / gating 项目是否把 PnL 当作唯一标签或把复盘结论直接写成交易规则。",
+          "用于阻止 AI 把复盘指标当作事前路径、实盘许可或默认交易建议。"
+        ],
+        "not_allowed": [
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘订单。",
+          "不得把候选知识当作 reviewed、approved、default guidance 或 hard gate。",
+          "不得根据单笔交易复盘直接宣布策略有效、无效或可实盘。"
+        ],
+        "requires_context": [
+          "trade_plan_id",
+          "strategy_rule_version",
+          "risk_policy_id",
+          "order_trace_id",
+          "fill_trace_id",
+          "market_regime",
+          "reason_code",
+          "reviewer"
+        ]
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "reviewed-preparation 审计未通过；补 Trade Analysis 内部契约/schema 前不得 formal reviewed、approved、default guidance、hard gate 或风险阈值建议。",
+        "requires_human_escalation": true,
+        "hidden_from_default_queue": false,
+        "visible_in_default_guidance_queue": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "risk_threshold_advice_allowed": false
+      },
+      "prior_reviewed_preparation_audit": {
+        "audit_result_id": "audit_result_phase37_trade_analysis_reviewed_preparation_20260612_strict_v1",
+        "package_id": "phase37_trade_analysis_reviewed_preparation_audit_package_20260612",
+        "decision": "needs_more_evidence",
+        "reviewed_allowed": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "risk_threshold_advice_allowed": false,
+        "reasons": [
+          "首轮 candidate 方向可接受，但本包没有提供可审计的 internal contract / schema 正文、schema_extract、字段表或 hash；仅列出需要检查的 contract 名称与 warning。",
+          "reviewed/caveat_only 需要字段本体和 owner 边界；当前外部来源只能支撑方法边界或 vendor workflow，不能替代 CEK-TA Trade Analysis 字段契约。"
+        ],
+        "required_followups": [
+          "reviewed 前补 CEK-TA good_loss/bad_win 判定 schema，绑定 plan_compliance、risk_compliance、execution_quality、market_context 和 reviewer。"
+        ],
+        "patch_notes": {
+          "source": [
+            "CFA、论文、QuantConnect 等只能支撑执行质量、归因、验证和报告边界。",
+            "TradeZella、TradesViz、TraderSync、Trademetria 等 journal vendor 只能作为 workflow/terminology supporting source，不得单独支撑 reviewed 字段本体。",
+            "Van Tharp R/R-multiple 可支撑 R 归一化复盘概念，但不得写成正式学术标准或策略有效性证明。"
+          ],
+          "content": [
+            "Trade Analysis 只负责 post-trade 复盘、标签、reason code、质量归因、bad-case taxonomy 和 research hypothesis 生成。",
+            "PnL 不得作为唯一标签；必须保留计划、实际、风险、执行、市场状态和规则符合性上下文。",
+            "复盘结论不得直接改写实时交易规则，必须转成 research hypothesis 并经过独立验证。"
+          ],
+          "boundary": [
+            "needs_more_evidence 不等于 rejected；说明内容方向仍可作为 draft，但不能进入 formal reviewed/caveat_only。",
+            "不得生成买卖点、仓位、杠杆、止损止盈参数、实盘执行建议或风险阈值数值。",
+            "MAE/MFE、planned/realized R、good loss/bad win、reason code 均为 post-trade/research labeling 边界，不得作为事前路径、实盘许可或 default guidance。"
+          ],
+          "conflict": [
+            "Quant Foundation 负责 R/R-multiple 本体；Trade Analysis 只消费这些指标做复盘标签。",
+            "Live Execution / Risk Management 拥有真实订单、成交、风险动作和 hard gate；Trade Analysis 不接管实时执行或风控动作。",
+            "AI Engineering 只能引用字段设计 LLM scoring 标签、eval case 和 RAG 检索，不得把复盘结论改写成模型训练本体或交易执行规则。"
+          ]
+        },
+        "schema_contract_assessment": {
+          "required_contracts_present": false,
+          "missing_contracts": [
+            "reviewed_requires_good_loss_bad_win_policy_schema"
+          ],
+          "field_level_gaps": [
+            "reviewed 前补 CEK-TA good_loss/bad_win 判定 schema，绑定 plan_compliance、risk_compliance、execution_quality、market_context 和 reviewer。"
+          ]
+        }
+      },
+      "required_contract_evidence": {
+        "contract_id": "phase37_trade_analysis_review_contract",
+        "covers_missing_contracts": [
+          "reviewed_requires_good_loss_bad_win_policy_schema"
+        ],
+        "field_level_gaps_from_prior_audit": [
+          "reviewed 前补 CEK-TA good_loss/bad_win 判定 schema，绑定 plan_compliance、risk_compliance、execution_quality、market_context 和 reviewer。"
+        ]
+      },
+      "requested_audit_decision": [
+        "accepted_for_reviewed_caveat_only",
+        "needs_more_evidence",
+        "rejected",
+        "blocked"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260612_phase37_trade_analysis_entry_quality_review_required_001",
+      "research_task_id": "P37-H-T05",
+      "current_status": {
+        "review_status": "needs_more_evidence",
+        "ingestion_decision": "needs_more_evidence",
+        "workflow_stage": "reviewed_preparation_needs_more_evidence",
+        "queue_group": "needs_more_evidence",
+        "reviewed_preparation_audit_result_id": "audit_result_phase37_trade_analysis_reviewed_preparation_20260612_strict_v1"
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_07_trade_analysis.entry_quality_review_required.v1",
+        "target_review_status": "blocked_until_supplemented",
+        "default_guidance_after_conversion": "deny_until_reviewed_caveat_only_audit",
+        "formalization_blockers": [
+          "requires_reviewed_preparation_audit",
+          "requires_trade_analysis_contract_schema_inline_evidence"
+        ],
+        "reviewed_allowed": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "risk_threshold_advice_allowed": false
+      },
+      "classification": {
+        "tree_node_id": "kt.trade_analysis",
+        "canonical_node_id": "kt.trade_analysis",
+        "tree_path": "CEK-TA / Trading Engineering / Trade Analysis",
+        "related_nodes": [
+          "kt.trading_engineering",
+          "kt.trade_analysis",
+          "kt.quant_foundation.risk_normalized_metrics",
+          "kt.risk_management.pre_trade_gates",
+          "kt.live_execution",
+          "kt.ai_engineering.llm_training"
+        ],
+        "partition_id": "KB_07_TRADE_ANALYSIS",
+        "domain": "trade_analysis",
+        "subdomain": "entry_quality",
+        "rule_type": "trade_analysis_boundary_rule",
+        "claim_type": "trade_review_boundary_rule",
+        "used_for": [
+          "trade_review",
+          "llm_scoring_label_design",
+          "bad_case_taxonomy",
+          "external_project_rag_retrieval",
+          "ai_trader_project_gap_audit"
+        ],
+        "classification_notes": "本候选主归属 Trading Engineering / Trade Analysis。AI Engineering 只能引用本规则设计标签、reason code 和 eval case，不得把复盘指标直接改写成交易执行规则。"
+      },
+      "claim": {
+        "claim_id": "claim_p37_h_t05",
+        "title": "入场质量必须独立复盘",
+        "statement": "入场质量复盘必须记录信号、触发条件、时间框架、市场状态、计划价差、延迟和是否按规则入场；不能由最终盈亏倒推出入场正确。",
+        "normalized_claim": "trade_analysis.entry_quality_review_required.v1",
+        "evidence_summary": "CFA explains trade evaluation, execution quality, transaction costs, opportunity cost, and benchmark-based trade cost analysis.；TradesViz discusses tagging trades by plan/checklist completion and comparing metrics by trade setup, conditions, and rule adherence.；QuantConnect backtest results include charts, orders, logs, statistics and reports, supporting audit-trace and multi-metric review needs.",
+        "interpretation_notes": "本候选只定义交易复盘、标签、reason code、质量归因和研究假设边界，不输出买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+        "claim_strength": "medium_high",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general_with_strategy_and_venue_context",
+        "asset": "general",
+        "timeframe": "post_trade_review_and_research",
+        "data_granularity": "trade_log_order_log_fill_log_risk_log_market_context",
+        "project_type": "trading_ai_support_layer",
+        "applies_when": [
+          "审计外接项目的交易复盘、LLM scoring 标签、坏例 taxonomy、reason code、交易质量归因或训练样本描述",
+          "把交易日志、订单日志、成交日志、风险日志和市场上下文整理成可复盘、可审计、可训练的数据"
+        ],
+        "not_applicable_when": [
+          "需要生成买卖点、仓位、杠杆、止损止盈或实盘执行建议",
+          "问题属于实时风控 gate、订单路由、回测统计或数据工程本体，应由对应分支处理",
+          "没有 trade plan、actual execution、market context、risk context 或 audit trace 上下文"
+        ],
+        "assumptions": [
+          "候选用于 CEK-TA 通用支持层知识库，不包含外接项目私有账户事实、密钥或策略参数。",
+          "复盘字段必须从交易计划、订单/成交、风险、市场上下文和人工审计记录中可追溯生成。",
+          "候选通过外部审计前不能进入正式 reviewed 知识库。"
+        ],
+        "limitations": [
+          "交易日志和 journal vendor 资料只能支持复盘模式，不能证明策略有效或可盈利。",
+          "复盘结论不能直接改变实盘规则；必须转成 research hypothesis 并经过独立验证。",
+          "本候选不提供任何投资建议、实盘许可或风险阈值建议。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_title": "Trade Strategy and Execution",
+          "source_url": "https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/trade-strategy-execution",
+          "source_type": "professional_body_reading",
+          "publisher": "CFA Institute",
+          "reliability": "high",
+          "score": 90,
+          "freshness": "time_sensitive",
+          "evidence_summary": "CFA explains trade evaluation, execution quality, transaction costs, opportunity cost, and benchmark-based trade cost analysis.",
+          "limitations": [
+            "Execution-quality source; does not define retail journal taxonomy or CEK-TA reason-code fields."
+          ],
+          "source_id": "src_001",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Mastering Your Trading with R-Value and Profit Factor in TradesViz",
+          "source_url": "https://www.tradesviz.com/blog/what-is-r-value-profit-factor/",
+          "source_type": "trading_journal_vendor_education",
+          "publisher": "TradesViz",
+          "reliability": "medium",
+          "score": 68,
+          "freshness": "time_sensitive",
+          "evidence_summary": "TradesViz discusses tagging trades by plan/checklist completion and comparing metrics by trade setup, conditions, and rule adherence.",
+          "limitations": [
+            "Vendor workflow example; not a universal trading-quality taxonomy."
+          ],
+          "source_id": "src_002",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Backtesting Results",
+          "source_url": "https://www.quantconnect.com/docs/v2/cloud-platform/backtesting/results",
+          "source_type": "platform_doc",
+          "publisher": "QuantConnect",
+          "reliability": "medium_high",
+          "score": 78,
+          "freshness": "time_sensitive",
+          "evidence_summary": "QuantConnect backtest results include charts, orders, logs, statistics and reports, supporting audit-trace and multi-metric review needs.",
+          "limitations": [
+            "Platform-specific reporting semantics; not CEK-TA mandatory tooling."
+          ],
+          "source_id": "src_003",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "The Role of Trading in Portfolio Performance Attribution",
+          "source_url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2928963",
+          "source_type": "paper",
+          "publisher": "SSRN",
+          "reliability": "medium_high",
+          "score": 82,
+          "freshness": "stable",
+          "evidence_summary": "The paper discusses execution quality in portfolio performance attribution and limitations of conventional TCA incentives.",
+          "limitations": [
+            "Portfolio-trading context; use as supporting source for execution-quality attribution boundary."
+          ],
+          "source_id": "src_004",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "medium_high",
+        "score": 79.5,
+        "score_version": "phase37_trade_analysis_source_scoring_v1",
+        "primary_source_count": 3,
+        "supporting_source_count": 4,
+        "low_reliability_source_count": 1,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "正式入库前必须由外部审计确认 vendor journal sources 没有被过度使用。",
+          "CFA、论文和平台文档只能支持执行质量、归因和验证边界；CEK-TA 字段契约后续需要 reviewed-preparation 再审确认。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none_known_in_visible_context",
+        "checked_against": [
+          "Phase 37 Trading 与 AI 跨分支引用契约",
+          "Quant Foundation R/R 与 R-multiple 边界",
+          "Live Execution / Risk Management owner 边界",
+          "AI Engineering LLM scoring / label governance 边界"
+        ],
+        "conflicts": [],
+        "resolution_summary": "Trade Analysis 首轮审计内容层 accepted_for_draft；candidate 不是 formal knowledge，不得创建 reviewed、approved、default guidance 或 hard gate。",
+        "approval_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 设计交易复盘、坏例 taxonomy、reason code、标签和 eval case 时必须保留计划、实际、风险、执行和市场上下文。",
+          "用于审计 LLM scoring / gating 项目是否把 PnL 当作唯一标签或把复盘结论直接写成交易规则。",
+          "用于阻止 AI 把复盘指标当作事前路径、实盘许可或默认交易建议。"
+        ],
+        "not_allowed": [
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘订单。",
+          "不得把候选知识当作 reviewed、approved、default guidance 或 hard gate。",
+          "不得根据单笔交易复盘直接宣布策略有效、无效或可实盘。"
+        ],
+        "requires_context": [
+          "trade_plan_id",
+          "strategy_rule_version",
+          "risk_policy_id",
+          "order_trace_id",
+          "fill_trace_id",
+          "market_regime",
+          "reason_code",
+          "reviewer"
+        ]
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "reviewed-preparation 审计未通过；补 Trade Analysis 内部契约/schema 前不得 formal reviewed、approved、default guidance、hard gate 或风险阈值建议。",
+        "requires_human_escalation": true,
+        "hidden_from_default_queue": false,
+        "visible_in_default_guidance_queue": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "risk_threshold_advice_allowed": false
+      },
+      "prior_reviewed_preparation_audit": {
+        "audit_result_id": "audit_result_phase37_trade_analysis_reviewed_preparation_20260612_strict_v1",
+        "package_id": "phase37_trade_analysis_reviewed_preparation_audit_package_20260612",
+        "decision": "needs_more_evidence",
+        "reviewed_allowed": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "risk_threshold_advice_allowed": false,
+        "reasons": [
+          "首轮 candidate 方向可接受，但本包没有提供可审计的 internal contract / schema 正文、schema_extract、字段表或 hash；仅列出需要检查的 contract 名称与 warning。",
+          "reviewed/caveat_only 需要字段本体和 owner 边界；当前外部来源只能支撑方法边界或 vendor workflow，不能替代 CEK-TA Trade Analysis 字段契约。"
+        ],
+        "required_followups": [
+          "reviewed 前补 entry_quality_review schema，明确 signal_ref、trigger_condition、timeframe、regime、planned_vs_actual_entry、latency 和 rule_compliance。"
+        ],
+        "patch_notes": {
+          "source": [
+            "CFA、论文、QuantConnect 等只能支撑执行质量、归因、验证和报告边界。",
+            "TradeZella、TradesViz、TraderSync、Trademetria 等 journal vendor 只能作为 workflow/terminology supporting source，不得单独支撑 reviewed 字段本体。",
+            "Van Tharp R/R-multiple 可支撑 R 归一化复盘概念，但不得写成正式学术标准或策略有效性证明。"
+          ],
+          "content": [
+            "Trade Analysis 只负责 post-trade 复盘、标签、reason code、质量归因、bad-case taxonomy 和 research hypothesis 生成。",
+            "PnL 不得作为唯一标签；必须保留计划、实际、风险、执行、市场状态和规则符合性上下文。",
+            "复盘结论不得直接改写实时交易规则，必须转成 research hypothesis 并经过独立验证。"
+          ],
+          "boundary": [
+            "needs_more_evidence 不等于 rejected；说明内容方向仍可作为 draft，但不能进入 formal reviewed/caveat_only。",
+            "不得生成买卖点、仓位、杠杆、止损止盈参数、实盘执行建议或风险阈值数值。",
+            "MAE/MFE、planned/realized R、good loss/bad win、reason code 均为 post-trade/research labeling 边界，不得作为事前路径、实盘许可或 default guidance。"
+          ],
+          "conflict": [
+            "Quant Foundation 负责 R/R-multiple 本体；Trade Analysis 只消费这些指标做复盘标签。",
+            "Live Execution / Risk Management 拥有真实订单、成交、风险动作和 hard gate；Trade Analysis 不接管实时执行或风控动作。",
+            "AI Engineering 只能引用字段设计 LLM scoring 标签、eval case 和 RAG 检索，不得把复盘结论改写成模型训练本体或交易执行规则。"
+          ]
+        },
+        "schema_contract_assessment": {
+          "required_contracts_present": false,
+          "missing_contracts": [
+            "reviewed_requires_entry_exit_risk_execution_quality_review_schema"
+          ],
+          "field_level_gaps": [
+            "reviewed 前补 entry_quality_review schema，明确 signal_ref、trigger_condition、timeframe、regime、planned_vs_actual_entry、latency 和 rule_compliance。"
+          ]
+        }
+      },
+      "required_contract_evidence": {
+        "contract_id": "phase37_trade_analysis_review_contract",
+        "covers_missing_contracts": [
+          "reviewed_requires_entry_exit_risk_execution_quality_review_schema"
+        ],
+        "field_level_gaps_from_prior_audit": [
+          "reviewed 前补 entry_quality_review schema，明确 signal_ref、trigger_condition、timeframe、regime、planned_vs_actual_entry、latency 和 rule_compliance。"
+        ]
+      },
+      "requested_audit_decision": [
+        "accepted_for_reviewed_caveat_only",
+        "needs_more_evidence",
+        "rejected",
+        "blocked"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260612_phase37_trade_analysis_exit_quality_review_required_001",
+      "research_task_id": "P37-H-T06",
+      "current_status": {
+        "review_status": "needs_more_evidence",
+        "ingestion_decision": "needs_more_evidence",
+        "workflow_stage": "reviewed_preparation_needs_more_evidence",
+        "queue_group": "needs_more_evidence",
+        "reviewed_preparation_audit_result_id": "audit_result_phase37_trade_analysis_reviewed_preparation_20260612_strict_v1"
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_07_trade_analysis.exit_quality_review_required.v1",
+        "target_review_status": "blocked_until_supplemented",
+        "default_guidance_after_conversion": "deny_until_reviewed_caveat_only_audit",
+        "formalization_blockers": [
+          "requires_reviewed_preparation_audit",
+          "requires_trade_analysis_contract_schema_inline_evidence"
+        ],
+        "reviewed_allowed": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "risk_threshold_advice_allowed": false
+      },
+      "classification": {
+        "tree_node_id": "kt.trade_analysis",
+        "canonical_node_id": "kt.trade_analysis",
+        "tree_path": "CEK-TA / Trading Engineering / Trade Analysis",
+        "related_nodes": [
+          "kt.trading_engineering",
+          "kt.trade_analysis",
+          "kt.quant_foundation.risk_normalized_metrics",
+          "kt.risk_management.pre_trade_gates",
+          "kt.live_execution",
+          "kt.ai_engineering.llm_training"
+        ],
+        "partition_id": "KB_07_TRADE_ANALYSIS",
+        "domain": "trade_analysis",
+        "subdomain": "exit_quality",
+        "rule_type": "trade_analysis_boundary_rule",
+        "claim_type": "trade_review_boundary_rule",
+        "used_for": [
+          "trade_review",
+          "llm_scoring_label_design",
+          "bad_case_taxonomy",
+          "external_project_rag_retrieval",
+          "ai_trader_project_gap_audit"
+        ],
+        "classification_notes": "本候选主归属 Trading Engineering / Trade Analysis。AI Engineering 只能引用本规则设计标签、reason code 和 eval case，不得把复盘指标直接改写成交易执行规则。"
+      },
+      "claim": {
+        "claim_id": "claim_p37_h_t06",
+        "title": "出场质量必须独立复盘",
+        "statement": "出场质量复盘必须记录计划出场、实际出场、MAE/MFE、滑点、提前/延后出场原因和规则符合性；不能只用是否盈利判断出场质量。",
+        "normalized_claim": "trade_analysis.exit_quality_review_required.v1",
+        "evidence_summary": "MAE and MFE are described as post-trade metrics for the worst adverse and best favorable move during a trade.；TraderSync explains price and position MAE/MFE as trade-journal analytics, not as entry signals.；CFA explains trade evaluation, execution quality, transaction costs, opportunity cost, and benchmark-based trade cost analysis.",
+        "interpretation_notes": "本候选只定义交易复盘、标签、reason code、质量归因和研究假设边界，不输出买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+        "claim_strength": "medium_high",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general_with_strategy_and_venue_context",
+        "asset": "general",
+        "timeframe": "post_trade_review_and_research",
+        "data_granularity": "trade_log_order_log_fill_log_risk_log_market_context",
+        "project_type": "trading_ai_support_layer",
+        "applies_when": [
+          "审计外接项目的交易复盘、LLM scoring 标签、坏例 taxonomy、reason code、交易质量归因或训练样本描述",
+          "把交易日志、订单日志、成交日志、风险日志和市场上下文整理成可复盘、可审计、可训练的数据"
+        ],
+        "not_applicable_when": [
+          "需要生成买卖点、仓位、杠杆、止损止盈或实盘执行建议",
+          "问题属于实时风控 gate、订单路由、回测统计或数据工程本体，应由对应分支处理",
+          "没有 trade plan、actual execution、market context、risk context 或 audit trace 上下文"
+        ],
+        "assumptions": [
+          "候选用于 CEK-TA 通用支持层知识库，不包含外接项目私有账户事实、密钥或策略参数。",
+          "复盘字段必须从交易计划、订单/成交、风险、市场上下文和人工审计记录中可追溯生成。",
+          "候选通过外部审计前不能进入正式 reviewed 知识库。"
+        ],
+        "limitations": [
+          "交易日志和 journal vendor 资料只能支持复盘模式，不能证明策略有效或可盈利。",
+          "复盘结论不能直接改变实盘规则；必须转成 research hypothesis 并经过独立验证。",
+          "本候选不提供任何投资建议、实盘许可或风险阈值建议。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_title": "Understanding MAE and MFE Metrics",
+          "source_url": "https://trademetria.com/blog/understanding-mae-and-mfe-metrics-a-guide-for-traders/",
+          "source_type": "trading_journal_vendor_education",
+          "publisher": "Trademetria",
+          "reliability": "medium",
+          "score": 70,
+          "freshness": "time_sensitive",
+          "evidence_summary": "MAE and MFE are described as post-trade metrics for the worst adverse and best favorable move during a trade.",
+          "limitations": [
+            "Vendor education; use only as supporting evidence for journal metric semantics."
+          ],
+          "source_id": "src_001",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "MFE and MAE Metrics",
+          "source_url": "https://tradersync.com/mfe-and-mae-metrics/",
+          "source_type": "trading_journal_vendor_education",
+          "publisher": "TraderSync",
+          "reliability": "medium",
+          "score": 70,
+          "freshness": "time_sensitive",
+          "evidence_summary": "TraderSync explains price and position MAE/MFE as trade-journal analytics, not as entry signals.",
+          "limitations": [
+            "Vendor source; should not be used as sole source for formal reviewed claims."
+          ],
+          "source_id": "src_002",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Trade Strategy and Execution",
+          "source_url": "https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/trade-strategy-execution",
+          "source_type": "professional_body_reading",
+          "publisher": "CFA Institute",
+          "reliability": "high",
+          "score": 90,
+          "freshness": "time_sensitive",
+          "evidence_summary": "CFA explains trade evaluation, execution quality, transaction costs, opportunity cost, and benchmark-based trade cost analysis.",
+          "limitations": [
+            "Execution-quality source; does not define retail journal taxonomy or CEK-TA reason-code fields."
+          ],
+          "source_id": "src_003",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Risk-Reward Ratio: How to Calculate and Use It",
+          "source_url": "https://www.tradezella.com/blog/risk-reward-ratio",
+          "source_type": "trading_journal_vendor_education",
+          "publisher": "TradeZella",
+          "reliability": "medium",
+          "score": 70,
+          "freshness": "time_sensitive",
+          "evidence_summary": "TradeZella distinguishes planned risk/reward before a trade from R-multiple after exit.",
+          "limitations": [
+            "Vendor education; use as supporting source for planned-vs-realized review terminology only."
+          ],
+          "source_id": "src_004",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "medium_high",
+        "score": 75.0,
+        "score_version": "phase37_trade_analysis_source_scoring_v1",
+        "primary_source_count": 1,
+        "supporting_source_count": 4,
+        "low_reliability_source_count": 3,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "正式入库前必须由外部审计确认 vendor journal sources 没有被过度使用。",
+          "CFA、论文和平台文档只能支持执行质量、归因和验证边界；CEK-TA 字段契约后续需要 reviewed-preparation 再审确认。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none_known_in_visible_context",
+        "checked_against": [
+          "Phase 37 Trading 与 AI 跨分支引用契约",
+          "Quant Foundation R/R 与 R-multiple 边界",
+          "Live Execution / Risk Management owner 边界",
+          "AI Engineering LLM scoring / label governance 边界"
+        ],
+        "conflicts": [],
+        "resolution_summary": "Trade Analysis 首轮审计内容层 accepted_for_draft；candidate 不是 formal knowledge，不得创建 reviewed、approved、default guidance 或 hard gate。",
+        "approval_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 设计交易复盘、坏例 taxonomy、reason code、标签和 eval case 时必须保留计划、实际、风险、执行和市场上下文。",
+          "用于审计 LLM scoring / gating 项目是否把 PnL 当作唯一标签或把复盘结论直接写成交易规则。",
+          "用于阻止 AI 把复盘指标当作事前路径、实盘许可或默认交易建议。"
+        ],
+        "not_allowed": [
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘订单。",
+          "不得把候选知识当作 reviewed、approved、default guidance 或 hard gate。",
+          "不得根据单笔交易复盘直接宣布策略有效、无效或可实盘。"
+        ],
+        "requires_context": [
+          "trade_plan_id",
+          "strategy_rule_version",
+          "risk_policy_id",
+          "order_trace_id",
+          "fill_trace_id",
+          "market_regime",
+          "reason_code",
+          "reviewer"
+        ]
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "reviewed-preparation 审计未通过；补 Trade Analysis 内部契约/schema 前不得 formal reviewed、approved、default guidance、hard gate 或风险阈值建议。",
+        "requires_human_escalation": true,
+        "hidden_from_default_queue": false,
+        "visible_in_default_guidance_queue": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "risk_threshold_advice_allowed": false
+      },
+      "prior_reviewed_preparation_audit": {
+        "audit_result_id": "audit_result_phase37_trade_analysis_reviewed_preparation_20260612_strict_v1",
+        "package_id": "phase37_trade_analysis_reviewed_preparation_audit_package_20260612",
+        "decision": "needs_more_evidence",
+        "reviewed_allowed": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "risk_threshold_advice_allowed": false,
+        "reasons": [
+          "首轮 candidate 方向可接受，但本包没有提供可审计的 internal contract / schema 正文、schema_extract、字段表或 hash；仅列出需要检查的 contract 名称与 warning。",
+          "reviewed/caveat_only 需要字段本体和 owner 边界；当前外部来源只能支撑方法边界或 vendor workflow，不能替代 CEK-TA Trade Analysis 字段契约。"
+        ],
+        "required_followups": [
+          "reviewed 前补 exit_quality_review schema，明确 planned_exit、actual_exit、MAE/MFE window、slippage、exit_reason、rule_compliance 和 path_evidence。"
+        ],
+        "patch_notes": {
+          "source": [
+            "CFA、论文、QuantConnect 等只能支撑执行质量、归因、验证和报告边界。",
+            "TradeZella、TradesViz、TraderSync、Trademetria 等 journal vendor 只能作为 workflow/terminology supporting source，不得单独支撑 reviewed 字段本体。",
+            "Van Tharp R/R-multiple 可支撑 R 归一化复盘概念，但不得写成正式学术标准或策略有效性证明。"
+          ],
+          "content": [
+            "Trade Analysis 只负责 post-trade 复盘、标签、reason code、质量归因、bad-case taxonomy 和 research hypothesis 生成。",
+            "PnL 不得作为唯一标签；必须保留计划、实际、风险、执行、市场状态和规则符合性上下文。",
+            "复盘结论不得直接改写实时交易规则，必须转成 research hypothesis 并经过独立验证。"
+          ],
+          "boundary": [
+            "needs_more_evidence 不等于 rejected；说明内容方向仍可作为 draft，但不能进入 formal reviewed/caveat_only。",
+            "不得生成买卖点、仓位、杠杆、止损止盈参数、实盘执行建议或风险阈值数值。",
+            "MAE/MFE、planned/realized R、good loss/bad win、reason code 均为 post-trade/research labeling 边界，不得作为事前路径、实盘许可或 default guidance。"
+          ],
+          "conflict": [
+            "Quant Foundation 负责 R/R-multiple 本体；Trade Analysis 只消费这些指标做复盘标签。",
+            "Live Execution / Risk Management 拥有真实订单、成交、风险动作和 hard gate；Trade Analysis 不接管实时执行或风控动作。",
+            "AI Engineering 只能引用字段设计 LLM scoring 标签、eval case 和 RAG 检索，不得把复盘结论改写成模型训练本体或交易执行规则。"
+          ]
+        },
+        "schema_contract_assessment": {
+          "required_contracts_present": false,
+          "missing_contracts": [
+            "reviewed_requires_entry_exit_risk_execution_quality_review_schema"
+          ],
+          "field_level_gaps": [
+            "reviewed 前补 exit_quality_review schema，明确 planned_exit、actual_exit、MAE/MFE window、slippage、exit_reason、rule_compliance 和 path_evidence。"
+          ]
+        }
+      },
+      "required_contract_evidence": {
+        "contract_id": "phase37_trade_analysis_review_contract",
+        "covers_missing_contracts": [
+          "reviewed_requires_entry_exit_risk_execution_quality_review_schema"
+        ],
+        "field_level_gaps_from_prior_audit": [
+          "reviewed 前补 exit_quality_review schema，明确 planned_exit、actual_exit、MAE/MFE window、slippage、exit_reason、rule_compliance 和 path_evidence。"
+        ]
+      },
+      "requested_audit_decision": [
+        "accepted_for_reviewed_caveat_only",
+        "needs_more_evidence",
+        "rejected",
+        "blocked"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260612_phase37_trade_analysis_risk_quality_review_required_001",
+      "research_task_id": "P37-H-T07",
+      "current_status": {
+        "review_status": "needs_more_evidence",
+        "ingestion_decision": "needs_more_evidence",
+        "workflow_stage": "reviewed_preparation_needs_more_evidence",
+        "queue_group": "needs_more_evidence",
+        "reviewed_preparation_audit_result_id": "audit_result_phase37_trade_analysis_reviewed_preparation_20260612_strict_v1"
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_07_trade_analysis.risk_quality_review_required.v1",
+        "target_review_status": "blocked_until_supplemented",
+        "default_guidance_after_conversion": "deny_until_reviewed_caveat_only_audit",
+        "formalization_blockers": [
+          "requires_reviewed_preparation_audit",
+          "requires_trade_analysis_contract_schema_inline_evidence"
+        ],
+        "reviewed_allowed": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "risk_threshold_advice_allowed": false
+      },
+      "classification": {
+        "tree_node_id": "kt.trade_analysis",
+        "canonical_node_id": "kt.trade_analysis",
+        "tree_path": "CEK-TA / Trading Engineering / Trade Analysis",
+        "related_nodes": [
+          "kt.trading_engineering",
+          "kt.trade_analysis",
+          "kt.quant_foundation.risk_normalized_metrics",
+          "kt.risk_management.pre_trade_gates",
+          "kt.live_execution",
+          "kt.ai_engineering.llm_training"
+        ],
+        "partition_id": "KB_07_TRADE_ANALYSIS",
+        "domain": "trade_analysis",
+        "subdomain": "risk_quality",
+        "rule_type": "trade_analysis_boundary_rule",
+        "claim_type": "risk_review_boundary_rule",
+        "used_for": [
+          "trade_review",
+          "llm_scoring_label_design",
+          "bad_case_taxonomy",
+          "external_project_rag_retrieval",
+          "ai_trader_project_gap_audit"
+        ],
+        "classification_notes": "本候选主归属 Trading Engineering / Trade Analysis。AI Engineering 只能引用本规则设计标签、reason code 和 eval case，不得把复盘指标直接改写成交易执行规则。"
+      },
+      "claim": {
+        "claim_id": "claim_p37_h_t07",
+        "title": "风险质量必须独立复盘",
+        "statement": "风险质量复盘必须记录初始风险 R、实际承担风险、仓位、止损执行、风险变更、规则是否被移动或放宽；不能只用收益覆盖风险问题。",
+        "normalized_claim": "trade_analysis.risk_quality_review_required.v1",
+        "evidence_summary": "Van Tharp concepts define initial risk R, R-multiple distributions, expectancy, and SQN-style analysis.；TradeZella distinguishes planned risk/reward before a trade from R-multiple after exit.；TradesViz discusses tagging trades by plan/checklist completion and comparing metrics by trade setup, conditions, and rule adherence.",
+        "interpretation_notes": "本候选只定义交易复盘、标签、reason code、质量归因和研究假设边界，不输出买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+        "claim_strength": "medium_high",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general_with_strategy_and_venue_context",
+        "asset": "general",
+        "timeframe": "post_trade_review_and_research",
+        "data_granularity": "trade_log_order_log_fill_log_risk_log_market_context",
+        "project_type": "trading_ai_support_layer",
+        "applies_when": [
+          "审计外接项目的交易复盘、LLM scoring 标签、坏例 taxonomy、reason code、交易质量归因或训练样本描述",
+          "把交易日志、订单日志、成交日志、风险日志和市场上下文整理成可复盘、可审计、可训练的数据"
+        ],
+        "not_applicable_when": [
+          "需要生成买卖点、仓位、杠杆、止损止盈或实盘执行建议",
+          "问题属于实时风控 gate、订单路由、回测统计或数据工程本体，应由对应分支处理",
+          "没有 trade plan、actual execution、market context、risk context 或 audit trace 上下文"
+        ],
+        "assumptions": [
+          "候选用于 CEK-TA 通用支持层知识库，不包含外接项目私有账户事实、密钥或策略参数。",
+          "复盘字段必须从交易计划、订单/成交、风险、市场上下文和人工审计记录中可追溯生成。",
+          "候选通过外部审计前不能进入正式 reviewed 知识库。"
+        ],
+        "limitations": [
+          "交易日志和 journal vendor 资料只能支持复盘模式，不能证明策略有效或可盈利。",
+          "复盘结论不能直接改变实盘规则；必须转成 research hypothesis 并经过独立验证。",
+          "本候选不提供任何投资建议、实盘许可或风险阈值建议。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_title": "Tharp Think Trading Concepts",
+          "source_url": "https://vantharpinstitute.com/tharp-think-trading-concepts/",
+          "source_type": "professional_training_concept",
+          "publisher": "Van Tharp Institute",
+          "reliability": "medium_high",
+          "score": 82,
+          "freshness": "stable",
+          "evidence_summary": "Van Tharp concepts define initial risk R, R-multiple distributions, expectancy, and SQN-style analysis.",
+          "limitations": [
+            "Training concept page; reviewed knowledge should avoid treating it as a formal academic standard."
+          ],
+          "source_id": "src_001",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Risk-Reward Ratio: How to Calculate and Use It",
+          "source_url": "https://www.tradezella.com/blog/risk-reward-ratio",
+          "source_type": "trading_journal_vendor_education",
+          "publisher": "TradeZella",
+          "reliability": "medium",
+          "score": 70,
+          "freshness": "time_sensitive",
+          "evidence_summary": "TradeZella distinguishes planned risk/reward before a trade from R-multiple after exit.",
+          "limitations": [
+            "Vendor education; use as supporting source for planned-vs-realized review terminology only."
+          ],
+          "source_id": "src_002",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Mastering Your Trading with R-Value and Profit Factor in TradesViz",
+          "source_url": "https://www.tradesviz.com/blog/what-is-r-value-profit-factor/",
+          "source_type": "trading_journal_vendor_education",
+          "publisher": "TradesViz",
+          "reliability": "medium",
+          "score": 68,
+          "freshness": "time_sensitive",
+          "evidence_summary": "TradesViz discusses tagging trades by plan/checklist completion and comparing metrics by trade setup, conditions, and rule adherence.",
+          "limitations": [
+            "Vendor workflow example; not a universal trading-quality taxonomy."
+          ],
+          "source_id": "src_003",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Trade Strategy and Execution",
+          "source_url": "https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/trade-strategy-execution",
+          "source_type": "professional_body_reading",
+          "publisher": "CFA Institute",
+          "reliability": "high",
+          "score": 90,
+          "freshness": "time_sensitive",
+          "evidence_summary": "CFA explains trade evaluation, execution quality, transaction costs, opportunity cost, and benchmark-based trade cost analysis.",
+          "limitations": [
+            "Execution-quality source; does not define retail journal taxonomy or CEK-TA reason-code fields."
+          ],
+          "source_id": "src_004",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "medium_high",
+        "score": 77.5,
+        "score_version": "phase37_trade_analysis_source_scoring_v1",
+        "primary_source_count": 2,
+        "supporting_source_count": 4,
+        "low_reliability_source_count": 2,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "正式入库前必须由外部审计确认 vendor journal sources 没有被过度使用。",
+          "CFA、论文和平台文档只能支持执行质量、归因和验证边界；CEK-TA 字段契约后续需要 reviewed-preparation 再审确认。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none_known_in_visible_context",
+        "checked_against": [
+          "Phase 37 Trading 与 AI 跨分支引用契约",
+          "Quant Foundation R/R 与 R-multiple 边界",
+          "Live Execution / Risk Management owner 边界",
+          "AI Engineering LLM scoring / label governance 边界"
+        ],
+        "conflicts": [],
+        "resolution_summary": "Trade Analysis 首轮审计内容层 accepted_for_draft；candidate 不是 formal knowledge，不得创建 reviewed、approved、default guidance 或 hard gate。",
+        "approval_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 设计交易复盘、坏例 taxonomy、reason code、标签和 eval case 时必须保留计划、实际、风险、执行和市场上下文。",
+          "用于审计 LLM scoring / gating 项目是否把 PnL 当作唯一标签或把复盘结论直接写成交易规则。",
+          "用于阻止 AI 把复盘指标当作事前路径、实盘许可或默认交易建议。"
+        ],
+        "not_allowed": [
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘订单。",
+          "不得把候选知识当作 reviewed、approved、default guidance 或 hard gate。",
+          "不得根据单笔交易复盘直接宣布策略有效、无效或可实盘。"
+        ],
+        "requires_context": [
+          "trade_plan_id",
+          "strategy_rule_version",
+          "risk_policy_id",
+          "order_trace_id",
+          "fill_trace_id",
+          "market_regime",
+          "reason_code",
+          "reviewer"
+        ]
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "reviewed-preparation 审计未通过；补 Trade Analysis 内部契约/schema 前不得 formal reviewed、approved、default guidance、hard gate 或风险阈值建议。",
+        "requires_human_escalation": true,
+        "hidden_from_default_queue": false,
+        "visible_in_default_guidance_queue": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "risk_threshold_advice_allowed": false
+      },
+      "prior_reviewed_preparation_audit": {
+        "audit_result_id": "audit_result_phase37_trade_analysis_reviewed_preparation_20260612_strict_v1",
+        "package_id": "phase37_trade_analysis_reviewed_preparation_audit_package_20260612",
+        "decision": "needs_more_evidence",
+        "reviewed_allowed": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "risk_threshold_advice_allowed": false,
+        "reasons": [
+          "首轮 candidate 方向可接受，但本包没有提供可审计的 internal contract / schema 正文、schema_extract、字段表或 hash；仅列出需要检查的 contract 名称与 warning。",
+          "reviewed/caveat_only 需要字段本体和 owner 边界；当前外部来源只能支撑方法边界或 vendor workflow，不能替代 CEK-TA Trade Analysis 字段契约。"
+        ],
+        "required_followups": [
+          "reviewed 前补 risk_quality_review schema，明确 initial_R、actual_R、position_ref、stop_execution、risk_change_log、rule_override 和 risk_policy_ref。"
+        ],
+        "patch_notes": {
+          "source": [
+            "CFA、论文、QuantConnect 等只能支撑执行质量、归因、验证和报告边界。",
+            "TradeZella、TradesViz、TraderSync、Trademetria 等 journal vendor 只能作为 workflow/terminology supporting source，不得单独支撑 reviewed 字段本体。",
+            "Van Tharp R/R-multiple 可支撑 R 归一化复盘概念，但不得写成正式学术标准或策略有效性证明。"
+          ],
+          "content": [
+            "Trade Analysis 只负责 post-trade 复盘、标签、reason code、质量归因、bad-case taxonomy 和 research hypothesis 生成。",
+            "PnL 不得作为唯一标签；必须保留计划、实际、风险、执行、市场状态和规则符合性上下文。",
+            "复盘结论不得直接改写实时交易规则，必须转成 research hypothesis 并经过独立验证。"
+          ],
+          "boundary": [
+            "needs_more_evidence 不等于 rejected；说明内容方向仍可作为 draft，但不能进入 formal reviewed/caveat_only。",
+            "不得生成买卖点、仓位、杠杆、止损止盈参数、实盘执行建议或风险阈值数值。",
+            "MAE/MFE、planned/realized R、good loss/bad win、reason code 均为 post-trade/research labeling 边界，不得作为事前路径、实盘许可或 default guidance。"
+          ],
+          "conflict": [
+            "Quant Foundation 负责 R/R-multiple 本体；Trade Analysis 只消费这些指标做复盘标签。",
+            "Live Execution / Risk Management 拥有真实订单、成交、风险动作和 hard gate；Trade Analysis 不接管实时执行或风控动作。",
+            "AI Engineering 只能引用字段设计 LLM scoring 标签、eval case 和 RAG 检索，不得把复盘结论改写成模型训练本体或交易执行规则。"
+          ]
+        },
+        "schema_contract_assessment": {
+          "required_contracts_present": false,
+          "missing_contracts": [
+            "reviewed_requires_entry_exit_risk_execution_quality_review_schema"
+          ],
+          "field_level_gaps": [
+            "reviewed 前补 risk_quality_review schema，明确 initial_R、actual_R、position_ref、stop_execution、risk_change_log、rule_override 和 risk_policy_ref。"
+          ]
+        }
+      },
+      "required_contract_evidence": {
+        "contract_id": "phase37_trade_analysis_review_contract",
+        "covers_missing_contracts": [
+          "reviewed_requires_entry_exit_risk_execution_quality_review_schema"
+        ],
+        "field_level_gaps_from_prior_audit": [
+          "reviewed 前补 risk_quality_review schema，明确 initial_R、actual_R、position_ref、stop_execution、risk_change_log、rule_override 和 risk_policy_ref。"
+        ]
+      },
+      "requested_audit_decision": [
+        "accepted_for_reviewed_caveat_only",
+        "needs_more_evidence",
+        "rejected",
+        "blocked"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260612_phase37_trade_analysis_execution_quality_review_required_001",
+      "research_task_id": "P37-H-T08",
+      "current_status": {
+        "review_status": "needs_more_evidence",
+        "ingestion_decision": "needs_more_evidence",
+        "workflow_stage": "reviewed_preparation_needs_more_evidence",
+        "queue_group": "needs_more_evidence",
+        "reviewed_preparation_audit_result_id": "audit_result_phase37_trade_analysis_reviewed_preparation_20260612_strict_v1"
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_07_trade_analysis.execution_quality_review_required.v1",
+        "target_review_status": "blocked_until_supplemented",
+        "default_guidance_after_conversion": "deny_until_reviewed_caveat_only_audit",
+        "formalization_blockers": [
+          "requires_reviewed_preparation_audit",
+          "requires_trade_analysis_contract_schema_inline_evidence"
+        ],
+        "reviewed_allowed": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "risk_threshold_advice_allowed": false
+      },
+      "classification": {
+        "tree_node_id": "kt.trade_analysis",
+        "canonical_node_id": "kt.trade_analysis",
+        "tree_path": "CEK-TA / Trading Engineering / Trade Analysis",
+        "related_nodes": [
+          "kt.trading_engineering",
+          "kt.trade_analysis",
+          "kt.quant_foundation.risk_normalized_metrics",
+          "kt.risk_management.pre_trade_gates",
+          "kt.live_execution",
+          "kt.ai_engineering.llm_training"
+        ],
+        "partition_id": "KB_07_TRADE_ANALYSIS",
+        "domain": "trade_analysis",
+        "subdomain": "execution_quality",
+        "rule_type": "trade_analysis_boundary_rule",
+        "claim_type": "execution_quality_review_rule",
+        "used_for": [
+          "trade_review",
+          "llm_scoring_label_design",
+          "bad_case_taxonomy",
+          "external_project_rag_retrieval",
+          "ai_trader_project_gap_audit"
+        ],
+        "classification_notes": "本候选主归属 Trading Engineering / Trade Analysis。AI Engineering 只能引用本规则设计标签、reason code 和 eval case，不得把复盘指标直接改写成交易执行规则。"
+      },
+      "claim": {
+        "claim_id": "claim_p37_h_t08",
+        "title": "执行质量必须独立复盘",
+        "statement": "执行质量复盘必须记录订单、成交、滑点、费用、延迟、拒单、撤单、机会成本和 broker/venue/algorithm 表现；不能把策略信号质量和执行质量混在一起。",
+        "normalized_claim": "trade_analysis.execution_quality_review_required.v1",
+        "evidence_summary": "CFA explains trade evaluation, execution quality, transaction costs, opportunity cost, and benchmark-based trade cost analysis.；The paper discusses execution quality in portfolio performance attribution and limitations of conventional TCA incentives.；QuantConnect backtest results include charts, orders, logs, statistics and reports, supporting audit-trace and multi-metric review needs.",
+        "interpretation_notes": "本候选只定义交易复盘、标签、reason code、质量归因和研究假设边界，不输出买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+        "claim_strength": "medium_high",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general_with_strategy_and_venue_context",
+        "asset": "general",
+        "timeframe": "post_trade_review_and_research",
+        "data_granularity": "trade_log_order_log_fill_log_risk_log_market_context",
+        "project_type": "trading_ai_support_layer",
+        "applies_when": [
+          "审计外接项目的交易复盘、LLM scoring 标签、坏例 taxonomy、reason code、交易质量归因或训练样本描述",
+          "把交易日志、订单日志、成交日志、风险日志和市场上下文整理成可复盘、可审计、可训练的数据"
+        ],
+        "not_applicable_when": [
+          "需要生成买卖点、仓位、杠杆、止损止盈或实盘执行建议",
+          "问题属于实时风控 gate、订单路由、回测统计或数据工程本体，应由对应分支处理",
+          "没有 trade plan、actual execution、market context、risk context 或 audit trace 上下文"
+        ],
+        "assumptions": [
+          "候选用于 CEK-TA 通用支持层知识库，不包含外接项目私有账户事实、密钥或策略参数。",
+          "复盘字段必须从交易计划、订单/成交、风险、市场上下文和人工审计记录中可追溯生成。",
+          "候选通过外部审计前不能进入正式 reviewed 知识库。"
+        ],
+        "limitations": [
+          "交易日志和 journal vendor 资料只能支持复盘模式，不能证明策略有效或可盈利。",
+          "复盘结论不能直接改变实盘规则；必须转成 research hypothesis 并经过独立验证。",
+          "本候选不提供任何投资建议、实盘许可或风险阈值建议。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_title": "Trade Strategy and Execution",
+          "source_url": "https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/trade-strategy-execution",
+          "source_type": "professional_body_reading",
+          "publisher": "CFA Institute",
+          "reliability": "high",
+          "score": 90,
+          "freshness": "time_sensitive",
+          "evidence_summary": "CFA explains trade evaluation, execution quality, transaction costs, opportunity cost, and benchmark-based trade cost analysis.",
+          "limitations": [
+            "Execution-quality source; does not define retail journal taxonomy or CEK-TA reason-code fields."
+          ],
+          "source_id": "src_001",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "The Role of Trading in Portfolio Performance Attribution",
+          "source_url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2928963",
+          "source_type": "paper",
+          "publisher": "SSRN",
+          "reliability": "medium_high",
+          "score": 82,
+          "freshness": "stable",
+          "evidence_summary": "The paper discusses execution quality in portfolio performance attribution and limitations of conventional TCA incentives.",
+          "limitations": [
+            "Portfolio-trading context; use as supporting source for execution-quality attribution boundary."
+          ],
+          "source_id": "src_002",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Backtesting Results",
+          "source_url": "https://www.quantconnect.com/docs/v2/cloud-platform/backtesting/results",
+          "source_type": "platform_doc",
+          "publisher": "QuantConnect",
+          "reliability": "medium_high",
+          "score": 78,
+          "freshness": "time_sensitive",
+          "evidence_summary": "QuantConnect backtest results include charts, orders, logs, statistics and reports, supporting audit-trace and multi-metric review needs.",
+          "limitations": [
+            "Platform-specific reporting semantics; not CEK-TA mandatory tooling."
+          ],
+          "source_id": "src_003",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Return-Based, Holdings-Based and Transaction-Based Performance Attribution",
+          "source_url": "https://analystprep.com/study-notes/cfa-level-iii/return-based-holdings-based-and-transaction-based-performance-attribution-2/",
+          "source_type": "cfa_study_note",
+          "publisher": "AnalystPrep / CFA Level III study note",
+          "reliability": "medium_high",
+          "score": 78,
+          "freshness": "time_sensitive",
+          "evidence_summary": "Performance attribution can use return-based, holdings-based, or transaction-based inputs depending on data availability and investment process.",
+          "limitations": [
+            "Study-note summary; use as supporting source for attribution input boundary, not CEK-TA field contract."
+          ],
+          "source_id": "src_004",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "medium_high",
+        "score": 82.0,
+        "score_version": "phase37_trade_analysis_source_scoring_v1",
+        "primary_source_count": 4,
+        "supporting_source_count": 4,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "正式入库前必须由外部审计确认 vendor journal sources 没有被过度使用。",
+          "CFA、论文和平台文档只能支持执行质量、归因和验证边界；CEK-TA 字段契约后续需要 reviewed-preparation 再审确认。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none_known_in_visible_context",
+        "checked_against": [
+          "Phase 37 Trading 与 AI 跨分支引用契约",
+          "Quant Foundation R/R 与 R-multiple 边界",
+          "Live Execution / Risk Management owner 边界",
+          "AI Engineering LLM scoring / label governance 边界"
+        ],
+        "conflicts": [],
+        "resolution_summary": "Trade Analysis 首轮审计内容层 accepted_for_draft；candidate 不是 formal knowledge，不得创建 reviewed、approved、default guidance 或 hard gate。",
+        "approval_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 设计交易复盘、坏例 taxonomy、reason code、标签和 eval case 时必须保留计划、实际、风险、执行和市场上下文。",
+          "用于审计 LLM scoring / gating 项目是否把 PnL 当作唯一标签或把复盘结论直接写成交易规则。",
+          "用于阻止 AI 把复盘指标当作事前路径、实盘许可或默认交易建议。"
+        ],
+        "not_allowed": [
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘订单。",
+          "不得把候选知识当作 reviewed、approved、default guidance 或 hard gate。",
+          "不得根据单笔交易复盘直接宣布策略有效、无效或可实盘。"
+        ],
+        "requires_context": [
+          "trade_plan_id",
+          "strategy_rule_version",
+          "risk_policy_id",
+          "order_trace_id",
+          "fill_trace_id",
+          "market_regime",
+          "reason_code",
+          "reviewer"
+        ]
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "reviewed-preparation 审计未通过；补 Trade Analysis 内部契约/schema 前不得 formal reviewed、approved、default guidance、hard gate 或风险阈值建议。",
+        "requires_human_escalation": true,
+        "hidden_from_default_queue": false,
+        "visible_in_default_guidance_queue": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "risk_threshold_advice_allowed": false
+      },
+      "prior_reviewed_preparation_audit": {
+        "audit_result_id": "audit_result_phase37_trade_analysis_reviewed_preparation_20260612_strict_v1",
+        "package_id": "phase37_trade_analysis_reviewed_preparation_audit_package_20260612",
+        "decision": "needs_more_evidence",
+        "reviewed_allowed": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "risk_threshold_advice_allowed": false,
+        "reasons": [
+          "首轮 candidate 方向可接受，但本包没有提供可审计的 internal contract / schema 正文、schema_extract、字段表或 hash；仅列出需要检查的 contract 名称与 warning。",
+          "reviewed/caveat_only 需要字段本体和 owner 边界；当前外部来源只能支撑方法边界或 vendor workflow，不能替代 CEK-TA Trade Analysis 字段契约。"
+        ],
+        "required_followups": [
+          "reviewed 前对齐 Live Execution 的 order/fill/audit log schema，避免重复定义真实执行 owner。"
+        ],
+        "patch_notes": {
+          "source": [
+            "CFA、论文、QuantConnect 等只能支撑执行质量、归因、验证和报告边界。",
+            "TradeZella、TradesViz、TraderSync、Trademetria 等 journal vendor 只能作为 workflow/terminology supporting source，不得单独支撑 reviewed 字段本体。",
+            "Van Tharp R/R-multiple 可支撑 R 归一化复盘概念，但不得写成正式学术标准或策略有效性证明。"
+          ],
+          "content": [
+            "Trade Analysis 只负责 post-trade 复盘、标签、reason code、质量归因、bad-case taxonomy 和 research hypothesis 生成。",
+            "PnL 不得作为唯一标签；必须保留计划、实际、风险、执行、市场状态和规则符合性上下文。",
+            "复盘结论不得直接改写实时交易规则，必须转成 research hypothesis 并经过独立验证。"
+          ],
+          "boundary": [
+            "needs_more_evidence 不等于 rejected；说明内容方向仍可作为 draft，但不能进入 formal reviewed/caveat_only。",
+            "不得生成买卖点、仓位、杠杆、止损止盈参数、实盘执行建议或风险阈值数值。",
+            "MAE/MFE、planned/realized R、good loss/bad win、reason code 均为 post-trade/research labeling 边界，不得作为事前路径、实盘许可或 default guidance。"
+          ],
+          "conflict": [
+            "Quant Foundation 负责 R/R-multiple 本体；Trade Analysis 只消费这些指标做复盘标签。",
+            "Live Execution / Risk Management 拥有真实订单、成交、风险动作和 hard gate；Trade Analysis 不接管实时执行或风控动作。",
+            "AI Engineering 只能引用字段设计 LLM scoring 标签、eval case 和 RAG 检索，不得把复盘结论改写成模型训练本体或交易执行规则。"
+          ]
+        },
+        "schema_contract_assessment": {
+          "required_contracts_present": false,
+          "missing_contracts": [
+            "reviewed_requires_entry_exit_risk_execution_quality_review_schema"
+          ],
+          "field_level_gaps": [
+            "reviewed 前对齐 Live Execution 的 order/fill/audit log schema，避免重复定义真实执行 owner。"
+          ]
+        }
+      },
+      "required_contract_evidence": {
+        "contract_id": "phase37_trade_analysis_review_contract",
+        "covers_missing_contracts": [
+          "reviewed_requires_entry_exit_risk_execution_quality_review_schema"
+        ],
+        "field_level_gaps_from_prior_audit": [
+          "reviewed 前对齐 Live Execution 的 order/fill/audit log schema，避免重复定义真实执行 owner。"
+        ]
+      },
+      "requested_audit_decision": [
+        "accepted_for_reviewed_caveat_only",
+        "needs_more_evidence",
+        "rejected",
+        "blocked"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260612_phase37_trade_analysis_rule_compliance_review_required_001",
+      "research_task_id": "P37-H-T09",
+      "current_status": {
+        "review_status": "needs_more_evidence",
+        "ingestion_decision": "needs_more_evidence",
+        "workflow_stage": "reviewed_preparation_needs_more_evidence",
+        "queue_group": "needs_more_evidence",
+        "reviewed_preparation_audit_result_id": "audit_result_phase37_trade_analysis_reviewed_preparation_20260612_strict_v1"
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_07_trade_analysis.rule_compliance_review_required.v1",
+        "target_review_status": "blocked_until_supplemented",
+        "default_guidance_after_conversion": "deny_until_reviewed_caveat_only_audit",
+        "formalization_blockers": [
+          "requires_reviewed_preparation_audit",
+          "requires_trade_analysis_contract_schema_inline_evidence"
+        ],
+        "reviewed_allowed": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "risk_threshold_advice_allowed": false
+      },
+      "classification": {
+        "tree_node_id": "kt.trade_analysis",
+        "canonical_node_id": "kt.trade_analysis",
+        "tree_path": "CEK-TA / Trading Engineering / Trade Analysis",
+        "related_nodes": [
+          "kt.trading_engineering",
+          "kt.trade_analysis",
+          "kt.quant_foundation.risk_normalized_metrics",
+          "kt.risk_management.pre_trade_gates",
+          "kt.live_execution",
+          "kt.ai_engineering.llm_training"
+        ],
+        "partition_id": "KB_07_TRADE_ANALYSIS",
+        "domain": "trade_analysis",
+        "subdomain": "rule_compliance",
+        "rule_type": "trade_analysis_boundary_rule",
+        "claim_type": "rule_compliance_review_rule",
+        "used_for": [
+          "trade_review",
+          "llm_scoring_label_design",
+          "bad_case_taxonomy",
+          "external_project_rag_retrieval",
+          "ai_trader_project_gap_audit"
+        ],
+        "classification_notes": "本候选主归属 Trading Engineering / Trade Analysis。AI Engineering 只能引用本规则设计标签、reason code 和 eval case，不得把复盘指标直接改写成交易执行规则。"
+      },
+      "claim": {
+        "claim_id": "claim_p37_h_t09",
+        "title": "规则符合性必须复盘",
+        "statement": "每笔交易必须记录策略规则、入场/出场规则、风控规则和人工 override 是否被遵守；rule compliance 不能由 PnL 替代。",
+        "normalized_claim": "trade_analysis.rule_compliance_review_required.v1",
+        "evidence_summary": "TradesViz discusses tagging trades by plan/checklist completion and comparing metrics by trade setup, conditions, and rule adherence.；QuantConnect backtest results include charts, orders, logs, statistics and reports, supporting audit-trace and multi-metric review needs.；CFA explains trade evaluation, execution quality, transaction costs, opportunity cost, and benchmark-based trade cost analysis.",
+        "interpretation_notes": "本候选只定义交易复盘、标签、reason code、质量归因和研究假设边界，不输出买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+        "claim_strength": "medium_high",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general_with_strategy_and_venue_context",
+        "asset": "general",
+        "timeframe": "post_trade_review_and_research",
+        "data_granularity": "trade_log_order_log_fill_log_risk_log_market_context",
+        "project_type": "trading_ai_support_layer",
+        "applies_when": [
+          "审计外接项目的交易复盘、LLM scoring 标签、坏例 taxonomy、reason code、交易质量归因或训练样本描述",
+          "把交易日志、订单日志、成交日志、风险日志和市场上下文整理成可复盘、可审计、可训练的数据"
+        ],
+        "not_applicable_when": [
+          "需要生成买卖点、仓位、杠杆、止损止盈或实盘执行建议",
+          "问题属于实时风控 gate、订单路由、回测统计或数据工程本体，应由对应分支处理",
+          "没有 trade plan、actual execution、market context、risk context 或 audit trace 上下文"
+        ],
+        "assumptions": [
+          "候选用于 CEK-TA 通用支持层知识库，不包含外接项目私有账户事实、密钥或策略参数。",
+          "复盘字段必须从交易计划、订单/成交、风险、市场上下文和人工审计记录中可追溯生成。",
+          "候选通过外部审计前不能进入正式 reviewed 知识库。"
+        ],
+        "limitations": [
+          "交易日志和 journal vendor 资料只能支持复盘模式，不能证明策略有效或可盈利。",
+          "复盘结论不能直接改变实盘规则；必须转成 research hypothesis 并经过独立验证。",
+          "本候选不提供任何投资建议、实盘许可或风险阈值建议。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_title": "Mastering Your Trading with R-Value and Profit Factor in TradesViz",
+          "source_url": "https://www.tradesviz.com/blog/what-is-r-value-profit-factor/",
+          "source_type": "trading_journal_vendor_education",
+          "publisher": "TradesViz",
+          "reliability": "medium",
+          "score": 68,
+          "freshness": "time_sensitive",
+          "evidence_summary": "TradesViz discusses tagging trades by plan/checklist completion and comparing metrics by trade setup, conditions, and rule adherence.",
+          "limitations": [
+            "Vendor workflow example; not a universal trading-quality taxonomy."
+          ],
+          "source_id": "src_001",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Backtesting Results",
+          "source_url": "https://www.quantconnect.com/docs/v2/cloud-platform/backtesting/results",
+          "source_type": "platform_doc",
+          "publisher": "QuantConnect",
+          "reliability": "medium_high",
+          "score": 78,
+          "freshness": "time_sensitive",
+          "evidence_summary": "QuantConnect backtest results include charts, orders, logs, statistics and reports, supporting audit-trace and multi-metric review needs.",
+          "limitations": [
+            "Platform-specific reporting semantics; not CEK-TA mandatory tooling."
+          ],
+          "source_id": "src_002",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Trade Strategy and Execution",
+          "source_url": "https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/trade-strategy-execution",
+          "source_type": "professional_body_reading",
+          "publisher": "CFA Institute",
+          "reliability": "high",
+          "score": 90,
+          "freshness": "time_sensitive",
+          "evidence_summary": "CFA explains trade evaluation, execution quality, transaction costs, opportunity cost, and benchmark-based trade cost analysis.",
+          "limitations": [
+            "Execution-quality source; does not define retail journal taxonomy or CEK-TA reason-code fields."
+          ],
+          "source_id": "src_003",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "The Probability of Backtest Overfitting",
+          "source_url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2326253",
+          "source_type": "paper",
+          "publisher": "SSRN",
+          "reliability": "high",
+          "score": 88,
+          "freshness": "stable",
+          "evidence_summary": "Bailey et al. discuss backtest overfitting risk, supporting that research hypotheses and performance claims require validation rather than anecdotal trade examples.",
+          "limitations": [
+            "Backtest-overfitting paper; supports validation boundary, not trade-journal UI fields."
+          ],
+          "source_id": "src_004",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "medium_high",
+        "score": 81.0,
+        "score_version": "phase37_trade_analysis_source_scoring_v1",
+        "primary_source_count": 3,
+        "supporting_source_count": 4,
+        "low_reliability_source_count": 1,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "正式入库前必须由外部审计确认 vendor journal sources 没有被过度使用。",
+          "CFA、论文和平台文档只能支持执行质量、归因和验证边界；CEK-TA 字段契约后续需要 reviewed-preparation 再审确认。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none_known_in_visible_context",
+        "checked_against": [
+          "Phase 37 Trading 与 AI 跨分支引用契约",
+          "Quant Foundation R/R 与 R-multiple 边界",
+          "Live Execution / Risk Management owner 边界",
+          "AI Engineering LLM scoring / label governance 边界"
+        ],
+        "conflicts": [],
+        "resolution_summary": "Trade Analysis 首轮审计内容层 accepted_for_draft；candidate 不是 formal knowledge，不得创建 reviewed、approved、default guidance 或 hard gate。",
+        "approval_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 设计交易复盘、坏例 taxonomy、reason code、标签和 eval case 时必须保留计划、实际、风险、执行和市场上下文。",
+          "用于审计 LLM scoring / gating 项目是否把 PnL 当作唯一标签或把复盘结论直接写成交易规则。",
+          "用于阻止 AI 把复盘指标当作事前路径、实盘许可或默认交易建议。"
+        ],
+        "not_allowed": [
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘订单。",
+          "不得把候选知识当作 reviewed、approved、default guidance 或 hard gate。",
+          "不得根据单笔交易复盘直接宣布策略有效、无效或可实盘。"
+        ],
+        "requires_context": [
+          "trade_plan_id",
+          "strategy_rule_version",
+          "risk_policy_id",
+          "order_trace_id",
+          "fill_trace_id",
+          "market_regime",
+          "reason_code",
+          "reviewer"
+        ]
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "reviewed-preparation 审计未通过；补 Trade Analysis 内部契约/schema 前不得 formal reviewed、approved、default guidance、hard gate 或风险阈值建议。",
+        "requires_human_escalation": true,
+        "hidden_from_default_queue": false,
+        "visible_in_default_guidance_queue": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "risk_threshold_advice_allowed": false
+      },
+      "prior_reviewed_preparation_audit": {
+        "audit_result_id": "audit_result_phase37_trade_analysis_reviewed_preparation_20260612_strict_v1",
+        "package_id": "phase37_trade_analysis_reviewed_preparation_audit_package_20260612",
+        "decision": "needs_more_evidence",
+        "reviewed_allowed": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "risk_threshold_advice_allowed": false,
+        "reasons": [
+          "首轮 candidate 方向可接受，但本包没有提供可审计的 internal contract / schema 正文、schema_extract、字段表或 hash；仅列出需要检查的 contract 名称与 warning。",
+          "reviewed/caveat_only 需要字段本体和 owner 边界；当前外部来源只能支撑方法边界或 vendor workflow，不能替代 CEK-TA Trade Analysis 字段契约。"
+        ],
+        "required_followups": [
+          "reviewed 前补 rule_compliance schema，明确 strategy_rule_version、entry_rule、exit_rule、risk_rule、manual_override、violation_type 和 reviewer。"
+        ],
+        "patch_notes": {
+          "source": [
+            "CFA、论文、QuantConnect 等只能支撑执行质量、归因、验证和报告边界。",
+            "TradeZella、TradesViz、TraderSync、Trademetria 等 journal vendor 只能作为 workflow/terminology supporting source，不得单独支撑 reviewed 字段本体。",
+            "Van Tharp R/R-multiple 可支撑 R 归一化复盘概念，但不得写成正式学术标准或策略有效性证明。"
+          ],
+          "content": [
+            "Trade Analysis 只负责 post-trade 复盘、标签、reason code、质量归因、bad-case taxonomy 和 research hypothesis 生成。",
+            "PnL 不得作为唯一标签；必须保留计划、实际、风险、执行、市场状态和规则符合性上下文。",
+            "复盘结论不得直接改写实时交易规则，必须转成 research hypothesis 并经过独立验证。"
+          ],
+          "boundary": [
+            "needs_more_evidence 不等于 rejected；说明内容方向仍可作为 draft，但不能进入 formal reviewed/caveat_only。",
+            "不得生成买卖点、仓位、杠杆、止损止盈参数、实盘执行建议或风险阈值数值。",
+            "MAE/MFE、planned/realized R、good loss/bad win、reason code 均为 post-trade/research labeling 边界，不得作为事前路径、实盘许可或 default guidance。"
+          ],
+          "conflict": [
+            "Quant Foundation 负责 R/R-multiple 本体；Trade Analysis 只消费这些指标做复盘标签。",
+            "Live Execution / Risk Management 拥有真实订单、成交、风险动作和 hard gate；Trade Analysis 不接管实时执行或风控动作。",
+            "AI Engineering 只能引用字段设计 LLM scoring 标签、eval case 和 RAG 检索，不得把复盘结论改写成模型训练本体或交易执行规则。"
+          ]
+        },
+        "schema_contract_assessment": {
+          "required_contracts_present": false,
+          "missing_contracts": [
+            "reviewed_requires_rule_compliance_schema"
+          ],
+          "field_level_gaps": [
+            "reviewed 前补 rule_compliance schema，明确 strategy_rule_version、entry_rule、exit_rule、risk_rule、manual_override、violation_type 和 reviewer。"
+          ]
+        }
+      },
+      "required_contract_evidence": {
+        "contract_id": "phase37_trade_analysis_review_contract",
+        "covers_missing_contracts": [
+          "reviewed_requires_rule_compliance_schema"
+        ],
+        "field_level_gaps_from_prior_audit": [
+          "reviewed 前补 rule_compliance schema，明确 strategy_rule_version、entry_rule、exit_rule、risk_rule、manual_override、violation_type 和 reviewer。"
+        ]
+      },
+      "requested_audit_decision": [
+        "accepted_for_reviewed_caveat_only",
+        "needs_more_evidence",
+        "rejected",
+        "blocked"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260612_phase37_trade_analysis_regime_fit_review_required_001",
+      "research_task_id": "P37-H-T10",
+      "current_status": {
+        "review_status": "needs_more_evidence",
+        "ingestion_decision": "needs_more_evidence",
+        "workflow_stage": "reviewed_preparation_needs_more_evidence",
+        "queue_group": "needs_more_evidence",
+        "reviewed_preparation_audit_result_id": "audit_result_phase37_trade_analysis_reviewed_preparation_20260612_strict_v1"
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_07_trade_analysis.regime_fit_review_required.v1",
+        "target_review_status": "blocked_until_supplemented",
+        "default_guidance_after_conversion": "deny_until_reviewed_caveat_only_audit",
+        "formalization_blockers": [
+          "requires_reviewed_preparation_audit",
+          "requires_trade_analysis_contract_schema_inline_evidence"
+        ],
+        "reviewed_allowed": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "risk_threshold_advice_allowed": false
+      },
+      "classification": {
+        "tree_node_id": "kt.trade_analysis",
+        "canonical_node_id": "kt.trade_analysis",
+        "tree_path": "CEK-TA / Trading Engineering / Trade Analysis",
+        "related_nodes": [
+          "kt.trading_engineering",
+          "kt.trade_analysis",
+          "kt.quant_foundation.risk_normalized_metrics",
+          "kt.risk_management.pre_trade_gates",
+          "kt.live_execution",
+          "kt.ai_engineering.llm_training"
+        ],
+        "partition_id": "KB_07_TRADE_ANALYSIS",
+        "domain": "trade_analysis",
+        "subdomain": "regime_fit",
+        "rule_type": "trade_analysis_boundary_rule",
+        "claim_type": "regime_review_boundary_rule",
+        "used_for": [
+          "trade_review",
+          "llm_scoring_label_design",
+          "bad_case_taxonomy",
+          "external_project_rag_retrieval",
+          "ai_trader_project_gap_audit"
+        ],
+        "classification_notes": "本候选主归属 Trading Engineering / Trade Analysis。AI Engineering 只能引用本规则设计标签、reason code 和 eval case，不得把复盘指标直接改写成交易执行规则。"
+      },
+      "claim": {
+        "claim_id": "claim_p37_h_t10",
+        "title": "市场状态适配必须复盘",
+        "statement": "交易复盘必须记录市场状态、波动率、流动性、趋势/震荡、交易时段和策略适配情况；不能把单笔输赢直接归因于策略有效或无效。",
+        "normalized_claim": "trade_analysis.regime_fit_review_required.v1",
+        "evidence_summary": "CFA explains trade evaluation, execution quality, transaction costs, opportunity cost, and benchmark-based trade cost analysis.；Performance attribution can use return-based, holdings-based, or transaction-based inputs depending on data availability and investment process.；The paper discusses execution quality in portfolio performance attribution and limitations of conventional TCA incentives.",
+        "interpretation_notes": "本候选只定义交易复盘、标签、reason code、质量归因和研究假设边界，不输出买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+        "claim_strength": "medium_high",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general_with_strategy_and_venue_context",
+        "asset": "general",
+        "timeframe": "post_trade_review_and_research",
+        "data_granularity": "trade_log_order_log_fill_log_risk_log_market_context",
+        "project_type": "trading_ai_support_layer",
+        "applies_when": [
+          "审计外接项目的交易复盘、LLM scoring 标签、坏例 taxonomy、reason code、交易质量归因或训练样本描述",
+          "把交易日志、订单日志、成交日志、风险日志和市场上下文整理成可复盘、可审计、可训练的数据"
+        ],
+        "not_applicable_when": [
+          "需要生成买卖点、仓位、杠杆、止损止盈或实盘执行建议",
+          "问题属于实时风控 gate、订单路由、回测统计或数据工程本体，应由对应分支处理",
+          "没有 trade plan、actual execution、market context、risk context 或 audit trace 上下文"
+        ],
+        "assumptions": [
+          "候选用于 CEK-TA 通用支持层知识库，不包含外接项目私有账户事实、密钥或策略参数。",
+          "复盘字段必须从交易计划、订单/成交、风险、市场上下文和人工审计记录中可追溯生成。",
+          "候选通过外部审计前不能进入正式 reviewed 知识库。"
+        ],
+        "limitations": [
+          "交易日志和 journal vendor 资料只能支持复盘模式，不能证明策略有效或可盈利。",
+          "复盘结论不能直接改变实盘规则；必须转成 research hypothesis 并经过独立验证。",
+          "本候选不提供任何投资建议、实盘许可或风险阈值建议。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_title": "Trade Strategy and Execution",
+          "source_url": "https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/trade-strategy-execution",
+          "source_type": "professional_body_reading",
+          "publisher": "CFA Institute",
+          "reliability": "high",
+          "score": 90,
+          "freshness": "time_sensitive",
+          "evidence_summary": "CFA explains trade evaluation, execution quality, transaction costs, opportunity cost, and benchmark-based trade cost analysis.",
+          "limitations": [
+            "Execution-quality source; does not define retail journal taxonomy or CEK-TA reason-code fields."
+          ],
+          "source_id": "src_001",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Return-Based, Holdings-Based and Transaction-Based Performance Attribution",
+          "source_url": "https://analystprep.com/study-notes/cfa-level-iii/return-based-holdings-based-and-transaction-based-performance-attribution-2/",
+          "source_type": "cfa_study_note",
+          "publisher": "AnalystPrep / CFA Level III study note",
+          "reliability": "medium_high",
+          "score": 78,
+          "freshness": "time_sensitive",
+          "evidence_summary": "Performance attribution can use return-based, holdings-based, or transaction-based inputs depending on data availability and investment process.",
+          "limitations": [
+            "Study-note summary; use as supporting source for attribution input boundary, not CEK-TA field contract."
+          ],
+          "source_id": "src_002",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "The Role of Trading in Portfolio Performance Attribution",
+          "source_url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2928963",
+          "source_type": "paper",
+          "publisher": "SSRN",
+          "reliability": "medium_high",
+          "score": 82,
+          "freshness": "stable",
+          "evidence_summary": "The paper discusses execution quality in portfolio performance attribution and limitations of conventional TCA incentives.",
+          "limitations": [
+            "Portfolio-trading context; use as supporting source for execution-quality attribution boundary."
+          ],
+          "source_id": "src_003",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "The Probability of Backtest Overfitting",
+          "source_url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2326253",
+          "source_type": "paper",
+          "publisher": "SSRN",
+          "reliability": "high",
+          "score": 88,
+          "freshness": "stable",
+          "evidence_summary": "Bailey et al. discuss backtest overfitting risk, supporting that research hypotheses and performance claims require validation rather than anecdotal trade examples.",
+          "limitations": [
+            "Backtest-overfitting paper; supports validation boundary, not trade-journal UI fields."
+          ],
+          "source_id": "src_004",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "medium_high",
+        "score": 84.5,
+        "score_version": "phase37_trade_analysis_source_scoring_v1",
+        "primary_source_count": 4,
+        "supporting_source_count": 4,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "正式入库前必须由外部审计确认 vendor journal sources 没有被过度使用。",
+          "CFA、论文和平台文档只能支持执行质量、归因和验证边界；CEK-TA 字段契约后续需要 reviewed-preparation 再审确认。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none_known_in_visible_context",
+        "checked_against": [
+          "Phase 37 Trading 与 AI 跨分支引用契约",
+          "Quant Foundation R/R 与 R-multiple 边界",
+          "Live Execution / Risk Management owner 边界",
+          "AI Engineering LLM scoring / label governance 边界"
+        ],
+        "conflicts": [],
+        "resolution_summary": "Trade Analysis 首轮审计内容层 accepted_for_draft；candidate 不是 formal knowledge，不得创建 reviewed、approved、default guidance 或 hard gate。",
+        "approval_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 设计交易复盘、坏例 taxonomy、reason code、标签和 eval case 时必须保留计划、实际、风险、执行和市场上下文。",
+          "用于审计 LLM scoring / gating 项目是否把 PnL 当作唯一标签或把复盘结论直接写成交易规则。",
+          "用于阻止 AI 把复盘指标当作事前路径、实盘许可或默认交易建议。"
+        ],
+        "not_allowed": [
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘订单。",
+          "不得把候选知识当作 reviewed、approved、default guidance 或 hard gate。",
+          "不得根据单笔交易复盘直接宣布策略有效、无效或可实盘。"
+        ],
+        "requires_context": [
+          "trade_plan_id",
+          "strategy_rule_version",
+          "risk_policy_id",
+          "order_trace_id",
+          "fill_trace_id",
+          "market_regime",
+          "reason_code",
+          "reviewer"
+        ]
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "reviewed-preparation 审计未通过；补 Trade Analysis 内部契约/schema 前不得 formal reviewed、approved、default guidance、hard gate 或风险阈值建议。",
+        "requires_human_escalation": true,
+        "hidden_from_default_queue": false,
+        "visible_in_default_guidance_queue": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "risk_threshold_advice_allowed": false
+      },
+      "prior_reviewed_preparation_audit": {
+        "audit_result_id": "audit_result_phase37_trade_analysis_reviewed_preparation_20260612_strict_v1",
+        "package_id": "phase37_trade_analysis_reviewed_preparation_audit_package_20260612",
+        "decision": "needs_more_evidence",
+        "reviewed_allowed": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "risk_threshold_advice_allowed": false,
+        "reasons": [
+          "首轮 candidate 方向可接受，但本包没有提供可审计的 internal contract / schema 正文、schema_extract、字段表或 hash；仅列出需要检查的 contract 名称与 warning。",
+          "reviewed/caveat_only 需要字段本体和 owner 边界；当前外部来源只能支撑方法边界或 vendor workflow，不能替代 CEK-TA Trade Analysis 字段契约。"
+        ],
+        "required_followups": [
+          "reviewed 前补 regime_fit_review schema，明确 market_regime、volatility、liquidity、session、strategy_regime_assumption 和 mismatch_reason。"
+        ],
+        "patch_notes": {
+          "source": [
+            "CFA、论文、QuantConnect 等只能支撑执行质量、归因、验证和报告边界。",
+            "TradeZella、TradesViz、TraderSync、Trademetria 等 journal vendor 只能作为 workflow/terminology supporting source，不得单独支撑 reviewed 字段本体。",
+            "Van Tharp R/R-multiple 可支撑 R 归一化复盘概念，但不得写成正式学术标准或策略有效性证明。"
+          ],
+          "content": [
+            "Trade Analysis 只负责 post-trade 复盘、标签、reason code、质量归因、bad-case taxonomy 和 research hypothesis 生成。",
+            "PnL 不得作为唯一标签；必须保留计划、实际、风险、执行、市场状态和规则符合性上下文。",
+            "复盘结论不得直接改写实时交易规则，必须转成 research hypothesis 并经过独立验证。"
+          ],
+          "boundary": [
+            "needs_more_evidence 不等于 rejected；说明内容方向仍可作为 draft，但不能进入 formal reviewed/caveat_only。",
+            "不得生成买卖点、仓位、杠杆、止损止盈参数、实盘执行建议或风险阈值数值。",
+            "MAE/MFE、planned/realized R、good loss/bad win、reason code 均为 post-trade/research labeling 边界，不得作为事前路径、实盘许可或 default guidance。"
+          ],
+          "conflict": [
+            "Quant Foundation 负责 R/R-multiple 本体；Trade Analysis 只消费这些指标做复盘标签。",
+            "Live Execution / Risk Management 拥有真实订单、成交、风险动作和 hard gate；Trade Analysis 不接管实时执行或风控动作。",
+            "AI Engineering 只能引用字段设计 LLM scoring 标签、eval case 和 RAG 检索，不得把复盘结论改写成模型训练本体或交易执行规则。"
+          ]
+        },
+        "schema_contract_assessment": {
+          "required_contracts_present": false,
+          "missing_contracts": [
+            "reviewed_requires_regime_fit_review_contract"
+          ],
+          "field_level_gaps": [
+            "reviewed 前补 regime_fit_review schema，明确 market_regime、volatility、liquidity、session、strategy_regime_assumption 和 mismatch_reason。"
+          ]
+        }
+      },
+      "required_contract_evidence": {
+        "contract_id": "phase37_trade_analysis_review_contract",
+        "covers_missing_contracts": [
+          "reviewed_requires_regime_fit_review_contract"
+        ],
+        "field_level_gaps_from_prior_audit": [
+          "reviewed 前补 regime_fit_review schema，明确 market_regime、volatility、liquidity、session、strategy_regime_assumption 和 mismatch_reason。"
+        ]
+      },
+      "requested_audit_decision": [
+        "accepted_for_reviewed_caveat_only",
+        "needs_more_evidence",
+        "rejected",
+        "blocked"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260612_phase37_trade_analysis_reason_code_required_001",
+      "research_task_id": "P37-H-T11",
+      "current_status": {
+        "review_status": "needs_more_evidence",
+        "ingestion_decision": "needs_more_evidence",
+        "workflow_stage": "reviewed_preparation_needs_more_evidence",
+        "queue_group": "needs_more_evidence",
+        "reviewed_preparation_audit_result_id": "audit_result_phase37_trade_analysis_reviewed_preparation_20260612_strict_v1"
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_07_trade_analysis.reason_code_required.v1",
+        "target_review_status": "blocked_until_supplemented",
+        "default_guidance_after_conversion": "deny_until_reviewed_caveat_only_audit",
+        "formalization_blockers": [
+          "requires_reviewed_preparation_audit",
+          "requires_trade_analysis_contract_schema_inline_evidence"
+        ],
+        "reviewed_allowed": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "risk_threshold_advice_allowed": false
+      },
+      "classification": {
+        "tree_node_id": "kt.trade_analysis",
+        "canonical_node_id": "kt.trade_analysis",
+        "tree_path": "CEK-TA / Trading Engineering / Trade Analysis",
+        "related_nodes": [
+          "kt.trading_engineering",
+          "kt.trade_analysis",
+          "kt.quant_foundation.risk_normalized_metrics",
+          "kt.risk_management.pre_trade_gates",
+          "kt.live_execution",
+          "kt.ai_engineering.llm_training"
+        ],
+        "partition_id": "KB_07_TRADE_ANALYSIS",
+        "domain": "trade_analysis",
+        "subdomain": "reason_code",
+        "rule_type": "trade_analysis_boundary_rule",
+        "claim_type": "trade_analysis_schema_rule",
+        "used_for": [
+          "trade_review",
+          "llm_scoring_label_design",
+          "bad_case_taxonomy",
+          "external_project_rag_retrieval",
+          "ai_trader_project_gap_audit"
+        ],
+        "classification_notes": "本候选主归属 Trading Engineering / Trade Analysis。AI Engineering 只能引用本规则设计标签、reason code 和 eval case，不得把复盘指标直接改写成交易执行规则。"
+      },
+      "claim": {
+        "claim_id": "claim_p37_h_t11",
+        "title": "交易复盘必须有 reason code",
+        "statement": "交易复盘、LLM scoring 和坏例分析必须使用稳定 reason code 描述交易原因、错误类型、执行问题和风险问题；不能只保存自由文本评论。",
+        "normalized_claim": "trade_analysis.reason_code_required.v1",
+        "evidence_summary": "TradesViz discusses tagging trades by plan/checklist completion and comparing metrics by trade setup, conditions, and rule adherence.；QuantConnect backtest results include charts, orders, logs, statistics and reports, supporting audit-trace and multi-metric review needs.；CFA explains trade evaluation, execution quality, transaction costs, opportunity cost, and benchmark-based trade cost analysis.",
+        "interpretation_notes": "本候选只定义交易复盘、标签、reason code、质量归因和研究假设边界，不输出买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+        "claim_strength": "medium_high",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general_with_strategy_and_venue_context",
+        "asset": "general",
+        "timeframe": "post_trade_review_and_research",
+        "data_granularity": "trade_log_order_log_fill_log_risk_log_market_context",
+        "project_type": "trading_ai_support_layer",
+        "applies_when": [
+          "审计外接项目的交易复盘、LLM scoring 标签、坏例 taxonomy、reason code、交易质量归因或训练样本描述",
+          "把交易日志、订单日志、成交日志、风险日志和市场上下文整理成可复盘、可审计、可训练的数据"
+        ],
+        "not_applicable_when": [
+          "需要生成买卖点、仓位、杠杆、止损止盈或实盘执行建议",
+          "问题属于实时风控 gate、订单路由、回测统计或数据工程本体，应由对应分支处理",
+          "没有 trade plan、actual execution、market context、risk context 或 audit trace 上下文"
+        ],
+        "assumptions": [
+          "候选用于 CEK-TA 通用支持层知识库，不包含外接项目私有账户事实、密钥或策略参数。",
+          "复盘字段必须从交易计划、订单/成交、风险、市场上下文和人工审计记录中可追溯生成。",
+          "候选通过外部审计前不能进入正式 reviewed 知识库。"
+        ],
+        "limitations": [
+          "交易日志和 journal vendor 资料只能支持复盘模式，不能证明策略有效或可盈利。",
+          "复盘结论不能直接改变实盘规则；必须转成 research hypothesis 并经过独立验证。",
+          "本候选不提供任何投资建议、实盘许可或风险阈值建议。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_title": "Mastering Your Trading with R-Value and Profit Factor in TradesViz",
+          "source_url": "https://www.tradesviz.com/blog/what-is-r-value-profit-factor/",
+          "source_type": "trading_journal_vendor_education",
+          "publisher": "TradesViz",
+          "reliability": "medium",
+          "score": 68,
+          "freshness": "time_sensitive",
+          "evidence_summary": "TradesViz discusses tagging trades by plan/checklist completion and comparing metrics by trade setup, conditions, and rule adherence.",
+          "limitations": [
+            "Vendor workflow example; not a universal trading-quality taxonomy."
+          ],
+          "source_id": "src_001",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Backtesting Results",
+          "source_url": "https://www.quantconnect.com/docs/v2/cloud-platform/backtesting/results",
+          "source_type": "platform_doc",
+          "publisher": "QuantConnect",
+          "reliability": "medium_high",
+          "score": 78,
+          "freshness": "time_sensitive",
+          "evidence_summary": "QuantConnect backtest results include charts, orders, logs, statistics and reports, supporting audit-trace and multi-metric review needs.",
+          "limitations": [
+            "Platform-specific reporting semantics; not CEK-TA mandatory tooling."
+          ],
+          "source_id": "src_002",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Trade Strategy and Execution",
+          "source_url": "https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/trade-strategy-execution",
+          "source_type": "professional_body_reading",
+          "publisher": "CFA Institute",
+          "reliability": "high",
+          "score": 90,
+          "freshness": "time_sensitive",
+          "evidence_summary": "CFA explains trade evaluation, execution quality, transaction costs, opportunity cost, and benchmark-based trade cost analysis.",
+          "limitations": [
+            "Execution-quality source; does not define retail journal taxonomy or CEK-TA reason-code fields."
+          ],
+          "source_id": "src_003",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Return-Based, Holdings-Based and Transaction-Based Performance Attribution",
+          "source_url": "https://analystprep.com/study-notes/cfa-level-iii/return-based-holdings-based-and-transaction-based-performance-attribution-2/",
+          "source_type": "cfa_study_note",
+          "publisher": "AnalystPrep / CFA Level III study note",
+          "reliability": "medium_high",
+          "score": 78,
+          "freshness": "time_sensitive",
+          "evidence_summary": "Performance attribution can use return-based, holdings-based, or transaction-based inputs depending on data availability and investment process.",
+          "limitations": [
+            "Study-note summary; use as supporting source for attribution input boundary, not CEK-TA field contract."
+          ],
+          "source_id": "src_004",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "medium_high",
+        "score": 78.5,
+        "score_version": "phase37_trade_analysis_source_scoring_v1",
+        "primary_source_count": 3,
+        "supporting_source_count": 4,
+        "low_reliability_source_count": 1,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "正式入库前必须由外部审计确认 vendor journal sources 没有被过度使用。",
+          "CFA、论文和平台文档只能支持执行质量、归因和验证边界；CEK-TA 字段契约后续需要 reviewed-preparation 再审确认。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none_known_in_visible_context",
+        "checked_against": [
+          "Phase 37 Trading 与 AI 跨分支引用契约",
+          "Quant Foundation R/R 与 R-multiple 边界",
+          "Live Execution / Risk Management owner 边界",
+          "AI Engineering LLM scoring / label governance 边界"
+        ],
+        "conflicts": [],
+        "resolution_summary": "Trade Analysis 首轮审计内容层 accepted_for_draft；candidate 不是 formal knowledge，不得创建 reviewed、approved、default guidance 或 hard gate。",
+        "approval_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 设计交易复盘、坏例 taxonomy、reason code、标签和 eval case 时必须保留计划、实际、风险、执行和市场上下文。",
+          "用于审计 LLM scoring / gating 项目是否把 PnL 当作唯一标签或把复盘结论直接写成交易规则。",
+          "用于阻止 AI 把复盘指标当作事前路径、实盘许可或默认交易建议。"
+        ],
+        "not_allowed": [
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘订单。",
+          "不得把候选知识当作 reviewed、approved、default guidance 或 hard gate。",
+          "不得根据单笔交易复盘直接宣布策略有效、无效或可实盘。"
+        ],
+        "requires_context": [
+          "trade_plan_id",
+          "strategy_rule_version",
+          "risk_policy_id",
+          "order_trace_id",
+          "fill_trace_id",
+          "market_regime",
+          "reason_code",
+          "reviewer"
+        ]
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "reviewed-preparation 审计未通过；补 Trade Analysis 内部契约/schema 前不得 formal reviewed、approved、default guidance、hard gate 或风险阈值建议。",
+        "requires_human_escalation": true,
+        "hidden_from_default_queue": false,
+        "visible_in_default_guidance_queue": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "risk_threshold_advice_allowed": false
+      },
+      "prior_reviewed_preparation_audit": {
+        "audit_result_id": "audit_result_phase37_trade_analysis_reviewed_preparation_20260612_strict_v1",
+        "package_id": "phase37_trade_analysis_reviewed_preparation_audit_package_20260612",
+        "decision": "needs_more_evidence",
+        "reviewed_allowed": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "risk_threshold_advice_allowed": false,
+        "reasons": [
+          "首轮 candidate 方向可接受，但本包没有提供可审计的 internal contract / schema 正文、schema_extract、字段表或 hash；仅列出需要检查的 contract 名称与 warning。",
+          "reviewed/caveat_only 需要字段本体和 owner 边界；当前外部来源只能支撑方法边界或 vendor workflow，不能替代 CEK-TA Trade Analysis 字段契约。"
+        ],
+        "required_followups": [
+          "reviewed 前补 CEK-TA reason_code taxonomy/schema，定义 reason_code_id、category、severity、owner、multi-label policy、version/hash 和 migration rules。"
+        ],
+        "patch_notes": {
+          "source": [
+            "CFA、论文、QuantConnect 等只能支撑执行质量、归因、验证和报告边界。",
+            "TradeZella、TradesViz、TraderSync、Trademetria 等 journal vendor 只能作为 workflow/terminology supporting source，不得单独支撑 reviewed 字段本体。",
+            "Van Tharp R/R-multiple 可支撑 R 归一化复盘概念，但不得写成正式学术标准或策略有效性证明。"
+          ],
+          "content": [
+            "Trade Analysis 只负责 post-trade 复盘、标签、reason code、质量归因、bad-case taxonomy 和 research hypothesis 生成。",
+            "PnL 不得作为唯一标签；必须保留计划、实际、风险、执行、市场状态和规则符合性上下文。",
+            "复盘结论不得直接改写实时交易规则，必须转成 research hypothesis 并经过独立验证。"
+          ],
+          "boundary": [
+            "needs_more_evidence 不等于 rejected；说明内容方向仍可作为 draft，但不能进入 formal reviewed/caveat_only。",
+            "不得生成买卖点、仓位、杠杆、止损止盈参数、实盘执行建议或风险阈值数值。",
+            "MAE/MFE、planned/realized R、good loss/bad win、reason code 均为 post-trade/research labeling 边界，不得作为事前路径、实盘许可或 default guidance。"
+          ],
+          "conflict": [
+            "Quant Foundation 负责 R/R-multiple 本体；Trade Analysis 只消费这些指标做复盘标签。",
+            "Live Execution / Risk Management 拥有真实订单、成交、风险动作和 hard gate；Trade Analysis 不接管实时执行或风控动作。",
+            "AI Engineering 只能引用字段设计 LLM scoring 标签、eval case 和 RAG 检索，不得把复盘结论改写成模型训练本体或交易执行规则。"
+          ]
+        },
+        "schema_contract_assessment": {
+          "required_contracts_present": false,
+          "missing_contracts": [
+            "reviewed_requires_reason_code_taxonomy"
+          ],
+          "field_level_gaps": [
+            "reviewed 前补 CEK-TA reason_code taxonomy/schema，定义 reason_code_id、category、severity、owner、multi-label policy、version/hash 和 migration rules。"
+          ]
+        }
+      },
+      "required_contract_evidence": {
+        "contract_id": "phase37_trade_analysis_review_contract",
+        "covers_missing_contracts": [
+          "reviewed_requires_reason_code_taxonomy"
+        ],
+        "field_level_gaps_from_prior_audit": [
+          "reviewed 前补 CEK-TA reason_code taxonomy/schema，定义 reason_code_id、category、severity、owner、multi-label policy、version/hash 和 migration rules。"
+        ]
+      },
+      "requested_audit_decision": [
+        "accepted_for_reviewed_caveat_only",
+        "needs_more_evidence",
+        "rejected",
+        "blocked"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260612_phase37_trade_analysis_research_hypothesis_requires_validation_001",
+      "research_task_id": "P37-H-T12",
+      "current_status": {
+        "review_status": "needs_more_evidence",
+        "ingestion_decision": "needs_more_evidence",
+        "workflow_stage": "reviewed_preparation_needs_more_evidence",
+        "queue_group": "needs_more_evidence",
+        "reviewed_preparation_audit_result_id": "audit_result_phase37_trade_analysis_reviewed_preparation_20260612_strict_v1"
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_07_trade_analysis.research_hypothesis_requires_validation.v1",
+        "target_review_status": "blocked_until_supplemented",
+        "default_guidance_after_conversion": "deny_until_reviewed_caveat_only_audit",
+        "formalization_blockers": [
+          "requires_reviewed_preparation_audit",
+          "requires_trade_analysis_contract_schema_inline_evidence"
+        ],
+        "reviewed_allowed": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "risk_threshold_advice_allowed": false
+      },
+      "classification": {
+        "tree_node_id": "kt.trade_analysis",
+        "canonical_node_id": "kt.trade_analysis",
+        "tree_path": "CEK-TA / Trading Engineering / Trade Analysis",
+        "related_nodes": [
+          "kt.trading_engineering",
+          "kt.trade_analysis",
+          "kt.quant_foundation.risk_normalized_metrics",
+          "kt.risk_management.pre_trade_gates",
+          "kt.live_execution",
+          "kt.ai_engineering.llm_training"
+        ],
+        "partition_id": "KB_07_TRADE_ANALYSIS",
+        "domain": "trade_analysis",
+        "subdomain": "research_hypothesis",
+        "rule_type": "trade_analysis_boundary_rule",
+        "claim_type": "research_validation_boundary_rule",
+        "used_for": [
+          "trade_review",
+          "llm_scoring_label_design",
+          "bad_case_taxonomy",
+          "external_project_rag_retrieval",
+          "ai_trader_project_gap_audit"
+        ],
+        "classification_notes": "本候选主归属 Trading Engineering / Trade Analysis。AI Engineering 只能引用本规则设计标签、reason code 和 eval case，不得把复盘指标直接改写成交易执行规则。"
+      },
+      "claim": {
+        "claim_id": "claim_p37_h_t12",
+        "title": "复盘假设必须另行验证",
+        "statement": "交易复盘中发现的 pattern、错误归因或改进假设只能作为 research hypothesis，必须经过样本外、参数稳定性、成本和市场状态验证后才能进入策略规则。",
+        "normalized_claim": "trade_analysis.research_hypothesis_requires_validation.v1",
+        "evidence_summary": "Bailey et al. discuss backtest overfitting risk, supporting that research hypotheses and performance claims require validation rather than anecdotal trade examples.；White's reality check addresses data snooping, supporting separation of research hypotheses from validated conclusions.；Performance attribution can use return-based, holdings-based, or transaction-based inputs depending on data availability and investment process.",
+        "interpretation_notes": "本候选只定义交易复盘、标签、reason code、质量归因和研究假设边界，不输出买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+        "claim_strength": "medium_high",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general_with_strategy_and_venue_context",
+        "asset": "general",
+        "timeframe": "post_trade_review_and_research",
+        "data_granularity": "trade_log_order_log_fill_log_risk_log_market_context",
+        "project_type": "trading_ai_support_layer",
+        "applies_when": [
+          "审计外接项目的交易复盘、LLM scoring 标签、坏例 taxonomy、reason code、交易质量归因或训练样本描述",
+          "把交易日志、订单日志、成交日志、风险日志和市场上下文整理成可复盘、可审计、可训练的数据"
+        ],
+        "not_applicable_when": [
+          "需要生成买卖点、仓位、杠杆、止损止盈或实盘执行建议",
+          "问题属于实时风控 gate、订单路由、回测统计或数据工程本体，应由对应分支处理",
+          "没有 trade plan、actual execution、market context、risk context 或 audit trace 上下文"
+        ],
+        "assumptions": [
+          "候选用于 CEK-TA 通用支持层知识库，不包含外接项目私有账户事实、密钥或策略参数。",
+          "复盘字段必须从交易计划、订单/成交、风险、市场上下文和人工审计记录中可追溯生成。",
+          "候选通过外部审计前不能进入正式 reviewed 知识库。"
+        ],
+        "limitations": [
+          "交易日志和 journal vendor 资料只能支持复盘模式，不能证明策略有效或可盈利。",
+          "复盘结论不能直接改变实盘规则；必须转成 research hypothesis 并经过独立验证。",
+          "本候选不提供任何投资建议、实盘许可或风险阈值建议。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_title": "The Probability of Backtest Overfitting",
+          "source_url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2326253",
+          "source_type": "paper",
+          "publisher": "SSRN",
+          "reliability": "high",
+          "score": 88,
+          "freshness": "stable",
+          "evidence_summary": "Bailey et al. discuss backtest overfitting risk, supporting that research hypotheses and performance claims require validation rather than anecdotal trade examples.",
+          "limitations": [
+            "Backtest-overfitting paper; supports validation boundary, not trade-journal UI fields."
+          ],
+          "source_id": "src_001",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "A Reality Check for Data Snooping",
+          "source_url": "https://www.jstor.org/stable/2669537",
+          "source_type": "paper",
+          "publisher": "Econometrica / JSTOR",
+          "reliability": "high",
+          "score": 90,
+          "freshness": "stable",
+          "evidence_summary": "White's reality check addresses data snooping, supporting separation of research hypotheses from validated conclusions.",
+          "limitations": [
+            "Methodological source; not a trade-log taxonomy source."
+          ],
+          "source_id": "src_002",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Return-Based, Holdings-Based and Transaction-Based Performance Attribution",
+          "source_url": "https://analystprep.com/study-notes/cfa-level-iii/return-based-holdings-based-and-transaction-based-performance-attribution-2/",
+          "source_type": "cfa_study_note",
+          "publisher": "AnalystPrep / CFA Level III study note",
+          "reliability": "medium_high",
+          "score": 78,
+          "freshness": "time_sensitive",
+          "evidence_summary": "Performance attribution can use return-based, holdings-based, or transaction-based inputs depending on data availability and investment process.",
+          "limitations": [
+            "Study-note summary; use as supporting source for attribution input boundary, not CEK-TA field contract."
+          ],
+          "source_id": "src_003",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Tharp Think Trading Concepts",
+          "source_url": "https://vantharpinstitute.com/tharp-think-trading-concepts/",
+          "source_type": "professional_training_concept",
+          "publisher": "Van Tharp Institute",
+          "reliability": "medium_high",
+          "score": 82,
+          "freshness": "stable",
+          "evidence_summary": "Van Tharp concepts define initial risk R, R-multiple distributions, expectancy, and SQN-style analysis.",
+          "limitations": [
+            "Training concept page; reviewed knowledge should avoid treating it as a formal academic standard."
+          ],
+          "source_id": "src_004",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "medium_high",
+        "score": 84.5,
+        "score_version": "phase37_trade_analysis_source_scoring_v1",
+        "primary_source_count": 4,
+        "supporting_source_count": 4,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "正式入库前必须由外部审计确认 vendor journal sources 没有被过度使用。",
+          "CFA、论文和平台文档只能支持执行质量、归因和验证边界；CEK-TA 字段契约后续需要 reviewed-preparation 再审确认。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none_known_in_visible_context",
+        "checked_against": [
+          "Phase 37 Trading 与 AI 跨分支引用契约",
+          "Quant Foundation R/R 与 R-multiple 边界",
+          "Live Execution / Risk Management owner 边界",
+          "AI Engineering LLM scoring / label governance 边界"
+        ],
+        "conflicts": [],
+        "resolution_summary": "Trade Analysis 首轮审计内容层 accepted_for_draft；candidate 不是 formal knowledge，不得创建 reviewed、approved、default guidance 或 hard gate。",
+        "approval_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 设计交易复盘、坏例 taxonomy、reason code、标签和 eval case 时必须保留计划、实际、风险、执行和市场上下文。",
+          "用于审计 LLM scoring / gating 项目是否把 PnL 当作唯一标签或把复盘结论直接写成交易规则。",
+          "用于阻止 AI 把复盘指标当作事前路径、实盘许可或默认交易建议。"
+        ],
+        "not_allowed": [
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘订单。",
+          "不得把候选知识当作 reviewed、approved、default guidance 或 hard gate。",
+          "不得根据单笔交易复盘直接宣布策略有效、无效或可实盘。"
+        ],
+        "requires_context": [
+          "trade_plan_id",
+          "strategy_rule_version",
+          "risk_policy_id",
+          "order_trace_id",
+          "fill_trace_id",
+          "market_regime",
+          "reason_code",
+          "reviewer"
+        ]
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "reviewed-preparation 审计未通过；补 Trade Analysis 内部契约/schema 前不得 formal reviewed、approved、default guidance、hard gate 或风险阈值建议。",
+        "requires_human_escalation": true,
+        "hidden_from_default_queue": false,
+        "visible_in_default_guidance_queue": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "risk_threshold_advice_allowed": false
+      },
+      "prior_reviewed_preparation_audit": {
+        "audit_result_id": "audit_result_phase37_trade_analysis_reviewed_preparation_20260612_strict_v1",
+        "package_id": "phase37_trade_analysis_reviewed_preparation_audit_package_20260612",
+        "decision": "needs_more_evidence",
+        "reviewed_allowed": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "risk_threshold_advice_allowed": false,
+        "reasons": [
+          "首轮 candidate 方向可接受，但本包没有提供可审计的 internal contract / schema 正文、schema_extract、字段表或 hash；仅列出需要检查的 contract 名称与 warning。",
+          "reviewed/caveat_only 需要字段本体和 owner 边界；当前外部来源只能支撑方法边界或 vendor workflow，不能替代 CEK-TA Trade Analysis 字段契约。"
+        ],
+        "required_followups": [
+          "reviewed 前补 research_hypothesis_lifecycle schema，明确 hypothesis_id、source_trade_set、validation_protocol、OOS/cost/regime checks 和 promotion criteria。"
+        ],
+        "patch_notes": {
+          "source": [
+            "CFA、论文、QuantConnect 等只能支撑执行质量、归因、验证和报告边界。",
+            "TradeZella、TradesViz、TraderSync、Trademetria 等 journal vendor 只能作为 workflow/terminology supporting source，不得单独支撑 reviewed 字段本体。",
+            "Van Tharp R/R-multiple 可支撑 R 归一化复盘概念，但不得写成正式学术标准或策略有效性证明。"
+          ],
+          "content": [
+            "Trade Analysis 只负责 post-trade 复盘、标签、reason code、质量归因、bad-case taxonomy 和 research hypothesis 生成。",
+            "PnL 不得作为唯一标签；必须保留计划、实际、风险、执行、市场状态和规则符合性上下文。",
+            "复盘结论不得直接改写实时交易规则，必须转成 research hypothesis 并经过独立验证。"
+          ],
+          "boundary": [
+            "needs_more_evidence 不等于 rejected；说明内容方向仍可作为 draft，但不能进入 formal reviewed/caveat_only。",
+            "不得生成买卖点、仓位、杠杆、止损止盈参数、实盘执行建议或风险阈值数值。",
+            "MAE/MFE、planned/realized R、good loss/bad win、reason code 均为 post-trade/research labeling 边界，不得作为事前路径、实盘许可或 default guidance。"
+          ],
+          "conflict": [
+            "Quant Foundation 负责 R/R-multiple 本体；Trade Analysis 只消费这些指标做复盘标签。",
+            "Live Execution / Risk Management 拥有真实订单、成交、风险动作和 hard gate；Trade Analysis 不接管实时执行或风控动作。",
+            "AI Engineering 只能引用字段设计 LLM scoring 标签、eval case 和 RAG 检索，不得把复盘结论改写成模型训练本体或交易执行规则。"
+          ]
+        },
+        "schema_contract_assessment": {
+          "required_contracts_present": false,
+          "missing_contracts": [
+            "reviewed_requires_research_hypothesis_lifecycle_contract"
+          ],
+          "field_level_gaps": [
+            "reviewed 前补 research_hypothesis_lifecycle schema，明确 hypothesis_id、source_trade_set、validation_protocol、OOS/cost/regime checks 和 promotion criteria。"
+          ]
+        }
+      },
+      "required_contract_evidence": {
+        "contract_id": "phase37_trade_analysis_review_contract",
+        "covers_missing_contracts": [
+          "reviewed_requires_research_hypothesis_lifecycle_contract"
+        ],
+        "field_level_gaps_from_prior_audit": [
+          "reviewed 前补 research_hypothesis_lifecycle schema，明确 hypothesis_id、source_trade_set、validation_protocol、OOS/cost/regime checks 和 promotion criteria。"
+        ]
+      },
+      "requested_audit_decision": [
+        "accepted_for_reviewed_caveat_only",
+        "needs_more_evidence",
+        "rejected",
+        "blocked"
+      ]
+    }
+  ]
+}

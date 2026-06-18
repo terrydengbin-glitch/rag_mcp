@@ -1,0 +1,3672 @@
+{
+  "package_id": "phase41_extended_p1_remaining_reviewed_preparation_audit_package_20260610",
+  "package_type": "candidate_reviewed_preparation_reaudit_package",
+  "generated_at": "2026-06-10",
+  "phase": "41",
+  "task_id": "CEK-TA-335",
+  "title": "Phase 41 P0-Extended/P1 剩余 13 条候选 reviewed preparation 再审计包",
+  "purpose": "审计 13 条已 accepted_for_draft 但 reviewed_allowed=false 的 Phase 41 P0-Extended/P1 候选，判断是否可由 Codex 后续转换为 formal reviewed/caveat_only 知识。",
+  "quality_gate": {
+    "gate_id": "phase41_extended_p1_remaining_reviewed_preparation_quality_gate",
+    "generated_at": "2026-06-10",
+    "task_id": "CEK-TA-335",
+    "candidate_count": 13,
+    "expected_count": 13,
+    "checks": {
+      "count_matches_expected": "pass",
+      "priority_is_p0_extended_or_p1": "pass",
+      "queue_group_ai_passed": "pass",
+      "accepted_for_draft_only": "pass",
+      "reviewed_allowed_false_before_reaudit": "pass",
+      "source_refs_min_3": "pass",
+      "conflict_status_safe": "pass",
+      "canonical_nodes_under_ai_engineering": "pass",
+      "no_mojibake_marker": "pass"
+    },
+    "failure_count": 0,
+    "failures": [],
+    "gate_status": "pass"
+  },
+  "candidate_count": 13,
+  "allowed_decisions": [
+    "accepted_for_draft",
+    "needs_more_evidence",
+    "rejected"
+  ],
+  "reviewed_preparation_rules": [
+    "若允许后续转 formal reviewed，必须 decision=accepted_for_draft 且 reviewed_allowed=true。",
+    "若仍需补证，必须 decision=needs_more_evidence 且 reviewed_allowed=false。",
+    "若候选过宽、错分、证据不足或污染知识库，必须 decision=rejected 且 reviewed_allowed=false。",
+    "approved_allowed、default_guidance_allowed、hard_gate_allowed 必须始终为 false。",
+    "reviewed 只允许 machine_gate.default_guidance=caveat_only，不允许 allow。",
+    "source_patch_notes、content_patch_notes、boundary_patch_notes 和 conflict_patch_notes 必须写出可回写的具体修改点。"
+  ],
+  "auditor_focus": [
+    "来源是否足以支持具体 claim，而不是只支持泛泛工程概念。",
+    "P0-Extended/P1 是否仍是增强项，没有被写成外接项目默认依赖。",
+    "是否清楚区分 scorer、calibrator、Qwen3 audit assistant、RAG、platform 和 deterministic final gate 的责任。",
+    "是否错误收录 K 线、fill model、实盘风控或交易执行本体。",
+    "是否有适用范围、不适用场景、冲突状态、freshness 和 fallback/rollback 边界。",
+    "是否存在无来源默认指导、未消解冲突、过期依赖、私有业务字段或中文乱码。"
+  ],
+  "hard_boundaries": [
+    "本包不能直接创建 formal reviewed。",
+    "本包不能创建 approved。",
+    "本包不能启用 default guidance。",
+    "本包不能启用 hard gate。",
+    "Qwen3 只做审计助手，不做 numeric scorer、final gate 或事实来源。",
+    "表格/统计模型只做 scorer、risk ranking 或 review priority，不直接执行交易。",
+    "deterministic final gate 仍由独立交易风控/审批契约控制。",
+    "Trading Engineering 本体不得混入 AI Engineering 知识项。"
+  ],
+  "expected_output_schema": {
+    "audit_result_id": "audit_result_phase41_extended_p1_remaining_reviewed_preparation_20260610_strict_v1",
+    "source_package_id": "phase41_extended_p1_remaining_reviewed_preparation_audit_package_20260610",
+    "decisions": [
+      {
+        "candidate_id": "string",
+        "research_task_id": "string",
+        "decision": "accepted_for_draft | needs_more_evidence | rejected",
+        "reviewed_allowed": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "reason": "string",
+        "source_patch_notes": [
+          "string"
+        ],
+        "content_patch_notes": [
+          "string"
+        ],
+        "boundary_patch_notes": [
+          "string"
+        ],
+        "conflict_patch_notes": [
+          "string"
+        ],
+        "required_followups": [
+          "string"
+        ]
+      }
+    ],
+    "batch_summary": {
+      "accepted_for_reviewed_count": 0,
+      "needs_more_evidence_count": 0,
+      "rejected_count": 0,
+      "reviewed_allowed_count": 0,
+      "approved_allowed_count": 0,
+      "default_guidance_allowed_count": 0,
+      "hard_gate_allowed_count": 0
+    }
+  },
+  "candidates": [
+    {
+      "schema_version": "1.0.0",
+      "candidate_id": "cand_20260610_phase41_p41_a04_catboost_001",
+      "research_task_id": "P41-A04",
+      "status": {
+        "review_status": "accepted",
+        "ingestion_decision": "accepted_for_draft",
+        "decision_reason": "Phase 41 P0-Extended/P1 严格审计允许进入 formal draft 准备队列；不是 reviewed、approved 或默认指导。",
+        "created_at": "2026-06-10",
+        "updated_at": "2026-06-10"
+      },
+      "classification": {
+        "tree_node_id": "kt.ai_engineering.numeric_scoring.model_family_selection",
+        "canonical_node_id": "kt.ai_engineering.numeric_scoring.model_family_selection",
+        "tree_path": "CEK-TA / AI Engineering / Hybrid Scoring And Qwen3 Audit",
+        "related_nodes": [
+          "kt.trading_engineering",
+          "kt.rag_engineering",
+          "kt.ai_feedback_governance"
+        ],
+        "partition_id": "KB_AI_20_NUMERIC_SCORING",
+        "domain": "llm_training",
+        "subdomain": "numeric_scoring_model_family_selection",
+        "rule_type": "governance_rule",
+        "used_for": [
+          "llm_training",
+          "trading_gating_scoring",
+          "hybrid_scoring",
+          "rag_engineering",
+          "mcp",
+          "vue_audit_ui"
+        ]
+      },
+      "claim": {
+        "claim_id": "claim_001",
+        "statement": "CatBoost 只在类别变量丰富或类别处理成本较高时作为条件候选",
+        "normalized_claim": "phase41.catboost.v1",
+        "claim_type": "conditional_model_rule",
+        "model_role": "tabular_scorer",
+        "priority": "P0-Extended",
+        "evidence_summary": "CatBoost documents gradient boosting on decision trees with categorical feature support.；The CatBoost paper discusses ordered boosting and categorical feature processing to reduce target leakage and prediction shift.",
+        "interpretation_notes": "本候选只沉淀 AI Engineering 的模型选择、训练增强、校准不确定性、特征服务、Qwen3 审计助手或平台治理规则；交易规则本体必须路由到 Phase 37 / Trading Engineering。",
+        "claim_strength": "medium",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general",
+        "asset": "general",
+        "timeframe": "general",
+        "data_granularity": "general",
+        "project_type": "trading_llm_gating_scoring",
+        "applies_when": [
+          "外接项目已完成基本 hybrid scoring POC，正在评估增强模型、平台、解释、校准、不确定性、服务化或发布治理。",
+          "该规则用于限制增强能力的引入时机、职责边界、审计证据和回滚条件。"
+        ],
+        "not_applicable_when": [
+          "用户需要具体买卖点、仓位、止损止盈、K 线形态、策略参数或实盘订单执行。",
+          "知识点主要描述 fill model、订单状态机、实盘风控阈值、交易所异常处理或交易收益本体，应路由到 Trading Engineering。"
+        ],
+        "assumptions": [
+          "P0-Extended/P1 是增强能力，不应阻塞 POC 主链路。",
+          "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+        ],
+        "limitations": [
+          "本条仍是 candidate，需要外部 AI/人工审计确认来源充分性、适用边界和是否需要补充工程实例。",
+          "CatBoost remains a tabular scorer candidate; it must not become final gate or execution authority."
+        ]
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 区分必需能力与条件增强能力。",
+          "用于生成任务卡、接口契约、测试计划、审计 checklist 和候选知识补证问题。",
+          "用于阻断增强平台或模型能力绕过 deterministic final gate、人工审批和 RAG 引用边界。"
+        ],
+        "not_allowed": [
+          "不得据此生成买卖点、仓位、杠杆、止损止盈或实盘下单建议。",
+          "不得据此把 P1 平台工具变成默认依赖。",
+          "不得把 candidate 当作 reviewed/approved 默认指导。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_id": "src_catboost_docs",
+          "source_title": "CatBoost documentation",
+          "source_url": "https://catboost.ai/docs/",
+          "source_type": "official_doc",
+          "publisher": "CatBoost",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 84,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "CatBoost documents gradient boosting on decision trees with categorical feature support.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_catboost_paper",
+          "source_title": "CatBoost: unbiased boosting with categorical features",
+          "source_url": "https://arxiv.org/abs/1706.09516",
+          "source_type": "research_paper",
+          "publisher": "arXiv",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 86,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "The CatBoost paper discusses ordered boosting and categorical feature processing to reduce target leakage and prediction shift.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_sklearn_group_cv",
+          "source_title": "Cross-validation: StratifiedGroupKFold - scikit-learn documentation",
+          "source_url": "https://scikit-learn.org/stable/modules/cross_validation.html#stratifiedgroupkfold",
+          "source_type": "official_doc",
+          "publisher": "scikit-learn",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 86,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "scikit-learn documents grouped cross-validation that keeps groups from appearing in both train and test folds.",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "high",
+        "score": 85,
+        "score_version": "1.0.0",
+        "primary_source_count": 2,
+        "supporting_source_count": 1,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "增强能力来源多为官方文档、论文或内部契约；正式化时必须保留条件引入边界。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "checked_against": [
+          "docs/contracts/phase41_hybrid_scoring_runtime_contract.md",
+          "docs/contracts/phase41_tabular_llm_training_data_contract.md",
+          "docs/research/phase41_hybrid_scoring_qwen3_scope.md",
+          "docs/tasks/phase41_hybrid_scoring_qwen3_audit_stack.md"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与 Phase 41 契约的直接冲突；候选不会进入默认指导。",
+        "approval_allowed": false
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "candidate only; Phase 41 extended/P1 strict audit does not allow reviewed, approved, default guidance, or hard gate.",
+        "requires_human_escalation": true
+      },
+      "review": {
+        "confidence": "medium",
+        "freshness": "time_sensitive",
+        "reviewer": "external_ai_audit_plus_codex_import",
+        "reviewed_at": "2026-06-10",
+        "open_questions": [],
+        "audit_log": [
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "created",
+            "reason": "Phase 41 P0-Extended/P1 joint candidate expansion."
+          },
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "phase41_extended_p1_audit_accepted_for_draft",
+            "reason": "候选进入 formal draft 准备队列；不能直接 reviewed/approved。"
+          }
+        ],
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "reviewed_allowed": false,
+        "approved_allowed": false,
+        "ai_audit": {
+          "audit_result_id": "audit_result_phase41_extended_p1_candidate_audit_package_20260610_strict_v1",
+          "source_package_id": "phase41_extended_p1_candidate_audit_package_20260610",
+          "candidate_id": "cand_20260610_phase41_p41_a04_catboost_001",
+          "research_task_id": "P41-A04",
+          "decision": "accepted_for_draft",
+          "reason": "CatBoost official documentation and paper support categorical-feature-aware GBDT; the candidate correctly treats CatBoost as a conditional enhancement, not a default POC dependency.",
+          "source_patch_notes": [],
+          "content_patch_notes": [
+            "Keep CatBoost conditional; trigger only when categorical variables, venue/symbol/strategy-version categories, or categorical preprocessing burden justify it."
+          ],
+          "boundary_patch_notes": [
+            "CatBoost remains a tabular scorer candidate; it must not become final gate or execution authority."
+          ],
+          "conflict_patch_notes": [
+            "workflow.hidden_from_default_queue=false conflicts with package hard boundary that candidate knowledge must not enter default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before any draft conversion."
+          ],
+          "required_followups": [],
+          "reviewed_allowed": false,
+          "approved_allowed": false,
+          "default_guidance_allowed": false,
+          "hard_gate_allowed": false,
+          "import_policy": "strict audit result may route candidates only; formal reviewed/approved creation is blocked."
+        }
+      },
+      "copyright": {
+        "stores_full_text": false,
+        "stores_long_quote": false,
+        "summary_only": true,
+        "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+        "reuse_risk": "low"
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_ai_hybrid_scoring.phase41.catboost.v1",
+        "target_schema": "cek_ta_knowledge_item",
+        "target_review_status": "draft",
+        "skill_candidate": false,
+        "eval_case_candidate": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "workflow": {
+        "stage": "ai_audited",
+        "queue_group": "ai_passed",
+        "formal_knowledge_id": "kb_ai_hybrid_scoring.phase41.catboost.v1",
+        "formal_review_status": "draft",
+        "ai_audit_result_id": "audit_result_phase41_extended_p1_candidate_audit_package_20260610_strict_v1",
+        "hidden_from_default_queue": true,
+        "next_action": "prepare_formal_draft_after_codex_patch_review",
+        "default_guidance_allowed": false,
+        "visible_in_default_guidance_queue": false
+      },
+      "phase41_trace": {
+        "priority": "P0-Extended",
+        "source_hint": "CatBoost docs/paper",
+        "related_contracts": [
+          "docs/contracts/phase41_hybrid_scoring_runtime_contract.md",
+          "docs/contracts/phase41_tabular_llm_training_data_contract.md",
+          "docs/research/phase41_hybrid_scoring_qwen3_scope.md",
+          "docs/tasks/phase41_hybrid_scoring_qwen3_audit_stack.md"
+        ],
+        "scope_boundary": "AI Engineering enhancement only; Trading Engineering knowledge body is reference-only.",
+        "audit_patch_notes": {
+          "source_patch_notes": [],
+          "content_patch_notes": [
+            "Keep CatBoost conditional; trigger only when categorical variables, venue/symbol/strategy-version categories, or categorical preprocessing burden justify it."
+          ],
+          "boundary_patch_notes": [
+            "CatBoost remains a tabular scorer candidate; it must not become final gate or execution authority."
+          ],
+          "conflict_patch_notes": [
+            "workflow.hidden_from_default_queue=false conflicts with package hard boundary that candidate knowledge must not enter default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before any draft conversion."
+          ],
+          "required_followups": []
+        }
+      },
+      "_audit_export_meta": {
+        "source_file": "codex-expert-kit/rag/candidates/KB_AI_ENGINEERING/cand_20260610_phase41_p41_a04_catboost_001.json",
+        "proposed_knowledge_id": "kb_ai_hybrid_scoring.phase41.catboost.v1",
+        "formal_index_has_target": false,
+        "current_reviewed_allowed": false,
+        "current_queue_group": "ai_passed",
+        "current_stage": "ai_audited",
+        "current_formal_review_status": "draft",
+        "required_next_decision": "外部审计必须显式给出 reviewed_allowed=true，后续 Codex 才能生成 formal reviewed/caveat_only；否则继续 needs_more_evidence 或 rejected。"
+      }
+    },
+    {
+      "schema_version": "1.0.0",
+      "candidate_id": "cand_20260610_phase41_p41_a06_baseline_001",
+      "research_task_id": "P41-A06",
+      "status": {
+        "review_status": "accepted",
+        "ingestion_decision": "accepted_for_draft",
+        "decision_reason": "Phase 41 P0-Extended/P1 严格审计允许进入 formal draft 准备队列；不是 reviewed、approved 或默认指导。",
+        "created_at": "2026-06-10",
+        "updated_at": "2026-06-10"
+      },
+      "classification": {
+        "tree_node_id": "kt.ai_engineering.numeric_scoring.model_family_selection",
+        "canonical_node_id": "kt.ai_engineering.numeric_scoring.model_family_selection",
+        "tree_path": "CEK-TA / AI Engineering / Hybrid Scoring And Qwen3 Audit",
+        "related_nodes": [
+          "kt.trading_engineering",
+          "kt.rag_engineering",
+          "kt.ai_feedback_governance"
+        ],
+        "partition_id": "KB_AI_20_NUMERIC_SCORING",
+        "domain": "llm_training",
+        "subdomain": "numeric_scoring_model_family_selection",
+        "rule_type": "governance_rule",
+        "used_for": [
+          "llm_training",
+          "trading_gating_scoring",
+          "hybrid_scoring",
+          "rag_engineering",
+          "mcp",
+          "vue_audit_ui"
+        ]
+      },
+      "claim": {
+        "claim_id": "claim_001",
+        "statement": "模型集成只能作为增强项，必须先证明单模型 baseline 不足且不破坏可审计性",
+        "normalized_claim": "phase41.ensemble_after_single_model_baseline_insufficient.v1",
+        "claim_type": "extension_rule",
+        "model_role": "tabular_scorer",
+        "priority": "P0-Extended",
+        "evidence_summary": "scikit-learn documents ensemble methods as combinations of base estimators intended to improve generalizability and robustness.；NIST AI RMF provides governance practices for mapping, measuring and managing AI risks.",
+        "interpretation_notes": "本候选只沉淀 AI Engineering 的模型选择、训练增强、校准不确定性、特征服务、Qwen3 审计助手或平台治理规则；交易规则本体必须路由到 Phase 37 / Trading Engineering。",
+        "claim_strength": "medium",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general",
+        "asset": "general",
+        "timeframe": "general",
+        "data_granularity": "general",
+        "project_type": "trading_llm_gating_scoring",
+        "applies_when": [
+          "外接项目已完成基本 hybrid scoring POC，正在评估增强模型、平台、解释、校准、不确定性、服务化或发布治理。",
+          "该规则用于限制增强能力的引入时机、职责边界、审计证据和回滚条件。"
+        ],
+        "not_applicable_when": [
+          "用户需要具体买卖点、仓位、止损止盈、K 线形态、策略参数或实盘订单执行。",
+          "知识点主要描述 fill model、订单状态机、实盘风控阈值、交易所异常处理或交易收益本体，应路由到 Trading Engineering。"
+        ],
+        "assumptions": [
+          "P0-Extended/P1 是增强能力，不应阻塞 POC 主链路。",
+          "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+        ],
+        "limitations": [
+          "本条仍是 candidate，需要外部 AI/人工审计确认来源充分性、适用边界和是否需要补充工程实例。",
+          "Ensemble output remains scorer/review-priority signal only; it must not bypass calibrator, threshold policy, or deterministic final gate."
+        ]
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 区分必需能力与条件增强能力。",
+          "用于生成任务卡、接口契约、测试计划、审计 checklist 和候选知识补证问题。",
+          "用于阻断增强平台或模型能力绕过 deterministic final gate、人工审批和 RAG 引用边界。"
+        ],
+        "not_allowed": [
+          "不得据此生成买卖点、仓位、杠杆、止损止盈或实盘下单建议。",
+          "不得据此把 P1 平台工具变成默认依赖。",
+          "不得把 candidate 当作 reviewed/approved 默认指导。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_id": "src_sklearn_ensemble",
+          "source_title": "Ensemble methods - scikit-learn documentation",
+          "source_url": "https://scikit-learn.org/stable/modules/ensemble.html",
+          "source_type": "official_doc",
+          "publisher": "scikit-learn",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 86,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "scikit-learn documents ensemble methods as combinations of base estimators intended to improve generalizability and robustness.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_nist_ai_rmf",
+          "source_title": "NIST AI Risk Management Framework",
+          "source_url": "https://www.nist.gov/itl/ai-risk-management-framework",
+          "source_type": "governance_framework",
+          "publisher": "NIST",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 88,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "NIST AI RMF provides governance practices for mapping, measuring and managing AI risks.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_phase41_runtime",
+          "source_title": "Phase 41 hybrid scoring runtime contract",
+          "source_url": "docs/contracts/phase41_hybrid_scoring_runtime_contract.md",
+          "source_type": "internal_contract",
+          "publisher": "CEK-TA",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 88,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "Phase 41 runtime contract defines scorer, calibrator, Qwen3 audit assistant, RAG and deterministic final gate boundaries.",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "high",
+        "score": 87,
+        "score_version": "1.0.0",
+        "primary_source_count": 2,
+        "supporting_source_count": 1,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "增强能力来源多为官方文档、论文或内部契约；正式化时必须保留条件引入边界。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "checked_against": [
+          "docs/contracts/phase41_hybrid_scoring_runtime_contract.md",
+          "docs/contracts/phase41_tabular_llm_training_data_contract.md",
+          "docs/research/phase41_hybrid_scoring_qwen3_scope.md",
+          "docs/tasks/phase41_hybrid_scoring_qwen3_audit_stack.md"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与 Phase 41 契约的直接冲突；候选不会进入默认指导。",
+        "approval_allowed": false
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "candidate only; Phase 41 extended/P1 strict audit does not allow reviewed, approved, default guidance, or hard gate.",
+        "requires_human_escalation": true
+      },
+      "review": {
+        "confidence": "medium",
+        "freshness": "time_sensitive",
+        "reviewer": "external_ai_audit_plus_codex_import",
+        "reviewed_at": "2026-06-10",
+        "open_questions": [
+          "pre_conversion_slug_patch_required"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "created",
+            "reason": "Phase 41 P0-Extended/P1 joint candidate expansion."
+          },
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "phase41_extended_p1_audit_accepted_for_draft",
+            "reason": "候选进入 formal draft 准备队列；不能直接 reviewed/approved。"
+          }
+        ],
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "reviewed_allowed": false,
+        "approved_allowed": false,
+        "ai_audit": {
+          "audit_result_id": "audit_result_phase41_extended_p1_candidate_audit_package_20260610_strict_v1",
+          "source_package_id": "phase41_extended_p1_candidate_audit_package_20260610",
+          "candidate_id": "cand_20260610_phase41_p41_a06_baseline_001",
+          "research_task_id": "P41-A06",
+          "decision": "accepted_for_draft",
+          "reason": "scikit-learn supports ensemble methods and the Phase 41 runtime contract supports auditability boundaries; acceptable as an enhancement rule if the vague slug is patched.",
+          "source_patch_notes": [],
+          "content_patch_notes": [
+            "Rename normalized_claim/proposed_knowledge_id from phase41.baseline.v1 to phase41.ensemble_after_single_model_baseline_insufficient.v1 before formal conversion.",
+            "Require a single-model baseline comparison report and an auditability impact report before ensemble adoption."
+          ],
+          "boundary_patch_notes": [
+            "Ensemble output remains scorer/review-priority signal only; it must not bypass calibrator, threshold policy, or deterministic final gate."
+          ],
+          "conflict_patch_notes": [
+            "workflow.hidden_from_default_queue=false conflicts with package hard boundary that candidate knowledge must not enter default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before any draft conversion."
+          ],
+          "required_followups": [
+            "pre_conversion_slug_patch_required"
+          ],
+          "reviewed_allowed": false,
+          "approved_allowed": false,
+          "default_guidance_allowed": false,
+          "hard_gate_allowed": false,
+          "import_policy": "strict audit result may route candidates only; formal reviewed/approved creation is blocked."
+        }
+      },
+      "copyright": {
+        "stores_full_text": false,
+        "stores_long_quote": false,
+        "summary_only": true,
+        "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+        "reuse_risk": "low"
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_ai_hybrid_scoring.phase41.ensemble_after_single_model_baseline_insufficient.v1",
+        "target_schema": "cek_ta_knowledge_item",
+        "target_review_status": "draft",
+        "skill_candidate": false,
+        "eval_case_candidate": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "workflow": {
+        "stage": "ai_audited",
+        "queue_group": "ai_passed",
+        "formal_knowledge_id": "kb_ai_hybrid_scoring.phase41.baseline.v1",
+        "formal_review_status": "draft",
+        "ai_audit_result_id": "audit_result_phase41_extended_p1_candidate_audit_package_20260610_strict_v1",
+        "hidden_from_default_queue": true,
+        "next_action": "prepare_formal_draft_after_codex_patch_review",
+        "default_guidance_allowed": false,
+        "visible_in_default_guidance_queue": false
+      },
+      "phase41_trace": {
+        "priority": "P0-Extended",
+        "source_hint": "scikit-learn、ML governance sources",
+        "related_contracts": [
+          "docs/contracts/phase41_hybrid_scoring_runtime_contract.md",
+          "docs/contracts/phase41_tabular_llm_training_data_contract.md",
+          "docs/research/phase41_hybrid_scoring_qwen3_scope.md",
+          "docs/tasks/phase41_hybrid_scoring_qwen3_audit_stack.md"
+        ],
+        "scope_boundary": "AI Engineering enhancement only; Trading Engineering knowledge body is reference-only.",
+        "audit_patch_notes": {
+          "source_patch_notes": [],
+          "content_patch_notes": [
+            "Rename normalized_claim/proposed_knowledge_id from phase41.baseline.v1 to phase41.ensemble_after_single_model_baseline_insufficient.v1 before formal conversion.",
+            "Require a single-model baseline comparison report and an auditability impact report before ensemble adoption."
+          ],
+          "boundary_patch_notes": [
+            "Ensemble output remains scorer/review-priority signal only; it must not bypass calibrator, threshold policy, or deterministic final gate."
+          ],
+          "conflict_patch_notes": [
+            "workflow.hidden_from_default_queue=false conflicts with package hard boundary that candidate knowledge must not enter default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before any draft conversion."
+          ],
+          "required_followups": [
+            "pre_conversion_slug_patch_required"
+          ]
+        },
+        "slug_patch_applied": true
+      },
+      "_audit_export_meta": {
+        "source_file": "codex-expert-kit/rag/candidates/KB_AI_ENGINEERING/cand_20260610_phase41_p41_a06_baseline_001.json",
+        "proposed_knowledge_id": "kb_ai_hybrid_scoring.phase41.baseline.v1",
+        "formal_index_has_target": false,
+        "current_reviewed_allowed": false,
+        "current_queue_group": "ai_passed",
+        "current_stage": "ai_audited",
+        "current_formal_review_status": "draft",
+        "required_next_decision": "外部审计必须显式给出 reviewed_allowed=true，后续 Codex 才能生成 formal reviewed/caveat_only；否则继续 needs_more_evidence 或 rejected。"
+      }
+    },
+    {
+      "schema_version": "1.0.0",
+      "candidate_id": "cand_20260610_phase41_p41_b04_entity_group_split_split_001",
+      "research_task_id": "P41-B04",
+      "status": {
+        "review_status": "accepted",
+        "ingestion_decision": "accepted_for_draft",
+        "decision_reason": "Phase 41 P0-Extended/P1 严格审计允许进入 formal draft 准备队列；不是 reviewed、approved 或默认指导。",
+        "created_at": "2026-06-10",
+        "updated_at": "2026-06-10"
+      },
+      "classification": {
+        "tree_node_id": "kt.ai_engineering.numeric_scoring.tabular_scorer_training",
+        "canonical_node_id": "kt.ai_engineering.numeric_scoring.tabular_scorer_training",
+        "tree_path": "CEK-TA / AI Engineering / Hybrid Scoring And Qwen3 Audit",
+        "related_nodes": [
+          "kt.trading_engineering",
+          "kt.rag_engineering",
+          "kt.ai_feedback_governance"
+        ],
+        "partition_id": "KB_AI_20_NUMERIC_SCORING",
+        "domain": "llm_training",
+        "subdomain": "tabular_scorer_training",
+        "rule_type": "governance_rule",
+        "used_for": [
+          "llm_training",
+          "trading_gating_scoring",
+          "hybrid_scoring",
+          "rag_engineering",
+          "mcp",
+          "vue_audit_ui"
+        ]
+      },
+      "claim": {
+        "claim_id": "claim_001",
+        "statement": "entity group split 必须避免同一策略/品种/周期族跨 split 泄漏",
+        "normalized_claim": "phase41.entity_group_split_split.v1",
+        "claim_type": "leakage_boundary_rule",
+        "model_role": "tabular_scorer",
+        "priority": "P0-Extended",
+        "evidence_summary": "scikit-learn documents grouped cross-validation that keeps groups from appearing in both train and test folds.；Phase 41 runtime contract defines scorer, calibrator, Qwen3 audit assistant, RAG and deterministic final gate boundaries.",
+        "interpretation_notes": "本候选只沉淀 AI Engineering 的模型选择、训练增强、校准不确定性、特征服务、Qwen3 审计助手或平台治理规则；交易规则本体必须路由到 Phase 37 / Trading Engineering。",
+        "claim_strength": "medium",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general",
+        "asset": "general",
+        "timeframe": "general",
+        "data_granularity": "general",
+        "project_type": "trading_llm_gating_scoring",
+        "applies_when": [
+          "外接项目已完成基本 hybrid scoring POC，正在评估增强模型、平台、解释、校准、不确定性、服务化或发布治理。",
+          "该规则用于限制增强能力的引入时机、职责边界、审计证据和回滚条件。"
+        ],
+        "not_applicable_when": [
+          "用户需要具体买卖点、仓位、止损止盈、K 线形态、策略参数或实盘订单执行。",
+          "知识点主要描述 fill model、订单状态机、实盘风控阈值、交易所异常处理或交易收益本体，应路由到 Trading Engineering。"
+        ],
+        "assumptions": [
+          "P0-Extended/P1 是增强能力，不应阻塞 POC 主链路。",
+          "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+        ],
+        "limitations": [
+          "本条仍是 candidate，需要外部 AI/人工审计确认来源充分性、适用边界和是否需要补充工程实例。",
+          "Group split is an AI training/eval split rule; it is not a trading strategy or market-regime definition."
+        ]
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 区分必需能力与条件增强能力。",
+          "用于生成任务卡、接口契约、测试计划、审计 checklist 和候选知识补证问题。",
+          "用于阻断增强平台或模型能力绕过 deterministic final gate、人工审批和 RAG 引用边界。"
+        ],
+        "not_allowed": [
+          "不得据此生成买卖点、仓位、杠杆、止损止盈或实盘下单建议。",
+          "不得据此把 P1 平台工具变成默认依赖。",
+          "不得把 candidate 当作 reviewed/approved 默认指导。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_id": "src_sklearn_group_cv",
+          "source_title": "Cross-validation: StratifiedGroupKFold - scikit-learn documentation",
+          "source_url": "https://scikit-learn.org/stable/modules/cross_validation.html#stratifiedgroupkfold",
+          "source_type": "official_doc",
+          "publisher": "scikit-learn",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 86,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "scikit-learn documents grouped cross-validation that keeps groups from appearing in both train and test folds.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_phase41_runtime",
+          "source_title": "Phase 41 hybrid scoring runtime contract",
+          "source_url": "docs/contracts/phase41_hybrid_scoring_runtime_contract.md",
+          "source_type": "internal_contract",
+          "publisher": "CEK-TA",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 88,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "Phase 41 runtime contract defines scorer, calibrator, Qwen3 audit assistant, RAG and deterministic final gate boundaries.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_nist_ai_rmf",
+          "source_title": "NIST AI Risk Management Framework",
+          "source_url": "https://www.nist.gov/itl/ai-risk-management-framework",
+          "source_type": "governance_framework",
+          "publisher": "NIST",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 88,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "NIST AI RMF provides governance practices for mapping, measuring and managing AI risks.",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "high",
+        "score": 87,
+        "score_version": "1.0.0",
+        "primary_source_count": 2,
+        "supporting_source_count": 1,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "增强能力来源多为官方文档、论文或内部契约；正式化时必须保留条件引入边界。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "checked_against": [
+          "docs/contracts/phase41_hybrid_scoring_runtime_contract.md",
+          "docs/contracts/phase41_tabular_llm_training_data_contract.md",
+          "docs/research/phase41_hybrid_scoring_qwen3_scope.md",
+          "docs/tasks/phase41_hybrid_scoring_qwen3_audit_stack.md"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与 Phase 41 契约的直接冲突；候选不会进入默认指导。",
+        "approval_allowed": false
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "candidate only; Phase 41 extended/P1 strict audit does not allow reviewed, approved, default guidance, or hard gate.",
+        "requires_human_escalation": true
+      },
+      "review": {
+        "confidence": "medium",
+        "freshness": "time_sensitive",
+        "reviewer": "external_ai_audit_plus_codex_import",
+        "reviewed_at": "2026-06-10",
+        "open_questions": [],
+        "audit_log": [
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "created",
+            "reason": "Phase 41 P0-Extended/P1 joint candidate expansion."
+          },
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "phase41_extended_p1_audit_accepted_for_draft",
+            "reason": "候选进入 formal draft 准备队列；不能直接 reviewed/approved。"
+          }
+        ],
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "reviewed_allowed": false,
+        "approved_allowed": false,
+        "ai_audit": {
+          "audit_result_id": "audit_result_phase41_extended_p1_candidate_audit_package_20260610_strict_v1",
+          "source_package_id": "phase41_extended_p1_candidate_audit_package_20260610",
+          "candidate_id": "cand_20260610_phase41_p41_b04_entity_group_split_split_001",
+          "research_task_id": "P41-B04",
+          "decision": "accepted_for_draft",
+          "reason": "scikit-learn grouped CV supports keeping groups out of both train and test folds; the internal runtime contract can map strategy/symbol/timeframe family to groups.",
+          "source_patch_notes": [],
+          "content_patch_notes": [
+            "Define group_key candidates: strategy_version_ref, symbol_group, venue_group, timeframe_family, and strategy_family_ref.",
+            "Require group_split_manifest_hash for reviewed conversion."
+          ],
+          "boundary_patch_notes": [
+            "Group split is an AI training/eval split rule; it is not a trading strategy or market-regime definition."
+          ],
+          "conflict_patch_notes": [
+            "workflow.hidden_from_default_queue=false conflicts with package hard boundary that candidate knowledge must not enter default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before any draft conversion."
+          ],
+          "required_followups": [],
+          "reviewed_allowed": false,
+          "approved_allowed": false,
+          "default_guidance_allowed": false,
+          "hard_gate_allowed": false,
+          "import_policy": "strict audit result may route candidates only; formal reviewed/approved creation is blocked."
+        }
+      },
+      "copyright": {
+        "stores_full_text": false,
+        "stores_long_quote": false,
+        "summary_only": true,
+        "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+        "reuse_risk": "low"
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_ai_hybrid_scoring.phase41.entity_group_split_split.v1",
+        "target_schema": "cek_ta_knowledge_item",
+        "target_review_status": "draft",
+        "skill_candidate": false,
+        "eval_case_candidate": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "workflow": {
+        "stage": "ai_audited",
+        "queue_group": "ai_passed",
+        "formal_knowledge_id": "kb_ai_hybrid_scoring.phase41.entity_group_split_split.v1",
+        "formal_review_status": "draft",
+        "ai_audit_result_id": "audit_result_phase41_extended_p1_candidate_audit_package_20260610_strict_v1",
+        "hidden_from_default_queue": true,
+        "next_action": "prepare_formal_draft_after_codex_patch_review",
+        "default_guidance_allowed": false,
+        "visible_in_default_guidance_queue": false
+      },
+      "phase41_trace": {
+        "priority": "P0-Extended",
+        "source_hint": "ML validation practice",
+        "related_contracts": [
+          "docs/contracts/phase41_hybrid_scoring_runtime_contract.md",
+          "docs/contracts/phase41_tabular_llm_training_data_contract.md",
+          "docs/research/phase41_hybrid_scoring_qwen3_scope.md",
+          "docs/tasks/phase41_hybrid_scoring_qwen3_audit_stack.md"
+        ],
+        "scope_boundary": "AI Engineering enhancement only; Trading Engineering knowledge body is reference-only.",
+        "audit_patch_notes": {
+          "source_patch_notes": [],
+          "content_patch_notes": [
+            "Define group_key candidates: strategy_version_ref, symbol_group, venue_group, timeframe_family, and strategy_family_ref.",
+            "Require group_split_manifest_hash for reviewed conversion."
+          ],
+          "boundary_patch_notes": [
+            "Group split is an AI training/eval split rule; it is not a trading strategy or market-regime definition."
+          ],
+          "conflict_patch_notes": [
+            "workflow.hidden_from_default_queue=false conflicts with package hard boundary that candidate knowledge must not enter default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before any draft conversion."
+          ],
+          "required_followups": []
+        }
+      },
+      "_audit_export_meta": {
+        "source_file": "codex-expert-kit/rag/candidates/KB_AI_ENGINEERING/cand_20260610_phase41_p41_b04_entity_group_split_split_001.json",
+        "proposed_knowledge_id": "kb_ai_hybrid_scoring.phase41.entity_group_split_split.v1",
+        "formal_index_has_target": false,
+        "current_reviewed_allowed": false,
+        "current_queue_group": "ai_passed",
+        "current_stage": "ai_audited",
+        "current_formal_review_status": "draft",
+        "required_next_decision": "外部审计必须显式给出 reviewed_allowed=true，后续 Codex 才能生成 formal reviewed/caveat_only；否则继续 needs_more_evidence 或 rejected。"
+      }
+    },
+    {
+      "schema_version": "1.0.0",
+      "candidate_id": "cand_20260610_phase41_p41_c04_platt_isotonic_001",
+      "research_task_id": "P41-C04",
+      "status": {
+        "review_status": "accepted",
+        "ingestion_decision": "accepted_for_draft",
+        "decision_reason": "Phase 41 P0-Extended/P1 严格审计允许进入 formal draft 准备队列；不是 reviewed、approved 或默认指导。",
+        "created_at": "2026-06-10",
+        "updated_at": "2026-06-10"
+      },
+      "classification": {
+        "tree_node_id": "kt.ai_engineering.calibration_threshold.uncertainty",
+        "canonical_node_id": "kt.ai_engineering.calibration_threshold.uncertainty",
+        "tree_path": "CEK-TA / AI Engineering / Hybrid Scoring And Qwen3 Audit",
+        "related_nodes": [
+          "kt.trading_engineering",
+          "kt.rag_engineering",
+          "kt.ai_feedback_governance"
+        ],
+        "partition_id": "KB_AI_21_CALIBRATION_THRESHOLD",
+        "domain": "llm_training",
+        "subdomain": "calibration_threshold_uncertainty",
+        "rule_type": "governance_rule",
+        "used_for": [
+          "llm_training",
+          "trading_gating_scoring",
+          "hybrid_scoring",
+          "rag_engineering",
+          "mcp",
+          "vue_audit_ui"
+        ]
+      },
+      "claim": {
+        "claim_id": "claim_001",
+        "statement": "Platt 与 isotonic 的选择必须声明样本量、单调性假设和过拟合风险",
+        "normalized_claim": "phase41.platt_isotonic.v1",
+        "claim_type": "calibration_method_rule",
+        "model_role": "calibrator",
+        "priority": "P0-Extended",
+        "evidence_summary": "scikit-learn documents probability calibration, including sigmoid and isotonic approaches.；The calibration paper compares calibration methods and discusses isotonic regression and sigmoid calibration behavior.",
+        "interpretation_notes": "本候选只沉淀 AI Engineering 的模型选择、训练增强、校准不确定性、特征服务、Qwen3 审计助手或平台治理规则；交易规则本体必须路由到 Phase 37 / Trading Engineering。",
+        "claim_strength": "medium",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general",
+        "asset": "general",
+        "timeframe": "general",
+        "data_granularity": "general",
+        "project_type": "trading_llm_gating_scoring",
+        "applies_when": [
+          "外接项目已完成基本 hybrid scoring POC，正在评估增强模型、平台、解释、校准、不确定性、服务化或发布治理。",
+          "该规则用于限制增强能力的引入时机、职责边界、审计证据和回滚条件。"
+        ],
+        "not_applicable_when": [
+          "用户需要具体买卖点、仓位、止损止盈、K 线形态、策略参数或实盘订单执行。",
+          "知识点主要描述 fill model、订单状态机、实盘风控阈值、交易所异常处理或交易收益本体，应路由到 Trading Engineering。"
+        ],
+        "assumptions": [
+          "P0-Extended/P1 是增强能力，不应阻塞 POC 主链路。",
+          "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+        ],
+        "limitations": [
+          "本条仍是 candidate，需要外部 AI/人工审计确认来源充分性、适用边界和是否需要补充工程实例。",
+          "Calibration method selection improves probability quality only; it is not a trading return claim."
+        ]
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 区分必需能力与条件增强能力。",
+          "用于生成任务卡、接口契约、测试计划、审计 checklist 和候选知识补证问题。",
+          "用于阻断增强平台或模型能力绕过 deterministic final gate、人工审批和 RAG 引用边界。"
+        ],
+        "not_allowed": [
+          "不得据此生成买卖点、仓位、杠杆、止损止盈或实盘下单建议。",
+          "不得据此把 P1 平台工具变成默认依赖。",
+          "不得把 candidate 当作 reviewed/approved 默认指导。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_id": "src_sklearn_calibration",
+          "source_title": "Probability calibration - scikit-learn documentation",
+          "source_url": "https://scikit-learn.org/stable/modules/calibration.html",
+          "source_type": "official_doc",
+          "publisher": "scikit-learn",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 88,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "scikit-learn documents probability calibration, including sigmoid and isotonic approaches.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_calibration_paper",
+          "source_title": "Predicting Good Probabilities With Supervised Learning",
+          "source_url": "https://www.cs.cornell.edu/~alexn/papers/calibration.icml05.crc.rev3.pdf",
+          "source_type": "research_paper",
+          "publisher": "ICML",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 84,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "The calibration paper compares calibration methods and discusses isotonic regression and sigmoid calibration behavior.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_nist_ai_rmf",
+          "source_title": "NIST AI Risk Management Framework",
+          "source_url": "https://www.nist.gov/itl/ai-risk-management-framework",
+          "source_type": "governance_framework",
+          "publisher": "NIST",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 88,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "NIST AI RMF provides governance practices for mapping, measuring and managing AI risks.",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "high",
+        "score": 87,
+        "score_version": "1.0.0",
+        "primary_source_count": 2,
+        "supporting_source_count": 1,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "增强能力来源多为官方文档、论文或内部契约；正式化时必须保留条件引入边界。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "checked_against": [
+          "docs/contracts/phase41_hybrid_scoring_runtime_contract.md",
+          "docs/contracts/phase41_tabular_llm_training_data_contract.md",
+          "docs/research/phase41_hybrid_scoring_qwen3_scope.md",
+          "docs/tasks/phase41_hybrid_scoring_qwen3_audit_stack.md"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与 Phase 41 契约的直接冲突；候选不会进入默认指导。",
+        "approval_allowed": false
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "candidate only; Phase 41 extended/P1 strict audit does not allow reviewed, approved, default guidance, or hard gate.",
+        "requires_human_escalation": true
+      },
+      "review": {
+        "confidence": "medium",
+        "freshness": "time_sensitive",
+        "reviewer": "external_ai_audit_plus_codex_import",
+        "reviewed_at": "2026-06-10",
+        "open_questions": [],
+        "audit_log": [
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "created",
+            "reason": "Phase 41 P0-Extended/P1 joint candidate expansion."
+          },
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "phase41_extended_p1_audit_accepted_for_draft",
+            "reason": "候选进入 formal draft 准备队列；不能直接 reviewed/approved。"
+          }
+        ],
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "reviewed_allowed": false,
+        "approved_allowed": false,
+        "ai_audit": {
+          "audit_result_id": "audit_result_phase41_extended_p1_candidate_audit_package_20260610_strict_v1",
+          "source_package_id": "phase41_extended_p1_candidate_audit_package_20260610",
+          "candidate_id": "cand_20260610_phase41_p41_c04_platt_isotonic_001",
+          "research_task_id": "P41-C04",
+          "decision": "accepted_for_draft",
+          "reason": "scikit-learn calibration and the supervised calibration paper support Platt/sigmoid and isotonic calibration; accepted with sample-size and overfitting caveats.",
+          "source_patch_notes": [],
+          "content_patch_notes": [
+            "Require calibration_method, calibration_set_hash, sample_size, reliability_diagram_ref, Brier/ECE metrics, and overfit_risk_caveat.",
+            "State isotonic should be avoided or caveated when calibration samples are sparse."
+          ],
+          "boundary_patch_notes": [
+            "Calibration method selection improves probability quality only; it is not a trading return claim."
+          ],
+          "conflict_patch_notes": [
+            "workflow.hidden_from_default_queue=false conflicts with package hard boundary that candidate knowledge must not enter default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before any draft conversion."
+          ],
+          "required_followups": [],
+          "reviewed_allowed": false,
+          "approved_allowed": false,
+          "default_guidance_allowed": false,
+          "hard_gate_allowed": false,
+          "import_policy": "strict audit result may route candidates only; formal reviewed/approved creation is blocked."
+        }
+      },
+      "copyright": {
+        "stores_full_text": false,
+        "stores_long_quote": false,
+        "summary_only": true,
+        "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+        "reuse_risk": "low"
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_ai_hybrid_scoring.phase41.platt_isotonic.v1",
+        "target_schema": "cek_ta_knowledge_item",
+        "target_review_status": "draft",
+        "skill_candidate": false,
+        "eval_case_candidate": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "workflow": {
+        "stage": "ai_audited",
+        "queue_group": "ai_passed",
+        "formal_knowledge_id": "kb_ai_hybrid_scoring.phase41.platt_isotonic.v1",
+        "formal_review_status": "draft",
+        "ai_audit_result_id": "audit_result_phase41_extended_p1_candidate_audit_package_20260610_strict_v1",
+        "hidden_from_default_queue": true,
+        "next_action": "prepare_formal_draft_after_codex_patch_review",
+        "default_guidance_allowed": false,
+        "visible_in_default_guidance_queue": false
+      },
+      "phase41_trace": {
+        "priority": "P0-Extended",
+        "source_hint": "scikit-learn calibration",
+        "related_contracts": [
+          "docs/contracts/phase41_hybrid_scoring_runtime_contract.md",
+          "docs/contracts/phase41_tabular_llm_training_data_contract.md",
+          "docs/research/phase41_hybrid_scoring_qwen3_scope.md",
+          "docs/tasks/phase41_hybrid_scoring_qwen3_audit_stack.md"
+        ],
+        "scope_boundary": "AI Engineering enhancement only; Trading Engineering knowledge body is reference-only.",
+        "audit_patch_notes": {
+          "source_patch_notes": [],
+          "content_patch_notes": [
+            "Require calibration_method, calibration_set_hash, sample_size, reliability_diagram_ref, Brier/ECE metrics, and overfit_risk_caveat.",
+            "State isotonic should be avoided or caveated when calibration samples are sparse."
+          ],
+          "boundary_patch_notes": [
+            "Calibration method selection improves probability quality only; it is not a trading return claim."
+          ],
+          "conflict_patch_notes": [
+            "workflow.hidden_from_default_queue=false conflicts with package hard boundary that candidate knowledge must not enter default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before any draft conversion."
+          ],
+          "required_followups": []
+        }
+      },
+      "_audit_export_meta": {
+        "source_file": "codex-expert-kit/rag/candidates/KB_AI_ENGINEERING/cand_20260610_phase41_p41_c04_platt_isotonic_001.json",
+        "proposed_knowledge_id": "kb_ai_hybrid_scoring.phase41.platt_isotonic.v1",
+        "formal_index_has_target": false,
+        "current_reviewed_allowed": false,
+        "current_queue_group": "ai_passed",
+        "current_stage": "ai_audited",
+        "current_formal_review_status": "draft",
+        "required_next_decision": "外部审计必须显式给出 reviewed_allowed=true，后续 Codex 才能生成 formal reviewed/caveat_only；否则继续 needs_more_evidence 或 rejected。"
+      }
+    },
+    {
+      "schema_version": "1.0.0",
+      "candidate_id": "cand_20260610_phase41_p41_c05_regime_strategy_family_timeframe_regime_strategy_timeframe_slice_label_ai_engineering_001",
+      "research_task_id": "P41-C05",
+      "status": {
+        "review_status": "accepted",
+        "ingestion_decision": "accepted_for_draft",
+        "decision_reason": "Phase 41 P0-Extended/P1 严格审计允许进入 formal draft 准备队列；不是 reviewed、approved 或默认指导。",
+        "created_at": "2026-06-10",
+        "updated_at": "2026-06-10"
+      },
+      "classification": {
+        "tree_node_id": "kt.ai_engineering.calibration_threshold.uncertainty",
+        "canonical_node_id": "kt.ai_engineering.calibration_threshold.uncertainty",
+        "tree_path": "CEK-TA / AI Engineering / Hybrid Scoring And Qwen3 Audit",
+        "related_nodes": [
+          "kt.trading_engineering",
+          "kt.rag_engineering",
+          "kt.ai_feedback_governance"
+        ],
+        "partition_id": "KB_AI_21_CALIBRATION_THRESHOLD",
+        "domain": "llm_training",
+        "subdomain": "calibration_threshold_uncertainty",
+        "rule_type": "governance_rule",
+        "used_for": [
+          "llm_training",
+          "trading_gating_scoring",
+          "hybrid_scoring",
+          "rag_engineering",
+          "mcp",
+          "vue_audit_ui"
+        ]
+      },
+      "claim": {
+        "claim_id": "claim_001",
+        "statement": "校准应按 regime、strategy family、timeframe 切片检查，发现漂移时触发再校准审计；regime、strategy、timeframe 只能作为引用或 slice label，不在 AI Engineering 定义交易规则本体",
+        "normalized_claim": "phase41.regime_strategy_family_timeframe_regime_strategy_timeframe_slice_label_ai_engineering.v1",
+        "claim_type": "monitoring_rule",
+        "model_role": "calibrator",
+        "priority": "P0-Extended",
+        "evidence_summary": "scikit-learn documents probability calibration, including sigmoid and isotonic approaches.；TFDV documents schema, statistics, anomalies, data validation and skew/drift checks.",
+        "interpretation_notes": "本候选只沉淀 AI Engineering 的模型选择、训练增强、校准不确定性、特征服务、Qwen3 审计助手或平台治理规则；交易规则本体必须路由到 Phase 37 / Trading Engineering。",
+        "claim_strength": "medium",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general",
+        "asset": "general",
+        "timeframe": "general",
+        "data_granularity": "general",
+        "project_type": "trading_llm_gating_scoring",
+        "applies_when": [
+          "外接项目已完成基本 hybrid scoring POC，正在评估增强模型、平台、解释、校准、不确定性、服务化或发布治理。",
+          "该规则用于限制增强能力的引入时机、职责边界、审计证据和回滚条件。"
+        ],
+        "not_applicable_when": [
+          "用户需要具体买卖点、仓位、止损止盈、K 线形态、策略参数或实盘订单执行。",
+          "知识点主要描述 fill model、订单状态机、实盘风控阈值、交易所异常处理或交易收益本体，应路由到 Trading Engineering。"
+        ],
+        "assumptions": [
+          "P0-Extended/P1 是增强能力，不应阻塞 POC 主链路。",
+          "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+        ],
+        "limitations": [
+          "本条仍是 candidate，需要外部 AI/人工审计确认来源充分性、适用边界和是否需要补充工程实例。",
+          "AI Engineering must not define market regime, strategy family logic, timeframe trading rules, execution cost, or final risk rules."
+        ]
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 区分必需能力与条件增强能力。",
+          "用于生成任务卡、接口契约、测试计划、审计 checklist 和候选知识补证问题。",
+          "用于阻断增强平台或模型能力绕过 deterministic final gate、人工审批和 RAG 引用边界。"
+        ],
+        "not_allowed": [
+          "不得据此生成买卖点、仓位、杠杆、止损止盈或实盘下单建议。",
+          "不得据此把 P1 平台工具变成默认依赖。",
+          "不得把 candidate 当作 reviewed/approved 默认指导。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_id": "src_sklearn_calibration",
+          "source_title": "Probability calibration - scikit-learn documentation",
+          "source_url": "https://scikit-learn.org/stable/modules/calibration.html",
+          "source_type": "official_doc",
+          "publisher": "scikit-learn",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 88,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "scikit-learn documents probability calibration, including sigmoid and isotonic approaches.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_tfdv_docs",
+          "source_title": "TensorFlow Data Validation",
+          "source_url": "https://www.tensorflow.org/tfx/data_validation/get_started",
+          "source_type": "official_doc",
+          "publisher": "TensorFlow",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 82,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "TFDV documents schema, statistics, anomalies, data validation and skew/drift checks.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_phase41_runtime",
+          "source_title": "Phase 41 hybrid scoring runtime contract",
+          "source_url": "docs/contracts/phase41_hybrid_scoring_runtime_contract.md",
+          "source_type": "internal_contract",
+          "publisher": "CEK-TA",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 88,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "Phase 41 runtime contract defines scorer, calibrator, Qwen3 audit assistant, RAG and deterministic final gate boundaries.",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "high",
+        "score": 86,
+        "score_version": "1.0.0",
+        "primary_source_count": 2,
+        "supporting_source_count": 1,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "增强能力来源多为官方文档、论文或内部契约；正式化时必须保留条件引入边界。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "checked_against": [
+          "docs/contracts/phase41_hybrid_scoring_runtime_contract.md",
+          "docs/contracts/phase41_tabular_llm_training_data_contract.md",
+          "docs/research/phase41_hybrid_scoring_qwen3_scope.md",
+          "docs/tasks/phase41_hybrid_scoring_qwen3_audit_stack.md"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与 Phase 41 契约的直接冲突；候选不会进入默认指导。",
+        "approval_allowed": false
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "candidate only; Phase 41 extended/P1 strict audit does not allow reviewed, approved, default guidance, or hard gate.",
+        "requires_human_escalation": true
+      },
+      "review": {
+        "confidence": "medium",
+        "freshness": "time_sensitive",
+        "reviewer": "external_ai_audit_plus_codex_import",
+        "reviewed_at": "2026-06-10",
+        "open_questions": [],
+        "audit_log": [
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "created",
+            "reason": "Phase 41 P0-Extended/P1 joint candidate expansion."
+          },
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "phase41_extended_p1_audit_accepted_for_draft",
+            "reason": "候选进入 formal draft 准备队列；不能直接 reviewed/approved。"
+          }
+        ],
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "reviewed_allowed": false,
+        "approved_allowed": false,
+        "ai_audit": {
+          "audit_result_id": "audit_result_phase41_extended_p1_candidate_audit_package_20260610_strict_v1",
+          "source_package_id": "phase41_extended_p1_candidate_audit_package_20260610",
+          "candidate_id": "cand_20260610_phase41_p41_c05_regime_strategy_family_timeframe_regime_strategy_timeframe_slice_label_ai_engineering_001",
+          "research_task_id": "P41-C05",
+          "decision": "accepted_for_draft",
+          "reason": "scikit-learn supports calibration checks and TFDV supports slicing/skew/drift style validation; the Phase 41 contract correctly keeps regime/strategy/timeframe as reference-only slice labels.",
+          "source_patch_notes": [],
+          "content_patch_notes": [
+            "Require per-slice minimum support; sparse slices may only emit warnings, not hard thresholds.",
+            "Store regime_ref, strategy_family_ref, and timeframe_ref as references only."
+          ],
+          "boundary_patch_notes": [
+            "AI Engineering must not define market regime, strategy family logic, timeframe trading rules, execution cost, or final risk rules."
+          ],
+          "conflict_patch_notes": [
+            "workflow.hidden_from_default_queue=false conflicts with package hard boundary that candidate knowledge must not enter default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before any draft conversion."
+          ],
+          "required_followups": [],
+          "reviewed_allowed": false,
+          "approved_allowed": false,
+          "default_guidance_allowed": false,
+          "hard_gate_allowed": false,
+          "import_policy": "strict audit result may route candidates only; formal reviewed/approved creation is blocked."
+        }
+      },
+      "copyright": {
+        "stores_full_text": false,
+        "stores_long_quote": false,
+        "summary_only": true,
+        "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+        "reuse_risk": "low"
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_ai_hybrid_scoring.phase41.regime_strategy_family_timeframe_regime_strategy_timeframe_slice_label_ai_engineering.v1",
+        "target_schema": "cek_ta_knowledge_item",
+        "target_review_status": "draft",
+        "skill_candidate": false,
+        "eval_case_candidate": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "workflow": {
+        "stage": "ai_audited",
+        "queue_group": "ai_passed",
+        "formal_knowledge_id": "kb_ai_hybrid_scoring.phase41.regime_strategy_family_timeframe_regime_strategy_timeframe_slice_label_ai_engineering.v1",
+        "formal_review_status": "draft",
+        "ai_audit_result_id": "audit_result_phase41_extended_p1_candidate_audit_package_20260610_strict_v1",
+        "hidden_from_default_queue": true,
+        "next_action": "prepare_formal_draft_after_codex_patch_review",
+        "default_guidance_allowed": false,
+        "visible_in_default_guidance_queue": false
+      },
+      "phase41_trace": {
+        "priority": "P0-Extended",
+        "source_hint": "calibration docs、Phase 40 drift",
+        "related_contracts": [
+          "docs/contracts/phase41_hybrid_scoring_runtime_contract.md",
+          "docs/contracts/phase41_tabular_llm_training_data_contract.md",
+          "docs/research/phase41_hybrid_scoring_qwen3_scope.md",
+          "docs/tasks/phase41_hybrid_scoring_qwen3_audit_stack.md"
+        ],
+        "scope_boundary": "AI Engineering enhancement only; Trading Engineering knowledge body is reference-only.",
+        "audit_patch_notes": {
+          "source_patch_notes": [],
+          "content_patch_notes": [
+            "Require per-slice minimum support; sparse slices may only emit warnings, not hard thresholds.",
+            "Store regime_ref, strategy_family_ref, and timeframe_ref as references only."
+          ],
+          "boundary_patch_notes": [
+            "AI Engineering must not define market regime, strategy family logic, timeframe trading rules, execution cost, or final risk rules."
+          ],
+          "conflict_patch_notes": [
+            "workflow.hidden_from_default_queue=false conflicts with package hard boundary that candidate knowledge must not enter default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before any draft conversion."
+          ],
+          "required_followups": []
+        }
+      },
+      "_audit_export_meta": {
+        "source_file": "codex-expert-kit/rag/candidates/KB_AI_ENGINEERING/cand_20260610_phase41_p41_c05_regime_strategy_family_timeframe_regime_strategy_timeframe_slice_label_ai_engineering_001.json",
+        "proposed_knowledge_id": "kb_ai_hybrid_scoring.phase41.regime_strategy_family_timeframe_regime_strategy_timeframe_slice_label_ai_engineering.v1",
+        "formal_index_has_target": false,
+        "current_reviewed_allowed": false,
+        "current_queue_group": "ai_passed",
+        "current_stage": "ai_audited",
+        "current_formal_review_status": "draft",
+        "required_next_decision": "外部审计必须显式给出 reviewed_allowed=true，后续 Codex 才能生成 formal reviewed/caveat_only；否则继续 needs_more_evidence 或 rejected。"
+      }
+    },
+    {
+      "schema_version": "1.0.0",
+      "candidate_id": "cand_20260610_phase41_p41_c06_conformal_abstain_band_deterministic_final_gate_001",
+      "research_task_id": "P41-C06",
+      "status": {
+        "review_status": "accepted",
+        "ingestion_decision": "accepted_for_draft",
+        "decision_reason": "Phase 41 P0-Extended/P1 严格审计允许进入 formal draft 准备队列；不是 reviewed、approved 或默认指导。",
+        "created_at": "2026-06-10",
+        "updated_at": "2026-06-10"
+      },
+      "classification": {
+        "tree_node_id": "kt.ai_engineering.calibration_threshold.uncertainty",
+        "canonical_node_id": "kt.ai_engineering.calibration_threshold.uncertainty",
+        "tree_path": "CEK-TA / AI Engineering / Hybrid Scoring And Qwen3 Audit",
+        "related_nodes": [
+          "kt.trading_engineering",
+          "kt.rag_engineering",
+          "kt.ai_feedback_governance"
+        ],
+        "partition_id": "KB_AI_21_CALIBRATION_THRESHOLD",
+        "domain": "llm_training",
+        "subdomain": "calibration_threshold_uncertainty",
+        "rule_type": "governance_rule",
+        "used_for": [
+          "llm_training",
+          "trading_gating_scoring",
+          "hybrid_scoring",
+          "rag_engineering",
+          "mcp",
+          "vue_audit_ui"
+        ]
+      },
+      "claim": {
+        "claim_id": "claim_001",
+        "statement": "conformal 或 abstain band 只能作为不确定性增强层，不能替代 deterministic final gate",
+        "normalized_claim": "phase41.conformal_abstain_band_deterministic_final_gate.v1",
+        "claim_type": "extension_rule",
+        "model_role": "calibrator",
+        "priority": "P1",
+        "evidence_summary": "MAPIE documents conformal prediction intervals and prediction sets for uncertainty quantification.；scikit-learn documents probability calibration, including sigmoid and isotonic approaches.",
+        "interpretation_notes": "本候选只沉淀 AI Engineering 的模型选择、训练增强、校准不确定性、特征服务、Qwen3 审计助手或平台治理规则；交易规则本体必须路由到 Phase 37 / Trading Engineering。",
+        "claim_strength": "medium",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general",
+        "asset": "general",
+        "timeframe": "general",
+        "data_granularity": "general",
+        "project_type": "trading_llm_gating_scoring",
+        "applies_when": [
+          "外接项目已完成基本 hybrid scoring POC，正在评估增强模型、平台、解释、校准、不确定性、服务化或发布治理。",
+          "该规则用于限制增强能力的引入时机、职责边界、审计证据和回滚条件。"
+        ],
+        "not_applicable_when": [
+          "用户需要具体买卖点、仓位、止损止盈、K 线形态、策略参数或实盘订单执行。",
+          "知识点主要描述 fill model、订单状态机、实盘风控阈值、交易所异常处理或交易收益本体，应路由到 Trading Engineering。"
+        ],
+        "assumptions": [
+          "P0-Extended/P1 是增强能力，不应阻塞 POC 主链路。",
+          "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+        ],
+        "limitations": [
+          "本条仍是 candidate，需要外部 AI/人工审计确认来源充分性、适用边界和是否需要补充工程实例。",
+          "Conformal or abstain output may route to review/abstain only; it must not emit allow/block/reduce_size."
+        ]
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 区分必需能力与条件增强能力。",
+          "用于生成任务卡、接口契约、测试计划、审计 checklist 和候选知识补证问题。",
+          "用于阻断增强平台或模型能力绕过 deterministic final gate、人工审批和 RAG 引用边界。"
+        ],
+        "not_allowed": [
+          "不得据此生成买卖点、仓位、杠杆、止损止盈或实盘下单建议。",
+          "不得据此把 P1 平台工具变成默认依赖。",
+          "不得把 candidate 当作 reviewed/approved 默认指导。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_id": "src_mapie_docs",
+          "source_title": "MAPIE documentation",
+          "source_url": "https://mapie.readthedocs.io/en/v0.9.1/",
+          "source_type": "official_doc",
+          "publisher": "MAPIE",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 82,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "MAPIE documents conformal prediction intervals and prediction sets for uncertainty quantification.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_sklearn_calibration",
+          "source_title": "Probability calibration - scikit-learn documentation",
+          "source_url": "https://scikit-learn.org/stable/modules/calibration.html",
+          "source_type": "official_doc",
+          "publisher": "scikit-learn",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 88,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "scikit-learn documents probability calibration, including sigmoid and isotonic approaches.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_phase41_runtime",
+          "source_title": "Phase 41 hybrid scoring runtime contract",
+          "source_url": "docs/contracts/phase41_hybrid_scoring_runtime_contract.md",
+          "source_type": "internal_contract",
+          "publisher": "CEK-TA",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 88,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "Phase 41 runtime contract defines scorer, calibrator, Qwen3 audit assistant, RAG and deterministic final gate boundaries.",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "high",
+        "score": 86,
+        "score_version": "1.0.0",
+        "primary_source_count": 2,
+        "supporting_source_count": 1,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "增强能力来源多为官方文档、论文或内部契约；正式化时必须保留条件引入边界。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "checked_against": [
+          "docs/contracts/phase41_hybrid_scoring_runtime_contract.md",
+          "docs/contracts/phase41_tabular_llm_training_data_contract.md",
+          "docs/research/phase41_hybrid_scoring_qwen3_scope.md",
+          "docs/tasks/phase41_hybrid_scoring_qwen3_audit_stack.md"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与 Phase 41 契约的直接冲突；候选不会进入默认指导。",
+        "approval_allowed": false
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "candidate only; Phase 41 extended/P1 strict audit does not allow reviewed, approved, default guidance, or hard gate.",
+        "requires_human_escalation": true
+      },
+      "review": {
+        "confidence": "medium",
+        "freshness": "time_sensitive",
+        "reviewer": "external_ai_audit_plus_codex_import",
+        "reviewed_at": "2026-06-10",
+        "open_questions": [],
+        "audit_log": [
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "created",
+            "reason": "Phase 41 P0-Extended/P1 joint candidate expansion."
+          },
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "phase41_extended_p1_audit_accepted_for_draft",
+            "reason": "候选进入 formal draft 准备队列；不能直接 reviewed/approved。"
+          }
+        ],
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "reviewed_allowed": false,
+        "approved_allowed": false,
+        "ai_audit": {
+          "audit_result_id": "audit_result_phase41_extended_p1_candidate_audit_package_20260610_strict_v1",
+          "source_package_id": "phase41_extended_p1_candidate_audit_package_20260610",
+          "candidate_id": "cand_20260610_phase41_p41_c06_conformal_abstain_band_deterministic_final_gate_001",
+          "research_task_id": "P41-C06",
+          "decision": "accepted_for_draft",
+          "reason": "MAPIE and calibration sources support conformal/uncertainty as an enhancement layer; the claim correctly prevents it from replacing deterministic final gate.",
+          "source_patch_notes": [],
+          "content_patch_notes": [
+            "Add coverage_assumption, calibration_or_conformal_set_hash, coverage_metric, abstain_band_version, and sparse_slice_caveat fields."
+          ],
+          "boundary_patch_notes": [
+            "Conformal or abstain output may route to review/abstain only; it must not emit allow/block/reduce_size."
+          ],
+          "conflict_patch_notes": [
+            "workflow.hidden_from_default_queue=false conflicts with package hard boundary that candidate knowledge must not enter default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before any draft conversion."
+          ],
+          "required_followups": [],
+          "reviewed_allowed": false,
+          "approved_allowed": false,
+          "default_guidance_allowed": false,
+          "hard_gate_allowed": false,
+          "import_policy": "strict audit result may route candidates only; formal reviewed/approved creation is blocked."
+        }
+      },
+      "copyright": {
+        "stores_full_text": false,
+        "stores_long_quote": false,
+        "summary_only": true,
+        "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+        "reuse_risk": "low"
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_ai_hybrid_scoring.phase41.conformal_abstain_band_deterministic_final_gate.v1",
+        "target_schema": "cek_ta_knowledge_item",
+        "target_review_status": "draft",
+        "skill_candidate": false,
+        "eval_case_candidate": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "workflow": {
+        "stage": "ai_audited",
+        "queue_group": "ai_passed",
+        "formal_knowledge_id": "kb_ai_hybrid_scoring.phase41.conformal_abstain_band_deterministic_final_gate.v1",
+        "formal_review_status": "draft",
+        "ai_audit_result_id": "audit_result_phase41_extended_p1_candidate_audit_package_20260610_strict_v1",
+        "hidden_from_default_queue": true,
+        "next_action": "prepare_formal_draft_after_codex_patch_review",
+        "default_guidance_allowed": false,
+        "visible_in_default_guidance_queue": false
+      },
+      "phase41_trace": {
+        "priority": "P1",
+        "source_hint": "conformal prediction sources",
+        "related_contracts": [
+          "docs/contracts/phase41_hybrid_scoring_runtime_contract.md",
+          "docs/contracts/phase41_tabular_llm_training_data_contract.md",
+          "docs/research/phase41_hybrid_scoring_qwen3_scope.md",
+          "docs/tasks/phase41_hybrid_scoring_qwen3_audit_stack.md"
+        ],
+        "scope_boundary": "AI Engineering enhancement only; Trading Engineering knowledge body is reference-only.",
+        "audit_patch_notes": {
+          "source_patch_notes": [],
+          "content_patch_notes": [
+            "Add coverage_assumption, calibration_or_conformal_set_hash, coverage_metric, abstain_band_version, and sparse_slice_caveat fields."
+          ],
+          "boundary_patch_notes": [
+            "Conformal or abstain output may route to review/abstain only; it must not emit allow/block/reduce_size."
+          ],
+          "conflict_patch_notes": [
+            "workflow.hidden_from_default_queue=false conflicts with package hard boundary that candidate knowledge must not enter default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before any draft conversion."
+          ],
+          "required_followups": []
+        }
+      },
+      "_audit_export_meta": {
+        "source_file": "codex-expert-kit/rag/candidates/KB_AI_ENGINEERING/cand_20260610_phase41_p41_c06_conformal_abstain_band_deterministic_final_gate_001.json",
+        "proposed_knowledge_id": "kb_ai_hybrid_scoring.phase41.conformal_abstain_band_deterministic_final_gate.v1",
+        "formal_index_has_target": false,
+        "current_reviewed_allowed": false,
+        "current_queue_group": "ai_passed",
+        "current_stage": "ai_audited",
+        "current_formal_review_status": "draft",
+        "required_next_decision": "外部审计必须显式给出 reviewed_allowed=true，后续 Codex 才能生成 formal reviewed/caveat_only；否则继续 needs_more_evidence 或 rejected。"
+      }
+    },
+    {
+      "schema_version": "1.0.0",
+      "candidate_id": "cand_20260610_phase41_p41_d05_feast_feature_store_poc_manifest_001",
+      "research_task_id": "P41-D05",
+      "status": {
+        "review_status": "accepted",
+        "ingestion_decision": "accepted_for_draft",
+        "decision_reason": "Phase 41 P0-Extended/P1 严格审计允许进入 formal draft 准备队列；不是 reviewed、approved 或默认指导。",
+        "created_at": "2026-06-10",
+        "updated_at": "2026-06-10"
+      },
+      "classification": {
+        "tree_node_id": "kt.ai_engineering.decision_time_feature_contract.feature_store",
+        "canonical_node_id": "kt.ai_engineering.decision_time_feature_contract.feature_store",
+        "tree_path": "CEK-TA / AI Engineering / Hybrid Scoring And Qwen3 Audit",
+        "related_nodes": [
+          "kt.trading_engineering",
+          "kt.rag_engineering",
+          "kt.ai_feedback_governance"
+        ],
+        "partition_id": "KB_AI_22_DECISION_TIME_FEATURES",
+        "domain": "llm_training",
+        "subdomain": "decision_time_feature_store",
+        "rule_type": "governance_rule",
+        "used_for": [
+          "llm_training",
+          "trading_gating_scoring",
+          "hybrid_scoring",
+          "rag_engineering",
+          "mcp",
+          "vue_audit_ui"
+        ]
+      },
+      "claim": {
+        "claim_id": "claim_001",
+        "statement": "Feast 或正式 feature store 只在离线/在线一致性压力出现后引入，POC 阶段可用文件化 manifest",
+        "normalized_claim": "phase41.feast_feature_store_poc_manifest.v1",
+        "claim_type": "platform_boundary_rule",
+        "model_role": "platform_governance",
+        "priority": "P1",
+        "evidence_summary": "Feast documents feature store concepts for historical feature extraction and online serving.；Feast documents point-in-time joins and historical feature retrieval for training data and batch scoring.",
+        "interpretation_notes": "本候选只沉淀 AI Engineering 的模型选择、训练增强、校准不确定性、特征服务、Qwen3 审计助手或平台治理规则；交易规则本体必须路由到 Phase 37 / Trading Engineering。",
+        "claim_strength": "medium",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general",
+        "asset": "general",
+        "timeframe": "general",
+        "data_granularity": "general",
+        "project_type": "trading_llm_gating_scoring",
+        "applies_when": [
+          "外接项目已完成基本 hybrid scoring POC，正在评估增强模型、平台、解释、校准、不确定性、服务化或发布治理。",
+          "该规则用于限制增强能力的引入时机、职责边界、审计证据和回滚条件。"
+        ],
+        "not_applicable_when": [
+          "用户需要具体买卖点、仓位、止损止盈、K 线形态、策略参数或实盘订单执行。",
+          "知识点主要描述 fill model、订单状态机、实盘风控阈值、交易所异常处理或交易收益本体，应路由到 Trading Engineering。"
+        ],
+        "assumptions": [
+          "P0-Extended/P1 是增强能力，不应阻塞 POC 主链路。",
+          "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+        ],
+        "limitations": [
+          "本条仍是 candidate，需要外部 AI/人工审计确认来源充分性、适用边界和是否需要补充工程实例。",
+          "Feature store adoption is infrastructure governance, not a trading rule."
+        ]
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 区分必需能力与条件增强能力。",
+          "用于生成任务卡、接口契约、测试计划、审计 checklist 和候选知识补证问题。",
+          "用于阻断增强平台或模型能力绕过 deterministic final gate、人工审批和 RAG 引用边界。"
+        ],
+        "not_allowed": [
+          "不得据此生成买卖点、仓位、杠杆、止损止盈或实盘下单建议。",
+          "不得据此把 P1 平台工具变成默认依赖。",
+          "不得把 candidate 当作 reviewed/approved 默认指导。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_id": "src_feast_docs",
+          "source_title": "Feast documentation",
+          "source_url": "https://docs.feast.dev/",
+          "source_type": "official_doc",
+          "publisher": "Feast",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 84,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "Feast documents feature store concepts for historical feature extraction and online serving.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_feast_feature_retrieval",
+          "source_title": "Feature retrieval - Feast documentation",
+          "source_url": "https://docs.feast.dev/getting-started/concepts/feature-retrieval",
+          "source_type": "official_doc",
+          "publisher": "Feast",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 84,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "Feast documents point-in-time joins and historical feature retrieval for training data and batch scoring.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_phase41_runtime",
+          "source_title": "Phase 41 hybrid scoring runtime contract",
+          "source_url": "docs/contracts/phase41_hybrid_scoring_runtime_contract.md",
+          "source_type": "internal_contract",
+          "publisher": "CEK-TA",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 88,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "Phase 41 runtime contract defines scorer, calibrator, Qwen3 audit assistant, RAG and deterministic final gate boundaries.",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "high",
+        "score": 85,
+        "score_version": "1.0.0",
+        "primary_source_count": 2,
+        "supporting_source_count": 1,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "增强能力来源多为官方文档、论文或内部契约；正式化时必须保留条件引入边界。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "checked_against": [
+          "docs/contracts/phase41_hybrid_scoring_runtime_contract.md",
+          "docs/contracts/phase41_tabular_llm_training_data_contract.md",
+          "docs/research/phase41_hybrid_scoring_qwen3_scope.md",
+          "docs/tasks/phase41_hybrid_scoring_qwen3_audit_stack.md"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与 Phase 41 契约的直接冲突；候选不会进入默认指导。",
+        "approval_allowed": false
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "candidate only; Phase 41 extended/P1 strict audit does not allow reviewed, approved, default guidance, or hard gate.",
+        "requires_human_escalation": true
+      },
+      "review": {
+        "confidence": "medium",
+        "freshness": "time_sensitive",
+        "reviewer": "external_ai_audit_plus_codex_import",
+        "reviewed_at": "2026-06-10",
+        "open_questions": [],
+        "audit_log": [
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "created",
+            "reason": "Phase 41 P0-Extended/P1 joint candidate expansion."
+          },
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "phase41_extended_p1_audit_accepted_for_draft",
+            "reason": "候选进入 formal draft 准备队列；不能直接 reviewed/approved。"
+          }
+        ],
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "reviewed_allowed": false,
+        "approved_allowed": false,
+        "ai_audit": {
+          "audit_result_id": "audit_result_phase41_extended_p1_candidate_audit_package_20260610_strict_v1",
+          "source_package_id": "phase41_extended_p1_candidate_audit_package_20260610",
+          "candidate_id": "cand_20260610_phase41_p41_d05_feast_feature_store_poc_manifest_001",
+          "research_task_id": "P41-D05",
+          "decision": "accepted_for_draft",
+          "reason": "Feast sources support feature retrieval and point-in-time/historical feature serving; acceptable as a conditional P1 feature-store adoption rule.",
+          "source_patch_notes": [],
+          "content_patch_notes": [
+            "Define trigger conditions: repeated offline/online parity failures, low-latency online feature serving requirement, or complex point-in-time joins.",
+            "POC can use versioned file manifests before feature-store adoption."
+          ],
+          "boundary_patch_notes": [
+            "Feature store adoption is infrastructure governance, not a trading rule."
+          ],
+          "conflict_patch_notes": [
+            "workflow.hidden_from_default_queue=false conflicts with package hard boundary that candidate knowledge must not enter default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before any draft conversion."
+          ],
+          "required_followups": [],
+          "reviewed_allowed": false,
+          "approved_allowed": false,
+          "default_guidance_allowed": false,
+          "hard_gate_allowed": false,
+          "import_policy": "strict audit result may route candidates only; formal reviewed/approved creation is blocked."
+        }
+      },
+      "copyright": {
+        "stores_full_text": false,
+        "stores_long_quote": false,
+        "summary_only": true,
+        "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+        "reuse_risk": "low"
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_ai_hybrid_scoring.phase41.feast_feature_store_poc_manifest.v1",
+        "target_schema": "cek_ta_knowledge_item",
+        "target_review_status": "draft",
+        "skill_candidate": false,
+        "eval_case_candidate": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "workflow": {
+        "stage": "ai_audited",
+        "queue_group": "ai_passed",
+        "formal_knowledge_id": "kb_ai_hybrid_scoring.phase41.feast_feature_store_poc_manifest.v1",
+        "formal_review_status": "draft",
+        "ai_audit_result_id": "audit_result_phase41_extended_p1_candidate_audit_package_20260610_strict_v1",
+        "hidden_from_default_queue": true,
+        "next_action": "prepare_formal_draft_after_codex_patch_review",
+        "default_guidance_allowed": false,
+        "visible_in_default_guidance_queue": false
+      },
+      "phase41_trace": {
+        "priority": "P1",
+        "source_hint": "Feast docs、Phase 41 scope",
+        "related_contracts": [
+          "docs/contracts/phase41_hybrid_scoring_runtime_contract.md",
+          "docs/contracts/phase41_tabular_llm_training_data_contract.md",
+          "docs/research/phase41_hybrid_scoring_qwen3_scope.md",
+          "docs/tasks/phase41_hybrid_scoring_qwen3_audit_stack.md"
+        ],
+        "scope_boundary": "AI Engineering enhancement only; Trading Engineering knowledge body is reference-only.",
+        "audit_patch_notes": {
+          "source_patch_notes": [],
+          "content_patch_notes": [
+            "Define trigger conditions: repeated offline/online parity failures, low-latency online feature serving requirement, or complex point-in-time joins.",
+            "POC can use versioned file manifests before feature-store adoption."
+          ],
+          "boundary_patch_notes": [
+            "Feature store adoption is infrastructure governance, not a trading rule."
+          ],
+          "conflict_patch_notes": [
+            "workflow.hidden_from_default_queue=false conflicts with package hard boundary that candidate knowledge must not enter default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before any draft conversion."
+          ],
+          "required_followups": []
+        }
+      },
+      "_audit_export_meta": {
+        "source_file": "codex-expert-kit/rag/candidates/KB_AI_ENGINEERING/cand_20260610_phase41_p41_d05_feast_feature_store_poc_manifest_001.json",
+        "proposed_knowledge_id": "kb_ai_hybrid_scoring.phase41.feast_feature_store_poc_manifest.v1",
+        "formal_index_has_target": false,
+        "current_reviewed_allowed": false,
+        "current_queue_group": "ai_passed",
+        "current_stage": "ai_audited",
+        "current_formal_review_status": "draft",
+        "required_next_decision": "外部审计必须显式给出 reviewed_allowed=true，后续 Codex 才能生成 formal reviewed/caveat_only；否则继续 needs_more_evidence 或 rejected。"
+      }
+    },
+    {
+      "schema_version": "1.0.0",
+      "candidate_id": "cand_20260610_phase41_p41_e04_thinking_mode_non_thinking_mode_chain_of_thought_strict_json_reason_code_citation_audit_summary_001",
+      "research_task_id": "P41-E04",
+      "status": {
+        "review_status": "accepted",
+        "ingestion_decision": "accepted_for_draft",
+        "decision_reason": "Phase 41 P0-Extended/P1 严格审计允许进入 formal draft 准备队列；不是 reviewed、approved 或默认指导。",
+        "created_at": "2026-06-10",
+        "updated_at": "2026-06-10"
+      },
+      "classification": {
+        "tree_node_id": "kt.ai_engineering.llm_audit_assistant.qwen3_audit_assistant",
+        "canonical_node_id": "kt.ai_engineering.llm_audit_assistant.qwen3_audit_assistant",
+        "tree_path": "CEK-TA / AI Engineering / Hybrid Scoring And Qwen3 Audit",
+        "related_nodes": [
+          "kt.trading_engineering",
+          "kt.rag_engineering",
+          "kt.ai_feedback_governance"
+        ],
+        "partition_id": "KB_AI_23_LLM_AUDIT_ASSISTANT",
+        "domain": "llm_training",
+        "subdomain": "qwen3_audit_assistant",
+        "rule_type": "governance_rule",
+        "used_for": [
+          "llm_training",
+          "trading_gating_scoring",
+          "hybrid_scoring",
+          "rag_engineering",
+          "mcp",
+          "vue_audit_ui"
+        ]
+      },
+      "claim": {
+        "claim_id": "claim_001",
+        "statement": "thinking mode 只用于复杂审计，低延迟结构化检查可使用 non-thinking mode；不得保存私有 chain-of-thought，最终只保存 strict JSON、reason code、citation 和 audit summary",
+        "normalized_claim": "phase41.thinking_mode_non_thinking_mode_chain_of_thought_strict_json_reason_code_citation_audit_summary.v1",
+        "claim_type": "usage_policy_rule",
+        "model_role": "llm_audit_assistant",
+        "priority": "P0-Extended",
+        "evidence_summary": "Qwen3 documentation describes thinking and non-thinking mode usage and output separation.；Qwen quickstart documents model usage modes and version-specific behavior for Qwen3 variants.",
+        "interpretation_notes": "本候选只沉淀 AI Engineering 的模型选择、训练增强、校准不确定性、特征服务、Qwen3 审计助手或平台治理规则；交易规则本体必须路由到 Phase 37 / Trading Engineering。",
+        "claim_strength": "medium",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general",
+        "asset": "general",
+        "timeframe": "general",
+        "data_granularity": "general",
+        "project_type": "trading_llm_gating_scoring",
+        "applies_when": [
+          "外接项目已完成基本 hybrid scoring POC，正在评估增强模型、平台、解释、校准、不确定性、服务化或发布治理。",
+          "该规则用于限制增强能力的引入时机、职责边界、审计证据和回滚条件。"
+        ],
+        "not_applicable_when": [
+          "用户需要具体买卖点、仓位、止损止盈、K 线形态、策略参数或实盘订单执行。",
+          "知识点主要描述 fill model、订单状态机、实盘风控阈值、交易所异常处理或交易收益本体，应路由到 Trading Engineering。"
+        ],
+        "assumptions": [
+          "P0-Extended/P1 是增强能力，不应阻塞 POC 主链路。",
+          "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+        ],
+        "limitations": [
+          "本条仍是 candidate，需要外部 AI/人工审计确认来源充分性、适用边界和是否需要补充工程实例。",
+          "Thinking mode is an inference/audit configuration; it does not make Qwen3 a fact source, scorer, or final gate."
+        ]
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 区分必需能力与条件增强能力。",
+          "用于生成任务卡、接口契约、测试计划、审计 checklist 和候选知识补证问题。",
+          "用于阻断增强平台或模型能力绕过 deterministic final gate、人工审批和 RAG 引用边界。"
+        ],
+        "not_allowed": [
+          "不得据此生成买卖点、仓位、杠杆、止损止盈或实盘下单建议。",
+          "不得据此把 P1 平台工具变成默认依赖。",
+          "不得把 candidate 当作 reviewed/approved 默认指导。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_id": "src_qwen3_blog",
+          "source_title": "Qwen3: Think Deeper, Act Faster",
+          "source_url": "https://qwenlm.github.io/blog/qwen3/",
+          "source_type": "official_doc",
+          "publisher": "Qwen",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 84,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "Qwen3 documentation describes thinking and non-thinking mode usage and output separation.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_qwen_quickstart",
+          "source_title": "Qwen Quickstart documentation",
+          "source_url": "https://qwen.readthedocs.io/en/latest/getting_started/quickstart.html",
+          "source_type": "official_doc",
+          "publisher": "Qwen",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 84,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "Qwen quickstart documents model usage modes and version-specific behavior for Qwen3 variants.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_phase41_runtime",
+          "source_title": "Phase 41 hybrid scoring runtime contract",
+          "source_url": "docs/contracts/phase41_hybrid_scoring_runtime_contract.md",
+          "source_type": "internal_contract",
+          "publisher": "CEK-TA",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 88,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "Phase 41 runtime contract defines scorer, calibrator, Qwen3 audit assistant, RAG and deterministic final gate boundaries.",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "high",
+        "score": 85,
+        "score_version": "1.0.0",
+        "primary_source_count": 2,
+        "supporting_source_count": 1,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "增强能力来源多为官方文档、论文或内部契约；正式化时必须保留条件引入边界。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "checked_against": [
+          "docs/contracts/phase41_hybrid_scoring_runtime_contract.md",
+          "docs/contracts/phase41_tabular_llm_training_data_contract.md",
+          "docs/research/phase41_hybrid_scoring_qwen3_scope.md",
+          "docs/tasks/phase41_hybrid_scoring_qwen3_audit_stack.md"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与 Phase 41 契约的直接冲突；候选不会进入默认指导。",
+        "approval_allowed": false
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "candidate only; Phase 41 extended/P1 strict audit does not allow reviewed, approved, default guidance, or hard gate.",
+        "requires_human_escalation": true
+      },
+      "review": {
+        "confidence": "medium",
+        "freshness": "time_sensitive",
+        "reviewer": "external_ai_audit_plus_codex_import",
+        "reviewed_at": "2026-06-10",
+        "open_questions": [],
+        "audit_log": [
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "created",
+            "reason": "Phase 41 P0-Extended/P1 joint candidate expansion."
+          },
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "phase41_extended_p1_audit_accepted_for_draft",
+            "reason": "候选进入 formal draft 准备队列；不能直接 reviewed/approved。"
+          }
+        ],
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "reviewed_allowed": false,
+        "approved_allowed": false,
+        "ai_audit": {
+          "audit_result_id": "audit_result_phase41_extended_p1_candidate_audit_package_20260610_strict_v1",
+          "source_package_id": "phase41_extended_p1_candidate_audit_package_20260610",
+          "candidate_id": "cand_20260610_phase41_p41_e04_thinking_mode_non_thinking_mode_chain_of_thought_strict_json_reason_code_citation_audit_summary_001",
+          "research_task_id": "P41-E04",
+          "decision": "accepted_for_draft",
+          "reason": "Qwen3 official docs support thinking and non-thinking modes, and the Phase41 runtime contract supports saving only structured audit outputs.",
+          "source_patch_notes": [],
+          "content_patch_notes": [
+            "Formal draft must forbid storing private chain-of-thought; only strict JSON, reason codes, citations, unsupported_claims, and audit_summary may be retained."
+          ],
+          "boundary_patch_notes": [
+            "Thinking mode is an inference/audit configuration; it does not make Qwen3 a fact source, scorer, or final gate."
+          ],
+          "conflict_patch_notes": [
+            "workflow.hidden_from_default_queue=false conflicts with package hard boundary that candidate knowledge must not enter default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before any draft conversion."
+          ],
+          "required_followups": [],
+          "reviewed_allowed": false,
+          "approved_allowed": false,
+          "default_guidance_allowed": false,
+          "hard_gate_allowed": false,
+          "import_policy": "strict audit result may route candidates only; formal reviewed/approved creation is blocked."
+        }
+      },
+      "copyright": {
+        "stores_full_text": false,
+        "stores_long_quote": false,
+        "summary_only": true,
+        "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+        "reuse_risk": "low"
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_ai_hybrid_scoring.phase41.thinking_mode_non_thinking_mode_chain_of_thought_strict_json_reason_code_citation_audit_summary.v1",
+        "target_schema": "cek_ta_knowledge_item",
+        "target_review_status": "draft",
+        "skill_candidate": false,
+        "eval_case_candidate": true,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "workflow": {
+        "stage": "ai_audited",
+        "queue_group": "ai_passed",
+        "formal_knowledge_id": "kb_ai_hybrid_scoring.phase41.thinking_mode_non_thinking_mode_chain_of_thought_strict_json_reason_code_citation_audit_summary.v1",
+        "formal_review_status": "draft",
+        "ai_audit_result_id": "audit_result_phase41_extended_p1_candidate_audit_package_20260610_strict_v1",
+        "hidden_from_default_queue": true,
+        "next_action": "prepare_formal_draft_after_codex_patch_review",
+        "default_guidance_allowed": false,
+        "visible_in_default_guidance_queue": false
+      },
+      "phase41_trace": {
+        "priority": "P0-Extended",
+        "source_hint": "Qwen docs、Phase 41 runtime",
+        "related_contracts": [
+          "docs/contracts/phase41_hybrid_scoring_runtime_contract.md",
+          "docs/contracts/phase41_tabular_llm_training_data_contract.md",
+          "docs/research/phase41_hybrid_scoring_qwen3_scope.md",
+          "docs/tasks/phase41_hybrid_scoring_qwen3_audit_stack.md"
+        ],
+        "scope_boundary": "AI Engineering enhancement only; Trading Engineering knowledge body is reference-only.",
+        "audit_patch_notes": {
+          "source_patch_notes": [],
+          "content_patch_notes": [
+            "Formal draft must forbid storing private chain-of-thought; only strict JSON, reason codes, citations, unsupported_claims, and audit_summary may be retained."
+          ],
+          "boundary_patch_notes": [
+            "Thinking mode is an inference/audit configuration; it does not make Qwen3 a fact source, scorer, or final gate."
+          ],
+          "conflict_patch_notes": [
+            "workflow.hidden_from_default_queue=false conflicts with package hard boundary that candidate knowledge must not enter default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before any draft conversion."
+          ],
+          "required_followups": []
+        }
+      },
+      "_audit_export_meta": {
+        "source_file": "codex-expert-kit/rag/candidates/KB_AI_ENGINEERING/cand_20260610_phase41_p41_e04_thinking_mode_non_thinking_mode_chain_of_thought_strict_json_reason_code_citation_audit_summary_001.json",
+        "proposed_knowledge_id": "kb_ai_hybrid_scoring.phase41.thinking_mode_non_thinking_mode_chain_of_thought_strict_json_reason_code_citation_audit_summary.v1",
+        "formal_index_has_target": false,
+        "current_reviewed_allowed": false,
+        "current_queue_group": "ai_passed",
+        "current_stage": "ai_audited",
+        "current_formal_review_status": "draft",
+        "required_next_decision": "外部审计必须显式给出 reviewed_allowed=true，后续 Codex 才能生成 formal reviewed/caveat_only；否则继续 needs_more_evidence 或 rejected。"
+      }
+    },
+    {
+      "schema_version": "1.0.0",
+      "candidate_id": "cand_20260610_phase41_p41_e06_dpo_preference_pair_pnl_001",
+      "research_task_id": "P41-E06",
+      "status": {
+        "review_status": "accepted",
+        "ingestion_decision": "accepted_for_draft",
+        "decision_reason": "Phase 41 P0-Extended/P1 严格审计允许进入 formal draft 准备队列；不是 reviewed、approved 或默认指导。",
+        "created_at": "2026-06-10",
+        "updated_at": "2026-06-10"
+      },
+      "classification": {
+        "tree_node_id": "kt.ai_engineering.llm_audit_assistant.qwen3_training_recipe",
+        "canonical_node_id": "kt.ai_engineering.llm_audit_assistant.qwen3_training_recipe",
+        "tree_path": "CEK-TA / AI Engineering / Hybrid Scoring And Qwen3 Audit",
+        "related_nodes": [
+          "kt.trading_engineering",
+          "kt.rag_engineering",
+          "kt.ai_feedback_governance"
+        ],
+        "partition_id": "KB_AI_23_LLM_AUDIT_ASSISTANT",
+        "domain": "llm_training",
+        "subdomain": "qwen3_training_recipe",
+        "rule_type": "governance_rule",
+        "used_for": [
+          "llm_training",
+          "trading_gating_scoring",
+          "hybrid_scoring",
+          "rag_engineering",
+          "mcp",
+          "vue_audit_ui"
+        ]
+      },
+      "claim": {
+        "claim_id": "claim_001",
+        "statement": "DPO/preference pair 只能优化审计质量，不得以 PnL 高低直接构造偏好",
+        "normalized_claim": "phase41.dpo_preference_pair_pnl.v1",
+        "claim_type": "preference_training_rule",
+        "model_role": "llm_audit_assistant",
+        "priority": "P0-Extended",
+        "evidence_summary": "TRL documents Direct Preference Optimization as preference-pair training for language model alignment.；TRL documents SFT and preference optimization workflows for language model post-training.",
+        "interpretation_notes": "本候选只沉淀 AI Engineering 的模型选择、训练增强、校准不确定性、特征服务、Qwen3 审计助手或平台治理规则；交易规则本体必须路由到 Phase 37 / Trading Engineering。",
+        "claim_strength": "medium",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general",
+        "asset": "general",
+        "timeframe": "general",
+        "data_granularity": "general",
+        "project_type": "trading_llm_gating_scoring",
+        "applies_when": [
+          "外接项目已完成基本 hybrid scoring POC，正在评估增强模型、平台、解释、校准、不确定性、服务化或发布治理。",
+          "该规则用于限制增强能力的引入时机、职责边界、审计证据和回滚条件。"
+        ],
+        "not_applicable_when": [
+          "用户需要具体买卖点、仓位、止损止盈、K 线形态、策略参数或实盘订单执行。",
+          "知识点主要描述 fill model、订单状态机、实盘风控阈值、交易所异常处理或交易收益本体，应路由到 Trading Engineering。"
+        ],
+        "assumptions": [
+          "P0-Extended/P1 是增强能力，不应阻塞 POC 主链路。",
+          "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+        ],
+        "limitations": [
+          "本条仍是 candidate，需要外部 AI/人工审计确认来源充分性、适用边界和是否需要补充工程实例。",
+          "DPO-trained Qwen3 remains audit assistant only; it must not produce final trading decisions."
+        ]
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 区分必需能力与条件增强能力。",
+          "用于生成任务卡、接口契约、测试计划、审计 checklist 和候选知识补证问题。",
+          "用于阻断增强平台或模型能力绕过 deterministic final gate、人工审批和 RAG 引用边界。"
+        ],
+        "not_allowed": [
+          "不得据此生成买卖点、仓位、杠杆、止损止盈或实盘下单建议。",
+          "不得据此把 P1 平台工具变成默认依赖。",
+          "不得把 candidate 当作 reviewed/approved 默认指导。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_id": "src_trl_dpo",
+          "source_title": "DPO Trainer - Hugging Face TRL",
+          "source_url": "https://huggingface.co/docs/trl/en/dpo_trainer",
+          "source_type": "official_doc",
+          "publisher": "Hugging Face",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 84,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "TRL documents Direct Preference Optimization as preference-pair training for language model alignment.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_trl_docs",
+          "source_title": "TRL documentation - Hugging Face",
+          "source_url": "https://huggingface.co/docs/trl/",
+          "source_type": "official_doc",
+          "publisher": "Hugging Face",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 84,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "TRL documents SFT and preference optimization workflows for language model post-training.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_phase41_runtime",
+          "source_title": "Phase 41 hybrid scoring runtime contract",
+          "source_url": "docs/contracts/phase41_hybrid_scoring_runtime_contract.md",
+          "source_type": "internal_contract",
+          "publisher": "CEK-TA",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 88,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "Phase 41 runtime contract defines scorer, calibrator, Qwen3 audit assistant, RAG and deterministic final gate boundaries.",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "high",
+        "score": 85,
+        "score_version": "1.0.0",
+        "primary_source_count": 2,
+        "supporting_source_count": 1,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "增强能力来源多为官方文档、论文或内部契约；正式化时必须保留条件引入边界。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "checked_against": [
+          "docs/contracts/phase41_hybrid_scoring_runtime_contract.md",
+          "docs/contracts/phase41_tabular_llm_training_data_contract.md",
+          "docs/research/phase41_hybrid_scoring_qwen3_scope.md",
+          "docs/tasks/phase41_hybrid_scoring_qwen3_audit_stack.md"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与 Phase 41 契约的直接冲突；候选不会进入默认指导。",
+        "approval_allowed": false
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "candidate only; Phase 41 extended/P1 strict audit does not allow reviewed, approved, default guidance, or hard gate.",
+        "requires_human_escalation": true
+      },
+      "review": {
+        "confidence": "medium",
+        "freshness": "time_sensitive",
+        "reviewer": "external_ai_audit_plus_codex_import",
+        "reviewed_at": "2026-06-10",
+        "open_questions": [],
+        "audit_log": [
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "created",
+            "reason": "Phase 41 P0-Extended/P1 joint candidate expansion."
+          },
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "phase41_extended_p1_audit_accepted_for_draft",
+            "reason": "候选进入 formal draft 准备队列；不能直接 reviewed/approved。"
+          }
+        ],
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "reviewed_allowed": false,
+        "approved_allowed": false,
+        "ai_audit": {
+          "audit_result_id": "audit_result_phase41_extended_p1_candidate_audit_package_20260610_strict_v1",
+          "source_package_id": "phase41_extended_p1_candidate_audit_package_20260610",
+          "candidate_id": "cand_20260610_phase41_p41_e06_dpo_preference_pair_pnl_001",
+          "research_task_id": "P41-E06",
+          "decision": "accepted_for_draft",
+          "reason": "TRL DPO documentation supports preference pairs with chosen/rejected completions; accepted if preferences are audit-quality labels, not PnL/return labels.",
+          "source_patch_notes": [],
+          "content_patch_notes": [
+            "Preference dimensions must be schema validity, citation completeness, reason-code consistency, safe abstain, and unsupported-claim avoidance.",
+            "Do not construct chosen/rejected pairs from PnL alone."
+          ],
+          "boundary_patch_notes": [
+            "DPO-trained Qwen3 remains audit assistant only; it must not produce final trading decisions."
+          ],
+          "conflict_patch_notes": [
+            "workflow.hidden_from_default_queue=false conflicts with package hard boundary that candidate knowledge must not enter default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before any draft conversion."
+          ],
+          "required_followups": [],
+          "reviewed_allowed": false,
+          "approved_allowed": false,
+          "default_guidance_allowed": false,
+          "hard_gate_allowed": false,
+          "import_policy": "strict audit result may route candidates only; formal reviewed/approved creation is blocked."
+        }
+      },
+      "copyright": {
+        "stores_full_text": false,
+        "stores_long_quote": false,
+        "summary_only": true,
+        "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+        "reuse_risk": "low"
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_ai_hybrid_scoring.phase41.dpo_preference_pair_pnl.v1",
+        "target_schema": "cek_ta_knowledge_item",
+        "target_review_status": "draft",
+        "skill_candidate": false,
+        "eval_case_candidate": true,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "workflow": {
+        "stage": "ai_audited",
+        "queue_group": "ai_passed",
+        "formal_knowledge_id": "kb_ai_hybrid_scoring.phase41.dpo_preference_pair_pnl.v1",
+        "formal_review_status": "draft",
+        "ai_audit_result_id": "audit_result_phase41_extended_p1_candidate_audit_package_20260610_strict_v1",
+        "hidden_from_default_queue": true,
+        "next_action": "prepare_formal_draft_after_codex_patch_review",
+        "default_guidance_allowed": false,
+        "visible_in_default_guidance_queue": false
+      },
+      "phase41_trace": {
+        "priority": "P0-Extended",
+        "source_hint": "TRL DPO、Phase 41 data contract",
+        "related_contracts": [
+          "docs/contracts/phase41_hybrid_scoring_runtime_contract.md",
+          "docs/contracts/phase41_tabular_llm_training_data_contract.md",
+          "docs/research/phase41_hybrid_scoring_qwen3_scope.md",
+          "docs/tasks/phase41_hybrid_scoring_qwen3_audit_stack.md"
+        ],
+        "scope_boundary": "AI Engineering enhancement only; Trading Engineering knowledge body is reference-only.",
+        "audit_patch_notes": {
+          "source_patch_notes": [],
+          "content_patch_notes": [
+            "Preference dimensions must be schema validity, citation completeness, reason-code consistency, safe abstain, and unsupported-claim avoidance.",
+            "Do not construct chosen/rejected pairs from PnL alone."
+          ],
+          "boundary_patch_notes": [
+            "DPO-trained Qwen3 remains audit assistant only; it must not produce final trading decisions."
+          ],
+          "conflict_patch_notes": [
+            "workflow.hidden_from_default_queue=false conflicts with package hard boundary that candidate knowledge must not enter default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before any draft conversion."
+          ],
+          "required_followups": []
+        }
+      },
+      "_audit_export_meta": {
+        "source_file": "codex-expert-kit/rag/candidates/KB_AI_ENGINEERING/cand_20260610_phase41_p41_e06_dpo_preference_pair_pnl_001.json",
+        "proposed_knowledge_id": "kb_ai_hybrid_scoring.phase41.dpo_preference_pair_pnl.v1",
+        "formal_index_has_target": false,
+        "current_reviewed_allowed": false,
+        "current_queue_group": "ai_passed",
+        "current_stage": "ai_audited",
+        "current_formal_review_status": "draft",
+        "required_next_decision": "外部审计必须显式给出 reviewed_allowed=true，后续 Codex 才能生成 formal reviewed/caveat_only；否则继续 needs_more_evidence 或 rejected。"
+      }
+    },
+    {
+      "schema_version": "1.0.0",
+      "candidate_id": "cand_20260610_phase41_p41_e08_vllm_qwen_serving_001",
+      "research_task_id": "P41-E08",
+      "status": {
+        "review_status": "accepted",
+        "ingestion_decision": "accepted_for_draft",
+        "decision_reason": "Phase 41 P0-Extended/P1 严格审计允许进入 formal draft 准备队列；不是 reviewed、approved 或默认指导。",
+        "created_at": "2026-06-10",
+        "updated_at": "2026-06-10"
+      },
+      "classification": {
+        "tree_node_id": "kt.ai_engineering.llm_audit_assistant.qwen3_training_recipe",
+        "canonical_node_id": "kt.ai_engineering.llm_audit_assistant.qwen3_training_recipe",
+        "tree_path": "CEK-TA / AI Engineering / Hybrid Scoring And Qwen3 Audit",
+        "related_nodes": [
+          "kt.trading_engineering",
+          "kt.rag_engineering",
+          "kt.ai_feedback_governance"
+        ],
+        "partition_id": "KB_AI_23_LLM_AUDIT_ASSISTANT",
+        "domain": "llm_training",
+        "subdomain": "qwen3_training_recipe",
+        "rule_type": "governance_rule",
+        "used_for": [
+          "llm_training",
+          "trading_gating_scoring",
+          "hybrid_scoring",
+          "rag_engineering",
+          "mcp",
+          "vue_audit_ui"
+        ]
+      },
+      "claim": {
+        "claim_id": "claim_001",
+        "statement": "vLLM 或本地 Qwen serving 只在延迟、吞吐或离线批量审计需求明确后引入",
+        "normalized_claim": "phase41.vllm_qwen_serving.v1",
+        "claim_type": "serving_boundary_rule",
+        "model_role": "platform_governance",
+        "priority": "P1",
+        "evidence_summary": "vLLM documents online serving and OpenAI-compatible server interfaces for LLM serving.；vLLM serve documents serving options including scheduling controls relevant to latency and throughput.",
+        "interpretation_notes": "本候选只沉淀 AI Engineering 的模型选择、训练增强、校准不确定性、特征服务、Qwen3 审计助手或平台治理规则；交易规则本体必须路由到 Phase 37 / Trading Engineering。",
+        "claim_strength": "medium",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general",
+        "asset": "general",
+        "timeframe": "general",
+        "data_granularity": "general",
+        "project_type": "trading_llm_gating_scoring",
+        "applies_when": [
+          "外接项目已完成基本 hybrid scoring POC，正在评估增强模型、平台、解释、校准、不确定性、服务化或发布治理。",
+          "该规则用于限制增强能力的引入时机、职责边界、审计证据和回滚条件。"
+        ],
+        "not_applicable_when": [
+          "用户需要具体买卖点、仓位、止损止盈、K 线形态、策略参数或实盘订单执行。",
+          "知识点主要描述 fill model、订单状态机、实盘风控阈值、交易所异常处理或交易收益本体，应路由到 Trading Engineering。"
+        ],
+        "assumptions": [
+          "P0-Extended/P1 是增强能力，不应阻塞 POC 主链路。",
+          "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+        ],
+        "limitations": [
+          "本条仍是 candidate，需要外部 AI/人工审计确认来源充分性、适用边界和是否需要补充工程实例。",
+          "vLLM/Qwen serving is infrastructure only; it does not change Qwen3 audit-assistant permissions."
+        ]
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 区分必需能力与条件增强能力。",
+          "用于生成任务卡、接口契约、测试计划、审计 checklist 和候选知识补证问题。",
+          "用于阻断增强平台或模型能力绕过 deterministic final gate、人工审批和 RAG 引用边界。"
+        ],
+        "not_allowed": [
+          "不得据此生成买卖点、仓位、杠杆、止损止盈或实盘下单建议。",
+          "不得据此把 P1 平台工具变成默认依赖。",
+          "不得把 candidate 当作 reviewed/approved 默认指导。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_id": "src_vllm_docs",
+          "source_title": "Online Serving - vLLM documentation",
+          "source_url": "https://docs.vllm.ai/en/latest/serving/online_serving/",
+          "source_type": "official_doc",
+          "publisher": "vLLM",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 84,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "vLLM documents online serving and OpenAI-compatible server interfaces for LLM serving.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_vllm_serve",
+          "source_title": "vllm serve CLI documentation",
+          "source_url": "https://docs.vllm.ai/en/stable/cli/serve/",
+          "source_type": "official_doc",
+          "publisher": "vLLM",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 82,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "vLLM serve documents serving options including scheduling controls relevant to latency and throughput.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_qwen_quickstart",
+          "source_title": "Qwen Quickstart documentation",
+          "source_url": "https://qwen.readthedocs.io/en/latest/getting_started/quickstart.html",
+          "source_type": "official_doc",
+          "publisher": "Qwen",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 84,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "Qwen quickstart documents model usage modes and version-specific behavior for Qwen3 variants.",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "high",
+        "score": 83,
+        "score_version": "1.0.0",
+        "primary_source_count": 2,
+        "supporting_source_count": 1,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "增强能力来源多为官方文档、论文或内部契约；正式化时必须保留条件引入边界。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "checked_against": [
+          "docs/contracts/phase41_hybrid_scoring_runtime_contract.md",
+          "docs/contracts/phase41_tabular_llm_training_data_contract.md",
+          "docs/research/phase41_hybrid_scoring_qwen3_scope.md",
+          "docs/tasks/phase41_hybrid_scoring_qwen3_audit_stack.md"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与 Phase 41 契约的直接冲突；候选不会进入默认指导。",
+        "approval_allowed": false
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "candidate only; Phase 41 extended/P1 strict audit does not allow reviewed, approved, default guidance, or hard gate.",
+        "requires_human_escalation": true
+      },
+      "review": {
+        "confidence": "medium",
+        "freshness": "time_sensitive",
+        "reviewer": "external_ai_audit_plus_codex_import",
+        "reviewed_at": "2026-06-10",
+        "open_questions": [],
+        "audit_log": [
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "created",
+            "reason": "Phase 41 P0-Extended/P1 joint candidate expansion."
+          },
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "phase41_extended_p1_audit_accepted_for_draft",
+            "reason": "候选进入 formal draft 准备队列；不能直接 reviewed/approved。"
+          }
+        ],
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "reviewed_allowed": false,
+        "approved_allowed": false,
+        "ai_audit": {
+          "audit_result_id": "audit_result_phase41_extended_p1_candidate_audit_package_20260610_strict_v1",
+          "source_package_id": "phase41_extended_p1_candidate_audit_package_20260610",
+          "candidate_id": "cand_20260610_phase41_p41_e08_vllm_qwen_serving_001",
+          "research_task_id": "P41-E08",
+          "decision": "accepted_for_draft",
+          "reason": "vLLM documentation directly supports online serving and throughput-oriented LLM serving; Qwen docs support local/Qwen usage, so this is acceptable as P1 conditional serving guidance.",
+          "source_patch_notes": [],
+          "content_patch_notes": [
+            "Require latency/throughput requirement, batch-audit workload justification, rollback plan, and fallback-to-non-LLM audit path before vLLM/local Qwen serving adoption."
+          ],
+          "boundary_patch_notes": [
+            "vLLM/Qwen serving is infrastructure only; it does not change Qwen3 audit-assistant permissions."
+          ],
+          "conflict_patch_notes": [
+            "workflow.hidden_from_default_queue=false conflicts with package hard boundary that candidate knowledge must not enter default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before any draft conversion."
+          ],
+          "required_followups": [],
+          "reviewed_allowed": false,
+          "approved_allowed": false,
+          "default_guidance_allowed": false,
+          "hard_gate_allowed": false,
+          "import_policy": "strict audit result may route candidates only; formal reviewed/approved creation is blocked."
+        }
+      },
+      "copyright": {
+        "stores_full_text": false,
+        "stores_long_quote": false,
+        "summary_only": true,
+        "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+        "reuse_risk": "low"
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_ai_hybrid_scoring.phase41.vllm_qwen_serving.v1",
+        "target_schema": "cek_ta_knowledge_item",
+        "target_review_status": "draft",
+        "skill_candidate": false,
+        "eval_case_candidate": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "workflow": {
+        "stage": "ai_audited",
+        "queue_group": "ai_passed",
+        "formal_knowledge_id": "kb_ai_hybrid_scoring.phase41.vllm_qwen_serving.v1",
+        "formal_review_status": "draft",
+        "ai_audit_result_id": "audit_result_phase41_extended_p1_candidate_audit_package_20260610_strict_v1",
+        "hidden_from_default_queue": true,
+        "next_action": "prepare_formal_draft_after_codex_patch_review",
+        "default_guidance_allowed": false,
+        "visible_in_default_guidance_queue": false
+      },
+      "phase41_trace": {
+        "priority": "P1",
+        "source_hint": "vLLM docs、Qwen docs",
+        "related_contracts": [
+          "docs/contracts/phase41_hybrid_scoring_runtime_contract.md",
+          "docs/contracts/phase41_tabular_llm_training_data_contract.md",
+          "docs/research/phase41_hybrid_scoring_qwen3_scope.md",
+          "docs/tasks/phase41_hybrid_scoring_qwen3_audit_stack.md"
+        ],
+        "scope_boundary": "AI Engineering enhancement only; Trading Engineering knowledge body is reference-only.",
+        "audit_patch_notes": {
+          "source_patch_notes": [],
+          "content_patch_notes": [
+            "Require latency/throughput requirement, batch-audit workload justification, rollback plan, and fallback-to-non-LLM audit path before vLLM/local Qwen serving adoption."
+          ],
+          "boundary_patch_notes": [
+            "vLLM/Qwen serving is infrastructure only; it does not change Qwen3 audit-assistant permissions."
+          ],
+          "conflict_patch_notes": [
+            "workflow.hidden_from_default_queue=false conflicts with package hard boundary that candidate knowledge must not enter default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before any draft conversion."
+          ],
+          "required_followups": []
+        }
+      },
+      "_audit_export_meta": {
+        "source_file": "codex-expert-kit/rag/candidates/KB_AI_ENGINEERING/cand_20260610_phase41_p41_e08_vllm_qwen_serving_001.json",
+        "proposed_knowledge_id": "kb_ai_hybrid_scoring.phase41.vllm_qwen_serving.v1",
+        "formal_index_has_target": false,
+        "current_reviewed_allowed": false,
+        "current_queue_group": "ai_passed",
+        "current_stage": "ai_audited",
+        "current_formal_review_status": "draft",
+        "required_next_decision": "外部审计必须显式给出 reviewed_allowed=true，后续 Codex 才能生成 formal reviewed/caveat_only；否则继续 needs_more_evidence 或 rejected。"
+      }
+    },
+    {
+      "schema_version": "1.0.0",
+      "candidate_id": "cand_20260610_phase41_p41_f03_hybrid_scoring_audit_trace_scorer_calibrator_rag_qwen3_final_gate_001",
+      "research_task_id": "P41-F03",
+      "status": {
+        "review_status": "accepted",
+        "ingestion_decision": "accepted_for_draft",
+        "decision_reason": "Phase 41 P0-Extended/P1 严格审计允许进入 formal draft 准备队列；不是 reviewed、approved 或默认指导。",
+        "created_at": "2026-06-10",
+        "updated_at": "2026-06-10"
+      },
+      "classification": {
+        "tree_node_id": "kt.ai_engineering.model_release_governance.hybrid_runtime_contract",
+        "canonical_node_id": "kt.ai_engineering.model_release_governance.hybrid_runtime_contract",
+        "tree_path": "CEK-TA / AI Engineering / Hybrid Scoring And Qwen3 Audit",
+        "related_nodes": [
+          "kt.trading_engineering",
+          "kt.rag_engineering",
+          "kt.ai_feedback_governance"
+        ],
+        "partition_id": "KB_AI_25_MODEL_RELEASE_GOVERNANCE",
+        "domain": "ai_governance",
+        "subdomain": "hybrid_runtime_contract",
+        "rule_type": "governance_rule",
+        "used_for": [
+          "llm_training",
+          "trading_gating_scoring",
+          "hybrid_scoring",
+          "rag_engineering",
+          "mcp",
+          "vue_audit_ui"
+        ]
+      },
+      "claim": {
+        "claim_id": "claim_001",
+        "statement": "每次 hybrid scoring 必须记录 audit trace，串联输入、scorer、calibrator、RAG、Qwen3 和 final gate 输出",
+        "normalized_claim": "phase41.hybrid_scoring_audit_trace_scorer_calibrator_rag_qwen3_final_gate.v1",
+        "claim_type": "observability_rule",
+        "model_role": "final_gate",
+        "priority": "P0-Extended",
+        "evidence_summary": "Phase 41 runtime contract defines scorer, calibrator, Qwen3 audit assistant, RAG and deterministic final gate boundaries.；NIST AI RMF provides governance practices for mapping, measuring and managing AI risks.",
+        "interpretation_notes": "本候选只沉淀 AI Engineering 的模型选择、训练增强、校准不确定性、特征服务、Qwen3 审计助手或平台治理规则；交易规则本体必须路由到 Phase 37 / Trading Engineering。",
+        "claim_strength": "medium",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general",
+        "asset": "general",
+        "timeframe": "general",
+        "data_granularity": "general",
+        "project_type": "trading_llm_gating_scoring",
+        "applies_when": [
+          "外接项目已完成基本 hybrid scoring POC，正在评估增强模型、平台、解释、校准、不确定性、服务化或发布治理。",
+          "该规则用于限制增强能力的引入时机、职责边界、审计证据和回滚条件。"
+        ],
+        "not_applicable_when": [
+          "用户需要具体买卖点、仓位、止损止盈、K 线形态、策略参数或实盘订单执行。",
+          "知识点主要描述 fill model、订单状态机、实盘风控阈值、交易所异常处理或交易收益本体，应路由到 Trading Engineering。"
+        ],
+        "assumptions": [
+          "P0-Extended/P1 是增强能力，不应阻塞 POC 主链路。",
+          "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+        ],
+        "limitations": [
+          "本条仍是 candidate，需要外部 AI/人工审计确认来源充分性、适用边界和是否需要补充工程实例。",
+          "Audit trace is for audit/replay only; it must not expose account secrets, raw private strategy bodies, or execution parameters."
+        ]
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 区分必需能力与条件增强能力。",
+          "用于生成任务卡、接口契约、测试计划、审计 checklist 和候选知识补证问题。",
+          "用于阻断增强平台或模型能力绕过 deterministic final gate、人工审批和 RAG 引用边界。"
+        ],
+        "not_allowed": [
+          "不得据此生成买卖点、仓位、杠杆、止损止盈或实盘下单建议。",
+          "不得据此把 P1 平台工具变成默认依赖。",
+          "不得把 candidate 当作 reviewed/approved 默认指导。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_id": "src_phase41_runtime",
+          "source_title": "Phase 41 hybrid scoring runtime contract",
+          "source_url": "docs/contracts/phase41_hybrid_scoring_runtime_contract.md",
+          "source_type": "internal_contract",
+          "publisher": "CEK-TA",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 88,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "Phase 41 runtime contract defines scorer, calibrator, Qwen3 audit assistant, RAG and deterministic final gate boundaries.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_nist_ai_rmf",
+          "source_title": "NIST AI Risk Management Framework",
+          "source_url": "https://www.nist.gov/itl/ai-risk-management-framework",
+          "source_type": "governance_framework",
+          "publisher": "NIST",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 88,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "NIST AI RMF provides governance practices for mapping, measuring and managing AI risks.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_mlflow_registry",
+          "source_title": "MLflow Model Registry",
+          "source_url": "https://mlflow.org/docs/latest/ml/model-registry/",
+          "source_type": "official_doc",
+          "publisher": "MLflow",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 84,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "MLflow Model Registry documents registered models, versions, aliases, tags and lifecycle metadata.",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "high",
+        "score": 87,
+        "score_version": "1.0.0",
+        "primary_source_count": 2,
+        "supporting_source_count": 1,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "增强能力来源多为官方文档、论文或内部契约；正式化时必须保留条件引入边界。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "checked_against": [
+          "docs/contracts/phase41_hybrid_scoring_runtime_contract.md",
+          "docs/contracts/phase41_tabular_llm_training_data_contract.md",
+          "docs/research/phase41_hybrid_scoring_qwen3_scope.md",
+          "docs/tasks/phase41_hybrid_scoring_qwen3_audit_stack.md"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与 Phase 41 契约的直接冲突；候选不会进入默认指导。",
+        "approval_allowed": false
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "candidate only; Phase 41 extended/P1 strict audit does not allow reviewed, approved, default guidance, or hard gate.",
+        "requires_human_escalation": true
+      },
+      "review": {
+        "confidence": "medium",
+        "freshness": "time_sensitive",
+        "reviewer": "external_ai_audit_plus_codex_import",
+        "reviewed_at": "2026-06-10",
+        "open_questions": [],
+        "audit_log": [
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "created",
+            "reason": "Phase 41 P0-Extended/P1 joint candidate expansion."
+          },
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "phase41_extended_p1_audit_accepted_for_draft",
+            "reason": "候选进入 formal draft 准备队列；不能直接 reviewed/approved。"
+          }
+        ],
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "reviewed_allowed": false,
+        "approved_allowed": false,
+        "ai_audit": {
+          "audit_result_id": "audit_result_phase41_extended_p1_candidate_audit_package_20260610_strict_v1",
+          "source_package_id": "phase41_extended_p1_candidate_audit_package_20260610",
+          "candidate_id": "cand_20260610_phase41_p41_f03_hybrid_scoring_audit_trace_scorer_calibrator_rag_qwen3_final_gate_001",
+          "research_task_id": "P41-F03",
+          "decision": "accepted_for_draft",
+          "reason": "The Phase41 runtime contract, NIST governance, and MLflow versioning support a replayable hybrid-scoring audit trace at draft level.",
+          "source_patch_notes": [],
+          "content_patch_notes": [
+            "Define audit trace fields: request_id, input_snapshot_ref, scorer_version, scorer_output_ref, calibrator_version, calibrated_probability, rag_refs, qwen_output_ref, threshold_policy_version, final_gate_decision_ref, latency_ms, fallback_path."
+          ],
+          "boundary_patch_notes": [
+            "Audit trace is for audit/replay only; it must not expose account secrets, raw private strategy bodies, or execution parameters."
+          ],
+          "conflict_patch_notes": [
+            "workflow.hidden_from_default_queue=false conflicts with package hard boundary that candidate knowledge must not enter default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before any draft conversion."
+          ],
+          "required_followups": [],
+          "reviewed_allowed": false,
+          "approved_allowed": false,
+          "default_guidance_allowed": false,
+          "hard_gate_allowed": false,
+          "import_policy": "strict audit result may route candidates only; formal reviewed/approved creation is blocked."
+        }
+      },
+      "copyright": {
+        "stores_full_text": false,
+        "stores_long_quote": false,
+        "summary_only": true,
+        "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+        "reuse_risk": "low"
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_ai_hybrid_scoring.phase41.hybrid_scoring_audit_trace_scorer_calibrator_rag_qwen3_final_gate.v1",
+        "target_schema": "cek_ta_knowledge_item",
+        "target_review_status": "draft",
+        "skill_candidate": false,
+        "eval_case_candidate": true,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "workflow": {
+        "stage": "ai_audited",
+        "queue_group": "ai_passed",
+        "formal_knowledge_id": "kb_ai_hybrid_scoring.phase41.hybrid_scoring_audit_trace_scorer_calibrator_rag_qwen3_final_gate.v1",
+        "formal_review_status": "draft",
+        "ai_audit_result_id": "audit_result_phase41_extended_p1_candidate_audit_package_20260610_strict_v1",
+        "hidden_from_default_queue": true,
+        "next_action": "prepare_formal_draft_after_codex_patch_review",
+        "default_guidance_allowed": false,
+        "visible_in_default_guidance_queue": false
+      },
+      "phase41_trace": {
+        "priority": "P0-Extended",
+        "source_hint": "Phase 41 runtime contract",
+        "related_contracts": [
+          "docs/contracts/phase41_hybrid_scoring_runtime_contract.md",
+          "docs/contracts/phase41_tabular_llm_training_data_contract.md",
+          "docs/research/phase41_hybrid_scoring_qwen3_scope.md",
+          "docs/tasks/phase41_hybrid_scoring_qwen3_audit_stack.md"
+        ],
+        "scope_boundary": "AI Engineering enhancement only; Trading Engineering knowledge body is reference-only.",
+        "audit_patch_notes": {
+          "source_patch_notes": [],
+          "content_patch_notes": [
+            "Define audit trace fields: request_id, input_snapshot_ref, scorer_version, scorer_output_ref, calibrator_version, calibrated_probability, rag_refs, qwen_output_ref, threshold_policy_version, final_gate_decision_ref, latency_ms, fallback_path."
+          ],
+          "boundary_patch_notes": [
+            "Audit trace is for audit/replay only; it must not expose account secrets, raw private strategy bodies, or execution parameters."
+          ],
+          "conflict_patch_notes": [
+            "workflow.hidden_from_default_queue=false conflicts with package hard boundary that candidate knowledge must not enter default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before any draft conversion."
+          ],
+          "required_followups": []
+        }
+      },
+      "_audit_export_meta": {
+        "source_file": "codex-expert-kit/rag/candidates/KB_AI_ENGINEERING/cand_20260610_phase41_p41_f03_hybrid_scoring_audit_trace_scorer_calibrator_rag_qwen3_final_gate_001.json",
+        "proposed_knowledge_id": "kb_ai_hybrid_scoring.phase41.hybrid_scoring_audit_trace_scorer_calibrator_rag_qwen3_final_gate.v1",
+        "formal_index_has_target": false,
+        "current_reviewed_allowed": false,
+        "current_queue_group": "ai_passed",
+        "current_stage": "ai_audited",
+        "current_formal_review_status": "draft",
+        "required_next_decision": "外部审计必须显式给出 reviewed_allowed=true，后续 Codex 才能生成 formal reviewed/caveat_only；否则继续 needs_more_evidence 或 rejected。"
+      }
+    },
+    {
+      "schema_version": "1.0.0",
+      "candidate_id": "cand_20260610_phase41_p41_f05_mlflow_registry_release_manifest_poc_registry_001",
+      "research_task_id": "P41-F05",
+      "status": {
+        "review_status": "accepted",
+        "ingestion_decision": "accepted_for_draft",
+        "decision_reason": "Phase 41 P0-Extended/P1 严格审计允许进入 formal draft 准备队列；不是 reviewed、approved 或默认指导。",
+        "created_at": "2026-06-10",
+        "updated_at": "2026-06-10"
+      },
+      "classification": {
+        "tree_node_id": "kt.ai_engineering.model_release_governance.training_platform_governance",
+        "canonical_node_id": "kt.ai_engineering.model_release_governance.training_platform_governance",
+        "tree_path": "CEK-TA / AI Engineering / Hybrid Scoring And Qwen3 Audit",
+        "related_nodes": [
+          "kt.trading_engineering",
+          "kt.rag_engineering",
+          "kt.ai_feedback_governance"
+        ],
+        "partition_id": "KB_AI_25_MODEL_RELEASE_GOVERNANCE",
+        "domain": "ai_governance",
+        "subdomain": "training_platform_governance",
+        "rule_type": "governance_rule",
+        "used_for": [
+          "llm_training",
+          "trading_gating_scoring",
+          "hybrid_scoring",
+          "rag_engineering",
+          "mcp",
+          "vue_audit_ui"
+        ]
+      },
+      "claim": {
+        "claim_id": "claim_001",
+        "statement": "MLflow registry 只有在模型版本和 release manifest 复杂度上升时引入，POC 可先用文件化 registry",
+        "normalized_claim": "phase41.mlflow_registry_release_manifest_poc_registry.v1",
+        "claim_type": "platform_boundary_rule",
+        "model_role": "platform_governance",
+        "priority": "P1",
+        "evidence_summary": "MLflow Model Registry documents registered models, versions, aliases, tags and lifecycle metadata.；Phase 41 runtime contract defines scorer, calibrator, Qwen3 audit assistant, RAG and deterministic final gate boundaries.",
+        "interpretation_notes": "本候选只沉淀 AI Engineering 的模型选择、训练增强、校准不确定性、特征服务、Qwen3 审计助手或平台治理规则；交易规则本体必须路由到 Phase 37 / Trading Engineering。",
+        "claim_strength": "medium",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general",
+        "asset": "general",
+        "timeframe": "general",
+        "data_granularity": "general",
+        "project_type": "trading_llm_gating_scoring",
+        "applies_when": [
+          "外接项目已完成基本 hybrid scoring POC，正在评估增强模型、平台、解释、校准、不确定性、服务化或发布治理。",
+          "该规则用于限制增强能力的引入时机、职责边界、审计证据和回滚条件。"
+        ],
+        "not_applicable_when": [
+          "用户需要具体买卖点、仓位、止损止盈、K 线形态、策略参数或实盘订单执行。",
+          "知识点主要描述 fill model、订单状态机、实盘风控阈值、交易所异常处理或交易收益本体，应路由到 Trading Engineering。"
+        ],
+        "assumptions": [
+          "P0-Extended/P1 是增强能力，不应阻塞 POC 主链路。",
+          "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+        ],
+        "limitations": [
+          "本条仍是 candidate，需要外部 AI/人工审计确认来源充分性、适用边界和是否需要补充工程实例。",
+          "MLflow registry does not approve trading releases; owner approval and deterministic final gate remain separate."
+        ]
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 区分必需能力与条件增强能力。",
+          "用于生成任务卡、接口契约、测试计划、审计 checklist 和候选知识补证问题。",
+          "用于阻断增强平台或模型能力绕过 deterministic final gate、人工审批和 RAG 引用边界。"
+        ],
+        "not_allowed": [
+          "不得据此生成买卖点、仓位、杠杆、止损止盈或实盘下单建议。",
+          "不得据此把 P1 平台工具变成默认依赖。",
+          "不得把 candidate 当作 reviewed/approved 默认指导。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_id": "src_mlflow_registry",
+          "source_title": "MLflow Model Registry",
+          "source_url": "https://mlflow.org/docs/latest/ml/model-registry/",
+          "source_type": "official_doc",
+          "publisher": "MLflow",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 84,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "MLflow Model Registry documents registered models, versions, aliases, tags and lifecycle metadata.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_phase41_runtime",
+          "source_title": "Phase 41 hybrid scoring runtime contract",
+          "source_url": "docs/contracts/phase41_hybrid_scoring_runtime_contract.md",
+          "source_type": "internal_contract",
+          "publisher": "CEK-TA",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 88,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "Phase 41 runtime contract defines scorer, calibrator, Qwen3 audit assistant, RAG and deterministic final gate boundaries.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_nist_ai_rmf",
+          "source_title": "NIST AI Risk Management Framework",
+          "source_url": "https://www.nist.gov/itl/ai-risk-management-framework",
+          "source_type": "governance_framework",
+          "publisher": "NIST",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 88,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "NIST AI RMF provides governance practices for mapping, measuring and managing AI risks.",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "high",
+        "score": 87,
+        "score_version": "1.0.0",
+        "primary_source_count": 2,
+        "supporting_source_count": 1,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "增强能力来源多为官方文档、论文或内部契约；正式化时必须保留条件引入边界。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "checked_against": [
+          "docs/contracts/phase41_hybrid_scoring_runtime_contract.md",
+          "docs/contracts/phase41_tabular_llm_training_data_contract.md",
+          "docs/research/phase41_hybrid_scoring_qwen3_scope.md",
+          "docs/tasks/phase41_hybrid_scoring_qwen3_audit_stack.md"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与 Phase 41 契约的直接冲突；候选不会进入默认指导。",
+        "approval_allowed": false
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "candidate only; Phase 41 extended/P1 strict audit does not allow reviewed, approved, default guidance, or hard gate.",
+        "requires_human_escalation": true
+      },
+      "review": {
+        "confidence": "medium",
+        "freshness": "time_sensitive",
+        "reviewer": "external_ai_audit_plus_codex_import",
+        "reviewed_at": "2026-06-10",
+        "open_questions": [],
+        "audit_log": [
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "created",
+            "reason": "Phase 41 P0-Extended/P1 joint candidate expansion."
+          },
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "phase41_extended_p1_audit_accepted_for_draft",
+            "reason": "候选进入 formal draft 准备队列；不能直接 reviewed/approved。"
+          }
+        ],
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "reviewed_allowed": false,
+        "approved_allowed": false,
+        "ai_audit": {
+          "audit_result_id": "audit_result_phase41_extended_p1_candidate_audit_package_20260610_strict_v1",
+          "source_package_id": "phase41_extended_p1_candidate_audit_package_20260610",
+          "candidate_id": "cand_20260610_phase41_p41_f05_mlflow_registry_release_manifest_poc_registry_001",
+          "research_task_id": "P41-F05",
+          "decision": "accepted_for_draft",
+          "reason": "MLflow registry documentation supports versioning, aliases, tags and metadata; accepted as P1 conditional adoption with file-based registry allowed for POC.",
+          "source_patch_notes": [],
+          "content_patch_notes": [
+            "Define trigger threshold for MLflow adoption: multiple model versions, calibrator versions, prompt/RAG versions, or release manifest complexity beyond file registry."
+          ],
+          "boundary_patch_notes": [
+            "MLflow registry does not approve trading releases; owner approval and deterministic final gate remain separate."
+          ],
+          "conflict_patch_notes": [
+            "workflow.hidden_from_default_queue=false conflicts with package hard boundary that candidate knowledge must not enter default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before any draft conversion."
+          ],
+          "required_followups": [],
+          "reviewed_allowed": false,
+          "approved_allowed": false,
+          "default_guidance_allowed": false,
+          "hard_gate_allowed": false,
+          "import_policy": "strict audit result may route candidates only; formal reviewed/approved creation is blocked."
+        }
+      },
+      "copyright": {
+        "stores_full_text": false,
+        "stores_long_quote": false,
+        "summary_only": true,
+        "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+        "reuse_risk": "low"
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_ai_hybrid_scoring.phase41.mlflow_registry_release_manifest_poc_registry.v1",
+        "target_schema": "cek_ta_knowledge_item",
+        "target_review_status": "draft",
+        "skill_candidate": false,
+        "eval_case_candidate": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "workflow": {
+        "stage": "ai_audited",
+        "queue_group": "ai_passed",
+        "formal_knowledge_id": "kb_ai_hybrid_scoring.phase41.mlflow_registry_release_manifest_poc_registry.v1",
+        "formal_review_status": "draft",
+        "ai_audit_result_id": "audit_result_phase41_extended_p1_candidate_audit_package_20260610_strict_v1",
+        "hidden_from_default_queue": true,
+        "next_action": "prepare_formal_draft_after_codex_patch_review",
+        "default_guidance_allowed": false,
+        "visible_in_default_guidance_queue": false
+      },
+      "phase41_trace": {
+        "priority": "P1",
+        "source_hint": "MLflow docs",
+        "related_contracts": [
+          "docs/contracts/phase41_hybrid_scoring_runtime_contract.md",
+          "docs/contracts/phase41_tabular_llm_training_data_contract.md",
+          "docs/research/phase41_hybrid_scoring_qwen3_scope.md",
+          "docs/tasks/phase41_hybrid_scoring_qwen3_audit_stack.md"
+        ],
+        "scope_boundary": "AI Engineering enhancement only; Trading Engineering knowledge body is reference-only.",
+        "audit_patch_notes": {
+          "source_patch_notes": [],
+          "content_patch_notes": [
+            "Define trigger threshold for MLflow adoption: multiple model versions, calibrator versions, prompt/RAG versions, or release manifest complexity beyond file registry."
+          ],
+          "boundary_patch_notes": [
+            "MLflow registry does not approve trading releases; owner approval and deterministic final gate remain separate."
+          ],
+          "conflict_patch_notes": [
+            "workflow.hidden_from_default_queue=false conflicts with package hard boundary that candidate knowledge must not enter default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before any draft conversion."
+          ],
+          "required_followups": []
+        }
+      },
+      "_audit_export_meta": {
+        "source_file": "codex-expert-kit/rag/candidates/KB_AI_ENGINEERING/cand_20260610_phase41_p41_f05_mlflow_registry_release_manifest_poc_registry_001.json",
+        "proposed_knowledge_id": "kb_ai_hybrid_scoring.phase41.mlflow_registry_release_manifest_poc_registry.v1",
+        "formal_index_has_target": false,
+        "current_reviewed_allowed": false,
+        "current_queue_group": "ai_passed",
+        "current_stage": "ai_audited",
+        "current_formal_review_status": "draft",
+        "required_next_decision": "外部审计必须显式给出 reviewed_allowed=true，后续 Codex 才能生成 formal reviewed/caveat_only；否则继续 needs_more_evidence 或 rejected。"
+      }
+    },
+    {
+      "schema_version": "1.0.0",
+      "candidate_id": "cand_20260610_phase41_p41_f06_ray_kubeflow_phase_41_001",
+      "research_task_id": "P41-F06",
+      "status": {
+        "review_status": "accepted",
+        "ingestion_decision": "accepted_for_draft",
+        "decision_reason": "Phase 41 P0-Extended/P1 严格审计允许进入 formal draft 准备队列；不是 reviewed、approved 或默认指导。",
+        "created_at": "2026-06-10",
+        "updated_at": "2026-06-10"
+      },
+      "classification": {
+        "tree_node_id": "kt.ai_engineering.model_release_governance.training_platform_governance",
+        "canonical_node_id": "kt.ai_engineering.model_release_governance.training_platform_governance",
+        "tree_path": "CEK-TA / AI Engineering / Hybrid Scoring And Qwen3 Audit",
+        "related_nodes": [
+          "kt.trading_engineering",
+          "kt.rag_engineering",
+          "kt.ai_feedback_governance"
+        ],
+        "partition_id": "KB_AI_25_MODEL_RELEASE_GOVERNANCE",
+        "domain": "ai_governance",
+        "subdomain": "training_platform_governance",
+        "rule_type": "governance_rule",
+        "used_for": [
+          "llm_training",
+          "trading_gating_scoring",
+          "hybrid_scoring",
+          "rag_engineering",
+          "mcp",
+          "vue_audit_ui"
+        ]
+      },
+      "claim": {
+        "claim_id": "claim_001",
+        "statement": "Ray/Kubeflow 只在分布式训练或流水线编排需求明确后引入，不作为 Phase 41 默认依赖",
+        "normalized_claim": "phase41.ray_kubeflow_phase_41.v1",
+        "claim_type": "platform_boundary_rule",
+        "model_role": "platform_governance",
+        "priority": "P1",
+        "evidence_summary": "Ray Train documents scalable model training and distributed fine-tuning across clusters.；Kubeflow Pipelines documents portable and scalable ML workflows on Kubernetes.",
+        "interpretation_notes": "本候选只沉淀 AI Engineering 的模型选择、训练增强、校准不确定性、特征服务、Qwen3 审计助手或平台治理规则；交易规则本体必须路由到 Phase 37 / Trading Engineering。",
+        "claim_strength": "medium",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general",
+        "asset": "general",
+        "timeframe": "general",
+        "data_granularity": "general",
+        "project_type": "trading_llm_gating_scoring",
+        "applies_when": [
+          "外接项目已完成基本 hybrid scoring POC，正在评估增强模型、平台、解释、校准、不确定性、服务化或发布治理。",
+          "该规则用于限制增强能力的引入时机、职责边界、审计证据和回滚条件。"
+        ],
+        "not_applicable_when": [
+          "用户需要具体买卖点、仓位、止损止盈、K 线形态、策略参数或实盘订单执行。",
+          "知识点主要描述 fill model、订单状态机、实盘风控阈值、交易所异常处理或交易收益本体，应路由到 Trading Engineering。"
+        ],
+        "assumptions": [
+          "P0-Extended/P1 是增强能力，不应阻塞 POC 主链路。",
+          "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+        ],
+        "limitations": [
+          "本条仍是 candidate，需要外部 AI/人工审计确认来源充分性、适用边界和是否需要补充工程实例。",
+          "Ray/Kubeflow must not become default dependency or centralize private strategy bodies."
+        ]
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 区分必需能力与条件增强能力。",
+          "用于生成任务卡、接口契约、测试计划、审计 checklist 和候选知识补证问题。",
+          "用于阻断增强平台或模型能力绕过 deterministic final gate、人工审批和 RAG 引用边界。"
+        ],
+        "not_allowed": [
+          "不得据此生成买卖点、仓位、杠杆、止损止盈或实盘下单建议。",
+          "不得据此把 P1 平台工具变成默认依赖。",
+          "不得把 candidate 当作 reviewed/approved 默认指导。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_id": "src_ray_train",
+          "source_title": "Ray Train documentation",
+          "source_url": "https://docs.ray.io/en/latest/train/train.html",
+          "source_type": "official_doc",
+          "publisher": "Ray",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 84,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "Ray Train documents scalable model training and distributed fine-tuning across clusters.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_kubeflow_pipelines",
+          "source_title": "Kubeflow Pipelines documentation",
+          "source_url": "https://www.kubeflow.org/docs/components/pipelines/concepts/pipeline/",
+          "source_type": "official_doc",
+          "publisher": "Kubeflow",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 84,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "Kubeflow Pipelines documents portable and scalable ML workflows on Kubernetes.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_phase41_runtime",
+          "source_title": "Phase 41 hybrid scoring runtime contract",
+          "source_url": "docs/contracts/phase41_hybrid_scoring_runtime_contract.md",
+          "source_type": "internal_contract",
+          "publisher": "CEK-TA",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 88,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "Phase 41 runtime contract defines scorer, calibrator, Qwen3 audit assistant, RAG and deterministic final gate boundaries.",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "high",
+        "score": 85,
+        "score_version": "1.0.0",
+        "primary_source_count": 2,
+        "supporting_source_count": 1,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "增强能力来源多为官方文档、论文或内部契约；正式化时必须保留条件引入边界。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "checked_against": [
+          "docs/contracts/phase41_hybrid_scoring_runtime_contract.md",
+          "docs/contracts/phase41_tabular_llm_training_data_contract.md",
+          "docs/research/phase41_hybrid_scoring_qwen3_scope.md",
+          "docs/tasks/phase41_hybrid_scoring_qwen3_audit_stack.md"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与 Phase 41 契约的直接冲突；候选不会进入默认指导。",
+        "approval_allowed": false
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "candidate only; Phase 41 extended/P1 strict audit does not allow reviewed, approved, default guidance, or hard gate.",
+        "requires_human_escalation": true
+      },
+      "review": {
+        "confidence": "medium",
+        "freshness": "time_sensitive",
+        "reviewer": "external_ai_audit_plus_codex_import",
+        "reviewed_at": "2026-06-10",
+        "open_questions": [],
+        "audit_log": [
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "created",
+            "reason": "Phase 41 P0-Extended/P1 joint candidate expansion."
+          },
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "phase41_extended_p1_audit_accepted_for_draft",
+            "reason": "候选进入 formal draft 准备队列；不能直接 reviewed/approved。"
+          }
+        ],
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "reviewed_allowed": false,
+        "approved_allowed": false,
+        "ai_audit": {
+          "audit_result_id": "audit_result_phase41_extended_p1_candidate_audit_package_20260610_strict_v1",
+          "source_package_id": "phase41_extended_p1_candidate_audit_package_20260610",
+          "candidate_id": "cand_20260610_phase41_p41_f06_ray_kubeflow_phase_41_001",
+          "research_task_id": "P41-F06",
+          "decision": "accepted_for_draft",
+          "reason": "Ray Train and Kubeflow Pipeline official docs support distributed training and workflow orchestration; accepted as P1 conditional platform guidance.",
+          "source_patch_notes": [],
+          "content_patch_notes": [
+            "Require distributed_training_need=true or pipeline_orchestration_need=true; otherwise keep POC file-based/simple runner approach."
+          ],
+          "boundary_patch_notes": [
+            "Ray/Kubeflow must not become default dependency or centralize private strategy bodies."
+          ],
+          "conflict_patch_notes": [
+            "workflow.hidden_from_default_queue=false conflicts with package hard boundary that candidate knowledge must not enter default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before any draft conversion."
+          ],
+          "required_followups": [],
+          "reviewed_allowed": false,
+          "approved_allowed": false,
+          "default_guidance_allowed": false,
+          "hard_gate_allowed": false,
+          "import_policy": "strict audit result may route candidates only; formal reviewed/approved creation is blocked."
+        }
+      },
+      "copyright": {
+        "stores_full_text": false,
+        "stores_long_quote": false,
+        "summary_only": true,
+        "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+        "reuse_risk": "low"
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_ai_hybrid_scoring.phase41.ray_kubeflow_phase_41.v1",
+        "target_schema": "cek_ta_knowledge_item",
+        "target_review_status": "draft",
+        "skill_candidate": false,
+        "eval_case_candidate": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "workflow": {
+        "stage": "ai_audited",
+        "queue_group": "ai_passed",
+        "formal_knowledge_id": "kb_ai_hybrid_scoring.phase41.ray_kubeflow_phase_41.v1",
+        "formal_review_status": "draft",
+        "ai_audit_result_id": "audit_result_phase41_extended_p1_candidate_audit_package_20260610_strict_v1",
+        "hidden_from_default_queue": true,
+        "next_action": "prepare_formal_draft_after_codex_patch_review",
+        "default_guidance_allowed": false,
+        "visible_in_default_guidance_queue": false
+      },
+      "phase41_trace": {
+        "priority": "P1",
+        "source_hint": "Ray、Kubeflow docs",
+        "related_contracts": [
+          "docs/contracts/phase41_hybrid_scoring_runtime_contract.md",
+          "docs/contracts/phase41_tabular_llm_training_data_contract.md",
+          "docs/research/phase41_hybrid_scoring_qwen3_scope.md",
+          "docs/tasks/phase41_hybrid_scoring_qwen3_audit_stack.md"
+        ],
+        "scope_boundary": "AI Engineering enhancement only; Trading Engineering knowledge body is reference-only.",
+        "audit_patch_notes": {
+          "source_patch_notes": [],
+          "content_patch_notes": [
+            "Require distributed_training_need=true or pipeline_orchestration_need=true; otherwise keep POC file-based/simple runner approach."
+          ],
+          "boundary_patch_notes": [
+            "Ray/Kubeflow must not become default dependency or centralize private strategy bodies."
+          ],
+          "conflict_patch_notes": [
+            "workflow.hidden_from_default_queue=false conflicts with package hard boundary that candidate knowledge must not enter default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before any draft conversion."
+          ],
+          "required_followups": []
+        }
+      },
+      "_audit_export_meta": {
+        "source_file": "codex-expert-kit/rag/candidates/KB_AI_ENGINEERING/cand_20260610_phase41_p41_f06_ray_kubeflow_phase_41_001.json",
+        "proposed_knowledge_id": "kb_ai_hybrid_scoring.phase41.ray_kubeflow_phase_41.v1",
+        "formal_index_has_target": false,
+        "current_reviewed_allowed": false,
+        "current_queue_group": "ai_passed",
+        "current_stage": "ai_audited",
+        "current_formal_review_status": "draft",
+        "required_next_decision": "外部审计必须显式给出 reviewed_allowed=true，后续 Codex 才能生成 formal reviewed/caveat_only；否则继续 needs_more_evidence 或 rejected。"
+      }
+    }
+  ]
+}

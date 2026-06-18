@@ -1,0 +1,265 @@
+{
+  "schema_version": "1.0.0",
+  "candidate_id": "cand_20260609_ai_engineering_training_data_strategy_version_required_v1_001",
+  "research_task_id": "RIT-P36-C-05",
+  "status": {
+    "review_status": "accepted",
+    "ingestion_decision": "needs_more_evidence",
+    "decision_reason": "Phase 36 batch AI audit decision: accepted_for_draft. 该状态不是 approved。",
+    "created_at": "2026-06-09",
+    "updated_at": "2026-06-09"
+  },
+  "classification": {
+    "tree_node_id": "kt.llm_training.trading_scoring_gating_training",
+    "canonical_node_id": "kt.llm_training.trading_scoring_gating_training",
+    "tree_path": "CEK-TA / AI Engineering",
+    "related_nodes": [],
+    "partition_id": "KB_09_LLM_TRAINING",
+    "domain": "llm_training",
+    "subdomain": "trading_scoring_gating_training",
+    "rule_type": "checklist",
+    "used_for": [
+      "llm_training",
+      "trading_gating_scoring",
+      "rag_engineering",
+      "mcp",
+      "vue_audit_ui"
+    ]
+  },
+  "claim": {
+    "claim_id": "claim_001",
+    "statement": "每条 strategy-dependent training sample 必须携带 strategy_version_ref、strategy_registry_ref 或 lineage_manifest_id，并把 dataset_version、eval_run 和 release manifest 与该引用绑定；策略版本变化必须触发 dataset version 更新或 eval rerun。AI Engineering 只保存引用、hash、owner 和审计字段，不保存策略本体、阈值或执行规则。",
+    "normalized_claim": "training_data.strategy_version_required.v1",
+    "evidence_summary": "MLflow Tracking 支持 run、model、dataset、metrics 和 artifact 的关联追踪；DVC 支持数据占位元数据随 Git 版本化；Datasheets for Datasets 强调数据组成、用途和维护说明；scikit-learn 的 data leakage 指南强调建模时不能使用预测时不可得的信息。这些来源共同支撑 strategy-dependent training sample 必须有版本和 lineage 绑定。",
+    "interpretation_notes": "本条是 training sample 层规则：样本依赖策略版本时必须可回溯；但策略版本的语义、策略本体和交易规则仍由 Trading Engineering 或外接项目注册表负责。",
+    "claim_strength": "medium",
+    "performance_claim": false
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "general",
+    "data_granularity": "general",
+    "project_type": "trading_llm_assistant",
+    "applies_when": [
+      "训练样本、评估样本、偏好样本或 gating/scoring 样本的 label、reason_code 或适用性依赖某个策略版本。",
+      "外接项目准备训练、重训、评估或发布交易 LLM gate/scorer，并需要回溯 dataset_version、model_version 和 strategy_version 的绑定关系。",
+      "策略版本、prompt、RAG 索引、数据集或模型其中任一项发生变化，需要判断是否重跑评估。"
+    ],
+    "not_applicable_when": [
+      "样本用于纯通用 LLM 格式测试，不涉及策略依赖。",
+      "任务是在定义具体策略规则、策略参数或交易执行行为；这些应路由到 Trading Engineering。",
+      "策略版本引用会泄露私有策略逻辑或账户配置，必须只保留不可逆 hash 或外部 registry 引用。"
+    ],
+    "assumptions": [
+      "外接项目提供项目事实、私有交易数据和策略上下文；CEK-TA 只沉淀可复用专业规则。",
+      "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+    ],
+    "limitations": [
+      "本条仍是 needs_more_evidence 候选，等待二次审计确认与 trade_data.strategy_id_and_version_required 的边界。",
+      "需要外接项目提供真实 strategy registry 或 release manifest 契约后才能落地字段校验。"
+    ]
+  },
+  "source_refs": [
+    {
+      "source_id": "src_mlflow_tracking_2026",
+      "source_title": "MLflow Tracking",
+      "source_url": "https://mlflow.org/docs/latest/ml/tracking/",
+      "source_type": "official_doc",
+      "publisher": "MLflow",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "score": 88,
+      "relevance": "high",
+      "freshness": "time_sensitive",
+      "limitations": [],
+      "evidence_summary": "MLflow Tracking records parameters, code versions, metrics, output files, run metadata, artifacts, and dataset-linked metrics, supporting run and release lineage for ML systems.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_dvc_files_2026",
+      "source_title": ".dvc Files | Data Version Control",
+      "source_url": "https://dvc.org/doc/user-guide/project-structure/dvc-files",
+      "source_type": "official_doc",
+      "publisher": "DVC",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "score": 86,
+      "relevance": "high",
+      "freshness": "time_sensitive",
+      "limitations": [],
+      "evidence_summary": "DVC .dvc files act as Git-versioned placeholders containing the metadata needed to track target data over time.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_datasheets_for_datasets_2018",
+      "source_title": "Datasheets for Datasets",
+      "source_url": "https://arxiv.org/abs/1803.09010",
+      "source_type": "paper",
+      "publisher": "arXiv",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "score": 88,
+      "relevance": "high",
+      "freshness": "stable",
+      "limitations": [],
+      "evidence_summary": "Datasheets for Datasets supports documenting dataset motivation, composition, collection process, recommended uses, maintenance, and limitations for transparency and accountability.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_sklearn_common_pitfalls_data_leakage_2026",
+      "source_title": "Common pitfalls and recommended practices | scikit-learn",
+      "source_url": "https://scikit-learn.org/stable/common_pitfalls.html",
+      "source_type": "official_doc",
+      "publisher": "scikit-learn",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "score": 88,
+      "relevance": "high",
+      "freshness": "time_sensitive",
+      "limitations": [],
+      "evidence_summary": "scikit-learn defines data leakage as using information unavailable at prediction time and recommends splitting data before preprocessing and fitting transformations only on training data.",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 87,
+    "score_version": "1.0.0",
+    "primary_source_count": 4,
+    "supporting_source_count": 0,
+    "low_reliability_source_count": 0,
+    "mandatory_downgrades": [],
+    "limitations": [
+      "补证来源支持字段、lineage、schema、leakage 或 SFT 数据格式原则；二次审计前仍不得转 reviewed 或 approved。",
+      "AI Engineering 只保存训练数据 schema、引用和审计规则；交易规则本体必须路由到 Trading Engineering。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "docs/contracts/ai_engineering_gating_scoring_contract.md",
+      "docs/contracts/ai_engineering_knowledge_item_policy.md",
+      "docs/tasks/phase36_ai_engineering_gating_scoring_knowledge.md"
+    ],
+    "conflicts": [],
+    "resolution_summary": "补证后未发现与当前 CEK-TA formal knowledge 的直接冲突；仍需二次审计确认是否与相邻规则合并或父子化。候选不会进入默认指导。",
+    "approval_allowed": false
+  },
+  "review": {
+    "confidence": "medium",
+    "freshness": "time_sensitive",
+    "reviewer": "external_ai_and_codex_alignment",
+    "reviewed_at": "2026-06-09",
+    "open_questions": [
+      "请审计 strategy_version_ref 缺失时是否应统一 block_training、exclude_from_eval，还是部分通用样本允许降级为 needs_review。",
+      "二次审计通过后只能进入 accepted_for_draft -> formal reviewed；不得直接进入 approved 或 machine_gate allow。"
+    ],
+    "audit_log": [
+      {
+        "at": "2026-06-09",
+        "actor": "codex",
+        "action": "created",
+        "reason": "Phase 36 bulk AI Engineering candidate expansion."
+      },
+      {
+        "at": "2026-06-09",
+        "actor": "external_ai",
+        "action": "phase36_batch_audit_result_received",
+        "reason": "方向合理，但当前不应直接转 draft。statement 包含“策略版本”，但 source_refs 主要支持数据文档化、data leakage 防护和 feature store metadata，不足以直接支撑 strategy_version_required 这个交易工程字段。该字段涉及 Trading Engineering 的 strategy registry / strategy_version_ref 边界，正式入库前需要补内部契约或 lineage 来源。",
+        "audit_result_id": "audit_result_phase36_ai_engineering_batch_10_of_10_20260609_gpt55_pro_strict_sources"
+      },
+      {
+        "at": "2026-06-09",
+        "actor": "codex",
+        "action": "phase36_batch10_supplemental_evidence_added",
+        "reason": "按第十批审计意见补直接来源、重写 statement、明确 AI Engineering 与 Trading Engineering 边界，导出二审包。",
+        "audit_package": "phase36_batch10_strategy_training_example_supplemental_audit_package_20260609"
+      },
+      {
+        "at": "2026-06-09",
+        "actor": "external_ai",
+        "action": "phase36_batch_audit_result_received",
+        "reason": "补证后可以升级为 accepted_for_draft。rewritten statement 已与 normalized_claim 对齐：每条 strategy-dependent training sample 必须携带 strategy_version_ref、strategy_registry_ref 或 lineage_manifest_id，并把 dataset_version、eval_run 和 release manifest 与该引用绑定；策略版本变化必须触发 dataset version 更新或 eval rerun。MLflow / DVC / Datasheets / scikit-learn data leakage 来源足以支撑训练样本的 lineage、versioning 和预测时可见性纪律。正式 draft 仍需补内部 strategy registry contract，因为外部来源不定义 CEK-TA 的策略版本语义。",
+        "audit_result_id": "audit_result_phase36_batch10_strategy_training_example_supplemental_reaudit_20260609_gpt55_pro_strict_sources"
+      }
+    ],
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase36_batch10_strategy_training_example_supplemental_reaudit_20260609_gpt55_pro_strict_sources",
+      "source_package_id": "phase36_batch10_strategy_training_example_supplemental_audit_package_20260609",
+      "decision": "accepted_for_draft",
+      "reason": "补证后可以升级为 accepted_for_draft。rewritten statement 已与 normalized_claim 对齐：每条 strategy-dependent training sample 必须携带 strategy_version_ref、strategy_registry_ref 或 lineage_manifest_id，并把 dataset_version、eval_run 和 release manifest 与该引用绑定；策略版本变化必须触发 dataset version 更新或 eval rerun。MLflow / DVC / Datasheets / scikit-learn data leakage 来源足以支撑训练样本的 lineage、versioning 和预测时可见性纪律。正式 draft 仍需补内部 strategy registry contract，因为外部来源不定义 CEK-TA 的策略版本语义。",
+      "source_patch_notes": [
+        "保留 MLflow Tracking / Dataset Tracking 作为 run、dataset、metrics、artifact 与 lineage 来源。",
+        "保留 DVC 作为 data / model versioning 来源。",
+        "保留 Datasheets for Datasets 作为 dataset composition、recommended use、limitations 来源。",
+        "保留 scikit-learn data leakage 作为预测时不可得信息不得进入训练与评估的 supporting source。",
+        "正式 draft 必须补 CEK-TA strategy_version_ref_contract.md、release_manifest_schema.json 或 Trading Engineering strategy registry contract。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议保留补证方向：strategy-dependent training samples must include strategy_version_ref / strategy_registry_ref / lineage_manifest_id and bind dataset_version, eval_run and release_manifest to that reference.",
+        "建议字段：sample_id、strategy_id、strategy_version_ref、strategy_registry_ref、strategy_owner_ref、dataset_version、eval_run_id、release_manifest_id、lineage_manifest_id、review_status。",
+        "strategy_version_ref 变更应触发 dataset version 更新、eval rerun、release manifest update 或 explicit no-impact review。",
+        "缺少 strategy_version_ref 时：若样本依赖策略版本，应 block_training 或 exclude_from_strategy_dependent_eval；若样本是纯通用格式测试，可标记 not_applicable / needs_review。",
+        "AI Engineering 不得根据 strategy_version_ref 反推出策略逻辑。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 只保存 strategy_version_ref、hash、owner、lineage_manifest_id、dataset_version 和审计字段。",
+        "Trading Engineering 管理策略版本语义、策略本体、K 线/信号逻辑、回测、实盘执行和风险控制。",
+        "不得把具体策略参数、阈值、仓位、止损止盈、订单规则或账户规则写入 AI Engineering。"
+      ],
+      "conflict_patch_notes": [
+        "与 trade_data.strategy_id_and_version_required 应父子化：trade_data 条管所有交易数据样本的策略引用字段；training_data 条管 strategy-dependent training sample 的训练准入和重新评估触发条件。",
+        "与 versioning.model_prompt_rag_strategy_snapshot_required 强互补：本条是 sample-level lineage，versioning 条是 release/gate-decision-level lineage。",
+        "与 training_data.trade_sample_schema_required 互补：trade_sample_schema 是父 schema，本条是 strategy_version_ref 子规则。"
+      ],
+      "required_followups": [
+        "补 strategy_version_ref_schema.json。",
+        "补 strategy_registry_ref owner policy。",
+        "补 release_manifest_id / lineage_manifest_id 与 dataset_version 的绑定规则。",
+        "补 no-impact review 流程：strategy_version_ref 改变但不影响某类通用样本时如何记录。",
+        "补 eval cases：missing strategy_version_ref、strategy version changed without rerun、strategy body leaked into AI KB、LLM infers strategy logic from version name、generic format sample marked not_applicable。"
+      ],
+      "boundary": "accepted_for_draft 不是 approved；reviewed 不会进入默认指导。"
+    },
+    "supplemental_research": {
+      "package_id": "phase36_batch10_strategy_training_example_supplemental_audit_package_20260609",
+      "research_doc": "docs/research/phase36_batch10_strategy_training_example_supplemental_research.md",
+      "summary": "已补 MLflow、DVC、Datasheets、scikit-learn data leakage、Hugging Face TRL SFTTrainer、OpenAI Structured Outputs、JSON Schema 与 TFDV 等直接来源，并重写元治理占位 statement。",
+      "source_count": 4,
+      "status_after_supplement": "needs_more_evidence"
+    }
+  },
+  "copyright": {
+    "stores_full_text": false,
+    "stores_long_quote": false,
+    "summary_only": true,
+    "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+    "reuse_risk": "low"
+  },
+  "conversion_target": {
+    "proposed_knowledge_id": "kb_ai_engineering.training_data.strategy_version_required.v1",
+    "target_schema": "cek_ta_knowledge_item",
+    "target_review_status": "draft",
+    "skill_candidate": false,
+    "eval_case_candidate": false
+  },
+  "workflow": {
+    "stage": "formalized_reviewed",
+    "queue_group": "formalized",
+    "formal_knowledge_id": "kb_ai_engineering.training_data.strategy_version_required.v1",
+    "formal_review_status": "reviewed",
+    "ai_audit_result_id": "audit_result_phase36_batch10_strategy_training_example_supplemental_reaudit_20260609_gpt55_pro_strict_sources",
+    "hidden_from_default_queue": true,
+    "next_action": "none",
+    "formal_knowledge_path": "codex-expert-kit/rag/knowledge/KB_09_LLM_TRAINING/kb_ai_engineering.training_data.strategy_version_required.v1.json"
+  }
+}

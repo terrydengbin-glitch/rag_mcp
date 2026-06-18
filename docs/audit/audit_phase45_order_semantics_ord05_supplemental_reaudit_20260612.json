@@ -1,0 +1,64 @@
+{
+  "audit_result_id": "audit_phase45_order_semantics_ord05_supplemental_reaudit_20260612",
+  "auditor": "GPT-5.5 Thinking",
+  "audited_at": "2026-06-12",
+  "package_id": "phase45_order_semantics_ord05_supplemental_reaudit_package_20260612",
+  "summary": {
+    "total": 1,
+    "accepted_for_reviewed_caveat_only": 1,
+    "needs_more_evidence": 0,
+    "rejected": 0,
+    "blocked": 0
+  },
+  "candidate_results": [
+    {
+      "candidate_id": "cand_20260612_phase45_order_semantics_p45_f_ord05_001",
+      "research_task_id": "P45-F-ORD05",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "trade_execution_advice_allowed": false,
+      "reasons": [
+        "CME FirmSoft Order Type Definitions 明确列出 MKL = Market Limit，可支撑 market-to-limit / Market Limit 作为 CME-specific order semantics。",
+        "IBKR Order Types, Algos and Tools 明确列出 VWAP Best-Efforts algo order type，可支撑 VWAP 作为 broker-specific execution algo semantics。",
+        "Nasdaq、NYSE、CME、Coinbase、Binance、Kraken 等来源共同支撑 exchange-specific order behavior 不得泛化为通用语义。",
+        "claim 已明确所有示例必须保留 exchange、product、session、rulebook、API version 和 adapter caveat。",
+        "claim 未输出订单提交许可、路由建议、费用优化、自动撤单、自动改单或 hard gate。"
+      ],
+      "required_followups": [
+        "正式 reviewed/caveat_only 文本必须保留：CME FirmSoft / Market Limit 只支撑 CME 语境，不得泛化为所有 venue。",
+        "正式文本必须保留：IBKR VWAP Best-Efforts 是 broker-specific algo，不是通用 VWAP 订单类型、策略信号或路由建议。",
+        "正式文本应继续强调本条是 anti-generalization caveat，不是特殊订单类型百科。",
+        "外接项目必须为自身 venue/broker/API version 提供 rulebook_or_spec_ref 和 adapter_mapping_ref。"
+      ],
+      "patch_notes": {
+        "source": [
+          "保留 Nasdaq Opening/Closing Cross、NYSE Auctions、NYSE Pillar、CME Definitions、Coinbase、Binance、Kraken。",
+          "新增并保留 CME FirmSoft Market Limit 官方来源。",
+          "新增并保留 IBKR VWAP Best-Efforts 官方来源。"
+        ],
+        "content": [
+          "保留 MOO/MOC/LOC、auction-only、peg、market-with-protection、market-to-limit、iceberg、RFQ、TWAP/VWAP、post-only、reduce-only 作为 venue-specific examples。",
+          "所有示例必须绑定 exchange、product、session、rulebook、API version 和 adapter caveat。",
+          "本条定位为 anti-generalization caveat，不定义任何订单提交规则。"
+        ],
+        "boundary": [
+          "不得生成通用订单行为规则。",
+          "不得生成订单提交许可。",
+          "不得生成路由建议。",
+          "不得生成费用优化建议。",
+          "不得生成自动撤单或自动改单。",
+          "不得生成 hard gate。"
+        ],
+        "conflict": []
+      }
+    }
+  ],
+  "global_required_patches": [
+    "ORD05 只能作为 anti-generalization caveat，不是特殊订单类型百科。",
+    "不得创建 approved、default guidance、hard gate、订单提交许可、路由建议、费用优化、自动撤单/改单。"
+  ]
+}

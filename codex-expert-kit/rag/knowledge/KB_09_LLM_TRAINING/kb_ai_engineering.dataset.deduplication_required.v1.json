@@ -1,0 +1,451 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_ai_engineering.dataset.deduplication_required.v1",
+  "title": "训练、评估与知识库数据集必须执行重复和污染检查",
+  "metadata": {
+    "partition_id": "KB_09_LLM_TRAINING",
+    "domain": "llm_training",
+    "subdomain": "dataset_governance",
+    "rule_type": "checklist",
+    "content_type": "json",
+    "project_binding": "none",
+    "tree_node_id": "kt.llm_training.model_training_engineering",
+    "tree_path": "CEK-TA / AI Engineering",
+    "canonical_node_id": "kt.llm_training.model_training_engineering",
+    "canonical_tree_path": "CEK-TA / AI Engineering",
+    "risk_level": "medium",
+    "used_for": [
+      "llm_training",
+      "trading_gating_scoring",
+      "rag_engineering",
+      "mcp",
+      "vue_audit_ui"
+    ],
+    "source_candidate_id": "cand_20260609_ai_engineering_dataset_deduplication_required_v1_001",
+    "research_task_id": "RIT-P36-A-T07",
+    "claim_type": "data_quality_rule",
+    "classification_notes": "该知识属于 AI Engineering 的数据质量与数据集治理规则，只定义 exact/near duplicate、split contamination、promotion gate 和审计字段；交易规则本体、K 线样本和策略细节必须留在 Trading Engineering。"
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "general",
+    "data_granularity": "general",
+    "project_type": "trading_llm_assistant",
+    "applies_when": [
+      "外接项目准备把样本放入 train_pool、eval_pool、gold_set、shadow_pool、RAG index、SFT 数据集或 preference training 数据集。",
+      "项目需要确认训练、评估、黄金集、影子集、偏好样本、RAG chunk 之间是否存在 exact duplicate、near-duplicate 或 benchmark contamination。",
+      "项目需要为数据集 promotion 提供可审计的 dedupe_run_id、split_id、overlap_count、action_taken 和 reviewer。"
+    ],
+    "not_applicable_when": [
+      "只是在定义 dataset schema、source lineage、version/hash 或 dataset card，而没有执行重复与污染检查。",
+      "需要判断两笔交易在业务上是否等价、是否应作为有效重复模式保留；该判断应由 data owner 或 Trading Engineering 给出解释。",
+      "需要沉淀具体 K 线形态、买卖点、仓位、止损止盈、fill model 或策略参数。"
+    ]
+  },
+  "content": {
+    "statement": "Training、eval、gold、shadow、RAG 和 preference datasets 在进入训练、评估或检索 promotion 前，必须执行 exact duplicate、near-duplicate 和 split-contamination 检查；未完成检查的数据集不得进入正式训练、评估、黄金集、RAG 索引或偏好训练。",
+    "rationale": "重复样本和跨 split 污染会让模型记忆、评估偏乐观、黄金集失真，并让外接交易 LLM gating/scoring 项目误判模型质量。本规则聚焦数据质量门禁，不替代 dataset schema、source lineage、version/hash 或 dataset card。",
+    "procedure": [
+      "为每次检查生成 dedupe_run_id，并绑定 dataset_id、dataset_version、pool_type、split_id 和 reviewer。",
+      "先执行 exact duplicate 检查，记录 hash_algorithm、exact_hash_match_count、overlap_pool 和 evidence_hash。",
+      "再执行 near-duplicate 检查，记录 near_duplicate_method、near_duplicate_threshold、near_duplicate_group_id 和命中样本。",
+      "检查 train/eval/gold/shadow/preference/RAG chunk 之间的 overlap；发现污染时触发 leakage_train_test_contamination_block 或生成新 split version。",
+      "对命中样本执行 action_taken：drop、quarantine、keep_with_reason、move_to_incident_pool、reassign_split 或 needs_human_review。",
+      "合理重复样本、hard negative、重复 incident pattern 可以保留，但必须写明 reason、weighting_policy、split_isolation 和 reviewer。",
+      "未生成 dedupe_run_report 或 contamination_check_report 时，阻断数据集 promotion。"
+    ],
+    "examples": [],
+    "anti_patterns": [
+      "把去重等同于无条件删除所有重复样本，导致业务上有效的重复 incident pattern 或 hard negative 被误删。",
+      "只做文件 hash，不做 train/eval/gold/preference/RAG chunk 的跨池污染检查。",
+      "在 eval 或 gold set 中保留与训练集 exact/near duplicate 的样本，却仍把评估结果当作样本外能力。",
+      "把原始交易文本、截图、订单、账户或策略私有字段写入通用知识库。",
+      "把 reviewed 知识当作 approved 默认指导。"
+    ],
+    "validation": [
+      "dedupe_run_report 存在，并包含 dataset_id、dataset_version、pool_type、split_id、method、threshold、overlap_count、action_taken、reviewer 和 reviewed_at。",
+      "train/eval/gold/shadow/preference/RAG 之间的 exact duplicate、near-duplicate 和 benchmark contamination 均有检查结果。",
+      "所有 keep_with_reason 都有业务解释、weighting policy、split isolation 和 reviewer。",
+      "发现 eval/gold 污染时必须阻断 promotion 或重建 split。",
+      "review_status 为 reviewed 时 machine_gate 必须保持 caveat_only。"
+    ],
+    "risk_notes": [
+      "accepted_for_draft 不是 approved；本条只能作为 formal reviewed 知识进入审计和检索，默认指导仍需后续人工治理。",
+      "near-duplicate 阈值不能由 CEK-TA 单独替外接项目拍板；AI Engineering 可定义技术字段，业务等价解释由 data owner 或 Trading Engineering 负责。",
+      "本知识项只保存 hash、duplicate_group_id、脱敏摘要和外部 dataset reference，不保存私有交易样本正文。",
+      "本条与 dataset_schema_required、dataset_source_lineage_required、dataset_version_and_hash_required 分工不同：本条负责重复/污染检测门禁。",
+      "本条应与 leakage_train_test_contamination_block、eval_case_no_training_overlap_required、eval_holdout_test_set_required、data_asset_eval_pool_must_not_train 互链。"
+    ],
+    "citation_notes": "ACL 2022 去重研究支持重复与近重复会影响语言模型记忆和 train-test overlap；BigCode 数据集工程提供 decontamination 与 near-deduplication 实践；scikit-learn data leakage 文档支持 train/test 隔离原则；Datasheets、OpenAI fine-tuning 和 TFDV 作为数据文档化、质量和 schema 校验的 supporting sources。",
+    "audit_patch_notes": {
+      "source_patch_notes": [
+        "将 ACL 2022 Deduplicating Training Data Makes Language Models Better 设为主来源之一，用于支持近重复、memorization、train-test overlap 和 dedup 对评估准确性的影响。",
+        "将 BigCode dataset repo 中 decontamination 与 near_deduplication pipeline 设为工程实践来源，用于支持 benchmark decontamination 和 near-dedup pipeline 的可执行性。",
+        "保留 scikit-learn common pitfalls / data leakage 作为 train/test leakage 和 split contamination 的通用 ML 方法论来源。",
+        "保留 Datasheets for Datasets、OpenAI fine-tuning best practices、TFDV 作为支持性来源；这些来源支撑数据文档化、数据质量、schema validation，但不应作为 deduplication 的主来源。",
+        "建议补内部来源：CEK-TA dataset_split_manifest、dedupe_run_report、leakage_check_report 的 schema 或 contract。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：Training、eval、gold、shadow、RAG 和 preference datasets must run exact duplicate、near-duplicate and split-contamination checks before training/evaluation/RAG promotion。",
+        "建议字段：dedupe_run_id、dataset_id、dataset_version、pool_type、split_id、dedupe_method、hash_algorithm、exact_hash_match_count、near_duplicate_method、near_duplicate_threshold、near_duplicate_group_id、train_eval_overlap_count、gold_overlap_count、benchmark_contamination_count、action_taken、reviewer、reviewed_at。",
+        "明确 deduplication 不等于无条件删除所有重复：业务上合理重复、hard negative、重复 incident pattern 可以保留，但必须记录 reason、weighting policy、split isolation 和 reviewer。",
+        "增加 promotion gate：未完成 dedupe / contamination check 的数据集不得进入 train_pool、eval_pool、gold_set、RAG index 或 preference training。",
+        "增加 leakage link：如果发现 eval/gold/preference 与 train pool exact 或 near duplicate，应触发 leakage_train_test_contamination_block 或 new split version。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 只定义重复检测、污染检测、promotion gate、metadata schema 和审计字段。",
+        "原始交易文本、截图、订单记录、账户信息、策略细节、K 线样本不得写入 AI Engineering KB；只保存 hash、duplicate_group_id、脱敏摘要和外部 dataset reference。",
+        "判断两个交易样本是否业务上等价、是否允许作为重复样本保留，应由项目 data owner 或 Trading Engineering 提供解释。",
+        "不得把具体交易规则、买卖点、仓位、止损止盈、fill model 或策略参数沉淀进本知识项。"
+      ],
+      "conflict_patch_notes": [
+        "与 dataset_schema_required、dataset_source_lineage_required、dataset_version_and_hash_required 不再是重复关系：本条聚焦 dedup / contamination gate，那三条分别负责 schema、lineage、version/hash。",
+        "与 leakage_train_test_contamination_block 后续候选高度相关，建议建立 canonical family：dataset.deduplication_required 负责检测，leakage.train_test_contamination_block 负责阻断动作。",
+        "与 eval_case_no_training_overlap_required、eval_holdout_test_set_required、data_asset_eval_pool_must_not_train 应互链。",
+        "未发现需要 rejected 的直接冲突。"
+      ],
+      "required_followups": [
+        "补 dedupe_report_schema.json。",
+        "补 near_duplicate_threshold 的 owner 规则：默认由 AI Engineering 定义技术阈值，由 data owner / Trading Engineering 解释业务等价。",
+        "补 dedupe action enum：drop、quarantine、keep_with_reason、move_to_incident_pool、reassign_split、needs_human_review。",
+        "补 UI audit 字段：duplicate_group_id、overlap_pool、evidence_hash、action_taken、reviewer。",
+        "补 eval case：train/eval exact duplicate、near duplicate paraphrase、gold contamination、preference pair duplicate、RAG chunk duplicate。"
+      ]
+    },
+    "required_fields": [
+      "dedupe_run_id",
+      "dataset_id",
+      "dataset_version",
+      "pool_type",
+      "split_id",
+      "dedupe_method",
+      "hash_algorithm",
+      "exact_hash_match_count",
+      "near_duplicate_method",
+      "near_duplicate_threshold",
+      "near_duplicate_group_id",
+      "train_eval_overlap_count",
+      "gold_overlap_count",
+      "benchmark_contamination_count",
+      "action_taken",
+      "reviewer",
+      "reviewed_at"
+    ],
+    "action_enum": [
+      "drop",
+      "quarantine",
+      "keep_with_reason",
+      "move_to_incident_pool",
+      "reassign_split",
+      "needs_human_review"
+    ],
+    "promotion_gate": {
+      "missing_dedupe_or_contamination_check": "block_promotion",
+      "eval_or_gold_overlap_with_train": "block_or_rebuild_split",
+      "near_duplicate_keep_without_reason": "needs_human_review",
+      "private_trade_payload_in_report": "block_and_sanitize"
+    },
+    "linked_rules": [
+      "dataset.schema_required.v1",
+      "dataset.source_lineage_required.v1",
+      "dataset.version_and_hash_required.v1",
+      "leakage.train_test_contamination_block.v1",
+      "eval_case.no_training_overlap_required.v1",
+      "eval.holdout_test_set_required.v1",
+      "data_asset.eval_pool_must_not_train.v1"
+    ]
+  },
+  "assumptions": [
+    "外接项目提供项目事实、私有交易数据和策略上下文；CEK-TA 只沉淀可复用专业规则。",
+    "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+  ],
+  "source_evidence": [
+    {
+      "source_id": "src_datasheets",
+      "source_title": "Datasheets for Datasets",
+      "source_url": "https://arxiv.org/abs/1803.09010",
+      "source_type": "paper",
+      "publisher": "arXiv",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "Datasheets for Datasets 支持记录数据集动机、组成、采集、推荐用途、限制和维护信息，可作为数据集治理 supporting source。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_openai_ft",
+      "source_title": "Fine-tuning best practices | OpenAI API",
+      "source_url": "https://platform.openai.com/docs/guides/fine-tuning-best-practices",
+      "source_type": "official_doc",
+      "publisher": "OpenAI",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "OpenAI fine-tuning 文档强调训练数据质量、任务贴合样本和 held-out eval 数据，可支持训练数据 promotion 前的数据质量检查。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_tfdv",
+      "source_title": "TensorFlow Data Validation: Checking and analyzing your data",
+      "source_url": "https://tensorflow.github.io/tfx/guide/tfdv/",
+      "source_type": "official_doc",
+      "publisher": "TensorFlow / TFX",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "TFDV 支持 schema-based validation、异常检测和训练/服务数据偏移检查，可作为数据质量流水线 supporting source。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_acl_2022_deduplicating_training_data",
+      "source_title": "Deduplicating Training Data Makes Language Models Better",
+      "source_url": "https://arxiv.org/abs/2107.06499",
+      "source_type": "paper",
+      "publisher": "arXiv / ACL 2022",
+      "published_at": "2021-07-14",
+      "accessed_at": "2026-06-09",
+      "version": "ACL 2022 accepted version",
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "ACL 2022 去重研究说明重复和近重复数据会增加记忆文本输出，并影响 train-test overlap 与评估准确性，直接支持 LLM 训练数据去重门禁。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_bigcode_dataset_decontamination_deduplication",
+      "source_title": "BigCode Dataset decontamination and near-deduplication pipeline",
+      "source_url": "https://github.com/bigcode-project/bigcode-dataset",
+      "source_type": "official_repo",
+      "publisher": "BigCode Project",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "BigCode 数据集仓库包含 decontamination 与 near_deduplication 流水线，是 benchmark decontamination 和近重复检测的工程实践来源。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_sklearn_common_pitfalls_data_leakage",
+      "source_title": "Common pitfalls and recommended practices | scikit-learn",
+      "source_url": "https://scikit-learn.org/stable/common_pitfalls.html#data-leakage",
+      "source_type": "official_doc",
+      "publisher": "scikit-learn",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "medium",
+      "evidence_summary": "scikit-learn common pitfalls 明确警示 data leakage，支持 train/test/eval/gold split 污染检查和隔离原则。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_occ_fed_fdic_revised_model_risk_2026",
+      "source_title": "Model Risk Management: Revised Guidance",
+      "source_url": "https://occ.gov/news-issuances/bulletins/2026/bulletin-2026-13.html",
+      "source_type": "standard_or_risk_framework",
+      "publisher": "OCC / Federal Reserve / FDIC",
+      "published_at": "2026-04-17",
+      "accessed_at": "2026-06-09",
+      "version": "OCC Bulletin 2026-13 / SR 26-2",
+      "reliability": "high",
+      "relevance": "medium",
+      "evidence_summary": "2026 年跨机构模型风险管理修订指南支持模型治理、验证、变更控制和风险分层；同时需注明 generative AI 和 agentic AI 不在其直接范围内，只能作为模型风险治理类比来源。",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 90,
+    "score_version": "1.0.0",
+    "primary_source_count": 3,
+    "supporting_source_count": 4,
+    "low_reliability_source_count": 0,
+    "limitations": [
+      "本条为 reviewed 知识，来源和审计补丁已记录；默认指导仍需后续人工治理升级 approved。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "docs/contracts/ai_engineering_gating_scoring_contract.md",
+      "docs/contracts/ai_engineering_knowledge_item_policy.md",
+      "docs/tasks/phase36_ai_engineering_gating_scoring_knowledge.md"
+    ],
+    "conflicts": [],
+    "resolution_summary": "未发现与当前 CEK-TA formal knowledge 的直接冲突；候选不会进入默认指导。",
+    "default_recommendation": "caveat_only_until_approved"
+  },
+  "review": {
+    "confidence": "medium",
+    "freshness": "time_sensitive",
+    "review_status": "reviewed",
+    "reviewer": "codex",
+    "reviewed_at": "2026-06-09",
+    "created_at": "2026-06-09",
+    "updated_at": "2026-06-09",
+    "open_questions": [
+      "是否需要在后续任务中新增 dedupe_report_schema.json？",
+      "near_duplicate_threshold 的默认技术阈值、业务保留例外和 owner 是否需要按外接项目类型拆分？",
+      "是否需要在 Vue 候选审计页增加 duplicate_group_id、overlap_pool、evidence_hash、action_taken、reviewer 字段？"
+    ],
+    "decision_log": [
+      {
+        "at": "2026-06-09",
+        "actor": "external_ai",
+        "decision": "accepted_for_draft",
+        "reason": "补充后的 candidate_id、normalized_claim、statement 和 source_refs 已基本对齐。该候选已经从原来的泛 dataset schema/governance 规则，改写为 exact duplicate、near-duplicate、train/eval/gold/shadow/preference contamination 检查规则。补充来源包含 ACL 2022 Deduplicating Training Data Makes Language Models Better、BigCode dataset decontamination / near_deduplication pipeline、scikit-learn data leakage guidance，并保留 Datasheets、OpenAI fine-tuning、TFDV 作为 supporting sources，已经足够进入 formal draft。但 accepted_for_draft 仍不是 approved，正式 draft 需要写清检测方法、阈值 owner、例外保留策略和 split isolation。",
+        "audit_result_id": "audit_result_phase36_batch02_supplemental_reaudit_20260609_gpt55_pro_strict_sources"
+      },
+      {
+        "at": "2026-06-09",
+        "actor": "codex",
+        "decision": "converted_to_reviewed",
+        "reason": "按 Phase 36 批量审计结果优化候选并转为 formal reviewed；未升级 approved。",
+        "audit_result_id": "audit_result_phase36_batch02_supplemental_reaudit_20260609_gpt55_pro_strict_sources"
+      }
+    ],
+    "approval_status": "not_requested",
+    "default_guidance_allowed": false,
+    "source_candidate_id": "cand_20260609_ai_engineering_dataset_deduplication_required_v1_001",
+    "ai_audit_result_id": "audit_result_phase36_batch02_supplemental_reaudit_20260609_gpt55_pro_strict_sources",
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase36_batch02_supplemental_reaudit_20260609_gpt55_pro_strict_sources",
+      "source_package_id": "phase36_batch02_supplemental_audit_package_20260609",
+      "decision": "accepted_for_draft",
+      "reason": "补充后的 candidate_id、normalized_claim、statement 和 source_refs 已基本对齐。该候选已经从原来的泛 dataset schema/governance 规则，改写为 exact duplicate、near-duplicate、train/eval/gold/shadow/preference contamination 检查规则。补充来源包含 ACL 2022 Deduplicating Training Data Makes Language Models Better、BigCode dataset decontamination / near_deduplication pipeline、scikit-learn data leakage guidance，并保留 Datasheets、OpenAI fine-tuning、TFDV 作为 supporting sources，已经足够进入 formal draft。但 accepted_for_draft 仍不是 approved，正式 draft 需要写清检测方法、阈值 owner、例外保留策略和 split isolation。",
+      "source_patch_notes": [
+        "将 ACL 2022 Deduplicating Training Data Makes Language Models Better 设为主来源之一，用于支持近重复、memorization、train-test overlap 和 dedup 对评估准确性的影响。",
+        "将 BigCode dataset repo 中 decontamination 与 near_deduplication pipeline 设为工程实践来源，用于支持 benchmark decontamination 和 near-dedup pipeline 的可执行性。",
+        "保留 scikit-learn common pitfalls / data leakage 作为 train/test leakage 和 split contamination 的通用 ML 方法论来源。",
+        "保留 Datasheets for Datasets、OpenAI fine-tuning best practices、TFDV 作为支持性来源；这些来源支撑数据文档化、数据质量、schema validation，但不应作为 deduplication 的主来源。",
+        "建议补内部来源：CEK-TA dataset_split_manifest、dedupe_run_report、leakage_check_report 的 schema 或 contract。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：Training、eval、gold、shadow、RAG 和 preference datasets must run exact duplicate、near-duplicate and split-contamination checks before training/evaluation/RAG promotion。",
+        "建议字段：dedupe_run_id、dataset_id、dataset_version、pool_type、split_id、dedupe_method、hash_algorithm、exact_hash_match_count、near_duplicate_method、near_duplicate_threshold、near_duplicate_group_id、train_eval_overlap_count、gold_overlap_count、benchmark_contamination_count、action_taken、reviewer、reviewed_at。",
+        "明确 deduplication 不等于无条件删除所有重复：业务上合理重复、hard negative、重复 incident pattern 可以保留，但必须记录 reason、weighting policy、split isolation 和 reviewer。",
+        "增加 promotion gate：未完成 dedupe / contamination check 的数据集不得进入 train_pool、eval_pool、gold_set、RAG index 或 preference training。",
+        "增加 leakage link：如果发现 eval/gold/preference 与 train pool exact 或 near duplicate，应触发 leakage_train_test_contamination_block 或 new split version。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 只定义重复检测、污染检测、promotion gate、metadata schema 和审计字段。",
+        "原始交易文本、截图、订单记录、账户信息、策略细节、K 线样本不得写入 AI Engineering KB；只保存 hash、duplicate_group_id、脱敏摘要和外部 dataset reference。",
+        "判断两个交易样本是否业务上等价、是否允许作为重复样本保留，应由项目 data owner 或 Trading Engineering 提供解释。",
+        "不得把具体交易规则、买卖点、仓位、止损止盈、fill model 或策略参数沉淀进本知识项。"
+      ],
+      "conflict_patch_notes": [
+        "与 dataset_schema_required、dataset_source_lineage_required、dataset_version_and_hash_required 不再是重复关系：本条聚焦 dedup / contamination gate，那三条分别负责 schema、lineage、version/hash。",
+        "与 leakage_train_test_contamination_block 后续候选高度相关，建议建立 canonical family：dataset.deduplication_required 负责检测，leakage.train_test_contamination_block 负责阻断动作。",
+        "与 eval_case_no_training_overlap_required、eval_holdout_test_set_required、data_asset_eval_pool_must_not_train 应互链。",
+        "未发现需要 rejected 的直接冲突。"
+      ],
+      "required_followups": [
+        "补 dedupe_report_schema.json。",
+        "补 near_duplicate_threshold 的 owner 规则：默认由 AI Engineering 定义技术阈值，由 data owner / Trading Engineering 解释业务等价。",
+        "补 dedupe action enum：drop、quarantine、keep_with_reason、move_to_incident_pool、reassign_split、needs_human_review。",
+        "补 UI audit 字段：duplicate_group_id、overlap_pool、evidence_hash、action_taken、reviewer。",
+        "补 eval case：train/eval exact duplicate、near duplicate paraphrase、gold contamination、preference pair duplicate、RAG chunk duplicate。"
+      ]
+    },
+    "approved_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "contribution": {
+    "contribution_id": null,
+    "source_project": null,
+    "sanitization_status": "not_applicable",
+    "private_data_removed": true,
+    "generic_mapping_notes": "Phase 36 public-source AI Engineering candidate; no project-private trading facts included."
+  },
+  "copyright": {
+    "stores_full_text": false,
+    "stores_long_quote": false,
+    "summary_only": true,
+    "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+    "reuse_risk": "low"
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于审计 AI Engineering、LLM 训练、RAG/MCP、部署、安全或治理链路。",
+      "用于提醒外接项目补齐来源、适用边界、冲突状态、审计记录和人工审批。",
+      "用于 reviewed/audit 模式下带 caveat 引用。"
+    ],
+    "not_allowed": [
+      "不得生成买卖点、仓位、杠杆、止损止盈或实盘执行指令。",
+      "不得覆盖确定性风控、交易执行系统或人工审批。",
+      "不得作为 approved/default guidance 直接返回。"
+    ],
+    "required_context": [
+      "project_type",
+      "task_type",
+      "mode",
+      "strategy_version",
+      "data_boundary",
+      "review_status"
+    ],
+    "fallback_behavior": "cite_with_caveat"
+  },
+  "machine_gate": {
+    "default_guidance": "caveat_only",
+    "reason": "该知识来自 accepted_for_draft 的二次审计结果，只能作为 reviewed 审计知识使用；默认指导需要后续人工治理升级 approved。",
+    "requires_human_escalation": true,
+    "blocking_reasons": [
+      "not_approved",
+      "phase36_batch02_supplemental_reviewed_only"
+    ],
+    "checked_at": "2026-06-09",
+    "gate_version": "1.0.0",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "recommended_extra_sources": [
+    {
+      "title": "将 ACL 2022 Deduplicating Training Data Makes Language Models Better 设为主来源之一，用于支持近重复、memorization、train-test overlap 和 dedup 对评估准确性的影响。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_1"
+    },
+    {
+      "title": "将 BigCode dataset repo 中 decontamination 与 near_deduplication pipeline 设为工程实践来源，用于支持 benchmark decontamination 和 near-dedup pipeline 的可执行性。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_2"
+    },
+    {
+      "title": "保留 scikit-learn common pitfalls / data leakage 作为 train/test leakage 和 split contamination 的通用 ML 方法论来源。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_3"
+    },
+    {
+      "title": "保留 Datasheets for Datasets、OpenAI fine-tuning best practices、TFDV 作为支持性来源；这些来源支撑数据文档化、数据质量、schema validation，但不应作为 deduplication 的主来源。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_4"
+    },
+    {
+      "title": "建议补内部来源：CEK-TA dataset_split_manifest、dedupe_run_report、leakage_check_report 的 schema 或 contract。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_5"
+    }
+  ]
+}

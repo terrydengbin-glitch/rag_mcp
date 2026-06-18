@@ -1,0 +1,368 @@
+{
+  "audit_result_id": "audit_result_phase36_ai_engineering_batch_06_of_10_20260609_gpt55_pro_strict_sources",
+  "source_package_id": "phase36_ai_engineering_candidate_audit_batch_06_of_10_20260609",
+  "decisions": [
+    {
+      "candidate_id": "cand_20260609_ai_engineering_llm_judge_position_and_format_bias_check_required_v1_001",
+      "decision": "needs_more_evidence",
+      "reason": "方向正确，但当前 source_refs 不足以直接支撑该 specific claim。candidate_id 和 statement 指向 LLM-as-judge 的位置偏差、格式偏差和裁判提示稳定性检查；现有 OpenAI evals 和 Model Cards 只能支持通用评估、限制记录和模型用途说明，不能直接证明 position bias / format bias / judge prompt stability 的专项风险。外部检索已找到 MT-Bench / Chatbot Arena、LLM-as-a-Judge position bias 系统研究等直接来源，因此建议补源后再转 draft。",
+      "source_patch_notes": [
+        "保留 OpenAI evals / evaluation best practices 作为通用 eval workflow 来源，但必须标注 Evals platform 退役时间线：2026-10-31 read-only，2026-11-30 shutdown。",
+        "保留 Model Cards 作为 intended use、limitations、evaluation procedure 和 risk disclosure 的 supporting source。",
+        "新增 Judging LLM-as-a-judge with MT-Bench and Chatbot Arena，作为 position、verbosity、self-enhancement bias 的主来源。",
+        "新增 Judging the Judges / A Systematic Study of Position Bias in LLM-as-a-Judge，作为 position consistency、preference fairness、repetition stability 的主来源。",
+        "如要保留“format bias”，建议再补 OffsetBias、CALM 或其他覆盖 format / length / verbosity / style bias 的 LLM judge bias source。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议改为：LLM-as-judge evals must test order/position swaps, formatting variants, verbosity/length sensitivity and judge-prompt stability before scores are used for promotion, tuning or gating evidence.",
+        "建议字段：judge_model_id、judge_prompt_version、eval_dataset_id、candidate_order_randomized、position_swap_pass、format_variant_pass、verbosity_control_pass、repetition_stability_score、position_consistency_score、preference_fairness_score、human_calibration_ref。",
+        "明确单次 LLM judge 结果不得作为 hard gate promotion 的充分证据。",
+        "增加 negative case：candidate A/B 换顺序后裁判结论翻转、同内容不同格式导致分数显著变化、长回答被系统性偏好。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 只定义 judge-bias evaluation、prompt stability、审计字段和 promotion gate。",
+        "不得把 LLM judge 评分直接转成交易执行、仓位、止损止盈或策略参数。",
+        "如果 judge 评分用于交易策略收益解释、策略优劣裁决或实盘阈值，必须路由 Trading Engineering 或项目 owner。"
+      ],
+      "conflict_patch_notes": [
+        "与 eval.production_like_eval_required、eval.ablation_required_for_rag_prompt_model_components、eval.score_calibration_required_before_gating 互补。",
+        "与 label_factory.inter_annotator_agreement_required / human consensus 相关：LLM judge 分数需要与人工或 gold set 校准。",
+        "当前版本直接 accepted 会导致具体 bias claim 缺少直接 source_refs。"
+      ],
+      "required_followups": [
+        "补 llm_judge_bias_audit_schema.json。",
+        "补 position_swap / format_variant / verbosity_control eval cases。",
+        "补至少两个 LLM-as-judge bias 直接来源。",
+        "补 UI 展示字段：judge_prompt_version、swap_result、format_variant_result、human_calibration_ref。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_llm_role_boundary_cannot_override_hard_risk_gate_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立。交易 LLM 不应覆盖 hard risk gate，这可以作为 CEK-TA 内部高风险 workflow 边界进入 draft。FINRA algorithmic trading guidance 支持自动化交易系统的监督、测试、控制和风险治理；NIST AI RMF 支持 AI 风险治理；OWASP 支持 tool access 最小权限和权限校验。正式 draft 应把本条聚焦为 hard risk gate override prohibition，而不是同时覆盖所有 role boundary。",
+      "source_patch_notes": [
+        "保留 FINRA 15-09 / Algorithmic Trading 作为交易自动化监督、测试和控制来源。",
+        "保留 NIST AI RMF 作为 AI 风险治理来源。",
+        "保留 OWASP Prompt Injection Prevention Cheat Sheet 作为 LLM tool access、least privilege、permission validation 来源。",
+        "建议互链第一批已二审通过的 capability_boundary / role split family。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：LLM outputs may provide explanation, scoring signals, reason codes and review suggestions, but must not override a deterministic hard risk gate or approved Trading Engineering risk control.",
+        "建议字段：llm_role、risk_gate_id、deterministic_gate_result、llm_suggestion、override_attempt_detected、fallback_action、audit_event_id。",
+        "明确 LLM 建议与 hard gate 冲突时，默认以 hard gate / deterministic risk control 为准。",
+        "不要在本条定义具体风控阈值或交易规则。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 管理 LLM role boundary、override detection、fallback 和 audit trace。",
+        "Trading Engineering 管理 hard risk gate 本体、风控阈值、执行系统、订单逻辑和策略参数。",
+        "不得把具体 hard risk rule、阈值、仓位或订单动作写入 AI Engineering 知识库。"
+      ],
+      "conflict_patch_notes": [
+        "与 no_direct_order_execution、scorer_not_executor 高度重叠，建议形成 role_boundary family。",
+        "与 runtime_final_gate_deterministic_engine_required、safety_no_tool_permission_escalation、gating.low_confidence_cannot_allow 互链。",
+        "未发现需要 rejected 的冲突。"
+      ],
+      "required_followups": [
+        "补 llm_role_boundary_contract.md。",
+        "补 override_attempt eval case。",
+        "补 deterministic_gate_result 与 fallback_action enum。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_llm_role_boundary_no_direct_order_execution_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立。LLM 不应直接执行订单是 CEK-TA 内部安全边界，外部交易自动化治理、AI 风险管理和 OWASP tool least privilege 均支持该类边界。正式 draft 应把本条聚焦为 no direct broker/order/action tool authority。",
+      "source_patch_notes": [
+        "保留 FINRA algorithmic trading / 15-09。",
+        "保留 NIST AI RMF。",
+        "保留 OWASP Prompt Injection Prevention Cheat Sheet。",
+        "建议补 OpenAI usage policies 作为高影响金融自动化需要 human review 的 supporting source。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：A trading LLM must not directly place, cancel, modify or route orders, nor invoke broker action tools; it may only produce audited suggestions, reason codes or review tickets.",
+        "建议字段：tool_name、tool_permission_scope、broker_action_allowed、order_action_requested、blocked_reason、review_queue_id、audit_event_id。",
+        "把 order execution 明确列入 forbidden responsibilities。",
+        "允许 read-only order status reference，但不得允许 write/execute action。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 只定义 tool permission boundary 和 no-direct-execution rule。",
+        "订单执行、broker action、订单取消/修改、仓位变化由 Trading Engineering / Live Execution 管理。",
+        "不得写入券商 token、账号、订单明细、实盘动作或策略规则。"
+      ],
+      "conflict_patch_notes": [
+        "与 cannot_override_hard_risk_gate、scorer_not_executor 为兄弟规则。",
+        "与 mcp.read_only_knowledge_access、mcp.server_side_permission_enforcement_required 强互补。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 forbidden_tool_action enum：place_order、cancel_order、modify_order、route_order、set_stop_loss、set_take_profit。",
+        "补 broker_action_tool_block test。",
+        "补 Vue audit UI 字段：requested_tool、blocked_reason、review_status。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_llm_role_boundary_scorer_not_executor_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立，但与前两条重复明显。建议保留为 role boundary 父规则：LLM 可做 scorer、explainer、retriever、reason_code generator 和 human-review assistant；不得做 executor、final risk gate、position sizer 或 broker action agent。",
+      "source_patch_notes": [
+        "保留 FINRA、NIST、OWASP。",
+        "建议补内部 role_split_matrix.yaml 作为正式主引用。",
+        "建议与第一批 capability_boundary.numeric_model_vs_llm_role_split 互链。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写成职责矩阵，而不是重复 no direct order execution 句。",
+        "建议字段：role_name、allowed_responsibilities、forbidden_responsibilities、required_controls、owner、audit_required。",
+        "允许角色：retriever、explainer、candidate_scorer、risk_warning_generator、reason_code_generator、human_review_assistant。",
+        "禁止角色：order_executor、broker_action_agent、position_sizer、final_risk_gate、stop_loss_setter、take_profit_setter。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 管理角色边界和工具权限。",
+        "Trading Engineering 管理 numerical model、execution engine、risk gate、position sizing、strategy logic。",
+        "AI Engineering KB 只保留抽象角色和外部引用，不保留交易规则本体。"
+      ],
+      "conflict_patch_notes": [
+        "与 cannot_override_hard_risk_gate、no_direct_order_execution 重复，应父子化。",
+        "与 runtime.llm_gate_is_suggestion_not_final_authority、runtime_final_gate_deterministic_engine_required 互链。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 role_split_matrix.yaml。",
+        "补 role boundary test cases：LLM attempts execution、LLM overrides hard gate、LLM recommends scorer output only。",
+        "补 exception workflow：validated_numeric_model / Trading Engineering owner approval。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_mcp_read_only_knowledge_access_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立。MCP 知识工具默认只读、只返回来源和审计可用元数据，是合理的 AI Engineering 安全边界。MCP security best practices、MCP tools spec 和 OWASP least privilege 均支持工具访问权限、参数校验、错误处理和最小权限原则。",
+      "source_patch_notes": [
+        "保留 MCP specification / tools spec。",
+        "保留 MCP Security Best Practices。",
+        "补 OWASP Prompt Injection Prevention Cheat Sheet 作为 least privilege、read-only database accounts、tool permission validation 的 supporting source。",
+        "建议补内部 MCP knowledge tool contract。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：MCP knowledge tools must default to read-only access and return source IDs, confidence, errors and permission status without allowing write, trade, broker or project-secret mutation.",
+        "建议字段：mcp_server_id、tool_name、access_mode、read_only、allowed_resource_scopes、source_ids_returned、permission_status、error_contract_version。",
+        "明确 read-only knowledge access 不等于 Trading Engineering 数据写入权限。",
+        "对 RAG 知识查询工具要求返回 source_id / chunk_id / freshness / conflict status。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 管理 MCP knowledge tool read-only contract。",
+        "项目私有数据、账户、密钥、订单、交易规则不得通过知识工具写入或修改。",
+        "涉及 broker action 或策略配置写入的工具不得归入 AI Engineering knowledge MCP。"
+      ],
+      "conflict_patch_notes": [
+        "与 mcp.server_side_permission_enforcement_required 是父子关系：本条定义默认只读，后者定义服务端强制。",
+        "与 no_direct_order_execution、safety_no_tool_permission_escalation、rag_no_source_or_conflict_blocks_default_guidance 互链。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 mcp_read_only_knowledge_tool_contract.json。",
+        "补 allowed_resource_scope enum。",
+        "补 read-only violation red-team eval case。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_mcp_server_side_permission_enforcement_required_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立。权限、参数、错误和来源返回必须由 server-side contract 强制，不能只依赖 LLM 自觉遵守。MCP tools spec 支持 schema、protocol errors、tool execution errors；MCP security best practices 支持授权边界；OWASP 支持按用户权限和 session context 验证 tool calls。",
+      "source_patch_notes": [
+        "保留 MCP specification / tools spec。",
+        "保留 MCP Security Best Practices。",
+        "补 OWASP Prompt Injection Prevention Cheat Sheet。",
+        "建议补 NSA / enterprise MCP security guidance 作为可选 high-assurance supporting source，但不必作为唯一主源。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：MCP permissions, input schema validation, source return contract and error handling must be enforced on the server side; the LLM must not be able to self-grant permissions or bypass validation through prompt text.",
+        "建议字段：server_id、tool_name、permission_scope、user_context_required、schema_validation_result、source_return_required、error_type、isError、audit_event_id。",
+        "区分 protocol_error、tool_execution_error、permission_denied、schema_validation_error、source_missing。",
+        "权限失败默认 fail closed，不生成默认交易指导。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 定义 server-side permission contract 和 audit fields。",
+        "交易执行、订单修改、策略参数写入和账户权限不属于 AI Engineering MCP knowledge tool。",
+        "不得记录 API key、broker token、账号标识或完整交易上下文。"
+      ],
+      "conflict_patch_notes": [
+        "与 mcp.read_only_knowledge_access 重复但不等价；建议保留为 server-side enforcement 子规则。",
+        "与 deployment.llm_timeout_or_mcp_failure_fallback_required、safety_no_tool_permission_escalation 互链。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 mcp_permission_contract_schema.json。",
+        "补 permission_denied / schema_error / tool_error fallback enum。",
+        "补 red-team eval case：prompt asks tool to escalate permission、tool returns unsafe action、source omitted。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_method_selection_no_finetune_before_eval_baseline_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立。OpenAI model optimization workflow 明确先写 evals 建立 baseline，再迭代 prompt、fine-tuning 和模型输出质量；这足以支持“不先有 eval baseline，不进入 fine-tune / preference training 决策”的内部工程规则。正式 draft 需要注明 OpenAI fine-tuning platform 正在 winding down，相关来源有 freshness / migration 风险。",
+      "source_patch_notes": [
+        "保留 OpenAI Model Optimization 作为主来源。",
+        "保留 OpenAI fine-tuning best practices / DPO 文档作为 fine-tuning / preference training 的 supporting source，但注明平台退役或迁移风险。",
+        "保留 OpenAI File Search / RAG 类来源作为 retrieval baseline supporting source。",
+        "建议补内部 method_selection_decision_record schema。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：Before any fine-tuning, SFT or DPO/preference training proposal, the project must establish an eval baseline and compare prompt/RAG/rule baselines on representative task data.",
+        "建议字段：task_id、eval_baseline_id、prompt_baseline_id、rag_baseline_id、rule_baseline_id、failure_case_ids、fine_tune_candidate_reason、decision。",
+        "明确 fine-tuning 不是默认第一步；它只能在 baseline 失败模式、数据质量和评估目标清楚后进入评审。",
+        "若没有 eval baseline，fallback_action 应为 needs_more_evidence 或 research_only。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 管理 method selection、eval baseline、RAG/prompt/fine-tune decision record。",
+        "若任务目标涉及具体交易策略收益、风控阈值或执行规则，应由 Trading Engineering 给出业务上下文。",
+        "不得把项目私有训练样本、策略逻辑、账号或订单信息写入通用 method selection 知识项。"
+      ],
+      "conflict_patch_notes": [
+        "与 eval.deterministic_baseline_required_before_llm_gate 互补：一个是 method selection baseline，一个是 gate promotion baseline。",
+        "与 method_selection.rag_first_baseline_required 重叠，应父子化：本条为 no-finetune-before-eval 父规则，RAG-first 为检索任务子规则。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 method_selection_record_schema.json。",
+        "补 eval baseline checklist。",
+        "补 no_finetune_before_eval red-team case：用户要求直接 fine-tune、无 eval 数据、无 failure taxonomy。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_method_selection_rag_first_baseline_required_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立，但应限定为知识检索、事实更新、私有文档问答、source-grounded scoring 等 RAG 适合的任务。OpenAI model optimization 支持先建立 eval baseline、提供相关上下文、再决定 fine-tuning；OpenAI fine-tuning guidance 也说明引入新知识通常应优先考虑 RAG / context，而不是直接 fine-tune。正式 draft 应避免写成所有任务都必须 RAG-first。",
+      "source_patch_notes": [
+        "保留 OpenAI Model Optimization。",
+        "保留 OpenAI File Search / retrieval docs 作为 RAG baseline source。",
+        "保留 OpenAI fine-tuning guidance，但注明平台 winding down 和 freshness 限制。",
+        "建议补内部 task_taxonomy_rag_vs_finetune_boundary_required。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：For source-grounded, private-document, current-knowledge or auditable retrieval tasks, a RAG/file-search baseline must be evaluated before choosing fine-tuning or preference training.",
+        "建议字段：task_type、rag_baseline_id、retrieval_corpus_id、source_coverage、citation_quality、no_hit_rate、conflict_rate、fine_tune_reason。",
+        "增加不适用条件：纯格式控制、稳定输出风格、低延迟小模型蒸馏或无需外部知识的任务，不强制 RAG-first。",
+        "RAG baseline 通过不等于 live-ready，还需 eval、shadow、权限和来源冲突处理。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 管理 RAG baseline 和 method selection。",
+        "交易策略、K 线信号、回测结论和执行规则不作为 RAG-first 知识沉淀。",
+        "私有项目文档只保留 source ref、hash、license / privacy status，不写全文。"
+      ],
+      "conflict_patch_notes": [
+        "与 no_finetune_before_eval_baseline 高度相关，建议作为子规则。",
+        "与 rag.retrieval_required_before_trade_scoring、rag.no_source_or_conflict_blocks_default_guidance 后续候选互链。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 rag_first_decision_tree.md。",
+        "补 task_type enum：source_grounded_qa、policy_lookup、private_doc_reasoning、format_control、classification、style_alignment。",
+        "补 RAG baseline metrics：source_coverage、citation_accuracy、no_hit_rate、conflict_rate。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_outcome_schema_post_trade_fields_separated_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "方向充分成立。post-trade outcome、realized PnL、fill result、exit price、future return 等字段只能进入 label、eval、audit 或 post-trade review 链路，不能混入 scoring input 或 decision-time features。scikit-learn data leakage、TFDV schema/skew validation 和 Datasheets 可支撑字段角色隔离与数据治理。",
+      "source_patch_notes": [
+        "保留 Datasheets for Datasets。",
+        "保留 scikit-learn common pitfalls / data leakage。",
+        "补 TFDV 作为 schema validation、label-as-feature / skew 检查来源。",
+        "建议互链 feature_schema.post_trade_fields_forbidden_in_input 和 labeling.no_future_information。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：Post-trade outcome fields must be separated from decision-time input features and may only be used as labels, outcome context, evaluation fields or post-trade review evidence.",
+        "建议字段：field_name、field_role、allowed_in_input、allowed_as_label、allowed_as_outcome_context、post_trade_flag、future_info_flag、validation_rule_id。",
+        "post_trade_field enum 建议包括 realized_pnl、fill_price、fill_quantity、exit_price、future_return、later_human_label、execution_outcome。",
+        "若 post-trade field 出现在 input schema，应 block_training / block_eval_promotion。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 管理 input / label / outcome 字段角色隔离。",
+        "交易执行事实、fill model、滑点、费用、PnL 口径由 Trading Engineering 提供。",
+        "不得把真实订单、账号、成交明细或策略参数写入知识库。"
+      ],
+      "conflict_patch_notes": [
+        "与 feature_schema.post_trade_fields_forbidden_in_input 是兄弟或父子关系：本条管 outcome schema separation，后者管 input 禁止。",
+        "与 leakage.label_in_input_forbidden、labeling.no_future_information 互链。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 outcome_schema_post_trade_fields_separated.json。",
+        "补 field_role enum：input_feature、label、outcome_context、audit_context、post_trade_review。",
+        "补 validation cases：realized_pnl in input、future_return alias、later_human_label joined before split。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_preference_pair_not_based_on_pnl_only_v1_001",
+      "decision": "needs_more_evidence",
+      "reason": "当前候选不应直接转 draft。candidate_id 和 normalized_claim 指向 preference pair 不得只基于 PnL，但 statement 实际是“preference_pair.not_based_on_pnl_only.v1 必须在 AI Engineering 候选知识中声明来源、适用边界、冲突状态和默认使用限制”，属于元治理占位句，与 normalized_claim 不对齐。source_refs 只有 OpenAI model optimization 和 NIST，不能直接支撑 preference pair schema、DPO pair data 或 no-PnL-only preference label。方向合理，但必须重写 statement 并补直接来源。",
+      "source_patch_notes": [
+        "补 OpenAI DPO 文档，支持 prompt、preferred output、non-preferred output 的 pair 结构。",
+        "补 Hugging Face TRL DPOTrainer / dataset formats，支持 prompt、chosen、rejected 或 preference dataset 格式。",
+        "复用第五批 label_schema.no_pnl_only_label、multi_dimensional_trade_quality、good_loss_bad_win family 作为 no-PnL-only preference 的内部来源。",
+        "补 outcome bias / label guideline / reason code taxonomy 作为 preference reason 依据。",
+        "保留 NIST AI RMF 只能作为 governance supporting source，不应作为 preference pair 结构或 no-PnL-only 的主来源。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议改为：Preference pairs for trade LLM training must not be derived solely from PnL; each pair must compare responses for the same prompt using process quality, risk compliance, rule compliance, evidence quality and reason codes.",
+        "建议字段：preference_pair_id、prompt_id、chosen_response_id、rejected_response_id、pnl_used、pnl_only_flag、process_quality_evidence、risk_compliance_evidence、rule_compliance_evidence、reason_codes、review_status。",
+        "明确 PnL 可作为 outcome_context，但不得成为 chosen/rejected 的唯一依据。",
+        "blocked trade 或 counterfactual_missing 样本不得用事后价格路径自动构造 preference pair。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 定义 preference pair schema、reason code、no-PnL-only gate 和训练回灌边界。",
+        "PnL 口径、交易过程质量、风险合规、规则合规由 Trading Engineering 或 domain owner 提供。",
+        "不得写入具体交易策略、买卖点、订单、仓位、止损止盈或账号信息。"
+      ],
+      "conflict_patch_notes": [
+        "与 dpo.preference_data_quality_required、label_schema.no_pnl_only_label、preference_training.chosen_rejected_reason_required 高度相关。",
+        "当前 statement 与 normalized_claim 明显错配，直接 accepted 会污染知识库。",
+        "建议保留本条作为 no-PnL-only preference 子规则，另建或复用 preference_pair_schema_required 处理通用 pair schema。"
+      ],
+      "required_followups": [
+        "重写 candidate statement。",
+        "补 preference_pair_schema.json。",
+        "补 no_pnl_only_preference_checklist.md。",
+        "补 eval cases：chosen by PnL only、chosen with risk violation、same prompt but different evidence quality、counterfactual_missing used incorrectly。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_preference_training_chosen_rejected_reason_required_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立。偏好训练需要同一 prompt 下的 chosen/rejected 或 preferred/non-preferred pair，并记录偏好理由、质量边界和 review 状态。Hugging Face TRL DPOTrainer 与 OpenAI DPO 文档直接支持 prompt + chosen/preferred + rejected/non-preferred 结构；正式 draft 需要补 reason-code / label guideline 来源来支撑“记录偏好理由”。",
+      "source_patch_notes": [
+        "保留 Hugging Face TRL DPOTrainer 作为 chosen/rejected/prompt 结构来源。",
+        "补 OpenAI DPO 文档作为 preferred_output / non_preferred_output 结构来源。",
+        "保留 OpenAI model optimization 作为 method selection / eval baseline supporting source。",
+        "补 label_reason_codes_required、label_guideline_required、preference_pair_schema_required 作为内部互链来源。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：Preference training examples must compare chosen/rejected responses for the same prompt and record preference_reason_codes, evidence_refs, quality boundary and review status before use in SFT/DPO/RFT workflows.",
+        "建议字段：preference_pair_id、prompt_id、chosen_response_id、rejected_response_id、same_prompt_check、preference_reason_codes、evidence_refs、review_status、label_guideline_version、split_id。",
+        "明确 chosen/rejected 不等于 absolute good/bad；如果要转成 unpaired good/bad label，必须另有绝对质量审核。",
+        "缺少 reason_code 或 same_prompt_check 时不得进入 preference training pool。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 管理 preference pair schema、same-prompt check、reason codes、review status。",
+        "交易收益、风险合规、策略上下文和 PnL 解释由 Trading Engineering / domain owner 提供。",
+        "不得把具体交易样本、账户、订单、策略参数写入通用 preference training 知识项。"
+      ],
+      "conflict_patch_notes": [
+        "与 preference_pair.not_based_on_pnl_only 互补；后者需补证后作为 no-PnL-only 子规则。",
+        "与 dpo.preference_data_quality_required、preference_training.preference_pair_schema_required、label_reason_codes_required 互链。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 preference_training_pair_reason_schema.json。",
+        "补 preference_reason_code enum。",
+        "补 same_prompt_check 和 split contamination check。",
+        "补 eval cases：different prompt pair、missing reason code、PnL-only preference、chosen/rejected both bad。"
+      ]
+    }
+  ],
+  "raw_external_report_path": "C:\\Users\\dove\\.codex\\attachments\\e860ec64-fb0c-401f-a392-38c32ba71f01\\pasted-text.txt",
+  "normalization_notes": [
+    "外部第六批审计报告已使用 CEK-TA 内部 decisions[] 契约。",
+    "accepted_for_draft 只允许转 formal reviewed，不能转 approved 或默认指导。",
+    "needs_more_evidence 候选必须保留在候选队列，等待补证二审。"
+  ]
+}

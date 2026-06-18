@@ -1,0 +1,111 @@
+{
+  "meta_audit_result_id": "meta_audit_result_phase37_data_engineering_candidate_audit_20260611_strict_v1",
+  "auditor": "external_ai_strict_meta_audit",
+  "audited_at": "2026-06-11",
+  "audited_file": "audit_result_phase37_data_engineering_candidate_audit_20260611_strict_v1.json",
+  "original_audit_result_id": "audit_result_phase37_data_engineering_candidate_audit_20260611_strict_v1",
+  "package_id": "phase37_data_engineering_candidate_audit_package_20260611",
+  "meta_decision": "audit_result_requires_schema_patch_before_import",
+  "candidate_decision_review": {
+    "original_summary": {
+      "total": 12,
+      "accepted_for_draft": 12,
+      "needs_more_evidence": 0,
+      "rejected": 0,
+      "blocked": 0
+    },
+    "candidate_decisions_upheld": 12,
+    "candidate_decisions_changed": 0,
+    "upheld_decision": "12 accepted_for_draft retained",
+    "reviewed_allowed": false,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "meta_quality_gate": {
+    "pass": false,
+    "reason": "The uploaded audit result contains confidence enum values not allowed by the source package required_output_schema.",
+    "patchable": true,
+    "candidate_quality_gate_after_schema_patch": true
+  },
+  "blocking_findings": [
+    {
+      "finding_id": "schema_confidence_enum_violation",
+      "severity": "blocking_for_machine_import",
+      "description": "The package schema permits confidence only as low|medium|high, but the uploaded audit result uses medium_high for five candidate results.",
+      "affected_research_task_ids": [
+        "P37-B-D09",
+        "P37-B-D12",
+        "P37-B-D04",
+        "P37-B-D10",
+        "P37-B-D11"
+      ],
+      "recommended_patch": "Normalize medium_high to medium or high. Conservative patch uses medium because affected rows include weak/recommended source caveats."
+    }
+  ],
+  "non_blocking_findings": [
+    {
+      "finding_id": "draft_decisions_upheld",
+      "severity": "non_blocking",
+      "description": "The 12 accepted_for_draft decisions are substantively supportable at draft level, given official/provider/framework sources and explicit non-generalization boundaries."
+    },
+    {
+      "finding_id": "external_source_dependency_not_in_candidate_refs",
+      "severity": "non_blocking_for_draft_but_required_before_reviewed",
+      "description": "Some acceptance reasons rely on sources recommended by the auditor rather than already embedded in the candidate source_refs, notably continuous futures symbology/roll methodology for P37-B-D09 and explicit uniqueness/dedup sources for P37-B-D04."
+    },
+    {
+      "finding_id": "recommended_followups_empty",
+      "severity": "non_blocking_but_reduce_machine_actionability",
+      "description": "Several accepted_for_draft entries place required improvements in patch_notes or recommended_extra_sources while leaving required_followups empty. This is acceptable for draft but less actionable for automated conversion."
+    },
+    {
+      "finding_id": "formal_kb_conflict_limit",
+      "severity": "non_blocking",
+      "description": "The result correctly states that the complete CEK-TA formal KB was not provided; therefore conflict audit remains limited to visible context."
+    }
+  ],
+  "patch_applied_file": "audit_result_phase37_data_engineering_candidate_audit_20260611_strict_v1_schema_patched.json",
+  "patch_changes": [
+    {
+      "candidate_id": "cand_20260611_phase37_data_engineering_corporate_action_or_contract_rollover_policy_001",
+      "research_task_id": "P37-B-D09",
+      "old_confidence": "medium_high",
+      "new_confidence": "medium",
+      "reason": "required_output_schema only permits low|medium|high; mapped conservatively to medium because each entry has source caveats or recommended source followups."
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_data_engineering_data_quality_report_required_001",
+      "research_task_id": "P37-B-D12",
+      "old_confidence": "medium_high",
+      "new_confidence": "medium",
+      "reason": "required_output_schema only permits low|medium|high; mapped conservatively to medium because each entry has source caveats or recommended source followups."
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_data_engineering_duplicate_event_detection_required_001",
+      "research_task_id": "P37-B-D04",
+      "old_confidence": "medium_high",
+      "new_confidence": "medium",
+      "reason": "required_output_schema only permits low|medium|high; mapped conservatively to medium because each entry has source caveats or recommended source followups."
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_data_engineering_outlier_detection_required_001",
+      "research_task_id": "P37-B-D10",
+      "old_confidence": "medium_high",
+      "new_confidence": "medium",
+      "reason": "required_output_schema only permits low|medium|high; mapped conservatively to medium because each entry has source caveats or recommended source followups."
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_data_engineering_raw_vs_adjusted_data_boundary_001",
+      "research_task_id": "P37-B-D11",
+      "old_confidence": "medium_high",
+      "new_confidence": "medium",
+      "reason": "required_output_schema only permits low|medium|high; mapped conservatively to medium because each entry has source caveats or recommended source followups."
+    }
+  ],
+  "source_boundary_notes": [
+    "Do not convert this audit result into reviewed/approved/default guidance/hard gate.",
+    "Treat vendor/framework documentation as implementation evidence and CEK-TA audit-contract support, not as universal market or regulatory rules.",
+    "AI Engineering may reference the rules but must not copy or redefine the Trading Engineering/Data Engineering ontology."
+  ]
+}

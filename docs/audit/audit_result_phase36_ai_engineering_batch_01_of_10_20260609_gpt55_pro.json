@@ -1,0 +1,355 @@
+{
+  "audit_result_id": "audit_result_phase36_ai_engineering_batch_01_of_10_20260609_gpt55_pro",
+  "source_package_id": "phase36_ai_engineering_candidate_audit_batch_01_of_10_20260609",
+  "decisions": [
+    {
+      "candidate_id": "cand_20260609_ai_engineering_approval_hard_gate_enable_requires_approval_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立。开启 hard gate 或改变阈值属于高影响 AI/自动化治理变更，应要求责任人审批、变更记录、回滚计划和审计留痕。外部资料支持治理、风险管理、测试、变更控制和监督原则，但正式知识中应说明这是 CEK-TA 内部强制工程规则，不是外部标准逐字要求。",
+      "source_patch_notes": [
+        "保留 NIST AI RMF 作为 AI 风险治理主来源。",
+        "将旧 Federal Reserve model risk 来源更新或补充为 2026 年 OCC/Fed/FDIC revised model risk guidance，并注明 GenAI/agentic AI 不在其直接范围内，只作为模型风险治理类比来源。",
+        "补 FINRA Algorithmic Trading / Regulatory Notice 15-09 作为交易自动化系统监督、测试、变更和控制来源。",
+        "建议补一个 MLOps/部署来源，支持 rollback、shadow/canary 或 safe promotion。"
+      ],
+      "content_patch_notes": [
+        "正式 draft 增加审批单字段：owner、approver、change_type、old_threshold、new_threshold、impact_assessment、offline_eval_result、shadow_result、rollback_plan_id、audit_log_id、effective_at。",
+        "把 hard gate enable 和 threshold change 分成两个触发条件，但可保留在同一 checklist 内。",
+        "将“必须”定义为 CEK-TA 内部 policy must，而非声称外部监管逐字要求。"
+      ],
+      "boundary_patch_notes": [
+        "不得在 AI Engineering 中写入具体交易阈值、仓位、止损止盈、订单执行参数。",
+        "如果阈值与策略收益、风险预算、交易执行直接相关，应路由到 Trading Engineering。"
+      ],
+      "conflict_patch_notes": [
+        "未发现直接冲突。",
+        "需要链接 calibration.threshold_requires_shadow_data 和 audit.every_gate_decision_requires_trace，避免审批、校准、审计三类规则分散。"
+      ],
+      "required_followups": [
+        "补 CEK-TA approval/change-ticket schema。",
+        "补 rollback_plan 最小字段和审批状态枚举。",
+        "回写来源更新说明：Fed/OCC 2026 guidance 对 GenAI 的适用限制。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_audit_every_gate_decision_requires_trace_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "方向充分成立。gate/scoring 决策属于可审计自动化决策，应记录输入摘要、版本、知识引用、reason codes、缺失字段和降级动作。NIST AI RMF、模型风险治理和 MLflow tracking/lineage 均支持透明度、文档化、评估和可复现追踪。",
+      "source_patch_notes": [
+        "保留 NIST AI RMF。",
+        "补 MLflow Tracking 作为参数、指标、代码版本、artifacts 记录来源。",
+        "补 MLflow Dataset Tracking 或同类 lineage 来源，支持数据集与模型输出 lineage。",
+        "补 2026 OCC/Fed/FDIC revised model risk guidance，注明其 GenAI 范围限制。"
+      ],
+      "content_patch_notes": [
+        "正式 draft 增加 gate_decision_trace schema：event_id、decision_timestamp、input_fingerprint、sanitized_input_summary、model_id、model_version、prompt_version、rag_index_version、knowledge_source_ids、score、decision、reason_codes、missing_fields、fallback_action、latency_ms、cost_estimate、reviewer_id。",
+        "要求记录 source_ids 而不是只记录自然语言解释。",
+        "要求日志可复现但不泄露原始敏感交易上下文。"
+      ],
+      "boundary_patch_notes": [
+        "只记录摘要、hash、引用 ID 和脱敏字段；不得写入账号、密钥、私有策略规则、完整订单流。",
+        "如 trace 涉及订单执行明细，应只存外部系统引用，细节路由到 Trading Engineering 或安全日志系统。"
+      ],
+      "conflict_patch_notes": [
+        "与 data_privacy.no_secret_or_account_identifier_in_training 存在正向约束关系：审计留痕必须同时满足脱敏要求。",
+        "未发现与 formal knowledge 的直接冲突。"
+      ],
+      "required_followups": [
+        "补 gate trace JSON schema。",
+        "补 reason_code 枚举和 fallback_action 枚举。",
+        "补日志保留期限、访问权限和脱敏策略。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_business_objective_llm_trader_acceptance_criteria_required_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立，但与 success_metric_not_only_pnl 内容重复。建议本条作为父规则：LLM 交易质量项目上线前必须定义 acceptance criteria，覆盖风险拦截、坏交易过滤、解释质量、人工复核、审计成本和运行约束，而不仅是收益表现。",
+      "source_patch_notes": [
+        "保留 OpenAI evals 来源，但注明 Evals platform 正在退役，应迁移到当前 Datasets/新 eval 工作流。",
+        "保留 NIST AI RMF，支持 intended purpose、measurement、deployment context 和 risk management。",
+        "补 Model Cards for Model Reporting，支持 intended use、evaluation procedures、performance characteristics 和 limitations。",
+        "补 CFA Institute GIPS 或投资表现呈现来源，用于说明投资表现报告不能只看单一 PnL 且不得误导。"
+      ],
+      "content_patch_notes": [
+        "将本条改为 acceptance criteria 父 checklist，不再重复“不能只看 PnL”的一句话。",
+        "建议字段：risk_interception_rate、false_allow_rate、false_block_rate、bad_trade_filter_quality、explanation_quality、source_coverage、human_review_rate、audit_cost_minutes、latency_budget、privacy_compliance_pass。",
+        "明确 acceptance criteria 是上线准入条件，不等于策略收益承诺。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 只定义 LLM gate/scoring 质量指标和审计指标。",
+        "PnL、回撤、夏普、滑点、成交质量等交易绩效指标的计算口径应路由到 Trading Engineering。"
+      ],
+      "conflict_patch_notes": [
+        "与 business_objective.success_metric_not_only_pnl 重复，应拆分父子关系。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "建立 acceptance criteria 模板。",
+        "将本条与第 4 条互链：本条为项目准入 checklist，第 4 条为 metric composition rule。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_business_objective_success_metric_not_only_pnl_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立。LLM 交易质量项目如果只用 PnL 衡量，会掩盖风险拦截、坏交易过滤、解释质量、合规成本和 false allow/false block 等关键维度。需要保留为独立 metric rule，但应避免与第 3 条重复。",
+      "source_patch_notes": [
+        "保留 OpenAI evals 作为工作流质量评估来源，但注明退役时间线。",
+        "补 NIST AI RMF Measure/Manage 作为多维风险测量来源。",
+        "补 Model Cards for Model Reporting，支持跨条件报告 performance characteristics 和 intended use。",
+        "补 CFA Institute GIPS，支持投资表现呈现需要准确、一致、不得误导。"
+      ],
+      "content_patch_notes": [
+        "将 statement 改为：LLM gate/scoring 成功指标不得仅用 PnL，应至少覆盖风险拦截、坏交易过滤、解释/来源质量、审计成本、false allow/false block 和人工升级质量。",
+        "明确 PnL 可以作为外部 Trading Engineering 绩效输入，但不能成为 LLM label 或 acceptance 的唯一依据。",
+        "建议加入 negative control：blocked trade 不能简单按 missed profit 标为 loss。"
+      ],
+      "boundary_patch_notes": [
+        "不得在 AI Engineering 定义具体收益率目标、风控预算或交易参数。",
+        "交易绩效指标只作为外部评估引用，不在本知识项中定义策略规则。"
+      ],
+      "conflict_patch_notes": [
+        "与第 3 条重复，应保留本条为 success metric 子规则。",
+        "需与后续 label_schema.no_pnl_only_label、eval_blocked_trade_cannot_be_labeled_as_loss 建立冲突防护链接。"
+      ],
+      "required_followups": [
+        "补 metric taxonomy：quality、risk、explainability、auditability、operational_cost。",
+        "补 bad cases 示例：高 PnL 但违反规则、高解释质量但低风险拦截等。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_calibration_llm_score_not_probability_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立。LLM 输出分数、口头置信度或 rubric score 不是天然概率，不能直接作为 calibrated probability 使用。需要通过独立验证集、校准曲线、Brier/ECE 等指标和分组评估验证。",
+      "source_patch_notes": [
+        "保留 scikit-learn calibration 和 cross-validation 来源。",
+        "补 ACL 2024 LLM confidence estimation and calibration survey，直接支持 LLM confidence/calibration 风险。",
+        "保留 OpenAI evals 作为任务评估流程来源，但注明 Evals platform 退役。",
+        "建议补一个 threshold tuning 或 reliability diagram 来源。"
+      ],
+      "content_patch_notes": [
+        "把本条聚焦为 raw LLM score != probability，不直接讲阈值上线。",
+        "建议正式 draft 增加：raw_score、calibrated_score、calibration_dataset_id、calibration_method、ece、brier_score、reliability_bucket、subgroup_key。",
+        "明确 verbal confidence、rubric score、logprob-derived score 都必须经过验证后才能用于 gating。"
+      ],
+      "boundary_patch_notes": [
+        "不得让 raw LLM score 直接 hard allow 交易。",
+        "若 score 对具体市场 regime 或策略参数敏感，应把 regime/策略解释路由到 Trading Engineering。"
+      ],
+      "conflict_patch_notes": [
+        "与第 6 条重叠；本条保留为 score semantics 规则，第 6 条保留为 threshold promotion 规则。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 calibration report schema。",
+        "补最小校准指标集合：ECE、Brier/log loss、reliability diagram、bucket sample count。",
+        "补分组评估要求：市场状态、资产类别、策略版本、数据来源模式。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_calibration_threshold_requires_shadow_data_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立。阈值用于 gating/hard gate 时，不能只凭离线样本或主观判断确定，应基于 holdout/shadow 数据、分组评估、校准结果和审批流程后再上线。",
+      "source_patch_notes": [
+        "保留 scikit-learn cross-validation/calibration 来源。",
+        "补 AWS shadow deployment / SageMaker shadow testing 作为 shadow mode 不影响生产决策、比较生产请求副本的部署安全来源。",
+        "保留 OpenAI evals 作为 LLM 任务评估来源，但注明退役。",
+        "与 approval.hard_gate_enable_requires_approval 共享治理来源。"
+      ],
+      "content_patch_notes": [
+        "将 statement 改为：gate threshold promotion requires holdout/shadow evidence, calibration report, subgroup analysis, owner approval, rollback plan and audit record。",
+        "建议正式 draft 增加 promotion gate：offline_pass、shadow_pass、false_allow_within_limit、false_block_reviewed、rollback_ready。",
+        "不应在本条写具体 threshold 数值。"
+      ],
+      "boundary_patch_notes": [
+        "阈值确定流程属于 AI Engineering；具体阈值、策略收益影响和执行参数属于 Trading Engineering 或项目私有配置。",
+        "shadow 模式下 LLM 输出不得影响实盘订单。"
+      ],
+      "conflict_patch_notes": [
+        "与第 1 条审批规则和第 5 条校准语义规则互补。",
+        "应避免与第 5 条重复描述 score 不是概率。"
+      ],
+      "required_followups": [
+        "补 threshold promotion checklist。",
+        "补 shadow_data_id、shadow_window、sample_count、drift_check、promotion_decision 字段。",
+        "补失败回滚与人工复核路径。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_capability_boundary_llm_not_primary_price_predictor_v1_001",
+      "decision": "needs_more_evidence",
+      "reason": "候选方向作为 CEK-TA 内部安全边界是合理的，但现有来源主要支持治理、验证、监督和风险管理，不能直接证明“LLM 不应作为主要价格预测器”这一能力判断。尤其 2026 revised model risk guidance 明确 GenAI/agentic AI 不在范围内，因此不能作为该强断言的直接证据。",
+      "source_patch_notes": [
+        "保留 NIST AI RMF、FINRA AI/Algorithmic Trading 作为治理和监督来源，但降低为 supporting evidence。",
+        "补内部架构合同：LLM role boundary、deterministic final gate、numeric model registry、execution engine boundary。",
+        "补 empirical benchmark 或专业研究：LLM 在数值金融预测上的限制、与专门时序/量化模型的比较、LLM hallucination/calibration 风险。",
+        "补 OpenAI/模型供应商关于模型输出非金融建议、非确定性输出或评估要求的官方边界材料。"
+      ],
+      "content_patch_notes": [
+        "建议改写为：默认不得把 LLM 输出作为 primary numeric price forecasting 或 execution authority；除非经过独立验证、监控、审批和回滚，LLM 默认只承担检索、解释、候选评分、reason code 和人工辅助。",
+        "删掉绝对化措辞，避免把工程保守边界写成通用科学定论。",
+        "拆出 scorer、explainer、retriever、review assistant 与 executor/forecaster 的角色表。"
+      ],
+      "boundary_patch_notes": [
+        "数值预测、风控阈值、仓位、订单执行、fill model 和交易风控本体应路由到 Trading Engineering。",
+        "AI Engineering 只保留 LLM 角色边界、评估和安全 gate 规则。"
+      ],
+      "conflict_patch_notes": [
+        "与第 8 条高度重复，建议合并。",
+        "与 runtime_final_gate_deterministic_engine_required、llm_role_boundary_no_direct_order_execution 后续候选应互链。"
+      ],
+      "required_followups": [
+        "补内部 architecture boundary 文档。",
+        "补 LLM numerical forecasting limitation 或 financial forecasting benchmark 来源。",
+        "补 CEK-TA 允许例外条件：validated_numeric_model、independent_review、monitoring、rollback、human_approval。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_capability_boundary_numeric_model_vs_llm_role_split_v1_001",
+      "decision": "needs_more_evidence",
+      "reason": "角色拆分方向正确，但当前来源不足以支撑“数值预测、风控阈值和订单执行应由专门模型或确定性系统承担”的强制结论。应先补内部系统架构合同和外部能力/风险证据，再转 draft。",
+      "source_patch_notes": [
+        "补内部 contract：numeric model vs LLM role split、final deterministic risk gate、execution engine separation。",
+        "补 FINRA algorithmic trading supervision/testing 来源作为自动化交易系统边界来源。",
+        "补 LLM calibration/confidence 来源作为 LLM 输出不应直接承担硬执行权的 supporting evidence。",
+        "补模型卡/系统卡类来源支持 intended use 与 limitation 文档化。"
+      ],
+      "content_patch_notes": [
+        "改写为角色分工 checklist：LLM 可做 retrieval、explanation、candidate scoring、reason_code generation、human review assist；numeric/deterministic systems 负责 price forecast、risk threshold、position sizing、order execution。",
+        "增加例外审批：若 LLM 被用于数值预测，必须有独立验证、模型卡、数据卡、监控、rollback、owner approval。",
+        "删除与第 7 条重复的 statement。"
+      ],
+      "boundary_patch_notes": [
+        "Trading Engineering 管理预测模型、回测、实盘执行、交易风控和策略参数。",
+        "AI Engineering 管理 LLM 角色边界、接口权限、评估、审计和安全。"
+      ],
+      "conflict_patch_notes": [
+        "与第 7 条合并为一个 formal knowledge item，或第 7 做原则、第 8 做职责矩阵。",
+        "与后续 no_direct_order_execution、scorer_not_executor、deterministic_final_gate 规则建立链接。"
+      ],
+      "required_followups": [
+        "补 role split matrix。",
+        "补 architecture diagram 或接口契约引用。",
+        "补外部研究/官方文档证明 LLM 置信度、数值可靠性和非确定性风险。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_data_asset_eval_pool_must_not_train_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "方向充分成立。训练池、评估池、gold set、shadow pool 和 incident pool 如果混用，会造成评估污染、训练/测试泄漏和事故样本污染。Datasheets、DVC、MLflow 和 scikit-learn holdout/CV 原则均支持数据集文档化、版本化和分离评估。",
+      "source_patch_notes": [
+        "保留 Datasheets for Datasets。",
+        "保留 DVC 文档作为 data/model versioning 来源。",
+        "补 MLflow Dataset Tracking 或同类 dataset lineage 来源。",
+        "保留 scikit-learn cross-validation/holdout 来源。"
+      ],
+      "content_patch_notes": [
+        "正式 draft 定义五类数据池：train_pool、eval_pool、gold_set、shadow_pool、incident_pool。",
+        "增加 movement rule：incident_pool 不得自动进入 train_pool；eval/gold 不得被训练使用；shadow pool 只能用于上线前评估或生产旁路分析。",
+        "增加字段：dataset_id、pool_type、source_system、version、hash、created_at、owner、allowed_use、prohibited_use、promotion_ticket_id。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 只沉淀数据治理规则和 schema，不存储私有交易样本。",
+        "原始订单、账户、策略明细和交易结果数据留在项目私有数据域。"
+      ],
+      "conflict_patch_notes": [
+        "与第 10 条 gold_set_immutable_required 重叠；本条保留为 pool separation，10 保留为 gold set versioning。",
+        "与后续 leakage_train_test_contamination_block 建立强链接。"
+      ],
+      "required_followups": [
+        "补 data pool registry schema。",
+        "补数据池迁移审批流程。",
+        "补泄漏检测规则：train/eval/gold hash overlap、near-duplicate overlap、source lineage overlap。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_data_asset_gold_set_immutable_required_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立，但“immutable”应解释为版本不可变，而不是永远不能新增或修订。gold set 应通过版本、hash、变更记录和 reviewer 审批演进，避免评估基准被无审计地污染。",
+      "source_patch_notes": [
+        "保留 DVC 作为 versioning 来源。",
+        "补 MLflow Dataset Tracking 或同类 lineage 来源。",
+        "保留 Datasheets for Datasets，支持数据集用途、组成、维护和限制说明。",
+        "保留 scikit-learn holdout/CV 来源，支持评估集不应被训练污染。"
+      ],
+      "content_patch_notes": [
+        "将 statement 改为：gold set must be immutable per version; any change creates a new version with hash, diff, rationale, owner and reviewer approval。",
+        "定义 gold_set_version、gold_set_hash、change_reason、diff_summary、reviewer、effective_at、deprecated_at。",
+        "增加回归评估要求：新旧 gold set 需要并行报告一段时间，避免指标跳变不可解释。"
+      ],
+      "boundary_patch_notes": [
+        "gold set 的标签规范、版本规则属于 AI Engineering。",
+        "gold set 内的原始交易样本和账户信息不得进入 AI Engineering 知识库。"
+      ],
+      "conflict_patch_notes": [
+        "与第 9 条合并或互链；本条作为 gold set immutability/versioning 子规则。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 gold set registry schema。",
+        "补 new_version approval workflow。",
+        "补 gold set contamination 检测和 incident response。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_data_license_market_data_license_check_required_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立。市场数据进入训练、评估、RAG、再分发、非展示使用或 AI solution 前必须检查授权、用途、供应商限制、derived data、redistribution 和 non-display 许可。当前来源足够支持 license-governed concern，但 Nasdaq 来源需要更可审计的当前协议或条款快照。",
+      "source_patch_notes": [
+        "保留 CME Group License Data / Market Data Policy Education Center，支持 internal display、internal non-display、distribution、derived/custom products、AI solutions compliance。",
+        "Nasdaq Data Terms 页面可能动态加载，建议补 Nasdaq Global Data Agreement、供应商合同、数据产品条款或可审计快照。",
+        "补项目级 vendor contract reference，但不得把私有合同全文写入知识库。",
+        "建议补 legal/compliance review 来源或内部 policy。"
+      ],
+      "content_patch_notes": [
+        "正式 draft 增加 license_check schema：vendor、dataset_name、contract_id、allowed_use_training、allowed_use_eval、allowed_use_rag、allowed_use_redistribution、non_display_allowed、derived_data_allowed、retention_limit、subprocessor_allowed、model_provider_upload_allowed、reviewer、reviewed_at。",
+        "明确 license check 是上线/导入前 gate，未通过则阻断训练、评估或再分发。",
+        "加入 vendor-specific restrictions must override generic CEK-TA guidance。"
+      ],
+      "boundary_patch_notes": [
+        "本条不是法律意见，只是 AI Engineering 的合规 gate。",
+        "不得将私有合同、供应商账号、商业条款或数据权限细节沉淀为通用 KB 内容。",
+        "交易所/供应商数据再分发和 derived data 产品规则应由项目法律/合规确认。"
+      ],
+      "conflict_patch_notes": [
+        "与 data_privacy.no_secret_or_account_identifier_in_training 和 data_asset pool rules 互补。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 market data license checklist。",
+        "补 vendor_terms_snapshot_id 字段。",
+        "补 compliance_review_required=true 的触发条件。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_data_privacy_no_secret_or_account_identifier_in_training_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "方向充分成立。训练导出前必须移除密钥、账号标识、PII、账户敏感信息，并保留脱敏审计记录。OWASP LLM 风险、prompt injection/data exfiltration、NIST Privacy Framework 均支持该类隐私与安全控制。",
+      "source_patch_notes": [
+        "保留 NIST AI RMF 作为治理来源。",
+        "补 NIST Privacy Framework 作为隐私风险管理来源。",
+        "补 OWASP Top 10 for LLM Applications 的 Sensitive Information Disclosure 来源。",
+        "补 OWASP Prompt Injection Prevention Cheat Sheet，支持 API key/password/system information exfiltration 风险。",
+        "建议补 secret scanning 工具或内部安全基线来源。"
+      ],
+      "content_patch_notes": [
+        "正式 draft 增加 export_redaction schema：export_id、source_dataset_id、redaction_run_id、secret_scan_result、pii_scan_result、account_identifier_scan_result、redaction_policy_version、residual_risk、reviewer、approved_at。",
+        "要求审计记录自身也必须脱敏，不能把 raw secret、账号、token、完整账户标识写入日志。",
+        "增加检测到敏感信息后的 incident workflow：quarantine、notify owner、rotate secret、block export、record sanitized incident id。"
+      ],
+      "boundary_patch_notes": [
+        "项目私有事实、账号数据、密钥、账户标识不进入 AI Engineering KB。",
+        "脱敏策略可沉淀为通用规则；原始敏感样本只保留在项目安全域。"
+      ],
+      "conflict_patch_notes": [
+        "与 audit.every_gate_decision_requires_trace 存在约束关系：trace 必须可审计但不能泄露敏感信息。",
+        "与 data_license.market_data_license_check_required 互补，分别覆盖 privacy/security 与 vendor/license。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 secret/PII/account identifier scanning checklist。",
+        "补 redaction audit record schema。",
+        "补敏感信息发现后的 incident/quarantine 流程。"
+      ]
+    }
+  ]
+}

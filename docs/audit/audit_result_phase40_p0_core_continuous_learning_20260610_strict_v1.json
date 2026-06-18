@@ -1,0 +1,543 @@
+{
+  "audit_result_id": "audit_result_phase40_p0_core_continuous_learning_20260610_strict_v1",
+  "source_package_id": "phase40_candidate_audit_package_20260610",
+  "audited_at_jst": "2026-06-10T17:02:47+09:00",
+  "decision": "Conditional Accept for Formal Draft Queue",
+  "decisions": [
+    {
+      "candidate_id": "cand_20260610_phase40_p40_c01_allow_block_skip_human_review_001",
+      "research_task_id": "P40-C01",
+      "decision": "accepted_for_draft",
+      "reason": "方向正确：持续学习必须记录完整候选空间，不能只记录成交/allow 样本。whylogs/WhyLabs 可支撑数据与模型健康日志，OPE/logged bandit 文献进一步支撑记录被历史策略选择或未选择的动作以降低选择偏差。",
+      "source_patch_notes": [
+        "保留 whylogs/WhyLabs 作为 logging/monitoring 来源；补充 logged bandit / OPE 来源，支撑 block/skip/human_review 也要记录。"
+      ],
+      "content_patch_notes": [
+        "正式 draft 应明确 log every candidate != execute every candidate；记录字段至少包含 candidate_id、decision_time、action_taken、final_gate_decision、policy_version、outcome_ref、counterfactual_status。"
+      ],
+      "boundary_patch_notes": [
+        "不得把该条解释为自动扩大交易执行范围；不得把 blocked/skipped 的 outcome 当作直接可观测事实。"
+      ],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false 与 hard boundary『candidate 不能默认指导』冲突；进入 draft 前必须改为 true，并补 visible_in_default_guidance_queue=false。"
+      ],
+      "required_followups": [
+        "修正 workflow.hidden_from_default_queue=true；补 visible_in_default_guidance_queue=false。"
+      ],
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false
+    },
+    {
+      "candidate_id": "cand_20260610_phase40_p40_c02_feedback_record_scorer_llm_final_gate_001",
+      "research_task_id": "P40-C02",
+      "decision": "accepted_for_draft",
+      "reason": "方向正确：feedback record 保存 decision-time features、scorer 输出、LLM audit 输出、final gate 决策和后验结果引用，是可回放 audit trail 的最小契约。whylogs 支撑数据日志，MLflow 支撑模型版本/metadata，NIST 支撑治理。",
+      "source_patch_notes": [
+        "补 point-in-time / decision-time feature contract 来源，避免只靠 whylogs/MLflow 泛化支撑字段清单。"
+      ],
+      "content_patch_notes": [
+        "明确 outcome 只能保存引用和 observation window，不得把 post-trade outcome 混入 scorer 输入。"
+      ],
+      "boundary_patch_notes": [
+        "LLM audit output 是审计辅助，不是 final gate；final_gate_decision 必须来自 deterministic final gate。"
+      ],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false 与 hard boundary『candidate 不能默认指导』冲突；进入 draft 前必须改为 true，并补 visible_in_default_guidance_queue=false。"
+      ],
+      "required_followups": [
+        "修正 workflow.hidden_from_default_queue=true。"
+      ],
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false
+    },
+    {
+      "candidate_id": "cand_20260610_phase40_p40_c03_opportunity_cost_001",
+      "research_task_id": "P40-C03",
+      "decision": "accepted_for_draft",
+      "reason": "来源充分：off-policy/logged bandit 论文直接支撑从历史日志中评估未由目标策略选择的动作，适合为 blocked/skipped 候选保留 opportunity-cost 评估入口。",
+      "source_patch_notes": [
+        "保留 arXiv logged bandit 与 JMLR counterfactual risk minimization；补 Open Bandit Pipeline 或内部 OPE contract 作为工程落地来源。"
+      ],
+      "content_patch_notes": [
+        "Draft 必须写明 opportunity-cost 是估计入口，不是真实成交结果；需要 behavior_policy_id、target_policy_id、propensity、paper/replay 或 human_review 证据。"
+      ],
+      "boundary_patch_notes": [
+        "fill/slippage/fee/latency 假设必须引用 Phase 37 / Trading Engineering，不得在 AI Engineering 中沉淀交易执行规则。"
+      ],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false 与 hard boundary『candidate 不能默认指导』冲突；进入 draft 前必须改为 true，并补 visible_in_default_guidance_queue=false。"
+      ],
+      "required_followups": [
+        "增加 counterfactual_method、fill_cost_assumption_ref、replay_engine_version 字段。"
+      ],
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false
+    },
+    {
+      "candidate_id": "cand_20260610_phase40_p40_c04_pnl_001",
+      "research_task_id": "P40-C04",
+      "decision": "needs_more_evidence",
+      "reason": "当前来源过于泛化。NIST/TFDV/whylogs 支撑治理、数据质量和监控，但不能直接支撑“PnL 之外必须覆盖交易质量、规则违规、风控违规、执行质量和人工复核”这一交易标签 taxonomy。",
+      "source_patch_notes": [
+        "补 CEK-TA label_policy_version / trading quality label taxonomy；补 outcome bias、reward hacking、human review label governance 来源。"
+      ],
+      "content_patch_notes": [
+        "将 statement 改成：PnL-only label 不足以代表交易决策质量；必须结合 process/risk/rule/execution/human-review 标签。"
+      ],
+      "boundary_patch_notes": [
+        "不得把具体风控阈值、执行质量公式、fill/cost 模型写入 AI Engineering。"
+      ],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false 与 hard boundary『candidate 不能默认指导』冲突；进入 draft 前必须改为 true，并补 visible_in_default_guidance_queue=false。"
+      ],
+      "required_followups": [
+        "提交 label_schema_v1，包括 good_loss、bad_win、rule_violation、risk_violation、execution_quality、human_review_outcome。"
+      ],
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false
+    },
+    {
+      "candidate_id": "cand_20260610_phase40_p40_c05_good_loss_bad_win_001",
+      "research_task_id": "P40-C05",
+      "decision": "needs_more_evidence",
+      "reason": "方向合理，但来源不直接。good loss / bad win 是交易复盘与标签治理概念，当前 NIST + logged bandit 只能支撑治理和反事实问题，不能直接支撑该标签复核规则。",
+      "source_patch_notes": [
+        "补交易决策质量/过程质量标签来源，或 CEK-TA 内部 label policy；补 reward hacking / outcome bias 来源。"
+      ],
+      "content_patch_notes": [
+        "Draft 应写：亏损不必然是 bad decision，盈利不必然是 good decision；需由复核规则与上下文证据判定。"
+      ],
+      "boundary_patch_notes": [
+        "不得把 good_loss/bad_win 转化为买卖策略规则或实盘阈值。"
+      ],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false 与 hard boundary『candidate 不能默认指导』冲突；进入 draft 前必须改为 true，并补 visible_in_default_guidance_queue=false。"
+      ],
+      "required_followups": [
+        "定义 human_review rubric 与 label provenance。"
+      ],
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false
+    },
+    {
+      "candidate_id": "cand_20260610_phase40_p40_c06_false_allow_cost_false_block_cost_001",
+      "research_task_id": "P40-C06",
+      "decision": "accepted_for_draft",
+      "reason": "来源充分：scikit-learn 的 cost-sensitive threshold tuning 直接支撑阈值与业务成本函数绑定；calibration 文档支撑概率先校准再用于阈值。",
+      "source_patch_notes": [
+        "保留 scikit cost threshold 与 calibration；补 false_allow/false_block 成本矩阵的内部业务 policy ref。"
+      ],
+      "content_patch_notes": [
+        "明确 threshold 不得固定 0.5；threshold_policy_version 必须记录 cost matrix、review budget、calibration set 和 owner approval。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 只定义评估/阈值治理；具体交易成本、滑点、手续费假设归 Trading Engineering。"
+      ],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false 与 hard boundary『candidate 不能默认指导』冲突；进入 draft 前必须改为 true，并补 visible_in_default_guidance_queue=false。"
+      ],
+      "required_followups": [
+        "新增 false_allow_cost_ref、false_block_cost_ref、review_budget_version。"
+      ],
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false
+    },
+    {
+      "candidate_id": "cand_20260610_phase40_p40_c07_feature_drift_label_drift_score_distribution_drift_calibration_drift_001",
+      "research_task_id": "P40-C07",
+      "decision": "accepted_for_draft",
+      "reason": "方向正确，但需补来源。Evidently 支撑 individual columns 的 features/predictions/targets 分布漂移，TFDV 支撑 skew/drift；calibration drift 还应补 scikit calibration/reliability diagram 来源。",
+      "source_patch_notes": [
+        "补 scikit-learn calibration curve / reliability diagram 作为 calibration drift 的来源。"
+      ],
+      "content_patch_notes": [
+        "将四类 drift 明确定义：feature drift、label/target drift、score/prediction distribution drift、calibration drift。"
+      ],
+      "boundary_patch_notes": [
+        "漂移告警只能触发 review/retrain candidate，不得自动上线新模型。"
+      ],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false 与 hard boundary『candidate 不能默认指导』冲突；进入 draft 前必须改为 true，并补 visible_in_default_guidance_queue=false。"
+      ],
+      "required_followups": [
+        "新增 drift_monitor_version、reference_window、current_window、minimum_slice_n、action_on_alert。"
+      ],
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false
+    },
+    {
+      "candidate_id": "cand_20260610_phase40_p40_c08_strategy_version_symbol_mix_market_regime_execution_cost_ai_001",
+      "research_task_id": "P40-C08",
+      "decision": "needs_more_evidence",
+      "reason": "当前来源不足。TFDV/whylogs/NIST 只支撑通用 drift/data monitoring，不能直接支撑 strategy_version、market_regime、execution_cost 这些交易 AI 切片；其中 execution cost 还涉及 Trading Engineering 边界。",
+      "source_patch_notes": [
+        "补 slice/segment monitoring 来源、domain/regime drift 来源；execution_cost 必须补 Phase 37 fill/cost boundary ref。"
+      ],
+      "content_patch_notes": [
+        "将 claim 改成 AI monitoring slices，而不是交易规则本体：strategy_version_ref、symbol_group、regime_label_ref、execution_cost_ref。"
+      ],
+      "boundary_patch_notes": [
+        "不得在 AI Engineering 定义 market regime 规则、成本模型、成交假设或执行参数。"
+      ],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false 与 hard boundary『candidate 不能默认指导』冲突；进入 draft 前必须改为 true，并补 visible_in_default_guidance_queue=false。"
+      ],
+      "required_followups": [
+        "补 trading_engineering_policy_version、regime_source_ref、execution_cost_assumption_ref。"
+      ],
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false
+    },
+    {
+      "candidate_id": "cand_20260610_phase40_p40_c09_candidate_model_champion_model_001",
+      "research_task_id": "P40-C09",
+      "decision": "accepted_for_draft",
+      "reason": "来源基本充分。MLflow Model Registry 支撑 registered model、versions、aliases、tags 和 lifecycle metadata；该条正确阻断 retrain 自动替换 champion。",
+      "source_patch_notes": [
+        "保留 MLflow Model Registry / Workflow；补 champion-challenger release contract 内部来源。"
+      ],
+      "content_patch_notes": [
+        "candidate_model 只能进入 offline/shadow/paper/canary 评估，不得直接替换 champion_model。"
+      ],
+      "boundary_patch_notes": [
+        "不得因单次指标提升自动进入 hard gate；必须有 owner approval、release manifest、rollback target。"
+      ],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false 与 hard boundary『candidate 不能默认指导』冲突；进入 draft 前必须改为 true，并补 visible_in_default_guidance_queue=false。"
+      ],
+      "required_followups": [
+        "新增 champion_model_id、candidate_model_id、promotion_decision、approval_record。"
+      ],
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false
+    },
+    {
+      "candidate_id": "cand_20260610_phase40_p40_c10__001",
+      "research_task_id": "P40-C10",
+      "decision": "rejected",
+      "reason": "存在入库级结构缺陷：candidate_id 含空 slug，normalized_claim 为 phase40..v1，proposed_knowledge_id 为 kb_ai_feedback_governance.phase40..v1。必须重建，不能进入 formal draft。",
+      "source_patch_notes": [
+        "重建后再补 MLflow/TFDV/NIST 及内部 retraining trigger contract。"
+      ],
+      "content_patch_notes": [
+        "建议新 normalized_claim：phase40.retraining_trigger_audit_record.v1。"
+      ],
+      "boundary_patch_notes": [
+        "拒绝原因是 metadata 污染风险，不代表 claim 方向错误。"
+      ],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false 与 hard boundary『candidate 不能默认指导』冲突；进入 draft 前必须改为 true，并补 visible_in_default_guidance_queue=false。",
+        "normalized_claim/proposed_knowledge_id 出现空 slug，存在 formal index 污染风险；该类项必须拒绝并重建。"
+      ],
+      "required_followups": [
+        "重建 candidate_id：cand_20260610_phase40_p40_c10_retraining_trigger_audit_record_001。"
+      ],
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false
+    },
+    {
+      "candidate_id": "cand_20260610_phase40_p40_c11__001",
+      "research_task_id": "P40-C11",
+      "decision": "rejected",
+      "reason": "存在入库级结构缺陷：candidate_id 含空 slug，normalized_claim 为 phase40..v1，proposed_knowledge_id 为 kb_ai_feedback_governance.phase40..v1。必须重建，不能进入 formal draft。",
+      "source_patch_notes": [
+        "重建后保留 scikit calibration/Brier/TFDV，并补分组可靠性和 recalibration contract。"
+      ],
+      "content_patch_notes": [
+        "建议新 normalized_claim：phase40.retrain_recalibration_threshold_reliability.v1。"
+      ],
+      "boundary_patch_notes": [
+        "拒绝原因是 metadata 污染风险，不代表 claim 方向错误。"
+      ],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false 与 hard boundary『candidate 不能默认指导』冲突；进入 draft 前必须改为 true，并补 visible_in_default_guidance_queue=false。",
+        "normalized_claim/proposed_knowledge_id 出现空 slug，存在 formal index 污染风险；该类项必须拒绝并重建。"
+      ],
+      "required_followups": [
+        "重建 candidate_id：cand_20260610_phase40_p40_c11_retrain_recalibration_threshold_reliability_001。"
+      ],
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false
+    },
+    {
+      "candidate_id": "cand_20260610_phase40_p40_c12_threshold_policy_001",
+      "research_task_id": "P40-C12",
+      "decision": "accepted_for_draft",
+      "reason": "方向正确：threshold policy 需要同时考虑成本矩阵和人工复核预算。scikit cost-sensitive threshold tuning 支撑成本函数，calibration 支撑概率校准。",
+      "source_patch_notes": [
+        "补 human review budget / queue capacity 的内部 policy source。"
+      ],
+      "content_patch_notes": [
+        "Draft 必须将 threshold_policy_version 与 cost_matrix_version、review_budget_version、calibrator_version 绑定。"
+      ],
+      "boundary_patch_notes": [
+        "不得把 review budget 写成自动 allow/block；超预算应路由到降级策略或人工审批。"
+      ],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false 与 hard boundary『candidate 不能默认指导』冲突；进入 draft 前必须改为 true，并补 visible_in_default_guidance_queue=false。"
+      ],
+      "required_followups": [
+        "增加 review_capacity_limit、overflow_policy、owner_approval。"
+      ],
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false
+    },
+    {
+      "candidate_id": "cand_20260610_phase40_p40_c13_challenger_offline_shadow_paper_soft_gate_001",
+      "research_task_id": "P40-C13",
+      "decision": "needs_more_evidence",
+      "reason": "当前来源不够直接。MLflow/NIST 支撑模型生命周期和治理，但不能直接支撑 offline、shadow、paper、soft-gate 验证链路；paper/replay 还涉及 Trading Engineering 假设。",
+      "source_patch_notes": [
+        "补 OPE/shadow evaluation、Google SRE canary、Phase37 paper/replay/fill-cost boundary 来源。"
+      ],
+      "content_patch_notes": [
+        "将 challenger 通过条件拆成 offline_eval、shadow_eval、paper_or_replay_eval、soft_gate_eval，并定义每类最低证据。"
+      ],
+      "boundary_patch_notes": [
+        "paper/replay 的成交、滑点、成本假设必须引用 Trading Engineering。"
+      ],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false 与 hard boundary『candidate 不能默认指导』冲突；进入 draft 前必须改为 true，并补 visible_in_default_guidance_queue=false。"
+      ],
+      "required_followups": [
+        "补 promotion_gate_checklist 和 acceptance_metrics。"
+      ],
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false
+    },
+    {
+      "candidate_id": "cand_20260610_phase40_p40_c14_hard_gate_canary_001",
+      "research_task_id": "P40-C14",
+      "decision": "accepted_for_draft",
+      "reason": "来源充分。Argo Rollouts 和 Google SRE canary 支撑受控 canary / progressive delivery；NIST、SEC Knight、FCA 案例支撑高风险算法交易需严格控制。",
+      "source_patch_notes": [
+        "保留 Argo Rollouts；补 Google SRE canary 和 SEC/FCA 算法交易控制案例作为高风险背景。"
+      ],
+      "content_patch_notes": [
+        "hard gate canary 必须包含 exposure limit、stop condition、rollback target、owner approval、kill switch。"
+      ],
+      "boundary_patch_notes": [
+        "canary 只是发布证据，不是自动上线许可。"
+      ],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false 与 hard boundary『candidate 不能默认指导』冲突；进入 draft 前必须改为 true，并补 visible_in_default_guidance_queue=false。"
+      ],
+      "required_followups": [
+        "新增 canary_stage、stop_condition、rollback_target、manual_approval_required。"
+      ],
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false
+    },
+    {
+      "candidate_id": "cand_20260610_phase40_p40_c15_release_manifest_rollback_target_kill_switch_001",
+      "research_task_id": "P40-C15",
+      "decision": "accepted_for_draft",
+      "reason": "方向正确。MLflow 支撑模型版本和元数据，Argo/GitOps 支撑 progressive rollout/rollback，NIST 支撑治理；交易系统风险案例支持 kill switch/rollback 必须前置。",
+      "source_patch_notes": [
+        "补 Google SRE rollback/canary 或 incident management 来源；补 SEC Knight/FCA 控制案例。"
+      ],
+      "content_patch_notes": [
+        "release_manifest 必须覆盖 data/model/prompt/RAG/threshold/calibrator/final_gate/owner/rollback。"
+      ],
+      "boundary_patch_notes": [
+        "release manifest 不得包含私有策略正文或账户密钥；交易执行规则归 Phase37。"
+      ],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false 与 hard boundary『candidate 不能默认指导』冲突；进入 draft 前必须改为 true，并补 visible_in_default_guidance_queue=false。"
+      ],
+      "required_followups": [
+        "新增 secret_scan、rollback_drill_status、kill_switch_tested_at。"
+      ],
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false
+    },
+    {
+      "candidate_id": "cand_20260610_phase40_p40_c16_llm_rag_prompt_sft_lora_001",
+      "research_task_id": "P40-C16",
+      "decision": "accepted_for_draft",
+      "reason": "方向正确但应写成项目治理策略。OpenAI model optimization 将 eval、prompt engineering、fine-tuning 放入优化闭环；TRL 支撑 SFT 等后训练方法。",
+      "source_patch_notes": [
+        "补 RAG source / retrieval-context 来源；OpenAI model optimization 可作为 prompt/RAG/fine-tune 决策框架。"
+      ],
+      "content_patch_notes": [
+        "正式 draft 写成：先更新知识与检索，再 prompt，再在 eval 证明长期失败时 SFT/LoRA；不是通用行业硬律。"
+      ],
+      "boundary_patch_notes": [
+        "LLM 改进不得改变 final gate 权限；RAG/prompt/SFT 只能影响 audit assistant 行为。"
+      ],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false 与 hard boundary『candidate 不能默认指导』冲突；进入 draft 前必须改为 true，并补 visible_in_default_guidance_queue=false。"
+      ],
+      "required_followups": [
+        "新增 rag_index_version、prompt_version、eval_failure_threshold、sft_trigger_approval。"
+      ],
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false
+    },
+    {
+      "candidate_id": "cand_20260610_phase40_p40_c17_sft_lora_eval_schema_citation_reason_code_001",
+      "research_task_id": "P40-C17",
+      "decision": "needs_more_evidence",
+      "reason": "当前来源不足。OpenAI model optimization 与 HF SFT/TRL 支撑 eval 和 SFT 训练，但不能直接支撑 schema、citation、reason-code 长期失败的触发条件。",
+      "source_patch_notes": [
+        "补 JSON Schema / Structured Outputs、RAG faithfulness/citation completeness、CEK-TA reason taxonomy contract。"
+      ],
+      "content_patch_notes": [
+        "将 SFT/LoRA 触发条件机器化：schema_valid_rate、citation_resolved_rate、reason_code_consistency、unsupported_claim_rate。"
+      ],
+      "boundary_patch_notes": [
+        "SFT/LoRA 不能作为事实来源，也不能赋予 LLM final gate 权限。"
+      ],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false 与 hard boundary『candidate 不能默认指导』冲突；进入 draft 前必须改为 true，并补 visible_in_default_guidance_queue=false。"
+      ],
+      "required_followups": [
+        "补 eval_set_hash、failure_window、approval_record、post_sft_regression_eval。"
+      ],
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false
+    },
+    {
+      "candidate_id": "cand_20260610_phase40_p40_c18__001",
+      "research_task_id": "P40-C18",
+      "decision": "rejected",
+      "reason": "存在入库级结构缺陷：candidate_id 含空 slug，normalized_claim 为 phase40..v1，proposed_knowledge_id 为 kb_ai_feedback_governance.phase40..v1。必须重建后再审。",
+      "source_patch_notes": [
+        "重建后补 self-training/model-generated labels/feedback loop contamination 相关来源。"
+      ],
+      "content_patch_notes": [
+        "建议新 normalized_claim：phase40.feedback_loop_label_provenance.v1。"
+      ],
+      "boundary_patch_notes": [
+        "拒绝原因是 metadata 污染风险，不代表 claim 方向错误。"
+      ],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false 与 hard boundary『candidate 不能默认指导』冲突；进入 draft 前必须改为 true，并补 visible_in_default_guidance_queue=false。",
+        "normalized_claim/proposed_knowledge_id 出现空 slug，存在 formal index 污染风险；该类项必须拒绝并重建。"
+      ],
+      "required_followups": [
+        "重建 candidate_id：cand_20260610_phase40_p40_c18_feedback_loop_label_provenance_001。"
+      ],
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false
+    }
+  ],
+  "batch_summary": {
+    "accepted_for_draft_count": 10,
+    "needs_more_evidence_count": 5,
+    "rejected_count": 3,
+    "misrouted_to_trading_count": 0,
+    "direct_reviewed_count": 0,
+    "direct_approved_count": 0,
+    "default_guidance_allowed_count": 0,
+    "hard_gate_allowed_count": 0,
+    "metadata_findings": {
+      "candidate_count_declared": 18,
+      "candidate_count_observed": 18,
+      "hidden_from_default_queue_false_count": 18,
+      "empty_slug_candidates": [
+        "cand_20260610_phase40_p40_c10__001",
+        "cand_20260610_phase40_p40_c11__001",
+        "cand_20260610_phase40_p40_c18__001"
+      ]
+    }
+  },
+  "web_sources_used": [
+    {
+      "name": "NIST AI RMF",
+      "ref": "turn271241view1"
+    },
+    {
+      "name": "SEC Knight Capital Market Access Rule case",
+      "ref": "turn792758view1"
+    },
+    {
+      "name": "FCA algorithmic trading controls review",
+      "ref": "turn792758view2"
+    },
+    {
+      "name": "Google SRE Canary Release",
+      "ref": "turn792758view3"
+    },
+    {
+      "name": "whylogs/WhyLabs docs",
+      "ref": "turn268960search4"
+    },
+    {
+      "name": "MLflow Model Registry",
+      "ref": "turn268960search1"
+    },
+    {
+      "name": "TensorFlow Data Validation",
+      "ref": "turn268960search2"
+    },
+    {
+      "name": "Evidently data drift",
+      "ref": "turn268960search3"
+    },
+    {
+      "name": "scikit-learn threshold tuning",
+      "ref": "turn573493search4"
+    },
+    {
+      "name": "scikit-learn probability calibration",
+      "ref": "turn573493search1"
+    },
+    {
+      "name": "Argo Rollouts",
+      "ref": "turn573493search2"
+    },
+    {
+      "name": "OpenAI model optimization",
+      "ref": "turn621377search0"
+    },
+    {
+      "name": "Hugging Face TRL SFT",
+      "ref": "turn573493search3"
+    },
+    {
+      "name": "Off-policy logged bandit feedback",
+      "ref": "turn621377search3"
+    },
+    {
+      "name": "JMLR counterfactual risk minimization",
+      "ref": "turn621377search12"
+    }
+  ]
+}

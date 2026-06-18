@@ -1,0 +1,286 @@
+{
+  "schema_version": "1.1.0-candidate",
+  "candidate_id": "cand_20260617_phase60_sandbox_paper_live_gap_report_required_001",
+  "research_task_id": "P60-A08",
+  "status": {
+    "review_status": "formalized",
+    "ingestion_decision": "formal_reviewed_created",
+    "decision_reason": "Phase 60 reviewed-preparation strict audit allowed this item to become formal reviewed/caveat_only.",
+    "created_at": "2026-06-17",
+    "updated_at": "2026-06-17"
+  },
+  "classification": {
+    "tree_node_id": "kt.replay_simulation",
+    "canonical_node_id": "kt.replay_simulation",
+    "tree_path": "CEK-TA / Trading Engineering / Replay Simulation",
+    "related_nodes": [
+      "kt.trading_engineering",
+      "kt.replay_simulation",
+      "kt.live_execution",
+      "kt.risk_management",
+      "kt.data_engineering",
+      "kt.market_microstructure",
+      "kt.ai_engineering"
+    ],
+    "partition_id": "KB_05_REPLAY_SIMULATION",
+    "domain": "replay_simulation",
+    "subdomain": "environment_gap_report",
+    "rule_type": "gap_report_rule",
+    "claim_type": "audit_report_required",
+    "used_for": [
+      "gap_report_review",
+      "paper_live_reconciliation",
+      "simulation_audit",
+      "external_project_rag_retrieval"
+    ],
+    "classification_notes": "本候选属于 Trading Engineering 的环境治理知识。AI Engineering 只能引用 manifest、gap report 和 reason code 做审计解释，不得拥有交易执行、阈值或 hard gate。"
+  },
+  "claim": {
+    "claim_id": "claim_p60_a08",
+    "title": "sandbox / paper / live 差异必须输出标准 gap report",
+    "statement": "比较 sandbox、testnet、replay、paper trading、live canary 或 live 前，必须输出 gap report，覆盖数据、时钟、成交、费用、滑点、延迟、market impact、订单状态、风控和账户差异。",
+    "normalized_claim": "phase60.sandbox_paper_live_gap_report_required.v1",
+    "evidence_summary": "CEK-TA internal contract defining promotion decisions, gap report fields, required evidence and hard boundaries.；Alpaca documents paper trading limitations such as market impact, information leakage, latency slippage, queue position, price improvement, regulatory fees and dividends.；HftBacktest discusses market-data replay and fill assumptions, including the critical no-market-impact limitation for replay-based backtesting.",
+    "interpretation_notes": "本候选只定义 sandbox / testnet / replay / paper / live canary 环境边界、证据和审计流程，不输出买卖点、仓位、杠杆、止损止盈、风险阈值或实盘执行建议。",
+    "claim_strength": "medium_high",
+    "performance_claim": false
+  },
+  "applicability": {
+    "market": "general_with_platform_or_venue_specific_mapping",
+    "asset": "general",
+    "timeframe": "testing_replay_paper_or_live_canary_environment",
+    "data_granularity": "mocked_response_historical_realtime_order_event_or_fill_event",
+    "project_type": "trading_ai_support_layer",
+    "applies_when": [
+      "外接项目设计 sandbox、testnet、historical replay、realtime simulation、paper trading 或 live canary 流程",
+      "需要审计测试环境、模拟成交、订单生命周期、风控 rehearsal 或 paper/live 差异",
+      "需要把回测、回放、模拟盘和实盘等效链条落实到环境证据"
+    ],
+    "not_applicable_when": [
+      "需要直接生成买卖点、仓位、杠杆、止损止盈、风险阈值或实盘执行建议",
+      "问题属于真实 live order routing、账户同步、真实保证金或 broker truth，应由 Live Execution / Risk owner 处理",
+      "没有平台、交易所、券商、API 版本、数据来源或环境类型证据"
+    ],
+    "assumptions": [
+      "候选用于 CEK-TA 通用支持层知识库，不包含任何外接项目私有策略参数。",
+      "每个环境都需要显式记录环境事实、模拟假设、owner 和审计 trace。",
+      "候选通过外部审计前不能进入正式 reviewed 知识库。"
+    ],
+    "limitations": [
+      "平台、交易所、broker 和框架文档只能作为 implementation pattern 或 supporting source。",
+      "sandbox、testnet、paper trading 和 replay 的结果不能单独证明策略收益或实盘可行性。",
+      "本候选不提供投资建议、订单建议、风险阈值或实盘许可。"
+    ]
+  },
+  "source_refs": [
+    {
+      "source_title": "Phase 60 Environment Promotion Decision and Gap Report Contract",
+      "source_url": "docs/contracts/phase60_environment_promotion_gap_report_contract.md",
+      "source_type": "internal_contract",
+      "publisher": "CEK-TA",
+      "reliability": "high",
+      "score": 88,
+      "freshness": "current",
+      "evidence_summary": "CEK-TA internal contract defining promotion decisions, gap report fields, required evidence and hard boundaries.",
+      "limitations": [
+        "Internal CEK-TA schema; reviewed status requires external audit."
+      ],
+      "source_id": "src_phase60_gap_contract",
+      "accessed_at": "2026-06-17",
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "Paper Trading",
+      "source_url": "https://docs.alpaca.markets/us/docs/paper-trading",
+      "source_type": "official_doc",
+      "publisher": "Alpaca",
+      "reliability": "high",
+      "score": 86,
+      "freshness": "time_sensitive",
+      "evidence_summary": "Alpaca documents paper trading limitations such as market impact, information leakage, latency slippage, queue position, price improvement, regulatory fees and dividends.",
+      "limitations": [
+        "Broker-specific limitations; useful as paper/live gap examples, not exhaustive for all brokers."
+      ],
+      "source_id": "src_alpaca_paper",
+      "accessed_at": "2026-06-17",
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "HftBacktest Order Fill",
+      "source_url": "https://hftbacktest.readthedocs.io/en/latest/order_fill.html",
+      "source_type": "framework_doc",
+      "publisher": "HftBacktest",
+      "reliability": "medium_high",
+      "score": 82,
+      "freshness": "time_sensitive",
+      "evidence_summary": "HftBacktest discusses market-data replay and fill assumptions, including the critical no-market-impact limitation for replay-based backtesting.",
+      "limitations": [
+        "Framework-specific; use to support replay caveats and fill assumption disclosure."
+      ],
+      "source_id": "src_hftbacktest_order_fill",
+      "accessed_at": "2026-06-17",
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "Execution Report <8> message - FIX 4.4",
+      "source_url": "https://www.onixs.biz/fix-dictionary/4.4/msgtype_8_8.html",
+      "source_type": "standard_doc",
+      "publisher": "OnixS FIX Dictionary",
+      "reliability": "high",
+      "score": 84,
+      "freshness": "stable",
+      "evidence_summary": "FIX Execution Report is used to confirm order receipt or changes, relay order status, fills, rejects and post-trade fee calculations.",
+      "limitations": [
+        "FIX-specific standard; REST/WebSocket broker states still require adapter mapping."
+      ],
+      "source_id": "src_fix_exec_report",
+      "accessed_at": "2026-06-17",
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "source_count": 4,
+    "primary_source_count": 4,
+    "limitations": [
+      "外部来源具有平台、broker、exchange、asset class 或 API 版本边界。",
+      "内部契约需要外部 AI/人工审计后才能用于 formal reviewed/caveat_only。"
+    ],
+    "needs_more_evidence": false
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "known_conflicts": [],
+    "potential_conflicts": [
+      "可能与 Phase 58 environment equivalence manifest、Phase 37 replay/simulation、Phase 45 order/risk knowledge 重叠，正式转换前必须做重复和 owner 边界检查。"
+    ],
+    "resolution_summary": "External strict audit accepted this candidate for draft only. approval_allowed=false is required to avoid machine misread; formal reviewed/caveat_only requires a separate reviewed-preparation audit.",
+    "approval_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于提醒外接项目区分 sandbox、testnet、replay、paper、live canary 和 live 环境",
+      "用于审计 environment_manifest、promotion_decision 和 gap_report 是否齐全",
+      "用于阻止 AI 把 paper 盈亏、sandbox 响应或 replay 成交泛化为 live-ready 证据"
+    ],
+    "not_allowed": [
+      "不得据此生成买卖点、仓位、杠杆、止损止盈或风险阈值",
+      "不得据此授权实盘、自动拒单、自动停机或 hard gate",
+      "不得把任何平台 sandbox/paper 行为泛化为所有市场"
+    ]
+  },
+  "machine_gate": {
+    "default_guidance": "deny",
+    "reviewed_allowed": false,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "trade_execution_advice_allowed": false,
+    "risk_threshold_advice_allowed": false,
+    "requires_human_escalation": true,
+    "reason": "accepted_for_draft only; reviewed/caveat_only requires a separate reviewed-preparation audit."
+  },
+  "conversion_target": {
+    "proposed_knowledge_id": "kb_phase60_replay_simulation.sandbox_paper_live_gap_report_required.v1",
+    "target_partition": "KB_05_REPLAY_SIMULATION",
+    "target_review_status": "draft_preparation",
+    "default_guidance_target": "deny",
+    "hard_gate_target": "deny"
+  },
+  "workflow": {
+    "stage": "formalized_reviewed",
+    "queue_group": "formalized",
+    "hidden_from_default_queue": true,
+    "next_action": "runtime_linkage_validation",
+    "formal_knowledge_id": "kb_phase60_replay_simulation.sandbox_paper_live_gap_report_required.v1",
+    "formal_review_status": "reviewed",
+    "ai_audit_result_id": "audit_result_phase60_reviewed_preparation_20260617_strict_v1",
+    "reviewed_preparation_audit_package_id": "phase60_reviewed_preparation_audit_package_20260617",
+    "current_task_id": "CEK-TA-579",
+    "visible_in_default_guidance_queue": false,
+    "formalization_allowed": true,
+    "formal_knowledge_path": "codex-expert-kit/rag/knowledge/KB_05_REPLAY_SIMULATION/kb_phase60_replay_simulation.sandbox_paper_live_gap_report_required.v1.json",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "audit_log": [
+    {
+      "event": "candidate_created",
+      "at": "2026-06-17",
+      "by": "codex",
+      "notes": "Phase 60 P0 候选生成，等待严格审计。"
+    },
+    {
+      "event": "external_ai_audit_imported",
+      "at": "2026-06-17",
+      "by": "codex",
+      "task_id": "CEK-TA-577",
+      "audit_result_id": "audit_result_phase60_sandbox_replay_paper_candidate_20260617_strict_v1",
+      "decision": "accepted_for_draft",
+      "notes": "Strict audit accepted for draft only; conflict_audit.approval_allowed patched to false."
+    },
+    {
+      "event": "reviewed_preparation_audit_package_exported",
+      "at": "2026-06-17",
+      "by": "codex",
+      "task_id": "CEK-TA-578",
+      "package_id": "phase60_reviewed_preparation_audit_package_20260617",
+      "notes": "Exported for strict reviewed/caveat_only preparation audit; no formal reviewed knowledge created."
+    },
+    {
+      "event": "formal_reviewed_caveat_only_created",
+      "at": "2026-06-17",
+      "by": "codex",
+      "task_id": "CEK-TA-579",
+      "audit_result_id": "audit_result_phase60_reviewed_preparation_20260617_strict_v1",
+      "formal_knowledge_id": "kb_phase60_replay_simulation.sandbox_paper_live_gap_report_required.v1",
+      "notes": "Formal reviewed/caveat_only created; no approved/default/hard gate."
+    }
+  ],
+  "copyright": {
+    "stores_full_text": false,
+    "stores_long_quote": false,
+    "summary_only": true
+  },
+  "review": {
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase60_reviewed_preparation_20260617_strict_v1",
+      "package_id": "phase60_reviewed_preparation_audit_package_20260617",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "medium_high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "formal_knowledge_id": "kb_phase60_replay_simulation.sandbox_paper_live_gap_report_required.v1",
+      "required_followups": [
+        "补 gap_report_not_live_permission=true。",
+        "补 known_non_equivalence、unreconciled_gap、residual_risk_note、human_acceptance_required。",
+        "补 QuantConnect reconciliation 作为直接来源。"
+      ],
+      "patch_notes": {
+        "source": [
+          "FIX 是订单状态标准来源，非 REST/WebSocket 全覆盖来源。"
+        ],
+        "content": [
+          "gap report 是差异审计材料，不是通过证书。"
+        ],
+        "boundary": [
+          "gap report 通过不等于策略有效，不等于 live-ready。"
+        ],
+        "conflict": [
+          "与 Phase 58 simulation_live_gap_report_required 一致，建议 alias。"
+        ]
+      }
+    },
+    "review_status": "formalized",
+    "default_guidance_allowed": false
+  }
+}

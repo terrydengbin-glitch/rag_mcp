@@ -1,0 +1,317 @@
+{
+  "schema_version": "1.1.0-candidate",
+  "candidate_id": "cand_20260611_phase37_data_engineering_ohlcv_schema_required_001",
+  "research_task_id": "P37-B-D05",
+  "status": {
+    "review_status": "accepted",
+    "ingestion_decision": "accepted_for_draft",
+    "decision_reason": "Phase 37 Data Engineering 首轮严格审计结论为 accepted_for_draft；不允许 reviewed/approved/default guidance/hard gate。",
+    "created_at": "2026-06-11",
+    "updated_at": "2026-06-11"
+  },
+  "classification": {
+    "tree_node_id": "kt.trading_engineering.data_engineering",
+    "canonical_node_id": "kt.trading_engineering.data_engineering",
+    "tree_path": "CEK-TA / Trading Engineering / Data Engineering",
+    "related_nodes": [
+      "kt.trading_engineering",
+      "kt.ai_engineering.decision_time_feature_contract",
+      "kt.ai_engineering.external_project_memory.memory_schema_lifecycle"
+    ],
+    "partition_id": "KB_02_DATA_ENGINEERING",
+    "domain": "trading_engineering",
+    "subdomain": "ohlcv_schema",
+    "rule_type": "schema_contract_rule",
+    "claim_type": "schema_contract_rule",
+    "used_for": [
+      "trading_data_contract",
+      "backtest_data_audit",
+      "ai_training_dataset_boundary",
+      "external_project_rag_retrieval"
+    ],
+    "classification_notes": "本候选主归属 Trading Engineering / Data Engineering；AI Engineering 只能通过 knowledge_refs 引用，不得复制市场数据工程规则本体。"
+  },
+  "claim": {
+    "claim_id": "claim_p37_b_d05",
+    "statement": "OHLCV 数据用于策略、回测、训练或审计前，必须定义 open、high、low、close、volume、interval、symbol、时间戳和空区间语义；不能只凭字段名假设数据可用。",
+    "normalized_claim": "data_engineering.ohlcv_schema_required.v1",
+    "evidence_summary": "Databento documents OHLCV aggregate bars with O/H/L/C/V fields, interval suffixes, start timestamps, and no-record semantics for empty intervals.; Databento documents primary timestamps, including ts_recv and ts_event, and sorting/indexing timestamp behavior.; Great Expectations documents expectations, validation results, failed counts and percentages, and generated Data Docs.",
+    "interpretation_notes": "本候选定义交易数据工程边界，不输出买卖点、仓位、止损止盈、杠杆或实盘执行建议。",
+    "claim_strength": "medium_high",
+    "performance_claim": false
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "general",
+    "data_granularity": "event_or_bar",
+    "project_type": "trading_ai_support_layer",
+    "applies_when": [
+      "导入或生成 OHLCV/K 线数据",
+      "把 OHLCV 作为指标、信号、标签、回测或审计输入"
+    ],
+    "not_applicable_when": [
+      "只处理非 OHLCV 的事件级订单或成交流",
+      "OHLCV 仅作为图表展示且不进入决策、训练或审计",
+      "需要具体交易策略参数、账户事实、交易所私有配置、密钥或实盘权限时，应由外接项目事实层处理。",
+      "AI Engineering 只能引用本规则，不得把本规则改写为模型训练、MCP 或 RAG 本体规则。"
+    ],
+    "assumptions": [
+      "候选用于 CEK-TA 通用支持层知识库，而不是某个项目私有数据源配置。",
+      "所有数据工程结论必须保留来源、时间戳、版本、schema、修复和验证边界。",
+      "候选通过外部审计前不能进入正式 reviewed 知识库。"
+    ],
+    "limitations": [
+      "本批来源包含数据供应商、数据库、数据质量框架、特征存储和交易所/指数/参考数据资料，仍需要外部 AI/人工严格审计。",
+      "供应商和框架文档只能支撑通用工程边界，不能替代具体外接项目的数据契约。",
+      "本候选不提供任何投资建议或实盘执行许可。"
+    ]
+  },
+  "source_refs": [
+    {
+      "source_title": "OHLCV schema",
+      "source_url": "https://databento.com/docs/schemas-and-data-formats/ohlcv",
+      "source_type": "market_data_vendor_official_doc",
+      "publisher": "Databento",
+      "published_at": null,
+      "reliability": "high",
+      "score": 86,
+      "freshness": "time_sensitive",
+      "evidence_summary": "Databento documents OHLCV aggregate bars with O/H/L/C/V fields, interval suffixes, start timestamps, and no-record semantics for empty intervals.",
+      "limitations": [
+        "Vendor-specific schema; use as strong schema evidence but not as a universal exchange rule."
+      ],
+      "source_id": "src_001",
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "Common fields, enums, and types",
+      "source_url": "https://databento.com/docs/standards-and-conventions/common-fields-enums-types",
+      "source_type": "market_data_vendor_official_doc",
+      "publisher": "Databento",
+      "published_at": null,
+      "reliability": "high",
+      "score": 86,
+      "freshness": "time_sensitive",
+      "evidence_summary": "Databento documents primary timestamps, including ts_recv and ts_event, and sorting/indexing timestamp behavior.",
+      "limitations": [
+        "Vendor-specific timestamp semantics; external projects must map their own provider fields explicitly."
+      ],
+      "source_id": "src_002",
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "Try Great Expectations",
+      "source_url": "https://docs.greatexpectations.io/docs/core/introduction/try_gx/",
+      "source_type": "data_quality_framework_doc",
+      "publisher": "Great Expectations",
+      "published_at": null,
+      "reliability": "high",
+      "score": 84,
+      "freshness": "time_sensitive",
+      "evidence_summary": "Great Expectations documents expectations, validation results, failed counts and percentages, and generated Data Docs.",
+      "limitations": [
+        "Framework-specific quality checks; project-specific thresholds and market calendars must be defined separately."
+      ],
+      "source_id": "src_003",
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "BBO schemas",
+      "source_url": "https://databento.com/docs/schemas-and-data-formats/bbo",
+      "source_type": "market_data_vendor_official_doc",
+      "publisher": "Databento",
+      "published_at": null,
+      "reliability": "high",
+      "score": 84,
+      "freshness": "time_sensitive",
+      "evidence_summary": "Databento BBO interval schemas document interval suffixes, no-record semantics, and forward-fill details for missing bid or ask sides.",
+      "limitations": [
+        "Vendor-specific BBO behavior; useful for missing/forward-fill policy evidence."
+      ],
+      "source_id": "src_004",
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "relevance": "medium_high",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 85.0,
+    "score_version": "phase37_data_engineering_source_scoring_v1",
+    "primary_source_count": 4,
+    "supporting_source_count": 0,
+    "low_reliability_source_count": 0,
+    "mandatory_downgrades": [],
+    "limitations": [
+      "正式入库前必须由外部审计确认 claim 没有超出来源可证明范围。",
+      "vendor/framework 文档按其自身产品适用，不能自动泛化为所有交易所或所有数据平台实现。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none_known_in_visible_context",
+    "checked_against": [
+      "Phase 36/38/40/41 AI Engineering 知识边界",
+      "现有 KB_01_QUANT_FOUNDATION formal 知识",
+      "Phase 37 Trading 与 AI 跨分支引用契约"
+    ],
+    "conflicts": [],
+    "resolution_summary": "未发现与可见正式知识的直接冲突；本候选只定义 Trading Engineering 数据工程规则本体，AI Engineering 只能引用。",
+    "approval_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于提醒 AI IDE 检索 Trading Engineering 数据工程规则本体。",
+      "用于审计交易项目方案中是否缺少时间戳、schema、版本、数据质量和调整边界。",
+      "用于辅助外接项目设计数据契约、质量报告、训练集和回测数据审计清单。"
+    ],
+    "not_allowed": [
+      "不得生成买卖点、仓位、杠杆、止损止盈或实盘执行建议。",
+      "不得把候选知识当作 approved、default guidance 或 hard gate。",
+      "不得绕过外接项目事实、数据供应商契约、风控 hard gate 或人工治理流程。"
+    ]
+  },
+  "machine_gate": {
+    "default_guidance": "deny",
+    "reason": "Phase 37 Data Engineering first audit does not allow default guidance; formal reviewed requires a later reviewed-preparation gate.",
+    "requires_human_escalation": true,
+    "hidden_from_default_queue": true
+  },
+  "review": {
+    "confidence": "medium_high",
+    "freshness": "mixed",
+    "reviewer": "external_ai_and_codex_alignment",
+    "reviewed_at": "2026-06-11",
+    "open_questions": [
+      "外部审计是否认为来源足以支撑该 claim？",
+      "是否需要补充更强的一手交易所、数据供应商、数据库或数据质量资料？",
+      "是否存在与现有 Data Engineering 或 AI Engineering formal 知识的重叠，需要合并或拆分？"
+    ],
+    "audit_log": [
+      {
+        "at": "2026-06-11",
+        "actor": "codex",
+        "action": "created",
+        "reason": "根据 Phase 37 P37-B Data Engineering 队列生成 Trading Engineering 候选知识。"
+      },
+      {
+        "at": "2026-06-11",
+        "actor": "codex",
+        "action": "sourced",
+        "reason": "记录公开专业资料、官方文档、交易所/指数/参考数据资料和数据质量框架来源摘要。"
+      },
+      {
+        "at": "2026-06-11",
+        "actor": "codex",
+        "action": "classified",
+        "reason": "归类到 KB_02_DATA_ENGINEERING / kt.trading_engineering.data_engineering / ohlcv_schema。"
+      },
+      {
+        "at": "2026-06-11",
+        "actor": "external_ai_strict_audit",
+        "action": "phase37_data_engineering_first_audit_imported",
+        "reason": "accepted_for_draft / confidence=high",
+        "audit_result_id": "audit_result_phase37_data_engineering_candidate_audit_20260611_strict_v1",
+        "patch_notes": [
+          "补充 price scale、volume unit、currency、session calendar、adjustment status、vendor aggregation rule 字段；字段名相同不等于语义相同。",
+          "保留“图表展示不进入决策/训练/审计时可不适用”的边界。"
+        ]
+      },
+      {
+        "at": "2026-06-11",
+        "actor": "external_ai_strict_audit",
+        "action": "phase37_data_engineering_first_audit_imported",
+        "reason": "accepted_for_draft / confidence=high",
+        "audit_result_id": "audit_result_phase37_data_engineering_candidate_audit_20260611_strict_v1_schema_patched",
+        "patch_notes": [
+          "补充 price scale、volume unit、currency、session calendar、adjustment status、vendor aggregation rule 字段；字段名相同不等于语义相同。",
+          "保留“图表展示不进入决策/训练/审计时可不适用”的边界。"
+        ]
+      },
+      {
+        "at": "2026-06-11",
+        "actor": "codex",
+        "action": "phase37_data_engineering_formal_reviewed_created",
+        "reason": "CEK-TA-389: formal reviewed/caveat_only written to codex-expert-kit/rag/knowledge/KB_02_DATA_ENGINEERING/kb_02_data_engineering.ohlcv_schema_required.v1.json."
+      }
+    ],
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase37_data_engineering_reviewed_preparation_20260611_strict_v1",
+      "source_package_id": "phase37_data_engineering_reviewed_preparation_audit_package_20260611",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "required_patches": {
+        "source": [
+          "补入至少一个非 Databento 的 bar aggregation/vendor schema 来源；可选 CTA/Polygon/Nasdaq vendor docs。"
+        ],
+        "content": [
+          "增加 price_scale、volume_unit、currency、session_calendar、adjustment_status、aggregation_rule 字段。"
+        ],
+        "boundary": [
+          "字段名相同不等于语义相同；供应商 schema 只能作为映射样例。"
+        ],
+        "conflict": []
+      }
+    }
+  },
+  "workflow": {
+    "stage": "formalized_reviewed",
+    "allowed_next_decisions": [
+      "accepted_for_draft",
+      "needs_more_evidence",
+      "rejected",
+      "blocked"
+    ],
+    "forbidden_decisions": [
+      "reviewed",
+      "approved",
+      "default_guidance",
+      "hard_gate"
+    ],
+    "formal_knowledge_id": "kb_02_data_engineering.ohlcv_schema_required.v1",
+    "formalization_allowed": false,
+    "formalization_notes": "只有外部 AI/人工严格审计通过后，才能按 Phase 32 流程转 formal reviewed/caveat_only。",
+    "ai_audit_result_id": "audit_result_phase37_data_engineering_reviewed_preparation_20260611_strict_v1",
+    "formal_review_status": "reviewed",
+    "default_guidance_allowed": false,
+    "approved_allowed": false,
+    "hard_gate_allowed": false,
+    "hidden_from_default_queue": true,
+    "visible_in_default_guidance_queue": false,
+    "queue_group": "formalized",
+    "next_action": "none",
+    "knowledge_path": "codex-expert-kit/rag/knowledge/KB_02_DATA_ENGINEERING/kb_02_data_engineering.ohlcv_schema_required.v1.json",
+    "formal_knowledge_path": "codex-expert-kit/rag/knowledge/KB_02_DATA_ENGINEERING/kb_02_data_engineering.ohlcv_schema_required.v1.json"
+  },
+  "conversion_target": {
+    "proposed_knowledge_id": "kb_02_data_engineering.ohlcv_schema_required.v1",
+    "target_partition_id": "KB_02_DATA_ENGINEERING",
+    "target_tree_node_id": "kt.trading_engineering.data_engineering",
+    "target_review_status": "reviewed",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "reviewed_allowed": true
+  },
+  "contribution": {
+    "source": "codex_research_ingestion",
+    "private_data_removed": true,
+    "contains_project_private_facts": false,
+    "contains_trade_secrets": false
+  }
+}

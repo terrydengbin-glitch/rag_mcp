@@ -1,0 +1,219 @@
+{
+  "audit_result_id": "audit_phase45_stress_scenario_reviewed_preparation_20260612",
+  "auditor": "external_ai_strict_audit",
+  "audited_at": "2026-06-12",
+  "package_id": "phase45_stress_scenario_reviewed_preparation_audit_package_20260612",
+  "summary": {
+    "total": 6,
+    "accepted_for_reviewed_caveat_only": 5,
+    "needs_more_evidence": 1,
+    "rejected": 0,
+    "blocked": 0
+  },
+  "hard_boundaries": {
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "risk_threshold_advice_allowed": false,
+    "liquidation_horizon_advice_allowed": false,
+    "trade_execution_advice_allowed": false
+  },
+  "candidate_results": [
+    {
+      "candidate_id": "",
+      "research_task_id": "P45-E-STRESS01",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "reasons": [
+        "PFMI、BCBS、CME 足以支撑 scenario stress testing、historical/hypothetical/reverse scenario、治理、方法、文档、数据版本和 owner 边界。"
+      ],
+      "required_followups": [
+        "正式 reviewed/caveat_only 文本必须保留 PFMI/FMI、BCBS/bank、CME/clearing caveat。",
+        "review frequency 只能作为字段或 policy_ref，不得写默认频率数值。",
+        "scenario result 不得进入 execution permission。"
+      ],
+      "patch_notes": {
+        "source": [
+          "保留 PFMI、BCBS Stress Testing Principles、CME Clearing Stress Testing Practices。"
+        ],
+        "content": [
+          "将 owner、review frequency、data version、scenario assumption version 对齐 stress_scenario_event schema。"
+        ],
+        "boundary": [
+          "不得输出风险阈值。",
+          "不得生成交易许可。",
+          "不得生成 hard gate。"
+        ],
+        "conflict": []
+      }
+    },
+    {
+      "candidate_id": "",
+      "research_task_id": "P45-E-STRESS02",
+      "decision": "needs_more_evidence",
+      "confidence": "medium_high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "reasons": [
+        "当前来源足以支撑 clearing liquidity stress、credit/liquidity exposure 和 liquid resources，但不足以直接支撑 market depth、bid-ask spread、execution liquidity。",
+        "首轮 accepted_for_draft 时已经要求补 market liquidity / asset liquidity stress 来源，但 reviewed preparation 包没有补入。"
+      ],
+      "required_followups": [
+        "补 ESMA liquidity stress testing guidelines，覆盖 liquidation cost、time to liquidity、trade/order size、higher bid-ask spread、longer time to liquidate。",
+        "补 market liquidity / asset liquidity / market impact 来源，覆盖 market depth、bid-ask spread、market impact、time-to-liquidation。",
+        "把 clearing liquidity 与 market/execution liquidity 分成两个 source group。",
+        "明确缺失 market depth / spread source 时必须标记 unknown，不得当作 normal、zero 或 safe。"
+      ],
+      "patch_notes": {
+        "source": [
+          "保留 PFMI、CPMI-IOSCO CCP resilience guidance、CME liquidity risk management、DTCC stress testing 作为 clearing liquidity 来源。",
+          "新增 ESMA liquidity stress testing、SEC/eCFR liquidity classification、CFA market liquidity 和 NY Fed market depth 作为 market/execution liquidity 来源。"
+        ],
+        "content": [
+          "把 market_depth、bid_ask_spread、market_impact、time_to_liquidate 作为 market liquidity dimensions。",
+          "把 funding、settlement、collateral、clearing、liquid_resources 作为 clearing/funding liquidity dimensions。"
+        ],
+        "boundary": [
+          "不得输出可成交数量。",
+          "不得输出滑点阈值。",
+          "不得输出 liquidation horizon 数值。",
+          "不得生成交易许可或仓位建议。"
+        ],
+        "conflict": []
+      }
+    },
+    {
+      "candidate_id": "",
+      "research_task_id": "P45-E-STRESS03",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "reasons": [
+        "补证已覆盖 concentration、wrong-way risk、correlation breakdown 直接证据，claim 已限定为 scenario assumptions。"
+      ],
+      "required_followups": [
+        "正式 reviewed/caveat_only 文本必须保留 BCBS/FDIC 银行或 CCR 语境 caveat。",
+        "不得从 correlation_assumption 推导降仓、拒单、hard gate。"
+      ],
+      "patch_notes": {
+        "source": [
+          "保留 BCBS stress testing、BCBS sound stress testing、BIS correlation breakdown、FDIC interagency CCR guidance。"
+        ],
+        "content": [
+          "保留 normal_sample_window_ref、stress_window_ref、assumption_source_refs、not_a_threshold、not_a_trade_action。"
+        ],
+        "boundary": [
+          "不得输出相关性阈值。",
+          "不得生成降仓、拒单、交易许可或 hard gate。"
+        ],
+        "conflict": []
+      }
+    },
+    {
+      "candidate_id": "",
+      "research_task_id": "P45-E-STRESS04",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "reasons": [
+        "STRESS04 三审补证已解决 margin/funding 缺口，CME、IBKR、Binance 来源能支撑 broker/venue/clearing/account-mode/funding-interval specific scenario dimension。"
+      ],
+      "required_followups": [
+        "正式 reviewed/caveat_only 文本必须保留 CME futures/clearing caveat、IBKR broker/account field caveat 和 Binance USD-M Futures caveat。",
+        "外接项目必须为自身 broker、venue、clearing、account-mode、funding interval 提供版本化字段来源。"
+      ],
+      "patch_notes": {
+        "source": [
+          "保留 Nasdaq、NYSE、CME trading hours、CME Product Margins、IBKR Available for Trading Values、Binance USD-M Futures Account/Funding sources。"
+        ],
+        "content": [
+          "保留 traditional_exchange、futures_session、crypto_24_7 的 market_type 分层和 direct source ref 要求。"
+        ],
+        "boundary": [
+          "不得输出风险阈值、隔夜持仓建议、止损止盈、仓位调整、交易许可或 hard gate。"
+        ],
+        "conflict": []
+      }
+    },
+    {
+      "candidate_id": "",
+      "research_task_id": "P45-E-STRESS05",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "reasons": [
+        "Basel market risk / MAR33 / Acerbi-Tasche 已补足 VaR、Expected Shortfall、liquidity horizon、tail loss 的直接依据。"
+      ],
+      "required_followups": [
+        "正式 reviewed/caveat_only 文本必须保留 Basel/MAR33 银行监管资本模型 caveat。",
+        "不得把 VaR/ES、scenario loss 或 liquidity-adjusted loss 变成 CEK-TA 风险阈值。"
+      ],
+      "patch_notes": {
+        "source": [
+          "保留 BCBS stress testing、PFMI、DTCC stress testing、Basel Minimum Capital Requirements for Market Risk、Basel MAR33、Acerbi-Tasche ES。"
+        ],
+        "content": [
+          "保留 VaR、ExpectedShortfall、scenario_loss、max_single_day_loss、max_multi_day_loss、liquidity_adjusted_loss 字段分层。"
+        ],
+        "boundary": [
+          "不得输出 VaR/ES 阈值。",
+          "不得生成交易许可。",
+          "不得生成降仓、停机或 hard gate。"
+        ],
+        "conflict": []
+      }
+    },
+    {
+      "candidate_id": "",
+      "research_task_id": "P45-E-STRESS06",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "reasons": [
+        "claim 与 stress_result_governance contract 一致：risk_review_input=true、owner_decision_input=true、scenario_backlog_input=true、trade_permission=false、hard_gate=false。"
+      ],
+      "required_followups": [
+        "正式 reviewed/caveat_only 文本必须保留 PFMI/BCBS/FIA caveat。",
+        "stress_test_passed 不得进入 execution permission、order admission、default guidance 或 hard gate 字段。"
+      ],
+      "patch_notes": {
+        "source": [
+          "保留 BCBS stress testing principles、FIA automated trading risk controls、PFMI。"
+        ],
+        "content": [
+          "保留 risk_review_input、owner_decision_input、scenario_backlog_input、not_trade_permission。"
+        ],
+        "boundary": [
+          "不得生成交易许可。",
+          "不得生成 hard gate。",
+          "不得生成风险阈值、仓位、杠杆、止损止盈或实盘执行建议。"
+        ],
+        "conflict": []
+      }
+    }
+  ]
+}

@@ -1,0 +1,383 @@
+{
+  "package_id": "phase41_a06_reviewed_preparation_audit_package_20260611",
+  "task_id": "CEK-TA-339",
+  "created_at": "2026-06-11",
+  "purpose": "请求外部 AI/人工审计确认 P41-A06 是否可以从 accepted_for_draft 进入 formal reviewed/caveat_only。不得授权 approved、default guidance 或 hard gate。",
+  "source_candidate_path": "codex-expert-kit/rag/candidates/KB_AI_ENGINEERING/cand_20260610_phase41_p41_a06_baseline_001.json",
+  "target_knowledge_id": "kb_ai_hybrid_scoring.phase41.ensemble_after_single_model_baseline_insufficient.v1",
+  "hard_boundaries": {
+    "create_formal_knowledge_in_this_package": false,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "trading_execution_allowed": false,
+    "qwen_as_numeric_scorer_allowed": false,
+    "ensemble_as_final_gate_allowed": false
+  },
+  "allowed_audit_decisions": [
+    "accepted_for_reviewed_caveat_only",
+    "needs_more_evidence",
+    "rejected"
+  ],
+  "decision_semantics": {
+    "accepted_for_reviewed_caveat_only": "允许 Codex 后续另起任务创建 formal knowledge，review.review_status=reviewed，machine_gate.default_guidance=caveat_only；仍不得 approved/default/hard gate。",
+    "needs_more_evidence": "仍需补充来源、边界、冲突或契约，不得创建 formal knowledge。",
+    "rejected": "不应继续作为 Phase 41 reviewed 候选。"
+  },
+  "audit_questions": [
+    "single-model baseline comparison 是否足以支持 ensemble 只能作为增强候选，而非默认优先模型？",
+    "auditability impact report 是否覆盖模型版本、校准器、threshold policy、trace、解释边界和回滚目标？",
+    "该知识是否只属于 AI Engineering / numeric scoring / model family selection，不混入 K 线、fill model、仓位或实盘风控本体？",
+    "来源是否足以支撑 reviewed/caveat_only，而不是 approved/default guidance/hard gate？",
+    "是否仍保持 ensemble 输出只能作为 scorer signal 或 review-priority signal？"
+  ],
+  "expected_output_schema": {
+    "candidate_id": "string",
+    "research_task_id": "string",
+    "decision": "accepted_for_reviewed_caveat_only | needs_more_evidence | rejected",
+    "reviewed_allowed": "boolean",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "reason": "string",
+    "source_patch_notes": [
+      "string"
+    ],
+    "content_patch_notes": [
+      "string"
+    ],
+    "boundary_patch_notes": [
+      "string"
+    ],
+    "conflict_patch_notes": [
+      "string"
+    ],
+    "required_followups": [
+      "string"
+    ]
+  },
+  "preflight_validation": {
+    "passed": true,
+    "errors": []
+  },
+  "candidates": [
+    {
+      "candidate_id": "cand_20260610_phase41_p41_a06_baseline_001",
+      "research_task_id": "P41-A06",
+      "current_status": {
+        "review_status": "accepted",
+        "ingestion_decision": "accepted_for_draft",
+        "decision_reason": "P41-A06 已修复 metadata/slug 一致性，并补齐 single-model baseline comparison、ensemble enhancement、ensemble validation complexity、auditability impact report、final gate boundary 五个维度证据；可进入 accepted_for_draft。",
+        "workflow_stage": "ai_audited",
+        "queue_group": "ai_passed",
+        "formal_review_status": "draft"
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_ai_hybrid_scoring.phase41.ensemble_after_single_model_baseline_insufficient.v1",
+        "formal_knowledge_id": "kb_ai_hybrid_scoring.phase41.ensemble_after_single_model_baseline_insufficient.v1",
+        "target_review_status_requested": "reviewed",
+        "machine_gate_requested": "caveat_only"
+      },
+      "classification": {
+        "tree_node_id": "kt.ai_engineering.numeric_scoring.model_family_selection",
+        "canonical_node_id": "kt.ai_engineering.numeric_scoring.model_family_selection",
+        "tree_path": "CEK-TA / AI Engineering / Hybrid Scoring And Qwen3 Audit",
+        "related_nodes": [
+          "kt.trading_engineering",
+          "kt.rag_engineering",
+          "kt.ai_feedback_governance"
+        ],
+        "partition_id": "KB_AI_20_NUMERIC_SCORING",
+        "domain": "llm_training",
+        "subdomain": "numeric_scoring_model_family_selection",
+        "rule_type": "governance_rule",
+        "used_for": [
+          "llm_training",
+          "trading_gating_scoring",
+          "hybrid_scoring",
+          "rag_engineering",
+          "mcp",
+          "vue_audit_ui"
+        ]
+      },
+      "claim": {
+        "claim_id": "claim_001",
+        "statement": "模型集成只能作为增强项，必须先证明单模型 baseline 不足且不破坏可审计性",
+        "normalized_claim": "phase41.ensemble_after_single_model_baseline_insufficient.v1",
+        "claim_type": "extension_rule",
+        "model_role": "tabular_scorer",
+        "priority": "P0-Extended",
+        "evidence_summary": "补证后证据链覆盖：Google ML 工程规则支持先建立简单模型和 baseline metrics；scikit-learn 将 ensemble 定义为组合 base estimators 以改善泛化或鲁棒性，并说明 stacking 会引入交叉验证和 final estimator 复杂度；NIST AI RMF/AIRC 将 explainability、interpretability、transparency 与审计、治理、监控和文档关联；CEK-TA Phase 41 契约要求 scorer/calibrator/Qwen3/RAG/final gate 分责。",
+        "interpretation_notes": "本条不是要求默认使用 ensemble，而是要求：只有当单模型 baseline 比较报告证明不足，且 auditability impact report 证明复杂度、解释、追踪、校准和回滚仍可治理时，ensemble 才可作为增强候选。",
+        "claim_strength": "medium",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general",
+        "asset": "general",
+        "timeframe": "general",
+        "data_granularity": "general",
+        "project_type": "trading_llm_gating_scoring",
+        "applies_when": [
+          "外接项目已完成基本 hybrid scoring POC，正在评估增强模型、平台、解释、校准、不确定性、服务化或发布治理。",
+          "该规则用于限制增强能力的引入时机、职责边界、审计证据和回滚条件。",
+          "外接项目已经具备 rule baseline、Logistic Regression、LightGBM/XGBoost 等单模型基线结果。",
+          "团队正在评估 voting、stacking、bagging、boosting 或多模型组合是否值得引入。",
+          "可以提供同一时间切分、同一指标、同一校准/阈值策略下的单模型与 ensemble 对比。"
+        ],
+        "not_applicable_when": [
+          "用户需要具体买卖点、仓位、止损止盈、K 线形态、策略参数或实盘订单执行。",
+          "知识点主要描述 fill model、订单状态机、实盘风控阈值、交易所异常处理或交易收益本体，应路由到 Trading Engineering。",
+          "尚未建立可复现的单模型 baseline、split manifest、feature schema、label policy 或 baseline behavior。",
+          "ensemble 被用于绕过校准器、threshold policy、deterministic final gate 或人工审批。",
+          "目标是在 Trading Engineering 中定义买卖点、仓位、止损止盈、fill model 或实盘执行策略。"
+        ],
+        "assumptions": [
+          "P0-Extended/P1 是增强能力，不应阻塞 POC 主链路。",
+          "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+        ],
+        "limitations": [
+          "本条仍是 candidate，需要外部 AI/人工审计确认来源充分性、适用边界和是否需要补充工程实例。",
+          "Ensemble output remains scorer/review-priority signal only; it must not bypass calibrator, threshold policy, or deterministic final gate.",
+          "single-model baseline comparison report 必须至少包含候选模型清单、训练/验证/校准/holdout split、主指标、业务成本维度、校准质量、延迟和回滚复杂度。",
+          "auditability impact report 必须说明 ensemble 后的 feature attribution、reason code、trace、模型版本、calibrator 版本、threshold policy 和 rollback target 是否仍可复核。",
+          "ensemble 输出只能作为 scorer/review-priority 信号；不得直接成为交易概率、买卖建议或 final gate 决策。",
+          "本候选三审通过也只能进入 accepted_for_draft，不能进入 approved/default guidance/hard gate。"
+        ]
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 区分必需能力与条件增强能力。",
+          "用于生成任务卡、接口契约、测试计划、审计 checklist 和候选知识补证问题。",
+          "用于阻断增强平台或模型能力绕过 deterministic final gate、人工审批和 RAG 引用边界。",
+          "用于提醒 AI IDE 在引入 ensemble 前生成单模型 baseline 比较任务卡。",
+          "用于检查 ensemble 是否增加了不可审计的模型、校准、阈值、trace 或回滚复杂度。",
+          "用于生成三审问题：baseline 是否不足、auditability 是否仍可接受、是否保持 final gate 分责。"
+        ],
+        "not_allowed": [
+          "不得据此生成买卖点、仓位、杠杆、止损止盈或实盘下单建议。",
+          "不得据此把 P1 平台工具变成默认依赖。",
+          "不得把 candidate 当作 reviewed/approved 默认指导。",
+          "不得把 ensemble 写成默认优于单模型。",
+          "不得把 ensemble 输出当作交易执行许可。",
+          "不得在未完成 baseline comparison 和 auditability impact report 时建议上架。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_id": "src_sklearn_ensemble",
+          "source_title": "Ensemble methods - scikit-learn documentation",
+          "source_url": "https://scikit-learn.org/stable/modules/ensemble.html",
+          "source_type": "official_doc",
+          "publisher": "scikit-learn",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 86,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "scikit-learn documents ensemble methods as combinations of base estimators intended to improve generalizability and robustness.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_nist_ai_rmf",
+          "source_title": "NIST AI Risk Management Framework",
+          "source_url": "https://www.nist.gov/itl/ai-risk-management-framework",
+          "source_type": "governance_framework",
+          "publisher": "NIST",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 88,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "NIST AI RMF provides governance practices for mapping, measuring and managing AI risks.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_phase41_runtime",
+          "source_title": "Phase 41 hybrid scoring runtime contract",
+          "source_url": "docs/contracts/phase41_hybrid_scoring_runtime_contract.md",
+          "source_type": "internal_contract",
+          "publisher": "CEK-TA",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 88,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "Phase 41 runtime contract defines scorer, calibrator, Qwen3 audit assistant, RAG and deterministic final gate boundaries.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_google_rules_of_ml_simple_model_baseline",
+          "source_title": "Rules of Machine Learning - Google for Developers",
+          "source_url": "https://developers.google.com/machine-learning/guides/rules-of-ml",
+          "source_type": "official_doc",
+          "publisher": "Google for Developers",
+          "score": 88,
+          "relevance": "high",
+          "freshness": "stable",
+          "evidence_dimension": "single_model_baseline_comparison",
+          "evidence_summary": "Google ML engineering guidance emphasizes robust infrastructure, simple first models, baseline metrics, and delaying added complexity until simpler approaches are exhausted.",
+          "limitations": [
+            "This supports the engineering baseline requirement; it does not prove any trading performance edge."
+          ],
+          "published_at": null,
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "reliability": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_sklearn_ensemble_base_estimators_generalizability",
+          "source_title": "Ensemble methods - scikit-learn documentation",
+          "source_url": "https://scikit-learn.org/stable/modules/ensemble.html",
+          "source_type": "official_doc",
+          "publisher": "scikit-learn",
+          "score": 88,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "evidence_dimension": "ensemble_as_enhancement",
+          "evidence_summary": "scikit-learn frames ensemble methods as combining base estimators to improve generalizability or robustness over a single estimator.",
+          "limitations": [
+            "The source supports ensemble motivation, not automatic adoption or final gate authority."
+          ],
+          "published_at": null,
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "reliability": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_sklearn_stacking_cross_validation_final_estimator",
+          "source_title": "Stacked generalization - scikit-learn documentation",
+          "source_url": "https://scikit-learn.org/stable/modules/ensemble.html#stacked-generalization",
+          "source_type": "official_doc",
+          "publisher": "scikit-learn",
+          "score": 86,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "evidence_dimension": "ensemble_validation_complexity",
+          "evidence_summary": "scikit-learn describes stacking as using base-estimator predictions as inputs to a final estimator trained through cross-validation, which adds validation and trace complexity.",
+          "limitations": [
+            "This supports added audit complexity; it does not prescribe a CEK-TA production architecture."
+          ],
+          "published_at": null,
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "reliability": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_nist_airc_explainability_audit_governance",
+          "source_title": "AI Risks and Trustworthiness - NIST AI Resource Center",
+          "source_url": "https://airc.nist.gov/airmf-resources/airmf/3-sec-characteristics/",
+          "source_type": "governance_framework",
+          "publisher": "NIST AI Resource Center",
+          "score": 88,
+          "relevance": "high",
+          "freshness": "stable",
+          "evidence_dimension": "auditability_impact_report",
+          "evidence_summary": "NIST distinguishes transparency, explainability, and interpretability and links explainable systems to easier debugging, monitoring, documentation, audit, and governance.",
+          "limitations": [
+            "This supports auditability criteria; CEK-TA still needs project-specific audit reports before adoption."
+          ],
+          "published_at": null,
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "reliability": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_phase41_runtime_contract_final_gate_boundary",
+          "source_title": "Phase 41 hybrid scoring runtime contract",
+          "source_url": "docs/contracts/phase41_hybrid_scoring_runtime_contract.md",
+          "source_type": "internal_contract",
+          "publisher": "CEK-TA",
+          "score": 90,
+          "relevance": "high",
+          "freshness": "stable",
+          "evidence_dimension": "final_gate_boundary",
+          "evidence_summary": "CEK-TA Phase 41 runtime contract separates scorer, calibrator, Qwen3 audit assistant, RAG, and deterministic final gate responsibilities.",
+          "limitations": [
+            "Internal contract evidence must be paired with external sources for professional knowledge claims."
+          ],
+          "published_at": null,
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "reliability": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_phase41_training_data_contract_baseline_report",
+          "source_title": "Phase 41 tabular and LLM training data contract",
+          "source_url": "docs/contracts/phase41_tabular_llm_training_data_contract.md",
+          "source_type": "internal_contract",
+          "publisher": "CEK-TA",
+          "score": 90,
+          "relevance": "high",
+          "freshness": "stable",
+          "evidence_dimension": "single_model_baseline_comparison",
+          "evidence_summary": "CEK-TA Phase 41 data contract defines split manifests, feature schema, label policy, calibration, threshold, and model registry evidence required for scorer comparison.",
+          "limitations": [
+            "Internal contract evidence is a CEK-TA acceptance boundary, not an external proof of model performance."
+          ],
+          "published_at": null,
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "reliability": "high",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_summary": {
+        "source_count": 9,
+        "source_ids": [
+          "src_sklearn_ensemble",
+          "src_nist_ai_rmf",
+          "src_phase41_runtime",
+          "src_google_rules_of_ml_simple_model_baseline",
+          "src_sklearn_ensemble_base_estimators_generalizability",
+          "src_sklearn_stacking_cross_validation_final_estimator",
+          "src_nist_airc_explainability_audit_governance",
+          "src_phase41_runtime_contract_final_gate_boundary",
+          "src_phase41_training_data_contract_baseline_report"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "checked_against": [
+          "docs/contracts/phase41_hybrid_scoring_runtime_contract.md",
+          "docs/contracts/phase41_tabular_llm_training_data_contract.md",
+          "docs/research/phase41_hybrid_scoring_qwen3_scope.md",
+          "docs/tasks/phase41_hybrid_scoring_qwen3_audit_stack.md"
+        ],
+        "conflicts": [],
+        "resolution_summary": "metadata/slug 已统一；新增 baseline comparison 与 auditability impact 证据后仍需三审。三审通过前不得创建 formal reviewed。",
+        "approval_allowed": false
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "Candidate accepted_for_draft only; formal reviewed/default guidance/hard gate are not allowed by third audit.",
+        "requires_human_escalation": true
+      },
+      "review_snapshot": {
+        "reviewed_allowed": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "open_questions": [
+          "prepare_formal_reviewed_caveat_only_draft_in_next_task",
+          "do_not_enable_default_guidance",
+          "do_not_enable_hard_gate"
+        ]
+      }
+    }
+  ]
+}

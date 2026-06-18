@@ -1,0 +1,127 @@
+{
+  "audit_result_id": "audit_result_phase36_batch07_rag_parameter_risk_ledger_supplemental_reaudit_20260609_gpt55_pro_strict_sources",
+  "source_package_id": "phase36_batch07_rag_parameter_risk_ledger_supplemental_audit_package_20260609",
+  "decisions": [
+    {
+      "candidate_id": "cand_20260609_ai_engineering_rag_no_hit_requires_neutral_or_review_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "补证后可以升级为 accepted_for_draft。rewritten statement 已与 candidate_id / normalized_claim 对齐，明确规定：如果任务要求检索 CEK-TA，但没有命中、来源覆盖不足，或没有符合 machine_gate 的可用知识，系统必须返回 neutral_score、abstain、needs_review 或 block_default_guidance，不得编造默认指导。OpenAI File Search 支持 RAG 检索和来源引用；Sufficient Context 研究直接支持 insufficient context 下需要 abstain / guided abstention；OWASP 支持把 retrieved content / tool output 当作不可信输入处理；NIST AI RMF 支持风险治理。该条可以进入 draft，但正式知识中应说明 fallback 枚举是 CEK-TA 内部 safe-default policy，不是外部来源逐字要求。",
+      "source_patch_notes": [
+        "保留 OpenAI File Search 作为 RAG / retrieval 工程来源，支持知识库检索、vector store 和 file citations。",
+        "保留 OWASP Prompt Injection Prevention Cheat Sheet，支持 retrieved content、tool output 和 agent workflow 的不可信输入处理。",
+        "保留 NIST AI RMF 作为 AI 风险治理 supporting source。",
+        "将 Sufficient Context: A New Lens on Retrieval Augmented Generation Systems 作为 no-hit / insufficient-context 的主要直接来源，用于支持上下文不足时不应强答、应允许 abstain。",
+        "Contextual AI no-retrieval system prompt 可作为中等可靠度补充来源，只说明供应商层面可配置 no-retrieval 行为，不应作为 CEK-TA fallback 枚举的主来源。",
+        "正式 draft 仍应补 CEK-TA 内部 rag_no_hit_fallback_policy.md，作为 fallback_action 枚举和 UI 行为的主契约。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议保留补充包写法：如果任务要求检索 CEK-TA，但没有命中、来源覆盖不足，或没有符合 machine_gate 的可用知识，系统必须返回 neutral_score、abstain、needs_review 或 block_default_guidance，不得编造默认指导。",
+        "建议字段：retrieval_required、retrieval_run_id、retrieval_hit_count、eligible_hit_count、source_coverage_status、machine_gate_status、no_hit_reason、fallback_action、review_queue_id、audit_event_id。",
+        "fallback_action 建议枚举：neutral_score、abstain、needs_review、block_default_guidance。",
+        "明确 no-hit 不是 reject 交易，也不是 block order；它只表示 AI guidance 证据不足，不能生成默认交易指导。",
+        "如果 no-hit 同时伴随 retrieval timeout、MCP failure 或 source conflict，应互链 deployment.llm_timeout_or_mcp_failure_fallback_required 和 rag.no_source_or_conflict_blocks_default_guidance。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 只定义 RAG no-hit、source coverage、machine_gate status、fallback_action 和 audit UI 字段。",
+        "交易是否继续评估、是否实盘允许、是否触发 deterministic gate 或人工复核，应由 Trading Engineering / deterministic final gate / human review 决定。",
+        "不得根据 RAG no-hit 自动生成买卖建议、仓位、止损止盈、策略阈值或订单动作。",
+        "不得把项目私有事实、账户、策略规则或订单上下文写入通用 RAG fallback 知识项。"
+      ],
+      "conflict_patch_notes": [
+        "与 rag.no_source_or_conflict_blocks_default_guidance 重叠但不等价：本条处理 no-hit / insufficient-context fallback，后者处理无来源或来源冲突时禁止默认指导。",
+        "与 rag.approved_machine_gate_allow_only_default_guidance 是父子关系：父项规定默认指导准入条件，本条规定无可用知识时的 safe fallback。",
+        "与 deployment.llm_timeout_or_mcp_failure_fallback_required 互链，特别是 RAG no-hit、source conflict、schema validation failure 和 MCP/search failure 场景。",
+        "未发现需要 rejected 的直接冲突；accepted_for_draft 仍不等于 approved。"
+      ],
+      "required_followups": [
+        "补 rag_no_hit_fallback_policy.md。",
+        "补 fallback_action_enum.yaml：neutral_score、abstain、needs_review、block_default_guidance。",
+        "补 source_coverage_status enum：no_hit、insufficient_coverage、machine_gate_failed、source_conflict、retrieval_failed、eligible_source_available。",
+        "补 eval cases：no CEK-TA hit、only low-quality hit、machine_gate failed、conflicting sources、retrieval timeout。",
+        "补 Vue audit UI 展示：retrieval_hit_count、eligible_hit_count、source_coverage_status、fallback_action、review_status。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_research_feedback_no_auto_strategy_parameter_update_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "补证后可以升级为 accepted_for_draft。该候选已从 hypothesis-only 父规则中拆出，重写为工具权限和变更控制规则：LLM 输出不得自动创建、修改或部署交易策略参数，任何参数变更建议都必须转成 research ticket，并经过 Trading Engineering owner 审查、验证证据和审批。OWASP 支持 least-privilege tool scopes 和高风险动作 human approval；MCP security / authorization 支持敏感资源与操作的 server-side authorization / scope 控制；FINRA 支持算法交易系统的监督、测试和控制。证据足以进入 draft，但正式知识必须继续强调：具体策略参数、阈值、仓位、止损止盈和部署动作属于 Trading Engineering。",
+      "source_patch_notes": [
+        "保留 OpenAI evals 与 scikit-learn CV 作为研究建议进入验证流程前的 supporting sources，但不作为 no-auto-mutation 的主来源。",
+        "保留 FINRA algorithmic trading / 15-09，支持算法交易系统变更、测试、监督和控制的行业治理背景。",
+        "将 OWASP Prompt Injection Prevention Cheat Sheet / OWASP LLM01 Prompt Injection 作为工具权限、least privilege、human approval for high-risk actions 的主要安全来源。",
+        "将 MCP Security Best Practices 与 MCP Authorization 文档作为 server-side permission、scope、restricted resources / operations 的主要来源。",
+        "正式 draft 仍需要补 CEK-TA strategy_parameter_update_approval_policy 或 Trading Engineering change-control contract，作为具体审批路径的内部主来源。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议保留补充包写法：LLM 输出不得自动创建、修改或部署交易策略参数；任何参数变更建议都必须转成 research ticket，并经过 Trading Engineering owner 审查、验证证据和审批。",
+        "建议字段：suggestion_id、parameter_change_requested、auto_update_blocked、strategy_version_ref、requested_change_summary、change_ticket_id、owner_review_id、validation_evidence_ref、approval_status、audit_event_id。",
+        "增加 forbidden_action enum：create_strategy_parameter、modify_strategy_parameter、deploy_strategy_config、write_threshold_config、set_stop_loss、set_take_profit、change_position_sizing、promote_paper_to_live。",
+        "明确 no-auto-update 是 tool permission / change-control rule，不只是“LLM suggestion is hypothesis”的研究语义规则。",
+        "允许 LLM 生成 read-only explanation、research hypothesis、review ticket draft 或 evidence checklist，但不得写入配置、部署策略或伪造 approved 状态。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 管理 no-auto-mutation、tool permission、audit event、research ticket handoff 和 UI 展示字段。",
+        "Trading Engineering 管理策略参数、阈值、仓位、止损止盈、回测、样本外验证、paper/live promotion 和实盘部署。",
+        "AI Engineering KB 不得保存具体策略参数值、买卖点、账户事实、订单动作、K 线规则、仓位规则或私有策略上下文。",
+        "如果 LLM 输出涉及具体策略更新，只能保存脱敏摘要和外部 ticket/ref，由 Trading Engineering owner 解释和审批。"
+      ],
+      "conflict_patch_notes": [
+        "与 research_feedback.llm_suggestion_is_hypothesis_only 是父子关系：hypothesis-only 是原则父项，本条是 no-auto-mutation / change-control 子项。",
+        "与 mcp.server_side_permission_enforcement_required、mcp.read_only_knowledge_access、safety.no_tool_permission_escalation、approval.hard_gate_enable_requires_approval 应互链。",
+        "与 runtime_final_gate_deterministic_engine_required 互补：本条禁止 LLM 自动改策略参数，runtime_final_gate 禁止 LLM 成为最终交易许可。",
+        "未发现需要 rejected 的直接冲突；accepted_for_draft 仍不等于 approved。"
+      ],
+      "required_followups": [
+        "补 no_auto_strategy_parameter_update_policy.md。",
+        "补 strategy_parameter_update_approval_policy.md 或 Trading Engineering change-control contract。",
+        "补 tool/write permission schema：tool_name、access_mode、write_allowed、scope_required、owner_approval_required。",
+        "补 eval cases：LLM tries to update stop-loss、LLM changes threshold config、LLM writes strategy version、LLM creates approved-looking config。",
+        "补 Vue audit UI 字段：parameter_change_requested、auto_update_blocked、change_ticket_id、approval_status、trading_engineering_owner。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_risk_ledger_false_allow_cost_record_required_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "补证后可以升级为 accepted_for_draft。该候选已补足一审缺口：statement 明确要求在改变 hard-gate 成本假设、阈值或默认风险偏好前，把 false allow、false block、机会成本上下文、后续观测结果和 reviewer decision 记录到风险账本。scikit-learn cost-sensitive threshold 示例直接使用 misclassification cost matrix 调整阈值，NIST AI RMF Manage 支持风险记录和优先处理，FINRA 支持自动化交易系统监督与控制，第四批 false_allow family 提供 CEK-TA 内部风险偏好边界。因此可进入 draft。但正式知识必须限定：AI Engineering 只记录 cost context / risk ledger / audit fields，不计算具体机会成本或策略收益。",
+      "source_patch_notes": [
+        "将 scikit-learn cost-sensitive threshold / misclassification cost matrix 作为主来源之一，用于支撑 false allow / false block 成本差异需要 cost matrix 记录。",
+        "将 NIST AI RMF Core Manage 作为 risk ledger / impact / likelihood / owner / mitigation 的治理来源。",
+        "保留 FINRA 15-09 / Algorithmic Trading 作为交易自动化监督、测试、控制和风险治理来源。",
+        "保留第四批二审通过的 gating.false_allow_more_dangerous_than_false_block family 作为内部互链：第四批定义默认风险偏好，本条定义成本假设变更前的风险账本证据。",
+        "旧 Federal Reserve model risk 来源如继续保留，应补充 2026 OCC/Fed/FDIC revised model risk guidance，并标注 GenAI / agentic AI 适用范围限制；该来源只能作为模型治理 supporting source，不能作为 cost matrix 主证据。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：Before changing hard-gate cost assumptions, thresholds or default risk preference, false_allow, false_block, opportunity-cost context, observed downstream outcome and reviewer decision must be recorded in a risk ledger.",
+        "建议字段：risk_ledger_id、risk_event_id、gate_context、false_allow_count、false_block_count、opportunity_cost_context_ref、cost_matrix_ref、downstream_outcome_ref、review_owner、trading_engineering_owner、reviewer_decision、decision_timestamp。",
+        "明确 opportunity_cost_context_ref 只作为 Trading Engineering 提供的外部引用或脱敏上下文，不在 AI Engineering 内计算具体策略收益。",
+        "没有 risk_ledger_id / cost_matrix_ref / reviewer_decision 时，不得改变 hard-gate threshold、默认风险偏好或 false_allow / false_block severity。",
+        "风险账本记录不等于自动调阈值；阈值变更仍需 calibration、shadow evidence、owner approval 和 rollback plan。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 管理 risk ledger schema、evidence_refs、severity source、cost_matrix_ref、audit UI 和 promotion gate。",
+        "Trading Engineering 或项目 owner 管理成本函数、机会成本、策略收益、仓位影响、风控预算、阈值修改和交易参数。",
+        "不得在本知识项中写入具体收益目标、买卖点、仓位、止损止盈、订单动作、账户规则或策略参数。",
+        "false allow / false block 的具体严重度排序可由 CEK-TA 默认风险偏好给出，但项目级 override 必须由 approved risk ledger 和 Trading Engineering owner 提供。"
+      ],
+      "conflict_patch_notes": [
+        "与第四批 gating.false_allow_more_dangerous_than_false_block 是父子关系：第四批定义 hard-gate 默认风险偏好，本条定义改变成本假设或阈值前必须记录的 risk ledger evidence。",
+        "与 approval.hard_gate_enable_requires_approval、calibration.threshold_requires_shadow_data、audit.every_gate_decision_requires_trace 互链。",
+        "与 gating.low_confidence_cannot_allow 不重复：low_confidence 处理低置信度不能 hard allow，本条处理 false_allow / false_block 成本记录与阈值变更证据。",
+        "未发现需要 rejected 的直接冲突；accepted_for_draft 仍不等于 approved。"
+      ],
+      "required_followups": [
+        "补 risk_ledger_schema.json。",
+        "补 false_allow_false_block_cost_matrix.md。",
+        "补 Trading Engineering owner override policy。",
+        "补 risk_event_status enum：candidate、reviewed、cost_matrix_defined、override_approved、threshold_change_proposed、closed。",
+        "补 eval cases：false allow rule violation、false block missed opportunity、ledger incomplete、approved cost matrix override、threshold change without reviewer decision。",
+        "补 Vue audit UI 字段：risk_ledger_id、cost_matrix_ref、false_allow_count、false_block_count、opportunity_cost_context_ref、reviewer_decision、owner。"
+      ]
+    }
+  ],
+  "package_level_notes": [
+    "补充包 purpose 声明本次二审覆盖 3 条候选，但 task_ids 只列出 CEK-TA-239 和 CEK-TA-240 两个任务；建议回写时补齐或解释 metadata。",
+    "三条均只能进入 draft / formal reviewed 流程，不得设置 approved，也不得直接进入默认指导。",
+    "三条均保持 AI Engineering 边界：只沉淀 RAG fallback、工具权限、风险账本 schema、审计字段和 UI 展示；交易策略、回测、仓位、止损止盈、订单执行和交易风控本体应继续路由 Trading Engineering。"
+  ]
+}

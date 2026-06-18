@@ -1,0 +1,338 @@
+{
+  "audit_result_id": "audit_result_phase60_reviewed_preparation_20260617_strict_v1",
+  "package_id": "phase60_reviewed_preparation_audit_package_20260617",
+  "source_attachment": "C:/Users/dove/.codex/attachments/b9772aab-1e4f-4bba-90c4-bbf027d08178/pasted-text.txt",
+  "audited_at": "2026-06-17",
+  "package_summary": {
+    "total": 10,
+    "accepted_for_reviewed_caveat_only": 8,
+    "needs_more_evidence": 2,
+    "rejected": 0,
+    "blocked": 0
+  },
+  "hard_boundaries": {
+    "reviewed_caveat_only_maximum": true,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "trade_execution_advice_allowed": false,
+    "risk_threshold_advice_allowed": false,
+    "live_permission_allowed": false
+  },
+  "candidate_results": [
+    {
+      "candidate_id": "cand_20260617_phase60_environment_taxonomy_required_001",
+      "research_task_id": "P60-A01",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "medium_high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "trade_execution_advice_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "formal_knowledge_id": "kb_phase60_replay_simulation.environment_taxonomy_required.v1",
+      "required_followups": [
+        "正式写入 reviewed/caveat_only 时，把 Coinbase、Binance、QuantConnect、Alpaca、IBKR 作为 taxonomy 直接 source_refs，而不只依赖 NautilusTrader。",
+        "补 live canary 与 full live 的最小字段差异。"
+      ],
+      "patch_notes": {
+        "source": [
+          "NautilusTrader 只能作为 framework implementation pattern。",
+          "taxonomy source_refs 应补多平台直接来源。"
+        ],
+        "content": [
+          "taxonomy 必须绑定 EnvironmentManifest，不得只作为概念分类。"
+        ],
+        "boundary": [
+          "reviewed/caveat_only 不等于 approved、default guidance 或 hard gate。"
+        ],
+        "conflict": [
+          "与 Phase 58 environment equivalence manifest 不冲突，应作为上游 taxonomy。"
+        ]
+      }
+    },
+    {
+      "candidate_id": "cand_20260617_phase60_static_api_sandbox_contract_only_001",
+      "research_task_id": "P60-A02",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "trade_execution_advice_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "formal_knowledge_id": "kb_phase60_live_execution.static_api_sandbox_contract_only.v1",
+      "required_followups": [
+        "补 response_mocked、market_data_real、order_routing_real、account_real 字段。"
+      ],
+      "patch_notes": {
+        "source": [
+          "Coinbase 来源是 Coinbase-specific，不代表所有交易所 sandbox。"
+        ],
+        "content": [
+          "必须保留 static API sandbox 表述。"
+        ],
+        "boundary": [
+          "不得 live-ready，不得 hard gate。"
+        ],
+        "conflict": [
+          "与 Phase 58 等效链条不冲突。"
+        ]
+      }
+    },
+    {
+      "candidate_id": "cand_20260617_phase60_testnet_endpoint_isolation_required_001",
+      "research_task_id": "P60-A03",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "trade_execution_advice_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "formal_knowledge_id": "kb_phase60_live_execution.testnet_endpoint_isolation_required.v1",
+      "required_followups": [
+        "补 endpoint_scope_policy、credential_scope_policy、account_scope_policy、data_source_scope_policy。"
+      ],
+      "patch_notes": {
+        "source": [
+          "Binance 来源只能作为 Binance USD-M Futures-specific。"
+        ],
+        "content": [
+          "testnet facts 不得写入 production facts。"
+        ],
+        "boundary": [
+          "不得泛化为所有交易所 testnet 行为。"
+        ],
+        "conflict": [
+          "与 Live Execution owner 不冲突。"
+        ]
+      }
+    },
+    {
+      "candidate_id": "cand_20260617_phase60_paper_trading_not_live_required_001",
+      "research_task_id": "P60-A04",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "trade_execution_advice_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "formal_knowledge_id": "kb_phase60_replay_simulation.paper_trading_not_live_required.v1",
+      "required_followups": [
+        "与已有 paper_trading_not_equal_live 做 alias / merge。",
+        "补 paper_broker_model_version、paper_fill_policy、paper_live_gap_report_id。"
+      ],
+      "patch_notes": {
+        "source": [
+          "所有 paper 来源均有 broker/platform-specific 边界。"
+        ],
+        "content": [
+          "paper trading 是 rehearsal，不是 live execution。"
+        ],
+        "boundary": [
+          "不得实盘许可，不得交易建议。"
+        ],
+        "conflict": [
+          "与 Phase 37 / Phase 58 高度重叠，建议去重。"
+        ]
+      }
+    },
+    {
+      "candidate_id": "cand_20260617_phase60_replay_market_impact_assumption_required_001",
+      "research_task_id": "P60-A05",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "trade_execution_advice_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "formal_knowledge_id": "kb_phase60_replay_simulation.replay_market_impact_assumption_required.v1",
+      "required_followups": [
+        "补 queue_position_policy、partial_fill_policy、market_impact_assumption_detail。",
+        "补 QuantConnect reconciliation 作为辅助来源。"
+      ],
+      "patch_notes": {
+        "source": [
+          "HftBacktest 是 framework-specific。"
+        ],
+        "content": [
+          "replay fill 必须披露模型假设。"
+        ],
+        "boundary": [
+          "不得 live-ready，不得 hard gate。"
+        ],
+        "conflict": [
+          "与 Phase 58 等效链条一致。"
+        ]
+      }
+    },
+    {
+      "candidate_id": "cand_20260617_phase60_environment_manifest_required_001",
+      "research_task_id": "P60-A06",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "medium_high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "trade_execution_advice_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "formal_knowledge_id": "kb_phase60_replay_simulation.environment_manifest_required.v1",
+      "required_followups": [
+        "补完整 EnvironmentManifest schema。",
+        "补 reconciliation_report_id、known_non_equivalence、audit_trace_id、promotion_not_live_permission。"
+      ],
+      "patch_notes": {
+        "source": [
+          "manifest 名称和字段属于 CEK-TA internal governance，不是外部通用标准。"
+        ],
+        "content": [
+          "manifest 只证明环境事实可审计，不证明策略有效。"
+        ],
+        "boundary": [
+          "不得把 manifest 完备解释为上线许可。"
+        ],
+        "conflict": [
+          "与 Phase 58 environment_equivalence_manifest 应建立上下游关系。"
+        ]
+      }
+    },
+    {
+      "candidate_id": "cand_20260617_phase60_environment_promotion_evidence_required_001",
+      "research_task_id": "P60-A07",
+      "decision": "needs_more_evidence",
+      "confidence": "medium",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "trade_execution_advice_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "required_followups": [
+        "补 QuantConnect Live Trading Reconciliation。",
+        "补 NautilusTrader Live Execution Reconciliation。",
+        "补 human_reviewer_required、promotion_not_live_permission、risk_review_owner、residual_gap_acceptance_note。",
+        "补 promotion decision 不等于 live permission 的机器可读字段。"
+      ],
+      "patch_notes": {
+        "source": [
+          "必须补 reconciliation / live execution 直接来源。"
+        ],
+        "content": [
+          "promotion decision 是评审证据，不是交易许可。"
+        ],
+        "boundary": [
+          "不得自动晋级，不得自动实盘，不得 hard gate。"
+        ],
+        "conflict": [
+          "与 Risk owner 不冲突，但最终许可必须归 Risk / Live owner。"
+        ]
+      }
+    },
+    {
+      "candidate_id": "cand_20260617_phase60_sandbox_paper_live_gap_report_required_001",
+      "research_task_id": "P60-A08",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "medium_high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "trade_execution_advice_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "formal_knowledge_id": "kb_phase60_replay_simulation.sandbox_paper_live_gap_report_required.v1",
+      "required_followups": [
+        "补 gap_report_not_live_permission=true。",
+        "补 known_non_equivalence、unreconciled_gap、residual_risk_note、human_acceptance_required。",
+        "补 QuantConnect reconciliation 作为直接来源。"
+      ],
+      "patch_notes": {
+        "source": [
+          "FIX 是订单状态标准来源，非 REST/WebSocket 全覆盖来源。"
+        ],
+        "content": [
+          "gap report 是差异审计材料，不是通过证书。"
+        ],
+        "boundary": [
+          "gap report 通过不等于策略有效，不等于 live-ready。"
+        ],
+        "conflict": [
+          "与 Phase 58 simulation_live_gap_report_required 一致，建议 alias。"
+        ]
+      }
+    },
+    {
+      "candidate_id": "cand_20260617_phase60_order_lifecycle_mapping_required_001",
+      "research_task_id": "P60-A09",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "trade_execution_advice_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "formal_knowledge_id": "kb_phase60_live_execution.order_lifecycle_mapping_required.v1",
+      "required_followups": [
+        "补 venue_order_status_mapping_version、reject_code_mapping_version、unknown_outcome_policy。",
+        "补 REST/WebSocket/FIX adapter 差异说明。"
+      ],
+      "patch_notes": {
+        "source": [
+          "FIX 是标准来源，但 REST/WebSocket broker states 仍需 venue-specific mapping。"
+        ],
+        "content": [
+          "统一生命周期不得被解释为真实成交证明。"
+        ],
+        "boundary": [
+          "不得授权执行，不得 hard gate。"
+        ],
+        "conflict": [
+          "与 Phase 45 order semantics 可能重叠，需去重。"
+        ]
+      }
+    },
+    {
+      "candidate_id": "cand_20260617_phase60_sandbox_risk_rehearsal_not_hard_gate_001",
+      "research_task_id": "P60-A10",
+      "decision": "needs_more_evidence",
+      "confidence": "medium",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "trade_execution_advice_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "required_followups": [
+        "补 NautilusTrader RiskEngine / Execution docs。",
+        "补 Binance Futures Error Code / Order Reject docs。",
+        "补 broker_or_exchange_rejection_mapping_source。",
+        "补 live_risk_owner_policy_source。",
+        "补 risk_rehearsal_result_not_hard_gate=true。",
+        "补 kill_switch_or_manual_override_boundary。"
+      ],
+      "patch_notes": {
+        "source": [
+          "必须补 live risk / rejection / kill switch 直接来源。"
+        ],
+        "content": [
+          "risk rehearsal 只能验证字段、策略链条和审计流程。"
+        ],
+        "boundary": [
+          "不得替代 live risk owner，不得自动拒单，不得自动停机，不得 hard gate。"
+        ],
+        "conflict": [
+          "与 Risk Management owner 不冲突，但必须保留 owner 边界。"
+        ]
+      }
+    }
+  ]
+}

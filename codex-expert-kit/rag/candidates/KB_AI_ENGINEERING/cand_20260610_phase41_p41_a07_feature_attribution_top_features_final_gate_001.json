@@ -1,0 +1,360 @@
+{
+  "schema_version": "1.0.0",
+  "candidate_id": "cand_20260610_phase41_p41_a07_feature_attribution_top_features_final_gate_001",
+  "research_task_id": "P41-A07",
+  "status": {
+    "review_status": "accepted",
+    "ingestion_decision": "accepted_for_draft",
+    "decision_reason": "二审 accepted_for_draft 且 reviewed_allowed=true；已生成 formal reviewed knowledge。",
+    "created_at": "2026-06-10",
+    "updated_at": "2026-06-10"
+  },
+  "classification": {
+    "tree_node_id": "kt.ai_engineering.numeric_scoring.scorer_explainability",
+    "canonical_node_id": "kt.ai_engineering.numeric_scoring.scorer_explainability",
+    "tree_path": "CEK-TA / AI Engineering / Hybrid Scoring And Qwen3 Audit",
+    "related_nodes": [
+      "kt.trading_engineering",
+      "kt.rag_engineering",
+      "kt.ai_feedback_governance"
+    ],
+    "partition_id": "KB_AI_20_NUMERIC_SCORING",
+    "domain": "llm_training",
+    "subdomain": "scorer_explainability",
+    "rule_type": "governance_rule",
+    "used_for": [
+      "llm_training",
+      "trading_gating_scoring",
+      "hybrid_scoring",
+      "rag_engineering",
+      "mcp",
+      "vue_audit_ui"
+    ]
+  },
+  "claim": {
+    "claim_id": "claim_001",
+    "statement": "feature attribution、SHAP、permutation importance 和 top_features 只能作为模型调试与审计线索；不得声明因果关系，不得作为交易规则证据，也不得作为 deterministic final gate 的直接放行或阻断依据。",
+    "normalized_claim": "phase41.feature_attribution_top_features_final_gate.v1",
+    "claim_type": "explainability_boundary_rule",
+    "model_role": "tabular_scorer",
+    "priority": "P0-Extended",
+    "evidence_summary": "scikit-learn documents permutation importance as a model inspection method and notes limitations when features are correlated.；NIST AI RMF provides governance practices for mapping, measuring and managing AI risks.；SHAP 文档专门提醒预测模型解释不应被直接当作因果洞察。；契约明确 top_features 只能用于审计和 debug，不能作为因果结论或 final gate 权限。",
+    "interpretation_notes": "本候选只沉淀 AI Engineering 的模型选择、训练增强、校准不确定性、特征服务、Qwen3 审计助手或平台治理规则；交易规则本体必须路由到 Phase 37 / Trading Engineering。",
+    "claim_strength": "medium",
+    "performance_claim": false
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "general",
+    "data_granularity": "general",
+    "project_type": "trading_llm_gating_scoring",
+    "applies_when": [
+      "外接项目已完成基本 hybrid scoring POC，正在评估增强模型、平台、解释、校准、不确定性、服务化或发布治理。",
+      "该规则用于限制增强能力的引入时机、职责边界、审计证据和回滚条件。"
+    ],
+    "not_applicable_when": [
+      "用户需要具体买卖点、仓位、止损止盈、K 线形态、策略参数或实盘订单执行。",
+      "知识点主要描述 fill model、订单状态机、实盘风控阈值、交易所异常处理或交易收益本体，应路由到 Trading Engineering。"
+    ],
+    "assumptions": [
+      "P0-Extended/P1 是增强能力，不应阻塞 POC 主链路。",
+      "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+    ],
+    "limitations": [
+      "本条仍是 candidate，需要外部 AI/人工审计确认来源充分性、适用边界和是否需要补充工程实例。",
+      "causal_claim_allowed=false；final_gate_decision_allowed=false；任何 attribution 结论进入交易解释时必须带非因果、非交易规则证据说明。"
+    ]
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于提醒 AI IDE 区分必需能力与条件增强能力。",
+      "用于生成任务卡、接口契约、测试计划、审计 checklist 和候选知识补证问题。",
+      "用于阻断增强平台或模型能力绕过 deterministic final gate、人工审批和 RAG 引用边界。"
+    ],
+    "not_allowed": [
+      "不得据此生成买卖点、仓位、杠杆、止损止盈或实盘下单建议。",
+      "不得据此把 P1 平台工具变成默认依赖。",
+      "不得把 candidate 当作 reviewed/approved 默认指导。"
+    ]
+  },
+  "source_refs": [
+    {
+      "source_id": "src_shap_docs",
+      "source_title": "SHAP documentation",
+      "source_url": "https://shap.readthedocs.io/",
+      "source_type": "official_doc",
+      "publisher": "SHAP",
+      "published_at": null,
+      "accessed_at": "2026-06-10",
+      "version": null,
+      "reliability": "high",
+      "score": 82,
+      "relevance": "high",
+      "freshness": "time_sensitive",
+      "limitations": [],
+      "evidence_summary": "SHAP documents Shapley-value based feature attribution for explaining model outputs.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_sklearn_permutation_importance",
+      "source_title": "Permutation feature importance - scikit-learn documentation",
+      "source_url": "https://scikit-learn.org/stable/modules/permutation_importance.html",
+      "source_type": "official_doc",
+      "publisher": "scikit-learn",
+      "published_at": null,
+      "accessed_at": "2026-06-10",
+      "version": null,
+      "reliability": "high",
+      "score": 84,
+      "relevance": "high",
+      "freshness": "time_sensitive",
+      "limitations": [],
+      "evidence_summary": "scikit-learn documents permutation importance as a model inspection method and notes limitations when features are correlated.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_nist_ai_rmf",
+      "source_title": "NIST AI Risk Management Framework",
+      "source_url": "https://www.nist.gov/itl/ai-risk-management-framework",
+      "source_type": "governance_framework",
+      "publisher": "NIST",
+      "published_at": null,
+      "accessed_at": "2026-06-10",
+      "version": null,
+      "reliability": "high",
+      "score": 88,
+      "relevance": "high",
+      "freshness": "stable",
+      "limitations": [],
+      "evidence_summary": "NIST AI RMF provides governance practices for mapping, measuring and managing AI risks.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_shap_causal_warning",
+      "source_title": "Be careful when interpreting predictive models in search of causal insights - SHAP documentation",
+      "source_url": "https://shap.readthedocs.io/en/latest/example_notebooks/overviews/Be%20careful%20when%20interpreting%20predictive%20models%20in%20search%20of%20causal%20insights.html",
+      "source_type": "official_doc",
+      "publisher": "SHAP",
+      "published_at": null,
+      "accessed_at": "2026-06-10",
+      "version": null,
+      "reliability": "high",
+      "score": 88,
+      "relevance": "high",
+      "freshness": "time_sensitive",
+      "limitations": [
+        "支撑 attribution 不是因果证据，不证明任何交易特征稳定有效。"
+      ],
+      "evidence_summary": "SHAP 文档专门提醒预测模型解释不应被直接当作因果洞察。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_phase41_runtime_contract",
+      "source_title": "CEK-TA Phase 41 Hybrid Scoring Runtime Contract",
+      "source_url": "docs/contracts/phase41_hybrid_scoring_runtime_contract.md",
+      "source_type": "internal_contract",
+      "publisher": "CEK-TA",
+      "published_at": "2026-06-10",
+      "accessed_at": "2026-06-10",
+      "version": "draft",
+      "reliability": "high",
+      "score": 90,
+      "relevance": "high",
+      "freshness": "time_sensitive",
+      "limitations": [
+        "内部契约只证明 CEK-TA 字段和权限边界，不替代外部专业来源。"
+      ],
+      "evidence_summary": "契约明确 top_features 只能用于审计和 debug，不能作为因果结论或 final gate 权限。",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 88,
+    "score_version": "1.1.0",
+    "primary_source_count": 5,
+    "supporting_source_count": 0,
+    "low_reliability_source_count": 0,
+    "mandatory_downgrades": [],
+    "limitations": [
+      "增强能力来源多为官方文档、论文或内部契约；正式化时必须保留条件引入边界。",
+      "补证后仍需外部 AI/人工二审确认 claim-specific 充分性，不能直接转 reviewed 或 approved。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "docs/contracts/phase41_hybrid_scoring_runtime_contract.md",
+      "docs/contracts/phase41_tabular_llm_training_data_contract.md",
+      "docs/research/phase41_hybrid_scoring_qwen3_scope.md",
+      "docs/tasks/phase41_hybrid_scoring_qwen3_audit_stack.md"
+    ],
+    "conflicts": [],
+    "resolution_summary": "补证后未发现直接理论冲突；仍需二审确认来源充分性和 AI/Trading 分支边界。",
+    "approval_allowed": false
+  },
+  "machine_gate": {
+    "default_guidance": "deny",
+    "reason": "supplemented candidate awaiting reaudit; not reviewed, approved, default guidance, or hard gate.",
+    "requires_human_escalation": true
+  },
+  "review": {
+    "confidence": "medium",
+    "freshness": "time_sensitive",
+    "reviewer": "codex_supplemental_evidence",
+    "reviewed_at": "2026-06-10",
+    "open_questions": [
+      "请二审确认补证后是否 accepted_for_draft；如果仍不足，请返回 needs_more_evidence 或 rejected。",
+      "即使二审通过，本条仍只能进入 formal reviewed draft 准备流程，不得直接 approved、default guidance 或 hard gate。"
+    ],
+    "audit_log": [
+      {
+        "at": "2026-06-10",
+        "actor": "codex",
+        "action": "created",
+        "reason": "Phase 41 P0-Extended/P1 joint candidate expansion."
+      },
+      {
+        "at": "2026-06-10",
+        "actor": "codex",
+        "action": "phase41_extended_p1_audit_needs_more_evidence",
+        "reason": "需补证后重新审计。"
+      },
+      {
+        "at": "2026-06-10",
+        "actor": "codex",
+        "action": "phase41_extended_p1_supplemental_evidence_ready",
+        "reason": "按严格审计意见补证并准备二审。"
+      },
+      {
+        "at": "2026-06-10",
+        "actor": "codex",
+        "action": "phase41_extended_p1_formal_reviewed_created",
+        "reason": "CEK-TA-333: formal reviewed knowledge written to codex-expert-kit/rag/knowledge/KB_AI_20_NUMERIC_SCORING/kb_ai_hybrid_scoring.phase41.feature_attribution_top_features_final_gate.v1.json."
+      }
+    ],
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "reviewed_allowed": true,
+    "approved_allowed": false,
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase41_extended_p1_supplemental_reaudit_20260610_strict_v2",
+      "source_package_id": "phase41_extended_p1_supplemental_reaudit_package_20260610",
+      "candidate_id": "cand_20260610_phase41_p41_a07_feature_attribution_top_features_final_gate_001",
+      "research_task_id": "P41-A07",
+      "decision": "accepted_for_draft",
+      "reason": "SHAP causal-warning source and Phase 41 runtime contract now directly support attribution as audit/debug hint only, not causal evidence or final-gate authority.",
+      "source_patch_notes": [
+        "Add SHAP causal-warning source or causal inference/XAI limitation source.",
+        "Add Phase41 runtime/final-gate contract source stating attribution/top_features cannot decide final gate."
+      ],
+      "content_patch_notes": [
+        "Keep attribution/top_features as debugging/audit hints only; define causal_claim_allowed=false and final_gate_decision_allowed=false."
+      ],
+      "boundary_patch_notes": [],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false conflicts with package hard boundary that candidate knowledge must not enter default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before any draft conversion."
+      ],
+      "required_followups": [
+        "add_shap_causal_warning_source",
+        "add_final_gate_boundary_source"
+      ],
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "import_policy": "strict audit result may route candidates only; formal reviewed/approved creation is blocked.",
+      "supplemental_evidence": {
+        "status": "ready_for_reaudit",
+        "added_at": "2026-06-10",
+        "task_id": "CEK-TA-332",
+        "previous_statement": "feature attribution / top_features 只能辅助调试和审计，不等于因果解释、交易规则证据或 final gate 决策依据",
+        "patched_statement": "feature attribution、SHAP、permutation importance 和 top_features 只能作为模型调试与审计线索；不得声明因果关系，不得作为交易规则证据，也不得作为 deterministic final gate 的直接放行或阻断依据。",
+        "added_source_ids": [
+          "src_shap_causal_warning",
+          "src_phase41_runtime_contract"
+        ],
+        "all_supplemental_source_ids": [
+          "src_shap_causal_warning",
+          "src_phase41_runtime_contract"
+        ],
+        "supplemental_notes": [
+          "SHAP 官方 causal-warning 来源直接支撑 attribution 不能被当作因果洞察。",
+          "Phase 41 runtime contract 明确 top_features 只能用于审计和 debug，不能作为 final gate 权限。"
+        ],
+        "remaining_boundary": "causal_claim_allowed=false；final_gate_decision_allowed=false；任何 attribution 结论进入交易解释时必须带非因果、非交易规则证据说明。",
+        "reaudit_request": "请判断补证后是否 accepted_for_draft；不得直接 reviewed/approved/default/hard gate。"
+      },
+      "allowed_next_stage": "formal_reviewed_knowledge"
+    }
+  },
+  "copyright": {
+    "stores_full_text": false,
+    "stores_long_quote": false,
+    "summary_only": true,
+    "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+    "reuse_risk": "low"
+  },
+  "conversion_target": {
+    "proposed_knowledge_id": "kb_ai_hybrid_scoring.phase41.feature_attribution_top_features_final_gate.v1",
+    "target_schema": "cek_ta_knowledge_item",
+    "target_review_status": "reviewed",
+    "skill_candidate": false,
+    "eval_case_candidate": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "workflow": {
+    "stage": "formalized_reviewed",
+    "queue_group": "formalized",
+    "formal_knowledge_id": "kb_ai_hybrid_scoring.phase41.feature_attribution_top_features_final_gate.v1",
+    "formal_review_status": "reviewed",
+    "ai_audit_result_id": "audit_result_phase41_extended_p1_supplemental_reaudit_20260610_strict_v2",
+    "hidden_from_default_queue": true,
+    "next_action": "none",
+    "default_guidance_allowed": false,
+    "visible_in_default_guidance_queue": false,
+    "knowledge_path": "codex-expert-kit/rag/knowledge/KB_AI_20_NUMERIC_SCORING/kb_ai_hybrid_scoring.phase41.feature_attribution_top_features_final_gate.v1.json",
+    "formal_knowledge_path": "codex-expert-kit/rag/knowledge/KB_AI_20_NUMERIC_SCORING/kb_ai_hybrid_scoring.phase41.feature_attribution_top_features_final_gate.v1.json"
+  },
+  "phase41_trace": {
+    "priority": "P0-Extended",
+    "source_hint": "SHAP、causal inference sources",
+    "related_contracts": [
+      "docs/contracts/phase41_hybrid_scoring_runtime_contract.md",
+      "docs/contracts/phase41_tabular_llm_training_data_contract.md",
+      "docs/research/phase41_hybrid_scoring_qwen3_scope.md",
+      "docs/tasks/phase41_hybrid_scoring_qwen3_audit_stack.md"
+    ],
+    "scope_boundary": "AI Engineering enhancement only; Trading Engineering knowledge body is reference-only.",
+    "audit_patch_notes": {
+      "source_patch_notes": [
+        "Add SHAP causal-warning source or causal inference/XAI limitation source.",
+        "Add Phase41 runtime/final-gate contract source stating attribution/top_features cannot decide final gate."
+      ],
+      "content_patch_notes": [
+        "Keep attribution/top_features as debugging/audit hints only; define causal_claim_allowed=false and final_gate_decision_allowed=false."
+      ],
+      "boundary_patch_notes": [],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false conflicts with package hard boundary that candidate knowledge must not enter default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before any draft conversion."
+      ],
+      "required_followups": [
+        "add_shap_causal_warning_source",
+        "add_final_gate_boundary_source"
+      ]
+    },
+    "supplemental_evidence_ready": true,
+    "supplemental_evidence_added_at": "2026-06-10",
+    "supplemental_task_id": "CEK-TA-332",
+    "supplemental_source_ids": [
+      "src_shap_causal_warning",
+      "src_phase41_runtime_contract"
+    ],
+    "supplemental_constraints": {
+      "causal_claim_allowed": false,
+      "final_gate_decision_allowed": false
+    }
+  }
+}

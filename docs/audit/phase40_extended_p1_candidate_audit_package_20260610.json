@@ -1,0 +1,3907 @@
+{
+  "package_id": "phase40_extended_p1_candidate_audit_package_20260610",
+  "package_type": "candidate_ai_audit_package",
+  "generated_at": "2026-06-10",
+  "phase": "40",
+  "task_id": "CEK-TA-311",
+  "title": "Phase 40 Batch D/E 持续学习候选知识审计包",
+  "purpose": "审计 Phase 40 尚未采集的 P0-Extended 与 P1 持续学习候选知识，确认来源充分性、适用边界、冲突风险、AI 使用安全和跨分支路由。",
+  "hard_boundaries": [
+    "candidate 不是正式知识，不能作为默认指导。",
+    "accepted_for_draft 不是 approved。",
+    "reviewed 不等于 approved。",
+    "持续学习不等于线上自动学习。",
+    "再训练只能生成 candidate model，不得自动替换 champion model。",
+    "LLM audit assistant 不能做最终交易 gate。",
+    "shadow/paper/canary 只是发布证据，不是自动上线许可。",
+    "hard gate 启用必须有人工审批、release manifest、rollback target 和 kill switch。",
+    "交易规则本体必须路由到 Phase 37 / Trading Engineering。",
+    "不得把项目私有事实、账号数据、密钥或具体策略规则写入 AI Engineering。"
+  ],
+  "auditor_instruction": {
+    "goal": "逐条判断候选是否可转为 accepted_for_draft，或需要补来源、改边界、拆分、拒绝。",
+    "focus_checks": [
+      "是否有足够权威来源支持。",
+      "是否错误收录了 Trading Engineering 规则本体。",
+      "是否把持续学习误写成线上自动学习。",
+      "是否把再训练结果误设为自动上线或替换 champion。",
+      "是否把 LLM audit assistant 误设为最终交易裁决者。",
+      "是否存在无来源默认指导、冲突未处理或过期依赖。",
+      "是否需要补充论文、官方文档或工程实例。"
+    ],
+    "required_output_schema": {
+      "audit_result_id": "string",
+      "source_package_id": "phase40_extended_p1_candidate_audit_package_20260610",
+      "decisions": [
+        {
+          "candidate_id": "string",
+          "research_task_id": "string",
+          "decision": "accepted_for_draft | needs_more_evidence | rejected",
+          "reviewed_allowed": false,
+          "approved_allowed": false,
+          "default_guidance_allowed": false,
+          "hard_gate_allowed": false,
+          "reason": "string",
+          "source_patch_notes": [
+            "string"
+          ],
+          "content_patch_notes": [
+            "string"
+          ],
+          "boundary_patch_notes": [
+            "string"
+          ],
+          "conflict_patch_notes": [
+            "string"
+          ],
+          "required_followups": [
+            "string"
+          ]
+        }
+      ],
+      "batch_summary": {
+        "accepted_count": 0,
+        "needs_more_evidence_count": 0,
+        "rejected_count": 0,
+        "misrouted_to_trading_count": 0
+      }
+    }
+  },
+  "quality_gate": {
+    "report_id": "phase40_extended_p1_candidate_quality_gate",
+    "generated_at": "2026-06-10",
+    "scope": "Phase 40 Batch D/E candidate audit package",
+    "candidate_count": 18,
+    "planned_total": 18,
+    "checks": {
+      "source_refs_min_2": "pass",
+      "conflict_status_safe": "pass",
+      "review_status_candidate_only": "pass",
+      "machine_gate_denies_default_guidance": "pass",
+      "canonical_nodes_under_feedback_governance": "pass"
+    },
+    "failure_count": 0,
+    "failures": [],
+    "gate_status": "pass",
+    "boundary": "candidate is not reviewed or approved; audit result is required before formal knowledge conversion."
+  },
+  "candidate_count": 18,
+  "planned_total": 18,
+  "candidates": [
+    {
+      "schema_version": "1.0.0",
+      "candidate_id": "cand_20260610_phase40_p40_e01_replayable_audit_trail_001",
+      "research_task_id": "P40-E01",
+      "status": {
+        "review_status": "proposed",
+        "ingestion_decision": "convert_to_knowledge_item",
+        "decision_reason": "Phase 40 Batch D/E sourced candidate; not reviewed, not approved, not default guidance.",
+        "created_at": "2026-06-10",
+        "updated_at": "2026-06-10"
+      },
+      "classification": {
+        "tree_node_id": "kt.ai_feedback_governance.feedback_logging",
+        "canonical_node_id": "kt.ai_feedback_governance.feedback_logging",
+        "tree_path": "CEK-TA / AI Engineering / Continuous Learning And Feedback Governance",
+        "related_nodes": [],
+        "partition_id": "KB_AI_18_FEEDBACK_GOVERNANCE",
+        "domain": "ai_governance",
+        "subdomain": "feedback_logging",
+        "rule_type": "governance_rule",
+        "used_for": [
+          "llm_training",
+          "trading_gating_scoring",
+          "continuous_learning",
+          "rag_engineering",
+          "mcp",
+          "vue_audit_ui"
+        ]
+      },
+      "claim": {
+        "claim_id": "claim_001",
+        "statement": "feedback log 必须支持 replayable audit trail",
+        "normalized_claim": "phase40.replayable_audit_trail.v1",
+        "claim_type": "ai_governance_rule",
+        "evidence_summary": "Snowflake ML Observability describes monitoring logs that store inference data, predictions, timestamps, features, and ground-truth labels.；MLflow Model Registry provides model lineage, versioning, aliases, metadata tagging, and annotations for lifecycle management.；NIST AI RMF provides a risk-management framework for governing, mapping, measuring, and managing AI risks.",
+        "interpretation_notes": "本候选只沉淀 AI Engineering 的持续学习、反馈治理、再训练、再校准、发布回滚或 LLM 改进方法；交易规则本体必须路由到 Phase 37。",
+        "claim_strength": "medium",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general",
+        "asset": "general",
+        "timeframe": "general",
+        "data_granularity": "general",
+        "project_type": "trading_llm_gating_scoring",
+        "applies_when": [
+          "外接项目正在建设交易 AI gating/scoring 的反馈日志、标签刷新、漂移检测、再训练、再校准、shadow/paper/canary 或发布治理链路。",
+          "该规则用于补强 Phase 40 P0-Core 治理闭环，并为 AI IDE 生成任务卡、契约、测试和审计 checklist 提供候选知识。"
+        ],
+        "not_applicable_when": [
+          "用户需要具体买卖点、仓位、止损止盈、K 线形态、策略参数或实盘订单执行。",
+          "知识点主要描述 fill model、订单状态机、实盘风控阈值或交易所异常处理，应路由到 Trading Engineering。"
+        ],
+        "assumptions": [
+          "外接项目提供私有交易事实、模型输出和发布上下文；CEK-TA 只沉淀可复用专业规则。",
+          "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+        ],
+        "limitations": [
+          "本条仍是 candidate，需要外部 AI/人工审计确认来源充分性、适用边界和是否需要补充交易项目实例。",
+          "AI Engineering 只定义学习治理、证据链、评估、发布和回滚边界，不定义交易策略本体。"
+        ]
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 在外接项目中实现持续学习治理字段、审计追踪、评测回归和发布门禁。",
+          "用于阻断自动上线、无来源默认指导、LLM 越权 final gate 和反馈回路污染。",
+          "用于生成候选审计包，由外部 AI/人工进一步审计。"
+        ],
+        "not_allowed": [
+          "不得据此生成买卖点、仓位、杠杆、止损止盈或实盘下单建议。",
+          "不得据此跳过人工审批或 release/rollback 门禁。",
+          "不得把 candidate 当作 reviewed 或 approved 默认指导。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_id": "src_snowflake_ml_observability",
+          "source_title": "ML Observability: Monitoring model behavior over time",
+          "source_url": "https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/model-observability",
+          "source_type": "official_doc",
+          "publisher": "Snowflake",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 84,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "Snowflake ML Observability describes monitoring logs that store inference data, predictions, timestamps, features, and ground-truth labels.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_mlflow_model_registry",
+          "source_title": "MLflow Model Registry",
+          "source_url": "https://mlflow.org/docs/latest/ml/model-registry/",
+          "source_type": "official_doc",
+          "publisher": "MLflow",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 86,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "MLflow Model Registry provides model lineage, versioning, aliases, metadata tagging, and annotations for lifecycle management.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_nist_ai_rmf",
+          "source_title": "NIST AI Risk Management Framework",
+          "source_url": "https://www.nist.gov/itl/ai-risk-management-framework",
+          "source_type": "governance_framework",
+          "publisher": "NIST",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 88,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "NIST AI RMF provides a risk-management framework for governing, mapping, measuring, and managing AI risks.",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "high",
+        "score": 86,
+        "score_version": "1.1.0",
+        "primary_source_count": 3,
+        "supporting_source_count": 0,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "来源支持通用 AI/ML/MLOps/LLMOps/治理工程原则；正式知识转换时需保留 CEK-TA 具体上下游引用和冲突链接。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "checked_against": [
+          "docs/contracts/phase40_feedback_dataset_contract.md",
+          "docs/contracts/phase40_drift_retraining_recalibration_contract.md",
+          "docs/contracts/phase40_champion_challenger_release_contract.md",
+          "docs/research/phase40_ai_continuous_learning_scope.md"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与 Phase 40 契约的直接冲突；候选不会进入默认指导。",
+        "approval_allowed": true
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "candidate only; not reviewed or approved; external audit required before formal knowledge conversion.",
+        "requires_human_escalation": true
+      },
+      "review": {
+        "confidence": "medium",
+        "freshness": "time_sensitive",
+        "reviewer": "codex",
+        "reviewed_at": null,
+        "open_questions": [
+          "审计时确认该候选是否需要补充更贴近交易 AI 的实例或与 Phase 38/Trading Engineering 增加交叉引用。"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "created",
+            "reason": "Phase 40 Batch D/E continuous learning candidate expansion."
+          }
+        ]
+      },
+      "copyright": {
+        "stores_full_text": false,
+        "stores_long_quote": false,
+        "summary_only": true,
+        "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+        "reuse_risk": "low"
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_ai_feedback_governance.phase40.replayable_audit_trail.v1",
+        "target_schema": "cek_ta_knowledge_item",
+        "target_review_status": "draft",
+        "skill_candidate": false,
+        "eval_case_candidate": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "workflow": {
+        "stage": "candidate_ready",
+        "queue_group": "pending",
+        "formal_knowledge_id": null,
+        "formal_review_status": null,
+        "ai_audit_result_id": null,
+        "hidden_from_default_queue": false,
+        "next_action": "export_for_ai_or_human_audit",
+        "default_guidance_allowed": false
+      },
+      "phase40_trace": {
+        "batch": "Batch D/E",
+        "acceptance_gate": "可从 log 回放决策",
+        "search_direction": "replayable audit trail prediction log lineage",
+        "related_contracts": [
+          "docs/contracts/phase40_feedback_dataset_contract.md",
+          "docs/contracts/phase40_drift_retraining_recalibration_contract.md",
+          "docs/contracts/phase40_champion_challenger_release_contract.md",
+          "docs/research/phase40_ai_continuous_learning_scope.md"
+        ]
+      }
+    },
+    {
+      "schema_version": "1.0.0",
+      "candidate_id": "cand_20260610_phase40_p40_e02_label_policy_version_compatibility_001",
+      "research_task_id": "P40-E02",
+      "status": {
+        "review_status": "proposed",
+        "ingestion_decision": "convert_to_knowledge_item",
+        "decision_reason": "Phase 40 Batch D/E sourced candidate; not reviewed, not approved, not default guidance.",
+        "created_at": "2026-06-10",
+        "updated_at": "2026-06-10"
+      },
+      "classification": {
+        "tree_node_id": "kt.ai_feedback_governance.label_refresh",
+        "canonical_node_id": "kt.ai_feedback_governance.label_refresh",
+        "tree_path": "CEK-TA / AI Engineering / Continuous Learning And Feedback Governance",
+        "related_nodes": [],
+        "partition_id": "KB_AI_18_FEEDBACK_GOVERNANCE",
+        "domain": "ai_governance",
+        "subdomain": "label_refresh",
+        "rule_type": "governance_rule",
+        "used_for": [
+          "llm_training",
+          "trading_gating_scoring",
+          "continuous_learning",
+          "rag_engineering",
+          "mcp",
+          "vue_audit_ui"
+        ]
+      },
+      "claim": {
+        "claim_id": "claim_001",
+        "statement": "标签策略版本变更必须触发历史样本兼容性说明",
+        "normalized_claim": "phase40.label_policy_version_compatibility.v1",
+        "claim_type": "ai_governance_rule",
+        "evidence_summary": "The Data Cards Playbook supports transparent dataset documentation and metadata practices across a dataset lifecycle.；MLflow Model Registry provides model lineage, versioning, aliases, metadata tagging, and annotations for lifecycle management.；NIST AI RMF provides a risk-management framework for governing, mapping, measuring, and managing AI risks.",
+        "interpretation_notes": "本候选只沉淀 AI Engineering 的持续学习、反馈治理、再训练、再校准、发布回滚或 LLM 改进方法；交易规则本体必须路由到 Phase 37。",
+        "claim_strength": "medium",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general",
+        "asset": "general",
+        "timeframe": "general",
+        "data_granularity": "general",
+        "project_type": "trading_llm_gating_scoring",
+        "applies_when": [
+          "外接项目正在建设交易 AI gating/scoring 的反馈日志、标签刷新、漂移检测、再训练、再校准、shadow/paper/canary 或发布治理链路。",
+          "该规则用于补强 Phase 40 P0-Core 治理闭环，并为 AI IDE 生成任务卡、契约、测试和审计 checklist 提供候选知识。"
+        ],
+        "not_applicable_when": [
+          "用户需要具体买卖点、仓位、止损止盈、K 线形态、策略参数或实盘订单执行。",
+          "知识点主要描述 fill model、订单状态机、实盘风控阈值或交易所异常处理，应路由到 Trading Engineering。"
+        ],
+        "assumptions": [
+          "外接项目提供私有交易事实、模型输出和发布上下文；CEK-TA 只沉淀可复用专业规则。",
+          "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+        ],
+        "limitations": [
+          "本条仍是 candidate，需要外部 AI/人工审计确认来源充分性、适用边界和是否需要补充交易项目实例。",
+          "AI Engineering 只定义学习治理、证据链、评估、发布和回滚边界，不定义交易策略本体。"
+        ]
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 在外接项目中实现持续学习治理字段、审计追踪、评测回归和发布门禁。",
+          "用于阻断自动上线、无来源默认指导、LLM 越权 final gate 和反馈回路污染。",
+          "用于生成候选审计包，由外部 AI/人工进一步审计。"
+        ],
+        "not_allowed": [
+          "不得据此生成买卖点、仓位、杠杆、止损止盈或实盘下单建议。",
+          "不得据此跳过人工审批或 release/rollback 门禁。",
+          "不得把 candidate 当作 reviewed 或 approved 默认指导。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_id": "src_google_data_cards_playbook",
+          "source_title": "The Data Cards Playbook",
+          "source_url": "https://sites.research.google/datacardsplaybook/",
+          "source_type": "framework_doc",
+          "publisher": "Google Research",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 84,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "The Data Cards Playbook supports transparent dataset documentation and metadata practices across a dataset lifecycle.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_mlflow_model_registry",
+          "source_title": "MLflow Model Registry",
+          "source_url": "https://mlflow.org/docs/latest/ml/model-registry/",
+          "source_type": "official_doc",
+          "publisher": "MLflow",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 86,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "MLflow Model Registry provides model lineage, versioning, aliases, metadata tagging, and annotations for lifecycle management.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_nist_ai_rmf",
+          "source_title": "NIST AI Risk Management Framework",
+          "source_url": "https://www.nist.gov/itl/ai-risk-management-framework",
+          "source_type": "governance_framework",
+          "publisher": "NIST",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 88,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "NIST AI RMF provides a risk-management framework for governing, mapping, measuring, and managing AI risks.",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "high",
+        "score": 86,
+        "score_version": "1.1.0",
+        "primary_source_count": 3,
+        "supporting_source_count": 0,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "来源支持通用 AI/ML/MLOps/LLMOps/治理工程原则；正式知识转换时需保留 CEK-TA 具体上下游引用和冲突链接。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "checked_against": [
+          "docs/contracts/phase40_feedback_dataset_contract.md",
+          "docs/contracts/phase40_drift_retraining_recalibration_contract.md",
+          "docs/contracts/phase40_champion_challenger_release_contract.md",
+          "docs/research/phase40_ai_continuous_learning_scope.md"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与 Phase 40 契约的直接冲突；候选不会进入默认指导。",
+        "approval_allowed": true
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "candidate only; not reviewed or approved; external audit required before formal knowledge conversion.",
+        "requires_human_escalation": true
+      },
+      "review": {
+        "confidence": "medium",
+        "freshness": "time_sensitive",
+        "reviewer": "codex",
+        "reviewed_at": null,
+        "open_questions": [
+          "审计时确认该候选是否需要补充更贴近交易 AI 的实例或与 Phase 38/Trading Engineering 增加交叉引用。"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "created",
+            "reason": "Phase 40 Batch D/E continuous learning candidate expansion."
+          }
+        ]
+      },
+      "copyright": {
+        "stores_full_text": false,
+        "stores_long_quote": false,
+        "summary_only": true,
+        "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+        "reuse_risk": "low"
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_ai_feedback_governance.phase40.label_policy_version_compatibility.v1",
+        "target_schema": "cek_ta_knowledge_item",
+        "target_review_status": "draft",
+        "skill_candidate": false,
+        "eval_case_candidate": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "workflow": {
+        "stage": "candidate_ready",
+        "queue_group": "pending",
+        "formal_knowledge_id": null,
+        "formal_review_status": null,
+        "ai_audit_result_id": null,
+        "hidden_from_default_queue": false,
+        "next_action": "export_for_ai_or_human_audit",
+        "default_guidance_allowed": false
+      },
+      "phase40_trace": {
+        "batch": "Batch D/E",
+        "acceptance_gate": "有 label_policy_version",
+        "search_direction": "label policy version dataset migration compatibility",
+        "related_contracts": [
+          "docs/contracts/phase40_feedback_dataset_contract.md",
+          "docs/contracts/phase40_drift_retraining_recalibration_contract.md",
+          "docs/contracts/phase40_champion_challenger_release_contract.md",
+          "docs/research/phase40_ai_continuous_learning_scope.md"
+        ]
+      }
+    },
+    {
+      "schema_version": "1.0.0",
+      "candidate_id": "cand_20260610_phase40_p40_e03_drift_root_cause_classification_001",
+      "research_task_id": "P40-E03",
+      "status": {
+        "review_status": "proposed",
+        "ingestion_decision": "convert_to_knowledge_item",
+        "decision_reason": "Phase 40 Batch D/E sourced candidate; not reviewed, not approved, not default guidance.",
+        "created_at": "2026-06-10",
+        "updated_at": "2026-06-10"
+      },
+      "classification": {
+        "tree_node_id": "kt.ai_feedback_governance.drift_monitoring",
+        "canonical_node_id": "kt.ai_feedback_governance.drift_monitoring",
+        "tree_path": "CEK-TA / AI Engineering / Continuous Learning And Feedback Governance",
+        "related_nodes": [],
+        "partition_id": "KB_AI_18_FEEDBACK_GOVERNANCE",
+        "domain": "ai_governance",
+        "subdomain": "drift_monitoring",
+        "rule_type": "governance_rule",
+        "used_for": [
+          "llm_training",
+          "trading_gating_scoring",
+          "continuous_learning",
+          "rag_engineering",
+          "mcp",
+          "vue_audit_ui"
+        ]
+      },
+      "claim": {
+        "claim_id": "claim_001",
+        "statement": "漂移报警必须区分数据质量问题、市场变化和策略版本变化",
+        "normalized_claim": "phase40.drift_root_cause_classification.v1",
+        "claim_type": "ai_governance_rule",
+        "evidence_summary": "Fiddler describes model drift monitoring and root-cause analysis that differentiates data quality issues, concept drift, and other factors.；DataRobot documents data drift settings, thresholds, and feature importance for production ML monitoring.；Arize monitor guidance covers performance, drift, data quality, and custom metrics for continuous model monitoring.",
+        "interpretation_notes": "本候选只沉淀 AI Engineering 的持续学习、反馈治理、再训练、再校准、发布回滚或 LLM 改进方法；交易规则本体必须路由到 Phase 37。",
+        "claim_strength": "medium",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general",
+        "asset": "general",
+        "timeframe": "general",
+        "data_granularity": "general",
+        "project_type": "trading_llm_gating_scoring",
+        "applies_when": [
+          "外接项目正在建设交易 AI gating/scoring 的反馈日志、标签刷新、漂移检测、再训练、再校准、shadow/paper/canary 或发布治理链路。",
+          "该规则用于补强 Phase 40 P0-Core 治理闭环，并为 AI IDE 生成任务卡、契约、测试和审计 checklist 提供候选知识。"
+        ],
+        "not_applicable_when": [
+          "用户需要具体买卖点、仓位、止损止盈、K 线形态、策略参数或实盘订单执行。",
+          "知识点主要描述 fill model、订单状态机、实盘风控阈值或交易所异常处理，应路由到 Trading Engineering。"
+        ],
+        "assumptions": [
+          "外接项目提供私有交易事实、模型输出和发布上下文；CEK-TA 只沉淀可复用专业规则。",
+          "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+        ],
+        "limitations": [
+          "本条仍是 candidate，需要外部 AI/人工审计确认来源充分性、适用边界和是否需要补充交易项目实例。",
+          "AI Engineering 只定义学习治理、证据链、评估、发布和回滚边界，不定义交易策略本体。"
+        ]
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 在外接项目中实现持续学习治理字段、审计追踪、评测回归和发布门禁。",
+          "用于阻断自动上线、无来源默认指导、LLM 越权 final gate 和反馈回路污染。",
+          "用于生成候选审计包，由外部 AI/人工进一步审计。"
+        ],
+        "not_allowed": [
+          "不得据此生成买卖点、仓位、杠杆、止损止盈或实盘下单建议。",
+          "不得据此跳过人工审批或 release/rollback 门禁。",
+          "不得把 candidate 当作 reviewed 或 approved 默认指导。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_id": "src_fiddler_model_drift",
+          "source_title": "Model Drift - Fiddler Documentation",
+          "source_url": "https://docs.fiddler.ai/glossary/model-drift",
+          "source_type": "official_doc",
+          "publisher": "Fiddler",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 82,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "Fiddler describes model drift monitoring and root-cause analysis that differentiates data quality issues, concept drift, and other factors.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_datarobot_data_drift",
+          "source_title": "Set up data drift monitoring - DataRobot docs",
+          "source_url": "https://docs.datarobot.com/en/docs/classic-ui/mlops/deployment-settings/data-drift-settings.html",
+          "source_type": "official_doc",
+          "publisher": "DataRobot",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 82,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "DataRobot documents data drift settings, thresholds, and feature importance for production ML monitoring.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_arize_monitoring_metrics",
+          "source_title": "Best Practices for Monitors - Arize AX Docs",
+          "source_url": "https://arize.com/docs/ax/machine-learning/machine-learning/how-to-ml/monitors/choosing-your-metrics",
+          "source_type": "official_doc",
+          "publisher": "Arize AI",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 82,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "Arize monitor guidance covers performance, drift, data quality, and custom metrics for continuous model monitoring.",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "high",
+        "score": 82,
+        "score_version": "1.1.0",
+        "primary_source_count": 3,
+        "supporting_source_count": 0,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "来源支持通用 AI/ML/MLOps/LLMOps/治理工程原则；正式知识转换时需保留 CEK-TA 具体上下游引用和冲突链接。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "checked_against": [
+          "docs/contracts/phase40_feedback_dataset_contract.md",
+          "docs/contracts/phase40_drift_retraining_recalibration_contract.md",
+          "docs/contracts/phase40_champion_challenger_release_contract.md",
+          "docs/research/phase40_ai_continuous_learning_scope.md"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与 Phase 40 契约的直接冲突；候选不会进入默认指导。",
+        "approval_allowed": true
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "candidate only; not reviewed or approved; external audit required before formal knowledge conversion.",
+        "requires_human_escalation": true
+      },
+      "review": {
+        "confidence": "medium",
+        "freshness": "time_sensitive",
+        "reviewer": "codex",
+        "reviewed_at": null,
+        "open_questions": [
+          "审计时确认该候选是否需要补充更贴近交易 AI 的实例或与 Phase 38/Trading Engineering 增加交叉引用。"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "created",
+            "reason": "Phase 40 Batch D/E continuous learning candidate expansion."
+          }
+        ]
+      },
+      "copyright": {
+        "stores_full_text": false,
+        "stores_long_quote": false,
+        "summary_only": true,
+        "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+        "reuse_risk": "low"
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_ai_feedback_governance.phase40.drift_root_cause_classification.v1",
+        "target_schema": "cek_ta_knowledge_item",
+        "target_review_status": "draft",
+        "skill_candidate": false,
+        "eval_case_candidate": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "workflow": {
+        "stage": "candidate_ready",
+        "queue_group": "pending",
+        "formal_knowledge_id": null,
+        "formal_review_status": null,
+        "ai_audit_result_id": null,
+        "hidden_from_default_queue": false,
+        "next_action": "export_for_ai_or_human_audit",
+        "default_guidance_allowed": false
+      },
+      "phase40_trace": {
+        "batch": "Batch D/E",
+        "acceptance_gate": "有 root cause 分类",
+        "search_direction": "drift root cause data quality concept drift version change",
+        "related_contracts": [
+          "docs/contracts/phase40_feedback_dataset_contract.md",
+          "docs/contracts/phase40_drift_retraining_recalibration_contract.md",
+          "docs/contracts/phase40_champion_challenger_release_contract.md",
+          "docs/research/phase40_ai_continuous_learning_scope.md"
+        ]
+      }
+    },
+    {
+      "schema_version": "1.0.0",
+      "candidate_id": "cand_20260610_phase40_p40_e04_incident_retraining_requires_approval_001",
+      "research_task_id": "P40-E04",
+      "status": {
+        "review_status": "proposed",
+        "ingestion_decision": "convert_to_knowledge_item",
+        "decision_reason": "Phase 40 Batch D/E sourced candidate; not reviewed, not approved, not default guidance.",
+        "created_at": "2026-06-10",
+        "updated_at": "2026-06-10"
+      },
+      "classification": {
+        "tree_node_id": "kt.ai_feedback_governance.retraining_trigger",
+        "canonical_node_id": "kt.ai_feedback_governance.retraining_trigger",
+        "tree_path": "CEK-TA / AI Engineering / Continuous Learning And Feedback Governance",
+        "related_nodes": [],
+        "partition_id": "KB_AI_18_FEEDBACK_GOVERNANCE",
+        "domain": "ai_governance",
+        "subdomain": "retraining_trigger",
+        "rule_type": "governance_rule",
+        "used_for": [
+          "llm_training",
+          "trading_gating_scoring",
+          "continuous_learning",
+          "rag_engineering",
+          "mcp",
+          "vue_audit_ui"
+        ]
+      },
+      "claim": {
+        "claim_id": "claim_001",
+        "statement": "事故驱动再训练不能绕过常规评估和审批",
+        "normalized_claim": "phase40.incident_retraining_requires_approval.v1",
+        "claim_type": "ai_governance_rule",
+        "evidence_summary": "The AI Incident Response Framework covers recovery actions such as rolling back fine-tuned models or agent states and updating RAG sources after incidents.；MLflow workflow documentation covers registering models, managing versions, applying aliases and tags, and using model metadata.；NIST AI RMF provides a risk-management framework for governing, mapping, measuring, and managing AI risks.",
+        "interpretation_notes": "本候选只沉淀 AI Engineering 的持续学习、反馈治理、再训练、再校准、发布回滚或 LLM 改进方法；交易规则本体必须路由到 Phase 37。",
+        "claim_strength": "medium",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general",
+        "asset": "general",
+        "timeframe": "general",
+        "data_granularity": "general",
+        "project_type": "trading_llm_gating_scoring",
+        "applies_when": [
+          "外接项目正在建设交易 AI gating/scoring 的反馈日志、标签刷新、漂移检测、再训练、再校准、shadow/paper/canary 或发布治理链路。",
+          "该规则用于补强 Phase 40 P0-Core 治理闭环，并为 AI IDE 生成任务卡、契约、测试和审计 checklist 提供候选知识。"
+        ],
+        "not_applicable_when": [
+          "用户需要具体买卖点、仓位、止损止盈、K 线形态、策略参数或实盘订单执行。",
+          "知识点主要描述 fill model、订单状态机、实盘风控阈值或交易所异常处理，应路由到 Trading Engineering。"
+        ],
+        "assumptions": [
+          "外接项目提供私有交易事实、模型输出和发布上下文；CEK-TA 只沉淀可复用专业规则。",
+          "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+        ],
+        "limitations": [
+          "本条仍是 candidate，需要外部 AI/人工审计确认来源充分性、适用边界和是否需要补充交易项目实例。",
+          "AI Engineering 只定义学习治理、证据链、评估、发布和回滚边界，不定义交易策略本体。"
+        ]
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 在外接项目中实现持续学习治理字段、审计追踪、评测回归和发布门禁。",
+          "用于阻断自动上线、无来源默认指导、LLM 越权 final gate 和反馈回路污染。",
+          "用于生成候选审计包，由外部 AI/人工进一步审计。"
+        ],
+        "not_allowed": [
+          "不得据此生成买卖点、仓位、杠杆、止损止盈或实盘下单建议。",
+          "不得据此跳过人工审批或 release/rollback 门禁。",
+          "不得把 candidate 当作 reviewed 或 approved 默认指导。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_id": "src_cosai_ai_incident_response",
+          "source_title": "AI Incident Response Framework",
+          "source_url": "https://www.coalitionforsecureai.org/wp-content/uploads/2026/03/AI-Incident-Response-1.pdf",
+          "source_type": "framework_doc",
+          "publisher": "Coalition for Secure AI",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 82,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "The AI Incident Response Framework covers recovery actions such as rolling back fine-tuned models or agent states and updating RAG sources after incidents.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_mlflow_registry_workflow",
+          "source_title": "Model Registry Workflows - MLflow",
+          "source_url": "https://mlflow.org/docs/latest/ml/model-registry/workflow/",
+          "source_type": "official_doc",
+          "publisher": "MLflow",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 86,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "MLflow workflow documentation covers registering models, managing versions, applying aliases and tags, and using model metadata.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_nist_ai_rmf",
+          "source_title": "NIST AI Risk Management Framework",
+          "source_url": "https://www.nist.gov/itl/ai-risk-management-framework",
+          "source_type": "governance_framework",
+          "publisher": "NIST",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 88,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "NIST AI RMF provides a risk-management framework for governing, mapping, measuring, and managing AI risks.",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "high",
+        "score": 85,
+        "score_version": "1.1.0",
+        "primary_source_count": 3,
+        "supporting_source_count": 0,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "来源支持通用 AI/ML/MLOps/LLMOps/治理工程原则；正式知识转换时需保留 CEK-TA 具体上下游引用和冲突链接。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "checked_against": [
+          "docs/contracts/phase40_feedback_dataset_contract.md",
+          "docs/contracts/phase40_drift_retraining_recalibration_contract.md",
+          "docs/contracts/phase40_champion_challenger_release_contract.md",
+          "docs/research/phase40_ai_continuous_learning_scope.md"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与 Phase 40 契约的直接冲突；候选不会进入默认指导。",
+        "approval_allowed": true
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "candidate only; not reviewed or approved; external audit required before formal knowledge conversion.",
+        "requires_human_escalation": true
+      },
+      "review": {
+        "confidence": "medium",
+        "freshness": "time_sensitive",
+        "reviewer": "codex",
+        "reviewed_at": null,
+        "open_questions": [
+          "审计时确认该候选是否需要补充更贴近交易 AI 的实例或与 Phase 38/Trading Engineering 增加交叉引用。"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "created",
+            "reason": "Phase 40 Batch D/E continuous learning candidate expansion."
+          }
+        ]
+      },
+      "copyright": {
+        "stores_full_text": false,
+        "stores_long_quote": false,
+        "summary_only": true,
+        "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+        "reuse_risk": "low"
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_ai_feedback_governance.phase40.incident_retraining_requires_approval.v1",
+        "target_schema": "cek_ta_knowledge_item",
+        "target_review_status": "draft",
+        "skill_candidate": false,
+        "eval_case_candidate": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "workflow": {
+        "stage": "candidate_ready",
+        "queue_group": "pending",
+        "formal_knowledge_id": null,
+        "formal_review_status": null,
+        "ai_audit_result_id": null,
+        "hidden_from_default_queue": false,
+        "next_action": "export_for_ai_or_human_audit",
+        "default_guidance_allowed": false
+      },
+      "phase40_trace": {
+        "batch": "Batch D/E",
+        "acceptance_gate": "事故触发也要审批",
+        "search_direction": "incident retraining approval model governance",
+        "related_contracts": [
+          "docs/contracts/phase40_feedback_dataset_contract.md",
+          "docs/contracts/phase40_drift_retraining_recalibration_contract.md",
+          "docs/contracts/phase40_champion_challenger_release_contract.md",
+          "docs/research/phase40_ai_continuous_learning_scope.md"
+        ]
+      }
+    },
+    {
+      "schema_version": "1.0.0",
+      "candidate_id": "cand_20260610_phase40_p40_e05_calibration_bins_coverage_001",
+      "research_task_id": "P40-E05",
+      "status": {
+        "review_status": "proposed",
+        "ingestion_decision": "convert_to_knowledge_item",
+        "decision_reason": "Phase 40 Batch D/E sourced candidate; not reviewed, not approved, not default guidance.",
+        "created_at": "2026-06-10",
+        "updated_at": "2026-06-10"
+      },
+      "classification": {
+        "tree_node_id": "kt.ai_feedback_governance.recalibration_loop",
+        "canonical_node_id": "kt.ai_feedback_governance.recalibration_loop",
+        "tree_path": "CEK-TA / AI Engineering / Continuous Learning And Feedback Governance",
+        "related_nodes": [],
+        "partition_id": "KB_AI_18_FEEDBACK_GOVERNANCE",
+        "domain": "ai_governance",
+        "subdomain": "recalibration_loop",
+        "rule_type": "governance_rule",
+        "used_for": [
+          "llm_training",
+          "trading_gating_scoring",
+          "continuous_learning",
+          "rag_engineering",
+          "mcp",
+          "vue_audit_ui"
+        ]
+      },
+      "claim": {
+        "claim_id": "claim_001",
+        "statement": "再校准报告必须包含分桶可靠性和样本覆盖边界",
+        "normalized_claim": "phase40.calibration_bins_coverage.v1",
+        "claim_type": "ai_governance_rule",
+        "evidence_summary": "scikit-learn documents probability calibration workflows and calibration curves for classifier probability estimates.；scikit-learn documents reliability diagrams that compare average predicted probability per bin with observed positive fraction.；Arize monitor guidance covers performance, drift, data quality, and custom metrics for continuous model monitoring.",
+        "interpretation_notes": "本候选只沉淀 AI Engineering 的持续学习、反馈治理、再训练、再校准、发布回滚或 LLM 改进方法；交易规则本体必须路由到 Phase 37。",
+        "claim_strength": "medium",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general",
+        "asset": "general",
+        "timeframe": "general",
+        "data_granularity": "general",
+        "project_type": "trading_llm_gating_scoring",
+        "applies_when": [
+          "外接项目正在建设交易 AI gating/scoring 的反馈日志、标签刷新、漂移检测、再训练、再校准、shadow/paper/canary 或发布治理链路。",
+          "该规则用于补强 Phase 40 P0-Core 治理闭环，并为 AI IDE 生成任务卡、契约、测试和审计 checklist 提供候选知识。"
+        ],
+        "not_applicable_when": [
+          "用户需要具体买卖点、仓位、止损止盈、K 线形态、策略参数或实盘订单执行。",
+          "知识点主要描述 fill model、订单状态机、实盘风控阈值或交易所异常处理，应路由到 Trading Engineering。"
+        ],
+        "assumptions": [
+          "外接项目提供私有交易事实、模型输出和发布上下文；CEK-TA 只沉淀可复用专业规则。",
+          "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+        ],
+        "limitations": [
+          "本条仍是 candidate，需要外部 AI/人工审计确认来源充分性、适用边界和是否需要补充交易项目实例。",
+          "AI Engineering 只定义学习治理、证据链、评估、发布和回滚边界，不定义交易策略本体。"
+        ]
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 在外接项目中实现持续学习治理字段、审计追踪、评测回归和发布门禁。",
+          "用于阻断自动上线、无来源默认指导、LLM 越权 final gate 和反馈回路污染。",
+          "用于生成候选审计包，由外部 AI/人工进一步审计。"
+        ],
+        "not_allowed": [
+          "不得据此生成买卖点、仓位、杠杆、止损止盈或实盘下单建议。",
+          "不得据此跳过人工审批或 release/rollback 门禁。",
+          "不得把 candidate 当作 reviewed 或 approved 默认指导。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_id": "src_sklearn_calibration",
+          "source_title": "Probability calibration - scikit-learn documentation",
+          "source_url": "https://scikit-learn.org/stable/modules/calibration.html",
+          "source_type": "official_doc",
+          "publisher": "scikit-learn",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 88,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "scikit-learn documents probability calibration workflows and calibration curves for classifier probability estimates.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_sklearn_calibration_display",
+          "source_title": "CalibrationDisplay - scikit-learn documentation",
+          "source_url": "https://scikit-learn.org/stable/modules/generated/sklearn.calibration.CalibrationDisplay.html",
+          "source_type": "official_doc",
+          "publisher": "scikit-learn",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 88,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "scikit-learn documents reliability diagrams that compare average predicted probability per bin with observed positive fraction.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_arize_monitoring_metrics",
+          "source_title": "Best Practices for Monitors - Arize AX Docs",
+          "source_url": "https://arize.com/docs/ax/machine-learning/machine-learning/how-to-ml/monitors/choosing-your-metrics",
+          "source_type": "official_doc",
+          "publisher": "Arize AI",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 82,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "Arize monitor guidance covers performance, drift, data quality, and custom metrics for continuous model monitoring.",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "high",
+        "score": 86,
+        "score_version": "1.1.0",
+        "primary_source_count": 3,
+        "supporting_source_count": 0,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "来源支持通用 AI/ML/MLOps/LLMOps/治理工程原则；正式知识转换时需保留 CEK-TA 具体上下游引用和冲突链接。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "checked_against": [
+          "docs/contracts/phase40_feedback_dataset_contract.md",
+          "docs/contracts/phase40_drift_retraining_recalibration_contract.md",
+          "docs/contracts/phase40_champion_challenger_release_contract.md",
+          "docs/research/phase40_ai_continuous_learning_scope.md"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与 Phase 40 契约的直接冲突；候选不会进入默认指导。",
+        "approval_allowed": true
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "candidate only; not reviewed or approved; external audit required before formal knowledge conversion.",
+        "requires_human_escalation": true
+      },
+      "review": {
+        "confidence": "medium",
+        "freshness": "time_sensitive",
+        "reviewer": "codex",
+        "reviewed_at": null,
+        "open_questions": [
+          "审计时确认该候选是否需要补充更贴近交易 AI 的实例或与 Phase 38/Trading Engineering 增加交叉引用。"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "created",
+            "reason": "Phase 40 Batch D/E continuous learning candidate expansion."
+          }
+        ]
+      },
+      "copyright": {
+        "stores_full_text": false,
+        "stores_long_quote": false,
+        "summary_only": true,
+        "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+        "reuse_risk": "low"
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_ai_feedback_governance.phase40.calibration_bins_coverage.v1",
+        "target_schema": "cek_ta_knowledge_item",
+        "target_review_status": "draft",
+        "skill_candidate": false,
+        "eval_case_candidate": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "workflow": {
+        "stage": "candidate_ready",
+        "queue_group": "pending",
+        "formal_knowledge_id": null,
+        "formal_review_status": null,
+        "ai_audit_result_id": null,
+        "hidden_from_default_queue": false,
+        "next_action": "export_for_ai_or_human_audit",
+        "default_guidance_allowed": false
+      },
+      "phase40_trace": {
+        "batch": "Batch D/E",
+        "acceptance_gate": "有分桶和覆盖边界",
+        "search_direction": "reliability diagram calibration bins sample coverage",
+        "related_contracts": [
+          "docs/contracts/phase40_feedback_dataset_contract.md",
+          "docs/contracts/phase40_drift_retraining_recalibration_contract.md",
+          "docs/contracts/phase40_champion_challenger_release_contract.md",
+          "docs/research/phase40_ai_continuous_learning_scope.md"
+        ]
+      }
+    },
+    {
+      "schema_version": "1.0.0",
+      "candidate_id": "cand_20260610_phase40_p40_e06_challenger_risk_metrics_001",
+      "research_task_id": "P40-E06",
+      "status": {
+        "review_status": "proposed",
+        "ingestion_decision": "convert_to_knowledge_item",
+        "decision_reason": "Phase 40 Batch D/E sourced candidate; not reviewed, not approved, not default guidance.",
+        "created_at": "2026-06-10",
+        "updated_at": "2026-06-10"
+      },
+      "classification": {
+        "tree_node_id": "kt.ai_feedback_governance.champion_challenger",
+        "canonical_node_id": "kt.ai_feedback_governance.champion_challenger",
+        "tree_path": "CEK-TA / AI Engineering / Continuous Learning And Feedback Governance",
+        "related_nodes": [],
+        "partition_id": "KB_AI_18_FEEDBACK_GOVERNANCE",
+        "domain": "ai_governance",
+        "subdomain": "champion_challenger",
+        "rule_type": "governance_rule",
+        "used_for": [
+          "llm_training",
+          "trading_gating_scoring",
+          "continuous_learning",
+          "rag_engineering",
+          "mcp",
+          "vue_audit_ui"
+        ]
+      },
+      "claim": {
+        "claim_id": "claim_001",
+        "statement": "champion/challenger 比较必须包含风险指标，不得只看平均收益",
+        "normalized_claim": "phase40.challenger_risk_metrics.v1",
+        "claim_type": "ai_governance_rule",
+        "evidence_summary": "IBM describes model risk management as identifying, measuring, and controlling risks from inadequate model performance and governance.；MLflow Model Registry provides model lineage, versioning, aliases, metadata tagging, and annotations for lifecycle management.；Arize monitor guidance covers performance, drift, data quality, and custom metrics for continuous model monitoring.",
+        "interpretation_notes": "本候选只沉淀 AI Engineering 的持续学习、反馈治理、再训练、再校准、发布回滚或 LLM 改进方法；交易规则本体必须路由到 Phase 37。",
+        "claim_strength": "medium",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general",
+        "asset": "general",
+        "timeframe": "general",
+        "data_granularity": "general",
+        "project_type": "trading_llm_gating_scoring",
+        "applies_when": [
+          "外接项目正在建设交易 AI gating/scoring 的反馈日志、标签刷新、漂移检测、再训练、再校准、shadow/paper/canary 或发布治理链路。",
+          "该规则用于补强 Phase 40 P0-Core 治理闭环，并为 AI IDE 生成任务卡、契约、测试和审计 checklist 提供候选知识。"
+        ],
+        "not_applicable_when": [
+          "用户需要具体买卖点、仓位、止损止盈、K 线形态、策略参数或实盘订单执行。",
+          "知识点主要描述 fill model、订单状态机、实盘风控阈值或交易所异常处理，应路由到 Trading Engineering。"
+        ],
+        "assumptions": [
+          "外接项目提供私有交易事实、模型输出和发布上下文；CEK-TA 只沉淀可复用专业规则。",
+          "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+        ],
+        "limitations": [
+          "本条仍是 candidate，需要外部 AI/人工审计确认来源充分性、适用边界和是否需要补充交易项目实例。",
+          "AI Engineering 只定义学习治理、证据链、评估、发布和回滚边界，不定义交易策略本体。"
+        ]
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 在外接项目中实现持续学习治理字段、审计追踪、评测回归和发布门禁。",
+          "用于阻断自动上线、无来源默认指导、LLM 越权 final gate 和反馈回路污染。",
+          "用于生成候选审计包，由外部 AI/人工进一步审计。"
+        ],
+        "not_allowed": [
+          "不得据此生成买卖点、仓位、杠杆、止损止盈或实盘下单建议。",
+          "不得据此跳过人工审批或 release/rollback 门禁。",
+          "不得把 candidate 当作 reviewed 或 approved 默认指导。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_id": "src_ibm_model_risk",
+          "source_title": "What is model risk management?",
+          "source_url": "https://www.ibm.com/think/topics/model-risk-management",
+          "source_type": "framework_doc",
+          "publisher": "IBM",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 82,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "IBM describes model risk management as identifying, measuring, and controlling risks from inadequate model performance and governance.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_mlflow_model_registry",
+          "source_title": "MLflow Model Registry",
+          "source_url": "https://mlflow.org/docs/latest/ml/model-registry/",
+          "source_type": "official_doc",
+          "publisher": "MLflow",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 86,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "MLflow Model Registry provides model lineage, versioning, aliases, metadata tagging, and annotations for lifecycle management.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_arize_monitoring_metrics",
+          "source_title": "Best Practices for Monitors - Arize AX Docs",
+          "source_url": "https://arize.com/docs/ax/machine-learning/machine-learning/how-to-ml/monitors/choosing-your-metrics",
+          "source_type": "official_doc",
+          "publisher": "Arize AI",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 82,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "Arize monitor guidance covers performance, drift, data quality, and custom metrics for continuous model monitoring.",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "high",
+        "score": 83,
+        "score_version": "1.1.0",
+        "primary_source_count": 3,
+        "supporting_source_count": 0,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "来源支持通用 AI/ML/MLOps/LLMOps/治理工程原则；正式知识转换时需保留 CEK-TA 具体上下游引用和冲突链接。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "checked_against": [
+          "docs/contracts/phase40_feedback_dataset_contract.md",
+          "docs/contracts/phase40_drift_retraining_recalibration_contract.md",
+          "docs/contracts/phase40_champion_challenger_release_contract.md",
+          "docs/research/phase40_ai_continuous_learning_scope.md"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与 Phase 40 契约的直接冲突；候选不会进入默认指导。",
+        "approval_allowed": true
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "candidate only; not reviewed or approved; external audit required before formal knowledge conversion.",
+        "requires_human_escalation": true
+      },
+      "review": {
+        "confidence": "medium",
+        "freshness": "time_sensitive",
+        "reviewer": "codex",
+        "reviewed_at": null,
+        "open_questions": [
+          "审计时确认该候选是否需要补充更贴近交易 AI 的实例或与 Phase 38/Trading Engineering 增加交叉引用。"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "created",
+            "reason": "Phase 40 Batch D/E continuous learning candidate expansion."
+          }
+        ]
+      },
+      "copyright": {
+        "stores_full_text": false,
+        "stores_long_quote": false,
+        "summary_only": true,
+        "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+        "reuse_risk": "low"
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_ai_feedback_governance.phase40.challenger_risk_metrics.v1",
+        "target_schema": "cek_ta_knowledge_item",
+        "target_review_status": "draft",
+        "skill_candidate": false,
+        "eval_case_candidate": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "workflow": {
+        "stage": "candidate_ready",
+        "queue_group": "pending",
+        "formal_knowledge_id": null,
+        "formal_review_status": null,
+        "ai_audit_result_id": null,
+        "hidden_from_default_queue": false,
+        "next_action": "export_for_ai_or_human_audit",
+        "default_guidance_allowed": false
+      },
+      "phase40_trace": {
+        "batch": "Batch D/E",
+        "acceptance_gate": "包含风险切片",
+        "search_direction": "model validation risk metric challenger evaluation",
+        "related_contracts": [
+          "docs/contracts/phase40_feedback_dataset_contract.md",
+          "docs/contracts/phase40_drift_retraining_recalibration_contract.md",
+          "docs/contracts/phase40_champion_challenger_release_contract.md",
+          "docs/research/phase40_ai_continuous_learning_scope.md"
+        ]
+      }
+    },
+    {
+      "schema_version": "1.0.0",
+      "candidate_id": "cand_20260610_phase40_p40_e07_shadow_paper_execution_gap_001",
+      "research_task_id": "P40-E07",
+      "status": {
+        "review_status": "proposed",
+        "ingestion_decision": "convert_to_knowledge_item",
+        "decision_reason": "Phase 40 Batch D/E sourced candidate; not reviewed, not approved, not default guidance.",
+        "created_at": "2026-06-10",
+        "updated_at": "2026-06-10"
+      },
+      "classification": {
+        "tree_node_id": "kt.ai_feedback_governance.shadow_paper_canary",
+        "canonical_node_id": "kt.ai_feedback_governance.shadow_paper_canary",
+        "tree_path": "CEK-TA / AI Engineering / Continuous Learning And Feedback Governance",
+        "related_nodes": [],
+        "partition_id": "KB_AI_18_FEEDBACK_GOVERNANCE",
+        "domain": "ai_governance",
+        "subdomain": "shadow_paper_canary",
+        "rule_type": "governance_rule",
+        "used_for": [
+          "llm_training",
+          "trading_gating_scoring",
+          "continuous_learning",
+          "rag_engineering",
+          "mcp",
+          "vue_audit_ui"
+        ]
+      },
+      "claim": {
+        "claim_id": "claim_001",
+        "statement": "shadow 和 paper 结果必须明确与真实执行环境的差异",
+        "normalized_claim": "phase40.shadow_paper_execution_gap.v1",
+        "claim_type": "ai_governance_rule",
+        "evidence_summary": "AWS SageMaker shadow tests compare model-serving changes against current deployments before they affect end users.；Microsoft describes shadow testing as replicating production traffic to a candidate environment to compare behavior before release.；NIST AI RMF provides a risk-management framework for governing, mapping, measuring, and managing AI risks.",
+        "interpretation_notes": "本候选只沉淀 AI Engineering 的持续学习、反馈治理、再训练、再校准、发布回滚或 LLM 改进方法；交易规则本体必须路由到 Phase 37。",
+        "claim_strength": "medium",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general",
+        "asset": "general",
+        "timeframe": "general",
+        "data_granularity": "general",
+        "project_type": "trading_llm_gating_scoring",
+        "applies_when": [
+          "外接项目正在建设交易 AI gating/scoring 的反馈日志、标签刷新、漂移检测、再训练、再校准、shadow/paper/canary 或发布治理链路。",
+          "该规则用于补强 Phase 40 P0-Core 治理闭环，并为 AI IDE 生成任务卡、契约、测试和审计 checklist 提供候选知识。"
+        ],
+        "not_applicable_when": [
+          "用户需要具体买卖点、仓位、止损止盈、K 线形态、策略参数或实盘订单执行。",
+          "知识点主要描述 fill model、订单状态机、实盘风控阈值或交易所异常处理，应路由到 Trading Engineering。"
+        ],
+        "assumptions": [
+          "外接项目提供私有交易事实、模型输出和发布上下文；CEK-TA 只沉淀可复用专业规则。",
+          "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+        ],
+        "limitations": [
+          "本条仍是 candidate，需要外部 AI/人工审计确认来源充分性、适用边界和是否需要补充交易项目实例。",
+          "AI Engineering 只定义学习治理、证据链、评估、发布和回滚边界，不定义交易策略本体。"
+        ]
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 在外接项目中实现持续学习治理字段、审计追踪、评测回归和发布门禁。",
+          "用于阻断自动上线、无来源默认指导、LLM 越权 final gate 和反馈回路污染。",
+          "用于生成候选审计包，由外部 AI/人工进一步审计。"
+        ],
+        "not_allowed": [
+          "不得据此生成买卖点、仓位、杠杆、止损止盈或实盘下单建议。",
+          "不得据此跳过人工审批或 release/rollback 门禁。",
+          "不得把 candidate 当作 reviewed 或 approved 默认指导。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_id": "src_aws_sagemaker_shadow_tests",
+          "source_title": "Shadow tests - Amazon SageMaker AI",
+          "source_url": "https://docs.aws.amazon.com/sagemaker/latest/dg/shadow-tests.html",
+          "source_type": "official_doc",
+          "publisher": "AWS",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 86,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "AWS SageMaker shadow tests compare model-serving changes against current deployments before they affect end users.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_microsoft_shadow_testing",
+          "source_title": "Shadow Testing - Microsoft Engineering Fundamentals Playbook",
+          "source_url": "https://microsoft.github.io/code-with-engineering-playbook/automated-testing/shadow-testing/",
+          "source_type": "official_doc",
+          "publisher": "Microsoft",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 84,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "Microsoft describes shadow testing as replicating production traffic to a candidate environment to compare behavior before release.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_nist_ai_rmf",
+          "source_title": "NIST AI Risk Management Framework",
+          "source_url": "https://www.nist.gov/itl/ai-risk-management-framework",
+          "source_type": "governance_framework",
+          "publisher": "NIST",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 88,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "NIST AI RMF provides a risk-management framework for governing, mapping, measuring, and managing AI risks.",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "high",
+        "score": 86,
+        "score_version": "1.1.0",
+        "primary_source_count": 3,
+        "supporting_source_count": 0,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "来源支持通用 AI/ML/MLOps/LLMOps/治理工程原则；正式知识转换时需保留 CEK-TA 具体上下游引用和冲突链接。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "checked_against": [
+          "docs/contracts/phase40_feedback_dataset_contract.md",
+          "docs/contracts/phase40_drift_retraining_recalibration_contract.md",
+          "docs/contracts/phase40_champion_challenger_release_contract.md",
+          "docs/research/phase40_ai_continuous_learning_scope.md"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与 Phase 40 契约的直接冲突；候选不会进入默认指导。",
+        "approval_allowed": true
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "candidate only; not reviewed or approved; external audit required before formal knowledge conversion.",
+        "requires_human_escalation": true
+      },
+      "review": {
+        "confidence": "medium",
+        "freshness": "time_sensitive",
+        "reviewer": "codex",
+        "reviewed_at": null,
+        "open_questions": [
+          "审计时确认该候选是否需要补充更贴近交易 AI 的实例或与 Phase 38/Trading Engineering 增加交叉引用。"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "created",
+            "reason": "Phase 40 Batch D/E continuous learning candidate expansion."
+          }
+        ]
+      },
+      "copyright": {
+        "stores_full_text": false,
+        "stores_long_quote": false,
+        "summary_only": true,
+        "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+        "reuse_risk": "low"
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_ai_feedback_governance.phase40.shadow_paper_execution_gap.v1",
+        "target_schema": "cek_ta_knowledge_item",
+        "target_review_status": "draft",
+        "skill_candidate": false,
+        "eval_case_candidate": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "workflow": {
+        "stage": "candidate_ready",
+        "queue_group": "pending",
+        "formal_knowledge_id": null,
+        "formal_review_status": null,
+        "ai_audit_result_id": null,
+        "hidden_from_default_queue": false,
+        "next_action": "export_for_ai_or_human_audit",
+        "default_guidance_allowed": false
+      },
+      "phase40_trace": {
+        "batch": "Batch D/E",
+        "acceptance_gate": "声明非实盘等价",
+        "search_direction": "shadow mode paper trading limitations execution difference",
+        "related_contracts": [
+          "docs/contracts/phase40_feedback_dataset_contract.md",
+          "docs/contracts/phase40_drift_retraining_recalibration_contract.md",
+          "docs/contracts/phase40_champion_challenger_release_contract.md",
+          "docs/research/phase40_ai_continuous_learning_scope.md"
+        ]
+      }
+    },
+    {
+      "schema_version": "1.0.0",
+      "candidate_id": "cand_20260610_phase40_p40_e08_rollback_freezes_artifacts_001",
+      "research_task_id": "P40-E08",
+      "status": {
+        "review_status": "proposed",
+        "ingestion_decision": "convert_to_knowledge_item",
+        "decision_reason": "Phase 40 Batch D/E sourced candidate; not reviewed, not approved, not default guidance.",
+        "created_at": "2026-06-10",
+        "updated_at": "2026-06-10"
+      },
+      "classification": {
+        "tree_node_id": "kt.ai_feedback_governance.rollback_governance",
+        "canonical_node_id": "kt.ai_feedback_governance.rollback_governance",
+        "tree_path": "CEK-TA / AI Engineering / Continuous Learning And Feedback Governance",
+        "related_nodes": [],
+        "partition_id": "KB_AI_18_FEEDBACK_GOVERNANCE",
+        "domain": "ai_governance",
+        "subdomain": "rollback_governance",
+        "rule_type": "governance_rule",
+        "used_for": [
+          "llm_training",
+          "trading_gating_scoring",
+          "continuous_learning",
+          "rag_engineering",
+          "mcp",
+          "vue_audit_ui"
+        ]
+      },
+      "claim": {
+        "claim_id": "claim_001",
+        "statement": "rollback 后必须冻结相关模型、prompt、RAG 包和阈值策略",
+        "normalized_claim": "phase40.rollback_freezes_artifacts.v1",
+        "claim_type": "ai_governance_rule",
+        "evidence_summary": "The AI Incident Response Framework covers recovery actions such as rolling back fine-tuned models or agent states and updating RAG sources after incidents.；MLflow workflow documentation covers registering models, managing versions, applying aliases and tags, and using model metadata.；MLflow Model Registry provides model lineage, versioning, aliases, metadata tagging, and annotations for lifecycle management.",
+        "interpretation_notes": "本候选只沉淀 AI Engineering 的持续学习、反馈治理、再训练、再校准、发布回滚或 LLM 改进方法；交易规则本体必须路由到 Phase 37。",
+        "claim_strength": "medium",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general",
+        "asset": "general",
+        "timeframe": "general",
+        "data_granularity": "general",
+        "project_type": "trading_llm_gating_scoring",
+        "applies_when": [
+          "外接项目正在建设交易 AI gating/scoring 的反馈日志、标签刷新、漂移检测、再训练、再校准、shadow/paper/canary 或发布治理链路。",
+          "该规则用于补强 Phase 40 P0-Core 治理闭环，并为 AI IDE 生成任务卡、契约、测试和审计 checklist 提供候选知识。"
+        ],
+        "not_applicable_when": [
+          "用户需要具体买卖点、仓位、止损止盈、K 线形态、策略参数或实盘订单执行。",
+          "知识点主要描述 fill model、订单状态机、实盘风控阈值或交易所异常处理，应路由到 Trading Engineering。"
+        ],
+        "assumptions": [
+          "外接项目提供私有交易事实、模型输出和发布上下文；CEK-TA 只沉淀可复用专业规则。",
+          "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+        ],
+        "limitations": [
+          "本条仍是 candidate，需要外部 AI/人工审计确认来源充分性、适用边界和是否需要补充交易项目实例。",
+          "AI Engineering 只定义学习治理、证据链、评估、发布和回滚边界，不定义交易策略本体。"
+        ]
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 在外接项目中实现持续学习治理字段、审计追踪、评测回归和发布门禁。",
+          "用于阻断自动上线、无来源默认指导、LLM 越权 final gate 和反馈回路污染。",
+          "用于生成候选审计包，由外部 AI/人工进一步审计。"
+        ],
+        "not_allowed": [
+          "不得据此生成买卖点、仓位、杠杆、止损止盈或实盘下单建议。",
+          "不得据此跳过人工审批或 release/rollback 门禁。",
+          "不得把 candidate 当作 reviewed 或 approved 默认指导。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_id": "src_cosai_ai_incident_response",
+          "source_title": "AI Incident Response Framework",
+          "source_url": "https://www.coalitionforsecureai.org/wp-content/uploads/2026/03/AI-Incident-Response-1.pdf",
+          "source_type": "framework_doc",
+          "publisher": "Coalition for Secure AI",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 82,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "The AI Incident Response Framework covers recovery actions such as rolling back fine-tuned models or agent states and updating RAG sources after incidents.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_mlflow_registry_workflow",
+          "source_title": "Model Registry Workflows - MLflow",
+          "source_url": "https://mlflow.org/docs/latest/ml/model-registry/workflow/",
+          "source_type": "official_doc",
+          "publisher": "MLflow",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 86,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "MLflow workflow documentation covers registering models, managing versions, applying aliases and tags, and using model metadata.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_mlflow_model_registry",
+          "source_title": "MLflow Model Registry",
+          "source_url": "https://mlflow.org/docs/latest/ml/model-registry/",
+          "source_type": "official_doc",
+          "publisher": "MLflow",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 86,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "MLflow Model Registry provides model lineage, versioning, aliases, metadata tagging, and annotations for lifecycle management.",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "high",
+        "score": 85,
+        "score_version": "1.1.0",
+        "primary_source_count": 3,
+        "supporting_source_count": 0,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "来源支持通用 AI/ML/MLOps/LLMOps/治理工程原则；正式知识转换时需保留 CEK-TA 具体上下游引用和冲突链接。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "checked_against": [
+          "docs/contracts/phase40_feedback_dataset_contract.md",
+          "docs/contracts/phase40_drift_retraining_recalibration_contract.md",
+          "docs/contracts/phase40_champion_challenger_release_contract.md",
+          "docs/research/phase40_ai_continuous_learning_scope.md"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与 Phase 40 契约的直接冲突；候选不会进入默认指导。",
+        "approval_allowed": true
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "candidate only; not reviewed or approved; external audit required before formal knowledge conversion.",
+        "requires_human_escalation": true
+      },
+      "review": {
+        "confidence": "medium",
+        "freshness": "time_sensitive",
+        "reviewer": "codex",
+        "reviewed_at": null,
+        "open_questions": [
+          "审计时确认该候选是否需要补充更贴近交易 AI 的实例或与 Phase 38/Trading Engineering 增加交叉引用。"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "created",
+            "reason": "Phase 40 Batch D/E continuous learning candidate expansion."
+          }
+        ]
+      },
+      "copyright": {
+        "stores_full_text": false,
+        "stores_long_quote": false,
+        "summary_only": true,
+        "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+        "reuse_risk": "low"
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_ai_feedback_governance.phase40.rollback_freezes_artifacts.v1",
+        "target_schema": "cek_ta_knowledge_item",
+        "target_review_status": "draft",
+        "skill_candidate": false,
+        "eval_case_candidate": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "workflow": {
+        "stage": "candidate_ready",
+        "queue_group": "pending",
+        "formal_knowledge_id": null,
+        "formal_review_status": null,
+        "ai_audit_result_id": null,
+        "hidden_from_default_queue": false,
+        "next_action": "export_for_ai_or_human_audit",
+        "default_guidance_allowed": false
+      },
+      "phase40_trace": {
+        "batch": "Batch D/E",
+        "acceptance_gate": "明确冻结范围",
+        "search_direction": "model rollback freeze artifact incident response",
+        "related_contracts": [
+          "docs/contracts/phase40_feedback_dataset_contract.md",
+          "docs/contracts/phase40_drift_retraining_recalibration_contract.md",
+          "docs/contracts/phase40_champion_challenger_release_contract.md",
+          "docs/research/phase40_ai_continuous_learning_scope.md"
+        ]
+      }
+    },
+    {
+      "schema_version": "1.0.0",
+      "candidate_id": "cand_20260610_phase40_p40_e09_rag_update_retrieval_regression_001",
+      "research_task_id": "P40-E09",
+      "status": {
+        "review_status": "proposed",
+        "ingestion_decision": "convert_to_knowledge_item",
+        "decision_reason": "Phase 40 Batch D/E sourced candidate; not reviewed, not approved, not default guidance.",
+        "created_at": "2026-06-10",
+        "updated_at": "2026-06-10"
+      },
+      "classification": {
+        "tree_node_id": "kt.ai_feedback_governance.llm_prompt_rag_sft_loop",
+        "canonical_node_id": "kt.ai_feedback_governance.llm_prompt_rag_sft_loop",
+        "tree_path": "CEK-TA / AI Engineering / Continuous Learning And Feedback Governance",
+        "related_nodes": [],
+        "partition_id": "KB_AI_18_FEEDBACK_GOVERNANCE",
+        "domain": "llm_training",
+        "subdomain": "llm_prompt_rag_sft_loop",
+        "rule_type": "governance_rule",
+        "used_for": [
+          "llm_training",
+          "trading_gating_scoring",
+          "continuous_learning",
+          "rag_engineering",
+          "mcp",
+          "vue_audit_ui"
+        ]
+      },
+      "claim": {
+        "claim_id": "claim_001",
+        "statement": "RAG 知识更新必须回写检索评测集，不能只修改文档",
+        "normalized_claim": "phase40.rag_update_retrieval_regression.v1",
+        "claim_type": "ai_governance_rule",
+        "evidence_summary": "Evidently explains evaluating retrieval and generation separately, building test sets, running experiments, and monitoring RAG systems.；Google Cloud recommends testing RAG systems with query sets, metrics, and repeatable evaluation workflows.；Arize retrieval evaluation documents evaluating RAG retrieval quality and debugging bad responses, missing context, and irrelevant chunks.",
+        "interpretation_notes": "本候选只沉淀 AI Engineering 的持续学习、反馈治理、再训练、再校准、发布回滚或 LLM 改进方法；交易规则本体必须路由到 Phase 37。",
+        "claim_strength": "medium",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general",
+        "asset": "general",
+        "timeframe": "general",
+        "data_granularity": "general",
+        "project_type": "trading_llm_gating_scoring",
+        "applies_when": [
+          "外接项目正在建设交易 AI gating/scoring 的反馈日志、标签刷新、漂移检测、再训练、再校准、shadow/paper/canary 或发布治理链路。",
+          "该规则用于补强 Phase 40 P0-Core 治理闭环，并为 AI IDE 生成任务卡、契约、测试和审计 checklist 提供候选知识。"
+        ],
+        "not_applicable_when": [
+          "用户需要具体买卖点、仓位、止损止盈、K 线形态、策略参数或实盘订单执行。",
+          "知识点主要描述 fill model、订单状态机、实盘风控阈值或交易所异常处理，应路由到 Trading Engineering。"
+        ],
+        "assumptions": [
+          "外接项目提供私有交易事实、模型输出和发布上下文；CEK-TA 只沉淀可复用专业规则。",
+          "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+        ],
+        "limitations": [
+          "本条仍是 candidate，需要外部 AI/人工审计确认来源充分性、适用边界和是否需要补充交易项目实例。",
+          "AI Engineering 只定义学习治理、证据链、评估、发布和回滚边界，不定义交易策略本体。"
+        ]
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 在外接项目中实现持续学习治理字段、审计追踪、评测回归和发布门禁。",
+          "用于阻断自动上线、无来源默认指导、LLM 越权 final gate 和反馈回路污染。",
+          "用于生成候选审计包，由外部 AI/人工进一步审计。"
+        ],
+        "not_allowed": [
+          "不得据此生成买卖点、仓位、杠杆、止损止盈或实盘下单建议。",
+          "不得据此跳过人工审批或 release/rollback 门禁。",
+          "不得把 candidate 当作 reviewed 或 approved 默认指导。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_id": "src_evidently_rag_eval",
+          "source_title": "A complete guide to RAG evaluation",
+          "source_url": "https://www.evidentlyai.com/llm-guide/rag-evaluation",
+          "source_type": "engineering_article",
+          "publisher": "Evidently AI",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 82,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "Evidently explains evaluating retrieval and generation separately, building test sets, running experiments, and monitoring RAG systems.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_google_rag_best_practices",
+          "source_title": "RAG systems: Best practices to master evaluation",
+          "source_url": "https://cloud.google.com/blog/products/ai-machine-learning/optimizing-rag-retrieval",
+          "source_type": "engineering_article",
+          "publisher": "Google Cloud",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 84,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "Google Cloud recommends testing RAG systems with query sets, metrics, and repeatable evaluation workflows.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_arize_retrieval_eval",
+          "source_title": "Retrieval Evaluation - Arize AX Docs",
+          "source_url": "https://arize.com/docs/ax/cookbooks/evaluation/retrieval-evaluation",
+          "source_type": "official_doc",
+          "publisher": "Arize AI",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 82,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "Arize retrieval evaluation documents evaluating RAG retrieval quality and debugging bad responses, missing context, and irrelevant chunks.",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "high",
+        "score": 83,
+        "score_version": "1.1.0",
+        "primary_source_count": 3,
+        "supporting_source_count": 0,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "来源支持通用 AI/ML/MLOps/LLMOps/治理工程原则；正式知识转换时需保留 CEK-TA 具体上下游引用和冲突链接。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "checked_against": [
+          "docs/contracts/phase40_feedback_dataset_contract.md",
+          "docs/contracts/phase40_drift_retraining_recalibration_contract.md",
+          "docs/contracts/phase40_champion_challenger_release_contract.md",
+          "docs/research/phase40_ai_continuous_learning_scope.md"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与 Phase 40 契约的直接冲突；候选不会进入默认指导。",
+        "approval_allowed": true
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "candidate only; not reviewed or approved; external audit required before formal knowledge conversion.",
+        "requires_human_escalation": true
+      },
+      "review": {
+        "confidence": "medium",
+        "freshness": "time_sensitive",
+        "reviewer": "codex",
+        "reviewed_at": null,
+        "open_questions": [
+          "审计时确认该候选是否需要补充更贴近交易 AI 的实例或与 Phase 38/Trading Engineering 增加交叉引用。"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "created",
+            "reason": "Phase 40 Batch D/E continuous learning candidate expansion."
+          }
+        ]
+      },
+      "copyright": {
+        "stores_full_text": false,
+        "stores_long_quote": false,
+        "summary_only": true,
+        "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+        "reuse_risk": "low"
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_ai_feedback_governance.phase40.rag_update_retrieval_regression.v1",
+        "target_schema": "cek_ta_knowledge_item",
+        "target_review_status": "draft",
+        "skill_candidate": false,
+        "eval_case_candidate": true,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "workflow": {
+        "stage": "candidate_ready",
+        "queue_group": "pending",
+        "formal_knowledge_id": null,
+        "formal_review_status": null,
+        "ai_audit_result_id": null,
+        "hidden_from_default_queue": false,
+        "next_action": "export_for_ai_or_human_audit",
+        "default_guidance_allowed": false
+      },
+      "phase40_trace": {
+        "batch": "Batch D/E",
+        "acceptance_gate": "有 retrieval regression",
+        "search_direction": "RAG evaluation regression retrieval test set",
+        "related_contracts": [
+          "docs/contracts/phase40_feedback_dataset_contract.md",
+          "docs/contracts/phase40_drift_retraining_recalibration_contract.md",
+          "docs/contracts/phase40_champion_challenger_release_contract.md",
+          "docs/research/phase40_ai_continuous_learning_scope.md"
+        ]
+      }
+    },
+    {
+      "schema_version": "1.0.0",
+      "candidate_id": "cand_20260610_phase40_p40_e10_human_review_audit_trace_001",
+      "research_task_id": "P40-E10",
+      "status": {
+        "review_status": "proposed",
+        "ingestion_decision": "convert_to_knowledge_item",
+        "decision_reason": "Phase 40 Batch D/E sourced candidate; not reviewed, not approved, not default guidance.",
+        "created_at": "2026-06-10",
+        "updated_at": "2026-06-10"
+      },
+      "classification": {
+        "tree_node_id": "kt.ai_feedback_governance.feedback_loop_risk",
+        "canonical_node_id": "kt.ai_feedback_governance.feedback_loop_risk",
+        "tree_path": "CEK-TA / AI Engineering / Continuous Learning And Feedback Governance",
+        "related_nodes": [],
+        "partition_id": "KB_AI_18_FEEDBACK_GOVERNANCE",
+        "domain": "ai_governance",
+        "subdomain": "feedback_loop_risk",
+        "rule_type": "governance_rule",
+        "used_for": [
+          "llm_training",
+          "trading_gating_scoring",
+          "continuous_learning",
+          "rag_engineering",
+          "mcp",
+          "vue_audit_ui"
+        ]
+      },
+      "claim": {
+        "claim_id": "claim_001",
+        "statement": "人工复核样本不能直接作为默认真值，必须带 reviewer、reason 和冲突状态",
+        "normalized_claim": "phase40.human_review_audit_trace.v1",
+        "claim_type": "ai_governance_rule",
+        "evidence_summary": "Label Studio documentation describes reviewing annotations and validating label quality after human or model annotation.；IBM documents comparing human annotations and resolving conflicts through adjudication before promotion to ground truth.；The Data Cards Playbook supports transparent dataset documentation and metadata practices across a dataset lifecycle.",
+        "interpretation_notes": "本候选只沉淀 AI Engineering 的持续学习、反馈治理、再训练、再校准、发布回滚或 LLM 改进方法；交易规则本体必须路由到 Phase 37。",
+        "claim_strength": "medium",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general",
+        "asset": "general",
+        "timeframe": "general",
+        "data_granularity": "general",
+        "project_type": "trading_llm_gating_scoring",
+        "applies_when": [
+          "外接项目正在建设交易 AI gating/scoring 的反馈日志、标签刷新、漂移检测、再训练、再校准、shadow/paper/canary 或发布治理链路。",
+          "该规则用于补强 Phase 40 P0-Core 治理闭环，并为 AI IDE 生成任务卡、契约、测试和审计 checklist 提供候选知识。"
+        ],
+        "not_applicable_when": [
+          "用户需要具体买卖点、仓位、止损止盈、K 线形态、策略参数或实盘订单执行。",
+          "知识点主要描述 fill model、订单状态机、实盘风控阈值或交易所异常处理，应路由到 Trading Engineering。"
+        ],
+        "assumptions": [
+          "外接项目提供私有交易事实、模型输出和发布上下文；CEK-TA 只沉淀可复用专业规则。",
+          "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+        ],
+        "limitations": [
+          "本条仍是 candidate，需要外部 AI/人工审计确认来源充分性、适用边界和是否需要补充交易项目实例。",
+          "AI Engineering 只定义学习治理、证据链、评估、发布和回滚边界，不定义交易策略本体。"
+        ]
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 在外接项目中实现持续学习治理字段、审计追踪、评测回归和发布门禁。",
+          "用于阻断自动上线、无来源默认指导、LLM 越权 final gate 和反馈回路污染。",
+          "用于生成候选审计包，由外部 AI/人工进一步审计。"
+        ],
+        "not_allowed": [
+          "不得据此生成买卖点、仓位、杠杆、止损止盈或实盘下单建议。",
+          "不得据此跳过人工审批或 release/rollback 门禁。",
+          "不得把 candidate 当作 reviewed 或 approved 默认指导。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_id": "src_label_studio_review",
+          "source_title": "Review annotation quality in Label Studio",
+          "source_url": "https://docs.humansignal.com/guide/quality",
+          "source_type": "official_doc",
+          "publisher": "HumanSignal",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 82,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "Label Studio documentation describes reviewing annotations and validating label quality after human or model annotation.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_ibm_wks_adjudication",
+          "source_title": "Annotation setup - IBM Watson Knowledge Studio",
+          "source_url": "https://cloud.ibm.com/docs/watson-knowledge-studio?topic=watson-knowledge-studio-annotate-documents",
+          "source_type": "official_doc",
+          "publisher": "IBM Cloud",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 82,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "IBM documents comparing human annotations and resolving conflicts through adjudication before promotion to ground truth.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_google_data_cards_playbook",
+          "source_title": "The Data Cards Playbook",
+          "source_url": "https://sites.research.google/datacardsplaybook/",
+          "source_type": "framework_doc",
+          "publisher": "Google Research",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 84,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "The Data Cards Playbook supports transparent dataset documentation and metadata practices across a dataset lifecycle.",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "high",
+        "score": 83,
+        "score_version": "1.1.0",
+        "primary_source_count": 3,
+        "supporting_source_count": 0,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "来源支持通用 AI/ML/MLOps/LLMOps/治理工程原则；正式知识转换时需保留 CEK-TA 具体上下游引用和冲突链接。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "checked_against": [
+          "docs/contracts/phase40_feedback_dataset_contract.md",
+          "docs/contracts/phase40_drift_retraining_recalibration_contract.md",
+          "docs/contracts/phase40_champion_challenger_release_contract.md",
+          "docs/research/phase40_ai_continuous_learning_scope.md"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与 Phase 40 契约的直接冲突；候选不会进入默认指导。",
+        "approval_allowed": true
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "candidate only; not reviewed or approved; external audit required before formal knowledge conversion.",
+        "requires_human_escalation": true
+      },
+      "review": {
+        "confidence": "medium",
+        "freshness": "time_sensitive",
+        "reviewer": "codex",
+        "reviewed_at": null,
+        "open_questions": [
+          "审计时确认该候选是否需要补充更贴近交易 AI 的实例或与 Phase 38/Trading Engineering 增加交叉引用。"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "created",
+            "reason": "Phase 40 Batch D/E continuous learning candidate expansion."
+          }
+        ]
+      },
+      "copyright": {
+        "stores_full_text": false,
+        "stores_long_quote": false,
+        "summary_only": true,
+        "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+        "reuse_risk": "low"
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_ai_feedback_governance.phase40.human_review_audit_trace.v1",
+        "target_schema": "cek_ta_knowledge_item",
+        "target_review_status": "draft",
+        "skill_candidate": false,
+        "eval_case_candidate": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "workflow": {
+        "stage": "candidate_ready",
+        "queue_group": "pending",
+        "formal_knowledge_id": null,
+        "formal_review_status": null,
+        "ai_audit_result_id": null,
+        "hidden_from_default_queue": false,
+        "next_action": "export_for_ai_or_human_audit",
+        "default_guidance_allowed": false
+      },
+      "phase40_trace": {
+        "batch": "Batch D/E",
+        "acceptance_gate": "人审也要审计",
+        "search_direction": "human label audit reviewer reason conflict",
+        "related_contracts": [
+          "docs/contracts/phase40_feedback_dataset_contract.md",
+          "docs/contracts/phase40_drift_retraining_recalibration_contract.md",
+          "docs/contracts/phase40_champion_challenger_release_contract.md",
+          "docs/research/phase40_ai_continuous_learning_scope.md"
+        ]
+      }
+    },
+    {
+      "schema_version": "1.0.0",
+      "candidate_id": "cand_20260610_phase40_p40_e11_confidence_not_evidence_001",
+      "research_task_id": "P40-E11",
+      "status": {
+        "review_status": "proposed",
+        "ingestion_decision": "convert_to_knowledge_item",
+        "decision_reason": "Phase 40 Batch D/E sourced candidate; not reviewed, not approved, not default guidance.",
+        "created_at": "2026-06-10",
+        "updated_at": "2026-06-10"
+      },
+      "classification": {
+        "tree_node_id": "kt.ai_feedback_governance.feedback_loop_risk",
+        "canonical_node_id": "kt.ai_feedback_governance.feedback_loop_risk",
+        "tree_path": "CEK-TA / AI Engineering / Continuous Learning And Feedback Governance",
+        "related_nodes": [],
+        "partition_id": "KB_AI_18_FEEDBACK_GOVERNANCE",
+        "domain": "ai_governance",
+        "subdomain": "feedback_loop_risk",
+        "rule_type": "governance_rule",
+        "used_for": [
+          "llm_training",
+          "trading_gating_scoring",
+          "continuous_learning",
+          "rag_engineering",
+          "mcp",
+          "vue_audit_ui"
+        ]
+      },
+      "claim": {
+        "claim_id": "claim_001",
+        "statement": "高置信模型输出不能替代来源证据",
+        "normalized_claim": "phase40.confidence_not_evidence.v1",
+        "claim_type": "ai_governance_rule",
+        "evidence_summary": "NIST AI RMF provides a risk-management framework for governing, mapping, measuring, and managing AI risks.；scikit-learn documents probability calibration workflows and calibration curves for classifier probability estimates.；IBM describes model risk management as identifying, measuring, and controlling risks from inadequate model performance and governance.",
+        "interpretation_notes": "本候选只沉淀 AI Engineering 的持续学习、反馈治理、再训练、再校准、发布回滚或 LLM 改进方法；交易规则本体必须路由到 Phase 37。",
+        "claim_strength": "medium",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general",
+        "asset": "general",
+        "timeframe": "general",
+        "data_granularity": "general",
+        "project_type": "trading_llm_gating_scoring",
+        "applies_when": [
+          "外接项目正在建设交易 AI gating/scoring 的反馈日志、标签刷新、漂移检测、再训练、再校准、shadow/paper/canary 或发布治理链路。",
+          "该规则用于补强 Phase 40 P0-Core 治理闭环，并为 AI IDE 生成任务卡、契约、测试和审计 checklist 提供候选知识。"
+        ],
+        "not_applicable_when": [
+          "用户需要具体买卖点、仓位、止损止盈、K 线形态、策略参数或实盘订单执行。",
+          "知识点主要描述 fill model、订单状态机、实盘风控阈值或交易所异常处理，应路由到 Trading Engineering。"
+        ],
+        "assumptions": [
+          "外接项目提供私有交易事实、模型输出和发布上下文；CEK-TA 只沉淀可复用专业规则。",
+          "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+        ],
+        "limitations": [
+          "本条仍是 candidate，需要外部 AI/人工审计确认来源充分性、适用边界和是否需要补充交易项目实例。",
+          "AI Engineering 只定义学习治理、证据链、评估、发布和回滚边界，不定义交易策略本体。"
+        ]
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 在外接项目中实现持续学习治理字段、审计追踪、评测回归和发布门禁。",
+          "用于阻断自动上线、无来源默认指导、LLM 越权 final gate 和反馈回路污染。",
+          "用于生成候选审计包，由外部 AI/人工进一步审计。"
+        ],
+        "not_allowed": [
+          "不得据此生成买卖点、仓位、杠杆、止损止盈或实盘下单建议。",
+          "不得据此跳过人工审批或 release/rollback 门禁。",
+          "不得把 candidate 当作 reviewed 或 approved 默认指导。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_id": "src_nist_ai_rmf",
+          "source_title": "NIST AI Risk Management Framework",
+          "source_url": "https://www.nist.gov/itl/ai-risk-management-framework",
+          "source_type": "governance_framework",
+          "publisher": "NIST",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 88,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "NIST AI RMF provides a risk-management framework for governing, mapping, measuring, and managing AI risks.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_sklearn_calibration",
+          "source_title": "Probability calibration - scikit-learn documentation",
+          "source_url": "https://scikit-learn.org/stable/modules/calibration.html",
+          "source_type": "official_doc",
+          "publisher": "scikit-learn",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 88,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "scikit-learn documents probability calibration workflows and calibration curves for classifier probability estimates.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_ibm_model_risk",
+          "source_title": "What is model risk management?",
+          "source_url": "https://www.ibm.com/think/topics/model-risk-management",
+          "source_type": "framework_doc",
+          "publisher": "IBM",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 82,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "IBM describes model risk management as identifying, measuring, and controlling risks from inadequate model performance and governance.",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "high",
+        "score": 86,
+        "score_version": "1.1.0",
+        "primary_source_count": 3,
+        "supporting_source_count": 0,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "来源支持通用 AI/ML/MLOps/LLMOps/治理工程原则；正式知识转换时需保留 CEK-TA 具体上下游引用和冲突链接。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "checked_against": [
+          "docs/contracts/phase40_feedback_dataset_contract.md",
+          "docs/contracts/phase40_drift_retraining_recalibration_contract.md",
+          "docs/contracts/phase40_champion_challenger_release_contract.md",
+          "docs/research/phase40_ai_continuous_learning_scope.md"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与 Phase 40 契约的直接冲突；候选不会进入默认指导。",
+        "approval_allowed": true
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "candidate only; not reviewed or approved; external audit required before formal knowledge conversion.",
+        "requires_human_escalation": true
+      },
+      "review": {
+        "confidence": "medium",
+        "freshness": "time_sensitive",
+        "reviewer": "codex",
+        "reviewed_at": null,
+        "open_questions": [
+          "审计时确认该候选是否需要补充更贴近交易 AI 的实例或与 Phase 38/Trading Engineering 增加交叉引用。"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "created",
+            "reason": "Phase 40 Batch D/E continuous learning candidate expansion."
+          }
+        ]
+      },
+      "copyright": {
+        "stores_full_text": false,
+        "stores_long_quote": false,
+        "summary_only": true,
+        "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+        "reuse_risk": "low"
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_ai_feedback_governance.phase40.confidence_not_evidence.v1",
+        "target_schema": "cek_ta_knowledge_item",
+        "target_review_status": "draft",
+        "skill_candidate": false,
+        "eval_case_candidate": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "workflow": {
+        "stage": "candidate_ready",
+        "queue_group": "pending",
+        "formal_knowledge_id": null,
+        "formal_review_status": null,
+        "ai_audit_result_id": null,
+        "hidden_from_default_queue": false,
+        "next_action": "export_for_ai_or_human_audit",
+        "default_guidance_allowed": false
+      },
+      "phase40_trace": {
+        "batch": "Batch D/E",
+        "acceptance_gate": "明确 confidence 不等于 evidence",
+        "search_direction": "model confidence not evidence uncertainty audit",
+        "related_contracts": [
+          "docs/contracts/phase40_feedback_dataset_contract.md",
+          "docs/contracts/phase40_drift_retraining_recalibration_contract.md",
+          "docs/contracts/phase40_champion_challenger_release_contract.md",
+          "docs/research/phase40_ai_continuous_learning_scope.md"
+        ]
+      }
+    },
+    {
+      "schema_version": "1.0.0",
+      "candidate_id": "cand_20260610_phase40_p40_e12_continuous_learning_dashboard_001",
+      "research_task_id": "P40-E12",
+      "status": {
+        "review_status": "proposed",
+        "ingestion_decision": "convert_to_knowledge_item",
+        "decision_reason": "Phase 40 Batch D/E sourced candidate; not reviewed, not approved, not default guidance.",
+        "created_at": "2026-06-10",
+        "updated_at": "2026-06-10"
+      },
+      "classification": {
+        "tree_node_id": "kt.ai_feedback_governance.drift_monitoring",
+        "canonical_node_id": "kt.ai_feedback_governance.drift_monitoring",
+        "tree_path": "CEK-TA / AI Engineering / Continuous Learning And Feedback Governance",
+        "related_nodes": [],
+        "partition_id": "KB_AI_18_FEEDBACK_GOVERNANCE",
+        "domain": "ai_governance",
+        "subdomain": "drift_monitoring",
+        "rule_type": "governance_rule",
+        "used_for": [
+          "llm_training",
+          "trading_gating_scoring",
+          "continuous_learning",
+          "rag_engineering",
+          "mcp",
+          "vue_audit_ui"
+        ]
+      },
+      "claim": {
+        "claim_id": "claim_001",
+        "statement": "持续学习看板必须显示 drift、calibration、false allow/block 和人审成本趋势",
+        "normalized_claim": "phase40.continuous_learning_dashboard.v1",
+        "claim_type": "ai_governance_rule",
+        "evidence_summary": "Arize monitor guidance covers performance, drift, data quality, and custom metrics for continuous model monitoring.；Fiddler describes model drift monitoring and root-cause analysis that differentiates data quality issues, concept drift, and other factors.；scikit-learn documents reliability diagrams that compare average predicted probability per bin with observed positive fraction.",
+        "interpretation_notes": "本候选只沉淀 AI Engineering 的持续学习、反馈治理、再训练、再校准、发布回滚或 LLM 改进方法；交易规则本体必须路由到 Phase 37。",
+        "claim_strength": "medium",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general",
+        "asset": "general",
+        "timeframe": "general",
+        "data_granularity": "general",
+        "project_type": "trading_llm_gating_scoring",
+        "applies_when": [
+          "外接项目正在建设交易 AI gating/scoring 的反馈日志、标签刷新、漂移检测、再训练、再校准、shadow/paper/canary 或发布治理链路。",
+          "该规则用于补强 Phase 40 P0-Core 治理闭环，并为 AI IDE 生成任务卡、契约、测试和审计 checklist 提供候选知识。"
+        ],
+        "not_applicable_when": [
+          "用户需要具体买卖点、仓位、止损止盈、K 线形态、策略参数或实盘订单执行。",
+          "知识点主要描述 fill model、订单状态机、实盘风控阈值或交易所异常处理，应路由到 Trading Engineering。"
+        ],
+        "assumptions": [
+          "外接项目提供私有交易事实、模型输出和发布上下文；CEK-TA 只沉淀可复用专业规则。",
+          "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+        ],
+        "limitations": [
+          "本条仍是 candidate，需要外部 AI/人工审计确认来源充分性、适用边界和是否需要补充交易项目实例。",
+          "AI Engineering 只定义学习治理、证据链、评估、发布和回滚边界，不定义交易策略本体。"
+        ]
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 在外接项目中实现持续学习治理字段、审计追踪、评测回归和发布门禁。",
+          "用于阻断自动上线、无来源默认指导、LLM 越权 final gate 和反馈回路污染。",
+          "用于生成候选审计包，由外部 AI/人工进一步审计。"
+        ],
+        "not_allowed": [
+          "不得据此生成买卖点、仓位、杠杆、止损止盈或实盘下单建议。",
+          "不得据此跳过人工审批或 release/rollback 门禁。",
+          "不得把 candidate 当作 reviewed 或 approved 默认指导。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_id": "src_arize_monitoring_metrics",
+          "source_title": "Best Practices for Monitors - Arize AX Docs",
+          "source_url": "https://arize.com/docs/ax/machine-learning/machine-learning/how-to-ml/monitors/choosing-your-metrics",
+          "source_type": "official_doc",
+          "publisher": "Arize AI",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 82,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "Arize monitor guidance covers performance, drift, data quality, and custom metrics for continuous model monitoring.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_fiddler_model_drift",
+          "source_title": "Model Drift - Fiddler Documentation",
+          "source_url": "https://docs.fiddler.ai/glossary/model-drift",
+          "source_type": "official_doc",
+          "publisher": "Fiddler",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 82,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "Fiddler describes model drift monitoring and root-cause analysis that differentiates data quality issues, concept drift, and other factors.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_sklearn_calibration_display",
+          "source_title": "CalibrationDisplay - scikit-learn documentation",
+          "source_url": "https://scikit-learn.org/stable/modules/generated/sklearn.calibration.CalibrationDisplay.html",
+          "source_type": "official_doc",
+          "publisher": "scikit-learn",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 88,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "scikit-learn documents reliability diagrams that compare average predicted probability per bin with observed positive fraction.",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "high",
+        "score": 84,
+        "score_version": "1.1.0",
+        "primary_source_count": 3,
+        "supporting_source_count": 0,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "来源支持通用 AI/ML/MLOps/LLMOps/治理工程原则；正式知识转换时需保留 CEK-TA 具体上下游引用和冲突链接。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "checked_against": [
+          "docs/contracts/phase40_feedback_dataset_contract.md",
+          "docs/contracts/phase40_drift_retraining_recalibration_contract.md",
+          "docs/contracts/phase40_champion_challenger_release_contract.md",
+          "docs/research/phase40_ai_continuous_learning_scope.md"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与 Phase 40 契约的直接冲突；候选不会进入默认指导。",
+        "approval_allowed": true
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "candidate only; not reviewed or approved; external audit required before formal knowledge conversion.",
+        "requires_human_escalation": true
+      },
+      "review": {
+        "confidence": "medium",
+        "freshness": "time_sensitive",
+        "reviewer": "codex",
+        "reviewed_at": null,
+        "open_questions": [
+          "审计时确认该候选是否需要补充更贴近交易 AI 的实例或与 Phase 38/Trading Engineering 增加交叉引用。"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "created",
+            "reason": "Phase 40 Batch D/E continuous learning candidate expansion."
+          }
+        ]
+      },
+      "copyright": {
+        "stores_full_text": false,
+        "stores_long_quote": false,
+        "summary_only": true,
+        "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+        "reuse_risk": "low"
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_ai_feedback_governance.phase40.continuous_learning_dashboard.v1",
+        "target_schema": "cek_ta_knowledge_item",
+        "target_review_status": "draft",
+        "skill_candidate": false,
+        "eval_case_candidate": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "workflow": {
+        "stage": "candidate_ready",
+        "queue_group": "pending",
+        "formal_knowledge_id": null,
+        "formal_review_status": null,
+        "ai_audit_result_id": null,
+        "hidden_from_default_queue": false,
+        "next_action": "export_for_ai_or_human_audit",
+        "default_guidance_allowed": false
+      },
+      "phase40_trace": {
+        "batch": "Batch D/E",
+        "acceptance_gate": "有 dashboard 指标",
+        "search_direction": "model monitoring dashboard calibration drift review cost",
+        "related_contracts": [
+          "docs/contracts/phase40_feedback_dataset_contract.md",
+          "docs/contracts/phase40_drift_retraining_recalibration_contract.md",
+          "docs/contracts/phase40_champion_challenger_release_contract.md",
+          "docs/research/phase40_ai_continuous_learning_scope.md"
+        ]
+      }
+    },
+    {
+      "schema_version": "1.0.0",
+      "candidate_id": "cand_20260610_phase40_p40_p01_long_tail_feedback_sampling_001",
+      "research_task_id": "P40-P01",
+      "status": {
+        "review_status": "proposed",
+        "ingestion_decision": "convert_to_knowledge_item",
+        "decision_reason": "Phase 40 Batch D/E sourced candidate; not reviewed, not approved, not default guidance.",
+        "created_at": "2026-06-10",
+        "updated_at": "2026-06-10"
+      },
+      "classification": {
+        "tree_node_id": "kt.ai_feedback_governance.feedback_logging",
+        "canonical_node_id": "kt.ai_feedback_governance.feedback_logging",
+        "tree_path": "CEK-TA / AI Engineering / Continuous Learning And Feedback Governance",
+        "related_nodes": [],
+        "partition_id": "KB_AI_18_FEEDBACK_GOVERNANCE",
+        "domain": "ai_governance",
+        "subdomain": "feedback_logging",
+        "rule_type": "governance_rule",
+        "used_for": [
+          "llm_training",
+          "trading_gating_scoring",
+          "continuous_learning",
+          "rag_engineering",
+          "mcp",
+          "vue_audit_ui"
+        ]
+      },
+      "claim": {
+        "claim_id": "claim_001",
+        "statement": "feedback 采样策略必须说明长尾市场和低频策略覆盖",
+        "normalized_claim": "phase40.long_tail_feedback_sampling.v1",
+        "claim_type": "ai_governance_rule",
+        "evidence_summary": "The survey explains that long-tailed data has frequent head classes and many low-sample tail classes that are difficult to model.；Chronosphere tail sampling keeps selected high-value traces such as error traces while downsampling baseline traces.；Arize monitor guidance covers performance, drift, data quality, and custom metrics for continuous model monitoring.",
+        "interpretation_notes": "本候选只沉淀 AI Engineering 的持续学习、反馈治理、再训练、再校准、发布回滚或 LLM 改进方法；交易规则本体必须路由到 Phase 37。",
+        "claim_strength": "medium",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general",
+        "asset": "general",
+        "timeframe": "general",
+        "data_granularity": "general",
+        "project_type": "trading_llm_gating_scoring",
+        "applies_when": [
+          "外接项目正在建设交易 AI gating/scoring 的反馈日志、标签刷新、漂移检测、再训练、再校准、shadow/paper/canary 或发布治理链路。",
+          "该规则用于补强 Phase 40 P0-Core 治理闭环，并为 AI IDE 生成任务卡、契约、测试和审计 checklist 提供候选知识。"
+        ],
+        "not_applicable_when": [
+          "用户需要具体买卖点、仓位、止损止盈、K 线形态、策略参数或实盘订单执行。",
+          "知识点主要描述 fill model、订单状态机、实盘风控阈值或交易所异常处理，应路由到 Trading Engineering。"
+        ],
+        "assumptions": [
+          "外接项目提供私有交易事实、模型输出和发布上下文；CEK-TA 只沉淀可复用专业规则。",
+          "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+        ],
+        "limitations": [
+          "本条仍是 candidate，需要外部 AI/人工审计确认来源充分性、适用边界和是否需要补充交易项目实例。",
+          "AI Engineering 只定义学习治理、证据链、评估、发布和回滚边界，不定义交易策略本体。"
+        ]
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 在外接项目中实现持续学习治理字段、审计追踪、评测回归和发布门禁。",
+          "用于阻断自动上线、无来源默认指导、LLM 越权 final gate 和反馈回路污染。",
+          "用于生成候选审计包，由外部 AI/人工进一步审计。"
+        ],
+        "not_allowed": [
+          "不得据此生成买卖点、仓位、杠杆、止损止盈或实盘下单建议。",
+          "不得据此跳过人工审批或 release/rollback 门禁。",
+          "不得把 candidate 当作 reviewed 或 approved 默认指导。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_id": "src_long_tail_learning_survey",
+          "source_title": "A Systematic Review on Long-Tailed Learning",
+          "source_url": "https://arxiv.org/html/2408.00483v1",
+          "source_type": "paper",
+          "publisher": "arXiv",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 82,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "The survey explains that long-tailed data has frequent head classes and many low-sample tail classes that are difficult to model.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_chronosphere_tail_sampling",
+          "source_title": "Tail sampling - Chronosphere Documentation",
+          "source_url": "https://docs.chronosphere.io/control/shaping/sample-traces/tail-sampling",
+          "source_type": "official_doc",
+          "publisher": "Chronosphere",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "medium",
+          "score": 78,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "Chronosphere tail sampling keeps selected high-value traces such as error traces while downsampling baseline traces.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_arize_monitoring_metrics",
+          "source_title": "Best Practices for Monitors - Arize AX Docs",
+          "source_url": "https://arize.com/docs/ax/machine-learning/machine-learning/how-to-ml/monitors/choosing-your-metrics",
+          "source_type": "official_doc",
+          "publisher": "Arize AI",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 82,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "Arize monitor guidance covers performance, drift, data quality, and custom metrics for continuous model monitoring.",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "medium",
+        "score": 81,
+        "score_version": "1.1.0",
+        "primary_source_count": 3,
+        "supporting_source_count": 0,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "来源支持通用 AI/ML/MLOps/LLMOps/治理工程原则；正式知识转换时需保留 CEK-TA 具体上下游引用和冲突链接。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "checked_against": [
+          "docs/contracts/phase40_feedback_dataset_contract.md",
+          "docs/contracts/phase40_drift_retraining_recalibration_contract.md",
+          "docs/contracts/phase40_champion_challenger_release_contract.md",
+          "docs/research/phase40_ai_continuous_learning_scope.md"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与 Phase 40 契约的直接冲突；候选不会进入默认指导。",
+        "approval_allowed": true
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "candidate only; not reviewed or approved; external audit required before formal knowledge conversion.",
+        "requires_human_escalation": true
+      },
+      "review": {
+        "confidence": "medium",
+        "freshness": "time_sensitive",
+        "reviewer": "codex",
+        "reviewed_at": null,
+        "open_questions": [
+          "审计时确认该候选是否需要补充更贴近交易 AI 的实例或与 Phase 38/Trading Engineering 增加交叉引用。"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "created",
+            "reason": "Phase 40 Batch D/E continuous learning candidate expansion."
+          }
+        ]
+      },
+      "copyright": {
+        "stores_full_text": false,
+        "stores_long_quote": false,
+        "summary_only": true,
+        "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+        "reuse_risk": "low"
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_ai_feedback_governance.phase40.long_tail_feedback_sampling.v1",
+        "target_schema": "cek_ta_knowledge_item",
+        "target_review_status": "draft",
+        "skill_candidate": false,
+        "eval_case_candidate": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "workflow": {
+        "stage": "candidate_ready",
+        "queue_group": "pending",
+        "formal_knowledge_id": null,
+        "formal_review_status": null,
+        "ai_audit_result_id": null,
+        "hidden_from_default_queue": false,
+        "next_action": "export_for_ai_or_human_audit",
+        "default_guidance_allowed": false
+      },
+      "phase40_trace": {
+        "batch": "Batch D/E",
+        "acceptance_gate": "有长尾覆盖说明",
+        "search_direction": "long tail monitoring sampling low frequency class",
+        "related_contracts": [
+          "docs/contracts/phase40_feedback_dataset_contract.md",
+          "docs/contracts/phase40_drift_retraining_recalibration_contract.md",
+          "docs/contracts/phase40_champion_challenger_release_contract.md",
+          "docs/research/phase40_ai_continuous_learning_scope.md"
+        ]
+      }
+    },
+    {
+      "schema_version": "1.0.0",
+      "candidate_id": "cand_20260610_phase40_p40_p02_label_conflict_gold_set_001",
+      "research_task_id": "P40-P02",
+      "status": {
+        "review_status": "proposed",
+        "ingestion_decision": "convert_to_knowledge_item",
+        "decision_reason": "Phase 40 Batch D/E sourced candidate; not reviewed, not approved, not default guidance.",
+        "created_at": "2026-06-10",
+        "updated_at": "2026-06-10"
+      },
+      "classification": {
+        "tree_node_id": "kt.ai_feedback_governance.label_refresh",
+        "canonical_node_id": "kt.ai_feedback_governance.label_refresh",
+        "tree_path": "CEK-TA / AI Engineering / Continuous Learning And Feedback Governance",
+        "related_nodes": [],
+        "partition_id": "KB_AI_18_FEEDBACK_GOVERNANCE",
+        "domain": "ai_governance",
+        "subdomain": "label_refresh",
+        "rule_type": "governance_rule",
+        "used_for": [
+          "llm_training",
+          "trading_gating_scoring",
+          "continuous_learning",
+          "rag_engineering",
+          "mcp",
+          "vue_audit_ui"
+        ]
+      },
+      "claim": {
+        "claim_id": "claim_001",
+        "statement": "标签冲突需要仲裁策略和 gold set 回归测试",
+        "normalized_claim": "phase40.label_conflict_gold_set.v1",
+        "claim_type": "ai_governance_rule",
+        "evidence_summary": "IBM documents comparing human annotations and resolving conflicts through adjudication before promotion to ground truth.；Label Studio documentation describes reviewing annotations and validating label quality after human or model annotation.；The Data Cards Playbook supports transparent dataset documentation and metadata practices across a dataset lifecycle.",
+        "interpretation_notes": "本候选只沉淀 AI Engineering 的持续学习、反馈治理、再训练、再校准、发布回滚或 LLM 改进方法；交易规则本体必须路由到 Phase 37。",
+        "claim_strength": "medium",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general",
+        "asset": "general",
+        "timeframe": "general",
+        "data_granularity": "general",
+        "project_type": "trading_llm_gating_scoring",
+        "applies_when": [
+          "外接项目正在建设交易 AI gating/scoring 的反馈日志、标签刷新、漂移检测、再训练、再校准、shadow/paper/canary 或发布治理链路。",
+          "该规则用于补强 Phase 40 P0-Core 治理闭环，并为 AI IDE 生成任务卡、契约、测试和审计 checklist 提供候选知识。"
+        ],
+        "not_applicable_when": [
+          "用户需要具体买卖点、仓位、止损止盈、K 线形态、策略参数或实盘订单执行。",
+          "知识点主要描述 fill model、订单状态机、实盘风控阈值或交易所异常处理，应路由到 Trading Engineering。"
+        ],
+        "assumptions": [
+          "外接项目提供私有交易事实、模型输出和发布上下文；CEK-TA 只沉淀可复用专业规则。",
+          "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+        ],
+        "limitations": [
+          "本条仍是 candidate，需要外部 AI/人工审计确认来源充分性、适用边界和是否需要补充交易项目实例。",
+          "AI Engineering 只定义学习治理、证据链、评估、发布和回滚边界，不定义交易策略本体。"
+        ]
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 在外接项目中实现持续学习治理字段、审计追踪、评测回归和发布门禁。",
+          "用于阻断自动上线、无来源默认指导、LLM 越权 final gate 和反馈回路污染。",
+          "用于生成候选审计包，由外部 AI/人工进一步审计。"
+        ],
+        "not_allowed": [
+          "不得据此生成买卖点、仓位、杠杆、止损止盈或实盘下单建议。",
+          "不得据此跳过人工审批或 release/rollback 门禁。",
+          "不得把 candidate 当作 reviewed 或 approved 默认指导。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_id": "src_ibm_wks_adjudication",
+          "source_title": "Annotation setup - IBM Watson Knowledge Studio",
+          "source_url": "https://cloud.ibm.com/docs/watson-knowledge-studio?topic=watson-knowledge-studio-annotate-documents",
+          "source_type": "official_doc",
+          "publisher": "IBM Cloud",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 82,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "IBM documents comparing human annotations and resolving conflicts through adjudication before promotion to ground truth.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_label_studio_review",
+          "source_title": "Review annotation quality in Label Studio",
+          "source_url": "https://docs.humansignal.com/guide/quality",
+          "source_type": "official_doc",
+          "publisher": "HumanSignal",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 82,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "Label Studio documentation describes reviewing annotations and validating label quality after human or model annotation.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_google_data_cards_playbook",
+          "source_title": "The Data Cards Playbook",
+          "source_url": "https://sites.research.google/datacardsplaybook/",
+          "source_type": "framework_doc",
+          "publisher": "Google Research",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 84,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "The Data Cards Playbook supports transparent dataset documentation and metadata practices across a dataset lifecycle.",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "high",
+        "score": 83,
+        "score_version": "1.1.0",
+        "primary_source_count": 3,
+        "supporting_source_count": 0,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "来源支持通用 AI/ML/MLOps/LLMOps/治理工程原则；正式知识转换时需保留 CEK-TA 具体上下游引用和冲突链接。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "checked_against": [
+          "docs/contracts/phase40_feedback_dataset_contract.md",
+          "docs/contracts/phase40_drift_retraining_recalibration_contract.md",
+          "docs/contracts/phase40_champion_challenger_release_contract.md",
+          "docs/research/phase40_ai_continuous_learning_scope.md"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与 Phase 40 契约的直接冲突；候选不会进入默认指导。",
+        "approval_allowed": true
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "candidate only; not reviewed or approved; external audit required before formal knowledge conversion.",
+        "requires_human_escalation": true
+      },
+      "review": {
+        "confidence": "medium",
+        "freshness": "time_sensitive",
+        "reviewer": "codex",
+        "reviewed_at": null,
+        "open_questions": [
+          "审计时确认该候选是否需要补充更贴近交易 AI 的实例或与 Phase 38/Trading Engineering 增加交叉引用。"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "created",
+            "reason": "Phase 40 Batch D/E continuous learning candidate expansion."
+          }
+        ]
+      },
+      "copyright": {
+        "stores_full_text": false,
+        "stores_long_quote": false,
+        "summary_only": true,
+        "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+        "reuse_risk": "low"
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_ai_feedback_governance.phase40.label_conflict_gold_set.v1",
+        "target_schema": "cek_ta_knowledge_item",
+        "target_review_status": "draft",
+        "skill_candidate": false,
+        "eval_case_candidate": true,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "workflow": {
+        "stage": "candidate_ready",
+        "queue_group": "pending",
+        "formal_knowledge_id": null,
+        "formal_review_status": null,
+        "ai_audit_result_id": null,
+        "hidden_from_default_queue": false,
+        "next_action": "export_for_ai_or_human_audit",
+        "default_guidance_allowed": false
+      },
+      "phase40_trace": {
+        "batch": "Batch D/E",
+        "acceptance_gate": "有仲裁机制",
+        "search_direction": "label conflict adjudication gold set regression",
+        "related_contracts": [
+          "docs/contracts/phase40_feedback_dataset_contract.md",
+          "docs/contracts/phase40_drift_retraining_recalibration_contract.md",
+          "docs/contracts/phase40_champion_challenger_release_contract.md",
+          "docs/research/phase40_ai_continuous_learning_scope.md"
+        ]
+      }
+    },
+    {
+      "schema_version": "1.0.0",
+      "candidate_id": "cand_20260610_phase40_p40_p03_scheduled_event_retraining_001",
+      "research_task_id": "P40-P03",
+      "status": {
+        "review_status": "proposed",
+        "ingestion_decision": "convert_to_knowledge_item",
+        "decision_reason": "Phase 40 Batch D/E sourced candidate; not reviewed, not approved, not default guidance.",
+        "created_at": "2026-06-10",
+        "updated_at": "2026-06-10"
+      },
+      "classification": {
+        "tree_node_id": "kt.ai_feedback_governance.retraining_trigger",
+        "canonical_node_id": "kt.ai_feedback_governance.retraining_trigger",
+        "tree_path": "CEK-TA / AI Engineering / Continuous Learning And Feedback Governance",
+        "related_nodes": [],
+        "partition_id": "KB_AI_18_FEEDBACK_GOVERNANCE",
+        "domain": "ai_governance",
+        "subdomain": "retraining_trigger",
+        "rule_type": "governance_rule",
+        "used_for": [
+          "llm_training",
+          "trading_gating_scoring",
+          "continuous_learning",
+          "rag_engineering",
+          "mcp",
+          "vue_audit_ui"
+        ]
+      },
+      "claim": {
+        "claim_id": "claim_001",
+        "statement": "再训练计划应支持固定节奏与事件触发混合",
+        "normalized_claim": "phase40.scheduled_event_retraining.v1",
+        "claim_type": "ai_governance_rule",
+        "evidence_summary": "Iguazio describes model retraining as an MLOps capability that can run on a schedule or event-driven trigger.；Fiddler describes model drift monitoring and root-cause analysis that differentiates data quality issues, concept drift, and other factors.；MLflow workflow documentation covers registering models, managing versions, applying aliases and tags, and using model metadata.",
+        "interpretation_notes": "本候选只沉淀 AI Engineering 的持续学习、反馈治理、再训练、再校准、发布回滚或 LLM 改进方法；交易规则本体必须路由到 Phase 37。",
+        "claim_strength": "medium",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general",
+        "asset": "general",
+        "timeframe": "general",
+        "data_granularity": "general",
+        "project_type": "trading_llm_gating_scoring",
+        "applies_when": [
+          "外接项目正在建设交易 AI gating/scoring 的反馈日志、标签刷新、漂移检测、再训练、再校准、shadow/paper/canary 或发布治理链路。",
+          "该规则用于补强 Phase 40 P0-Core 治理闭环，并为 AI IDE 生成任务卡、契约、测试和审计 checklist 提供候选知识。"
+        ],
+        "not_applicable_when": [
+          "用户需要具体买卖点、仓位、止损止盈、K 线形态、策略参数或实盘订单执行。",
+          "知识点主要描述 fill model、订单状态机、实盘风控阈值或交易所异常处理，应路由到 Trading Engineering。"
+        ],
+        "assumptions": [
+          "外接项目提供私有交易事实、模型输出和发布上下文；CEK-TA 只沉淀可复用专业规则。",
+          "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+        ],
+        "limitations": [
+          "本条仍是 candidate，需要外部 AI/人工审计确认来源充分性、适用边界和是否需要补充交易项目实例。",
+          "AI Engineering 只定义学习治理、证据链、评估、发布和回滚边界，不定义交易策略本体。"
+        ]
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 在外接项目中实现持续学习治理字段、审计追踪、评测回归和发布门禁。",
+          "用于阻断自动上线、无来源默认指导、LLM 越权 final gate 和反馈回路污染。",
+          "用于生成候选审计包，由外部 AI/人工进一步审计。"
+        ],
+        "not_allowed": [
+          "不得据此生成买卖点、仓位、杠杆、止损止盈或实盘下单建议。",
+          "不得据此跳过人工审批或 release/rollback 门禁。",
+          "不得把 candidate 当作 reviewed 或 approved 默认指导。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_id": "src_iguazio_retraining",
+          "source_title": "What Is Machine Learning Model Retraining?",
+          "source_url": "https://www.iguazio.com/glossary/model-retraining/",
+          "source_type": "engineering_article",
+          "publisher": "Iguazio",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "medium",
+          "score": 78,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "Iguazio describes model retraining as an MLOps capability that can run on a schedule or event-driven trigger.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_fiddler_model_drift",
+          "source_title": "Model Drift - Fiddler Documentation",
+          "source_url": "https://docs.fiddler.ai/glossary/model-drift",
+          "source_type": "official_doc",
+          "publisher": "Fiddler",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 82,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "Fiddler describes model drift monitoring and root-cause analysis that differentiates data quality issues, concept drift, and other factors.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_mlflow_registry_workflow",
+          "source_title": "Model Registry Workflows - MLflow",
+          "source_url": "https://mlflow.org/docs/latest/ml/model-registry/workflow/",
+          "source_type": "official_doc",
+          "publisher": "MLflow",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 86,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "MLflow workflow documentation covers registering models, managing versions, applying aliases and tags, and using model metadata.",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "high",
+        "score": 82,
+        "score_version": "1.1.0",
+        "primary_source_count": 3,
+        "supporting_source_count": 0,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "来源支持通用 AI/ML/MLOps/LLMOps/治理工程原则；正式知识转换时需保留 CEK-TA 具体上下游引用和冲突链接。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "checked_against": [
+          "docs/contracts/phase40_feedback_dataset_contract.md",
+          "docs/contracts/phase40_drift_retraining_recalibration_contract.md",
+          "docs/contracts/phase40_champion_challenger_release_contract.md",
+          "docs/research/phase40_ai_continuous_learning_scope.md"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与 Phase 40 契约的直接冲突；候选不会进入默认指导。",
+        "approval_allowed": true
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "candidate only; not reviewed or approved; external audit required before formal knowledge conversion.",
+        "requires_human_escalation": true
+      },
+      "review": {
+        "confidence": "medium",
+        "freshness": "time_sensitive",
+        "reviewer": "codex",
+        "reviewed_at": null,
+        "open_questions": [
+          "审计时确认该候选是否需要补充更贴近交易 AI 的实例或与 Phase 38/Trading Engineering 增加交叉引用。"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "created",
+            "reason": "Phase 40 Batch D/E continuous learning candidate expansion."
+          }
+        ]
+      },
+      "copyright": {
+        "stores_full_text": false,
+        "stores_long_quote": false,
+        "summary_only": true,
+        "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+        "reuse_risk": "low"
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_ai_feedback_governance.phase40.scheduled_event_retraining.v1",
+        "target_schema": "cek_ta_knowledge_item",
+        "target_review_status": "draft",
+        "skill_candidate": false,
+        "eval_case_candidate": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "workflow": {
+        "stage": "candidate_ready",
+        "queue_group": "pending",
+        "formal_knowledge_id": null,
+        "formal_review_status": null,
+        "ai_audit_result_id": null,
+        "hidden_from_default_queue": false,
+        "next_action": "export_for_ai_or_human_audit",
+        "default_guidance_allowed": false
+      },
+      "phase40_trace": {
+        "batch": "Batch D/E",
+        "acceptance_gate": "明确混合触发",
+        "search_direction": "scheduled retraining event driven retraining",
+        "related_contracts": [
+          "docs/contracts/phase40_feedback_dataset_contract.md",
+          "docs/contracts/phase40_drift_retraining_recalibration_contract.md",
+          "docs/contracts/phase40_champion_challenger_release_contract.md",
+          "docs/research/phase40_ai_continuous_learning_scope.md"
+        ]
+      }
+    },
+    {
+      "schema_version": "1.0.0",
+      "candidate_id": "cand_20260610_phase40_p40_p04_rejected_challenger_reason_tracking_001",
+      "research_task_id": "P40-P04",
+      "status": {
+        "review_status": "proposed",
+        "ingestion_decision": "convert_to_knowledge_item",
+        "decision_reason": "Phase 40 Batch D/E sourced candidate; not reviewed, not approved, not default guidance.",
+        "created_at": "2026-06-10",
+        "updated_at": "2026-06-10"
+      },
+      "classification": {
+        "tree_node_id": "kt.ai_feedback_governance.champion_challenger",
+        "canonical_node_id": "kt.ai_feedback_governance.champion_challenger",
+        "tree_path": "CEK-TA / AI Engineering / Continuous Learning And Feedback Governance",
+        "related_nodes": [],
+        "partition_id": "KB_AI_18_FEEDBACK_GOVERNANCE",
+        "domain": "ai_governance",
+        "subdomain": "champion_challenger",
+        "rule_type": "governance_rule",
+        "used_for": [
+          "llm_training",
+          "trading_gating_scoring",
+          "continuous_learning",
+          "rag_engineering",
+          "mcp",
+          "vue_audit_ui"
+        ]
+      },
+      "claim": {
+        "claim_id": "claim_001",
+        "statement": "challenger 拒绝也要记录原因，进入后续实验知识库",
+        "normalized_claim": "phase40.rejected_challenger_reason_tracking.v1",
+        "claim_type": "ai_governance_rule",
+        "evidence_summary": "MLflow Model Registry provides model lineage, versioning, aliases, metadata tagging, and annotations for lifecycle management.；MLflow workflow documentation covers registering models, managing versions, applying aliases and tags, and using model metadata.；IBM describes model risk management as identifying, measuring, and controlling risks from inadequate model performance and governance.",
+        "interpretation_notes": "本候选只沉淀 AI Engineering 的持续学习、反馈治理、再训练、再校准、发布回滚或 LLM 改进方法；交易规则本体必须路由到 Phase 37。",
+        "claim_strength": "medium",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general",
+        "asset": "general",
+        "timeframe": "general",
+        "data_granularity": "general",
+        "project_type": "trading_llm_gating_scoring",
+        "applies_when": [
+          "外接项目正在建设交易 AI gating/scoring 的反馈日志、标签刷新、漂移检测、再训练、再校准、shadow/paper/canary 或发布治理链路。",
+          "该规则用于补强 Phase 40 P0-Core 治理闭环，并为 AI IDE 生成任务卡、契约、测试和审计 checklist 提供候选知识。"
+        ],
+        "not_applicable_when": [
+          "用户需要具体买卖点、仓位、止损止盈、K 线形态、策略参数或实盘订单执行。",
+          "知识点主要描述 fill model、订单状态机、实盘风控阈值或交易所异常处理，应路由到 Trading Engineering。"
+        ],
+        "assumptions": [
+          "外接项目提供私有交易事实、模型输出和发布上下文；CEK-TA 只沉淀可复用专业规则。",
+          "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+        ],
+        "limitations": [
+          "本条仍是 candidate，需要外部 AI/人工审计确认来源充分性、适用边界和是否需要补充交易项目实例。",
+          "AI Engineering 只定义学习治理、证据链、评估、发布和回滚边界，不定义交易策略本体。"
+        ]
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 在外接项目中实现持续学习治理字段、审计追踪、评测回归和发布门禁。",
+          "用于阻断自动上线、无来源默认指导、LLM 越权 final gate 和反馈回路污染。",
+          "用于生成候选审计包，由外部 AI/人工进一步审计。"
+        ],
+        "not_allowed": [
+          "不得据此生成买卖点、仓位、杠杆、止损止盈或实盘下单建议。",
+          "不得据此跳过人工审批或 release/rollback 门禁。",
+          "不得把 candidate 当作 reviewed 或 approved 默认指导。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_id": "src_mlflow_model_registry",
+          "source_title": "MLflow Model Registry",
+          "source_url": "https://mlflow.org/docs/latest/ml/model-registry/",
+          "source_type": "official_doc",
+          "publisher": "MLflow",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 86,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "MLflow Model Registry provides model lineage, versioning, aliases, metadata tagging, and annotations for lifecycle management.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_mlflow_registry_workflow",
+          "source_title": "Model Registry Workflows - MLflow",
+          "source_url": "https://mlflow.org/docs/latest/ml/model-registry/workflow/",
+          "source_type": "official_doc",
+          "publisher": "MLflow",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 86,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "MLflow workflow documentation covers registering models, managing versions, applying aliases and tags, and using model metadata.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_ibm_model_risk",
+          "source_title": "What is model risk management?",
+          "source_url": "https://www.ibm.com/think/topics/model-risk-management",
+          "source_type": "framework_doc",
+          "publisher": "IBM",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 82,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "IBM describes model risk management as identifying, measuring, and controlling risks from inadequate model performance and governance.",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "high",
+        "score": 85,
+        "score_version": "1.1.0",
+        "primary_source_count": 3,
+        "supporting_source_count": 0,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "来源支持通用 AI/ML/MLOps/LLMOps/治理工程原则；正式知识转换时需保留 CEK-TA 具体上下游引用和冲突链接。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "checked_against": [
+          "docs/contracts/phase40_feedback_dataset_contract.md",
+          "docs/contracts/phase40_drift_retraining_recalibration_contract.md",
+          "docs/contracts/phase40_champion_challenger_release_contract.md",
+          "docs/research/phase40_ai_continuous_learning_scope.md"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与 Phase 40 契约的直接冲突；候选不会进入默认指导。",
+        "approval_allowed": true
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "candidate only; not reviewed or approved; external audit required before formal knowledge conversion.",
+        "requires_human_escalation": true
+      },
+      "review": {
+        "confidence": "medium",
+        "freshness": "time_sensitive",
+        "reviewer": "codex",
+        "reviewed_at": null,
+        "open_questions": [
+          "审计时确认该候选是否需要补充更贴近交易 AI 的实例或与 Phase 38/Trading Engineering 增加交叉引用。"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "created",
+            "reason": "Phase 40 Batch D/E continuous learning candidate expansion."
+          }
+        ]
+      },
+      "copyright": {
+        "stores_full_text": false,
+        "stores_long_quote": false,
+        "summary_only": true,
+        "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+        "reuse_risk": "low"
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_ai_feedback_governance.phase40.rejected_challenger_reason_tracking.v1",
+        "target_schema": "cek_ta_knowledge_item",
+        "target_review_status": "draft",
+        "skill_candidate": false,
+        "eval_case_candidate": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "workflow": {
+        "stage": "candidate_ready",
+        "queue_group": "pending",
+        "formal_knowledge_id": null,
+        "formal_review_status": null,
+        "ai_audit_result_id": null,
+        "hidden_from_default_queue": false,
+        "next_action": "export_for_ai_or_human_audit",
+        "default_guidance_allowed": false
+      },
+      "phase40_trace": {
+        "batch": "Batch D/E",
+        "acceptance_gate": "保留拒绝原因",
+        "search_direction": "experiment tracking rejected model reason",
+        "related_contracts": [
+          "docs/contracts/phase40_feedback_dataset_contract.md",
+          "docs/contracts/phase40_drift_retraining_recalibration_contract.md",
+          "docs/contracts/phase40_champion_challenger_release_contract.md",
+          "docs/research/phase40_ai_continuous_learning_scope.md"
+        ]
+      }
+    },
+    {
+      "schema_version": "1.0.0",
+      "candidate_id": "cand_20260610_phase40_p40_p05_composite_artifact_rollback_001",
+      "research_task_id": "P40-P05",
+      "status": {
+        "review_status": "proposed",
+        "ingestion_decision": "convert_to_knowledge_item",
+        "decision_reason": "Phase 40 Batch D/E sourced candidate; not reviewed, not approved, not default guidance.",
+        "created_at": "2026-06-10",
+        "updated_at": "2026-06-10"
+      },
+      "classification": {
+        "tree_node_id": "kt.ai_feedback_governance.rollback_governance",
+        "canonical_node_id": "kt.ai_feedback_governance.rollback_governance",
+        "tree_path": "CEK-TA / AI Engineering / Continuous Learning And Feedback Governance",
+        "related_nodes": [],
+        "partition_id": "KB_AI_18_FEEDBACK_GOVERNANCE",
+        "domain": "ai_governance",
+        "subdomain": "rollback_governance",
+        "rule_type": "governance_rule",
+        "used_for": [
+          "llm_training",
+          "trading_gating_scoring",
+          "continuous_learning",
+          "rag_engineering",
+          "mcp",
+          "vue_audit_ui"
+        ]
+      },
+      "claim": {
+        "claim_id": "claim_001",
+        "statement": "发布治理要支持模型、prompt、RAG 包、阈值的组合回滚",
+        "normalized_claim": "phase40.composite_artifact_rollback.v1",
+        "claim_type": "ai_governance_rule",
+        "evidence_summary": "The AI Incident Response Framework covers recovery actions such as rolling back fine-tuned models or agent states and updating RAG sources after incidents.；MLflow Model Registry provides model lineage, versioning, aliases, metadata tagging, and annotations for lifecycle management.；Promptfoo documents how to evaluate RAG applications and compare retrieved context and generated answers.",
+        "interpretation_notes": "本候选只沉淀 AI Engineering 的持续学习、反馈治理、再训练、再校准、发布回滚或 LLM 改进方法；交易规则本体必须路由到 Phase 37。",
+        "claim_strength": "medium",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general",
+        "asset": "general",
+        "timeframe": "general",
+        "data_granularity": "general",
+        "project_type": "trading_llm_gating_scoring",
+        "applies_when": [
+          "外接项目正在建设交易 AI gating/scoring 的反馈日志、标签刷新、漂移检测、再训练、再校准、shadow/paper/canary 或发布治理链路。",
+          "该规则用于补强 Phase 40 P0-Core 治理闭环，并为 AI IDE 生成任务卡、契约、测试和审计 checklist 提供候选知识。"
+        ],
+        "not_applicable_when": [
+          "用户需要具体买卖点、仓位、止损止盈、K 线形态、策略参数或实盘订单执行。",
+          "知识点主要描述 fill model、订单状态机、实盘风控阈值或交易所异常处理，应路由到 Trading Engineering。"
+        ],
+        "assumptions": [
+          "外接项目提供私有交易事实、模型输出和发布上下文；CEK-TA 只沉淀可复用专业规则。",
+          "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+        ],
+        "limitations": [
+          "本条仍是 candidate，需要外部 AI/人工审计确认来源充分性、适用边界和是否需要补充交易项目实例。",
+          "AI Engineering 只定义学习治理、证据链、评估、发布和回滚边界，不定义交易策略本体。"
+        ]
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 在外接项目中实现持续学习治理字段、审计追踪、评测回归和发布门禁。",
+          "用于阻断自动上线、无来源默认指导、LLM 越权 final gate 和反馈回路污染。",
+          "用于生成候选审计包，由外部 AI/人工进一步审计。"
+        ],
+        "not_allowed": [
+          "不得据此生成买卖点、仓位、杠杆、止损止盈或实盘下单建议。",
+          "不得据此跳过人工审批或 release/rollback 门禁。",
+          "不得把 candidate 当作 reviewed 或 approved 默认指导。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_id": "src_cosai_ai_incident_response",
+          "source_title": "AI Incident Response Framework",
+          "source_url": "https://www.coalitionforsecureai.org/wp-content/uploads/2026/03/AI-Incident-Response-1.pdf",
+          "source_type": "framework_doc",
+          "publisher": "Coalition for Secure AI",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 82,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "The AI Incident Response Framework covers recovery actions such as rolling back fine-tuned models or agent states and updating RAG sources after incidents.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_mlflow_model_registry",
+          "source_title": "MLflow Model Registry",
+          "source_url": "https://mlflow.org/docs/latest/ml/model-registry/",
+          "source_type": "official_doc",
+          "publisher": "MLflow",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 86,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "MLflow Model Registry provides model lineage, versioning, aliases, metadata tagging, and annotations for lifecycle management.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_promptfoo_rag_eval",
+          "source_title": "Evaluating RAG pipelines - Promptfoo",
+          "source_url": "https://www.promptfoo.dev/docs/guides/evaluate-rag/",
+          "source_type": "official_doc",
+          "publisher": "Promptfoo",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 82,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "Promptfoo documents how to evaluate RAG applications and compare retrieved context and generated answers.",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "high",
+        "score": 83,
+        "score_version": "1.1.0",
+        "primary_source_count": 3,
+        "supporting_source_count": 0,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "来源支持通用 AI/ML/MLOps/LLMOps/治理工程原则；正式知识转换时需保留 CEK-TA 具体上下游引用和冲突链接。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "checked_against": [
+          "docs/contracts/phase40_feedback_dataset_contract.md",
+          "docs/contracts/phase40_drift_retraining_recalibration_contract.md",
+          "docs/contracts/phase40_champion_challenger_release_contract.md",
+          "docs/research/phase40_ai_continuous_learning_scope.md"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与 Phase 40 契约的直接冲突；候选不会进入默认指导。",
+        "approval_allowed": true
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "candidate only; not reviewed or approved; external audit required before formal knowledge conversion.",
+        "requires_human_escalation": true
+      },
+      "review": {
+        "confidence": "medium",
+        "freshness": "time_sensitive",
+        "reviewer": "codex",
+        "reviewed_at": null,
+        "open_questions": [
+          "审计时确认该候选是否需要补充更贴近交易 AI 的实例或与 Phase 38/Trading Engineering 增加交叉引用。"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "created",
+            "reason": "Phase 40 Batch D/E continuous learning candidate expansion."
+          }
+        ]
+      },
+      "copyright": {
+        "stores_full_text": false,
+        "stores_long_quote": false,
+        "summary_only": true,
+        "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+        "reuse_risk": "low"
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_ai_feedback_governance.phase40.composite_artifact_rollback.v1",
+        "target_schema": "cek_ta_knowledge_item",
+        "target_review_status": "draft",
+        "skill_candidate": false,
+        "eval_case_candidate": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "workflow": {
+        "stage": "candidate_ready",
+        "queue_group": "pending",
+        "formal_knowledge_id": null,
+        "formal_review_status": null,
+        "ai_audit_result_id": null,
+        "hidden_from_default_queue": false,
+        "next_action": "export_for_ai_or_human_audit",
+        "default_guidance_allowed": false
+      },
+      "phase40_trace": {
+        "batch": "Batch D/E",
+        "acceptance_gate": "支持组合 artifact",
+        "search_direction": "rollback model prompt RAG threshold composite release",
+        "related_contracts": [
+          "docs/contracts/phase40_feedback_dataset_contract.md",
+          "docs/contracts/phase40_drift_retraining_recalibration_contract.md",
+          "docs/contracts/phase40_champion_challenger_release_contract.md",
+          "docs/research/phase40_ai_continuous_learning_scope.md"
+        ]
+      }
+    },
+    {
+      "schema_version": "1.0.0",
+      "candidate_id": "cand_20260610_phase40_p40_p06_prompt_rag_model_eval_separation_001",
+      "research_task_id": "P40-P06",
+      "status": {
+        "review_status": "proposed",
+        "ingestion_decision": "convert_to_knowledge_item",
+        "decision_reason": "Phase 40 Batch D/E sourced candidate; not reviewed, not approved, not default guidance.",
+        "created_at": "2026-06-10",
+        "updated_at": "2026-06-10"
+      },
+      "classification": {
+        "tree_node_id": "kt.ai_feedback_governance.llm_prompt_rag_sft_loop",
+        "canonical_node_id": "kt.ai_feedback_governance.llm_prompt_rag_sft_loop",
+        "tree_path": "CEK-TA / AI Engineering / Continuous Learning And Feedback Governance",
+        "related_nodes": [],
+        "partition_id": "KB_AI_18_FEEDBACK_GOVERNANCE",
+        "domain": "llm_training",
+        "subdomain": "llm_prompt_rag_sft_loop",
+        "rule_type": "governance_rule",
+        "used_for": [
+          "llm_training",
+          "trading_gating_scoring",
+          "continuous_learning",
+          "rag_engineering",
+          "mcp",
+          "vue_audit_ui"
+        ]
+      },
+      "claim": {
+        "claim_id": "claim_001",
+        "statement": "LLM 改动必须分离 prompt regression、RAG retrieval regression 和 model eval",
+        "normalized_claim": "phase40.prompt_rag_model_eval_separation.v1",
+        "claim_type": "ai_governance_rule",
+        "evidence_summary": "Braintrust describes prompt evaluation as comparing outputs before and after changes across representative test cases to catch regressions.；Evidently explains evaluating retrieval and generation separately, building test sets, running experiments, and monitoring RAG systems.；Promptfoo documents how to evaluate RAG applications and compare retrieved context and generated answers.",
+        "interpretation_notes": "本候选只沉淀 AI Engineering 的持续学习、反馈治理、再训练、再校准、发布回滚或 LLM 改进方法；交易规则本体必须路由到 Phase 37。",
+        "claim_strength": "medium",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general",
+        "asset": "general",
+        "timeframe": "general",
+        "data_granularity": "general",
+        "project_type": "trading_llm_gating_scoring",
+        "applies_when": [
+          "外接项目正在建设交易 AI gating/scoring 的反馈日志、标签刷新、漂移检测、再训练、再校准、shadow/paper/canary 或发布治理链路。",
+          "该规则用于补强 Phase 40 P0-Core 治理闭环，并为 AI IDE 生成任务卡、契约、测试和审计 checklist 提供候选知识。"
+        ],
+        "not_applicable_when": [
+          "用户需要具体买卖点、仓位、止损止盈、K 线形态、策略参数或实盘订单执行。",
+          "知识点主要描述 fill model、订单状态机、实盘风控阈值或交易所异常处理，应路由到 Trading Engineering。"
+        ],
+        "assumptions": [
+          "外接项目提供私有交易事实、模型输出和发布上下文；CEK-TA 只沉淀可复用专业规则。",
+          "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+        ],
+        "limitations": [
+          "本条仍是 candidate，需要外部 AI/人工审计确认来源充分性、适用边界和是否需要补充交易项目实例。",
+          "AI Engineering 只定义学习治理、证据链、评估、发布和回滚边界，不定义交易策略本体。"
+        ]
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 在外接项目中实现持续学习治理字段、审计追踪、评测回归和发布门禁。",
+          "用于阻断自动上线、无来源默认指导、LLM 越权 final gate 和反馈回路污染。",
+          "用于生成候选审计包，由外部 AI/人工进一步审计。"
+        ],
+        "not_allowed": [
+          "不得据此生成买卖点、仓位、杠杆、止损止盈或实盘下单建议。",
+          "不得据此跳过人工审批或 release/rollback 门禁。",
+          "不得把 candidate 当作 reviewed 或 approved 默认指导。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_id": "src_braintrust_llm_eval",
+          "source_title": "What is LLM evaluation?",
+          "source_url": "https://www.braintrust.dev/articles/llm-evaluation-guide",
+          "source_type": "engineering_article",
+          "publisher": "Braintrust",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 80,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "Braintrust describes prompt evaluation as comparing outputs before and after changes across representative test cases to catch regressions.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_evidently_rag_eval",
+          "source_title": "A complete guide to RAG evaluation",
+          "source_url": "https://www.evidentlyai.com/llm-guide/rag-evaluation",
+          "source_type": "engineering_article",
+          "publisher": "Evidently AI",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 82,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "Evidently explains evaluating retrieval and generation separately, building test sets, running experiments, and monitoring RAG systems.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_promptfoo_rag_eval",
+          "source_title": "Evaluating RAG pipelines - Promptfoo",
+          "source_url": "https://www.promptfoo.dev/docs/guides/evaluate-rag/",
+          "source_type": "official_doc",
+          "publisher": "Promptfoo",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 82,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "Promptfoo documents how to evaluate RAG applications and compare retrieved context and generated answers.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_arize_retrieval_eval",
+          "source_title": "Retrieval Evaluation - Arize AX Docs",
+          "source_url": "https://arize.com/docs/ax/cookbooks/evaluation/retrieval-evaluation",
+          "source_type": "official_doc",
+          "publisher": "Arize AI",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 82,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "Arize retrieval evaluation documents evaluating RAG retrieval quality and debugging bad responses, missing context, and irrelevant chunks.",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "high",
+        "score": 82,
+        "score_version": "1.1.0",
+        "primary_source_count": 3,
+        "supporting_source_count": 1,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "来源支持通用 AI/ML/MLOps/LLMOps/治理工程原则；正式知识转换时需保留 CEK-TA 具体上下游引用和冲突链接。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "checked_against": [
+          "docs/contracts/phase40_feedback_dataset_contract.md",
+          "docs/contracts/phase40_drift_retraining_recalibration_contract.md",
+          "docs/contracts/phase40_champion_challenger_release_contract.md",
+          "docs/research/phase40_ai_continuous_learning_scope.md"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与 Phase 40 契约的直接冲突；候选不会进入默认指导。",
+        "approval_allowed": true
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "candidate only; not reviewed or approved; external audit required before formal knowledge conversion.",
+        "requires_human_escalation": true
+      },
+      "review": {
+        "confidence": "medium",
+        "freshness": "time_sensitive",
+        "reviewer": "codex",
+        "reviewed_at": null,
+        "open_questions": [
+          "审计时确认该候选是否需要补充更贴近交易 AI 的实例或与 Phase 38/Trading Engineering 增加交叉引用。"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "created",
+            "reason": "Phase 40 Batch D/E continuous learning candidate expansion."
+          }
+        ]
+      },
+      "copyright": {
+        "stores_full_text": false,
+        "stores_long_quote": false,
+        "summary_only": true,
+        "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+        "reuse_risk": "low"
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_ai_feedback_governance.phase40.prompt_rag_model_eval_separation.v1",
+        "target_schema": "cek_ta_knowledge_item",
+        "target_review_status": "draft",
+        "skill_candidate": false,
+        "eval_case_candidate": true,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "workflow": {
+        "stage": "candidate_ready",
+        "queue_group": "pending",
+        "formal_knowledge_id": null,
+        "formal_review_status": null,
+        "ai_audit_result_id": null,
+        "hidden_from_default_queue": false,
+        "next_action": "export_for_ai_or_human_audit",
+        "default_guidance_allowed": false
+      },
+      "phase40_trace": {
+        "batch": "Batch D/E",
+        "acceptance_gate": "三类评测分开",
+        "search_direction": "prompt regression RAG regression model eval separation",
+        "related_contracts": [
+          "docs/contracts/phase40_feedback_dataset_contract.md",
+          "docs/contracts/phase40_drift_retraining_recalibration_contract.md",
+          "docs/contracts/phase40_champion_challenger_release_contract.md",
+          "docs/research/phase40_ai_continuous_learning_scope.md"
+        ]
+      }
+    }
+  ]
+}

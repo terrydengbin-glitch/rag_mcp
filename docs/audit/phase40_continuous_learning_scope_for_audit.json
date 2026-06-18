@@ -1,0 +1,405 @@
+{
+  "audit_package_id": "phase40_continuous_learning_scope_for_audit_20260610",
+  "schema_version": "cek_ta_scope_audit_v1",
+  "created_at": "2026-06-10",
+  "phase": "Phase 40",
+  "phase_name": "AI Continuous Learning 与再训练闭环",
+  "audit_objective": "审计 Phase 40 持续学习知识范围、L3 专题结构、36 条知识点规划、上下游边界和采集门槛是否适合作为后续专业 RAG 知识库扩展范围。",
+  "instructions_for_auditor": {
+    "language": "中文",
+    "review_focus": [
+      "检查是否严格区分持续学习、周期再训练、受控发布和在线自动学习。",
+      "检查是否阻断再训练结果自动替换 champion model。",
+      "检查是否阻断 LLM audit assistant 成为最终交易 gate。",
+      "检查是否把 K 线、fill model、订单状态机、风控本体等 Trading Engineering 内容错误塞入 AI Engineering。",
+      "检查 10 个 L3 专题是否覆盖外接交易 LLM gating/scoring 项目的长期反馈闭环。",
+      "检查 36 条知识点是否数量合理、无明显遗漏、无重复、无互相矛盾。",
+      "检查三份契约是否足够支撑后续候选知识采集和外接项目开发。"
+    ],
+    "required_output": {
+      "overall_decision": "approve | approve_with_changes | needs_revision | reject",
+      "scope_issues": "array",
+      "missing_topics": "array",
+      "misclassified_topics": "array",
+      "knowledge_item_patch_suggestions": "array",
+      "contract_patch_suggestions": "array",
+      "risk_notes": "array",
+      "final_recommendation": "string"
+    }
+  },
+  "upstream_references": [
+    "docs/tasks/phase36_ai_engineering_gating_scoring_knowledge.md",
+    "docs/tasks/phase38_ai_model_platform_poc_knowledge.md",
+    "docs/tasks/phase39_knowledge_tree_single_source_stats_alignment.md",
+    "docs/tasks/phase40_ai_continuous_learning_retraining_loop.md",
+    "docs/research/phase40_ai_continuous_learning_scope.md",
+    "docs/contracts/phase40_feedback_dataset_contract.md",
+    "docs/contracts/phase40_drift_retraining_recalibration_contract.md",
+    "docs/contracts/phase40_champion_challenger_release_contract.md",
+    "docs/research/phase40_continuous_learning_collection_matrix.md",
+    "docs/research/phase40_research_task_queue.md",
+    "codex-expert-kit/rag/knowledge_tree.md"
+  ],
+  "boundary_policy": {
+    "in_scope": [
+      "反馈日志",
+      "标签刷新",
+      "数据集版本",
+      "审计追踪",
+      "漂移检测",
+      "再训练触发",
+      "再校准",
+      "阈值稳定性",
+      "champion/challenger",
+      "shadow/paper/canary",
+      "发布审批",
+      "rollback / kill switch",
+      "LLM prompt/RAG/SFT 持续改进顺序",
+      "反馈回路污染风险"
+    ],
+    "out_of_scope": [
+      "真实模型训练",
+      "线上自动学习",
+      "自动替换 champion model",
+      "LLM 作为最终交易 gate",
+      "K 线形态规则",
+      "fill model 本体",
+      "订单状态机",
+      "实盘风控阈值本体",
+      "交易所执行适配器",
+      "新增数据库或外部 MLOps 平台"
+    ],
+    "routing_rules": [
+      {
+        "if_topic": "K 线、市场结构、交易信号、回测偏差、fill model、订单状态机、实盘风控本体",
+        "route_to": "Trading Engineering / Phase 37",
+        "phase40_usage": "只允许引用版本、摘要或风险状态，不沉淀本体规则"
+      },
+      {
+        "if_topic": "RAG no-hit、引用不足、知识缺口",
+        "route_to": "RAG Engineering / Knowledge Governance",
+        "phase40_usage": "作为 LLM 持续改进链路的一种触发原因"
+      }
+    ]
+  },
+  "knowledge_tree_scope": {
+    "l1": {
+      "node_id": "kt.ai_engineering",
+      "title": "AI Engineering"
+    },
+    "l2": {
+      "node_id": "kt.ai_feedback_governance",
+      "title": "Continuous Learning And Feedback Governance",
+      "partition_id": "KB_AI_18_FEEDBACK_GOVERNANCE"
+    },
+    "l3_topics": [
+      {
+        "node_id": "kt.ai_feedback_governance.feedback_logging",
+        "title": "Feedback Logging",
+        "purpose": "记录所有候选交易和决策链路，不只记录成交交易。"
+      },
+      {
+        "node_id": "kt.ai_feedback_governance.label_refresh",
+        "title": "Label Refresh",
+        "purpose": "治理多维标签、人工复核、good loss / bad win 和 false allow/block cost。"
+      },
+      {
+        "node_id": "kt.ai_feedback_governance.drift_monitoring",
+        "title": "Drift Monitoring",
+        "purpose": "区分 feature、label、score、calibration、strategy、symbol/regime 和 execution cost 漂移。"
+      },
+      {
+        "node_id": "kt.ai_feedback_governance.retraining_trigger",
+        "title": "Retraining Trigger",
+        "purpose": "定义周期、漂移、样本阈值和事故驱动的再训练触发，但阻断自动上线。"
+      },
+      {
+        "node_id": "kt.ai_feedback_governance.recalibration_loop",
+        "title": "Recalibration Loop",
+        "purpose": "定义再训练后的概率校准、阈值稳定性和分组可靠性检查。"
+      },
+      {
+        "node_id": "kt.ai_feedback_governance.champion_challenger",
+        "title": "Champion Challenger",
+        "purpose": "定义 challenger 与 champion 的比较、拒绝、晋级和人工复核。"
+      },
+      {
+        "node_id": "kt.ai_feedback_governance.shadow_paper_canary",
+        "title": "Shadow Paper Canary",
+        "purpose": "定义 shadow、paper、soft gate、canary 的受控验证路径和停止条件。"
+      },
+      {
+        "node_id": "kt.ai_feedback_governance.rollback_governance",
+        "title": "Rollback Governance",
+        "purpose": "定义 release manifest、rollback target、kill switch、incident freeze 和审批链。"
+      },
+      {
+        "node_id": "kt.ai_feedback_governance.llm_prompt_rag_sft_loop",
+        "title": "LLM Prompt RAG SFT Loop",
+        "purpose": "定义 LLM 持续改进优先 RAG/prompt，再考虑 SFT/LoRA。"
+      },
+      {
+        "node_id": "kt.ai_feedback_governance.feedback_loop_risk",
+        "title": "Feedback Loop Risk",
+        "purpose": "治理自标注、选择性日志、模型生成标签、自动化偏差和反馈回路过拟合。"
+      }
+    ]
+  },
+  "planned_knowledge_counts": {
+    "total": 36,
+    "p0_core": 18,
+    "p0_extended": 12,
+    "p1": 6
+  },
+  "planned_knowledge_items": [
+    {
+      "id": "P40-C01",
+      "priority": "P0-Core",
+      "target_canonical_node_id": "kt.ai_feedback_governance.feedback_logging",
+      "statement": "所有交易候选都必须记录，包括 allow、block、skip 和 human_review。"
+    },
+    {
+      "id": "P40-C02",
+      "priority": "P0-Core",
+      "target_canonical_node_id": "kt.ai_feedback_governance.feedback_logging",
+      "statement": "feedback record 必须保存决策时特征、scorer 输出、LLM 审计输出、final gate 决策和后验结果引用。"
+    },
+    {
+      "id": "P40-C03",
+      "priority": "P0-Core",
+      "target_canonical_node_id": "kt.ai_feedback_governance.feedback_logging",
+      "statement": "被阻断候选也必须保留 opportunity-cost 评估入口，避免只学习已成交样本。"
+    },
+    {
+      "id": "P40-C04",
+      "priority": "P0-Core",
+      "target_canonical_node_id": "kt.ai_feedback_governance.label_refresh",
+      "statement": "标签不能只用 PnL，必须覆盖交易质量、规则违规、风控违规、执行质量和人工复核。"
+    },
+    {
+      "id": "P40-C05",
+      "priority": "P0-Core",
+      "target_canonical_node_id": "kt.ai_feedback_governance.label_refresh",
+      "statement": "good loss 与 bad win 必须进入标签复核，防止模型学习错误激励。"
+    },
+    {
+      "id": "P40-C06",
+      "priority": "P0-Core",
+      "target_canonical_node_id": "kt.ai_feedback_governance.label_refresh",
+      "statement": "false allow cost 与 false block cost 必须进入评估和阈值决策。"
+    },
+    {
+      "id": "P40-C07",
+      "priority": "P0-Core",
+      "target_canonical_node_id": "kt.ai_feedback_governance.drift_monitoring",
+      "statement": "feature drift、label drift、score distribution drift 和 calibration drift 必须分开监控。"
+    },
+    {
+      "id": "P40-C08",
+      "priority": "P0-Core",
+      "target_canonical_node_id": "kt.ai_feedback_governance.drift_monitoring",
+      "statement": "strategy version、symbol mix、market regime 和 execution cost 漂移必须纳入交易 AI 监控。"
+    },
+    {
+      "id": "P40-C09",
+      "priority": "P0-Core",
+      "target_canonical_node_id": "kt.ai_feedback_governance.retraining_trigger",
+      "statement": "再训练只能生成 candidate model，不得自动替换 champion model。"
+    },
+    {
+      "id": "P40-C10",
+      "priority": "P0-Core",
+      "target_canonical_node_id": "kt.ai_feedback_governance.retraining_trigger",
+      "statement": "再训练触发必须记录触发原因、样本窗口、数据版本和审批状态。"
+    },
+    {
+      "id": "P40-C11",
+      "priority": "P0-Core",
+      "target_canonical_node_id": "kt.ai_feedback_governance.recalibration_loop",
+      "statement": "每次再训练后必须重新校准概率、阈值和分组可靠性。"
+    },
+    {
+      "id": "P40-C12",
+      "priority": "P0-Core",
+      "target_canonical_node_id": "kt.ai_feedback_governance.recalibration_loop",
+      "statement": "threshold policy 必须与成本矩阵和人工复核预算联动。"
+    },
+    {
+      "id": "P40-C13",
+      "priority": "P0-Core",
+      "target_canonical_node_id": "kt.ai_feedback_governance.champion_challenger",
+      "statement": "challenger 必须先通过 offline、shadow、paper 或 soft-gate 验证。"
+    },
+    {
+      "id": "P40-C14",
+      "priority": "P0-Core",
+      "target_canonical_node_id": "kt.ai_feedback_governance.shadow_paper_canary",
+      "statement": "hard gate 启用前必须经过受控 canary 和停止条件检查。"
+    },
+    {
+      "id": "P40-C15",
+      "priority": "P0-Core",
+      "target_canonical_node_id": "kt.ai_feedback_governance.rollback_governance",
+      "statement": "每次发布必须有 release manifest、rollback target、kill switch 和审批记录。"
+    },
+    {
+      "id": "P40-C16",
+      "priority": "P0-Core",
+      "target_canonical_node_id": "kt.ai_feedback_governance.llm_prompt_rag_sft_loop",
+      "statement": "LLM 持续改进优先 RAG 更新，其次 prompt 更新，最后才考虑 SFT/LoRA。"
+    },
+    {
+      "id": "P40-C17",
+      "priority": "P0-Core",
+      "target_canonical_node_id": "kt.ai_feedback_governance.llm_prompt_rag_sft_loop",
+      "statement": "SFT/LoRA 只能在 eval 证明 schema、citation、reason-code 长期失败时触发。"
+    },
+    {
+      "id": "P40-C18",
+      "priority": "P0-Core",
+      "target_canonical_node_id": "kt.ai_feedback_governance.feedback_loop_risk",
+      "statement": "自标注、模型生成标签和选择性日志必须标注来源，避免反馈回路污染。"
+    },
+    {
+      "id": "P40-E01",
+      "priority": "P0-Extended",
+      "target_canonical_node_id": "kt.ai_feedback_governance.feedback_logging",
+      "statement": "feedback log 必须支持 replayable audit trail。"
+    },
+    {
+      "id": "P40-E02",
+      "priority": "P0-Extended",
+      "target_canonical_node_id": "kt.ai_feedback_governance.label_refresh",
+      "statement": "标签策略版本变更必须触发历史样本兼容性说明。"
+    },
+    {
+      "id": "P40-E03",
+      "priority": "P0-Extended",
+      "target_canonical_node_id": "kt.ai_feedback_governance.drift_monitoring",
+      "statement": "漂移报警必须区分数据质量问题、市场变化和策略版本变化。"
+    },
+    {
+      "id": "P40-E04",
+      "priority": "P0-Extended",
+      "target_canonical_node_id": "kt.ai_feedback_governance.retraining_trigger",
+      "statement": "事故驱动再训练不能绕过常规评估和审批。"
+    },
+    {
+      "id": "P40-E05",
+      "priority": "P0-Extended",
+      "target_canonical_node_id": "kt.ai_feedback_governance.recalibration_loop",
+      "statement": "再校准报告必须包含分桶可靠性和样本覆盖边界。"
+    },
+    {
+      "id": "P40-E06",
+      "priority": "P0-Extended",
+      "target_canonical_node_id": "kt.ai_feedback_governance.champion_challenger",
+      "statement": "champion/challenger 比较必须包含风险指标，不得只看平均收益。"
+    },
+    {
+      "id": "P40-E07",
+      "priority": "P0-Extended",
+      "target_canonical_node_id": "kt.ai_feedback_governance.shadow_paper_canary",
+      "statement": "shadow 和 paper 结果必须明确与真实执行环境的差异。"
+    },
+    {
+      "id": "P40-E08",
+      "priority": "P0-Extended",
+      "target_canonical_node_id": "kt.ai_feedback_governance.rollback_governance",
+      "statement": "rollback 后必须冻结相关模型、prompt、RAG 包和阈值策略。"
+    },
+    {
+      "id": "P40-E09",
+      "priority": "P0-Extended",
+      "target_canonical_node_id": "kt.ai_feedback_governance.llm_prompt_rag_sft_loop",
+      "statement": "RAG 知识更新必须回写检索评测集，不能只修改文档。"
+    },
+    {
+      "id": "P40-E10",
+      "priority": "P0-Extended",
+      "target_canonical_node_id": "kt.ai_feedback_governance.feedback_loop_risk",
+      "statement": "人工复核样本不能直接作为默认真值，必须带 reviewer、reason 和冲突状态。"
+    },
+    {
+      "id": "P40-E11",
+      "priority": "P0-Extended",
+      "target_canonical_node_id": "kt.ai_feedback_governance.feedback_loop_risk",
+      "statement": "高置信模型输出不能替代来源证据。"
+    },
+    {
+      "id": "P40-E12",
+      "priority": "P0-Extended",
+      "target_canonical_node_id": "kt.ai_feedback_governance.drift_monitoring",
+      "statement": "持续学习看板必须显示 drift、calibration、false allow/block 和人审成本趋势。"
+    },
+    {
+      "id": "P40-P01",
+      "priority": "P1",
+      "target_canonical_node_id": "kt.ai_feedback_governance.feedback_logging",
+      "statement": "feedback 采样策略必须说明长尾市场和低频策略覆盖。"
+    },
+    {
+      "id": "P40-P02",
+      "priority": "P1",
+      "target_canonical_node_id": "kt.ai_feedback_governance.label_refresh",
+      "statement": "标签冲突需要仲裁策略和 gold set 回归测试。"
+    },
+    {
+      "id": "P40-P03",
+      "priority": "P1",
+      "target_canonical_node_id": "kt.ai_feedback_governance.retraining_trigger",
+      "statement": "再训练计划应支持固定节奏与事件触发混合。"
+    },
+    {
+      "id": "P40-P04",
+      "priority": "P1",
+      "target_canonical_node_id": "kt.ai_feedback_governance.champion_challenger",
+      "statement": "challenger 拒绝也要记录原因，进入后续实验知识库。"
+    },
+    {
+      "id": "P40-P05",
+      "priority": "P1",
+      "target_canonical_node_id": "kt.ai_feedback_governance.rollback_governance",
+      "statement": "发布治理要支持模型、prompt、RAG 包、阈值的组合回滚。"
+    },
+    {
+      "id": "P40-P06",
+      "priority": "P1",
+      "target_canonical_node_id": "kt.ai_feedback_governance.llm_prompt_rag_sft_loop",
+      "statement": "LLM 改动必须分离 prompt regression、RAG retrieval regression 和 model eval。"
+    }
+  ],
+  "contract_summary": {
+    "feedback_dataset_contract": [
+      "FeedbackRecord",
+      "LabelUpdateRecord",
+      "DatasetVersionManifest",
+      "AuditTraceRecord",
+      "FeedbackQualityGateReport"
+    ],
+    "drift_retraining_recalibration_contract": [
+      "DriftReport",
+      "RetrainingTriggerDecision",
+      "CandidateModelTrainingRequest",
+      "RecalibrationReport",
+      "ThresholdStabilityReport"
+    ],
+    "champion_challenger_release_contract": [
+      "ChampionChallengerReview",
+      "ShadowPaperCanaryPlan",
+      "ShadowPaperCanaryReport",
+      "ReleaseManifest",
+      "RollbackPlan",
+      "HumanApprovalRecord"
+    ]
+  },
+  "quality_gates": [
+    "每条候选知识必须有来源。",
+    "每条候选知识必须有适用范围和不适用场景。",
+    "候选知识不得直接进入 approved。",
+    "accepted_for_draft 不等于 approved。",
+    "reviewed 不等于 approved。",
+    "MCP/SearchLab 只能读取 formal knowledge index，不从 candidate 队列作为默认知识读取。",
+    "任何涉及中文的文档和 JSON 必须 UTF-8 且无乱码。"
+  ]
+}

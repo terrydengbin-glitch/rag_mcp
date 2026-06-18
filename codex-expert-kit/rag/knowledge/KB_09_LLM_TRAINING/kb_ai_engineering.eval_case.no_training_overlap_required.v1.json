@@ -1,0 +1,345 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_ai_engineering.eval_case.no_training_overlap_required.v1",
+  "title": "评估样本不得与训练样本重叠",
+  "metadata": {
+    "partition_id": "KB_09_LLM_TRAINING",
+    "domain": "llm_training",
+    "subdomain": "eval_case_schema_engineering",
+    "rule_type": "decision_rule",
+    "content_type": "json",
+    "project_binding": "none",
+    "tree_node_id": "kt.llm_training.training_dataset_schema_engineering",
+    "tree_path": "CEK-TA / AI Engineering",
+    "canonical_node_id": "kt.llm_training.training_dataset_schema_engineering",
+    "canonical_tree_path": "CEK-TA / AI Engineering",
+    "risk_level": "medium",
+    "used_for": [
+      "llm_training",
+      "trading_gating_scoring",
+      "rag_engineering",
+      "mcp",
+      "vue_audit_ui"
+    ],
+    "source_candidate_id": "cand_20260609_ai_engineering_eval_case_no_training_overlap_required_v1_001",
+    "research_task_id": "RIT-P36-B-S20",
+    "claim_type": "llm_eval_rule",
+    "classification_notes": "Phase 36 AI Engineering reviewed knowledge；本条只沉淀 AI/LLM/RAG/MCP/训练数据、评估、部署或治理规则。交易规则本体、K 线、策略、实盘执行和风控阈值必须路由到 Trading Engineering。"
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "general",
+    "data_granularity": "general",
+    "project_type": "trading_llm_assistant",
+    "applies_when": [
+      "外接项目准备使用 eval case 评估 LLM gate/scoring、prompt、RAG、模型版本或阈值。",
+      "评估结果会用于模型 promotion、hard gate 讨论、SearchLab/MCP 回归或人工审计。",
+      "需要检查 eval/gold 与 train/prompt/RAG/preference 数据是否 exact 或 near duplicate。"
+    ],
+    "not_applicable_when": [
+      "只是在定义数据集版本或来源血缘，应路由到 dataset.version_and_hash_required 或 dataset.source_lineage_required。",
+      "需要定义具体交易策略、K 线形态、买卖点、仓位、止损止盈或实盘执行动作。",
+      "评估样本只是临时探索，不进入正式评估、门禁、审计或 promotion。"
+    ]
+  },
+  "content": {
+    "statement": "LLM gate/scoring 的 eval case 必须与 training、prompt selection、fine-tuning、threshold calibration、RAG index construction 和 preference training 数据隔离，并执行 exact duplicate 与 near-duplicate overlap 检查。",
+    "rationale": "评估样本如果与训练、调参、阈值校准或 RAG 构建样本重叠，会让模型评估偏乐观，无法证明外接交易 LLM gating/scoring 的真实泛化能力。",
+    "procedure": [
+      "为每个 eval case 记录 eval_case_id、eval_dataset_id、split_id 和 eval_dataset_hash。",
+      "列出 train_dataset_ids_checked、prompt_selection_dataset_id、rag_index_version、preference_dataset_id 和 calibration_dataset_id。",
+      "执行 exact overlap 与 near-duplicate overlap 检查，生成 overlap_check_id。",
+      "若 overlap_check 未完成或发现 eval/gold 与训练池重叠，阻断最终评估或重建 split。",
+      "将 contamination_status、action_taken 和 reviewer 写入审计记录。"
+    ],
+    "examples": [],
+    "anti_patterns": [
+      "把 reviewed 知识当作 approved 默认指导。",
+      "把 AI Engineering 规则扩写成具体交易阈值、仓位、买卖点、止损止盈或执行参数。",
+      "缺少来源、schema、适用范围、冲突检查或审计记录仍进入训练、评估、RAG promotion 或默认指导。"
+    ],
+    "validation": [
+      "source_evidence 至少存在 2 条，且没有 unresolved conflict。",
+      "review_status 为 reviewed 时 machine_gate.default_guidance 必须是 caveat_only。",
+      "外接项目调用时必须返回 knowledge_id、source_refs、review_status、machine_gate 和适用边界。",
+      "前端候选页、知识树和 SearchLab 不得显示乱码或未解释的英文 demo 文案。"
+    ],
+    "risk_notes": [
+      "accepted_for_draft 不是 approved；本条只能作为 formal reviewed 知识进入审计和检索。",
+      "本知识项只处理 AI Engineering 边界，不沉淀项目私有交易数据和交易规则本体。",
+      "若项目事实涉及具体策略、实盘订单、风控阈值或市场结构，应路由到 Trading Engineering 对应分支。"
+    ],
+    "citation_notes": "OpenAI eval/fine-tuning 资料和 scikit-learn cross-validation/data leakage 文档支持 held-out evaluation 与避免训练评估污染；CEK-TA dataset.deduplication_required 可作为内部互链。",
+    "audit_patch_notes": {
+      "source_patch_notes": [
+        "保留 OpenAI evals 作为 LLM workflow evaluation supporting source，但注明 Evals platform 退役风险。",
+        "保留 scikit-learn cross-validation 作为 held-out evaluation 和 split discipline 主要来源。",
+        "补 scikit-learn common pitfalls / data leakage 作为测试数据不得参与 fit / preprocessing / tuning 的来源。",
+        "建议补第二批已二审通过的 dataset.deduplication_required 作为 exact / near duplicate 和 contamination check 的内部互链来源。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：Eval cases must be isolated from training、prompt selection、fine-tuning、threshold calibration、RAG index construction and preference training data, with exact and near-duplicate overlap checks.",
+        "建议字段：eval_case_id、eval_dataset_id、split_id、train_dataset_ids_checked、overlap_check_id、exact_overlap_count、near_duplicate_count、contamination_status、action_taken、reviewer。",
+        "增加规则：overlap_check 未完成或发现 eval/gold 与 train pool 重叠时，不得用于最终模型或 gate promotion。",
+        "明确 no_training_overlap 是 eval case 最小 schema，不等于完整 dataset governance。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 只记录 split、hash、overlap check 和污染状态。",
+        "原始交易文本、订单、账户、策略细节和 K 线样本不得写入 AI Engineering KB。",
+        "若重叠判断涉及业务等价样本，应由项目 data owner 或 Trading Engineering 解释。"
+      ],
+      "conflict_patch_notes": [
+        "与 dataset.train_validation_test_split_required、data_asset.eval_pool_must_not_train、dataset.deduplication_required 构成正向互补。",
+        "与 eval_case.time_strategy_regime_split_required 有重叠：本条聚焦 no overlap，后者聚焦 split metadata。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 eval_case_overlap_check_schema.json。",
+        "补 exact/near duplicate 阈值和 owner 规则。",
+        "补 UI audit 字段：overlap_pool、duplicate_group_id、reviewer、action_taken。"
+      ]
+    },
+    "required_fields": [
+      "eval_case_id",
+      "eval_dataset_id",
+      "split_id",
+      "train_dataset_ids_checked",
+      "overlap_check_id",
+      "exact_overlap_count",
+      "near_duplicate_count",
+      "contamination_status",
+      "action_taken",
+      "reviewer"
+    ],
+    "linked_rules": [
+      "dataset.train_validation_test_split_required.v1",
+      "dataset.deduplication_required.v1",
+      "data_asset.eval_pool_must_not_train.v1",
+      "eval.holdout_test_set_required.v1"
+    ]
+  },
+  "assumptions": [
+    "外接项目提供项目事实、私有交易数据和策略上下文；CEK-TA 只沉淀可复用专业规则。",
+    "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+  ],
+  "source_evidence": [
+    {
+      "source_id": "src_openai_evals",
+      "source_title": "Working with evals | OpenAI API",
+      "source_url": "https://platform.openai.com/docs/guides/evals?api-mode=chat",
+      "source_type": "official_doc",
+      "publisher": "OpenAI",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "OpenAI evals documentation supports programmatic evaluation setup and workflow-specific quality checks before relying on model behavior.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_sklearn_cv",
+      "source_title": "Cross-validation: evaluating estimator performance | scikit-learn",
+      "source_url": "https://scikit-learn.org/stable/modules/cross_validation.html",
+      "source_type": "official_doc",
+      "publisher": "scikit-learn",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "scikit-learn cross-validation guidance supports held-out evaluation, splitting discipline, and avoiding evaluation on training data.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_occ_fed_fdic_revised_model_risk_2026",
+      "source_title": "Model Risk Management: Revised Guidance",
+      "source_url": "https://occ.gov/news-issuances/bulletins/2026/bulletin-2026-13.html",
+      "source_type": "standard_or_risk_framework",
+      "publisher": "OCC / Federal Reserve / FDIC",
+      "published_at": "2026-04-17",
+      "accessed_at": "2026-06-09",
+      "version": "OCC Bulletin 2026-13 / SR 26-2",
+      "reliability": "high",
+      "relevance": "medium",
+      "evidence_summary": "2026 年跨机构模型风险管理修订指南支持模型治理、验证、变更控制和风险分层；同时需注明 generative AI 和 agentic AI 不在其直接范围内，只能作为模型风险治理类比来源。",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 90,
+    "score_version": "1.0.0",
+    "primary_source_count": 2,
+    "supporting_source_count": 1,
+    "low_reliability_source_count": 0,
+    "limitations": [
+      "本条为 reviewed 知识，来源和审计补丁已记录；默认指导仍需后续人工治理升级 approved。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "docs/contracts/ai_engineering_gating_scoring_contract.md",
+      "docs/contracts/ai_engineering_knowledge_item_policy.md",
+      "docs/tasks/phase36_ai_engineering_gating_scoring_knowledge.md"
+    ],
+    "conflicts": [],
+    "resolution_summary": "未发现与当前 CEK-TA formal knowledge 的直接冲突；候选不会进入默认指导。",
+    "default_recommendation": "caveat_only_until_approved"
+  },
+  "review": {
+    "confidence": "medium",
+    "freshness": "time_sensitive",
+    "review_status": "reviewed",
+    "reviewer": "codex",
+    "reviewed_at": "2026-06-09",
+    "created_at": "2026-06-09",
+    "updated_at": "2026-06-09",
+    "open_questions": [
+      "审计时确认该候选是否应与相邻 AI Engineering 规则合并、拆分，或改路由到 Trading Engineering。",
+      "补 eval_case_overlap_check_schema.json。",
+      "补 exact/near duplicate 阈值和 owner 规则。",
+      "补 UI audit 字段：overlap_pool、duplicate_group_id、reviewer、action_taken。"
+    ],
+    "decision_log": [
+      {
+        "at": "2026-06-09",
+        "actor": "external_ai",
+        "decision": "accepted_for_draft",
+        "reason": "方向成立。评估样本必须与训练样本隔离，不能与训练、prompt tuning、fine-tuning、threshold calibration 或 RAG construction 样本发生 exact / near-duplicate overlap。OpenAI eval / fine-tuning 资料和 scikit-learn cross-validation / data leakage 资料均支持 held-out evaluation 与避免训练评估污染。",
+        "audit_result_id": "audit_result_phase36_ai_engineering_batch_03_of_10_20260609_gpt55_pro_strict_sources"
+      },
+      {
+        "at": "2026-06-09",
+        "actor": "codex",
+        "decision": "converted_to_reviewed",
+        "reason": "按 Phase 36 批量审计结果优化候选并转为 formal reviewed；未升级 approved。",
+        "audit_result_id": "audit_result_phase36_ai_engineering_batch_03_of_10_20260609_gpt55_pro_strict_sources"
+      }
+    ],
+    "approval_status": "not_requested",
+    "default_guidance_allowed": false,
+    "source_candidate_id": "cand_20260609_ai_engineering_eval_case_no_training_overlap_required_v1_001",
+    "ai_audit_result_id": "audit_result_phase36_ai_engineering_batch_03_of_10_20260609_gpt55_pro_strict_sources",
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase36_ai_engineering_batch_03_of_10_20260609_gpt55_pro_strict_sources",
+      "source_package_id": "phase36_ai_engineering_candidate_audit_batch_03_of_10_20260609",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立。评估样本必须与训练样本隔离，不能与训练、prompt tuning、fine-tuning、threshold calibration 或 RAG construction 样本发生 exact / near-duplicate overlap。OpenAI eval / fine-tuning 资料和 scikit-learn cross-validation / data leakage 资料均支持 held-out evaluation 与避免训练评估污染。",
+      "source_patch_notes": [
+        "保留 OpenAI evals 作为 LLM workflow evaluation supporting source，但注明 Evals platform 退役风险。",
+        "保留 scikit-learn cross-validation 作为 held-out evaluation 和 split discipline 主要来源。",
+        "补 scikit-learn common pitfalls / data leakage 作为测试数据不得参与 fit / preprocessing / tuning 的来源。",
+        "建议补第二批已二审通过的 dataset.deduplication_required 作为 exact / near duplicate 和 contamination check 的内部互链来源。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：Eval cases must be isolated from training、prompt selection、fine-tuning、threshold calibration、RAG index construction and preference training data, with exact and near-duplicate overlap checks.",
+        "建议字段：eval_case_id、eval_dataset_id、split_id、train_dataset_ids_checked、overlap_check_id、exact_overlap_count、near_duplicate_count、contamination_status、action_taken、reviewer。",
+        "增加规则：overlap_check 未完成或发现 eval/gold 与 train pool 重叠时，不得用于最终模型或 gate promotion。",
+        "明确 no_training_overlap 是 eval case 最小 schema，不等于完整 dataset governance。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 只记录 split、hash、overlap check 和污染状态。",
+        "原始交易文本、订单、账户、策略细节和 K 线样本不得写入 AI Engineering KB。",
+        "若重叠判断涉及业务等价样本，应由项目 data owner 或 Trading Engineering 解释。"
+      ],
+      "conflict_patch_notes": [
+        "与 dataset.train_validation_test_split_required、data_asset.eval_pool_must_not_train、dataset.deduplication_required 构成正向互补。",
+        "与 eval_case.time_strategy_regime_split_required 有重叠：本条聚焦 no overlap，后者聚焦 split metadata。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 eval_case_overlap_check_schema.json。",
+        "补 exact/near duplicate 阈值和 owner 规则。",
+        "补 UI audit 字段：overlap_pool、duplicate_group_id、reviewer、action_taken。"
+      ]
+    },
+    "approved_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "contribution": {
+    "contribution_id": null,
+    "source_project": null,
+    "sanitization_status": "not_applicable",
+    "private_data_removed": true,
+    "generic_mapping_notes": "Phase 36 public-source AI Engineering candidate; no project-private trading facts included."
+  },
+  "copyright": {
+    "stores_full_text": false,
+    "stores_long_quote": false,
+    "summary_only": true,
+    "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+    "reuse_risk": "low"
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于审计 AI Engineering、LLM 训练、RAG/MCP、部署、安全或治理链路。",
+      "用于提醒外接项目补齐来源、适用边界、冲突状态、审计记录和人工审批。",
+      "用于 reviewed/audit 模式下带 caveat 引用。"
+    ],
+    "not_allowed": [
+      "不得生成买卖点、仓位、杠杆、止损止盈或实盘执行指令。",
+      "不得覆盖确定性风控、交易执行系统或人工审批。",
+      "不得作为 approved/default guidance 直接返回。"
+    ],
+    "required_context": [
+      "project_type",
+      "task_type",
+      "mode",
+      "strategy_version",
+      "data_boundary",
+      "review_status"
+    ],
+    "fallback_behavior": "cite_with_caveat"
+  },
+  "machine_gate": {
+    "default_guidance": "caveat_only",
+    "reason": "reviewed only; accepted_for_draft is not approved; default guidance requires later human governance approval.",
+    "requires_human_escalation": true,
+    "blocking_reasons": [
+      "not_approved",
+      "phase36_batch03_reviewed_only"
+    ],
+    "checked_at": "2026-06-09",
+    "gate_version": "1.0.0",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "recommended_extra_sources": [
+    {
+      "title": "保留 OpenAI evals 作为 LLM workflow evaluation supporting source，但注明 Evals platform 退役风险。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_1"
+    },
+    {
+      "title": "保留 scikit-learn cross-validation 作为 held-out evaluation 和 split discipline 主要来源。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_2"
+    },
+    {
+      "title": "补 scikit-learn common pitfalls / data leakage 作为测试数据不得参与 fit / preprocessing / tuning 的来源。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_3"
+    },
+    {
+      "title": "建议补第二批已二审通过的 dataset.deduplication_required 作为 exact / near duplicate 和 contamination check 的内部互链来源。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_4"
+    }
+  ]
+}

@@ -1,0 +1,206 @@
+{
+  "audit_result_id": "audit_result_phase36_batch09_sft_trade_data_supplemental_reaudit_20260609_gpt55_pro_strict_sources",
+  "source_package_id": "phase36_batch09_sft_trade_data_supplemental_audit_package_20260609",
+  "decisions": [
+    {
+      "candidate_id": "cand_20260609_ai_engineering_sft_output_schema_consistency_required_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "补证后可以升级为 accepted_for_draft。rewritten statement 已与 normalized_claim 对齐：SFT 训练样本和模型输出必须绑定版本化 output_schema_id，并在 held-out eval 上通过 JSON Schema / structured-output conformance 检查；同时明确 SFT 只能提升格式稳定性，生产侧仍必须保留 schema validation、parser fallback 和失败样本记录。OpenAI Structured Outputs、JSON Schema、Hugging Face TRL SFTTrainer、TFDV 与 OpenAI fine-tuning best practices 能直接支撑 output schema consistency、required fields、SFT 样本格式和 held-out eval。正式 draft 需要保留 vendor-neutral schema contract，不绑定 OpenAI 平台实现。",
+      "source_patch_notes": [
+        "保留 OpenAI Structured Outputs 作为 structured output / JSON Schema 约束主来源，但正式 draft 必须注明供应商实现只支持 JSON Schema 子集，不能替代应用层验证。",
+        "保留 JSON Schema Specification / required properties 作为 output_schema_id、required_fields、allowed_values 和 schema_validation_report 的主来源。",
+        "保留 Hugging Face TRL SFTTrainer 作为 SFT prompt-completion、standard 和 conversational dataset formats 来源。",
+        "保留 TFDV 作为 schema validation、missing feature anomaly、training-serving skew supporting source。",
+        "保留 OpenAI fine-tuning best practices 作为 data quality、train/test split 和 task-specific examples supporting source，但正式 draft 必须标注 OpenAI fine-tuning platform wind-down 风险。",
+        "补 CEK-TA sft_output_schema_contract.json 作为内部主契约。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议保留补证写法：SFT samples and model outputs must bind to a versioned output_schema_id and pass held-out JSON Schema / structured-output conformance eval before gate/scoring use.",
+        "建议字段：output_schema_id、output_schema_version、required_fields、allowed_values、schema_validation_report_id、heldout_eval_id、failure_case_ids、parser_fallback_action、promotion_decision。",
+        "明确 SFT 可以改善格式稳定性，但不能成为唯一 schema enforcement；生产侧仍需要 parser validation、structured-output validation、retry/fallback 和失败样本记录。",
+        "如 output schema 变更，应触发 held-out eval rerun、schema diff review 和 release manifest update。",
+        "不得把具体交易字段语义、策略评分维度或执行规则写入 SFT schema；只保存字段名、类型、校验规则、owner_ref 和外部引用。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 只定义 SFT 输出 schema、schema conformance eval、parser fallback、失败样本记录和审计字段。",
+        "具体交易输出字段含义、策略评分维度、交易结果解释、买卖点、仓位、止损止盈和订单动作由 Trading Engineering 或 project owner 提供。",
+        "SFT 样本不得包含项目私有策略规则、账户、订单、broker token、K 线条件或实盘执行逻辑。",
+        "涉及快速变化知识、市场事实、来源引用或私有文档问答时，应优先使用 RAG / MCP，不应靠 SFT 注入。"
+      ],
+      "conflict_patch_notes": [
+        "与 sft.when_to_use_and_not_use 不再是完全重复：本条聚焦 output schema consistency，sft.when_to_use_and_not_use 聚焦方法选择边界。",
+        "与 training_example.sft_schema_required、training_example.input_target_separation、serving_consistency.training_serving_parity_test_required 应互链。",
+        "与 training_objective.task_definition_required 互补：task definition 定义 output_schema_id，本条要求 SFT 样本和输出遵守该 schema。",
+        "未发现需要 rejected 的直接冲突；accepted_for_draft 仍不等于 approved。"
+      ],
+      "required_followups": [
+        "补 sft_output_schema_contract.json。",
+        "补 output_schema_validation_report schema。",
+        "补 parser_fallback_action enum：retry、needs_review、block_promotion、degraded_read_only_response。",
+        "补 eval cases：missing required field、invalid enum、schema drift after SFT、valid JSON but invalid schema、schema-valid but unsafe trading action。",
+        "正式 draft 中标注 OpenAI fine-tuning / Evals platform migration 风险。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_trade_candidate_market_risk_execution_context_required_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "补证后可以升级为 accepted_for_draft。rewritten statement 已与 normalized_claim 对齐：交易候选进入 LLM scoring/gating 前必须携带 decision-time market_context_ref、risk_context_ref 和 execution_context_ref，且这些引用必须来自 owner-defined schema；缺失、过期或冲突的 context 必须降级为 needs_more_evidence 或 human_review，LLM 不得自行补全。FINRA 15-09 支持算法交易风险、测试、控制和监督；QuantConnect trading/orders 与 reality modeling 支持 execution context、fills、fees、slippage、brokerage/reality models；Feast/scikit-learn 支持 decision-time 可见性与泄漏防护；Datasheets 支持数据 composition、intended use 和 limitations 文档化。",
+      "source_patch_notes": [
+        "保留 FINRA 15-09 作为算法交易监督、风险评估、测试、交易系统与合规控制来源。",
+        "保留 QuantConnect Trading and Orders / Reality Modeling 作为 execution_context_ref、order_ref、fill_ref、fee/slippage/cost model refs 的工程来源。",
+        "保留 Feast point-in-time correctness 与 scikit-learn data leakage 作为 decision-time visibility 和 future-info 防护来源。",
+        "保留 Datasheets for Datasets 作为 context composition、recommended/prohibited use 和 limitations supporting source。",
+        "补 CEK-TA market_risk_execution_context_contract.md 作为内部主契约，声明 market/risk/execution semantics 由 Trading Engineering 或 project owner 提供。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议保留补证写法：Before LLM scoring/gating, each trade candidate must carry decision-time market_context_ref, risk_context_ref and execution_context_ref from owner-defined schemas; missing, stale or conflicting context must downgrade to needs_more_evidence or human_review.",
+        "建议字段：trade_candidate_id、decision_timestamp、market_context_ref、risk_context_ref、execution_context_ref、cost_model_ref、liquidity_context_ref、source_mode、context_freshness_status、context_conflict_status、review_owner。",
+        "market/risk/execution context 只能是外部引用、hash 或脱敏摘要，不是 AI Engineering 内部交易规则正文。",
+        "缺少 owner-defined context 时，不得生成 default allow、高置信评分、risk/reward conclusion 或交易指导。",
+        "context refs 应和 snapshot_id、strategy_version_ref、source_mode、execution_cost_status 互链。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 只定义 context refs、缺失状态、过期状态、冲突状态、review action 和审计字段。",
+        "market context、risk budget、execution cost、fill model、slippage、fees、liquidity、broker context 和 execution semantics 由 Trading Engineering 管理。",
+        "不得写入具体 K 线条件、market regime 公式、买卖点、仓位、止损止盈、订单路由、账户规则或策略参数。",
+        "如果 LLM 输出试图补全缺失 context，应记录为 hallucinated_context_attempt / needs_review，而不是进入评分证据。"
+      ],
+      "conflict_patch_notes": [
+        "与 trade_candidate.snapshot_required_before_scoring 重叠但不等价：snapshot 是 decision-time 容器，本条是 market/risk/execution context refs 子规则。",
+        "与 scoring_rubric.risk_reward_quality、risk_ledger.false_allow_cost_record_required、trade_data.fee_slippage_execution_cost_required 互链。",
+        "与 task_taxonomy.pre_trade_post_trade_task_separation、feature_schema.decision_time_only、outcome_schema.post_trade_fields_separated 强互补。",
+        "未发现需要 rejected 的直接冲突；accepted_for_draft 仍不等于 approved。"
+      ],
+      "required_followups": [
+        "补 market_risk_execution_context_schema.json。",
+        "补 Trading Engineering owner policy。",
+        "补 context_freshness_status / context_conflict_status enum。",
+        "补 eval cases：missing risk context、missing execution cost、stale context、LLM invents market context、context used as final allow。",
+        "补 Vue audit UI 字段：market_context_ref、risk_context_ref、execution_context_ref、context_status、review_owner。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_trade_data_fee_slippage_execution_cost_required_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "补证后可以升级为 accepted_for_draft。rewritten statement 已与 normalized_claim 对齐：用于 LLM scoring/gating 训练、评估或复盘的 trade data 必须记录 fee_ref、slippage_ref、fill_ref、spread_or_liquidity_context_ref 和 execution_cost_status；缺失执行成本上下文时，不得把 PnL 或 outcome 直接作为训练标签或 gate 评估依据。QuantConnect 官方文档直接支持 transaction fees、slippage、fill models、spread costs 和 reality modeling；Datasheets 支持数据组成、用途和限制；NIST AI RMF 可作为治理 supporting source。正式 draft 建议继续补更具体的 transaction-fee、slippage、trade-fill 文档引用，而不是只用宽泛 reality modeling。",
+      "source_patch_notes": [
+        "保留 QuantConnect Trading and Orders / Reality Modeling 作为 execution-cost 主来源。",
+        "建议正式 draft 进一步补 QuantConnect Transaction Fees、Slippage Key Concepts 和 Trade Fills Key Concepts 作为更细粒度主来源。",
+        "保留 Datasheets for Datasets 作为数据组成、recommended/prohibited use 和 limitations supporting source。",
+        "保留 NIST AI RMF 仅作为治理 supporting source，不作为 execution cost 语义主来源。",
+        "互链第二批 data_quality.execution_cost_required，避免父子规则重复。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议保留补证写法：Trade data used for LLM scoring/gating training, evaluation or review must record fee_ref, slippage_ref, fill_ref, spread_or_liquidity_context_ref and execution_cost_status; if execution-cost context is missing, PnL/outcome must not be used directly as a training label or gate evidence.",
+        "建议字段：trade_record_id、fee_ref、slippage_ref、fill_ref、spread_or_liquidity_context_ref、cost_model_ref、execution_cost_status、cost_context_owner、review_status。",
+        "execution_cost_status 建议枚举：complete、partial、missing_fee、missing_slippage、missing_fill、missing_spread_context、needs_more_evidence、not_applicable。",
+        "缺失 execution cost 时，可进入 review / needs_more_evidence，但不得进入 PnL-only label、preference pair 或 hard-gate eval 证据。",
+        "execution cost fields 应保存引用、hash 或脱敏摘要，不保存真实账户费率、券商合同、订单明细或私有成交数据。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 只定义 execution cost 字段存在性、缺失状态、训练/评估 gate、审计字段和 UI 展示。",
+        "具体 fee model、slippage model、fill model、cost model、brokerage model、成交质量、收益口径和机会成本由 Trading Engineering 管理。",
+        "不得写入具体券商账户费率、订单明细、仓位、止损止盈、策略参数或实盘执行规则。",
+        "如果 execution cost 与 risk/reward quality、false_allow/false_block cost matrix 相关，应只存 cost_model_ref / risk_context_ref，具体解释路由 Trading Engineering。"
+      ],
+      "conflict_patch_notes": [
+        "与 data_quality.execution_cost_required 重复但可父子化：data_quality 条作为质量 gate 父规则，本条作为 trade_data schema 子规则。",
+        "与 scoring_rubric.risk_reward_quality、risk_ledger.false_allow_cost_record_required、label_schema.no_pnl_only_label 强互补。",
+        "与 trade_candidate.market_risk_execution_context_required 互链：execution_context_ref 应包含或引用 execution cost context。",
+        "未发现需要 rejected 的直接冲突；accepted_for_draft 仍不等于 approved。"
+      ],
+      "required_followups": [
+        "补 execution_cost_fields_schema.json。",
+        "补 QuantConnect Transaction Fees / Slippage / Trade Fills 具体来源到正式 source_refs。",
+        "补 execution_cost_status enum。",
+        "补 eval cases：fee missing、slippage missing、fill price missing、spread context missing、PnL label used despite cost missing。",
+        "补 Vue audit UI 字段：fee_ref、slippage_ref、fill_ref、execution_cost_status、cost_context_owner。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_trade_data_raw_trade_record_required_fields_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "补证后可以升级为 accepted_for_draft。rewritten statement 已与 normalized_claim 对齐：进入 LLM training/eval/review 链路的 raw trade record 必须具备最小 schema，包括 trade_record_id、trade_candidate_id、decision_timestamp、source_mode、snapshot_id、strategy_version_ref、instrument_ref、order_ref、fill_ref、fee_slippage_ref、outcome_context_ref、privacy_scan_status 和 license_status；缺少核心字段时 block_training 或 needs_more_evidence。JSON Schema / required properties、TFDV schema validation、Datasheets 和 QuantConnect orders/fills 来源足以支撑进入 draft。但正式 draft 应明确该字段集合是 CEK-TA minimum recommended schema，可按任务分层拆分 required / conditional_required。",
+      "source_patch_notes": [
+        "保留 JSON Schema Specification / required properties 作为 required fields 和 schema validation 主来源。",
+        "保留 TFDV 作为 schema validation、missing feature anomaly、train/serve skew supporting source。",
+        "保留 Datasheets for Datasets 作为数据组成、采集过程、用途、限制和维护说明来源。",
+        "保留 QuantConnect Trading and Orders 作为 order_ref、fill_ref、execution context 的交易工程来源。",
+        "建议补 CEK-TA raw_trade_record_schema.json 作为内部主契约，并将字段拆成 required、conditional_required、external_ref_only。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议保留补证方向，但把字段分层：core_required、task_required、conditional_required。",
+        "建议字段：trade_record_id、trade_candidate_id、decision_timestamp、source_mode、snapshot_id、strategy_version_ref、instrument_ref、order_ref、fill_ref、fee_slippage_ref、outcome_context_ref、privacy_scan_status、license_status、field_role_map。",
+        "明确 raw trade record 不等于 AI Engineering 知识正文；AI Engineering 只保存 schema、hash、外部引用、脱敏摘要和 validation status。",
+        "缺少核心字段时应 block_training / exclude_from_eval / needs_more_evidence；字段角色冲突时应触发 leakage check。",
+        "order_ref、fill_ref、fee_slippage_ref 必须是外部引用，不得包含原始 broker token、账户、完整订单明细或私有成交明细。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 定义 raw trade record schema、field_role、required/conditional-required 规则、缺失字段 gate 和审计 UI。",
+        "真实订单、账户、broker tokens、成交明细、策略规则、执行事实和券商字段语义保留在 Trading Engineering / project private domain。",
+        "不得把具体订单生命周期、成交状态机、K 线信号、策略参数、仓位或止损止盈规则写入 AI Engineering。",
+        "字段业务含义和条件必填逻辑由 Trading Engineering / project owner 提供，AI Engineering 只记录 owner_ref。"
+      ],
+      "conflict_patch_notes": [
+        "与 data_quality.missing_core_fields_block_training、dataset.schema_required、trade_candidate.snapshot_required_before_scoring 强相关，建议作为 trade_data schema family。",
+        "与第十批 training_data.trade_sample_schema_required 预计重复，应统一 canonical schema：raw_trade_record_required_fields 管原始记录，trade_sample_schema_required 管训练样本抽象层。",
+        "与 leakage.label_in_input_forbidden、outcome_schema.post_trade_fields_separated、data_privacy.no_secret_or_account_identifier_in_training 互链。",
+        "未发现需要 rejected 的直接冲突；accepted_for_draft 仍不等于 approved。"
+      ],
+      "required_followups": [
+        "补 raw_trade_record_schema.json。",
+        "补 required_field / conditional_required / field_role enum。",
+        "补 external_ref_only 字段规范。",
+        "补 eval cases：missing trade_record_id、missing decision_timestamp、source_mode missing、order/fill refs included as raw sensitive data、post-trade outcome mixed into input。",
+        "补 Vue audit UI 字段：missing_core_fields、field_role_conflicts、privacy_scan_status、license_status。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_trade_data_source_mode_required_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "补证后可以升级为 accepted_for_draft。rewritten statement 已与 normalized_claim 对齐：每个进入 LLM training/eval/RAG/preference/review 的 trade data sample 必须声明 source_mode，例如 backtest、paper、shadow、live、synthetic 或 incident_replay，并记录 allowed_use、prohibited_use、pool_type 和 promotion_ticket_id；缺少 source_mode 或未经审计混用 source_mode 必须阻断训练或降级审计。QuantConnect paper trading / live trading / reality modeling 支持 source_mode 的交易工程语义；Datasheets 支持数据来源、用途和限制；TFDV / scikit-learn 支持 schema validation 与 leakage 防护。正式 draft 建议补 backtesting 官方来源和 CEK-TA source_mode_policy。",
+      "source_patch_notes": [
+        "保留 QuantConnect Paper Trading 作为 paper source_mode 直接来源。",
+        "保留 QuantConnect Live Trading / Reality Modeling 作为 live 与 execution assumptions supporting sources。",
+        "建议补 QuantConnect Backtesting 或 backtest report 官方来源，增强 backtest source_mode 直接证据。",
+        "保留 Datasheets for Datasets 作为 source、allowed_use/prohibited_use、limitations supporting source。",
+        "保留 TFDV / scikit-learn data leakage 作为 source_mode schema validation 与 train/eval 防污染 supporting source。",
+        "补 CEK-TA source_mode_policy.md 和 source_mode_schema.json 作为内部主契约。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议保留补证写法：Every trade data sample entering LLM training/eval/RAG/preference/review must declare source_mode and allowed/prohibited use before promotion.",
+        "建议 source_mode enum：backtest、paper、shadow、live、synthetic、incident_replay。",
+        "建议字段：source_mode、environment、capture_time、decision_timestamp、allowed_use、prohibited_use、pool_type、promotion_ticket_id、review_owner、source_mode_mixing_status。",
+        "明确不同 source_mode 不得无审计混用；live_to_train 需要脱敏、license/privacy check、leakage check 和 owner approval。",
+        "source_mode 缺失时应 block_training、exclude_from_eval、needs_more_evidence 或 human_review。",
+        "source_mode 不能替代 lineage、license、privacy、dedup、leakage 和 schema validation。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 定义 source_mode 枚举、allowed_use/prohibited_use、pool_type、混用状态和审计字段。",
+        "backtest/paper/live 的交易语义、fill model、回测假设、paper broker、live brokerage 和实盘执行由 Trading Engineering 管理。",
+        "不得写入具体交易策略、订单、账户、仓位、止损止盈、K 线条件、fill model 或实盘执行规则。",
+        "如果 source_mode 影响标签语义、成本模型或执行假设，AI Engineering 只记录 owner_ref / context_ref，解释权归 Trading Engineering。"
+      ],
+      "conflict_patch_notes": [
+        "与 data_quality.backtest_paper_live_separation 高度重叠，建议统一 canonical family：trade_data.source_mode_required 作为字段规则，data_quality.backtest_paper_live_separation 作为混用防护规则。",
+        "与 dataset.source_lineage_required、dataset.version_and_hash_required、data_asset.eval_pool_must_not_train、dataset.deduplication_required 互补。",
+        "与 trade_candidate.market_risk_execution_context_required 互链：context refs 应包含 source_mode 语义。",
+        "未发现需要 rejected 的直接冲突；accepted_for_draft 仍不等于 approved。"
+      ],
+      "required_followups": [
+        "补 source_mode_schema.json。",
+        "补 source_mode_policy.md。",
+        "补 source_mode_mixing_status enum：clean、mixed_reviewed、mixed_unreviewed、missing、conflict、not_applicable。",
+        "补 backtesting 官方来源到正式 source_refs。",
+        "补 eval cases：source_mode missing、backtest/live mixed、paper sample used as live label、incident replay entered train pool without review、live_to_train without privacy/license check。"
+      ]
+    }
+  ],
+  "package_level_notes": [
+    "本包 purpose 声明覆盖 5 条 SFT / trade_candidate / trade_data needs_more_evidence 候选，但 task_ids 只列出 CEK-TA-251 与 CEK-TA-252；建议回写时补全或解释 metadata。",
+    "5 条均只建议 accepted_for_draft，不得设置 approved，也不得直接进入默认指导。",
+    "正式 draft 应把第九批二审的 5 条放入三个 family：sft.output_schema、trade_candidate.context_refs、trade_data.schema_and_source_mode。",
+    "所有条目必须继续遵守 AI Engineering 边界：只沉淀 schema、引用、状态、fallback、审计字段和 UI 展示；具体 K 线、策略、风控、回测、fill model、费用/滑点模型、仓位、止损止盈、订单执行和账户事实继续路由 Trading Engineering。",
+    "OpenAI fine-tuning / Evals 相关 source_refs 必须添加 migration / deprecation note；涉及 QuantConnect 的 execution context 应优先补更具体的 transaction fees、slippage、trade fills、paper/live/backtest 文档链接。"
+  ]
+}

@@ -1,0 +1,169 @@
+{
+  "package_id": "phase45_trading_engineering_p1_knowledge_scope_for_audit_20260612",
+  "phase": 45,
+  "task_id": "CEK-TA-455",
+  "generated_at": "2026-06-12",
+  "audit_target": "Trading Engineering P1/P2 knowledge scope, canonical nodes, source seed and hard boundaries",
+  "objective": "请严格审计 Phase 45 是否正确补齐 Trading Engineering P1/P2 知识范围，是否存在错误归类、知识遗漏、边界过宽、来源不足或与 AI Engineering / Database / Risk / Live Execution owner 冲突。",
+  "input_files": [
+    "docs/tasks/phase45_trading_engineering_p1_completion.md",
+    "docs/research/phase45_trading_engineering_p1_knowledge_scope.md",
+    "docs/research/phase45_trading_engineering_p1_research_task_queue.md",
+    "docs/research/phase45_trading_engineering_p1_source_seed.md",
+    "docs/contracts/phase45_trading_engineering_p1_runtime_contract.md",
+    "codex-expert-kit/rag/knowledge_tree.md"
+  ],
+  "hard_boundaries": {
+    "candidate_is_not_formal_knowledge": true,
+    "reviewed_is_not_approved": true,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "risk_threshold_advice_allowed": false,
+    "trade_execution_advice_allowed": false,
+    "forbidden_outputs": [
+      "买卖点",
+      "仓位建议",
+      "杠杆建议",
+      "止损止盈价格",
+      "风险阈值数值",
+      "实盘执行许可",
+      "把单一交易所规则泛化为所有市场"
+    ]
+  },
+  "scope_summary": {
+    "total_planned_items": 47,
+    "p1_items": 36,
+    "p2_items": 11,
+    "groups": [
+      {
+        "group_id": "P45-A",
+        "title": "Execution TCA",
+        "count": 6,
+        "priority": "P1",
+        "canonical_nodes": [
+          "kt.live_execution.execution_tca",
+          "kt.trade_analysis.execution_tca_review"
+        ]
+      },
+      {
+        "group_id": "P45-B",
+        "title": "Audit Trail / Clock Sync",
+        "count": 6,
+        "priority": "P1",
+        "canonical_nodes": [
+          "kt.trading_engineering.data_engineering.audit_clock",
+          "kt.live_execution.audit_trail"
+        ]
+      },
+      {
+        "group_id": "P45-C",
+        "title": "Layered Risk / Credit / Margin",
+        "count": 6,
+        "priority": "P1",
+        "canonical_nodes": [
+          "kt.risk_management.layered_controls"
+        ]
+      },
+      {
+        "group_id": "P45-D",
+        "title": "Resilience / Incident / Log",
+        "count": 6,
+        "priority": "P1",
+        "canonical_nodes": [
+          "kt.live_execution.resilience_incident",
+          "kt.ai_engineering.database_storage_engineering"
+        ]
+      },
+      {
+        "group_id": "P45-E",
+        "title": "Stress Testing / Scenario Risk",
+        "count": 6,
+        "priority": "P1",
+        "canonical_nodes": [
+          "kt.risk_management.stress_scenario"
+        ]
+      },
+      {
+        "group_id": "P45-F",
+        "title": "Order Type / TIF / Venue Semantics",
+        "count": 6,
+        "priority": "P1",
+        "canonical_nodes": [
+          "kt.live_execution.order_semantics",
+          "kt.replay_simulation.order_semantics"
+        ]
+      },
+      {
+        "group_id": "P45-G",
+        "title": "Market Data Entitlement / Reference Data",
+        "count": 6,
+        "priority": "P2",
+        "canonical_nodes": [
+          "kt.trading_engineering.data_engineering.reference_data_entitlement"
+        ]
+      },
+      {
+        "group_id": "P45-H",
+        "title": "Crypto Perpetual",
+        "count": 5,
+        "priority": "P2",
+        "canonical_nodes": [
+          "kt.market_microstructure.crypto_perpetual",
+          "kt.risk_management.crypto_perpetual_risk"
+        ]
+      }
+    ]
+  },
+  "audit_questions": [
+    "47 条知识点数量、优先级和分组是否合理，是否还遗漏 Trading Engineering P1/P2 必备主题？",
+    "每组 canonical_node_id 是否归属正确，是否把 AI Engineering、Database 或外接项目私有逻辑错误混入 Trading Engineering？",
+    "Execution TCA 是否明确只解释执行质量和成本，而不是策略 edge 或交易许可？",
+    "Audit Trail / Clock Sync 是否明确是证据链和数据契约，而不是策略信号？",
+    "Layered Risk 是否避免给风险阈值数值和 CEK-TA hard gate？",
+    "Order Semantics 是否要求 venue-specific，不泛化到所有交易所？",
+    "Crypto Perpetual 是否清楚限定交易所、产品、时效和风险 owner？",
+    "来源种子是否足够权威，是否存在只能 supporting 不能作为主证据的来源？",
+    "后续 candidate -> audit -> reviewed/caveat_only 流程是否完整，是否存在直接 approved/default/hard gate 风险？"
+  ],
+  "expected_audit_output_schema": {
+    "quality_gate": {
+      "pass": "boolean",
+      "reason": "string"
+    },
+    "decision": "accepted_scope | accept_with_patch | needs_revision | rejected",
+    "group_findings": [
+      {
+        "group_id": "string",
+        "decision": "accept | patch_required | reject",
+        "required_patches": [
+          "string"
+        ],
+        "missing_topics": [
+          "string"
+        ],
+        "classification_issues": [
+          "string"
+        ],
+        "source_issues": [
+          "string"
+        ]
+      }
+    ],
+    "global_required_patches": [
+      "string"
+    ],
+    "forbidden_escalations_detected": [
+      "string"
+    ],
+    "recommended_next_step": "string"
+  },
+  "machine_gate": {
+    "scope_audit_only": true,
+    "creates_candidate": false,
+    "creates_formal_knowledge": false,
+    "allows_approved": false,
+    "allows_default_guidance": false,
+    "allows_hard_gate": false
+  }
+}

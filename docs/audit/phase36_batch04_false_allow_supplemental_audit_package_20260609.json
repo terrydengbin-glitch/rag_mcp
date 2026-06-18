@@ -1,0 +1,530 @@
+{
+  "package_id": "phase36_batch04_false_allow_supplemental_audit_package_20260609",
+  "package_type": "candidate_ai_audit_package",
+  "created_at": "2026-06-09",
+  "created_by": "codex",
+  "phase": "Phase 36",
+  "task_ids": [
+    "CEK-TA-217",
+    "CEK-TA-218"
+  ],
+  "source_audit_result_id": "audit_result_phase36_ai_engineering_batch_04_of_10_20260609_gpt55_pro_strict_sources",
+  "purpose": "对 Phase 36 第四批唯一 needs_more_evidence 候选进行补证后二次审计。",
+  "workflow_boundary": {
+    "candidate_is_not_formal_knowledge": true,
+    "accepted_for_draft_is_not_approved": true,
+    "reviewed_is_not_approved": true,
+    "do_not_set_approved": true,
+    "current_required_decision": "accepted_for_draft | needs_more_evidence | rejected"
+  },
+  "auditor_instructions": {
+    "language": "中文",
+    "review_focus": [
+      "补证后的 rewritten statement 是否与 candidate_id、normalized_claim 对齐。",
+      "是否已经避免把内部风险偏好写成所有交易场景的绝对事实。",
+      "source_refs 是否包含 cost-sensitive learning、cost matrix、risk governance 和 high-impact human review 的直接来源。",
+      "AI Engineering 与 Trading Engineering 边界是否清楚。",
+      "如 accepted_for_draft，只代表可转 formal reviewed，不代表 approved。"
+    ],
+    "required_output_schema": {
+      "audit_result_id": "string",
+      "source_package_id": "phase36_batch04_false_allow_supplemental_audit_package_20260609",
+      "items": [
+        {
+          "candidate_id": "string",
+          "decision": "accepted_for_draft | needs_more_evidence | rejected",
+          "reason": "string",
+          "source_patch_notes": [
+            "string"
+          ],
+          "content_patch_notes": [
+            "string"
+          ],
+          "boundary_patch_notes": [
+            "string"
+          ],
+          "conflict_patch_notes": [
+            "string"
+          ],
+          "required_followups": [
+            "string"
+          ]
+        }
+      ]
+    }
+  },
+  "candidates": [
+    {
+      "schema_version": "1.0.0",
+      "candidate_id": "cand_20260609_ai_engineering_gating_false_allow_more_dangerous_than_false_block_v1_001",
+      "research_task_id": "RIT-P36-C-22",
+      "status": {
+        "review_status": "needs_more_evidence",
+        "ingestion_decision": "needs_more_evidence",
+        "decision_reason": "已按第四批审计意见补充 cost-sensitive learning、cost matrix、AI RMF risk ledger、OpenAI high-impact human review 和 FINRA algorithmic trading controls 来源，等待二次审计；该状态不是 accepted、reviewed 或 approved。",
+        "created_at": "2026-06-09",
+        "updated_at": "2026-06-09"
+      },
+      "classification": {
+        "tree_node_id": "kt.llm_training.trading_scoring_gating_training",
+        "canonical_node_id": "kt.llm_training.trading_scoring_gating_training",
+        "tree_path": "CEK-TA / AI Engineering",
+        "related_nodes": [],
+        "partition_id": "KB_09_LLM_TRAINING",
+        "domain": "llm_training",
+        "subdomain": "trading_scoring_gating_training",
+        "rule_type": "checklist",
+        "used_for": [
+          "llm_training",
+          "trading_gating_scoring",
+          "rag_engineering",
+          "mcp",
+          "vue_audit_ui"
+        ]
+      },
+      "claim": {
+        "claim_id": "claim_001",
+        "statement": "在 CEK-TA hard-gate 交易 LLM 工作流中，false allow 默认按更高严重度处理；但这不是跨所有交易场景的普适事实，只有在 approved risk ledger、cost matrix 和 Trading Engineering owner 未定义覆盖模型时才作为默认风险偏好。",
+        "normalized_claim": "gating.false_allow_more_dangerous_than_false_block.v1",
+        "evidence_summary": "Cost-sensitive learning 文献和 scikit-learn 成本敏感阈值示例支持不同误分类错误需要由 cost matrix 定义；NIST AI RMF 支持按 impact/likelihood 管理 AI 风险；FINRA 15-09 支持算法交易监督和控制；OpenAI usage policies 可作为金融等高影响自动化决策需要安全边界与人工复核的 supporting source。",
+        "interpretation_notes": "本候选已从“false allow 一定比 false block 更危险”的绝对表述，改为 CEK-TA hard-gate 场景的默认风险偏好。AI Engineering 只定义 risk event schema、severity 默认值、cost matrix 引用和审计要求；具体成本函数、仓位影响、机会成本和交易阈值由 Trading Engineering 或项目 owner 管理。",
+        "claim_strength": "medium",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general",
+        "asset": "general",
+        "timeframe": "general",
+        "data_granularity": "general",
+        "project_type": "trading_llm_assistant",
+        "applies_when": [
+          "外接项目使用 LLM 输出影响 hard gate、pre-risk gate、实盘前置风控、默认交易建议或高风险 human review 队列。",
+          "系统需要在 false allow 与 false block 之间设定默认 severity、fallback_action 或 review priority。",
+          "项目尚未提供 approved risk ledger、cost matrix、Trading Engineering owner override 或策略级成本模型。"
+        ],
+        "not_applicable_when": [
+          "LLM 只做离线解释、研究假设或人工参考，不影响 hard gate、默认指导、阈值或队列优先级。",
+          "项目已有经批准的 risk ledger/cost matrix 明确 false_block 成本更高或定义了不同权重。",
+          "需要定义具体交易阈值、仓位、止损止盈、订单执行、策略收益或机会成本公式，应路由到 Trading Engineering。"
+        ],
+        "assumptions": [
+          "外接项目提供项目事实、私有交易数据和策略上下文；CEK-TA 只沉淀可复用专业规则。",
+          "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+        ],
+        "limitations": [
+          "该候选仍是 candidate，等待二次审计；不得进入 reviewed、approved 或默认指导。",
+          "false allow 的更高严重度是 CEK-TA hard-gate 默认风险偏好，不是所有交易场景的外部事实。",
+          "没有 risk ledger 时，本条只能触发 human_review、needs_more_evidence 或 block_default_guidance，不能单独决定交易阈值。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_id": "src_finra_algo",
+          "source_title": "Algorithmic Trading | FINRA",
+          "source_url": "https://www.finra.org/rules-guidance/key-topics/algorithmic-trading",
+          "source_type": "standard_or_risk_framework",
+          "publisher": "FINRA",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 82,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "FINRA algorithmic trading guidance supports supervision, controls, risk assessment, testing, and governance for automated trading systems.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_fed_model_risk",
+          "source_title": "Supervisory Guidance on Model Risk Management",
+          "source_url": "https://www.federalreserve.gov/frrs/guidance/supervisory-guidance-on-model-risk-management.htm",
+          "source_type": "standard_or_risk_framework",
+          "publisher": "Federal Reserve",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 84,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "Model risk guidance supports independent validation, governance, change control, and risk-based model oversight.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_nist",
+          "source_title": "AI Risk Management Framework | NIST",
+          "source_url": "https://www.nist.gov/itl/ai-risk-management-framework",
+          "source_type": "standard_or_risk_framework",
+          "publisher": "NIST",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 88,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "NIST AI RMF supports governance, mapping, measurement, and management of AI risks across design, deployment, and monitoring.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_elkan_cost_sensitive_learning",
+          "source_title": "The Foundations of Cost-Sensitive Learning",
+          "source_url": "https://cseweb.ucsd.edu/~elkan/rescale.pdf",
+          "source_type": "paper",
+          "publisher": "IJCAI / Charles Elkan",
+          "published_at": "2001",
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 90,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "该论文讨论不同误分类错误有不同惩罚，并强调 cost matrix 需要经济一致性；可支撑 false allow/false block 不能靠通用准确率判断，而要由成本矩阵定义。",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_sklearn_cost_sensitive_threshold",
+          "source_title": "Post-tuning the decision threshold for cost-sensitive learning",
+          "source_url": "https://scikit-learn.org/stable/auto_examples/model_selection/plot_cost_sensitive_learning.html",
+          "source_type": "official_doc",
+          "publisher": "scikit-learn",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 90,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "scikit-learn 官方示例说明可用 misclassification cost matrix 调整决策阈值，支持阈值应由错误成本而不是单一 accuracy 决定。",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_nist_ai_rmf_core_manage_impact_likelihood",
+          "source_title": "AI RMF Core - Manage risks based on impact, likelihood, and resources",
+          "source_url": "https://airc.nist.gov/airmf-resources/airmf/5-sec-core/",
+          "source_type": "standard_or_risk_framework",
+          "publisher": "NIST AI Resource Center",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 90,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "NIST AI RMF Core 支持按影响、可能性和资源优先处理已记录 AI 风险，可支撑 risk ledger 需要记录 severity、likelihood 和 owner。",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_openai_usage_policies_high_impact_human_review",
+          "source_title": "Usage policies | OpenAI",
+          "source_url": "https://openai.com/policies/usage-policies/",
+          "source_type": "official_doc",
+          "publisher": "OpenAI",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 82,
+          "relevance": "medium",
+          "freshness": "time_sensitive",
+          "limitations": [
+            "该来源不是交易策略或成本矩阵来源，只能支持高影响自动化决策的人审和安全边界。"
+          ],
+          "evidence_summary": "OpenAI usage policies 对金融等高影响自动化决策强调安全边界和 human review，可作为 LLM hard-gate 场景不能无审计默认放行的 supporting source。",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_finra_regulatory_notice_15_09",
+          "source_title": "Regulatory Notice 15-09: Guidance on Effective Supervision and Control Practices for Firms Engaging in Algorithmic Trading Strategies",
+          "source_url": "https://www.finra.org/rules-guidance/notices/15-09",
+          "source_type": "standard_or_risk_framework",
+          "publisher": "FINRA",
+          "published_at": "2015-03",
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 90,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "FINRA 15-09 支持算法交易需要监督、测试、控制、风险管理和治理；可作为交易自动化 hard-gate 风险边界的行业治理来源。",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "high",
+        "score": 89,
+        "score_version": "1.0.0",
+        "primary_source_count": 4,
+        "supporting_source_count": 4,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "来源可以支撑成本敏感决策、风险优先级和高风险自动化治理；false_allow 默认高严重度仍需作为 CEK-TA 内部 hard-gate policy 审计。",
+          "二次审计前不得进入 formal reviewed 或 approved。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "checked_against": [
+          "docs/contracts/ai_engineering_gating_scoring_contract.md",
+          "docs/contracts/ai_engineering_knowledge_item_policy.md",
+          "docs/tasks/phase36_ai_engineering_gating_scoring_knowledge.md"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与当前 CEK-TA formal knowledge 的直接冲突；候选不会进入默认指导。",
+        "approval_allowed": true
+      },
+      "review": {
+        "confidence": "medium",
+        "freshness": "time_sensitive",
+        "reviewer": "external_ai_and_codex_alignment",
+        "reviewed_at": "2026-06-09",
+        "open_questions": [
+          "rewritten statement 是否已经避免把内部风险偏好伪装成所有交易场景的外部事实？",
+          "cost-sensitive learning、cost matrix、NIST AI RMF、FINRA 和 OpenAI policies 是否足够支撑 accepted_for_draft？",
+          "是否需要与 risk_ledger.false_allow_cost_record_required 合并或建立父子关系？",
+          "Trading Engineering owner override policy 是否仍需作为后续补强任务？"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-09",
+            "actor": "codex",
+            "action": "created",
+            "reason": "Phase 36 bulk AI Engineering candidate expansion."
+          },
+          {
+            "at": "2026-06-09",
+            "actor": "external_ai",
+            "action": "phase36_batch_audit_result_received",
+            "reason": "当前候选不应直接转 draft。方向作为 CEK-TA hard-gate 默认风险偏好是合理的，但 normalized_claim 断言 false allow 一定比 false block 更危险，这需要内部 risk ledger、cost matrix、loss-severity policy 或 Trading Engineering owner 责任链支撑。现有 FINRA / NIST / model risk 来源只能支持监督、测试、控制和风险管理，不能直接证明所有交易场景下 false allow 成本必然高于 false block。",
+            "audit_result_id": "audit_result_phase36_ai_engineering_batch_04_of_10_20260609_gpt55_pro_strict_sources"
+          }
+        ],
+        "ai_audit": {
+          "audit_result_id": "audit_result_phase36_ai_engineering_batch_04_of_10_20260609_gpt55_pro_strict_sources",
+          "source_package_id": "phase36_ai_engineering_candidate_audit_batch_04_of_10_20260609",
+          "decision": "needs_more_evidence",
+          "reason": "当前候选不应直接转 draft。方向作为 CEK-TA hard-gate 默认风险偏好是合理的，但 normalized_claim 断言 false allow 一定比 false block 更危险，这需要内部 risk ledger、cost matrix、loss-severity policy 或 Trading Engineering owner 责任链支撑。现有 FINRA / NIST / model risk 来源只能支持监督、测试、控制和风险管理，不能直接证明所有交易场景下 false allow 成本必然高于 false block。",
+          "source_patch_notes": [
+            "保留 FINRA 15-09 / FINRA algorithmic trading 作为交易自动化监督和控制来源。",
+            "保留 NIST AI RMF 作为 risk tolerance、risk measurement 和治理来源。",
+            "将旧 Federal Reserve model risk 来源更新或补充为 2026 OCC/Fed/FDIC revised model risk guidance，并注明 GenAI/agentic AI 不在其直接范围内。",
+            "补 cost-sensitive classification、false positive / false negative risk tradeoff、risk ledger 或内部 false_allow_cost_record_required 来源。",
+            "补 OpenAI usage policies 作为高风险金融自动化需要 human review 的 supporting source。"
+          ],
+          "content_patch_notes": [
+            "正式 statement 建议改为：For CEK-TA hard-gate trading LLM workflows, false_allow is treated as higher-severity by default unless an approved risk ledger and Trading Engineering owner define a different cost model.",
+            "避免写成所有场景的普适定论；应限定在 hard gate、实盘前置风控或默认交易建议场景。",
+            "建议字段：risk_ledger_id、false_allow_severity、false_block_severity、cost_model_ref、risk_owner、trading_engineering_owner、override_reason、reviewed_at。",
+            "如果没有 risk ledger，不能用该条决定阈值，只能触发 human_review / needs_more_evidence。"
+          ],
+          "boundary_patch_notes": [
+            "AI Engineering 可定义 risk event schema、severity 默认值和审计要求。",
+            "具体成本函数、策略收益、机会成本、仓位影响、风控预算和交易阈值属于 Trading Engineering。",
+            "不得把具体交易参数、账户风控规则、止损止盈或订单执行逻辑写入本知识项。"
+          ],
+          "conflict_patch_notes": [
+            "与 gating.low_confidence_cannot_allow 重复但不等价：后者是低置信度不能 hard allow，本条是 false_allow vs false_block 成本排序。",
+            "与 risk_ledger.false_allow_cost_record_required 后续候选应互链或合并。",
+            "当前直接 accepted 会把内部风险偏好伪装成外部事实。"
+          ],
+          "required_followups": [
+            "补 false_allow_false_block_cost_matrix.md。",
+            "补 risk_ledger_schema.json。",
+            "补 Trading Engineering owner override policy。",
+            "补 eval cases：false allow causes rule violation、false block causes missed profit、risk ledger overrides default severity。"
+          ],
+          "boundary": "accepted_for_draft 不是 approved；reviewed 不会进入默认指导。"
+        }
+      },
+      "copyright": {
+        "stores_full_text": false,
+        "stores_long_quote": false,
+        "summary_only": true,
+        "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+        "reuse_risk": "low"
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_ai_engineering.gating.false_allow_more_dangerous_than_false_block.v1",
+        "target_schema": "cek_ta_knowledge_item",
+        "target_review_status": "draft",
+        "skill_candidate": false,
+        "eval_case_candidate": false,
+        "required_fields": [
+          "risk_ledger_id",
+          "risk_event_id",
+          "gate_context",
+          "false_allow_severity",
+          "false_block_severity",
+          "cost_matrix_ref",
+          "cost_model_ref",
+          "risk_owner",
+          "trading_engineering_owner",
+          "override_reason",
+          "fallback_action",
+          "review_queue_id",
+          "reviewed_at"
+        ]
+      },
+      "workflow": {
+        "stage": "needs_more_evidence",
+        "queue_group": "needs_more_evidence",
+        "formal_knowledge_id": null,
+        "formal_review_status": null,
+        "ai_audit_result_id": "audit_result_phase36_ai_engineering_batch_04_of_10_20260609_gpt55_pro_strict_sources",
+        "hidden_from_default_queue": false,
+        "next_action": "external_reaudit",
+        "supplemental_research_status": "ready_for_reaudit",
+        "source_package_id": "phase36_batch04_false_allow_supplemental_audit_package_20260609",
+        "last_supplemented_at": "2026-06-09"
+      },
+      "source_evidence_for_audit": [
+        {
+          "source_id": "src_finra_algo",
+          "source_title": "Algorithmic Trading | FINRA",
+          "source_url": "https://www.finra.org/rules-guidance/key-topics/algorithmic-trading",
+          "source_type": "standard_or_risk_framework",
+          "publisher": "FINRA",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 82,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "FINRA algorithmic trading guidance supports supervision, controls, risk assessment, testing, and governance for automated trading systems.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_fed_model_risk",
+          "source_title": "Supervisory Guidance on Model Risk Management",
+          "source_url": "https://www.federalreserve.gov/frrs/guidance/supervisory-guidance-on-model-risk-management.htm",
+          "source_type": "standard_or_risk_framework",
+          "publisher": "Federal Reserve",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 84,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "Model risk guidance supports independent validation, governance, change control, and risk-based model oversight.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_nist",
+          "source_title": "AI Risk Management Framework | NIST",
+          "source_url": "https://www.nist.gov/itl/ai-risk-management-framework",
+          "source_type": "standard_or_risk_framework",
+          "publisher": "NIST",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 88,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "NIST AI RMF supports governance, mapping, measurement, and management of AI risks across design, deployment, and monitoring.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_elkan_cost_sensitive_learning",
+          "source_title": "The Foundations of Cost-Sensitive Learning",
+          "source_url": "https://cseweb.ucsd.edu/~elkan/rescale.pdf",
+          "source_type": "paper",
+          "publisher": "IJCAI / Charles Elkan",
+          "published_at": "2001",
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 90,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "该论文讨论不同误分类错误有不同惩罚，并强调 cost matrix 需要经济一致性；可支撑 false allow/false block 不能靠通用准确率判断，而要由成本矩阵定义。",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_sklearn_cost_sensitive_threshold",
+          "source_title": "Post-tuning the decision threshold for cost-sensitive learning",
+          "source_url": "https://scikit-learn.org/stable/auto_examples/model_selection/plot_cost_sensitive_learning.html",
+          "source_type": "official_doc",
+          "publisher": "scikit-learn",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 90,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "scikit-learn 官方示例说明可用 misclassification cost matrix 调整决策阈值，支持阈值应由错误成本而不是单一 accuracy 决定。",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_nist_ai_rmf_core_manage_impact_likelihood",
+          "source_title": "AI RMF Core - Manage risks based on impact, likelihood, and resources",
+          "source_url": "https://airc.nist.gov/airmf-resources/airmf/5-sec-core/",
+          "source_type": "standard_or_risk_framework",
+          "publisher": "NIST AI Resource Center",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 90,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "NIST AI RMF Core 支持按影响、可能性和资源优先处理已记录 AI 风险，可支撑 risk ledger 需要记录 severity、likelihood 和 owner。",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_openai_usage_policies_high_impact_human_review",
+          "source_title": "Usage policies | OpenAI",
+          "source_url": "https://openai.com/policies/usage-policies/",
+          "source_type": "official_doc",
+          "publisher": "OpenAI",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 82,
+          "relevance": "medium",
+          "freshness": "time_sensitive",
+          "limitations": [
+            "该来源不是交易策略或成本矩阵来源，只能支持高影响自动化决策的人审和安全边界。"
+          ],
+          "evidence_summary": "OpenAI usage policies 对金融等高影响自动化决策强调安全边界和 human review，可作为 LLM hard-gate 场景不能无审计默认放行的 supporting source。",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_finra_regulatory_notice_15_09",
+          "source_title": "Regulatory Notice 15-09: Guidance on Effective Supervision and Control Practices for Firms Engaging in Algorithmic Trading Strategies",
+          "source_url": "https://www.finra.org/rules-guidance/notices/15-09",
+          "source_type": "standard_or_risk_framework",
+          "publisher": "FINRA",
+          "published_at": "2015-03",
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 90,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "FINRA 15-09 支持算法交易需要监督、测试、控制、风险管理和治理；可作为交易自动化 hard-gate 风险边界的行业治理来源。",
+          "quoted_excerpt_allowed": false
+        }
+      ]
+    }
+  ]
+}

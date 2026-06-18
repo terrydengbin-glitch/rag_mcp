@@ -1,0 +1,290 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_phase45_resilience_incident_log.business_continuity_disaster_recovery_required.v1",
+  "title": "交易系统必须声明 BC/DR 和关键系统恢复边界",
+  "metadata": {
+    "partition_id": "KB_06_LIVE_EXECUTION",
+    "domain": "live_trading",
+    "subdomain": "resilience_incident_log",
+    "rule_type": "resilience_incident_boundary_rule",
+    "claim_type": "execution_safety_rule",
+    "content_type": "json",
+    "project_binding": "none",
+    "tree_node_id": "kt.live_execution.resilience_incident_log",
+    "tree_path": "CEK-TA / Trading Engineering / Live Execution / Resilience Incident Log",
+    "canonical_node_id": "kt.live_execution.resilience_incident_log",
+    "canonical_tree_path": "CEK-TA / Trading Engineering / Live Execution / Resilience Incident Log",
+    "risk_level": "high",
+    "used_for": [
+      "trading_system_resilience_design",
+      "incident_response_review",
+      "runtime_log_governance",
+      "external_project_rag_retrieval",
+      "ai_trader_project_design_audit"
+    ],
+    "source_candidate_id": "cand_20260612_phase45_resilience_incident_log_p45_d_ops01_001",
+    "research_task_id": "P45-D-OPS01",
+    "phase": "Phase 45",
+    "related_nodes": [
+      "kt.live_execution.audit_trail",
+      "kt.live_execution.order_state_machine",
+      "kt.ai_engineering.database_storage_engineering.runtime_observability_trace",
+      "kt.ai_engineering.database_storage_engineering.audit_log_ledger",
+      "kt.risk_management.layered_risk_controls"
+    ],
+    "classification_notes": "Phase 45 Resilience / Incident / Log formal reviewed/caveat_only；只用于系统韧性、事故响应、恢复/replay 边界和日志治理，不是 approved/default guidance/hard gate，不生成交易动作、阈值或法律合规结论。"
+  },
+  "applicability": {
+    "market": "general_with_jurisdiction_platform_and_venue_caveats",
+    "asset": "general",
+    "timeframe": "runtime_operations_and_incident_context",
+    "data_granularity": "system_events_order_events_incident_records_runtime_logs_telemetry",
+    "project_type": "trading_ai_support_layer",
+    "applies_when": [
+      "外接项目需要设计交易系统 BC/DR、降级模式、只读模式、故障切换、事故响应、事故复盘或日志治理。",
+      "AI IDE 需要检查交易系统方案是否遗漏恢复目标、关键依赖、owner、演练证据、事件 taxonomy 或日志完整性。",
+      "需要区分恢复/replay 的审计证据、模拟用途和真实订单动作边界。"
+    ],
+    "not_applicable_when": [
+      "用户要求具体买卖点、仓位、杠杆、止损止盈、风险阈值、停机阈值或实盘执行动作。",
+      "需要 broker、venue、账户、订单或资金的实时事实时，应由外接项目事实层提供。",
+      "需要法律/监管合规结论时，应由对应辖区合规或法律 owner 判断。"
+    ]
+  },
+  "content": {
+    "statement": "交易系统的业务连续性和灾难恢复设计必须声明关键系统、依赖、恢复目标、备份/恢复路径、演练证据、owner 和客户/交易对手义务边界；不得把普通服务重启脚本等同于交易级 BC/DR 能力。",
+    "rationale": "本候选只定义系统韧性、事故响应、日志治理和恢复边界，不输出交易参数、风险阈值或实盘执行建议。",
+    "normalized_claim": "phase45_resilience_incident_log.business_continuity_disaster_recovery_required.v1",
+    "claim_strength": "reviewed_caveat_only",
+    "performance_claim": false,
+    "procedure": [
+      "确认问题属于系统韧性、事故响应、降级/只读模式、恢复/replay、post-incident review 或运行时日志治理。",
+      "检查来源是否只在其辖区、平台、协议、数据库或工程实践边界内使用。",
+      "检查是否声明 owner、evidence、audit_trace、状态字段和不适用场景。",
+      "遇到 replay、recovery、read_only、incident label 或 log integrity 时，不得推导自动实盘动作或 hard gate。",
+      "返回知识时必须携带 source_evidence、review_status、machine_gate、适用范围、不适用场景和 owner 边界。"
+    ],
+    "anti_patterns": [
+      "把 reviewed/caveat_only 当作 approved 或 default guidance。",
+      "把事故标签、日志完整性、恢复回放、read-only mode 自动解释为拒单、撤单、重发订单、恢复交易或 hard gate。",
+      "输出停机阈值、恢复阈值、风险阈值、买卖点、仓位、杠杆、止损止盈或实盘执行建议。"
+    ],
+    "validation": [
+      "review.review_status 必须为 reviewed；approved/default guidance/hard gate 必须为 false。",
+      "machine_gate.default_guidance 必须为 caveat_only，且 visible_in_default_guidance_queue=false。",
+      "source_evidence 必须保留监管、标准、工程实践、协议、数据库或内部 contract 的适用边界。"
+    ],
+    "risk_notes": [
+      "本条只做系统韧性与事故治理知识，不代表交易系统可自动动作。",
+      "监管来源具有辖区边界；工程来源和协议来源具有实现边界。",
+      "本条不是 approved，不进入默认指导，不启用 hard gate。"
+    ],
+    "citation_notes": "FINRA Rule 4370 requires member firms to create and maintain written business continuity plans for emergencies or significant business disruptions.；Regulation SCI covers policies and procedures for SCI systems capacity, integrity, resiliency, availability and security, including SCI events, notification, corrective action and records.；NIST SP 800-34 supports contingency planning, business impact analysis, recovery strategies, plan development, testing, training and maintenance.；AWS DR guidance discusses backups, redundant components and RTO/RPO as restoration objectives set by business needs.",
+    "audit_patch_notes": {
+      "source": [
+        "保留 FINRA Rule 4370、Reg SCI、NIST SP 800-34、AWS DR。"
+      ],
+      "content": [
+        "将“交易系统必须”收窄为“进入 CEK-TA reviewed/caveat_only 的交易系统韧性知识应要求声明”。"
+      ],
+      "boundary": [
+        "不得生成恢复阈值、停机阈值、自动重启、自动撤单或自动重发订单。"
+      ],
+      "conflict": []
+    }
+  },
+  "assumptions": [
+    "Resilience / Incident / Log Management 是交易工程运行时治理，不是策略 alpha。",
+    "所有 BC/DR、incident、log 和 telemetry 来源必须声明监管、平台、云服务、市场和系统适用边界。",
+    "候选通过外部审计前不能进入 formal reviewed 知识库。"
+  ],
+  "source_evidence": [
+    {
+      "source_title": "FINRA Rule 4370: Business Continuity Plans and Emergency Contact Information",
+      "source_url": "https://www.finra.org/rules-guidance/rulebooks/finra-rules/4370",
+      "source_type": "regulatory_rule",
+      "publisher": "FINRA",
+      "reliability": "high",
+      "score": 92,
+      "freshness": "time_sensitive",
+      "evidence_summary": "FINRA Rule 4370 requires member firms to create and maintain written business continuity plans for emergencies or significant business disruptions.",
+      "limitations": [
+        "FINRA member-firm context; not applicable to every trading venue, crypto platform or non-U.S. project."
+      ],
+      "source_id": "src_001",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "17 CFR Part 242 Regulation SCI",
+      "source_url": "https://www.ecfr.gov/current/title-17/chapter-II/part-242/subpart-ECFRe106e84e67e2bc9",
+      "source_type": "regulatory_rule",
+      "publisher": "eCFR / U.S. SEC",
+      "reliability": "high",
+      "score": 94,
+      "freshness": "time_sensitive",
+      "evidence_summary": "Regulation SCI covers policies and procedures for SCI systems capacity, integrity, resiliency, availability and security, including SCI events, notification, corrective action and records.",
+      "limitations": [
+        "U.S. SCI-entity regulatory context; not a universal global trading-system standard."
+      ],
+      "source_id": "src_002",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "NIST SP 800-34 Rev. 1: Contingency Planning Guide for Federal Information Systems",
+      "source_url": "https://csrc.nist.gov/pubs/sp/800/34/r1/upd1/final",
+      "source_type": "standard_doc",
+      "publisher": "NIST",
+      "reliability": "high",
+      "score": 89,
+      "freshness": "stable",
+      "evidence_summary": "NIST SP 800-34 supports contingency planning, business impact analysis, recovery strategies, plan development, testing, training and maintenance.",
+      "limitations": [
+        "General contingency-planning guidance; not trading-specific order or market-access policy."
+      ],
+      "source_id": "src_003",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "AWS Reliability Pillar: Plan for Disaster Recovery",
+      "source_url": "https://docs.aws.amazon.com/wellarchitected/latest/reliability-pillar/plan-for-disaster-recovery-dr.html",
+      "source_type": "cloud_architecture_doc",
+      "publisher": "AWS",
+      "reliability": "medium_high",
+      "score": 82,
+      "freshness": "time_sensitive",
+      "evidence_summary": "AWS DR guidance discusses backups, redundant components and RTO/RPO as restoration objectives set by business needs.",
+      "limitations": [
+        "Cloud DR pattern source; does not define trading execution permission or CEK-TA RTO/RPO thresholds."
+      ],
+      "source_id": "src_004",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 89.25,
+    "score_version": "phase45_source_scoring_v1",
+    "primary_source_count": 4,
+    "supporting_source_count": 0,
+    "low_reliability_source_count": 0,
+    "mandatory_downgrades": [],
+    "limitations": [
+      "正式 reviewed 前必须由外部审计确认 claim 没有超出来源可证明范围。",
+      "监管、标准、云架构和 SRE 来源必须保留适用边界，不得写成交易执行许可。",
+      "内部字段契约若后续用于 reviewed，需要提供 schema extract、字段表或 contract hash。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "Phase 37 Live Execution formal reviewed knowledge",
+      "Phase 37 Risk Management formal reviewed knowledge",
+      "Phase 42 Database/Storage formal reviewed knowledge",
+      "Phase 45 Audit Trail / Layered Risk formal reviewed knowledge",
+      "Phase 45 runtime contract"
+    ],
+    "conflicts": [],
+    "resolution_summary": "reviewed/caveat_only 准备审计通过；formal creation 保持 caveat_only，不创建 approved、default guidance、hard gate、风险阈值、停机阈值或自动实盘动作。",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "risk_threshold_advice_allowed": false,
+    "automatic_live_action_allowed": false
+  },
+  "review": {
+    "review_status": "reviewed",
+    "review_mode": "caveat_only",
+    "confidence": "high",
+    "freshness": "mixed",
+    "reviewer": "external_ai_strict_audit_and_codex",
+    "reviewed_at": "2026-06-12",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "risk_threshold_advice_allowed": false,
+    "automatic_live_action_allowed": false,
+    "approved_at": null,
+    "ai_audit": {
+      "audit_result_id": "audit_phase45_resilience_incident_log_reviewed_preparation_20260612",
+      "package_id": "phase45_resilience_incident_log_reviewed_preparation_audit_package_20260612",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "reasons": [
+        "BC/DR、关键系统、依赖、备份恢复、owner、客户/交易对手边界有 FINRA Rule 4370、Reg SCI、NIST SP 800-34、AWS DR 支撑。"
+      ],
+      "required_followups": [
+        "正式文本中保留 FINRA member firm、Reg SCI entity、NIST general contingency、AWS cloud pattern caveat。",
+        "恢复目标只能要求声明 owner/evidence，不得写 CEK-TA 固定 RTO/RPO 数值。"
+      ],
+      "patch_notes": {
+        "source": [
+          "保留 FINRA Rule 4370、Reg SCI、NIST SP 800-34、AWS DR。"
+        ],
+        "content": [
+          "将“交易系统必须”收窄为“进入 CEK-TA reviewed/caveat_only 的交易系统韧性知识应要求声明”。"
+        ],
+        "boundary": [
+          "不得生成恢复阈值、停机阈值、自动重启、自动撤单或自动重发订单。"
+        ],
+        "conflict": []
+      }
+    },
+    "source_candidate_id": "cand_20260612_phase45_resilience_incident_log_p45_d_ops01_001",
+    "ai_audit_result_id": "audit_phase45_resilience_incident_log_reviewed_preparation_20260612"
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于提醒 AI IDE 设计系统韧性、事故响应、runtime mode、replay boundary、post-incident review 和日志治理。",
+      "用于生成运行时治理 checklist、schema review、RAG 检索上下文和审计 reason code。"
+    ],
+    "not_allowed": [
+      "不得生成买卖点、仓位、杠杆、止损止盈、风险阈值、停机阈值、恢复阈值或实盘执行建议。",
+      "不得把 reviewed/caveat_only 当作 approved 或默认指导。",
+      "不得替外接项目启用 hard gate、拒单、停机、撤单、重发订单、恢复交易或解锁流程。"
+    ],
+    "required_context": [
+      "必须同时返回 source_evidence、applicability、not_applicable_when、review_status、conflict_status 和 machine_gate。",
+      "若外接项目问题涉及实盘、法律、授权、资金或风控动作，必须要求项目事实层或人工 owner 复核。"
+    ],
+    "fallback_behavior": "cite_with_caveat"
+  },
+  "machine_gate": {
+    "default_guidance": "caveat_only",
+    "review_visibility": "reviewed_caveat_only",
+    "reason": "reviewed/caveat_only audit passed; approved/default guidance/hard gate/risk threshold advice remain disabled.",
+    "requires_human_escalation": false,
+    "hidden_from_default_queue": true,
+    "visible_in_default_guidance_queue": false,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "risk_threshold_advice_allowed": false,
+    "automatic_live_action_allowed": false,
+    "blocking_reasons": [],
+    "checked_at": "2026-06-13T10:29:14+00:00",
+    "gate_version": "1.0.0"
+  },
+  "contribution": {
+    "source": "phase45_professional_research",
+    "private_data_removed": true,
+    "project_specific_details_removed": true,
+    "notes": "Generated for external strict audit; no account, key, order, threshold, position or private strategy data included."
+  },
+  "recommended_extra_sources": []
+}

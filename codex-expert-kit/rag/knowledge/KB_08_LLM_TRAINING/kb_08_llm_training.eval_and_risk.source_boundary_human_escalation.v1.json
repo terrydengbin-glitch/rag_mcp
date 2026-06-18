@@ -1,0 +1,202 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_08_llm_training.eval_and_risk.source_boundary_human_escalation.v1",
+  "title": "交易项目中的 LLM/RAG 输出必须保留来源、边界和人工升级动作",
+  "metadata": {
+    "partition_id": "KB_08_LLM_TRAINING",
+    "domain": "llm_training",
+    "subdomain": "eval_and_risk",
+    "rule_type": "principle",
+    "content_type": "json",
+    "project_binding": "none",
+    "tree_node_id": "kt.llm_training.eval",
+    "tree_path": "CEK-TA / AI Engineering / LLM Training / Eval",
+    "canonical_node_id": "kt.ai_engineering.llm_training.eval_and_risk",
+    "canonical_tree_path": "CEK-TA / AI Engineering / LLM Training / Eval And Risk",
+    "risk_level": "high",
+    "used_for": [
+      "llm_training",
+      "rag_engineering",
+      "mcp",
+      "vue_audit_ui",
+      "project_integration",
+      "live_trading",
+      "risk_review"
+    ],
+    "claim_type": "risk_boundary_rule",
+    "classification_notes": "UI tree node is kt.llm_training.eval; canonical classification is kt.ai_engineering.llm_training.eval_and_risk."
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "general",
+    "data_granularity": "general",
+    "project_type": "trading_llm_assistant",
+    "applies_when": [
+      "LLM 或 RAG 输出会影响交易项目开发、回测审计、实盘风控、知识入库或模型训练",
+      "输出包含专业规则、代码建议、风险判断或知识引用"
+    ],
+    "not_applicable_when": [
+      "纯闲聊或非工程任务",
+      "输出只做 UI 文案且不影响专业决策"
+    ]
+  },
+  "content": {
+    "statement": "交易项目中的 LLM/RAG 输出必须带来源、适用边界、不适用边界、冲突/时效提示和 recommended_next_action；高风险或实盘相关输出必须提供人工升级动作。",
+    "rationale": "AI 输出可能影响交易工程和风险决策。没有来源、边界和升级动作的输出无法审计，也无法在风险变化时持续管理。",
+    "procedure": [
+      "返回 source_refs 或明确说明缺来源。",
+      "返回 applicable_scope 和 not_applicable_scope。",
+      "返回 freshness、confidence、conflict_status。",
+      "对 live_trading、risk_review、exchange_adapter、model_api 行为输出 ask_human 或 refresh_source。",
+      "把失败样例加入 eval set。"
+    ],
+    "examples": [
+      "实盘 kill switch 规则若来源过期，应提示 refresh_source 和 ask_human。"
+    ],
+    "anti_patterns": [
+      "LLM 直接给实盘操作建议。",
+      "没有来源却使用确定语气。",
+      "不区分通用知识和项目私有事实。"
+    ],
+    "validation": [
+      "检查回答是否包含来源和边界。",
+      "检查高风险输出是否有人工升级动作。",
+      "检查 eval report 是否记录 unsafe_output_rate。"
+    ],
+    "risk_notes": [
+      "该知识不允许 LLM 代替人类做实盘决策。",
+      "模型和 API 行为是时间敏感项，需要持续复核。"
+    ],
+    "citation_notes": "NIST AI RMF 强调 AI 风险管理、trustworthiness、生命周期治理和持续度量；CEK-TA search result contract 规定检索输出必须带来源、边界、冲突状态和推荐动作。"
+  },
+  "assumptions": [
+    "LLM/RAG 输出可能被 Codex 或外部项目用于工程决策。",
+    "高风险交易动作需要人工确认。"
+  ],
+  "source_evidence": [
+    {
+      "source_id": "src_seed_005",
+      "source_title": "NIST AI Risk Management Framework",
+      "source_url": "https://www.nist.gov/itl/ai-risk-management-framework",
+      "source_type": "official_doc",
+      "publisher": "NIST",
+      "published_at": "2023-01-26",
+      "accessed_at": "2026-06-08",
+      "version": "AI RMF 1.0",
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "NIST AI RMF 说明框架用于改善 AI 产品和系统在设计、开发、使用、评估中的可信风险管理能力。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_seed_006",
+      "source_title": "NIST AI RMF Core",
+      "source_url": "https://airc.nist.gov/airmf-resources/airmf/5-sec-core/",
+      "source_type": "official_doc",
+      "publisher": "NIST Trustworthy and Responsible AI Resource Center",
+      "published_at": "2023-01-26",
+      "accessed_at": "2026-06-08",
+      "version": "AI RMF 1.0 Core",
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "AI RMF Core 包含 govern、map、measure、manage，并强调文档化、度量和持续改进。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_seed_008",
+      "source_title": "CEK-TA Search Result Contract",
+      "source_url": "codex-expert-kit/rag/search_result_contract.md",
+      "source_type": "internal_report",
+      "publisher": "CEK-TA",
+      "published_at": "2026-06-08",
+      "accessed_at": "2026-06-08",
+      "version": "1.0.0",
+      "reliability": "medium",
+      "relevance": "high",
+      "evidence_summary": "CEK-TA 检索契约定义 source_refs、applicable_scope、conflict_status、freshness 和 recommended_next_action。",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 90,
+    "score_version": "1.0.0",
+    "primary_source_count": 2,
+    "supporting_source_count": 1,
+    "limitations": [
+      "NIST 是通用 AI 风险框架；交易项目具体安全动作由 CEK-TA 契约细化。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "kb_09_rag_engineering.source_quality.unsourced_default_block.v1"
+    ],
+    "conflicts": [],
+    "resolution_summary": "该知识扩展 RAG 来源门槛到 LLM 输出治理，无冲突。",
+    "default_recommendation": "use_as_guidance"
+  },
+  "review": {
+    "confidence": "high",
+    "freshness": "time_sensitive",
+    "review_status": "approved",
+    "reviewer": "codex",
+    "reviewed_at": "2026-06-08",
+    "created_at": "2026-06-08",
+    "updated_at": "2026-06-08",
+    "open_questions": [
+      "后续应与具体 OpenAI/API 模型行为文档建立 freshness 检查。"
+    ],
+    "decision_log": [
+      {
+        "at": "2026-06-08",
+        "actor": "codex",
+        "decision": "approved",
+        "reason": "高权威来源和 CEK-TA 契约共同支撑，适合高风险 LLM/RAG 治理。"
+      }
+    ],
+    "approval_status": "approved",
+    "default_guidance_allowed": true,
+    "source_candidate_id": null,
+    "ai_audit_result_id": null
+  },
+  "contribution": {
+    "contribution_id": null,
+    "source_project": null,
+    "sanitization_status": "not_applicable",
+    "private_data_removed": true,
+    "generic_mapping_notes": "通用 LLM/RAG 风险治理知识。"
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于审计和解释 CEK-TA / AI Engineering / LLM Training / Eval And Risk 范围内的专业边界。",
+      "用于提醒用户补充适用范围、来源、冲突状态和验证条件。",
+      "用于阻止 AI 把未满足边界的知识当成默认交易建议。"
+    ],
+    "not_allowed": [
+      "不得据此生成买卖点、仓位、杠杆或实盘执行指令。",
+      "不得在缺少适用边界、来源或冲突状态时作为默认指导。",
+      "不得把 reviewed 或 caveat_only 知识表述为 approved 结论。",
+      "不得绕过人工风险确认或项目事实核验。"
+    ],
+    "required_context": [
+      "project_type",
+      "market",
+      "asset",
+      "timeframe",
+      "data_granularity",
+      "task_type"
+    ],
+    "fallback_behavior": "cite_with_caveat"
+  },
+  "machine_gate": {
+    "default_guidance": "allow",
+    "reason": "approved; default_guidance_allowed=true; sources, conflict, freshness, and privacy gates passed.",
+    "requires_human_escalation": false,
+    "blocking_reasons": [],
+    "checked_at": "2026-06-09",
+    "gate_version": "1.0.0"
+  },
+  "recommended_extra_sources": []
+}

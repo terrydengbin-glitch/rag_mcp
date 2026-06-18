@@ -1,0 +1,324 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_02_data_engineering.corporate_action_or_contract_rollover_policy.v1",
+  "title": "股票复权、指数成分调整、派息拆股、期货换月或合约展期必须声明调整/换月政策；原始数据和调整后数据不得混用来评估策略质量。",
+  "metadata": {
+    "partition_id": "KB_02_DATA_ENGINEERING",
+    "domain": "trading_engineering",
+    "subdomain": "adjustment_rollover",
+    "rule_type": "data_adjustment_boundary_rule",
+    "claim_type": "data_quality_rule",
+    "content_type": "json",
+    "project_binding": "none",
+    "tree_node_id": "kt.trading_engineering.data_engineering",
+    "tree_path": "CEK-TA / Trading Engineering / Data Engineering",
+    "canonical_node_id": "kt.trading_engineering.data_engineering",
+    "canonical_tree_path": "CEK-TA / Trading Engineering / Data Engineering",
+    "risk_level": "medium",
+    "used_for": [
+      "trading_data_contract",
+      "backtest_data_audit",
+      "ai_training_dataset_boundary",
+      "external_project_rag_retrieval"
+    ],
+    "source_candidate_id": "cand_20260611_phase37_data_engineering_corporate_action_or_contract_rollover_policy_001",
+    "research_task_id": "P37-B-D09",
+    "phase": "Phase 37",
+    "classification_notes": "Phase 37 Data Engineering formal reviewed/caveat_only；这是 Trading Engineering 数据规则本体，不是 AI Engineering 训练/RAG/MCP 本体规则，也不是 approved/default guidance。"
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "general",
+    "data_granularity": "event_or_bar",
+    "project_type": "trading_ai_support_layer",
+    "applies_when": [
+      "使用股票、指数、期货、期权或连续合约历史数据",
+      "比较跨长期样本、跨合约或跨 corporate action 前后的表现"
+    ],
+    "not_applicable_when": [
+      "只分析短期未发生调整/换月的原始事件流",
+      "外部项目明确只保存 raw 数据且不做收益、指标或策略评估",
+      "需要具体交易策略参数、账户事实、交易所私有配置、密钥或实盘权限时，应由外接项目事实层处理。",
+      "AI Engineering 只能引用本规则，不得把本规则改写为模型训练、MCP 或 RAG 本体规则。"
+    ]
+  },
+  "content": {
+    "statement": "股票复权、指数成分调整、派息拆股、期货换月或合约展期必须声明调整/换月政策；原始数据和调整后数据不得混用来评估策略质量。",
+    "rationale": "本候选定义交易数据工程边界，不输出买卖点、仓位、止损止盈、杠杆或实盘执行建议。",
+    "procedure": [
+      "确认当前问题属于 Trading Engineering / Data Engineering 数据规则本体，而不是 AI Engineering 训练、RAG 或 MCP 本体。",
+      "检查来源、字段语义、供应商/交易所适用范围、数据版本、时间角色和质量报告边界。",
+      "返回本知识时必须携带 source_evidence、review_status、machine_gate、适用范围和不适用场景。"
+    ],
+    "examples": [],
+    "anti_patterns": [
+      "把供应商字段名当作所有市场数据源的统一字段语义。",
+      "未声明时间戳、时区、版本、调整、缺失或重复处理规则就进入回测、训练或评估。",
+      "把 reviewed/caveat_only 知识说成 approved 默认指导。"
+    ],
+    "validation": [
+      "source_evidence 非空，且来源类型覆盖对应的数据工程维度。",
+      "conflict_status 只能是 none、resolved 或 none_known_in_visible_context。",
+      "machine_gate.default_guidance 必须为 caveat_only，review.default_guidance_allowed 必须为 false。"
+    ],
+    "risk_notes": [
+      "本批来源包含数据供应商、数据库、数据质量框架、特征存储和交易所/指数/参考数据资料，仍需要外部 AI/人工严格审计。",
+      "供应商和框架文档只能支撑通用工程边界，不能替代具体外接项目的数据契约。",
+      "本候选不提供任何投资建议或实盘执行许可。",
+      "roll rule、corporate action、index adjustment 均可能依 asset/venue/vendor 不同而不同。",
+      "本条为 formal reviewed/caveat_only，不是 approved；不得作为默认指导或 hard gate。",
+      "不得据此生成买卖点、仓位、杠杆、止损止盈或实盘执行建议。",
+      "AI Engineering 只能引用本 Trading Engineering 数据工程规则本体，不得复制改写为模型训练、RAG 或 MCP 本体规则。"
+    ],
+    "citation_notes": "Eurex documents adjustments to equity derivatives caused by corporate actions and the goal of preserving contract values.; Nasdaq manual documents equity corporate action and event treatment in index data contexts.; ICE describes corporate action reference data for operational and risk-management workflows.",
+    "audit_patch_notes": {
+      "source": [
+        "补入 Databento continuous contract/symbology 或交易所/指数供应商 continuous futures roll methodology 来源。"
+      ],
+      "content": [
+        "明确定义 raw、adjusted、back-adjusted、continuous-symbol original unadjusted prices；不得混用 raw 与调整后数据评估策略质量。"
+      ],
+      "boundary": [
+        "roll rule、corporate action、index adjustment 均可能依 asset/venue/vendor 不同而不同。"
+      ],
+      "conflict": []
+    }
+  },
+  "assumptions": [
+    "候选用于 CEK-TA 通用支持层知识库，而不是某个项目私有数据源配置。",
+    "所有数据工程结论必须保留来源、时间戳、版本、schema、修复和验证边界。",
+    "候选通过外部审计前不能进入正式 reviewed 知识库。"
+  ],
+  "source_evidence": [
+    {
+      "source_id": "src_001",
+      "source_title": "Corporate action procedures",
+      "source_url": "https://www.eurex.com/ex-en/rules-regs/corporate-actions/corporate-actions-procedures",
+      "source_type": "exchange_official_doc",
+      "publisher": "Eurex",
+      "published_at": null,
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "Eurex documents adjustments to equity derivatives caused by corporate actions and the goal of preserving contract values.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_002",
+      "source_title": "Corporate Actions and Events Manual Equities",
+      "source_url": "https://indexes.nasdaqomx.com/docs/Corporate_Actions_and_Events_Manual_Equities.pdf",
+      "source_type": "index_provider_manual",
+      "publisher": "Nasdaq",
+      "published_at": null,
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "Nasdaq manual documents equity corporate action and event treatment in index data contexts.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_003",
+      "source_title": "ICE Reference Data: Corporate Actions",
+      "source_url": "https://developer.ice.com/fixed-income-data-services/catalog/ice-reference-data-corporate-actions",
+      "source_type": "reference_data_provider_doc",
+      "publisher": "ICE",
+      "published_at": null,
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "medium_high",
+      "relevance": "high",
+      "evidence_summary": "ICE describes corporate action reference data for operational and risk-management workflows.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_004",
+      "source_title": "Instrument definitions schema",
+      "source_url": "https://databento.com/docs/schemas-and-data-formats/instrument-definitions",
+      "source_type": "market_data_vendor_official_doc",
+      "publisher": "Databento",
+      "published_at": null,
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "high",
+      "relevance": "medium_high",
+      "evidence_summary": "Databento instrument definitions provide point-in-time reference data such as symbols, expiration, listing date, tick size, and strike price.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_audit_extra_001",
+      "source_title": "Databento continuous contracts",
+      "source_url": "https://databento.com/docs/examples/symbology/continuous",
+      "source_type": "reviewed_preparation_required_extra_source",
+      "publisher": "unknown",
+      "published_at": null,
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "medium",
+      "relevance": "medium_high",
+      "evidence_summary": "continuous futures/roll mapping and original unadjusted prices",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_audit_extra_002",
+      "source_title": "Databento Symbology continuous contracts",
+      "source_url": "https://databento.com/docs/standards-and-conventions/symbology",
+      "source_type": "reviewed_preparation_required_extra_source",
+      "publisher": "unknown",
+      "published_at": null,
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "medium",
+      "relevance": "medium_high",
+      "evidence_summary": "roll rule/rank continuous symbol format",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 83.5,
+    "score_version": "phase37_data_engineering_reviewed_preparation_source_scoring_v1",
+    "primary_source_count": 3,
+    "supporting_source_count": 3,
+    "low_reliability_source_count": 0,
+    "limitations": [
+      "正式入库前必须由外部审计确认 claim 没有超出来源可证明范围。",
+      "vendor/framework 文档按其自身产品适用，不能自动泛化为所有交易所或所有数据平台实现。",
+      "补入 Databento continuous contract/symbology 或交易所/指数供应商 continuous futures roll methodology 来源。",
+      "本条为 formal reviewed/caveat_only；不是 approved，不得进入默认指导或 hard gate。",
+      "外部审计未提供完整 CEK-TA formal KB，因此冲突结论限于可见上下文。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none_known_in_visible_context",
+    "checked_against": [
+      "Phase 36/38/40/41 AI Engineering 知识边界",
+      "现有 KB_01_QUANT_FOUNDATION formal 知识",
+      "Phase 37 Trading 与 AI 跨分支引用契约"
+    ],
+    "conflicts": [],
+    "resolution_summary": "reviewed/caveat_only preparation audit passed for this item; full formal KB conflict coverage remains a runtime validation concern.",
+    "default_recommendation": "caveat_only_until_human_approval"
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于 AI IDE 或外接项目审计交易数据工程契约和边界。",
+      "用于提示用户补充来源、时间戳、时区、schema、版本、symbol、调整、缺失、重复和质量报告条件。",
+      "用于 RAG/MCP/SearchLab 以 caveat 方式返回来源和边界。"
+    ],
+    "not_allowed": [
+      "不得据此生成买卖点、仓位、杠杆、止损止盈或实盘执行建议。",
+      "不得把 reviewed/caveat_only 当作 approved 默认指导。",
+      "不得绕过外接项目事实层、数据供应商契约、风控 hard gate 或人工治理流程。"
+    ],
+    "required_context": [
+      "canonical_node_id=kt.trading_engineering.data_engineering",
+      "必须返回 source_evidence、review_status、conflict_status、machine_gate 和不适用场景。"
+    ],
+    "fallback_behavior": "cite_with_caveat"
+  },
+  "machine_gate": {
+    "default_guidance": "caveat_only",
+    "reason": "CEK-TA-389: reviewed-preparation audit allowed formal reviewed/caveat_only only; no approved/default/hard gate.",
+    "requires_human_escalation": true,
+    "blocking_reasons": [
+      "reviewed_not_approved",
+      "default_guidance_allowed_false",
+      "hard_gate_allowed_false"
+    ],
+    "checked_at": "2026-06-11",
+    "gate_version": "1.0.0",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "recommended_extra_sources": [],
+  "review": {
+    "confidence": "medium",
+    "freshness": "mixed",
+    "review_status": "reviewed",
+    "reviewer": "codex",
+    "reviewed_at": "2026-06-11",
+    "created_at": "2026-06-11",
+    "updated_at": "2026-06-11",
+    "default_guidance_allowed": false,
+    "approved_allowed": false,
+    "hard_gate_allowed": false,
+    "approval_status": "not_requested",
+    "source_candidate_id": "cand_20260611_phase37_data_engineering_corporate_action_or_contract_rollover_policy_001",
+    "ai_audit_result_id": "audit_result_phase37_data_engineering_reviewed_preparation_20260611_strict_v1",
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase37_data_engineering_reviewed_preparation_20260611_strict_v1",
+      "source_package_id": "phase37_data_engineering_reviewed_preparation_audit_package_20260611",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "required_patches": {
+        "source": [
+          "补入 Databento continuous contract/symbology 或交易所/指数供应商 continuous futures roll methodology 来源。"
+        ],
+        "content": [
+          "明确定义 raw、adjusted、back-adjusted、continuous-symbol original unadjusted prices；不得混用 raw 与调整后数据评估策略质量。"
+        ],
+        "boundary": [
+          "roll rule、corporate action、index adjustment 均可能依 asset/venue/vendor 不同而不同。"
+        ],
+        "conflict": []
+      },
+      "required_extra_sources": [
+        {
+          "title": "Databento continuous contracts",
+          "url": "https://databento.com/docs/examples/symbology/continuous",
+          "purpose": "continuous futures/roll mapping and original unadjusted prices"
+        },
+        {
+          "title": "Databento Symbology continuous contracts",
+          "url": "https://databento.com/docs/standards-and-conventions/symbology",
+          "purpose": "roll rule/rank continuous symbol format"
+        }
+      ]
+    },
+    "open_questions": [],
+    "decision_log": [
+      {
+        "at": "2026-06-11",
+        "actor": "external_ai_strict_audit",
+        "decision": "accepted_for_reviewed_caveat_only",
+        "reason": "corporate action 部分有交易所/指数/参考数据来源支撑；外部 Databento continuous contract/symbology 来源能补足期货连续合约与 roll rule 边界。; 该条可进入 caveat-only，但 formal source_refs 不能继续只靠 corporate action 来源支撑 rollover。"
+      },
+      {
+        "at": "2026-06-11",
+        "actor": "codex",
+        "decision": "reviewed",
+        "reason": "CEK-TA-389: formal reviewed/caveat_only created; approved/default guidance/hard gate all disabled."
+      }
+    ]
+  },
+  "contribution": {
+    "contribution_id": null,
+    "source_project": null,
+    "sanitization_status": "not_applicable",
+    "private_data_removed": true,
+    "generic_mapping_notes": "Generated from Phase 37 public-source Trading Engineering Data Engineering candidate; no project-private trading facts included."
+  },
+  "copyright": {
+    "stores_full_text": false,
+    "stores_long_quote": false,
+    "summary_only": true,
+    "license_notes": "仅保存来源链接、元数据和摘要，不保存长段原文。",
+    "reuse_risk": "low"
+  },
+  "phase37_conversion": {
+    "source_candidate_status": "accepted",
+    "source_ingestion_decision": "accepted_for_draft",
+    "promoted_by_task": "CEK-TA-389",
+    "reviewed_allowed": true,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  }
+}

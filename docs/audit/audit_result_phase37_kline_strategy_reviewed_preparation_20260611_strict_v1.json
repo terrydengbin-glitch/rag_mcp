@@ -1,0 +1,345 @@
+{
+  "audit_result_id": "audit_result_phase37_kline_strategy_reviewed_preparation_20260611_strict_v1",
+  "package_id": "phase37_kline_strategy_reviewed_preparation_audit_package_20260611",
+  "audited_at": "2026-06-11",
+  "auditor": "external_ai_strict_audit",
+  "scope": {
+    "phase": "Phase 37",
+    "partition_id": "KB_02_KLINE_STRATEGY",
+    "candidate_count": 12,
+    "max_decision": "accepted_for_reviewed_caveat_only"
+  },
+  "quality_gate": {
+    "pass": true,
+    "candidate_count": 12,
+    "accepted_for_reviewed_caveat_only": 12,
+    "needs_more_evidence": 0,
+    "rejected": 0,
+    "blocked": 0
+  },
+  "global_boundaries": {
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "trade_execution_advice_allowed": false,
+    "notes": [
+      "所有平台/框架/供应商文档只能按其语境使用。",
+      "Kline Strategy 只拥有 K线/策略工程方法边界，不拥有完整交易决策 hard gate。",
+      "不得把 caveat-only 误读为默认指导或实盘许可。"
+    ]
+  },
+  "decisions": [
+    {
+      "research_task_id": "P37-C-K01",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "confidence": "medium_high",
+      "reasons": [
+        "技术分析形态必须转成可测试规则并声明市场、周期和样本边界；Lo/Mamaysky/Wang、CFA 技术分析综述和 data-snooping 资料共同支撑 caveat-only。"
+      ],
+      "required_patches": {
+        "source": [
+          "补充 CMT/技术分析教材或专业协会资料，支撑 HH/HL、支撑阻力、突破等术语来源。"
+        ],
+        "content": [
+          "必须强调客观、可机器测试的识别规则，不得只凭主观看图命名。"
+        ],
+        "boundary": [
+          "不得生成趋势跟随买卖点、出入场建议、仓位或实盘执行许可。"
+        ],
+        "conflict": [
+          "作为 market_structure 父规则，避免与 K02/K06 重复。"
+        ]
+      }
+    },
+    {
+      "research_task_id": "P37-C-K02",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "confidence": "high",
+      "reasons": [
+        "QuantConnect bar availability 和 TradingView HTF lookahead 资料支撑市场结构必须声明周期和 bar 可用时间。"
+      ],
+      "required_patches": {
+        "source": [
+          "平台文档只支撑各自平台语义，外接项目必须映射自己的 bar availability 契约。"
+        ],
+        "content": [
+          "市场结构结论必须绑定 timeframe、bar start/end、decision timestamp 和数据可用时间。"
+        ],
+        "boundary": [
+          "不得把某一周期结构泛化到其他周期或市场。"
+        ],
+        "conflict": [
+          "与 Data Engineering 时间戳/point-in-time 规则交叉引用，不复制。"
+        ]
+      }
+    },
+    {
+      "research_task_id": "P37-C-K03",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "confidence": "medium_high",
+      "reasons": [
+        "data-snooping 论文和 CFA execution / cost 资料支持 entry signal 不等于完整交易决策。"
+      ],
+      "required_patches": {
+        "source": [
+          "保留 data-snooping 与 CFA execution/cost 来源分工。"
+        ],
+        "content": [
+          "Kline 条目只定义信号边界；成本、仓位、执行、风控必须引用对应 Trading 分支。"
+        ],
+        "boundary": [
+          "不得把入场信号直接解释成订单、仓位、止损止盈或实盘允许。"
+        ],
+        "conflict": [
+          "Cross-reference Quant Foundation / Execution / Risk，不复制 hard gate。"
+        ]
+      }
+    },
+    {
+      "research_task_id": "P37-C-K04",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "confidence": "high",
+      "reasons": [
+        "FINRA 和 Investor.gov 资料支持 stop 触发不保证成交价，stop-limit 可能不成交。"
+      ],
+      "required_patches": {
+        "source": [
+          "FINRA/Investor.gov 只支撑 stop order 风险与触发边界。"
+        ],
+        "content": [
+          "止损必须记录风险目的、触发条件、执行假设和交易假设失效关系。"
+        ],
+        "boundary": [
+          "不得输出具体止损价格、距离、仓位、杠杆或实盘执行建议。"
+        ],
+        "conflict": [
+          "与 Risk Management 和 Live Execution 交叉引用。"
+        ]
+      }
+    },
+    {
+      "research_task_id": "P37-C-K05",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "confidence": "high",
+      "reasons": [
+        "CFA execution quality 与 QuantConnect fill/slippage 资料支撑 take-profit 可达性只能作为成交质量假设披露。"
+      ],
+      "required_patches": {
+        "source": [
+          "CFA/QuantConnect 只支撑执行、fill、slippage 语义，不支撑收益保证。"
+        ],
+        "content": [
+          "止盈可达性是 execution/fill assumption，不是 profit guarantee。"
+        ],
+        "boundary": [
+          "不得输出具体止盈价格、盈亏目标或实盘订单。"
+        ],
+        "conflict": [
+          "与 Replay/Simulation fill model 和 Live Execution 交叉引用。"
+        ]
+      }
+    },
+    {
+      "research_task_id": "P37-C-K06",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "confidence": "high",
+      "reasons": [
+        "TradingView HTF lookahead 与 Databricks point-in-time join 资料支撑多周期上下文必须避免未来数据泄漏。"
+      ],
+      "required_patches": {
+        "source": [
+          "TradingView 与 Databricks 只支撑各自时间语义和 point-in-time 模式。"
+        ],
+        "content": [
+          "多周期特征必须声明高周期数据确认时间、低周期决策时间和可用性边界。"
+        ],
+        "boundary": [
+          "不得把高周期未确认信息作为低周期已知事实。"
+        ],
+        "conflict": [
+          "与 Data Engineering feature timestamp / point-in-time 规则交叉引用。"
+        ]
+      }
+    },
+    {
+      "research_task_id": "P37-C-K07",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "confidence": "medium_high",
+      "reasons": [
+        "TradingView repainting 资料支撑实时未确认 bar 与历史 confirmed bar 可能不同；TA-Lib 只能证明实现存在。"
+      ],
+      "required_patches": {
+        "source": [
+          "TA-Lib 不能作为 edge 或默认阈值证据；TradingView repainting 只支撑平台语义。"
+        ],
+        "content": [
+          "指标必须声明窗口、输入 OHLC、bar 确认状态、延迟和 repainting 边界。"
+        ],
+        "boundary": [
+          "不得把指标值直接解释为买卖信号或盈利优势。"
+        ],
+        "conflict": [
+          "与 Data Engineering available_time 和 Backtest lookahead 规则交叉引用。"
+        ]
+      }
+    },
+    {
+      "research_task_id": "P37-C-K08",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "confidence": "medium_high",
+      "reasons": [
+        "Fidelity ATR 资料明确 ATR 衡量波动而非方向，可支撑 ATR 只作为波动上下文。"
+      ],
+      "required_patches": {
+        "source": [
+          "必须把 Fidelity ATR 或同等级 ATR-specific 来源写入正式 source_evidence。"
+        ],
+        "content": [
+          "ATR 只能用于波动过滤、归一化或候选上下文，不能声称方向、胜率或 edge。"
+        ],
+        "boundary": [
+          "不得输出止损距离、仓位、杠杆或实盘交易指令。"
+        ],
+        "conflict": [
+          "与 Risk Management position sizing 交叉引用，不复制仓位规则。"
+        ]
+      }
+    },
+    {
+      "research_task_id": "P37-C-K09",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "confidence": "medium_high",
+      "reasons": [
+        "Fidelity RSI 资料支持 70/30 是传统参考，可随证券调整且强趋势可长期超买/超卖。"
+      ],
+      "required_patches": {
+        "source": [
+          "必须把 RSI-specific 来源写入正式 source_evidence。"
+        ],
+        "content": [
+          "RSI 阈值必须声明市场、周期、参数、趋势状态和验证边界。"
+        ],
+        "boundary": [
+          "不得把 70/30 直接写成跨市场买卖规则。"
+        ],
+        "conflict": [
+          "与 signal_generalization 和 indicator_lag 规则交叉引用。"
+        ]
+      }
+    },
+    {
+      "research_task_id": "P37-C-K10",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "confidence": "high",
+      "reasons": [
+        "Databento OHLCV/statistics 与 Binance schema 资料支撑 volume 字段语义和供应商聚合边界。"
+      ],
+      "required_patches": {
+        "source": [
+          "Databento/Binance 只能证明各自 schema 与 API 语义。"
+        ],
+        "content": [
+          "成交量确认必须声明交易所、数据供应商、bar 构造、成交来源和缺失处理。"
+        ],
+        "boundary": [
+          "不得把供应商聚合 volume 直接等同官方全市场成交量。"
+        ],
+        "conflict": [
+          "与 Data Engineering OHLCV schema 和 symbol normalization 交叉引用。"
+        ]
+      }
+    },
+    {
+      "research_task_id": "P37-C-K11",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "confidence": "high",
+      "reasons": [
+        "Sullivan/Timmermann/White 与 White Reality Check 支撑技术信号不能无市场、周期、样本边界地泛化。"
+      ],
+      "required_patches": {
+        "source": [
+          "如果保留 cost boundary，应补 CFA TCA/execution 来源。"
+        ],
+        "content": [
+          "技术信号只能作为有边界的经验假设，不得描述为跨市场通用规律。"
+        ],
+        "boundary": [
+          "不得声称任何 K 线信号跨市场、跨周期、跨样本稳定有效。"
+        ],
+        "conflict": [
+          "与已有 approved signal boundary 知识互补，不覆盖其 approved 状态。"
+        ]
+      }
+    },
+    {
+      "research_task_id": "P37-C-K12",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "confidence": "high",
+      "reasons": [
+        "MLflow Tracking/Dataset Tracking 和 DVC pipeline 资料支撑参数、代码、数据、输出和 lineage 版本追踪。"
+      ],
+      "required_patches": {
+        "source": [
+          "MLflow、DVC、Git 只能作为等价实现来源，不得被强制为唯一工具。"
+        ],
+        "content": [
+          "策略规则版本、参数、信号计算版本、数据版本、评估输出和变更原因应写成 CEK-TA 审计契约字段。"
+        ],
+        "boundary": [
+          "不得把版本契约写成外部法规或所有平台强制实现。"
+        ],
+        "conflict": [
+          "与 Data Engineering versioning 和 AI training dataset lineage 交叉引用。"
+        ]
+      }
+    }
+  ]
+}

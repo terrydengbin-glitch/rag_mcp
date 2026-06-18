@@ -1,0 +1,275 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_phase60_live_execution.static_api_sandbox_contract_only.v1",
+  "title": "static API sandbox 只能验证接口契约，不能证明市场行为",
+  "metadata": {
+    "partition_id": "KB_06_LIVE_EXECUTION",
+    "domain": "live_execution",
+    "subdomain": "api_sandbox",
+    "rule_type": "api_contract_boundary_rule",
+    "claim_type": "mocked_response_boundary",
+    "content_type": "json",
+    "project_binding": "none",
+    "tree_node_id": "kt.live_execution",
+    "tree_path": "CEK-TA / Trading Engineering / Live Execution",
+    "canonical_node_id": "kt.live_execution",
+    "canonical_tree_path": "CEK-TA / Trading Engineering / Live Execution",
+    "related_nodes": [
+      "kt.trading_engineering",
+      "kt.replay_simulation",
+      "kt.live_execution",
+      "kt.risk_management",
+      "kt.data_engineering",
+      "kt.market_microstructure",
+      "kt.ai_engineering"
+    ],
+    "risk_level": "medium_high",
+    "used_for": [
+      "adapter_review",
+      "api_contract_review",
+      "external_project_rag_retrieval",
+      "mcp",
+      "sandbox_boundary_audit",
+      "searchlab",
+      "vue_audit_ui"
+    ],
+    "classification_notes": "本候选属于 Trading Engineering 的环境治理知识。AI Engineering 只能引用 manifest、gap report 和 reason code 做审计解释，不得拥有交易执行、阈值或 hard gate。",
+    "source_candidate_id": "cand_20260617_phase60_static_api_sandbox_contract_only_001",
+    "research_task_id": "P60-A02",
+    "phase": "Phase 60",
+    "formalization_task_id": "CEK-TA-579",
+    "review_mode": "reviewed_caveat_only"
+  },
+  "applicability": {
+    "market": "general_with_platform_or_venue_specific_mapping",
+    "asset": "general",
+    "timeframe": "testing_replay_paper_or_live_canary_environment",
+    "data_granularity": "mocked_response_historical_realtime_order_event_or_fill_event",
+    "project_type": "trading_ai_support_layer",
+    "applies_when": [
+      "外接项目设计 sandbox、testnet、historical replay、realtime simulation、paper trading 或 live canary 流程",
+      "需要审计测试环境、模拟成交、订单生命周期、风控 rehearsal 或 paper/live 差异",
+      "需要把回测、回放、模拟盘和实盘等效链条落实到环境证据"
+    ],
+    "not_applicable_when": [
+      "需要直接生成买卖点、仓位、杠杆、止损止盈、风险阈值或实盘执行建议",
+      "问题属于真实 live order routing、账户同步、真实保证金或 broker truth，应由 Live Execution / Risk owner 处理",
+      "没有平台、交易所、券商、API 版本、数据来源或环境类型证据"
+    ]
+  },
+  "content": {
+    "statement": "如果 sandbox 返回 mocked response，它只能验证 API 字段、请求/响应格式、鉴权和错误结构；不得作为真实成交、真实账户、真实流动性或策略收益证据。",
+    "rationale": "本候选只定义 sandbox / testnet / replay / paper / live canary 环境边界、证据和审计流程，不输出买卖点、仓位、杠杆、止损止盈、风险阈值或实盘执行建议。",
+    "procedure": [
+      "确认当前问题属于 sandbox、testnet、historical replay、realtime simulation、paper trading、live canary 或 live 环境治理。",
+      "要求外接项目提供 environment_manifest、gap_report、promotion_decision 或 order lifecycle mapping 的可审计证据。",
+      "返回来源、适用范围、不适用场景、owner 边界和 caveat，不返回交易执行许可。",
+      "遇到 live permission、risk threshold、hard gate 或实盘动作请求时，路由给外接项目 Live Execution / Risk Management owner。"
+    ],
+    "anti_patterns": [
+      "把 static API sandbox mocked response 当作真实市场行为。",
+      "把 testnet 订单、余额或成交写成 production fact。",
+      "把 paper trading 盈亏写成 live-ready 或策略有效。",
+      "把 historical replay fill 写成真实队列位置、真实 market impact 或 live 可成交性。",
+      "把 environment_manifest、promotion_decision 或 gap_report 写成实盘许可、自动晋级、自动拒单、自动停机或 hard gate。"
+    ],
+    "validation": [
+      "检查 source_evidence 是否至少包含官方/框架/标准/内部契约来源。",
+      "检查 conflict_audit.approval_allowed=false。",
+      "检查 machine_gate.default_guidance=caveat_only 且 approved/default/hard gate 均为 false。",
+      "检查内容没有买卖点、仓位、杠杆、止损止盈、风险阈值或 live permission。"
+    ],
+    "risk_notes": [
+      "平台、交易所、broker 和框架文档只能作为 implementation pattern 或 supporting source。",
+      "sandbox、testnet、paper trading 和 replay 的结果不能单独证明策略收益或实盘可行性。",
+      "本候选不提供投资建议、订单建议、风险阈值或实盘许可。",
+      "不得 live-ready，不得 hard gate。",
+      "reviewed/caveat_only 只允许作为审计上下文、RAG 检索和项目方案 review；不等于 approved。",
+      "平台、broker、exchange 和 framework 来源必须保留具体适用范围，不得泛化为所有市场。"
+    ],
+    "citation_notes": "Coinbase documents a sandbox endpoint where Accounts and Orders responses are mocked but have the same format as production.；CEK-TA internal contract defining EnvironmentManifest fields, owner boundaries and machine gate restrictions.",
+    "required_followups": [
+      "补 response_mocked、market_data_real、order_routing_real、account_real 字段。"
+    ],
+    "audit_patch_notes": {
+      "source_patch_notes": [
+        "Coinbase 来源是 Coinbase-specific，不代表所有交易所 sandbox。"
+      ],
+      "content_patch_notes": [
+        "必须保留 static API sandbox 表述。"
+      ],
+      "boundary_patch_notes": [
+        "不得 live-ready，不得 hard gate。"
+      ],
+      "conflict_patch_notes": [
+        "与 Phase 58 等效链条不冲突。"
+      ]
+    }
+  },
+  "assumptions": [
+    "候选用于 CEK-TA 通用支持层知识库，不包含任何外接项目私有策略参数。",
+    "每个环境都需要显式记录环境事实、模拟假设、owner 和审计 trace。",
+    "候选通过外部审计前不能进入正式 reviewed 知识库。"
+  ],
+  "source_evidence": [
+    {
+      "source_id": "src_coinbase_sandbox",
+      "source_title": "Advanced Trade API Sandbox",
+      "source_url": "https://docs.cdp.coinbase.com/coinbase-app/advanced-trade-apis/sandbox",
+      "source_type": "official_doc",
+      "publisher": "Coinbase Developer Platform",
+      "published_at": null,
+      "accessed_at": "2026-06-17",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "Coinbase documents a sandbox endpoint where Accounts and Orders responses are mocked but have the same format as production.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_phase60_env_contract",
+      "source_title": "Phase 60 Sandbox / Replay / Paper Environment Contract",
+      "source_url": "docs/contracts/phase60_sandbox_replay_paper_environment_contract.md",
+      "source_type": "internal_contract",
+      "publisher": "CEK-TA",
+      "published_at": null,
+      "accessed_at": "2026-06-17",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "CEK-TA internal contract defining EnvironmentManifest fields, owner boundaries and machine gate restrictions.",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 84,
+    "source_count": 2,
+    "primary_source_count": 2,
+    "limitations": [
+      "外部来源具有平台、broker、exchange、asset class 或 API 版本边界。",
+      "内部契约需要外部 AI/人工审计后才能用于 formal reviewed/caveat_only。"
+    ],
+    "source_quality_notes": [
+      "Reviewed/caveat_only sources support environment governance and audit boundaries, not strategy profitability or live permission.",
+      "Platform, broker, exchange and framework sources are implementation-pattern evidence and must retain scope caveats."
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "known_conflicts": [],
+    "potential_conflicts": [
+      "可能与 Phase 58 environment equivalence manifest、Phase 37 replay/simulation、Phase 45 order/risk knowledge 重叠，正式转换前必须做重复和 owner 边界检查。"
+    ],
+    "resolution_summary": "External strict audit accepted this candidate for draft only. approval_allowed=false is required to avoid machine misread; formal reviewed/caveat_only requires a separate reviewed-preparation audit.",
+    "approval_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "approved_allowed": false
+  },
+  "review": {
+    "review_status": "reviewed",
+    "confidence": "high",
+    "freshness": "mixed",
+    "reviewer": "external_ai_strict_audit_and_codex_backwrite",
+    "reviewed_at": "2026-06-17",
+    "source_candidate_id": "cand_20260617_phase60_static_api_sandbox_contract_only_001",
+    "ai_audit_result_id": "audit_result_phase60_reviewed_preparation_20260617_strict_v1",
+    "approval_status": "not_requested",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase60_reviewed_preparation_20260617_strict_v1",
+      "package_id": "phase60_reviewed_preparation_audit_package_20260617",
+      "candidate_id": "cand_20260617_phase60_static_api_sandbox_contract_only_001",
+      "research_task_id": "P60-A02",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "trade_execution_advice_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "live_permission_allowed": false,
+      "required_followups": [
+        "补 response_mocked、market_data_real、order_routing_real、account_real 字段。"
+      ],
+      "patch_notes": {
+        "source": [
+          "Coinbase 来源是 Coinbase-specific，不代表所有交易所 sandbox。"
+        ],
+        "content": [
+          "必须保留 static API sandbox 表述。"
+        ],
+        "boundary": [
+          "不得 live-ready，不得 hard gate。"
+        ],
+        "conflict": [
+          "与 Phase 58 等效链条不冲突。"
+        ]
+      }
+    },
+    "audit_log": [
+      {
+        "at": "2026-06-17",
+        "actor": "external_ai_strict_audit",
+        "action": "phase60_reviewed_preparation_audit_passed",
+        "reason": "accepted_for_reviewed_caveat_only; approved/default/hard gate remain forbidden.",
+        "audit_result_id": "audit_result_phase60_reviewed_preparation_20260617_strict_v1"
+      },
+      {
+        "at": "2026-06-17",
+        "actor": "codex",
+        "action": "formal_reviewed_caveat_only_created",
+        "reason": "CEK-TA-579 materialized formal reviewed/caveat_only knowledge."
+      }
+    ]
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于提醒外接项目区分 sandbox、testnet、replay、paper、live canary 和 live 环境",
+      "用于审计 environment_manifest、promotion_decision 和 gap_report 是否齐全",
+      "用于阻止 AI 把 paper 盈亏、sandbox 响应或 replay 成交泛化为 live-ready 证据"
+    ],
+    "not_allowed": [
+      "不得据此生成买卖点、仓位、杠杆、止损止盈或风险阈值",
+      "不得据此授权实盘、自动拒单、自动停机或 hard gate",
+      "不得把任何平台 sandbox/paper 行为泛化为所有市场"
+    ]
+  },
+  "machine_gate": {
+    "default_guidance": "caveat_only",
+    "reason": "Formal reviewed/caveat_only only; not approved, not default guidance, not hard gate, not live permission.",
+    "requires_human_escalation": true,
+    "hidden_from_default_queue": true,
+    "visible_in_default_guidance_queue": false,
+    "reviewed_allowed": true,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "trade_execution_advice_allowed": false,
+    "risk_threshold_advice_allowed": false,
+    "live_permission_allowed": false
+  },
+  "contract_refs": [],
+  "workflow": {
+    "source_candidate_id": "cand_20260617_phase60_static_api_sandbox_contract_only_001",
+    "source_candidate_path": "codex-expert-kit/rag/candidates/KB_06_LIVE_EXECUTION/cand_20260617_phase60_static_api_sandbox_contract_only_001.json",
+    "formalized_by_task_id": "CEK-TA-579",
+    "formalized_at": "2026-06-17",
+    "review_mode": "reviewed_caveat_only",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "live_permission_allowed": false
+  },
+  "contribution": {
+    "formalized_from_candidate": "cand_20260617_phase60_static_api_sandbox_contract_only_001",
+    "private_data_removed": true,
+    "contains_project_private_strategy": false,
+    "contains_secret": false,
+    "contains_account_facts": false
+  }
+}

@@ -1,0 +1,333 @@
+{
+  "schema_version": "1.1.0-candidate",
+  "candidate_id": "cand_20260612_phase45_resilience_incident_log_p45_d_ops04_001",
+  "research_task_id": "P45-D-OPS04",
+  "status": {
+    "review_status": "formalized",
+    "ingestion_decision": "formal_reviewed_created",
+    "decision_reason": "blocked supplemental re-audit 通过，已创建 formal reviewed/caveat_only。",
+    "created_at": "2026-06-12",
+    "updated_at": "2026-06-12"
+  },
+  "classification": {
+    "tree_node_id": "kt.live_execution.resilience_incident_log",
+    "canonical_node_id": "kt.live_execution.resilience_incident_log",
+    "tree_path": "CEK-TA / Trading Engineering / Live Execution / Resilience Incident Log",
+    "related_nodes": [
+      "kt.live_execution.audit_trail",
+      "kt.live_execution.order_state_machine",
+      "kt.ai_engineering.database_storage_engineering.runtime_observability_trace",
+      "kt.ai_engineering.database_storage_engineering.audit_log_ledger",
+      "kt.risk_management.layered_risk_controls"
+    ],
+    "partition_id": "KB_06_LIVE_EXECUTION",
+    "domain": "live_trading",
+    "subdomain": "resilience_incident_log",
+    "rule_type": "resilience_incident_boundary_rule",
+    "claim_type": "incident_taxonomy_rule",
+    "used_for": [
+      "trading_system_resilience_design",
+      "incident_response_review",
+      "runtime_log_governance",
+      "external_project_rag_retrieval",
+      "ai_trader_project_design_audit"
+    ],
+    "classification_notes": "P45-D 只补交易系统韧性、事故响应、恢复/replay 边界和日志治理；不创建 CEK-TA hard gate，也不定义交易动作。"
+  },
+  "claim": {
+    "claim_id": "claim_p45_d_ops04",
+    "title": "交易事故 taxonomy 必须区分技术、市场、数据和风控影响",
+    "statement": "CEK-TA reviewed/caveat_only 的交易事故内部 taxonomy 建议至少覆盖 system_availability、data_quality、order_and_fill、risk_policy、account_and_funding、external_dependency、market_state 和 human_action。该 taxonomy 只用于 audit、review、priority queue、post-incident review 或 RAG 检索上下文，不得自动触发交易动作、风控阈值、停机阈值、拒单、撤单、重发订单或 hard gate。",
+    "normalized_claim": "phase45_resilience_incident_log.incident_taxonomy_required.v1",
+    "evidence_summary": "Reg SCI/NIST/Google SRE 支撑事故响应和复盘框架；CEK-TA runtime contract 内联 incident_taxonomy schema，明确 taxonomy_scope=CEK-TA internal taxonomy 以及 category、impact_area、affected_system、market_impact、data_quality、order_state、human_action、audit_trace_id 字段。",
+    "interpretation_notes": "本候选只定义系统韧性、事故响应、日志治理和恢复边界，不输出交易参数、风险阈值或实盘执行建议。",
+    "claim_strength": "candidate",
+    "performance_claim": false
+  },
+  "applicability": {
+    "market": "general_with_jurisdiction_platform_and_venue_caveats",
+    "asset": "general",
+    "timeframe": "runtime_operations_and_incident_context",
+    "data_granularity": "system_events_order_events_incident_records_runtime_logs_telemetry",
+    "project_type": "trading_ai_support_layer",
+    "applies_when": [
+      "外接项目需要设计交易系统 BC/DR、降级模式、只读模式、故障切换、事故响应、事故复盘或日志治理。",
+      "AI IDE 需要检查交易系统方案是否遗漏恢复目标、关键依赖、owner、演练证据、事件 taxonomy 或日志完整性。",
+      "需要区分恢复/replay 的审计证据、模拟用途和真实订单动作边界。"
+    ],
+    "not_applicable_when": [
+      "用户要求具体买卖点、仓位、杠杆、止损止盈、风险阈值、停机阈值或实盘执行动作。",
+      "需要 broker、venue、账户、订单或资金的实时事实时，应由外接项目事实层提供。",
+      "需要法律/监管合规结论时，应由对应辖区合规或法律 owner 判断。"
+    ],
+    "assumptions": [
+      "Resilience / Incident / Log Management 是交易工程运行时治理，不是策略 alpha。",
+      "所有 BC/DR、incident、log 和 telemetry 来源必须声明监管、平台、云服务、市场和系统适用边界。",
+      "候选通过外部审计前不能进入 formal reviewed 知识库。"
+    ],
+    "limitations": [
+      "Reg SCI 和 FINRA 来源具有美国监管与机构适用边界。",
+      "NIST 来源是通用安全/应急/日志治理来源，不替代交易所或 broker 私有规则。",
+      "AWS、Google SRE、OpenTelemetry 是工程实现模式，不是金融市场强制标准。"
+    ]
+  },
+  "source_refs": [
+    {
+      "source_title": "NIST SP 800-61 Rev. 3: Incident Response Recommendations and Considerations",
+      "source_url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-61r3.pdf",
+      "source_type": "standard_doc",
+      "publisher": "NIST",
+      "reliability": "high",
+      "score": 90,
+      "freshness": "time_sensitive",
+      "evidence_summary": "NIST SP 800-61 Rev. 3 provides incident response considerations across preparation, detection, analysis, response, recovery and improvement activities.",
+      "limitations": [
+        "Cybersecurity incident-response source; must be mapped carefully to trading operations incidents."
+      ],
+      "source_id": "src_001",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "17 CFR Part 242 Regulation SCI",
+      "source_url": "https://www.ecfr.gov/current/title-17/chapter-II/part-242/subpart-ECFRe106e84e67e2bc9",
+      "source_type": "regulatory_rule",
+      "publisher": "eCFR / U.S. SEC",
+      "reliability": "high",
+      "score": 94,
+      "freshness": "time_sensitive",
+      "evidence_summary": "Regulation SCI covers policies and procedures for SCI systems capacity, integrity, resiliency, availability and security, including SCI events, notification, corrective action and records.",
+      "limitations": [
+        "U.S. SCI-entity regulatory context; not a universal global trading-system standard."
+      ],
+      "source_id": "src_002",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "FINRA Rule 4370: Business Continuity Plans and Emergency Contact Information",
+      "source_url": "https://www.finra.org/rules-guidance/rulebooks/finra-rules/4370",
+      "source_type": "regulatory_rule",
+      "publisher": "FINRA",
+      "reliability": "high",
+      "score": 92,
+      "freshness": "time_sensitive",
+      "evidence_summary": "FINRA Rule 4370 requires member firms to create and maintain written business continuity plans for emergencies or significant business disruptions.",
+      "limitations": [
+        "FINRA member-firm context; not applicable to every trading venue, crypto platform or non-U.S. project."
+      ],
+      "source_id": "src_003",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "Google SRE Book: Postmortem Culture",
+      "source_url": "https://sre.google/sre-book/postmortem-culture/",
+      "source_type": "engineering_practice",
+      "publisher": "Google SRE",
+      "reliability": "medium_high",
+      "score": 82,
+      "freshness": "stable",
+      "evidence_summary": "Google SRE postmortem guidance supports documenting incidents, understanding contributing causes and defining preventive actions in a blameless learning process.",
+      "limitations": [
+        "SRE practice source; not a financial-market regulatory requirement."
+      ],
+      "source_id": "src_004",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "Phase 45 Resilience / Incident / Log Runtime Contract",
+      "source_url": "docs/contracts/phase45_resilience_incident_log_runtime_contract.md",
+      "source_type": "internal_contract",
+      "publisher": "CEK-TA",
+      "reliability": "high",
+      "score": 90,
+      "freshness": "current",
+      "relevance": "high",
+      "evidence_summary": "CEK-TA contract now defines incident_taxonomy, audit_ledger_event, log layer boundaries, runtime mode and replay boundary schemas.",
+      "limitations": [
+        "Internal CEK-TA contract; use with external supporting sources."
+      ],
+      "source_id": "src_supp_reviewed_001",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 89.6,
+    "score_version": "phase45_source_scoring_v1",
+    "primary_source_count": 5,
+    "supporting_source_count": 0,
+    "low_reliability_source_count": 0,
+    "mandatory_downgrades": [],
+    "limitations": [
+      "正式 reviewed 前必须由外部审计确认 claim 没有超出来源可证明范围。",
+      "监管、标准、云架构和 SRE 来源必须保留适用边界，不得写成交易执行许可。",
+      "内部字段契约若后续用于 reviewed，需要提供 schema extract、字段表或 contract hash。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "Phase 37 Live Execution formal reviewed knowledge",
+      "Phase 37 Risk Management formal reviewed knowledge",
+      "Phase 42 Database/Storage formal reviewed knowledge",
+      "Phase 45 Audit Trail / Layered Risk formal reviewed knowledge",
+      "Phase 45 runtime contract"
+    ],
+    "conflicts": [],
+    "resolution_summary": "未发现与现有 formal reviewed 知识的直接冲突；P45-D 仅补运行时韧性、事故、恢复和日志边界。",
+    "approval_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "risk_threshold_advice_allowed": false
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于提醒 AI IDE 设计 BC/DR、降级/只读模式、failover/recovery/replay、incident taxonomy、post-incident review 和 runtime log governance。",
+      "用于生成运行时治理 checklist、schema review、RAG 检索上下文和审计 reason code。",
+      "用于检查外接项目方案是否把重启脚本、普通日志或 SRE practice 误写成交易级恢复/审计能力。"
+    ],
+    "not_allowed": [
+      "不得生成买卖点、仓位、杠杆、止损止盈、风险阈值、停机阈值或实盘执行建议。",
+      "不得把候选知识当作 approved 或默认指导。",
+      "不得替外接项目启用 hard gate、拒单、停机、重发订单、撤单或解锁流程。"
+    ]
+  },
+  "machine_gate": {
+    "default_guidance": "deny",
+    "reason": "candidate only; pending external strict audit; no reviewed/approved/default/hard gate.",
+    "requires_human_escalation": false,
+    "hidden_from_default_queue": true,
+    "visible_in_default_guidance_queue": false,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "risk_threshold_advice_allowed": false
+  },
+  "review": {
+    "review_status": "candidate_ready",
+    "review_mode": "external_strict_audit_required",
+    "confidence": "medium_high",
+    "freshness": "mixed",
+    "reviewer": null,
+    "reviewed_at": null,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "risk_threshold_advice_allowed": false,
+    "audit_log": [
+      {
+        "at": "2026-06-12",
+        "actor": "codex",
+        "action": "phase45_resilience_incident_log_candidate_generated",
+        "reason": "Generated from Phase 45 P45-D task queue with regulatory, standard and engineering sources."
+      },
+      {
+        "at": "2026-06-12",
+        "actor": "external_ai_strict_audit",
+        "action": "phase45_resilience_incident_log_first_audit_imported",
+        "reason": "accepted_for_draft / confidence=medium",
+        "audit_result_id": "audit_phase45_resilience_incident_log_20260612_external_strict_v1"
+      },
+      {
+        "at": "2026-06-12",
+        "actor": "codex",
+        "action": "phase45_resilience_incident_log_reviewed_preparation_supplemented",
+        "reason": "按 reviewed/caveat_only 审计意见补证，等待再审。",
+        "audit_result_id": "audit_phase45_resilience_incident_log_reviewed_preparation_20260612"
+      },
+      {
+        "at": "2026-06-12",
+        "actor": "external_ai_strict_audit_and_codex",
+        "action": "phase45_resilience_incident_log_blocked_supplemental_reaudit_formalized",
+        "reason": "blocked supplemental re-audit accepted this item for formal reviewed/caveat_only.",
+        "audit_result_id": "audit_phase45_resilience_incident_log_reviewed_blocked_supplemental_reaudit_20260612",
+        "formal_knowledge_id": "kb_phase45_resilience_incident_log.incident_taxonomy_required.v1"
+      }
+    ],
+    "ai_audit": {
+      "audit_result_id": "audit_phase45_resilience_incident_log_reviewed_blocked_supplemental_reaudit_20260612",
+      "package_id": "phase45_resilience_incident_log_reviewed_blocked_supplemental_reaudit_package_20260612",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "reasons": [
+        "上轮 blocked 点已修复：statement 已明确为 CEK-TA reviewed/caveat_only 内部事故 taxonomy，而不是外部监管或标准强制分类。",
+        "taxonomy 使用范围已限制为 audit、review、priority queue、post-incident review、RAG 检索上下文。",
+        "claim 明确不得自动触发交易动作、风控阈值、停机阈值、拒单、撤单、重发订单或 hard gate。",
+        "Reg SCI、NIST、Google SRE 只作为事故响应和复盘框架来源；具体 taxonomy 字段由 CEK-TA runtime contract 提供本体来源，来源分工合理。"
+      ],
+      "required_followups": [
+        "正式 reviewed/caveat_only 文本必须保留：该 taxonomy 是 CEK-TA internal taxonomy，不是监管原文分类。",
+        "正式文本必须保留：taxonomy label 只能进入 audit/review/priority queue，不得进入 execution gate。",
+        "如未来扩展为自动化治理，必须另开任务重新审计，不得从本条推导 hard gate。"
+      ],
+      "patch_notes": {
+        "source": [
+          "保留 NIST SP 800-61、Reg SCI、FINRA 4370、Google SRE Postmortem Culture。",
+          "CEK-TA runtime contract 作为 incident_taxonomy schema 的字段本体来源。"
+        ],
+        "content": [
+          "保留 system_availability、data_quality、order_and_fill、risk_policy、account_and_funding、external_dependency、market_state、human_action 八类为 CEK-TA 内部建议分类。",
+          "保留 category、impact_area、affected_system、market_impact、data_quality、order_state、human_action、audit_trace_id 字段。"
+        ],
+        "boundary": [
+          "不得生成交易动作。",
+          "不得生成风控阈值。",
+          "不得生成停机阈值。",
+          "不得生成拒单、撤单、重发订单或 hard gate。"
+        ],
+        "conflict": []
+      }
+    }
+  },
+  "workflow": {
+    "stage": "formalized_reviewed",
+    "queue_group": "formalized",
+    "source_phase": "45",
+    "source_task_id": "CEK-TA-463",
+    "batch": "P45-D Resilience / Incident / Log",
+    "formal_knowledge_id": "kb_phase45_resilience_incident_log.incident_taxonomy_required.v1",
+    "formal_knowledge_path": "codex-expert-kit/rag/knowledge/KB_06_LIVE_EXECUTION/kb_phase45_resilience_incident_log.incident_taxonomy_required.v1.json",
+    "allowed_next_decisions": [
+      "accepted_for_reviewed_caveat_only",
+      "needs_more_evidence",
+      "rejected",
+      "blocked"
+    ],
+    "forbidden_next_decisions": [
+      "approved",
+      "default_guidance",
+      "hard_gate"
+    ],
+    "formal_review_status": "reviewed",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "risk_threshold_advice_allowed": false,
+    "hidden_from_default_queue": true,
+    "next_action": "none"
+  },
+  "contribution": {
+    "source": "phase45_professional_research",
+    "private_data_removed": true,
+    "project_specific_details_removed": true,
+    "notes": "Generated for external strict audit; no account, key, order, threshold, position or private strategy data included."
+  }
+}

@@ -1,0 +1,123 @@
+[
+  {
+    "case_id": "routing.v1_to_canonical.backtest_bias.001",
+    "category": "tree_routing",
+    "priority": "P0",
+    "task_type": "backtest_review",
+    "query": "检查回测偏差知识",
+    "mode": "quality_eval",
+    "filters": {
+      "tree_node_id": "kt.backtest.bias",
+      "include_aliases": true
+    },
+    "project_context": {
+      "market": "general",
+      "asset": "general",
+      "timeframe": "general",
+      "data_granularity": "general",
+      "project_type": "general"
+    },
+    "expected": {
+      "alias_resolution": "success",
+      "routing_fields": ["input_tree_node_id", "resolved_tree_node_id", "canonical_node_id", "alias_used", "migration_status", "warnings"],
+      "compatible_result_required": true
+    },
+    "must_not": {
+      "return_schema_mismatch": true,
+      "drop_v1_tree_node_id": true
+    },
+    "metrics": ["v1_v2_route_consistency_rate", "alias_resolution_success_rate"],
+    "review_notes": "旧 v1 节点必须能通过 alias 找到 canonical 路径。"
+  },
+  {
+    "case_id": "routing.canonical_to_v1.backtest_bias.001",
+    "category": "tree_routing",
+    "priority": "P0",
+    "task_type": "backtest_review",
+    "query": "检查 canonical 回测偏差节点",
+    "mode": "quality_eval",
+    "filters": {
+      "canonical_node_id": "kt.trading_engineering.backtest.bias",
+      "include_aliases": true
+    },
+    "project_context": {
+      "market": "general",
+      "asset": "general",
+      "timeframe": "general",
+      "data_granularity": "general",
+      "project_type": "general"
+    },
+    "expected": {
+      "alias_resolution": "success",
+      "compatible_result_required": true,
+      "routing_fields": ["canonical_node_id", "resolved_tree_node_id", "alias_used", "migration_status"]
+    },
+    "must_not": {
+      "require_v1_only_query": true,
+      "return_schema_mismatch": true
+    },
+    "metrics": ["v1_v2_route_consistency_rate", "alias_resolution_success_rate"],
+    "review_notes": "canonical 查询必须兼容已有 v1 知识。"
+  },
+  {
+    "case_id": "routing.alias_mismatch.block.001",
+    "category": "tree_routing",
+    "priority": "P0",
+    "task_type": "quality_eval",
+    "query": "检查错误的 v1/canonical 组合是否阻断",
+    "mode": "default_guidance",
+    "filters": {
+      "tree_node_id": "kt.backtest.bias",
+      "canonical_node_id": "kt.ai_engineering.rag_engineering.source_quality",
+      "include_aliases": true
+    },
+    "project_context": {
+      "market": "general",
+      "asset": "general",
+      "timeframe": "general",
+      "data_granularity": "general",
+      "project_type": "general"
+    },
+    "expected": {
+      "status": "error",
+      "error_code": "schema_mismatch",
+      "default_guidance_blocked": true
+    },
+    "must_not": {
+      "return_default_guidance": true,
+      "silently_choose_one_node": true
+    },
+    "metrics": ["alias_mismatch_block_rate", "unsafe_default_guidance_rate"],
+    "review_notes": "v1 与 canonical 不一致时必须阻断，不能静默降级。"
+  },
+  {
+    "case_id": "routing.split_target.default_block.001",
+    "category": "tree_routing",
+    "priority": "P1",
+    "task_type": "strategy_design",
+    "query": "查询被拆分迁移的策略节点",
+    "mode": "default_guidance",
+    "filters": {
+      "tree_node_id": "kt.kline_strategy",
+      "include_children": true,
+      "include_aliases": true
+    },
+    "project_context": {
+      "market": "crypto",
+      "asset": "BTC",
+      "timeframe": "1m",
+      "data_granularity": "kline",
+      "project_type": "kline_trend_strategy"
+    },
+    "expected": {
+      "split_targets_excluded_from_default": true,
+      "warnings": ["split_target_requires_audit_or_explicit_scope"]
+    },
+    "must_not": {
+      "return_candidate_or_split_target_as_default_guidance": true,
+      "claim_ambiguous_strategy_node_is_approved": true
+    },
+    "metrics": ["split_target_default_block_rate", "routing_warning_completeness"],
+    "review_notes": "拆分节点只能在 audit/browse 或显式范围下进入检索。"
+  }
+]

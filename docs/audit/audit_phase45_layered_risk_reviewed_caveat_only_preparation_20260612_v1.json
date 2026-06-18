@@ -1,0 +1,197 @@
+{
+  "audit_result_id": "audit_phase45_layered_risk_reviewed_caveat_only_preparation_20260612_v1",
+  "auditor": "external_ai_strict_audit",
+  "audited_at": "2026-06-12",
+  "package_id": "phase45_layered_risk_reviewed_preparation_audit_package_20260612",
+  "summary": {
+    "total": 6,
+    "accepted_for_reviewed_caveat_only": 6,
+    "needs_more_evidence": 0,
+    "rejected": 0,
+    "blocked": 0
+  },
+  "candidate_results": [
+    {
+      "candidate_id": "",
+      "research_task_id": "P45-C-RISK01",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "reasons": [
+        "SEC 15c3-5、CME pre-trade risk tools 和 FIA automated trading safeguards 足以支撑 pre-trade controls 分层边界。"
+      ],
+      "patch_notes": {
+        "source": [
+          "SEC Rule 15c3-5 只支撑美国 broker-dealer market access 语境。",
+          "CME 和 FIA 来源分别是 venue-specific 工具与行业最佳实践来源。"
+        ],
+        "content": [
+          "订单级、账户级、策略级、产品/venue 级、信用/保证金级和系统级是 CEK-TA 内部分层 taxonomy。"
+        ],
+        "boundary": [
+          "不得把分层 control 自动变成 hard gate；不得输出任何风险阈值。"
+        ],
+        "conflict": [
+          "未发现与 Phase 37 Risk Management 或 Phase 45 runtime contract 的直接冲突。"
+        ]
+      }
+    },
+    {
+      "candidate_id": "",
+      "research_task_id": "P45-C-RISK02",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "reasons": [
+        "SEC FAQ 和 CME Globex Credit Controls 足以支撑 credit/capital/exposure control 与 strategy risk owner 分离。"
+      ],
+      "patch_notes": {
+        "source": [
+          "SEC FAQ 只支撑 broker-dealer financial exposure controls。",
+          "CME Globex Credit Controls 只支撑 clearing-firm risk administrator 与 CME 语境。"
+        ],
+        "content": [
+          "credit limit 不等于 strategy loss limit、仓位 sizing 或 alpha risk preference。"
+        ],
+        "boundary": [
+          "不得输出信用额度、资本阈值、账户限制数值或资金充足性结论。"
+        ],
+        "conflict": [
+          "credit owner 与 strategy risk owner 必须在外接项目中保持分离。"
+        ]
+      }
+    },
+    {
+      "candidate_id": "",
+      "research_task_id": "P45-C-RISK03",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "reasons": [
+        "SEC price/size parameter controls 和 CME price banding/pre-trade risk tools 足以支撑 order admission controls 独立于策略信号。"
+      ],
+      "patch_notes": {
+        "source": [
+          "CME price banding 只能作为 venue-specific 示例，不得泛化为所有 venue。"
+        ],
+        "content": [
+          "最大订单量、price collar、price band 和 fat-finger controls 必须声明 venue/product/version/evidence。"
+        ],
+        "boundary": [
+          "策略信号强度、AI 置信度或 alpha 分数不得作为绕过 order admission controls 的理由。"
+        ],
+        "conflict": [
+          "order admission controls 归 Live Execution / Risk Management owner。"
+        ]
+      }
+    },
+    {
+      "candidate_id": "",
+      "research_task_id": "P45-C-RISK04",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "reasons": [
+        "CME messaging controls 和 FIA automated trading safeguards 足以支撑 message throttle / cancel-rate controls 的审计边界。"
+      ],
+      "patch_notes": {
+        "source": [
+          "CME messaging controls 只支撑 CME iLink / CME venue excessive messaging 语境。"
+        ],
+        "content": [
+          "message pressure 是 system / venue risk，不是成交风险、PnL 风险或策略 alpha。"
+        ],
+        "boundary": [
+          "不得输出 CME MPS、EMT、volume ratio、cancel-rate 等具体数值作为 CEK-TA 通用阈值。"
+        ],
+        "conflict": [
+          "message throttle / cancel-rate controls 引用 Live Execution、Market Microstructure 和 Audit Trail。"
+        ]
+      }
+    },
+    {
+      "candidate_id": "",
+      "research_task_id": "P45-C-RISK05",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "reasons": [
+        "CME 支撑 clearing margin/performance bond/SPAN，IBKR 支撑 available funds/excess liquidity/buying power，Binance Futures API 支撑 crypto venue availableBalance/wallet/margin 字段语义，内部 contract 补齐 point-in-time account_margin_collateral_evidence。"
+      ],
+      "patch_notes": {
+        "source": [
+          "CME 来源只支撑 CME Clearing / SPAN / performance bond 语境。",
+          "IBKR 字段只支撑 IBKR broker/account-type 语境。",
+          "Binance Futures 字段只支撑 Binance USDⓈ-M Futures/API/account-mode 语境。"
+        ],
+        "content": [
+          "margin、performance bond、collateral、available funds、buying power、wallet balance、margin balance、strategy capital budget 必须拆分。",
+          "point-in-time account/margin/collateral evidence 必须包含 broker/venue、account_mode、field_name、source timestamp、snapshot_id、staleness_status、semantic_boundary 和 owner。"
+        ],
+        "boundary": [
+          "任何账户字段都不能默认解释为可交易现金。",
+          "不得输出资金充足性结论、保证金比例、信用额度、可用资金判断或下单许可。"
+        ],
+        "conflict": [
+          "未发现与 Phase 37 Risk Management、Phase 45 Execution TCA / Audit Trail 或 runtime contract 的直接冲突。"
+        ]
+      }
+    },
+    {
+      "candidate_id": "",
+      "research_task_id": "P45-C-RISK06",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "reasons": [
+        "SEC 15c3-5、FIA 和 CME pre-trade risk tools 足以支撑 post-trade surveillance 不能替代 pre-trade controls 的边界。"
+      ],
+      "patch_notes": {
+        "source": [
+          "SEC/FIA/CME 来源支撑 pre-trade controls 与 post-trade analysis 的职责区分，但不直接定义 CEK-TA deterministic gate。"
+        ],
+        "content": [
+          "post-trade surveillance 只能发现、解释和复盘已发生事件。"
+        ],
+        "boundary": [
+          "本候选不得启用拒单、停机、撤单、解锁或任何 hard gate。"
+        ],
+        "conflict": [
+          "deterministic gate 只能由外接项目 Risk Management / Live Execution owner 另行定义。"
+        ]
+      }
+    }
+  ],
+  "mandatory_caveats": [
+    "SEC Rule 15c3-5 只支撑美国 broker-dealer market access 语境，不得泛化为全球市场、crypto venue 或全部 broker。",
+    "FIA 是行业最佳实践来源，不是 CEK-TA 阈值来源，也不是强制监管规则。",
+    "CME 来源只支撑 CME Globex / CME Clearing / CME product 语境。",
+    "IBKR 字段只支撑 IBKR broker/account-type 语境。",
+    "Binance Futures 字段只支撑 Binance USDⓈ-M Futures/API/account-mode 语境。",
+    "reviewed/caveat_only 只能用于风控设计、owner 边界、证据字段和审计提醒，不能生成交易许可、资金充足性结论、风控阈值或 hard gate。"
+  ]
+}

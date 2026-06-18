@@ -1,0 +1,396 @@
+{
+  "audit_result_id": "audit_phase45_p2_reviewed_preparation_20260612",
+  "auditor": "external_ai_strict_audit",
+  "audited_at": "2026-06-12",
+  "package_id": "phase45_p2_reviewed_preparation_audit_package_20260612",
+  "summary": {
+    "total": 11,
+    "accepted_for_reviewed_caveat_only": 8,
+    "needs_more_evidence": 3,
+    "rejected": 0,
+    "blocked": 0
+  },
+  "candidate_results": [
+    {
+      "research_task_id": "P45-G-DATA01",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "trade_execution_advice_allowed": false,
+      "legal_license_conclusion_allowed": false,
+      "reasons": [
+        "NYSE、Nasdaq、CME 来源足以支撑 market data display / non-display / internal use / client use / derived data / redistribution 等必须声明授权边界。",
+        "本条只作为 entitlement checklist，不输出法律授权结论、训练授权结论或数据再分发许可。"
+      ],
+      "required_followups": [
+        "正式 reviewed/caveat_only 文本必须保留 active agreement / legal owner / vendor agreement caveat。",
+        "training、evaluation、RAG embedding storage 只能写成 must-declare usage boundary，不得写成 permission granted。"
+      ],
+      "patch_notes": {
+        "source": [
+          "保留 NYSE、Nasdaq、CME market-data policy 来源。"
+        ],
+        "content": [
+          "明确本条是授权边界审计规则，不是授权结论。"
+        ],
+        "boundary": [
+          "不得输出法律授权结论。",
+          "不得输出训练授权结论。",
+          "不得输出数据再分发许可。"
+        ],
+        "conflict": []
+      }
+    },
+    {
+      "research_task_id": "P45-G-DATA02",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "trade_execution_advice_allowed": false,
+      "legal_license_conclusion_allowed": false,
+      "reasons": [
+        "Databento PIT instrument definitions 足以支撑 reference data 必须按 point-in-time 查询。",
+        "claim 防止 current metadata 回填历史训练、回测、复盘或标签生成，边界正确。"
+      ],
+      "required_followups": [
+        "正式文本建议补 Databento Corporate Actions / Reference API source_ref。",
+        "所有 PIT metadata 必须绑定 vendor、dataset、venue、schema version、effective time。"
+      ],
+      "patch_notes": {
+        "source": [
+          "保留 Databento Instrument Definitions、Databento PIT article、Databento Schemas、CME Product Slate。"
+        ],
+        "content": [
+          "明确 current metadata 不得静默回填历史样本。"
+        ],
+        "boundary": [
+          "不得把 reference data 写成交易信号。",
+          "不得生成训练授权结论。"
+        ],
+        "conflict": []
+      }
+    },
+    {
+      "research_task_id": "P45-G-DATA03",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "trade_execution_advice_allowed": false,
+      "legal_license_conclusion_allowed": false,
+      "reasons": [
+        "Databento、Nasdaq、CME 来源足以支撑 tick size、lot size、round lot、price limit、session limit 等 reference metadata 需要按 venue/product/session/version 处理。"
+      ],
+      "required_followups": [
+        "正式文本必须要求 effective_from / effective_to / source_ref / schema_version。",
+        "Databento tutorial 类来源只能作为辅助，主证据应保留官方 schema / venue docs。"
+      ],
+      "patch_notes": {
+        "source": [
+          "保留 Databento Instrument Definitions、Databento Statistics、Nasdaq Symbol Directory、UTP round-lot alert、CME Daily Price Limits。"
+        ],
+        "content": [
+          "tick/lot/price-limit 是版本化 reference metadata，不是策略参数。"
+        ],
+        "boundary": [
+          "不得输出交易参数。",
+          "不得输出风险阈值。"
+        ],
+        "conflict": []
+      }
+    },
+    {
+      "research_task_id": "P45-G-DATA04",
+      "decision": "needs_more_evidence",
+      "confidence": "medium_high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "trade_execution_advice_allowed": false,
+      "legal_license_conclusion_allowed": false,
+      "reasons": [
+        "dataset、schema、instrument universe、coverage 起止时间等主体方向正确。",
+        "但 statement 包含 delisting / symbol change / corporate action 处理，当前 source_refs 仍缺少直接来源。"
+      ],
+      "required_followups": [
+        "补 Databento Corporate Actions / Reference API，覆盖 listed/delisted securities、corporate actions、PIT reference events。",
+        "或补 Nasdaq Daily List / FINRA Daily List 等 delisting / symbol-change 直接来源。",
+        "补 dataset_coverage schema：coverage_start、coverage_end、missing_interval、filter_rule、field_availability、delisting_policy_ref。"
+      ],
+      "patch_notes": {
+        "source": [
+          "保留 Databento Schemas、Databento Instrument Definitions、Nasdaq Symbol Directory、CME Product Slate。",
+          "新增 delisting / symbol-change / corporate action 直接来源后再审。"
+        ],
+        "content": [
+          "不得把未声明覆盖范围的数据当成完整市场事实。"
+        ],
+        "boundary": [
+          "不得生成交易信号。",
+          "不得生成训练授权结论。"
+        ],
+        "conflict": []
+      }
+    },
+    {
+      "research_task_id": "P45-G-DATA05",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "trade_execution_advice_allowed": false,
+      "legal_license_conclusion_allowed": false,
+      "reasons": [
+        "包内已提供 CEK-TA lineage contract hash，足以支撑 parser_version、normalization_version、raw_snapshot_digest、lineage_id 等字段本体。"
+      ],
+      "required_followups": [
+        "正式文本必须区分 vendor_schema_version 与 internal parser_version / normalization_version。",
+        "OpenLineage、MLflow、Iceberg、DVC 不得写成强制技术栈。",
+        "market-data license、training use、redistribution permission 继续由 legal/vendor agreement owner 判断。"
+      ],
+      "patch_notes": {
+        "source": [
+          "保留 Databento、Nasdaq、CEK-TA lineage contract、OpenLineage、MLflow、Iceberg、DVC。"
+        ],
+        "content": [
+          "保留 vendor_id、dataset_id、schema_version、field_dictionary_ref、parser_version、parser_code_hash、normalization_version、normalization_code_hash、raw_snapshot_uri、raw_snapshot_digest、lineage_id。"
+        ],
+        "boundary": [
+          "不得输出法律授权结论。",
+          "不得输出训练授权结论。",
+          "不得输出数据再分发许可。",
+          "不得生成 hard gate。"
+        ],
+        "conflict": []
+      }
+    },
+    {
+      "research_task_id": "P45-G-DATA06",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "trade_execution_advice_allowed": false,
+      "legal_license_conclusion_allowed": false,
+      "reasons": [
+        "Databento reference/schema 来源支撑 reference data 用于 instrument、venue、contract、session、tick/lot/limit 等标识。",
+        "claim 明确 reference data 不是 alpha、买卖点、仓位、风控阈值或实盘许可。"
+      ],
+      "required_followups": [
+        "若 reference data 派生为 feature，必须转入 Feature Engineering / Strategy Research / AI Engineering 的泄漏、时点和验证流程。"
+      ],
+      "patch_notes": {
+        "source": [
+          "保留 Databento、NYSE、CME 来源。"
+        ],
+        "content": [
+          "明确 reference data 与 feature / alpha 的 owner boundary。"
+        ],
+        "boundary": [
+          "不得生成交易信号。",
+          "不得生成训练授权结论。",
+          "不得生成实盘许可。"
+        ],
+        "conflict": []
+      }
+    },
+    {
+      "research_task_id": "P45-H-CRYPTO01",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "trade_execution_advice_allowed": false,
+      "legal_license_conclusion_allowed": false,
+      "reasons": [
+        "Binance Mark Price API 与 Binance / Bybit 文档足以支撑 mark price、index price、last price、funding basis 和 liquidation trigger 分开建模。"
+      ],
+      "required_followups": [
+        "正式文本必须保留 Binance / Bybit venue-specific caveat。",
+        "oracle/composite index 需要绑定具体 venue index source_ref。"
+      ],
+      "patch_notes": {
+        "source": [
+          "保留 Binance mark/index 文档、Binance Mark Price API、Bybit Mark Price 文档。"
+        ],
+        "content": [
+          "mark/index/last/oracle/funding_basis/liquidation_trigger 必须分字段。"
+        ],
+        "boundary": [
+          "不得输出止损参数。",
+          "不得输出清算规避建议。",
+          "不得输出交易许可。"
+        ],
+        "conflict": []
+      }
+    },
+    {
+      "research_task_id": "P45-H-CRYPTO02",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "trade_execution_advice_allowed": false,
+      "legal_license_conclusion_allowed": false,
+      "reasons": [
+        "Binance、Bybit、OKX 来源足以支撑 funding rate、funding interval、funding timestamp、direction 和 realized funding fee 是 perpetual 独立现金流。"
+      ],
+      "required_followups": [
+        "正式文本必须要求 funding_cashflow_event schema 或等价字段。",
+        "funding interval 与 fee source 必须按 venue/product/account mode 版本化。"
+      ],
+      "patch_notes": {
+        "source": [
+          "保留 Binance Funding Rates、Binance Funding History API、Bybit Funding Rate、OKX Funding Fee。"
+        ],
+        "content": [
+          "funding fee 必须独立于 price_pnl、fee、slippage 和 strategy alpha。"
+        ],
+        "boundary": [
+          "不得输出 funding 套利建议。",
+          "不得输出交易许可。",
+          "不得输出仓位建议。"
+        ],
+        "conflict": []
+      }
+    },
+    {
+      "research_task_id": "P45-H-CRYPTO03",
+      "decision": "needs_more_evidence",
+      "confidence": "medium_high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "trade_execution_advice_allowed": false,
+      "legal_license_conclusion_allowed": false,
+      "reasons": [
+        "liquidation 不等于普通止损的核心 claim 正确。",
+        "但 source_refs 仍不足以直接覆盖 maintenance margin tier、margin mode、partial liquidation。"
+      ],
+      "required_followups": [
+        "补 Binance Leverage & Margin / maintenance margin bracket 来源。",
+        "补 Bybit Risk Limit / Maintenance Margin / laddered liquidation 来源。",
+        "补 internal liquidation_event schema：maintenance_margin_source_ref、margin_mode、liquidation_price、bankruptcy_price、partial_liquidation_ref。"
+      ],
+      "patch_notes": {
+        "source": [
+          "保留 Binance liquidation、Binance mark price、Bybit mark price 来源。",
+          "新增 maintenance margin tier / margin mode / partial liquidation 直接来源后再审。"
+        ],
+        "content": [
+          "liquidation price、bankruptcy price、maintenance margin、margin mode、partial liquidation 必须分字段。"
+        ],
+        "boundary": [
+          "不得输出清算规避建议。",
+          "不得输出仓位或杠杆建议。",
+          "不得输出止损参数。"
+        ],
+        "conflict": []
+      }
+    },
+    {
+      "research_task_id": "P45-H-CRYPTO04",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "trade_execution_advice_allowed": false,
+      "legal_license_conclusion_allowed": false,
+      "reasons": [
+        "Binance 与 Bybit 来源足以支撑 ADL、insurance fund、bankruptcy loss coverage 是 venue-specific 风险机制。",
+        "Binance ADL Risk API 支撑 ADL rating 只能作为 venue-specific risk data，不是 CEK-TA 阈值、交易信号或 hard gate。"
+      ],
+      "required_followups": [
+        "正式文本必须保留 venue/product/collateral/margin mode caveat。",
+        "ADL risk rating 不得进入交易信号、默认指导或 hard gate。"
+      ],
+      "patch_notes": {
+        "source": [
+          "保留 Binance Insurance Fund、Binance ADL、Binance ADL Risk API、Bybit Insurance Fund、Bybit ADL。"
+        ],
+        "content": [
+          "ADL / insurance fund / loss allocation 必须按 venue-specific 风险机制建模。"
+        ],
+        "boundary": [
+          "不得输出清算规避。",
+          "不得输出交易信号。",
+          "不得输出 hard gate。"
+        ],
+        "conflict": []
+      }
+    },
+    {
+      "research_task_id": "P45-H-CRYPTO05",
+      "decision": "needs_more_evidence",
+      "confidence": "medium_high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "trade_execution_advice_allowed": false,
+      "legal_license_conclusion_allowed": false,
+      "reasons": [
+        "二审补证足以支撑 accepted_for_draft。",
+        "但 reviewed/caveat_only 层仍缺 exchange status / incident event 直接来源，以及 mark price anomaly / index component abnormal handling 的直接规则来源。"
+      ],
+      "required_followups": [
+        "补 Binance / Bybit / OKX status page 或 incident/outage 官方来源。",
+        "补 Bybit mark price abnormal / index component abnormal handling source，或等价 venue rulebook。",
+        "如保留 clawback 字段，补具体 venue clawback / loss-socialization rulebook。",
+        "API/WebSocket 风险只能进入 observability / audit checklist，不得变成自动停机 hard gate。"
+      ],
+      "patch_notes": {
+        "source": [
+          "保留 Databento Status、OKX Pre-market、Binance ADL、Binance Insurance Fund、Binance Aggregate Trade Streams、Binance WebSocket、Bybit WebSocket、Binance Maintenance Updates、Binance Mark Price API。",
+          "新增 outage / incident truth source 与 mark-index anomaly handling source 后再审。"
+        ],
+        "content": [
+          "exchange maintenance / service interruption、api_ws_disconnect、heartbeat_ping_pong_failure、stream_rate_limit、mark_index_monitoring、pre_market_rule、adl_insurance_event、loss_allocation_mechanism 需要分字段建模。"
+        ],
+        "boundary": [
+          "不得输出清算规避建议。",
+          "不得输出仓位、杠杆或止损止盈。",
+          "不得生成停机 hard gate。",
+          "不得生成自动解锁、自动撤单或强平处理动作。",
+          "不得把 Binance / Bybit / OKX 规则泛化为所有 crypto venue。"
+        ],
+        "conflict": []
+      }
+    }
+  ],
+  "global_required_patches": [
+    "formal reviewed 只能是 caveat_only，approved/default guidance/hard gate 必须保持 false。",
+    "DATA04、CRYPTO03、CRYPTO05 需要补证后再审，不能直接 formalize。"
+  ]
+}

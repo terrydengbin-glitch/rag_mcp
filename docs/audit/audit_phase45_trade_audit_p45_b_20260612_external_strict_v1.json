@@ -1,0 +1,122 @@
+{
+  "audit_result_id": "audit_phase45_trade_audit_p45_b_20260612_external_strict_v1",
+  "auditor": "GPT-5.5 Thinking",
+  "audited_at": "2026-06-12",
+  "package_id": "phase45_trade_audit_candidate_audit_package_20260612",
+  "summary": {
+    "total": 6,
+    "accepted_for_draft": 4,
+    "needs_more_evidence": 2,
+    "rejected": 0,
+    "blocked": 0
+  },
+  "candidate_results": [
+    {
+      "research_task_id": "P45-B-AUD01",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "SEC/CAT/FINRA/ESMA 足以支撑 clock synchronization 与 reportable event timestamp 边界。"
+      ],
+      "required_followups": [
+        "明确这是 CEK-TA 内部审计字段要求，不是全球监管统一规则。",
+        "不得把 CAT / FINRA / ESMA 的精度或漂移阈值泛化到 crypto、外汇、离岸交易所或全部 broker。",
+        "补充 event_time_source / timezone / precision / drift_observed / sync_provider / exception_reason / remediation_id 字段。"
+      ]
+    },
+    {
+      "research_task_id": "P45-B-AUD02",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "SEC Rule 613 支撑 order receipt/origination 到 routing、modification、cancellation、execution 的 time-sequenced record；FIX 支撑协议事件语义。"
+      ],
+      "required_followups": [
+        "actor / reason / source_system 是 CEK-TA 内部 schema 强化项，应标注为内部审计字段。",
+        "补充事件类型枚举：received / routed / replaced / canceled / rejected / partial_fill / fill / expired / terminal_state。",
+        "补充 prev_event_id 或 causal parent 字段定义。"
+      ]
+    },
+    {
+      "research_task_id": "P45-B-AUD03",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "SEC/CAT 与 FIX 足以支撑多 ID 映射和订单链路可追踪。"
+      ],
+      "required_followups": [
+        "不要把 CAT 字段直接等同于 crypto exchange 的 client_order_id / exchange_order_id。",
+        "补充 venue/broker 私有 ID 映射应由外接项目事实层提供。",
+        "明确 cancel/replace 关联 ID 和 idempotency request ID 是 CEK-TA 工程字段，不是 FIX/CAT 全部原生字段。"
+      ]
+    },
+    {
+      "research_task_id": "P45-B-AUD04",
+      "decision": "needs_more_evidence",
+      "confidence": "medium",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "SEC/FIX/NIST 只能部分支撑，缺少 event stream、idempotency、dedup_key、replay_cursor 和回放不静默覆盖的工程来源。"
+      ],
+      "required_followups": [
+        "补充 Kafka idempotent producer / transactions / delivery semantics、event sourcing、CDC replay 或数据库唯一约束/upsert 审计边界来源。",
+        "补充内部 schema contract 或 contract hash，证明 event_id / dedup_key / replay_cursor 是 CEK-TA 字段契约。",
+        "拆分监管/审计层与工程实现层。"
+      ]
+    },
+    {
+      "research_task_id": "P45-B-AUD05",
+      "decision": "needs_more_evidence",
+      "confidence": "medium",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "SEC 613 + NIST 800-92 不足以证明 hash/checksum/append-only/immutable ledger，需要补 SEC 17a-4、WORM 或 audit-trail alternative 等来源。"
+      ],
+      "required_followups": [
+        "补充 SEC Rule 17a-4 / FINRA 4511 / WORM 或 audit-trail alternative 来源。",
+        "补充存储层来源：append-only ledger、object lock、hash chain、checksum、audit trail recreation policy。",
+        "明确 AUD05 是 Database/Storage owner 承接的 trade audit storage boundary，不能变成策略、执行或 AI Engineering 本体规则。"
+      ]
+    },
+    {
+      "research_task_id": "P45-B-AUD06",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "CAT Alert 与 ESMA 足以支撑 manual/electronic timestamp boundary；所有阈值必须 jurisdiction-scoped。"
+      ],
+      "required_followups": [
+        "不得输出具体 drift 数值作为 CEK-TA 通用阈值；数值只能作为 CAT/NMS 语境案例。",
+        "增加 event_class、timestamp_source、granularity、drift_policy_ref、evidence_policy_ref 字段。",
+        "明确人工录入时间不能替代电子事件时间，但电子事件精度也不能泛化到所有人工流程。"
+      ]
+    }
+  ],
+  "global_notes": [
+    "审计包边界合格：candidate 审计，禁止 reviewed/approved/default guidance/hard gate。",
+    "AUD04 需要补事件流、幂等、dedup_key、replay_cursor 和回放不静默覆盖的工程来源。",
+    "AUD05 需要补 SEC 17a-4、WORM、audit-trail alternative 和存储完整性来源。"
+  ]
+}

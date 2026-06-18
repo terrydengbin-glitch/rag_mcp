@@ -1,0 +1,345 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_ai_engineering.security.prompt_injection_test_required_for_trade_context.v1",
+  "title": "LLM trade quality scoring/gating systems must include prom",
+  "metadata": {
+    "partition_id": "KB_AI_19_SECURITY_PRIVACY_COMPLIANCE",
+    "domain": "ai_governance",
+    "subdomain": "prompt_injection",
+    "rule_type": "checklist",
+    "content_type": "json",
+    "project_binding": "none",
+    "tree_node_id": "kt.ai_security_privacy_compliance",
+    "tree_path": "CEK-TA / AI Engineering",
+    "canonical_node_id": "kt.ai_security_privacy_compliance",
+    "canonical_tree_path": "CEK-TA / AI Engineering",
+    "risk_level": "medium",
+    "used_for": [
+      "llm_training",
+      "rag_engineering",
+      "mcp",
+      "vue_audit_ui"
+    ],
+    "source_candidate_id": "cand_20260609_ai_engineering_security_prompt_injection_test_required_for_trade_context_v1_001",
+    "research_task_id": "RIT-P36-N-05",
+    "claim_type": "ai_governance_rule",
+    "classification_notes": "Phase 36 AI Engineering reviewed knowledge; UI tree and canonical node are inherited from candidate classification. Trading rule bodies must remain in Trading Engineering."
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "general",
+    "data_granularity": "general",
+    "project_type": "trading_llm_assistant",
+    "applies_when": [
+      "Building or auditing LLM training, RAG, MCP, evaluation, or governance for trade quality scoring/gating assistants."
+    ],
+    "not_applicable_when": [
+      "The task asks for concrete trading entries, exits, position sizing, account-specific settings, or live order execution."
+    ]
+  },
+  "content": {
+    "statement": "LLM trade quality scoring/gating systems must include prompt injection tests for trade notes, retrieved documents, tool outputs, and free-text project context.",
+    "rationale": "This candidate is scoped to AI Engineering governance for LLM trade quality scoring/gating systems. It does not define trading signals, order execution rules, or strategy parameters. 审计结论：方向成立。交易 LLM scoring/gating 系统必须覆盖 trade notes、retrieved documents、tool outputs、free-text project context 等 prompt injection / indirect prompt injection 测试。OWASP Prompt Injection、OWASP RAG Security 和 NIST AI RMF 来源足以支撑进入 draft。",
+    "procedure": [
+      "确认项目事实匹配 applies_when，且没有命中 not_applicable_when。",
+      "按 source_patch_notes 检查来源是否足够支撑 statement。",
+      "按 content_patch_notes 补齐正式实现、schema、字段和 checklist。",
+      "按 boundary_patch_notes 确认没有把交易规则本体、项目私有参数或实盘执行规则写入 AI Engineering。",
+      "保留 required_followups，后续由来源增强或治理任务继续关闭。"
+    ],
+    "examples": [],
+    "anti_patterns": [
+      "把 reviewed 知识当作 approved 默认指导。",
+      "把 AI Engineering 规则扩写成具体交易阈值、仓位、买卖点或执行参数。",
+      "忽略审计结果中的来源限制、适用范围和后续补强要求。"
+    ],
+    "validation": [
+      "source_evidence 至少 2 条，且没有 low-only 来源。",
+      "conflict_status 为 none 或 resolved。",
+      "review_status 为 reviewed 时 machine_gate 必须是 caveat_only。",
+      "MCP/SearchLab 默认指导不得把本条当作 approved 返回。"
+    ],
+    "risk_notes": [
+      "Candidate requires human or AI audit before conversion to formal reviewed knowledge.",
+      "AI Engineering 负责 prompt-injection test catalog、guardrail behavior、fallback action 和审计字段。",
+      "不得把真实账户、密钥、订单、策略参数或私有交易样本写入 red-team 用例。",
+      "涉及实盘执行或 broker action 的测试只用 synthetic / mock tool。",
+      "与 redteam.hard_gate_override_attempt_test、safety.no_tool_permission_escalation、security.rag_context_is_untrusted_input 互链。",
+      "与 MCP permission enforcement 互补。",
+      "未发现直接冲突。",
+      "补 trade_context_prompt_injection_redteam_cases.yaml。",
+      "补 attack_surface enum：trade_note、rag_document、tool_output、free_text_project_context、email_or_chat_log、mcp_result。",
+      "补 regression trigger：model_version、prompt_version、RAG index、tool permission 或 parser schema 变更时重跑。",
+      "补 Vue audit UI 字段：attack_type、observed_behavior、fallback_action、review_status。"
+    ],
+    "citation_notes": "OWASP prompt injection and RAG security guidance recommend controls and testing around indirect prompt injection and retrieved content boundaries.",
+    "audit_patch_notes": {
+      "source_patch_notes": [
+        "保留 OWASP Prompt Injection Prevention Cheat Sheet 作为主来源。",
+        "保留 OWASP RAG Security Cheat Sheet，支持 RAG pipeline 的 document poisoning、context window attack、query injection、tool invocation 和 fail-closed controls。",
+        "保留 NIST AI RMF 作为治理和风险管理来源。",
+        "建议补 OWASP GenAI Red Teaming Guide 或内部 redteam_case_catalog 作为测试用例来源。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 可写为：LLM trade quality scoring/gating systems must include prompt-injection and indirect-injection tests for user notes, retrieved documents, tool outputs, free-text project context and RAG chunks.",
+        "建议字段：redteam_case_id、attack_surface、injection_type、expected_safe_behavior、observed_behavior、guardrail_result、fallback_action、reviewer。",
+        "测试应覆盖 direct injection、indirect RAG injection、tool-output injection、encoding/obfuscation、system-prompt leakage、unsafe tool call。",
+        "单次通过不等于 approved，应纳入 regression suite。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 负责 prompt-injection test catalog、guardrail behavior、fallback action 和审计字段。",
+        "不得把真实账户、密钥、订单、策略参数或私有交易样本写入 red-team 用例。",
+        "涉及实盘执行或 broker action 的测试只用 synthetic / mock tool。"
+      ],
+      "conflict_patch_notes": [
+        "与 redteam.hard_gate_override_attempt_test、safety.no_tool_permission_escalation、security.rag_context_is_untrusted_input 互链。",
+        "与 MCP permission enforcement 互补。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 trade_context_prompt_injection_redteam_cases.yaml。",
+        "补 attack_surface enum：trade_note、rag_document、tool_output、free_text_project_context、email_or_chat_log、mcp_result。",
+        "补 regression trigger：model_version、prompt_version、RAG index、tool permission 或 parser schema 变更时重跑。",
+        "补 Vue audit UI 字段：attack_type、observed_behavior、fallback_action、review_status。"
+      ]
+    }
+  },
+  "assumptions": [
+    "External projects provide project facts and private data; CEK-TA stores only generalized reusable knowledge."
+  ],
+  "source_evidence": [
+    {
+      "source_id": "src_011",
+      "source_title": "LLM Prompt Injection Prevention Cheat Sheet",
+      "source_url": "https://cheatsheetseries.owasp.org/cheatsheets/LLM_Prompt_Injection_Prevention_Cheat_Sheet.html",
+      "source_type": "standard_or_risk_framework",
+      "publisher": "OWASP",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "OWASP treats prompt injection as a vulnerability and calls out untrusted retrieved or fetched context and tool output as attack surfaces.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_012",
+      "source_title": "RAG Security Cheat Sheet",
+      "source_url": "https://cheatsheetseries.owasp.org/cheatsheets/RAG_Security_Cheat_Sheet.html",
+      "source_type": "standard_or_risk_framework",
+      "publisher": "OWASP",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "OWASP RAG guidance recommends treating retrieved content as untrusted data, not instructions, and logging the retrieval-response pipeline.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_013",
+      "source_title": "AI Risk Management Framework | NIST",
+      "source_url": "https://www.nist.gov/itl/ai-risk-management-framework",
+      "source_type": "standard_or_risk_framework",
+      "publisher": "NIST",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "NIST AI RMF provides a risk-management framework for trustworthy AI design, development, use, and evaluation.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_occ_fed_fdic_revised_model_risk_2026",
+      "source_title": "Model Risk Management: Revised Guidance",
+      "source_url": "https://occ.gov/news-issuances/bulletins/2026/bulletin-2026-13.html",
+      "source_type": "standard_or_risk_framework",
+      "publisher": "OCC / Federal Reserve / FDIC",
+      "published_at": "2026-04-17",
+      "accessed_at": "2026-06-09",
+      "version": "OCC Bulletin 2026-13 / SR 26-2",
+      "reliability": "high",
+      "relevance": "medium",
+      "evidence_summary": "2026 年跨机构模型风险管理修订指南支持模型治理、验证、变更控制和风险分层；同时需注明 generative AI 和 agentic AI 不在其直接范围内，只能作为模型风险治理类比来源。",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 90,
+    "score_version": "1.0.0",
+    "primary_source_count": 2,
+    "supporting_source_count": 2,
+    "low_reliability_source_count": 0,
+    "limitations": [
+      "本条为 reviewed 知识，来源和审计补丁已记录；默认指导仍需后续人工治理升级 approved。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "docs/contracts/ai_engineering_gating_scoring_contract.md",
+      "docs/contracts/ai_engineering_knowledge_item_policy.md"
+    ],
+    "conflicts": [],
+    "resolution_summary": "No direct conflict found in current CEK-TA formal knowledge. Candidate is not default guidance.",
+    "default_recommendation": "caveat_only_until_approved"
+  },
+  "review": {
+    "confidence": "medium",
+    "freshness": "time_sensitive",
+    "review_status": "reviewed",
+    "reviewer": "codex",
+    "reviewed_at": "2026-06-09",
+    "created_at": "2026-06-09",
+    "updated_at": "2026-06-09",
+    "open_questions": [
+      "Should this candidate be split or merged with adjacent AI Engineering policy cards during formal draft conversion?",
+      "补 trade_context_prompt_injection_redteam_cases.yaml。",
+      "补 attack_surface enum：trade_note、rag_document、tool_output、free_text_project_context、email_or_chat_log、mcp_result。",
+      "补 regression trigger：model_version、prompt_version、RAG index、tool permission 或 parser schema 变更时重跑。",
+      "补 Vue audit UI 字段：attack_type、observed_behavior、fallback_action、review_status。"
+    ],
+    "decision_log": [
+      {
+        "at": "2026-06-09",
+        "actor": "external_ai",
+        "decision": "accepted_for_draft",
+        "reason": "方向成立。交易 LLM scoring/gating 系统必须覆盖 trade notes、retrieved documents、tool outputs、free-text project context 等 prompt injection / indirect prompt injection 测试。OWASP Prompt Injection、OWASP RAG Security 和 NIST AI RMF 来源足以支撑进入 draft。",
+        "audit_result_id": "audit_result_phase36_ai_engineering_batch_08_of_10_20260609_gpt55_pro_strict_sources"
+      },
+      {
+        "at": "2026-06-09",
+        "actor": "codex",
+        "decision": "converted_to_reviewed",
+        "reason": "按 Phase 36 批量审计结果优化候选并转为 formal reviewed；未升级 approved。",
+        "audit_result_id": "audit_result_phase36_ai_engineering_batch_08_of_10_20260609_gpt55_pro_strict_sources"
+      }
+    ],
+    "approval_status": "not_requested",
+    "default_guidance_allowed": false,
+    "source_candidate_id": "cand_20260609_ai_engineering_security_prompt_injection_test_required_for_trade_context_v1_001",
+    "ai_audit_result_id": "audit_result_phase36_ai_engineering_batch_08_of_10_20260609_gpt55_pro_strict_sources",
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase36_ai_engineering_batch_08_of_10_20260609_gpt55_pro_strict_sources",
+      "source_package_id": "phase36_ai_engineering_candidate_audit_batch_08_of_10_20260609",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立。交易 LLM scoring/gating 系统必须覆盖 trade notes、retrieved documents、tool outputs、free-text project context 等 prompt injection / indirect prompt injection 测试。OWASP Prompt Injection、OWASP RAG Security 和 NIST AI RMF 来源足以支撑进入 draft。",
+      "source_patch_notes": [
+        "保留 OWASP Prompt Injection Prevention Cheat Sheet 作为主来源。",
+        "保留 OWASP RAG Security Cheat Sheet，支持 RAG pipeline 的 document poisoning、context window attack、query injection、tool invocation 和 fail-closed controls。",
+        "保留 NIST AI RMF 作为治理和风险管理来源。",
+        "建议补 OWASP GenAI Red Teaming Guide 或内部 redteam_case_catalog 作为测试用例来源。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 可写为：LLM trade quality scoring/gating systems must include prompt-injection and indirect-injection tests for user notes, retrieved documents, tool outputs, free-text project context and RAG chunks.",
+        "建议字段：redteam_case_id、attack_surface、injection_type、expected_safe_behavior、observed_behavior、guardrail_result、fallback_action、reviewer。",
+        "测试应覆盖 direct injection、indirect RAG injection、tool-output injection、encoding/obfuscation、system-prompt leakage、unsafe tool call。",
+        "单次通过不等于 approved，应纳入 regression suite。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 负责 prompt-injection test catalog、guardrail behavior、fallback action 和审计字段。",
+        "不得把真实账户、密钥、订单、策略参数或私有交易样本写入 red-team 用例。",
+        "涉及实盘执行或 broker action 的测试只用 synthetic / mock tool。"
+      ],
+      "conflict_patch_notes": [
+        "与 redteam.hard_gate_override_attempt_test、safety.no_tool_permission_escalation、security.rag_context_is_untrusted_input 互链。",
+        "与 MCP permission enforcement 互补。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 trade_context_prompt_injection_redteam_cases.yaml。",
+        "补 attack_surface enum：trade_note、rag_document、tool_output、free_text_project_context、email_or_chat_log、mcp_result。",
+        "补 regression trigger：model_version、prompt_version、RAG index、tool permission 或 parser schema 变更时重跑。",
+        "补 Vue audit UI 字段：attack_type、observed_behavior、fallback_action、review_status。"
+      ]
+    },
+    "approved_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "contribution": {
+    "contribution_id": null,
+    "source_project": null,
+    "sanitization_status": "not_applicable",
+    "private_data_removed": true,
+    "generic_mapping_notes": "Phase 36 public-source AI Engineering candidate; no project-private trading facts included."
+  },
+  "copyright": {
+    "stores_full_text": false,
+    "stores_long_quote": false,
+    "summary_only": true,
+    "license_notes": "Only source links and short summaries are stored.",
+    "reuse_risk": "low"
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于审计 AI Engineering、LLM 训练、RAG/MCP、部署、安全或治理链路。",
+      "用于提醒外接项目补齐来源、适用边界、冲突状态、审计记录和人工审批。",
+      "用于 reviewed/audit 模式下带 caveat 引用。"
+    ],
+    "not_allowed": [
+      "不得生成买卖点、仓位、杠杆、止损止盈或实盘执行指令。",
+      "不得覆盖确定性风控、交易执行系统或人工审批。",
+      "不得作为 approved/default guidance 直接返回。"
+    ],
+    "required_context": [
+      "project_type",
+      "task_type",
+      "mode",
+      "strategy_version",
+      "data_boundary",
+      "review_status"
+    ],
+    "fallback_behavior": "cite_with_caveat"
+  },
+  "machine_gate": {
+    "default_guidance": "caveat_only",
+    "reason": "reviewed only; accepted_for_draft is not approved; default guidance requires later human governance approval.",
+    "requires_human_escalation": true,
+    "blocking_reasons": [
+      "not_approved",
+      "phase36_batch_reviewed_only"
+    ],
+    "checked_at": "2026-06-09",
+    "gate_version": "1.0.0",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "recommended_extra_sources": [
+    {
+      "title": "保留 OWASP Prompt Injection Prevention Cheat Sheet 作为主来源。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_1"
+    },
+    {
+      "title": "保留 OWASP RAG Security Cheat Sheet，支持 RAG pipeline 的 document poisoning、context window attack、query injection、tool invocation 和 fail-closed controls。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_2"
+    },
+    {
+      "title": "保留 NIST AI RMF 作为治理和风险管理来源。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_3"
+    },
+    {
+      "title": "建议补 OWASP GenAI Red Teaming Guide 或内部 redteam_case_catalog 作为测试用例来源。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_4"
+    }
+  ]
+}

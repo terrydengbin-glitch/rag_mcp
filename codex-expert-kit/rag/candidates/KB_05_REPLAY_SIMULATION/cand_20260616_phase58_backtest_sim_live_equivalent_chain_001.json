@@ -1,0 +1,631 @@
+{
+  "schema_version": "1.1.0-candidate",
+  "candidate_id": "cand_20260616_phase58_backtest_sim_live_equivalent_chain_001",
+  "research_task_id": "P58-RSL-001",
+  "status": {
+    "review_status": "accepted",
+    "ingestion_decision": "accepted_for_reviewed_caveat_only",
+    "decision_reason": "Phase 58 reviewed-preparation 严格审计结论为 accepted_for_reviewed_caveat_only / confidence=high；允许沉淀为 formal reviewed/caveat_only，但不得 approved、default guidance、hard gate、实盘许可或自动风控动作。",
+    "created_at": "2026-06-16",
+    "updated_at": "2026-06-16"
+  },
+  "classification": {
+    "tree_node_id": "kt.replay_simulation.execution_semantics",
+    "canonical_node_id": "kt.trading_engineering.replay_simulation.execution_semantics",
+    "tree_path": "CEK-TA / Trading Engineering / Replay Simulation / Execution Semantics",
+    "related_nodes": [
+      "kt.trading_engineering.backtest.reproducibility",
+      "kt.trading_engineering.backtest.bias",
+      "kt.trading_engineering.live_execution.order_state_machine",
+      "kt.trading_engineering.risk_management.pre_trade_risk",
+      "kt.trading_engineering.trade_analysis.execution_quality"
+    ],
+    "partition_id": "KB_05_REPLAY_SIMULATION",
+    "domain": "trading_engineering",
+    "subdomain": "replay_simulation",
+    "rule_type": "principle",
+    "claim_type": "environment_equivalence_rule",
+    "used_for": [
+      "backtest_review",
+      "replay_simulation_review",
+      "paper_trading_review",
+      "live_trading_readiness_review",
+      "ai_trader_project_design",
+      "external_project_rag_retrieval"
+    ],
+    "classification_notes": "本候选主归属 Replay Simulation / Execution Semantics，因为它定义 backtest、replay、paper/sandbox、live 之间的工程等效边界；Backtest 和 Live Execution 为相关 owner，不由本条接管其本体规则。"
+  },
+  "claim": {
+    "claim_id": "claim_p58_rsl_001",
+    "title": "回测、回放、模拟盘和实盘只有共享真实或等效策略链条时才具备可比性",
+    "statement": "同一交易系统中，策略名称相同不足以证明回测、回放、模拟盘和实盘等效；必须证明共同核心、共同执行语义，或提供字段级版本映射、差异报告和 reconciliation 证据。只有当信号生成、数据可用时间、事件时钟、风控检查、订单意图、成交/成本/延迟模型、订单状态机、仓位/账户同步和审计日志走同一真实链条，或有字段级映射和差异报告证明等效链条时，结果才可比较并用于推进评审。",
+    "normalized_claim": "phase58_backtest_replay_paper_live_equivalent_strategy_chain_required",
+    "evidence_summary": "NautilusTrader 将 Backtest、Sandbox、Live 定义为不同环境，并强调共享共同核心和相同策略/执行算法；QuantConnect 将 paper trading 定义为实时数据加模拟成交，并在 reconciliation 文档中列出 backtest/live 差异来源；HftBacktest 明确市场数据 replay 不能改变市场，必须用 live 差异调整回测假设。",
+    "interpretation_notes": "该候选只定义工程等效性审计边界，不证明任何策略有效，不提供买卖点、仓位、杠杆、止损止盈或实盘执行建议。",
+    "claim_strength": "medium_high",
+    "performance_claim": false
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "general",
+    "data_granularity": "ohlc_to_tick_event",
+    "project_type": "trading_ai_support_layer",
+    "applies_when": [
+      "外接项目需要比较 backtest、replay、paper/sandbox 和 live 的结果",
+      "策略从回测推进到回放、模拟盘或实盘前需要做 readiness review",
+      "AI 交易项目需要把回测、模拟盘、实盘日志转换为训练标签或评测样本",
+      "需要审计同名策略在不同环境中是否实际运行同一链条",
+      "需要解释 paper trading 或 replay 与 live execution 的差异"
+    ],
+    "not_applicable_when": [
+      "只是描述某个环境的运行日志，不比较环境结果",
+      "只做静态研究笔记，不生成订单意图或执行事件",
+      "人工主观交易没有可复现策略代码、配置、订单和审计链路",
+      "用户要求具体买卖点、仓位、杠杆、止损止盈或实盘执行建议",
+      "需要平台、经纪商或交易所私有事实时，应由外接项目事实层和 adapter contract 提供"
+    ],
+    "assumptions": [
+      "系统存在策略代码、配置、数据源、订单意图、执行模型和审计日志。",
+      "不同环境之间至少能导出 strategy_id、strategy_version、config_hash、data_version、order_intent_id、fill_model_version 和 audit_trace_id。",
+      "候选已通过 reviewed-preparation 审计；formal reviewed/caveat_only 必须保留 environment_equivalence_manifest 契约和非 approved/default/hard gate 边界。"
+    ],
+    "limitations": [
+      "本候选不要求所有项目使用同一个交易框架。",
+      "本候选不要求 paper/sandbox 完全复刻 live，只要求差异可见、可审计、可解释。",
+      "外部平台文档主要支撑工程模式和环境定义，正式 reviewed 前仍需外部 AI/人工审计确认 claim 未超出来源。"
+    ]
+  },
+  "equivalence_contract": {
+    "manifest_name": "environment_equivalence_manifest",
+    "manifest_status": "reviewed_caveat_only_ready",
+    "contract_path": "docs/contracts/phase58_environment_equivalence_manifest_contract.md",
+    "contract_sha256": "CB13CE04988EB5F09BC7A0ED25258CCC5744461BA7DDFC80384EFE4CBB0598D6",
+    "reviewed_preparation_audit_result_id": "audit_result_phase58_backtest_sim_live_equivalence_reviewed_preparation_20260616_strict_v1",
+    "reviewed_mode": "caveat_only",
+    "logical_objects": [
+      "manifest_identity",
+      "environment_scope",
+      "strategy_identity",
+      "market_instrument_identity",
+      "data_time_identity",
+      "data_quality_identity",
+      "signal_decision_identity",
+      "risk_chain_identity",
+      "order_intent_identity",
+      "order_state_identity",
+      "venue_adapter_identity",
+      "execution_assumption_identity",
+      "account_cost_identity",
+      "reconciliation_identity",
+      "gap_report_identity",
+      "promotion_decision_policy",
+      "missing_field_policy",
+      "audit_trace"
+    ],
+    "minimum_fields": [
+      "strategy_id",
+      "strategy_code_version",
+      "strategy_config_hash",
+      "market",
+      "venue_id",
+      "broker_id",
+      "instrument_id",
+      "symbol_mapping_version",
+      "contract_spec_version",
+      "tick_size",
+      "lot_size",
+      "min_notional",
+      "price_precision",
+      "qty_precision",
+      "data_source_id",
+      "data_version",
+      "data_available_time",
+      "data_quality_report_id",
+      "missing_data_policy",
+      "duplicate_event_policy",
+      "out_of_order_event_policy",
+      "stale_data_policy",
+      "data_gap_fill_policy",
+      "clock_skew_policy",
+      "source_priority_policy",
+      "exchange_event_time",
+      "local_receive_time",
+      "decision_time",
+      "order_send_time",
+      "ack_time",
+      "fill_time",
+      "timezone_policy",
+      "bar_build_policy",
+      "resampling_policy",
+      "lookahead_guard_version",
+      "warmup_state_snapshot_id",
+      "event_clock_policy",
+      "signal_output_schema_version",
+      "risk_check_chain_version",
+      "order_intent_schema_version",
+      "order_type",
+      "time_in_force",
+      "post_only",
+      "reduce_only",
+      "client_order_id_policy",
+      "cancel_replace_policy",
+      "partial_fill_policy",
+      "reject_code_mapping_version",
+      "venue_order_status_mapping_version",
+      "order_state_machine_version",
+      "adapter_id",
+      "adapter_version",
+      "api_version",
+      "endpoint_mapping_version",
+      "websocket_stream_mapping_version",
+      "rate_limit_policy",
+      "retry_policy",
+      "idempotency_policy",
+      "disconnect_recovery_policy",
+      "fill_model_version",
+      "fee_model_version",
+      "fee_schedule_version",
+      "maker_taker_flag_policy",
+      "slippage_model_version",
+      "latency_model_version",
+      "account_mode",
+      "margin_mode",
+      "leverage_policy_version",
+      "collateral_currency",
+      "funding_or_borrow_cost_model_version",
+      "settlement_model_version",
+      "position_account_source_policy",
+      "reconciliation_policy_id",
+      "reconciliation_tolerance_policy",
+      "position_reconciliation_report_id",
+      "order_reconciliation_report_id",
+      "missing_event_policy",
+      "external_order_policy",
+      "audit_trace_id",
+      "environment_gap_report_id",
+      "promotion_decision_id",
+      "promotion_evidence_refs",
+      "promotion_blockers",
+      "human_reviewer_required",
+      "promotion_not_live_permission"
+    ],
+    "owner_mapping": {
+      "backtest_owner": [
+        "strategy_code_version",
+        "strategy_config_hash",
+        "backtest_run_manifest",
+        "backtest_fill_cost_assumption"
+      ],
+      "replay_simulation_owner": [
+        "event_clock_policy",
+        "fill_model_version",
+        "latency_model_version",
+        "environment_gap_report_id"
+      ],
+      "paper_owner": [
+        "paper_brokerage_model",
+        "simulated_fill_policy",
+        "paper_account_state"
+      ],
+      "live_execution_owner": [
+        "venue_order_status_mapping_version",
+        "reject_code_mapping_version",
+        "order_reconciliation_report_id",
+        "position_reconciliation_report_id"
+      ],
+      "risk_owner": [
+        "risk_check_chain_version",
+        "account_mode",
+        "margin_mode",
+        "leverage_policy_version"
+      ],
+      "data_owner": [
+        "data_source_id",
+        "data_version",
+        "data_available_time",
+        "data_quality_report_id",
+        "missing_data_policy",
+        "duplicate_event_policy",
+        "out_of_order_event_policy",
+        "stale_data_policy",
+        "data_gap_fill_policy",
+        "clock_skew_policy",
+        "source_priority_policy",
+        "symbol_mapping_version",
+        "contract_spec_version"
+      ],
+      "venue_adapter_owner": [
+        "adapter_id",
+        "adapter_version",
+        "api_version",
+        "endpoint_mapping_version",
+        "websocket_stream_mapping_version",
+        "rate_limit_policy",
+        "retry_policy",
+        "idempotency_policy",
+        "disconnect_recovery_policy"
+      ],
+      "promotion_review_owner": [
+        "promotion_decision_id",
+        "promotion_evidence_refs",
+        "promotion_blockers",
+        "human_reviewer_required",
+        "promotion_not_live_permission"
+      ]
+    },
+    "procedure": [
+      "冻结策略代码版本、参数配置、资产池、时间框架和特征开关。",
+      "验证 backtest、replay、paper/sandbox、live 是否调用同一策略入口，或是否存在字段级 adapter 映射。",
+      "检查每个环境的数据时间语义，确认信号没有使用未来数据。",
+      "对齐风险检查链条，记录本地拒单、风控阻断、仓位限制和风险状态。",
+      "对齐订单意图字段，包括方向、数量、订单类型、时效、路由上下文和来源策略事件。",
+      "声明回测、回放、模拟盘成交模型与实盘成交之间的费用、滑点、延迟、部分成交和拒单差异。",
+      "用 environment_equivalence_manifest 记录 market、venue、broker、instrument、订单语义、账户/成本、时钟、reconciliation、数据质量和缺失字段策略。",
+      "用环境 gap report 比较订单状态、成交、费用、延迟、拒单、撤单、仓位账户同步和审计日志。",
+      "当字段缺失或差异不可解释时，不得声称环境结果等效，只能标记为不可比或需要补证。"
+    ],
+    "required_gap_report_sections": [
+      "data_time_gap",
+      "event_clock_gap",
+      "risk_check_gap",
+      "order_intent_gap",
+      "fill_cost_latency_gap",
+      "order_state_gap",
+      "position_account_gap",
+      "audit_trace_gap",
+      "reconciliation_gap",
+      "venue_adapter_gap",
+      "missing_event_policy_gap",
+      "known_non_equivalence"
+    ]
+  },
+  "anti_patterns": [
+    "只因策略名称相同，就把回测、模拟盘和实盘结果视为同一策略链条。",
+    "回测使用向量化研究代码，实盘使用另一套事件驱动代码，但没有等效性映射和差异报告。",
+    "paper trading 使用实时数据和模拟成交，却被当作 live execution truth。",
+    "replay 回放中忽略市场冲击和队列假设，却将成交结果写成实盘可得结论。",
+    "回测、回放、模拟盘、实盘的风控检查、订单状态机、费用模型或仓位同步版本不同，但报告中没有披露。",
+    "把环境等效性检查改写成自动下单许可或 hard gate。"
+  ],
+  "validation": [
+    "检查策略代码版本和配置 hash 是否在所有环境中一致或有审计差异记录。",
+    "检查数据 available_time、event clock 和 replay clock 是否可比较。",
+    "检查 order_intent_id 是否能追溯到 strategy_event_id。",
+    "检查 fill_model、fee_model、slippage_model、latency_model 是否有版本和适用范围。",
+    "检查 live execution 的真实订单状态、拒单、撤单、费用和仓位同步是否能与 simulation gap report 对齐。",
+    "检查报告是否明确列出不可等效的字段，而不是只给最终收益曲线。"
+  ],
+  "source_refs": [
+    {
+      "source_id": "src_001",
+      "source_title": "NautilusTrader Architecture",
+      "source_url": "https://nautilustrader.io/docs/latest/concepts/architecture/",
+      "source_type": "framework_doc",
+      "publisher": "NautilusTrader",
+      "published_at": null,
+      "accessed_at": "2026-06-16",
+      "version": "latest docs",
+      "reliability": "high",
+      "score": 88,
+      "relevance": "high",
+      "freshness": "time_sensitive",
+      "limitations": [
+        "Framework-specific documentation; use for architecture pattern and environment semantics, not as a universal implementation requirement."
+      ],
+      "evidence_summary": "Defines Backtest, Sandbox, and Live environment contexts and states that the platform is designed to share common code across backtest, sandbox, and live systems.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_002",
+      "source_title": "NautilusTrader Live Trading",
+      "source_url": "https://nautilustrader.io/docs/latest/concepts/live/",
+      "source_type": "framework_doc",
+      "publisher": "NautilusTrader",
+      "published_at": null,
+      "accessed_at": "2026-06-16",
+      "version": "latest docs",
+      "reliability": "high",
+      "score": 88,
+      "relevance": "high",
+      "freshness": "time_sensitive",
+      "limitations": [
+        "Framework-specific; supports same-code/same-actors principle but does not remove project-specific reconciliation requirements."
+      ],
+      "evidence_summary": "States that backtested strategies can be deployed live with no code changes and that the same actors, strategies, and execution algorithms run against backtest engine and live node; also warns to understand execution reconciliation and backtest/live differences.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_003",
+      "source_title": "QuantConnect Paper Trading",
+      "source_url": "https://www.quantconnect.com/docs/v2/cloud-platform/live-trading/brokerages/quantconnect-paper-trading",
+      "source_type": "platform_doc",
+      "publisher": "QuantConnect",
+      "published_at": null,
+      "accessed_at": "2026-06-16",
+      "version": "v2 docs",
+      "reliability": "high",
+      "score": 86,
+      "relevance": "high",
+      "freshness": "time_sensitive",
+      "limitations": [
+        "Platform-specific paper brokerage behavior; use for paper/live/backtest distinction, not as universal paper trading behavior."
+      ],
+      "evidence_summary": "Explains that paper trading runs live real-time data into an algorithm with fictional capital and simulated fills; paper brokerage and backtesting brokerage have separate implementations.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_004",
+      "source_title": "HftBacktest Order Fill",
+      "source_url": "https://hftbacktest.readthedocs.io/en/latest/order_fill.html",
+      "source_type": "framework_doc",
+      "publisher": "HftBacktest",
+      "published_at": null,
+      "accessed_at": "2026-06-16",
+      "version": "latest docs",
+      "reliability": "high",
+      "score": 84,
+      "relevance": "high",
+      "freshness": "time_sensitive",
+      "limitations": [
+        "Replay backtesting framework documentation; directly supports replay/fill caveats but not all asset classes or venues."
+      ],
+      "evidence_summary": "Explains that market-data replay backtesting cannot change the simulated market, does not consider market impact, and must be compared with live outcomes to adjust backtesting assumptions.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_005",
+      "source_title": "QuantConnect Live Trading Getting Started",
+      "source_url": "https://www.quantconnect.com/docs/v2/cloud-platform/live-trading/getting-started",
+      "source_type": "platform_doc",
+      "publisher": "QuantConnect",
+      "published_at": null,
+      "accessed_at": "2026-06-16",
+      "version": "v2 docs",
+      "reliability": "high",
+      "score": 80,
+      "relevance": "medium_high",
+      "freshness": "time_sensitive",
+      "limitations": [
+        "Platform-specific live deployment documentation."
+      ],
+      "evidence_summary": "Supports live algorithm context with real-time market data and live deployment workflow.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_006",
+      "source_title": "QuantConnect Live Trading Reconciliation",
+      "source_url": "https://www.quantconnect.com/docs/v2/cloud-platform/live-trading/reconciliation",
+      "source_type": "platform_doc",
+      "publisher": "QuantConnect",
+      "published_at": null,
+      "accessed_at": "2026-06-16",
+      "version": "v2 docs",
+      "reliability": "high",
+      "score": 86,
+      "relevance": "high",
+      "freshness": "time_sensitive",
+      "limitations": [
+        "Platform-specific reconciliation guidance; supports categories of backtest/live divergence, not universal field names."
+      ],
+      "evidence_summary": "Audit result identifies this source as directly supporting backtest/live differences such as data, look-ahead, time steps, custom data availability, fills, brokerage, existing holdings, and state restart.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_007",
+      "source_title": "NautilusTrader Execution",
+      "source_url": "https://nautilustrader.io/docs/nightly/concepts/execution/",
+      "source_type": "framework_doc",
+      "publisher": "NautilusTrader",
+      "published_at": null,
+      "accessed_at": "2026-06-16",
+      "version": "nightly docs",
+      "reliability": "medium_high",
+      "score": 78,
+      "relevance": "medium_high",
+      "freshness": "time_sensitive",
+      "limitations": [
+        "Nightly framework documentation; use as supporting evidence for execution/risk field categories only."
+      ],
+      "evidence_summary": "Audit result cites this source for instrument precision, quantity bounds, notional limits, trading state restrictions, and execution/risk engine context.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_008",
+      "source_title": "QuantConnect Interactive Brokers",
+      "source_url": "https://www.quantconnect.com/docs/v2/cloud-platform/live-trading/brokerages/interactive-brokers",
+      "source_type": "platform_doc",
+      "publisher": "QuantConnect",
+      "published_at": null,
+      "accessed_at": "2026-06-16",
+      "version": "v2 docs",
+      "reliability": "medium_high",
+      "score": 76,
+      "relevance": "medium",
+      "freshness": "time_sensitive",
+      "limitations": [
+        "Broker-specific paper/live behavior; use only as supporting source for broker-specific simulator limitations."
+      ],
+      "evidence_summary": "Audit result cites this source for Interactive Brokers paper environment limitations relative to production execution and clearing.",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 86,
+    "score_version": "phase58_source_scoring_v1",
+    "primary_source_count": 5,
+    "supporting_source_count": 3,
+    "low_reliability_source_count": 0,
+    "mandatory_downgrades": [
+      "All platform/framework docs are implementation-pattern evidence; they do not impose a universal requirement to use those platforms."
+    ],
+    "limitations": [
+      "外部严格审计已允许 accepted_for_reviewed_caveat_only，但正式知识仍只能作为 reviewed/caveat_only 审计上下文。",
+      "不同 broker、exchange、asset class 和 infra stack 仍需要外接项目提供 adapter-level evidence。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "KB_04_BACKTEST formal knowledge",
+      "KB_05_REPLAY_SIMULATION formal knowledge",
+      "KB_06_LIVE_EXECUTION formal knowledge",
+      "Phase 37 / Phase 45 Trading Engineering reviewed knowledge"
+    ],
+    "conflicts": [],
+    "resolution_summary": "外部严格审计认为本候选与已有 backtest_not_live_truth、paper_trading_not_equal_live、simulation_live_gap_report_required、execution_cost_consistency_required 不冲突，属于更高层的环境等效性整合规则；不改变 Backtest、Replay、Paper、Live Execution、Risk Management 或 Data owner 边界。",
+    "reviewed_allowed": true,
+    "reviewed_mode": "caveat_only",
+    "approval_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于提醒 AI IDE 在设计交易系统时检查 backtest、replay、paper/sandbox、live 是否共享真实或字段级等效链条。",
+      "用于审计外接项目方案是否缺少 environment gap report。",
+      "用于 RAG 检索时解释不同环境结果不可直接等同。",
+      "用于 formal reviewed/caveat_only 审计上下文，不作为默认交易建议。"
+    ],
+    "not_allowed": [
+      "不得生成买卖点、仓位、杠杆、止损止盈或实盘执行建议。",
+      "不得把 paper/sandbox 或 replay 结果当作 live truth。",
+      "不得把候选知识当作 approved 或 default guidance。",
+      "不得将环境等效性检查直接变成自动下单许可、自动停机或 hard gate。",
+      "不得替代外接项目的 broker/exchange adapter、risk owner、live execution owner 和 legal/compliance owner。"
+    ],
+    "required_context": [
+      "environment_type",
+      "strategy_id",
+      "strategy_code_version",
+      "data_version",
+      "market",
+      "venue_id",
+      "broker_id",
+      "instrument_id",
+      "order_intent_schema_version",
+      "fill_model_version",
+      "live_order_state_source",
+      "reconciliation_policy_id",
+      "environment_gap_report_id"
+    ],
+    "fallback_behavior": "cite_with_caveat"
+  },
+  "machine_gate": {
+    "default_guidance": "deny",
+    "reviewed_allowed": true,
+    "reviewed_mode": "caveat_only",
+    "reason": "reviewed-preparation strict audit accepted for formal reviewed/caveat_only only; approved/default guidance/hard gate/trade execution advice remain forbidden.",
+    "requires_human_escalation": true,
+    "hidden_from_default_queue": true,
+    "visible_in_default_guidance_queue": false,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "review": {
+    "confidence": "medium_high",
+    "freshness": "time_sensitive",
+    "reviewer": "external_ai_strict_audit_and_codex",
+    "reviewed_at": "2026-06-16",
+    "open_questions": [
+      "进入 reviewed/caveat_only 前，是否创建独立 environment_equivalence_manifest contract？",
+      "是否需要把 environment_gap_report_required 与 promotion_checklist_required 拆成独立知识项？",
+      "是否需要补充 venue-specific adapter mapping 示例，例如 Binance Futures filters、order status、error codes、fee/funding rules？"
+    ],
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase58_backtest_sim_live_equivalence_reviewed_preparation_20260616_strict_v1",
+      "previous_audit_result_id": "audit_result_phase58_backtest_sim_live_equivalence_chain_20260616_strict_v1",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "reviewed_mode": "caveat_only",
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "required_followup": "formal reviewed/caveat_only 必须保留 data_quality_identity、venue_adapter_identity、promotion_decision_policy 和非 approved/default/hard gate 边界。"
+    },
+    "audit_log": [
+      {
+        "at": "2026-06-16",
+        "actor": "codex",
+        "action": "created",
+        "reason": "根据用户要求，联网搜索专业资料后创建回测、回放、模拟盘和实盘等效链条候选知识。"
+      },
+      {
+        "at": "2026-06-16",
+        "actor": "codex",
+        "action": "sourced",
+        "reason": "记录 NautilusTrader、QuantConnect、HftBacktest 等专业平台资料。"
+      },
+      {
+        "at": "2026-06-16",
+        "actor": "codex",
+        "action": "classified",
+        "reason": "主归类到 KB_05_REPLAY_SIMULATION / kt.trading_engineering.replay_simulation.execution_semantics，并关联 Backtest 与 Live Execution。"
+      },
+      {
+        "at": "2026-06-16",
+        "actor": "external_ai_strict_audit",
+        "action": "phase58_candidate_audit_imported",
+        "reason": "accepted_for_draft / confidence=medium_high；不得 reviewed/approved/default guidance/hard gate；要求补 environment_equivalence_manifest 字段契约。",
+        "audit_result_id": "audit_result_phase58_backtest_sim_live_equivalence_chain_20260616_strict_v1"
+      },
+      {
+        "at": "2026-06-16",
+        "actor": "codex",
+        "action": "phase58_candidate_patch_applied",
+        "reason": "按审计补丁扩展 market/venue/instrument、订单语义、账户/成本、时钟、reconciliation、owner mapping 和 missing event 字段。"
+      },
+      {
+        "at": "2026-06-16",
+        "actor": "codex",
+        "action": "phase58_environment_equivalence_manifest_contract_created",
+        "reason": "创建 docs/contracts/phase58_environment_equivalence_manifest_contract.md，并导出 reviewed/caveat_only 准备审计包。",
+        "contract_sha256": "A0A54CBA6F4B0C3DA4E58A83EFEA81D98A4A7A37558A37E07538CA4B91E3CA31"
+      },
+      {
+        "at": "2026-06-16",
+        "actor": "external_ai_strict_audit",
+        "action": "phase58_reviewed_preparation_audit_imported",
+        "reason": "accepted_for_reviewed_caveat_only / confidence=high；允许 formal reviewed/caveat_only，禁止 approved/default guidance/hard gate/实盘许可。",
+        "audit_result_id": "audit_result_phase58_backtest_sim_live_equivalence_reviewed_preparation_20260616_strict_v1"
+      },
+      {
+        "at": "2026-06-16",
+        "actor": "codex",
+        "action": "phase58_reviewed_preparation_patch_applied",
+        "reason": "补入 data_quality_identity、venue_adapter_identity、promotion_decision_policy，并更新 contract SHA。",
+        "contract_sha256": "CB13CE04988EB5F09BC7A0ED25258CCC5744461BA7DDFC80384EFE4CBB0598D6"
+      }
+    ]
+  },
+  "contribution": {
+    "contribution_id": "phase58_backtest_sim_live_equivalence_chain",
+    "source_project": "CEK-TA",
+    "sanitization_status": "not_applicable",
+    "private_data_removed": true,
+    "generic_mapping_notes": "通用交易工程环境等效性候选知识，不含项目私有策略、账户事实、密钥或实盘配置。"
+  },
+  "workflow": {
+    "stage": "formalized_reviewed",
+    "queue_group": "formalized",
+    "formal_knowledge_id": "kb_05_replay_simulation.execution_semantics.environment_equivalence_manifest_required.v1",
+    "formal_knowledge_path": "codex-expert-kit/rag/knowledge/KB_05_REPLAY_SIMULATION/kb_05_replay_simulation.execution_semantics.environment_equivalence_manifest_required.v1.json",
+    "formal_review_status": "reviewed",
+    "formal_review_mode": "caveat_only",
+    "ai_audit_result_id": "audit_result_phase58_backtest_sim_live_equivalence_reviewed_preparation_20260616_strict_v1",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "hidden_from_default_queue": true,
+    "visible_in_default_guidance_queue": false,
+    "next_action": "runtime_linkage_validation"
+  },
+  "next_steps": [
+    "按 Phase 32 流程创建 formal reviewed/caveat_only，不得创建 approved/default guidance/hard gate。",
+    "重建正式知识索引和 Vue3 fixture。",
+    "后续如需要，可另建 venue-specific adapter mapping 示例知识，但不得作为 universal rule。"
+  ]
+}

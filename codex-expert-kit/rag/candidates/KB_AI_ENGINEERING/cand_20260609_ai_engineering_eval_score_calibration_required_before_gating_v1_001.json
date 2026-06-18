@@ -1,0 +1,303 @@
+{
+  "schema_version": "1.0.0",
+  "candidate_id": "cand_20260609_ai_engineering_eval_score_calibration_required_before_gating_v1_001",
+  "research_task_id": "RIT-P36-C-34",
+  "status": {
+    "review_status": "accepted",
+    "ingestion_decision": "needs_more_evidence",
+    "decision_reason": "Phase 36 batch AI audit decision: accepted_for_draft. 该状态不是 approved。",
+    "created_at": "2026-06-09",
+    "updated_at": "2026-06-09"
+  },
+  "classification": {
+    "tree_node_id": "kt.llm_training.model_training_engineering",
+    "canonical_node_id": "kt.llm_training.model_training_engineering",
+    "tree_path": "CEK-TA / AI Engineering",
+    "related_nodes": [],
+    "partition_id": "KB_09_LLM_TRAINING",
+    "domain": "llm_training",
+    "subdomain": "evaluation_governance",
+    "rule_type": "decision_rule",
+    "used_for": [
+      "llm_training",
+      "trading_gating_scoring",
+      "rag_engineering",
+      "mcp",
+      "vue_audit_ui"
+    ]
+  },
+  "claim": {
+    "claim_id": "claim_001",
+    "statement": "LLM raw score、rubric score、verbal confidence 或 logprob-derived score 在用于 gating 前，必须在独立 holdout 或 shadow 数据上完成校准或验证，并记录 reliability、subgroup 和样本量；未校准前不得 hard allow。",
+    "normalized_claim": "eval.score_calibration_required_before_gating.v1",
+    "evidence_summary": "scikit-learn calibration 文档支持 probability calibration、reliability diagram、Brier/log loss 等校准检查；NAACL 2024 LLM confidence calibration survey 说明 LLM confidence estimation 与 calibration 是降低不可靠输出风险的重要问题；OpenAI evals 支持用测试输入和评分标准验证模型输出。",
+    "interpretation_notes": "本候选应作为 calibration family 的 eval 子规则：它不定义具体交易阈值，只定义 raw score 进入 gating 前必须有校准或独立验证证据。",
+    "claim_strength": "high",
+    "performance_claim": false
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "general",
+    "data_granularity": "general",
+    "project_type": "trading_llm_assistant",
+    "applies_when": [
+      "外接项目准备用 LLM 分数、rubric 分数、语言置信度或 logprob-derived score 决定 allow、block、review priority 或 threshold。",
+      "分数会影响交易 gate/scoring、shadow/paper promotion、hard gate 讨论或人工复核队列。",
+      "项目需要比较不同策略、市场状态、资产组或任务类型下的分数可靠性。"
+    ],
+    "not_applicable_when": [
+      "分数只用于离线排序或人工参考，且不会进入 gate、threshold 或默认指导。",
+      "讨论的是具体交易阈值、收益影响、仓位或风险预算，应由 Trading Engineering 或项目配置管理。",
+      "已有更高层 calibration.llm_score_not_probability 或 threshold_requires_shadow_data 覆盖，且本条只是重复描述。"
+    ],
+    "assumptions": [
+      "外接项目提供项目事实、私有交易数据和策略上下文；CEK-TA 只沉淀可复用专业规则。",
+      "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+    ],
+    "limitations": [
+      "校准前只能输出 advisory score、neutral 或 needs_review，不得 hard allow。",
+      "不要把 LLM verbal confidence 当成概率。",
+      "不得在本知识项写入具体 hard gate threshold 数值。"
+    ]
+  },
+  "source_refs": [
+    {
+      "source_id": "src_openai_evals",
+      "source_title": "Working with evals | OpenAI API",
+      "source_url": "https://platform.openai.com/docs/guides/evals?api-mode=chat",
+      "source_type": "official_doc",
+      "publisher": "OpenAI",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "score": 86,
+      "relevance": "high",
+      "freshness": "time_sensitive",
+      "limitations": [],
+      "evidence_summary": "OpenAI evals documentation supports programmatic evaluation setup and workflow-specific quality checks before relying on model behavior.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_sklearn_cv",
+      "source_title": "Cross-validation: evaluating estimator performance | scikit-learn",
+      "source_url": "https://scikit-learn.org/stable/modules/cross_validation.html",
+      "source_type": "official_doc",
+      "publisher": "scikit-learn",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "score": 84,
+      "relevance": "high",
+      "freshness": "time_sensitive",
+      "limitations": [],
+      "evidence_summary": "scikit-learn cross-validation guidance supports held-out evaluation, splitting discipline, and avoiding evaluation on training data.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_rules_ml",
+      "source_title": "Rules of Machine Learning",
+      "source_url": "https://martin.zinkevich.org/rules_of_ml/rules_of_ml.pdf",
+      "source_type": "paper",
+      "publisher": "Google / Martin Zinkevich",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "medium",
+      "score": 78,
+      "relevance": "high",
+      "freshness": "stable",
+      "limitations": [],
+      "evidence_summary": "Rules of ML discusses train/serve consistency, baselines, monitoring, and production ML safeguards.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_sklearn_probability_calibration",
+      "source_title": "Probability calibration | scikit-learn",
+      "source_url": "https://scikit-learn.org/stable/modules/calibration.html",
+      "source_type": "official_doc",
+      "publisher": "scikit-learn",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "score": 90,
+      "relevance": "high",
+      "freshness": "time_sensitive",
+      "limitations": [],
+      "evidence_summary": "scikit-learn 概率校准文档支持 reliability diagrams、proper scoring rules 和校准/区分能力拆分分析。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_sklearn_calibration_curve",
+      "source_title": "calibration_curve | scikit-learn",
+      "source_url": "https://scikit-learn.org/1.5/modules/generated/sklearn.calibration.calibration_curve.html",
+      "source_type": "official_doc",
+      "publisher": "scikit-learn",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "score": 82,
+      "relevance": "medium",
+      "freshness": "time_sensitive",
+      "limitations": [],
+      "evidence_summary": "calibration_curve 文档支持计算 true/predicted probabilities，并说明 calibration curves 也称 reliability diagrams。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_acl_2024_llm_confidence_calibration_survey",
+      "source_title": "A Survey of Confidence Estimation and Calibration in Large Language Models",
+      "source_url": "https://aclanthology.org/2024.naacl-long.366/",
+      "source_type": "paper",
+      "publisher": "ACL Anthology / NAACL",
+      "published_at": "2024-06",
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "score": 90,
+      "relevance": "high",
+      "freshness": "stable",
+      "limitations": [],
+      "evidence_summary": "NAACL 2024 survey 系统总结 LLM confidence estimation 和 calibration 的挑战与技术进展，支持 LLM 分数和置信度不得未经校准进入高影响门禁。",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 88,
+    "score_version": "1.0.0",
+    "primary_source_count": 2,
+    "supporting_source_count": 1,
+    "low_reliability_source_count": 0,
+    "mandatory_downgrades": [],
+    "limitations": [
+      "仍是 candidate，不得作为 formal reviewed 或 approved 知识使用。",
+      "二次审计前不得进入默认指导。"
+    ],
+    "review_notes": "补证后增加了与 normalized_claim 直接相关的主来源；等待二次审计决定是否 accepted_for_draft。"
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "docs/contracts/ai_engineering_gating_scoring_contract.md",
+      "docs/contracts/ai_engineering_knowledge_item_policy.md",
+      "docs/tasks/phase36_ai_engineering_gating_scoring_knowledge.md"
+    ],
+    "conflicts": [],
+    "resolution_summary": "未发现与当前 CEK-TA formal knowledge 的直接冲突；候选不会进入默认指导。",
+    "approval_allowed": true
+  },
+  "review": {
+    "confidence": "medium",
+    "freshness": "time_sensitive",
+    "reviewer": "external_ai_and_codex_alignment",
+    "reviewed_at": "2026-06-09",
+    "open_questions": [
+      "检查是否补足 calibration 直接来源，并是否与 calibration.llm_score_not_probability、calibration.threshold_requires_shadow_data 正确区分或互链。",
+      "是否与相邻 reviewed 知识重复，应该作为父子规则、互链规则还是合并？",
+      "是否仍需要更多领域直接来源或内部 schema contract？"
+    ],
+    "audit_log": [
+      {
+        "at": "2026-06-09",
+        "actor": "codex",
+        "action": "created",
+        "reason": "Phase 36 bulk AI Engineering candidate expansion."
+      },
+      {
+        "at": "2026-06-09",
+        "actor": "external_ai",
+        "action": "phase36_batch_audit_result_received",
+        "reason": "当前候选不应直接转 draft。normalized_claim 是 score calibration required before gating，但 statement 仍是泛化评估集规则，source_refs 也缺少 calibration / confidence estimation 的直接来源。该候选还与第一批已审计的 calibration.llm_score_not_probability 和 calibration.threshold_requires_shadow_data 高度重叠，应先补直接来源并决定合并或作为子规则。",
+        "audit_result_id": "audit_result_phase36_ai_engineering_batch_03_of_10_20260609_gpt55_pro_strict_sources"
+      },
+      {
+        "at": "2026-06-09",
+        "actor": "external_ai",
+        "action": "phase36_batch_audit_result_received",
+        "reason": "补证后可升级。statement 已明确聚焦 score calibration before gating，source_refs 增加 scikit-learn probability calibration、calibration_curve / reliability diagram 和 NAACL 2024 LLM confidence calibration survey，能直接支撑 raw score、rubric score、verbal confidence 或 logprob-derived score 在进入 gating 前需要独立 holdout/shadow 校准或验证。主要剩余问题是与第一批 calibration.llm_score_not_probability 和 calibration.threshold_requires_shadow_data 重复，需要作为 calibration family 的 eval 子项或合并。",
+        "audit_result_id": "audit_result_phase36_batch03_supplemental_reaudit_20260609_gpt55_pro_strict_sources"
+      }
+    ],
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase36_batch03_supplemental_reaudit_20260609_gpt55_pro_strict_sources",
+      "source_package_id": "phase36_batch03_supplemental_audit_package_20260609",
+      "decision": "accepted_for_draft",
+      "reason": "补证后可升级。statement 已明确聚焦 score calibration before gating，source_refs 增加 scikit-learn probability calibration、calibration_curve / reliability diagram 和 NAACL 2024 LLM confidence calibration survey，能直接支撑 raw score、rubric score、verbal confidence 或 logprob-derived score 在进入 gating 前需要独立 holdout/shadow 校准或验证。主要剩余问题是与第一批 calibration.llm_score_not_probability 和 calibration.threshold_requires_shadow_data 重复，需要作为 calibration family 的 eval 子项或合并。",
+      "source_patch_notes": [
+        "将 scikit-learn probability calibration 设为主来源，支撑 probability calibration、well-calibrated classifier、Brier/log loss 等校准检查。",
+        "将 NAACL 2024 LLM confidence estimation and calibration survey 设为主来源，支撑 LLM confidence / calibration 风险。",
+        "保留 OpenAI evals 作为评估流程 supporting source，并注明平台退役风险。",
+        "保留 scikit-learn CV 作为独立 holdout / validation 数据来源，但不作为 calibration 主证据。",
+        "建议与第一批 calibration.llm_score_not_probability、calibration.threshold_requires_shadow_data 共用 source family，减少重复维护。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议保留补充包写法：LLM raw score、rubric score、verbal confidence 或 logprob-derived score 在用于 gating 前，必须在独立 holdout 或 shadow 数据上完成校准或验证。",
+        "建议字段：raw_score_type、calibration_dataset_id、calibration_method、calibrated_score、ece、brier_score、log_loss、reliability_bucket、subgroup_key、sample_count、calibration_report_id。",
+        "明确未校准前不得 hard allow；可降级为 advisory_score、neutral_score、needs_review 或 block_default_guidance。",
+        "要求 subgroup reliability：市场状态、策略版本、资产组、source_mode、RAG source status 等分组样本量不足时应标注 insufficient_evidence。",
+        "不得在本条定义具体 hard gate threshold 数值。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 定义 score semantics、calibration report、reliability 检查和 gating 前置条件。",
+        "具体交易阈值、收益影响、仓位、风险预算和策略参数由 Trading Engineering 或项目配置管理。",
+        "校准数据中不得写入账号、订单明细、私有策略规则或完整交易上下文；只保留 hash、version、source refs 和脱敏摘要。"
+      ],
+      "conflict_patch_notes": [
+        "与 calibration.llm_score_not_probability、calibration.threshold_requires_shadow_data 高度重叠，建议保留本条为 eval 子规则：eval.score_calibration_required_before_gating。",
+        "上位规则 calibration.llm_score_not_probability 解释 raw score semantics；calibration.threshold_requires_shadow_data 管阈值 promotion；本条管 score 进入 gating 前的 eval evidence。",
+        "与 gating.low_confidence_cannot_allow、approval.hard_gate_enable_requires_approval、deployment.shadow_mode_before_live 应互链。",
+        "未发现需要 rejected 的直接冲突。"
+      ],
+      "required_followups": [
+        "补 calibration_report_schema.json。",
+        "补 raw_score_type enum：raw_llm_score、rubric_score、verbal_confidence、logprob_score、judge_score、ensemble_score。",
+        "补 fallback_action enum：advisory_score、neutral_score、needs_review、block_default_guidance、not_for_hard_gate。",
+        "确定 canonical 关系：本条作为 calibration family 的 eval 子项，而不是重复第一批父规则。"
+      ],
+      "boundary": "accepted_for_draft 不是 approved；reviewed 不会进入默认指导。"
+    }
+  },
+  "copyright": {
+    "stores_full_text": false,
+    "stores_long_quote": false,
+    "summary_only": true,
+    "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+    "reuse_risk": "low"
+  },
+  "conversion_target": {
+    "proposed_knowledge_id": "kb_ai_engineering.eval.score_calibration_required_before_gating.v1",
+    "target_schema": "cek_ta_knowledge_item",
+    "target_review_status": "draft",
+    "skill_candidate": false,
+    "eval_case_candidate": true,
+    "required_fields": [
+      "raw_score_type",
+      "calibration_dataset_id",
+      "calibration_method",
+      "calibrated_score",
+      "ece",
+      "brier_score",
+      "reliability_bucket",
+      "subgroup_key",
+      "sample_count",
+      "calibration_report_id"
+    ]
+  },
+  "workflow": {
+    "stage": "formalized_reviewed",
+    "queue_group": "formalized",
+    "formal_knowledge_id": "kb_ai_engineering.eval.score_calibration_required_before_gating.v1",
+    "formal_review_status": "reviewed",
+    "ai_audit_result_id": "audit_result_phase36_batch03_supplemental_reaudit_20260609_gpt55_pro_strict_sources",
+    "hidden_from_default_queue": true,
+    "next_action": "none",
+    "supplemental_research_status": "ready_for_reaudit",
+    "source_package_id": "phase36_batch03_supplemental_audit_package_20260609",
+    "last_supplemented_at": "2026-06-09",
+    "formal_knowledge_path": "codex-expert-kit/rag/knowledge/KB_09_LLM_TRAINING/kb_ai_engineering.eval.score_calibration_required_before_gating.v1.json"
+  }
+}

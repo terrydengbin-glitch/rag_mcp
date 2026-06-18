@@ -1,0 +1,196 @@
+{
+  "schema_version": "phase59_reviewed_preparation_audit_package.v1",
+  "package_id": "phase59_reviewed_preparation_audit_package_20260617",
+  "generated_at": "2026-06-17",
+  "phase": "Phase 59",
+  "audit_goal": "严格审计 Phase 59 三条 accepted_for_draft 候选是否可进入 formal reviewed/caveat_only 准备。审计必须核验候选是否已经按首轮审计补丁收窄边界、是否具备 reviewed/caveat_only 的最低来源和契约证据、是否仍禁止 approved、default guidance、hard gate、交易建议、DDL 和数据库迁移。",
+  "allowed_decisions": [
+    "accepted_for_reviewed_caveat_only",
+    "needs_more_evidence",
+    "rejected",
+    "blocked"
+  ],
+  "forbidden_decisions": [
+    "approved",
+    "default_guidance",
+    "hard_gate",
+    "trade_execution_advice",
+    "ddl_or_migration",
+    "reviewed_without_caveat"
+  ],
+  "hard_boundaries": {
+    "candidate_is_not_formal_knowledge": true,
+    "reviewed_caveat_only_maximum": true,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "trade_execution_advice_allowed": false,
+    "ddl_or_migration_allowed": false,
+    "database_selection_mandate_allowed": false
+  },
+  "upstream_audit_result": {
+    "audit_result_id": "audit_result_phase59_microstructure_feature_store_candidate_20260617_strict_v1",
+    "path": "docs/audit/audit_result_phase59_microstructure_feature_store_candidate_20260617_strict_v1.json",
+    "summary": {
+      "total": 3,
+      "accepted_for_draft": 3,
+      "needs_more_evidence": 0,
+      "rejected": 0,
+      "blocked": 0
+    }
+  },
+  "contract_refs": [
+    {
+      "contract_id": "phase59_microstructure_feature_store_hybrid_snapshot_contract",
+      "path": "docs/contracts/phase59_microstructure_feature_store_hybrid_snapshot_contract.md",
+      "review_focus": [
+        "kline_snapshot_identity",
+        "microstructure_store_identity",
+        "microstructure_feature_identity",
+        "feature_store_identity",
+        "hybrid_training_dataset_snapshot_manifest",
+        "point_in_time_join_policy",
+        "readiness_policy",
+        "tenant_isolation_policy"
+      ]
+    },
+    {
+      "contract_id": "phase38_training_data_and_eval_contract",
+      "path": "docs/contracts/phase38_training_data_and_eval_contract.md",
+      "review_focus": [
+        "decision-time feature frame",
+        "known-at boundary",
+        "training data leakage control"
+      ]
+    },
+    {
+      "contract_id": "phase42_database_storage_contract",
+      "path": "docs/contracts/phase42_database_storage_contract.md",
+      "review_focus": [
+        "canonical facts",
+        "audit_trace_id",
+        "dataset_snapshot_manifest",
+        "storage governance"
+      ]
+    }
+  ],
+  "review_questions": [
+    "三条候选是否已经充分执行首轮补丁：默认不混成宽表、补 known-at 字段、补物理分库例外？",
+    "P59-MFS-001 是否可作为 reviewed/caveat_only 的 Market Microstructure 存储边界知识，还是仍需要补 Binance/Databento/Kaiko/CoinAPI 等市场数据模型来源？",
+    "P59-MFS-002 是否可作为 reviewed/caveat_only 的 hybrid training dataset manifest 知识，还是必须先补 Databricks time-series feature table、Feast registry 或真实样本链路？",
+    "P59-MFS-003 是否可作为 reviewed/caveat_only 的 canonical registry / tenant isolation 边界知识，还是必须先补 OpenLineage、Feast Registry、Azure/AWS tenant isolation 直接来源？",
+    "是否存在与 Phase 38、Phase 42、Phase 43、Phase 37 Market Microstructure 的重复或 owner 边界冲突？",
+    "是否仍有任何内容会被机器误读为数据库选型、DDL、migration、default guidance、hard gate 或交易建议？"
+  ],
+  "output_schema": {
+    "audit_result_id": "string",
+    "package_id": "phase59_reviewed_preparation_audit_package_20260617",
+    "summary": {
+      "total": "number",
+      "accepted_for_reviewed_caveat_only": "number",
+      "needs_more_evidence": "number",
+      "rejected": "number",
+      "blocked": "number"
+    },
+    "candidate_results": [
+      {
+        "candidate_id": "string",
+        "research_task_id": "string",
+        "decision": "accepted_for_reviewed_caveat_only | needs_more_evidence | rejected | blocked",
+        "confidence": "low | medium | medium_high | high",
+        "reviewed_allowed": "boolean",
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "trade_execution_advice_allowed": false,
+        "ddl_or_migration_allowed": false,
+        "reasons": [
+          "string"
+        ],
+        "required_followups": [
+          "string"
+        ],
+        "patch_notes": {
+          "source": [
+            "string"
+          ],
+          "content": [
+            "string"
+          ],
+          "boundary": [
+            "string"
+          ],
+          "conflict": [
+            "string"
+          ]
+        }
+      }
+    ]
+  },
+  "candidates": [
+    {
+      "candidate_id": "cand_20260617_phase59_kline_microstructure_store_separation_001",
+      "research_task_id": "P59-MFS-001",
+      "path": "codex-expert-kit/rag/candidates/KB_03_MARKET_MICROSTRUCTURE/cand_20260617_phase59_kline_microstructure_store_separation_001.json",
+      "current_status": "accepted_for_draft",
+      "target_knowledge_id": "kb_phase59_market_microstructure.kline_microstructure_store_separation_required.v1",
+      "target_partition": "KB_03_MARKET_MICROSTRUCTURE",
+      "target_canonical_node_id": "kt.market_microstructure.order_flow",
+      "reviewed_preparation_claim": "Kline snapshot、指标和 entry/exit snap 属于低频决策上下文；tick、order book、trade prints、spread、depth、OFI、CVD 等 microstructure 原始或高频聚合数据属于高写入、高粒度市场事件层。二者不应默认混入一个物理宽表；除非有明确的规模、写入频率、保留策略、查询模式、审计需求和成本评估证明宽表可控，否则应按数据粒度、写入频率、查询模式、保留策略和审计需求物理分层，再通过可追溯引用和 point-in-time manifest 组合到训练样本。",
+      "required_caveats": [
+        "训练样本可以是宽的 logical dataset view，但不代表底层必须是一个物理宽表。",
+        "小规模研究、临时 notebook、只读导出或离线特征展开表可以存在，但不得替代 canonical store、microstructure raw store 或 audit ledger。",
+        "不得强制 ClickHouse、kdb+、Feast、Iceberg 或任何单一技术。"
+      ],
+      "source_refs": [
+        "Feast point-in-time joins",
+        "ClickHouse MergeTree",
+        "KX/kdb+ tick",
+        "Apache Iceberg partitioning"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260617_phase59_hybrid_training_dataset_snapshot_manifest_001",
+      "research_task_id": "P59-MFS-002",
+      "path": "codex-expert-kit/rag/candidates/KB_AI_26_DATABASE_STORAGE/cand_20260617_phase59_hybrid_training_dataset_snapshot_manifest_001.json",
+      "current_status": "accepted_for_draft",
+      "target_knowledge_id": "kb_phase59_database_storage.hybrid_training_dataset_snapshot_manifest_required.v1",
+      "target_partition": "KB_AI_26_DATABASE_STORAGE",
+      "target_canonical_node_id": "kt.ai_engineering.database_storage_engineering.feature_store_storage",
+      "reviewed_preparation_claim": "同时使用 Kline snapshot 与 microstructure 特征的训练集不应复制全部原始 microstructure 明细，也不应把训练样本固化为不可追踪宽表。它必须通过 hybrid training dataset snapshot manifest 绑定 kline_snapshot_ref、micro_snapshot_ref、micro_feature_ref、feature_schema_hash、dataset_hash、label_policy_version、split_manifest_ref、known_at_pass、readiness、audit_trace_id、prediction_time、feature_known_at、label_known_at、late_arrival_policy 和 point_in_time policy，并通过 known-at / point-in-time policy 阻断未来特征泄漏。",
+      "required_caveats": [
+        "readiness 只表示训练数据准备状态，不代表模型质量、上线许可或交易许可。",
+        "known_at_pass 必须绑定 prediction_time / feature_known_at / label_known_at。",
+        "manifest 只证明训练样本版本、来源和时间边界可审计，不证明模型有效。"
+      ],
+      "source_refs": [
+        "Feast point-in-time joins",
+        "Feast feature retrieval",
+        "Apache Iceberg spec",
+        "Phase 38 Training Data And Evaluation Contract",
+        "Phase 42 Database Storage Contract"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260617_phase59_canonical_registry_not_per_trader_db_001",
+      "research_task_id": "P59-MFS-003",
+      "path": "codex-expert-kit/rag/candidates/KB_AI_26_DATABASE_STORAGE/cand_20260617_phase59_canonical_registry_not_per_trader_db_001.json",
+      "current_status": "accepted_for_draft",
+      "target_knowledge_id": "kb_phase59_database_storage.canonical_registry_not_per_trader_db_required.v1",
+      "target_partition": "KB_AI_26_DATABASE_STORAGE",
+      "target_canonical_node_id": "kt.ai_engineering.database_storage_engineering.relational_core_schema",
+      "reviewed_preparation_claim": "Trading AI 项目应默认保留中央 canonical registry / audit ledger 作为 unit、dataset、manifest、feature schema、audit trace、readiness 和 lineage 的事实索引与治理入口。AI Trader、Unit 或策略版本默认通过 unit_id、unit_version、strategy_id、strategy_version 等字段逻辑隔离；当合规隔离、客户密钥、监管边界、地域隔离、超大规模或运维约束成立时，可以采用物理分库、schema 隔离或 hybrid pool/silo/bridge 架构，但必须保留全局索引、跨库 lineage reconciliation 和 audit trace。",
+      "required_caveats": [
+        "central canonical registry / audit ledger 是治理默认值，不是绝对物理单库要求。",
+        "物理分库必须有 tenant isolation policy、cross-database lineage reconciliation、全局 audit trace 和回滚策略。",
+        "向量库、cache、日志片段或临时文件不得替代 canonical registry / audit ledger。"
+      ],
+      "source_refs": [
+        "Phase 42 Database Storage Contract",
+        "Feast documentation",
+        "Apache Iceberg partitioning",
+        "KX architecture"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,189 @@
+{
+  "audit_result_id": "audit_phase53_reviewed_preparation_20260613",
+  "auditor": "GPT-5.5 Thinking",
+  "audited_at": "2026-06-13",
+  "package_id": "phase53_reviewed_preparation_audit_package_20260613",
+  "summary": {
+    "total": 5,
+    "accepted_for_reviewed_caveat_only": 3,
+    "needs_more_evidence": 2,
+    "rejected": 0,
+    "blocked": 0
+  },
+  "candidate_results": [
+    {
+      "candidate_id": "cand_20260613_phase53_trading_ai_agent_threat_model_required_001",
+      "research_task_id": "P53-AI-SEC01",
+      "decision": "needs_more_evidence",
+      "confidence": "medium_high",
+      "reasons": [
+        "NIST/OWASP/MITRE 足以支撑外部威胁面，但 reviewed/caveat_only 层需要 CEK-TA 内部 tool_permission_boundary、memory_write_policy、rag_source_trust、final_gate_bypass_denied 字段契约。",
+        "当前包只有字段列表，没有 MCP tool governance / memory governance / final gate boundary 的 contract extract 或 hash。"
+      ],
+      "required_followups": [
+        "补 MCP/tool governance internal contract extract 或 hash。",
+        "补 memory governance contract extract。",
+        "补 final_gate_boundary contract extract。",
+        "正式文本必须避免漏洞利用步骤，只保留 threat model / audit checklist / governance boundary。"
+      ],
+      "patch_notes": {
+        "source": [
+          "保留 NIST AI RMF / NIST AI 600-1、OWASP LLM Top 10、MITRE ATLAS。",
+          "新增 CEK-TA MCP/tool governance、memory governance、final gate boundary 内部 contract 来源。"
+        ],
+        "content": [
+          "拆成 threat_surface_taxonomy、tool_permission_boundary、memory_write_policy、rag_source_trust、final_gate_bypass_denied。",
+          "memory_poisoning 可以保留，但必须绑定 memory_write_policy 和 memory_integrity evidence。"
+        ],
+        "boundary": [
+          "不得生成漏洞利用步骤。",
+          "不得生成交易建议。",
+          "不得把 AI security risk 自动解释成交易 hard gate。",
+          "不得让 LLM/RAG/MCP 直接触发交易许可。"
+        ],
+        "conflict": [
+          "AI Engineering 只拥有安全治理边界；Risk Management / Live Execution 拥有最终运行控制。"
+        ]
+      }
+    },
+    {
+      "candidate_id": "cand_20260613_phase53_ai_sbom_model_sbom_required_001",
+      "research_task_id": "P53-AI-SBOM01",
+      "decision": "needs_more_evidence",
+      "confidence": "medium_high",
+      "reasons": [
+        "CISA SBOM、CISA AI SBOM、OWASP LLM Top 10、Model Cards 足以支撑方向。",
+        "reviewed/caveat_only 层字段覆盖 model_sbom、dataset_sbom、rag_index_sbom、container_dependency_sbom、inference_service_sbom，需要 CycloneDX ML-BOM、SPDX AI/Dataset Profile 或内部 registry contract 直接来源。"
+      ],
+      "required_followups": [
+        "补 CycloneDX ML-BOM 或 SPDX AI / Dataset Profile 作为 model/dataset/dependency schema 直接来源。",
+        "或补 CEK-TA model_registry / artifact_registry contract extract。",
+        "明确 SBOM 不是安全通过证明、发布批准、合规满足声明或 hard gate。",
+        "保留 source_confidentiality_boundary。"
+      ],
+      "patch_notes": {
+        "source": [
+          "保留 CISA SBOM、CISA AI SBOM、OWASP LLM Top 10、Model Cards。",
+          "新增 CycloneDX ML-BOM / SPDX AI BOM 或内部 model/artifact registry contract。"
+        ],
+        "content": [
+          "拆成 model_sbom、dataset_sbom、rag_index_sbom、container_dependency_sbom、inference_service_sbom。",
+          "增加 source_confidentiality_boundary。",
+          "LoRA/adapter、embedding model、RAG index 必须有明确字段来源或内部 contract。"
+        ],
+        "boundary": [
+          "SBOM 不等于安全通过证明。",
+          "不得暴露未授权供应链信息。",
+          "不得生成发布批准、合规满足声明或 hard gate。"
+        ],
+        "conflict": [
+          "AI SBOM 属于 AI Engineering / Supply Chain Governance，不接管模型发布批准。"
+        ]
+      }
+    },
+    {
+      "candidate_id": "cand_20260613_phase53_market_conduct_surveillance_taxonomy_required_001",
+      "research_task_id": "P53-TR-MC01",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reasons": [
+        "FINRA 2026 / 2025 / 2024 Manipulative Trading 来源足以支撑 spoofing、layering、wash_or_self_trade、momentum_ignition、marking_the_close、front_running 作为 surveillance taxonomy。",
+        "CFTC disruptive trading practices 来源可作为 futures/swaps disruptive practice 和 spoofing-related 边界来源。",
+        "candidate 已明确 legal_owner_required=true、manual_review_required=true、not_hard_gate=true。"
+      ],
+      "required_followups": [
+        "正式 reviewed/caveat_only 文本必须保留 FINRA/CFTC jurisdiction caveat。",
+        "不得把普通撤单、做市、报价更新或订单簿管理直接归类为操纵。",
+        "如用于非美国证券、crypto、期货或其他 venue，必须补对应 jurisdiction / venue-specific 来源。"
+      ],
+      "patch_notes": {
+        "source": [
+          "保留 FINRA 2026 Manipulative Trading。",
+          "保留 FINRA 2024 Manipulative Trading 作为 momentum ignition direct source。",
+          "保留 CFTC Disruptive Trading Practices。"
+        ],
+        "content": [
+          "surveillance_taxonomy 可包含 spoofing、layering、wash_or_self_trade、momentum_ignition、marking_the_close、front_running。",
+          "taxonomy 只能用于 surveillance labels、reason codes、人工复核和 escalation context。",
+          "保留 evidence_required：order_event_id、cancel_event_id、fill_event_id、venue、session、timestamp_quality。"
+        ],
+        "boundary": [
+          "不得输出法律意见。",
+          "不得生成操纵定性。",
+          "不得把异常标签直接变成硬阻断。",
+          "不得生成交易许可或 hard gate。"
+        ],
+        "conflict": [
+          "Legal / compliance owner 才能作正式判断；CEK-TA 只提供审计上下文。"
+        ]
+      }
+    },
+    {
+      "candidate_id": "cand_20260613_phase53_market_access_dea_regulatory_boundary_required_001",
+      "research_task_id": "P53-TR-MA01",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reasons": [
+        "SEC Rule 15c3-5 / SEC FAQ 足以支撑美国 securities market access、direct/exclusive control、regular review、supervisory procedures。",
+        "ESMA MiFID II Article 17 足以支撑 EU algorithmic trading / DEA controls、records、risk controls。",
+        "FIA automated trading controls 可作为 industry practice 辅助来源。"
+      ],
+      "required_followups": [
+        "正式 reviewed/caveat_only 文本必须保留 US SEC、EU MiFID、FIA source-group caveat。",
+        "不得把 SEC / FINRA / ESMA 规则泛化到 crypto、期货或非美国/欧盟市场。",
+        "不得输出信用额度、保证金比例、订单规模阈值、合规满足声明。"
+      ],
+      "patch_notes": {
+        "source": [
+          "保留 SEC Rule 15c3-5、SEC FAQ、ESMA MiFID II Article 17、FIA automated trading controls。"
+        ],
+        "content": [
+          "保留 market_access_owner、pre_trade_controls、recordkeeping、jurisdiction_caveat、periodic_review、venue_or_broker_rules。",
+          "明确 CEK-TA 只能沉淀 evidence contract / owner boundary / recordkeeping checklist。"
+        ],
+        "boundary": [
+          "不得输出合规意见。",
+          "不得输出具体阈值。",
+          "不得生成交易许可或 hard gate。"
+        ],
+        "conflict": [
+          "Live Execution / Risk Management 拥有运行时控制；CEK-TA 只定义知识边界。"
+        ]
+      }
+    },
+    {
+      "candidate_id": "cand_20260613_phase53_trade_audit_time_synchronization_required_001",
+      "research_task_id": "P53-TR-TS01",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reasons": [
+        "FINRA Rule 6820、CAT guidance、MiFID RTS 25 足以支撑金融事件 clock source、sync status、timestamp precision、drift policy 与 clock synchronization 语境。",
+        "OpenTelemetry 足以支撑模型推理和 RAG/MCP 审计日志的 observability 语境，但不替代金融 clock synchronization 规则。",
+        "candidate 已提供 audit_time_sync_context schema extract，并明确 no_trusted_clock_sync_result=ordering_unknown。"
+      ],
+      "required_followups": [
+        "正式 reviewed/caveat_only 文本必须按 source group 标注 FINRA/CAT 为 US CAT 语境，RTS 25 为 EU 语境，OpenTelemetry 为 observability 语境。",
+        "不得给出具体硬件采购建议、高频策略建议或交易许可。",
+        "ordering_unknown 只能作为审计 caveat，不能成为 hard gate。"
+      ],
+      "patch_notes": {
+        "source": [
+          "保留 FINRA Rule 6820、CAT Clock Sync、MiFID RTS 25、OpenTelemetry Observability Primer。"
+        ],
+        "content": [
+          "保留 clock_source、sync_status、timestamp_precision、timezone、drift_policy、ordering_caveat、last_sync_at、sync_evidence_ref。",
+          "no_trusted_clock_sync_result 必须等于 ordering_unknown。"
+        ],
+        "boundary": [
+          "不得推导执行质量结论。",
+          "不得推导合规结论。",
+          "不得生成交易许可或 hard gate。"
+        ],
+        "conflict": [
+          "Data / Live / Replay / RAG 各自拥有事件事实；Time Sync 只提供审计上下文。"
+        ]
+      }
+    }
+  ],
+  "boundary": "No approved/default guidance/hard gate/legal opinion/manipulation finding/compliance statement/trading execution advice/risk threshold created."
+}

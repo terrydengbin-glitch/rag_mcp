@@ -1,0 +1,434 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_phase45_stress_scenario.gap_and_overnight_risk_required.v1",
+  "title": "跳空和隔夜风险必须独立审计",
+  "metadata": {
+    "partition_id": "KB_07_RISK_MANAGEMENT",
+    "domain": "risk_management",
+    "subdomain": "scenario_stress_risk",
+    "rule_type": "stress_scenario_boundary_rule",
+    "claim_type": "risk_boundary_rule",
+    "content_type": "json",
+    "project_binding": "none",
+    "tree_node_id": "kt.risk_management.stress_scenario",
+    "tree_path": "CEK-TA / Trading Engineering / Risk Management / Scenario Stress Risk",
+    "canonical_node_id": "kt.risk_management.stress_scenario",
+    "canonical_tree_path": "CEK-TA / Trading Engineering / Risk Management / Scenario Stress Risk",
+    "risk_level": "high",
+    "used_for": [
+      "trading_ai_project_design_audit",
+      "stress_testing_review",
+      "scenario_risk_checklist",
+      "external_project_rag_retrieval"
+    ],
+    "source_candidate_id": "cand_20260612_phase45_stress_scenario_p45_e_stress04_001",
+    "research_task_id": "P45-E-STRESS04",
+    "phase": "Phase 45",
+    "related_nodes": [
+      "kt.risk_management.layered_risk_controls",
+      "kt.live_execution.resilience_incident_log",
+      "kt.trading_engineering.live_execution.execution_tca",
+      "kt.trade_analysis.review_reason_code"
+    ],
+    "classification_notes": "Phase 45 Stress Testing / Scenario Risk formal reviewed/caveat_only；只用于压力测试设计、情景风险复核、schema review 和审计提醒，不是 approved/default guidance/hard gate，不生成风险阈值、交易许可、仓位、杠杆、止损止盈或实盘执行建议。"
+  },
+  "applicability": {
+    "market": "general_with_clearing_venue_broker_and_jurisdiction_caveats",
+    "asset": "general",
+    "timeframe": "stress_scenario_and_risk_review_context",
+    "data_granularity": "portfolio_exposure_scenario_market_liquidity_risk_events",
+    "project_type": "trading_ai_support_layer",
+    "applies_when": [
+      "外接项目需要设计场景压力测试、流动性压力、相关性失效、跳空/隔夜风险、尾部亏损复核或 stress result governance。",
+      "AI IDE 需要判断风险评估是否把普通回测指标误当作 stress test。",
+      "需要把 scenario result、risk owner、人工审批和 deterministic final gate 分开建模。"
+    ],
+    "not_applicable_when": [
+      "用户要求具体风险阈值、仓位、杠杆、止损止盈、买卖点、交易许可或实盘执行动作。",
+      "需要外接项目真实账户、清算、保证金、融资或实时市场事实时，应由外接项目事实层提供。",
+      "需要监管资本、清算资源或合规结论时，应由对应机构/合规/legal owner 判断。"
+    ]
+  },
+  "content": {
+    "statement": "跳空、隔夜、周末、假日、停牌/恢复和 session close/open 风险必须按市场与 venue 分开声明。传统交易所、期货 session 和 crypto 24/7 市场的不可交易窗口、开盘/复牌 auction、订单接受规则、假日/early-close 日历、保证金/融资变化和数据可用边界不同；保证金/融资变化只能写成 broker、venue、clearing、account-mode 或 funding-interval specific 的情景维度，必须带直接来源和字段版本。不得把连续盘中回测假设外推到非连续交易时段，也不得输出隔夜持仓建议、止损止盈、仓位调整、session 阈值或 hard gate。",
+    "rationale": "本候选只定义压力测试、场景风险、流动性压力、尾部损失和风险复核边界，不输出风险阈值、交易参数或实盘执行建议。",
+    "normalized_claim": "phase45_stress_scenario.gap_and_overnight_risk_required.v1",
+    "claim_strength": "reviewed_caveat_only",
+    "performance_claim": false,
+    "procedure": [
+      "确认问题属于压力测试、情景风险、流动性压力、相关性失效、跳空/隔夜风险、尾部损失或 stress result governance。",
+      "检查 scenario、assumption、owner、data_version、source_version、review_status 和 audit_trace 是否声明。",
+      "若使用监管、清算、交易所、券商或平台来源，必须保留对应辖区、机构、产品、账户模式和实现 caveat。",
+      "若压力测试结果被用作交易许可、下单许可、仓位建议或 hard gate，必须阻断并要求外接项目 Risk Management / Live Execution owner 另行定义 deterministic policy。",
+      "返回知识时必须携带 source_evidence、review_status、machine_gate、适用范围、不适用场景和 owner 边界。"
+    ],
+    "examples": [],
+    "anti_patterns": [
+      "把 stress test passed 写成交易许可、默认放行或 hard gate。",
+      "输出风险阈值、VaR/ES 阈值、流动性阈值、仓位、杠杆、止损止盈、买卖点或实盘执行建议。",
+      "把 PFMI、BCBS、CME、DTCC、FIA、Basel 或券商/交易所来源泛化为所有市场的统一规则。",
+      "把 scenario assumption、correlation breakdown、tail loss review 或 gap/session risk 直接推导为降仓、拒单、停机或撤单动作。"
+    ],
+    "validation": [
+      "review.review_status 必须为 reviewed；approved/default guidance/hard gate/risk_threshold_advice 必须为 false。",
+      "machine_gate.default_guidance 必须为 caveat_only，且 visible_in_default_guidance_queue=false。",
+      "source_evidence 必须保留 regulatory/clearing/exchange/broker/professional source 的适用边界。",
+      "不得出现风险阈值、交易许可、仓位建议、杠杆、止损止盈或实盘执行建议。"
+    ],
+    "risk_notes": [
+      "Stress reviewed/caveat_only 只能作为风险复核、schema review、owner 边界和审计提醒。",
+      "压力测试结果不能替代 live risk gate、market data truth、order truth 或 portfolio owner 决策。",
+      "本条不是 approved，不进入默认指导，不启用 hard gate。"
+    ],
+    "citation_notes": "FIA covers automated trading risk controls, exchange volatility controls, post-trade analysis, testing and system safeguards.；CME describes scenario-based clearing stress testing using historical and hypothetical scenarios across price and volatility risk factors.；BCBS stress testing principles cover objectives, governance, policies, processes, methodology, resources and documentation for stress-testing frameworks.；Nasdaq rules include halt/pause order handling, including cases where orders entered during a halt or pause will not be accepted unless directed elsewhere.；NYSE FAQ supports market-wide circuit breaker halt durations and reopening-auction processing after halts.；CME trading-hours and holiday schedules support session, holiday, early-close and product-specific trading-hour boundaries.；Supporting source describing gap risk as price movement while markets are closed, with greater risk over weekends or longer closures.；CME defines futures margins/performance bonds as deposits required to cover potential losses and notes margin requirements vary by product and market volatility.；IBKR distinguishes Available Funds, Excess Liquidity and Buying Power, supporting broker/account-specific margin and financing field boundaries.；Binance USD-M Futures account balance response exposes wallet balance, cross wallet balance, available balance and margin availability fields.；Binance funding-info endpoint returns symbols with funding-rate cap/floor or fundingIntervalHours adjustments, supporting venue-specific funding-change evidence.；Binance user data stream documents account updates for balance, position, margin type and funding-fee balance changes.",
+    "audit_patch_notes": {
+      "source": [
+        "保留 Nasdaq、NYSE、CME trading hours、CME Product Margins、IBKR Available for Trading Values、Binance USD-M Futures Account/Funding sources。"
+      ],
+      "content": [
+        "保留 traditional_exchange、futures_session、crypto_24_7 的 market_type 分层和 direct source ref 要求。"
+      ],
+      "boundary": [
+        "不得输出风险阈值、隔夜持仓建议、止损止盈、仓位调整、交易许可或 hard gate。"
+      ],
+      "conflict": []
+    }
+  },
+  "assumptions": [
+    "Stress Testing / Scenario Risk 是风险复核与治理上下文，不是策略 alpha。",
+    "所有 stress、liquidity、clearing、CCP、banking 和 exchange 来源必须声明适用边界。",
+    "候选通过外部审计前不能进入 formal reviewed 知识库。"
+  ],
+  "source_evidence": [
+    {
+      "source_title": "Best Practices for Automated Trading Risk Controls and System Safeguards",
+      "source_url": "https://www.fia.org/sites/default/files/2024-07/FIA_WP_AUTOMATED%20TRADING%20RISK%20CONTROLS_FINAL_0.pdf",
+      "source_type": "professional_body",
+      "publisher": "FIA",
+      "reliability": "high",
+      "score": 90,
+      "freshness": "time_sensitive",
+      "evidence_summary": "FIA covers automated trading risk controls, exchange volatility controls, post-trade analysis, testing and system safeguards.",
+      "limitations": [
+        "Industry best practice; not a binding rule and not a CEK-TA threshold source."
+      ],
+      "source_id": "src_001",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "CME Clearing Stress Testing Practices",
+      "source_url": "https://www.cmegroup.com/articles/brochures-and-handbooks/101-overview-cme-clearing-stress-testing-practices.html",
+      "source_type": "official_exchange_doc",
+      "publisher": "CME Group",
+      "reliability": "high",
+      "score": 88,
+      "freshness": "time_sensitive",
+      "evidence_summary": "CME describes scenario-based clearing stress testing using historical and hypothetical scenarios across price and volatility risk factors.",
+      "limitations": [
+        "CME Clearing context; not universal for all venues, brokers or trading projects."
+      ],
+      "source_id": "src_002",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "Basel Committee Stress Testing Principles",
+      "source_url": "https://www.bis.org/bcbs/publ/d450.htm",
+      "source_type": "professional_body",
+      "publisher": "Bank for International Settlements / BCBS",
+      "reliability": "high",
+      "score": 92,
+      "freshness": "stable",
+      "evidence_summary": "BCBS stress testing principles cover objectives, governance, policies, processes, methodology, resources and documentation for stress-testing frameworks.",
+      "limitations": [
+        "Bank/supervisory stress-testing framework; not a CEK-TA trading gate or strategy-performance standard."
+      ],
+      "source_id": "src_003",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "Nasdaq Equity 4 Rules: Trading halt and pause order handling",
+      "source_url": "https://listingcenter.nasdaq.com/rulebook/nasdaq/rules/Nasdaq%20Equity%204",
+      "source_type": "official_exchange_doc",
+      "publisher": "Nasdaq",
+      "reliability": "high",
+      "score": 89,
+      "freshness": "time_sensitive",
+      "relevance": "high",
+      "evidence_summary": "Nasdaq rules include halt/pause order handling, including cases where orders entered during a halt or pause will not be accepted unless directed elsewhere.",
+      "limitations": [
+        "Nasdaq-specific equity market rules; not universal across all venues or assets."
+      ],
+      "source_id": "src_supp_001",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "NYSE Market-Wide Circuit Breakers FAQ",
+      "source_url": "https://www.nyse.com/publicdocs/nyse/NYSE_MWCB_FAQ.pdf",
+      "source_type": "official_exchange_doc",
+      "publisher": "NYSE",
+      "reliability": "high",
+      "score": 89,
+      "freshness": "time_sensitive",
+      "relevance": "high",
+      "evidence_summary": "NYSE FAQ supports market-wide circuit breaker halt durations and reopening-auction processing after halts.",
+      "limitations": [
+        "NYSE/US equity market context; not universal global market behavior."
+      ],
+      "source_id": "src_supp_002",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "CME Group Holiday and Trading Hours",
+      "source_url": "https://www.cmegroup.com/trading-hours.html",
+      "source_type": "official_exchange_doc",
+      "publisher": "CME Group",
+      "reliability": "high",
+      "score": 88,
+      "freshness": "time_sensitive",
+      "relevance": "high",
+      "evidence_summary": "CME trading-hours and holiday schedules support session, holiday, early-close and product-specific trading-hour boundaries.",
+      "limitations": [
+        "CME-specific schedule source; product schedules may vary and must be versioned."
+      ],
+      "source_id": "src_supp_003",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "Gap Risk Explained",
+      "source_url": "https://www.investopedia.com/terms/g/gaprisk.asp",
+      "source_type": "education_article",
+      "publisher": "Investopedia",
+      "reliability": "medium",
+      "score": 68,
+      "freshness": "stable",
+      "relevance": "medium_high",
+      "evidence_summary": "Supporting source describing gap risk as price movement while markets are closed, with greater risk over weekends or longer closures.",
+      "limitations": [
+        "Education/supporting source only; not acceptable as sole reviewed evidence."
+      ],
+      "source_id": "src_supp_004",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "CME Group Product Margins",
+      "source_url": "https://www.cmegroup.com/solutions/risk-management/margin-services/product-margins.html",
+      "source_type": "official_exchange_doc",
+      "publisher": "CME Group",
+      "reliability": "high",
+      "score": 90,
+      "freshness": "time_sensitive",
+      "relevance": "high",
+      "evidence_summary": "CME defines futures margins/performance bonds as deposits required to cover potential losses and notes margin requirements vary by product and market volatility.",
+      "limitations": [
+        "CME futures/clearing context only; not universal broker or crypto venue margin semantics."
+      ],
+      "source_id": "src_margin_001",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "IBKR Available for Trading Values",
+      "source_url": "https://www.ibkrguides.com/traderworkstation/available-for-trading.htm",
+      "source_type": "broker_doc",
+      "publisher": "Interactive Brokers",
+      "reliability": "high",
+      "score": 88,
+      "freshness": "time_sensitive",
+      "relevance": "high",
+      "evidence_summary": "IBKR distinguishes Available Funds, Excess Liquidity and Buying Power, supporting broker/account-specific margin and financing field boundaries.",
+      "limitations": [
+        "IBKR-specific account field semantics; not universal across brokers or venues."
+      ],
+      "source_id": "src_margin_002",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "Binance USD-M Futures Account Balance",
+      "source_url": "https://developers.binance.com/docs/derivatives/usds-margined-futures/account/rest-api/Futures-Account-Balance-V2",
+      "source_type": "official_exchange_api_doc",
+      "publisher": "Binance Open Platform",
+      "reliability": "high",
+      "score": 86,
+      "freshness": "time_sensitive",
+      "relevance": "high",
+      "evidence_summary": "Binance USD-M Futures account balance response exposes wallet balance, cross wallet balance, available balance and margin availability fields.",
+      "limitations": [
+        "Binance USD-M Futures API/account-mode context only; not a general broker or exchange rule."
+      ],
+      "source_id": "src_margin_003",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "Binance USD-M Futures Get Funding Info",
+      "source_url": "https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Get-Funding-Rate-Info",
+      "source_type": "official_exchange_api_doc",
+      "publisher": "Binance Open Platform",
+      "reliability": "high",
+      "score": 86,
+      "freshness": "time_sensitive",
+      "relevance": "high",
+      "evidence_summary": "Binance funding-info endpoint returns symbols with funding-rate cap/floor or fundingIntervalHours adjustments, supporting venue-specific funding-change evidence.",
+      "limitations": [
+        "Binance USD-M Futures funding semantics only; not universal crypto or traditional futures financing semantics."
+      ],
+      "source_id": "src_margin_004",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "Binance Futures Balance and Position Update Event",
+      "source_url": "https://developers.binance.com/docs/derivatives/usds-margined-futures/user-data-streams/Event-Balance-and-Position-Update",
+      "source_type": "official_exchange_api_doc",
+      "publisher": "Binance Open Platform",
+      "reliability": "high",
+      "score": 86,
+      "freshness": "time_sensitive",
+      "relevance": "medium_high",
+      "evidence_summary": "Binance user data stream documents account updates for balance, position, margin type and funding-fee balance changes.",
+      "limitations": [
+        "Binance USD-M Futures event semantics only; not universal account-event schema."
+      ],
+      "source_id": "src_margin_005",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 86.67,
+    "score_version": "phase45_source_scoring_v1",
+    "primary_source_count": 11,
+    "supporting_source_count": 1,
+    "low_reliability_source_count": 0,
+    "mandatory_downgrades": [],
+    "limitations": [
+      "正式 reviewed 前必须由外部审计确认 claim 没有超出来源可证明范围。",
+      "FMI、CCP、banking、exchange 来源必须保留 jurisdiction、clearing、venue 和 product caveat。",
+      "若后续使用内部 stress_result schema，需要提供 contract extract 或 hash。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "Phase 37 Risk Management formal reviewed knowledge",
+      "Phase 45 Layered Risk formal reviewed knowledge",
+      "Phase 45 Resilience Incident Log formal reviewed knowledge",
+      "Phase 45 Execution TCA formal reviewed knowledge"
+    ],
+    "conflicts": [],
+    "resolution_summary": "reviewed/caveat_only 准备审计通过；formal creation 保持 caveat_only，不创建 approved、default guidance、hard gate、风险阈值建议或交易许可。",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "risk_threshold_advice_allowed": false,
+    "trade_execution_advice_allowed": false
+  },
+  "review": {
+    "review_status": "reviewed",
+    "review_mode": "caveat_only",
+    "confidence": "high",
+    "freshness": "mixed",
+    "reviewer": "external_ai_strict_audit_and_codex",
+    "reviewed_at": "2026-06-12",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "risk_threshold_advice_allowed": false,
+    "trade_execution_advice_allowed": false,
+    "approved_at": null,
+    "ai_audit": {
+      "audit_result_id": "audit_phase45_stress_scenario_reviewed_preparation_20260612",
+      "package_id": "phase45_stress_scenario_reviewed_preparation_audit_package_20260612",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "reasons": [
+        "STRESS04 三审补证已解决 margin/funding 缺口，CME、IBKR、Binance 来源能支撑 broker/venue/clearing/account-mode/funding-interval specific scenario dimension。"
+      ],
+      "required_followups": [
+        "正式 reviewed/caveat_only 文本必须保留 CME futures/clearing caveat、IBKR broker/account field caveat 和 Binance USD-M Futures caveat。",
+        "外接项目必须为自身 broker、venue、clearing、account-mode、funding interval 提供版本化字段来源。"
+      ],
+      "patch_notes": {
+        "source": [
+          "保留 Nasdaq、NYSE、CME trading hours、CME Product Margins、IBKR Available for Trading Values、Binance USD-M Futures Account/Funding sources。"
+        ],
+        "content": [
+          "保留 traditional_exchange、futures_session、crypto_24_7 的 market_type 分层和 direct source ref 要求。"
+        ],
+        "boundary": [
+          "不得输出风险阈值、隔夜持仓建议、止损止盈、仓位调整、交易许可或 hard gate。"
+        ],
+        "conflict": []
+      }
+    },
+    "source_candidate_id": "cand_20260612_phase45_stress_scenario_p45_e_stress04_001",
+    "ai_audit_result_id": "audit_phase45_stress_scenario_reviewed_preparation_20260612"
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于提醒 AI IDE 设计压力测试、情景风险、流动性压力、尾部风险、owner 决策和 stress result governance。",
+      "用于生成压力测试 checklist、schema review、RAG 检索上下文和风险 reason code。"
+    ],
+    "not_allowed": [
+      "不得生成风险阈值、仓位、杠杆、买卖点、止损止盈、交易许可或实盘执行建议。",
+      "不得把 reviewed/caveat_only 当作 approved 或默认指导。",
+      "不得替外接项目启用 hard gate、拒单、停机、撤单或解锁流程。"
+    ],
+    "required_context": [
+      "必须同时返回 source_evidence、applicability、not_applicable_when、review_status、conflict_status 和 machine_gate。",
+      "若外接项目问题涉及实盘、法律、授权、资金或风控动作，必须要求项目事实层或人工 owner 复核。"
+    ],
+    "fallback_behavior": "cite_with_caveat"
+  },
+  "machine_gate": {
+    "default_guidance": "caveat_only",
+    "review_visibility": "reviewed_caveat_only",
+    "reason": "reviewed/caveat_only audit passed; approved/default guidance/hard gate/risk threshold advice remain disabled.",
+    "requires_human_escalation": false,
+    "hidden_from_default_queue": true,
+    "visible_in_default_guidance_queue": false,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "risk_threshold_advice_allowed": false,
+    "trade_execution_advice_allowed": false,
+    "blocking_reasons": [],
+    "checked_at": "2026-06-13T10:29:14+00:00",
+    "gate_version": "1.0.0"
+  },
+  "contribution": {
+    "source": "phase45_professional_research",
+    "private_data_removed": true,
+    "project_specific_details_removed": true,
+    "notes": "Generated for external strict audit; no project account, key, position, threshold, or private strategy data included."
+  },
+  "recommended_extra_sources": []
+}

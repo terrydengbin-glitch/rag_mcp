@@ -1,0 +1,332 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_ai_engineering.trade_candidate.snapshot_required_before_scoring.v1",
+  "title": "交易候选进入 LLM 评分前必须形成决策时快照，只包含当时可见信息和必要上下文。",
+  "metadata": {
+    "partition_id": "KB_09_LLM_TRAINING",
+    "domain": "llm_training",
+    "subdomain": "training_dataset_schema_engineering",
+    "rule_type": "decision_rule",
+    "content_type": "json",
+    "project_binding": "none",
+    "tree_node_id": "kt.llm_training.training_dataset_schema_engineering",
+    "tree_path": "CEK-TA / AI Engineering",
+    "canonical_node_id": "kt.llm_training.training_dataset_schema_engineering",
+    "canonical_tree_path": "CEK-TA / AI Engineering",
+    "risk_level": "medium",
+    "used_for": [
+      "llm_training",
+      "trading_gating_scoring",
+      "rag_engineering",
+      "mcp",
+      "vue_audit_ui"
+    ],
+    "source_candidate_id": "cand_20260609_ai_engineering_trade_candidate_snapshot_required_before_scoring_v1_001",
+    "research_task_id": "RIT-P36-B-S05",
+    "claim_type": "ai_governance_rule",
+    "classification_notes": "Phase 36 AI Engineering reviewed knowledge; UI tree and canonical node are inherited from candidate classification. Trading rule bodies must remain in Trading Engineering."
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "general",
+    "data_granularity": "general",
+    "project_type": "trading_llm_assistant",
+    "applies_when": [
+      "外接项目正在构建或审计交易 LLM gating/scoring、训练数据、评估、RAG/MCP、部署或治理链路。",
+      "该规则用于阻断数据泄漏、权限越界、无来源默认指导、训练/评估污染或上线前治理缺口。"
+    ],
+    "not_applicable_when": [
+      "用户需要具体买卖点、仓位、止损止盈、策略参数或实盘订单执行。",
+      "知识点主要描述 K 线结构、市场微观结构、回测模型、fill model 或交易风控本体，应路由到 Trading Engineering。"
+    ]
+  },
+  "content": {
+    "statement": "交易候选进入 LLM 评分前必须形成决策时快照，只包含当时可见信息和必要上下文。",
+    "rationale": "本候选仅沉淀 AI Engineering 中训练、评估、RAG/MCP、安全、部署或治理规则；不定义 K 线信号、具体交易策略、订单执行规则或账户参数。 审计结论：方向成立。交易候选进入 LLM 评分前应形成 decision-time snapshot，只包含当时可见信息和必要上下文。该条与 normalized_claim 对齐，且 scikit-learn data leakage 与 Datasheets 能支撑只使用预测时可得信息、记录数据组成和用途。",
+    "procedure": [
+      "确认项目事实匹配 applies_when，且没有命中 not_applicable_when。",
+      "按 source_patch_notes 检查来源是否足够支撑 statement。",
+      "按 content_patch_notes 补齐正式实现、schema、字段和 checklist。",
+      "按 boundary_patch_notes 确认没有把交易规则本体、项目私有参数或实盘执行规则写入 AI Engineering。",
+      "保留 required_followups，后续由来源增强或治理任务继续关闭。"
+    ],
+    "examples": [],
+    "anti_patterns": [
+      "把 reviewed 知识当作 approved 默认指导。",
+      "把 AI Engineering 规则扩写成具体交易阈值、仓位、买卖点或执行参数。",
+      "忽略审计结果中的来源限制、适用范围和后续补强要求。"
+    ],
+    "validation": [
+      "source_evidence 至少 2 条，且没有 low-only 来源。",
+      "conflict_status 为 none 或 resolved。",
+      "review_status 为 reviewed 时 machine_gate 必须是 caveat_only。",
+      "MCP/SearchLab 默认指导不得把本条当作 approved 返回。"
+    ],
+    "risk_notes": [
+      "本条仍是 candidate，需要外部 AI/人工审计确认来源充分性、适用边界和是否需要拆分。",
+      "AI Engineering 管理 snapshot schema、hash、字段角色和审计。",
+      "原始市场数据、K 线、订单、账户、策略上下文由 Trading Engineering 或 project owner 保存。",
+      "AI Engineering KB 只保存引用、hash、脱敏摘要和字段定义。",
+      "与 trade_candidate.decision_timestamp_required 是父子关系。",
+      "与 training_data.trade_sample_schema_required、training_data.decision_timestamp_required 预计在第十批相关，应统一 schema。",
+      "未发现直接冲突。",
+      "补 trade_candidate_snapshot_schema.json。",
+      "补 snapshot_hash / snapshot_version 字段。",
+      "补 eval cases：snapshot missing、post-trade field included、snapshot overwritten、source context missing。"
+    ],
+    "citation_notes": "The paper supports documenting dataset motivation, composition, collection, intended use, maintenance, and limitations.；scikit-learn documents inconsistent preprocessing and data leakage pitfalls, including fitting transformations only on training data.",
+    "audit_patch_notes": {
+      "source_patch_notes": [
+        "保留 Datasheets for Datasets 作为 snapshot 元数据和数据文档化来源。",
+        "保留 scikit-learn data leakage 作为只用预测时可用信息的主要来源。",
+        "补 TFDV / feature timestamp cutoff / outcome_schema.post_trade_fields_separated 来源，强化 snapshot validation。",
+        "互链 trade_candidate.decision_timestamp_required、feature_schema.decision_time_only、outcome_schema.post_trade_fields_separated。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：Before LLM scoring/gating, each trade candidate must create an immutable decision-time snapshot containing only information visible at decision_timestamp plus approved context refs.",
+        "建议字段：snapshot_id、trade_candidate_id、decision_timestamp、input_snapshot_hash、visible_fields、context_refs、excluded_post_trade_fields、source_ids、created_at。",
+        "snapshot 变更应产生新 version/hash，不允许静默覆盖。",
+        "缺少 snapshot 或 snapshot 包含 post-trade/future fields 时，应 block_scoring 或 needs_review。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 管理 snapshot schema、hash、字段角色和审计。",
+        "原始市场数据、K 线、订单、账户、策略上下文由 Trading Engineering 或 project owner 保存。",
+        "AI Engineering KB 只保存引用、hash、脱敏摘要和字段定义。"
+      ],
+      "conflict_patch_notes": [
+        "与 trade_candidate.decision_timestamp_required 是父子关系。",
+        "与 training_data.trade_sample_schema_required、training_data.decision_timestamp_required 预计在第十批相关，应统一 schema。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 trade_candidate_snapshot_schema.json。",
+        "补 snapshot_hash / snapshot_version 字段。",
+        "补 eval cases：snapshot missing、post-trade field included、snapshot overwritten、source context missing。"
+      ]
+    }
+  },
+  "assumptions": [
+    "外接项目提供项目事实、私有交易数据和策略上下文；CEK-TA 只沉淀可复用专业规则。",
+    "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+  ],
+  "source_evidence": [
+    {
+      "source_id": "src_datasheets",
+      "source_title": "Datasheets for Datasets",
+      "source_url": "https://arxiv.org/abs/1803.09010",
+      "source_type": "paper",
+      "publisher": "arXiv",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "The paper supports documenting dataset motivation, composition, collection, intended use, maintenance, and limitations.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_sklearn_pitfalls",
+      "source_title": "Common pitfalls and recommended practices | scikit-learn",
+      "source_url": "https://scikit-learn.org/stable/common_pitfalls.html",
+      "source_type": "official_doc",
+      "publisher": "scikit-learn",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "scikit-learn documents inconsistent preprocessing and data leakage pitfalls, including fitting transformations only on training data.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_occ_fed_fdic_revised_model_risk_2026",
+      "source_title": "Model Risk Management: Revised Guidance",
+      "source_url": "https://occ.gov/news-issuances/bulletins/2026/bulletin-2026-13.html",
+      "source_type": "standard_or_risk_framework",
+      "publisher": "OCC / Federal Reserve / FDIC",
+      "published_at": "2026-04-17",
+      "accessed_at": "2026-06-09",
+      "version": "OCC Bulletin 2026-13 / SR 26-2",
+      "reliability": "high",
+      "relevance": "medium",
+      "evidence_summary": "2026 年跨机构模型风险管理修订指南支持模型治理、验证、变更控制和风险分层；同时需注明 generative AI 和 agentic AI 不在其直接范围内，只能作为模型风险治理类比来源。",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 90,
+    "score_version": "1.0.0",
+    "primary_source_count": 2,
+    "supporting_source_count": 1,
+    "low_reliability_source_count": 0,
+    "limitations": [
+      "本条为 reviewed 知识，来源和审计补丁已记录；默认指导仍需后续人工治理升级 approved。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "docs/contracts/ai_engineering_gating_scoring_contract.md",
+      "docs/contracts/ai_engineering_knowledge_item_policy.md",
+      "docs/tasks/phase36_ai_engineering_gating_scoring_knowledge.md"
+    ],
+    "conflicts": [],
+    "resolution_summary": "未发现与当前 CEK-TA formal knowledge 的直接冲突；候选不会进入默认指导。",
+    "default_recommendation": "caveat_only_until_approved"
+  },
+  "review": {
+    "confidence": "medium",
+    "freshness": "time_sensitive",
+    "review_status": "reviewed",
+    "reviewer": "codex",
+    "reviewed_at": "2026-06-09",
+    "created_at": "2026-06-09",
+    "updated_at": "2026-06-09",
+    "open_questions": [
+      "审计时确认该候选是否应与相邻 AI Engineering 规则合并、拆分，或改路由到 Trading Engineering。",
+      "补 trade_candidate_snapshot_schema.json。",
+      "补 snapshot_hash / snapshot_version 字段。",
+      "补 eval cases：snapshot missing、post-trade field included、snapshot overwritten、source context missing。"
+    ],
+    "decision_log": [
+      {
+        "at": "2026-06-09",
+        "actor": "external_ai",
+        "decision": "accepted_for_draft",
+        "reason": "方向成立。交易候选进入 LLM 评分前应形成 decision-time snapshot，只包含当时可见信息和必要上下文。该条与 normalized_claim 对齐，且 scikit-learn data leakage 与 Datasheets 能支撑只使用预测时可得信息、记录数据组成和用途。",
+        "audit_result_id": "audit_result_phase36_ai_engineering_batch_09_of_10_20260609_gpt55_pro_strict_sources"
+      },
+      {
+        "at": "2026-06-09",
+        "actor": "codex",
+        "decision": "converted_to_reviewed",
+        "reason": "按 Phase 36 批量审计结果优化候选并转为 formal reviewed；未升级 approved。",
+        "audit_result_id": "audit_result_phase36_ai_engineering_batch_09_of_10_20260609_gpt55_pro_strict_sources"
+      }
+    ],
+    "approval_status": "not_requested",
+    "default_guidance_allowed": false,
+    "source_candidate_id": "cand_20260609_ai_engineering_trade_candidate_snapshot_required_before_scoring_v1_001",
+    "ai_audit_result_id": "audit_result_phase36_ai_engineering_batch_09_of_10_20260609_gpt55_pro_strict_sources",
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase36_ai_engineering_batch_09_of_10_20260609_gpt55_pro_strict_sources",
+      "source_package_id": "phase36_ai_engineering_candidate_audit_batch_09_of_10_20260609",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立。交易候选进入 LLM 评分前应形成 decision-time snapshot，只包含当时可见信息和必要上下文。该条与 normalized_claim 对齐，且 scikit-learn data leakage 与 Datasheets 能支撑只使用预测时可得信息、记录数据组成和用途。",
+      "source_patch_notes": [
+        "保留 Datasheets for Datasets 作为 snapshot 元数据和数据文档化来源。",
+        "保留 scikit-learn data leakage 作为只用预测时可用信息的主要来源。",
+        "补 TFDV / feature timestamp cutoff / outcome_schema.post_trade_fields_separated 来源，强化 snapshot validation。",
+        "互链 trade_candidate.decision_timestamp_required、feature_schema.decision_time_only、outcome_schema.post_trade_fields_separated。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：Before LLM scoring/gating, each trade candidate must create an immutable decision-time snapshot containing only information visible at decision_timestamp plus approved context refs.",
+        "建议字段：snapshot_id、trade_candidate_id、decision_timestamp、input_snapshot_hash、visible_fields、context_refs、excluded_post_trade_fields、source_ids、created_at。",
+        "snapshot 变更应产生新 version/hash，不允许静默覆盖。",
+        "缺少 snapshot 或 snapshot 包含 post-trade/future fields 时，应 block_scoring 或 needs_review。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 管理 snapshot schema、hash、字段角色和审计。",
+        "原始市场数据、K 线、订单、账户、策略上下文由 Trading Engineering 或 project owner 保存。",
+        "AI Engineering KB 只保存引用、hash、脱敏摘要和字段定义。"
+      ],
+      "conflict_patch_notes": [
+        "与 trade_candidate.decision_timestamp_required 是父子关系。",
+        "与 training_data.trade_sample_schema_required、training_data.decision_timestamp_required 预计在第十批相关，应统一 schema。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 trade_candidate_snapshot_schema.json。",
+        "补 snapshot_hash / snapshot_version 字段。",
+        "补 eval cases：snapshot missing、post-trade field included、snapshot overwritten、source context missing。"
+      ]
+    },
+    "approved_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "contribution": {
+    "contribution_id": null,
+    "source_project": null,
+    "sanitization_status": "not_applicable",
+    "private_data_removed": true,
+    "generic_mapping_notes": "Phase 36 public-source AI Engineering candidate; no project-private trading facts included."
+  },
+  "copyright": {
+    "stores_full_text": false,
+    "stores_long_quote": false,
+    "summary_only": true,
+    "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+    "reuse_risk": "low"
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于审计 AI Engineering、LLM 训练、RAG/MCP、部署、安全或治理链路。",
+      "用于提醒外接项目补齐来源、适用边界、冲突状态、审计记录和人工审批。",
+      "用于 reviewed/audit 模式下带 caveat 引用。"
+    ],
+    "not_allowed": [
+      "不得生成买卖点、仓位、杠杆、止损止盈或实盘执行指令。",
+      "不得覆盖确定性风控、交易执行系统或人工审批。",
+      "不得作为 approved/default guidance 直接返回。"
+    ],
+    "required_context": [
+      "project_type",
+      "task_type",
+      "mode",
+      "strategy_version",
+      "data_boundary",
+      "review_status"
+    ],
+    "fallback_behavior": "cite_with_caveat"
+  },
+  "machine_gate": {
+    "default_guidance": "caveat_only",
+    "reason": "reviewed only; accepted_for_draft is not approved; default guidance requires later human governance approval.",
+    "requires_human_escalation": true,
+    "blocking_reasons": [
+      "not_approved",
+      "phase36_batch_reviewed_only"
+    ],
+    "checked_at": "2026-06-09",
+    "gate_version": "1.0.0",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "recommended_extra_sources": [
+    {
+      "title": "保留 Datasheets for Datasets 作为 snapshot 元数据和数据文档化来源。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_1"
+    },
+    {
+      "title": "保留 scikit-learn data leakage 作为只用预测时可用信息的主要来源。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_2"
+    },
+    {
+      "title": "补 TFDV / feature timestamp cutoff / outcome_schema.post_trade_fields_separated 来源，强化 snapshot validation。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_3"
+    },
+    {
+      "title": "互链 trade_candidate.decision_timestamp_required、feature_schema.decision_time_only、outcome_schema.post_trade_fields_separated。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_4"
+    }
+  ]
+}

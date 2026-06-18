@@ -1,0 +1,346 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_ai_engineering.method_selection.rag_first_baseline_required.v1",
+  "title": "外接项目应先建立 RAG、提示词或规则 baseline 和 eval，再决定是否需要微调或偏好训练。",
+  "metadata": {
+    "partition_id": "KB_09_LLM_TRAINING",
+    "domain": "llm_training",
+    "subdomain": "training_method_selection",
+    "rule_type": "decision_rule",
+    "content_type": "json",
+    "project_binding": "none",
+    "tree_node_id": "kt.llm_training.training_method_selection",
+    "tree_path": "CEK-TA / AI Engineering",
+    "canonical_node_id": "kt.llm_training.training_method_selection",
+    "canonical_tree_path": "CEK-TA / AI Engineering",
+    "risk_level": "medium",
+    "used_for": [
+      "llm_training",
+      "trading_gating_scoring",
+      "rag_engineering",
+      "mcp",
+      "vue_audit_ui"
+    ],
+    "source_candidate_id": "cand_20260609_ai_engineering_method_selection_rag_first_baseline_required_v1_001",
+    "research_task_id": "RIT-P36-D-B10",
+    "claim_type": "llm_training_rule",
+    "classification_notes": "Phase 36 AI Engineering reviewed knowledge; UI tree and canonical node are inherited from candidate classification. Trading rule bodies must remain in Trading Engineering."
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "general",
+    "data_granularity": "general",
+    "project_type": "trading_llm_assistant",
+    "applies_when": [
+      "外接项目正在构建或审计交易 LLM gating/scoring、训练数据、评估、RAG/MCP、部署或治理链路。",
+      "该规则用于阻断数据泄漏、权限越界、无来源默认指导、训练/评估污染或上线前治理缺口。"
+    ],
+    "not_applicable_when": [
+      "用户需要具体买卖点、仓位、止损止盈、策略参数或实盘订单执行。",
+      "知识点主要描述 K 线结构、市场微观结构、回测模型、fill model 或交易风控本体，应路由到 Trading Engineering。"
+    ]
+  },
+  "content": {
+    "statement": "外接项目应先建立 RAG、提示词或规则 baseline 和 eval，再决定是否需要微调或偏好训练。",
+    "rationale": "本候选仅沉淀 AI Engineering 中训练、评估、RAG/MCP、安全、部署或治理规则；不定义 K 线信号、具体交易策略、订单执行规则或账户参数。 审计结论：方向成立，但应限定为知识检索、事实更新、私有文档问答、source-grounded scoring 等 RAG 适合的任务。OpenAI model optimization 支持先建立 eval baseline、提供相关上下文、再决定 fine-tuning；OpenAI fine-tuning guidance 也说明引入新知识通常应优先考虑 RAG / context，而不是直接 fine-tune。正式 draft 应避免写成所有任务都必须 RAG-first。",
+    "procedure": [
+      "确认项目事实匹配 applies_when，且没有命中 not_applicable_when。",
+      "按 source_patch_notes 检查来源是否足够支撑 statement。",
+      "按 content_patch_notes 补齐正式实现、schema、字段和 checklist。",
+      "按 boundary_patch_notes 确认没有把交易规则本体、项目私有参数或实盘执行规则写入 AI Engineering。",
+      "保留 required_followups，后续由来源增强或治理任务继续关闭。"
+    ],
+    "examples": [],
+    "anti_patterns": [
+      "把 reviewed 知识当作 approved 默认指导。",
+      "把 AI Engineering 规则扩写成具体交易阈值、仓位、买卖点或执行参数。",
+      "忽略审计结果中的来源限制、适用范围和后续补强要求。"
+    ],
+    "validation": [
+      "source_evidence 至少 2 条，且没有 low-only 来源。",
+      "conflict_status 为 none 或 resolved。",
+      "review_status 为 reviewed 时 machine_gate 必须是 caveat_only。",
+      "MCP/SearchLab 默认指导不得把本条当作 approved 返回。"
+    ],
+    "risk_notes": [
+      "本条仍是 candidate，需要外部 AI/人工审计确认来源充分性、适用边界和是否需要拆分。",
+      "AI Engineering 管理 RAG baseline 和 method selection。",
+      "交易策略、K 线信号、回测结论和执行规则不作为 RAG-first 知识沉淀。",
+      "私有项目文档只保留 source ref、hash、license / privacy status，不写全文。",
+      "与 no_finetune_before_eval_baseline 高度相关，建议作为子规则。",
+      "与 rag.retrieval_required_before_trade_scoring、rag.no_source_or_conflict_blocks_default_guidance 后续候选互链。",
+      "未发现直接冲突。",
+      "补 rag_first_decision_tree.md。",
+      "补 task_type enum：source_grounded_qa、policy_lookup、private_doc_reasoning、format_control、classification、style_alignment。",
+      "补 RAG baseline metrics：source_coverage、citation_accuracy、no_hit_rate、conflict_rate。"
+    ],
+    "citation_notes": "OpenAI model optimization guidance supports defining task objectives, choosing between prompting, RAG, fine-tuning, and evaluating quality before model changes.；OpenAI file search documentation supports retrieval with annotations and controlled result selection for RAG workflows.",
+    "audit_patch_notes": {
+      "source_patch_notes": [
+        "保留 OpenAI Model Optimization。",
+        "保留 OpenAI File Search / retrieval docs 作为 RAG baseline source。",
+        "保留 OpenAI fine-tuning guidance，但注明平台 winding down 和 freshness 限制。",
+        "建议补内部 task_taxonomy_rag_vs_finetune_boundary_required。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：For source-grounded, private-document, current-knowledge or auditable retrieval tasks, a RAG/file-search baseline must be evaluated before choosing fine-tuning or preference training.",
+        "建议字段：task_type、rag_baseline_id、retrieval_corpus_id、source_coverage、citation_quality、no_hit_rate、conflict_rate、fine_tune_reason。",
+        "增加不适用条件：纯格式控制、稳定输出风格、低延迟小模型蒸馏或无需外部知识的任务，不强制 RAG-first。",
+        "RAG baseline 通过不等于 live-ready，还需 eval、shadow、权限和来源冲突处理。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 管理 RAG baseline 和 method selection。",
+        "交易策略、K 线信号、回测结论和执行规则不作为 RAG-first 知识沉淀。",
+        "私有项目文档只保留 source ref、hash、license / privacy status，不写全文。"
+      ],
+      "conflict_patch_notes": [
+        "与 no_finetune_before_eval_baseline 高度相关，建议作为子规则。",
+        "与 rag.retrieval_required_before_trade_scoring、rag.no_source_or_conflict_blocks_default_guidance 后续候选互链。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 rag_first_decision_tree.md。",
+        "补 task_type enum：source_grounded_qa、policy_lookup、private_doc_reasoning、format_control、classification、style_alignment。",
+        "补 RAG baseline metrics：source_coverage、citation_accuracy、no_hit_rate、conflict_rate。"
+      ]
+    }
+  },
+  "assumptions": [
+    "外接项目提供项目事实、私有交易数据和策略上下文；CEK-TA 只沉淀可复用专业规则。",
+    "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+  ],
+  "source_evidence": [
+    {
+      "source_id": "src_openai_model",
+      "source_title": "Model optimization | OpenAI API",
+      "source_url": "https://platform.openai.com/docs/guides/model-optimization",
+      "source_type": "official_doc",
+      "publisher": "OpenAI",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "OpenAI model optimization guidance supports defining task objectives, choosing between prompting, RAG, fine-tuning, and evaluating quality before model changes.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_openai_file_search",
+      "source_title": "File search | OpenAI API",
+      "source_url": "https://platform.openai.com/docs/guides/tools-file-search?lang=javascript",
+      "source_type": "official_doc",
+      "publisher": "OpenAI",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "OpenAI file search documentation supports retrieval with annotations and controlled result selection for RAG workflows.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_openai_ft",
+      "source_title": "Fine-tuning best practices | OpenAI API",
+      "source_url": "https://platform.openai.com/docs/guides/fine-tuning-best-practices",
+      "source_type": "official_doc",
+      "publisher": "OpenAI",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "OpenAI fine-tuning guidance emphasizes data quality, held-out eval data, and task-specific examples for model improvement.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_occ_fed_fdic_revised_model_risk_2026",
+      "source_title": "Model Risk Management: Revised Guidance",
+      "source_url": "https://occ.gov/news-issuances/bulletins/2026/bulletin-2026-13.html",
+      "source_type": "standard_or_risk_framework",
+      "publisher": "OCC / Federal Reserve / FDIC",
+      "published_at": "2026-04-17",
+      "accessed_at": "2026-06-09",
+      "version": "OCC Bulletin 2026-13 / SR 26-2",
+      "reliability": "high",
+      "relevance": "medium",
+      "evidence_summary": "2026 年跨机构模型风险管理修订指南支持模型治理、验证、变更控制和风险分层；同时需注明 generative AI 和 agentic AI 不在其直接范围内，只能作为模型风险治理类比来源。",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 90,
+    "score_version": "1.0.0",
+    "primary_source_count": 2,
+    "supporting_source_count": 2,
+    "low_reliability_source_count": 0,
+    "limitations": [
+      "本条为 reviewed 知识，来源和审计补丁已记录；默认指导仍需后续人工治理升级 approved。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "docs/contracts/ai_engineering_gating_scoring_contract.md",
+      "docs/contracts/ai_engineering_knowledge_item_policy.md",
+      "docs/tasks/phase36_ai_engineering_gating_scoring_knowledge.md"
+    ],
+    "conflicts": [],
+    "resolution_summary": "未发现与当前 CEK-TA formal knowledge 的直接冲突；候选不会进入默认指导。",
+    "default_recommendation": "caveat_only_until_approved"
+  },
+  "review": {
+    "confidence": "medium",
+    "freshness": "time_sensitive",
+    "review_status": "reviewed",
+    "reviewer": "codex",
+    "reviewed_at": "2026-06-09",
+    "created_at": "2026-06-09",
+    "updated_at": "2026-06-09",
+    "open_questions": [
+      "审计时确认该候选是否应与相邻 AI Engineering 规则合并、拆分，或改路由到 Trading Engineering。",
+      "补 rag_first_decision_tree.md。",
+      "补 task_type enum：source_grounded_qa、policy_lookup、private_doc_reasoning、format_control、classification、style_alignment。",
+      "补 RAG baseline metrics：source_coverage、citation_accuracy、no_hit_rate、conflict_rate。"
+    ],
+    "decision_log": [
+      {
+        "at": "2026-06-09",
+        "actor": "external_ai",
+        "decision": "accepted_for_draft",
+        "reason": "方向成立，但应限定为知识检索、事实更新、私有文档问答、source-grounded scoring 等 RAG 适合的任务。OpenAI model optimization 支持先建立 eval baseline、提供相关上下文、再决定 fine-tuning；OpenAI fine-tuning guidance 也说明引入新知识通常应优先考虑 RAG / context，而不是直接 fine-tune。正式 draft 应避免写成所有任务都必须 RAG-first。",
+        "audit_result_id": "audit_result_phase36_ai_engineering_batch_06_of_10_20260609_gpt55_pro_strict_sources"
+      },
+      {
+        "at": "2026-06-09",
+        "actor": "codex",
+        "decision": "converted_to_reviewed",
+        "reason": "按 Phase 36 批量审计结果优化候选并转为 formal reviewed；未升级 approved。",
+        "audit_result_id": "audit_result_phase36_ai_engineering_batch_06_of_10_20260609_gpt55_pro_strict_sources"
+      }
+    ],
+    "approval_status": "not_requested",
+    "default_guidance_allowed": false,
+    "source_candidate_id": "cand_20260609_ai_engineering_method_selection_rag_first_baseline_required_v1_001",
+    "ai_audit_result_id": "audit_result_phase36_ai_engineering_batch_06_of_10_20260609_gpt55_pro_strict_sources",
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase36_ai_engineering_batch_06_of_10_20260609_gpt55_pro_strict_sources",
+      "source_package_id": "phase36_ai_engineering_candidate_audit_batch_06_of_10_20260609",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立，但应限定为知识检索、事实更新、私有文档问答、source-grounded scoring 等 RAG 适合的任务。OpenAI model optimization 支持先建立 eval baseline、提供相关上下文、再决定 fine-tuning；OpenAI fine-tuning guidance 也说明引入新知识通常应优先考虑 RAG / context，而不是直接 fine-tune。正式 draft 应避免写成所有任务都必须 RAG-first。",
+      "source_patch_notes": [
+        "保留 OpenAI Model Optimization。",
+        "保留 OpenAI File Search / retrieval docs 作为 RAG baseline source。",
+        "保留 OpenAI fine-tuning guidance，但注明平台 winding down 和 freshness 限制。",
+        "建议补内部 task_taxonomy_rag_vs_finetune_boundary_required。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：For source-grounded, private-document, current-knowledge or auditable retrieval tasks, a RAG/file-search baseline must be evaluated before choosing fine-tuning or preference training.",
+        "建议字段：task_type、rag_baseline_id、retrieval_corpus_id、source_coverage、citation_quality、no_hit_rate、conflict_rate、fine_tune_reason。",
+        "增加不适用条件：纯格式控制、稳定输出风格、低延迟小模型蒸馏或无需外部知识的任务，不强制 RAG-first。",
+        "RAG baseline 通过不等于 live-ready，还需 eval、shadow、权限和来源冲突处理。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 管理 RAG baseline 和 method selection。",
+        "交易策略、K 线信号、回测结论和执行规则不作为 RAG-first 知识沉淀。",
+        "私有项目文档只保留 source ref、hash、license / privacy status，不写全文。"
+      ],
+      "conflict_patch_notes": [
+        "与 no_finetune_before_eval_baseline 高度相关，建议作为子规则。",
+        "与 rag.retrieval_required_before_trade_scoring、rag.no_source_or_conflict_blocks_default_guidance 后续候选互链。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 rag_first_decision_tree.md。",
+        "补 task_type enum：source_grounded_qa、policy_lookup、private_doc_reasoning、format_control、classification、style_alignment。",
+        "补 RAG baseline metrics：source_coverage、citation_accuracy、no_hit_rate、conflict_rate。"
+      ]
+    },
+    "approved_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "contribution": {
+    "contribution_id": null,
+    "source_project": null,
+    "sanitization_status": "not_applicable",
+    "private_data_removed": true,
+    "generic_mapping_notes": "Phase 36 public-source AI Engineering candidate; no project-private trading facts included."
+  },
+  "copyright": {
+    "stores_full_text": false,
+    "stores_long_quote": false,
+    "summary_only": true,
+    "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+    "reuse_risk": "low"
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于审计 AI Engineering、LLM 训练、RAG/MCP、部署、安全或治理链路。",
+      "用于提醒外接项目补齐来源、适用边界、冲突状态、审计记录和人工审批。",
+      "用于 reviewed/audit 模式下带 caveat 引用。"
+    ],
+    "not_allowed": [
+      "不得生成买卖点、仓位、杠杆、止损止盈或实盘执行指令。",
+      "不得覆盖确定性风控、交易执行系统或人工审批。",
+      "不得作为 approved/default guidance 直接返回。"
+    ],
+    "required_context": [
+      "project_type",
+      "task_type",
+      "mode",
+      "strategy_version",
+      "data_boundary",
+      "review_status"
+    ],
+    "fallback_behavior": "cite_with_caveat"
+  },
+  "machine_gate": {
+    "default_guidance": "caveat_only",
+    "reason": "reviewed only; accepted_for_draft is not approved; default guidance requires later human governance approval.",
+    "requires_human_escalation": true,
+    "blocking_reasons": [
+      "not_approved",
+      "phase36_batch_reviewed_only"
+    ],
+    "checked_at": "2026-06-09",
+    "gate_version": "1.0.0",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "recommended_extra_sources": [
+    {
+      "title": "保留 OpenAI Model Optimization。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_1"
+    },
+    {
+      "title": "保留 OpenAI File Search / retrieval docs 作为 RAG baseline source。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_2"
+    },
+    {
+      "title": "保留 OpenAI fine-tuning guidance，但注明平台 winding down 和 freshness 限制。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_3"
+    },
+    {
+      "title": "建议补内部 task_taxonomy_rag_vs_finetune_boundary_required。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_4"
+    }
+  ]
+}

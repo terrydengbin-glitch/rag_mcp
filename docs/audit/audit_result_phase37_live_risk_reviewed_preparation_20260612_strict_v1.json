@@ -1,0 +1,431 @@
+{
+  "audit_result_id": "audit_result_phase37_live_risk_reviewed_preparation_20260612_strict_v1",
+  "package_id": "phase37_live_risk_reviewed_preparation_audit_package_20260612",
+  "auditor": "external_ai_strict_audit",
+  "audited_at": "2026-06-12",
+  "quality_gate": {
+    "pass": false,
+    "reason": "9 items are accepted for reviewed/caveat_only, but L03, L10 and L11 still need CEK-TA internal schemas/taxonomies before reviewed/caveat_only."
+  },
+  "summary": {
+    "total": 12,
+    "accepted_for_reviewed_caveat_only": 9,
+    "needs_more_evidence": 3,
+    "rejected": 0,
+    "blocked": 0
+  },
+  "hard_boundaries": {
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "risk_threshold_advice_allowed": false,
+    "trade_execution_advice_allowed": false
+  },
+  "candidate_results": [
+    {
+      "candidate_id": "cand_20260612_phase37_live_risk_least_privilege_api_required_001",
+      "research_task_id": "P37-G-L01",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "reasons": [
+        "NIST least privilege、SEC market access controls、CME pre-trade risk sources support the reviewed/caveat-only boundary that live API permissions must be least-privilege and separated by capability.",
+        "The claim remains tool/broker-specific and does not prescribe a universal permission matrix or any trading action."
+      ],
+      "required_followups": [],
+      "patch_notes": {
+        "source": [
+          "NIST/SEC/CME/IBKR support principles and implementation context only; broker/venue-specific permission mapping is still required."
+        ],
+        "content": [
+          "State as a permission and governance boundary, not as a universal broker permission template."
+        ],
+        "boundary": [
+          "No approved/default/hard gate; no trade execution advice; no account/key configuration recommendations."
+        ],
+        "conflict": [
+          "Live Execution owns real API/session permissions; AI Engineering may only cite this as a readiness check."
+        ]
+      }
+    },
+    {
+      "candidate_id": "cand_20260612_phase37_live_risk_order_state_machine_required_001",
+      "research_task_id": "P37-G-L02",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "reasons": [
+        "FIX Execution Report and OrdStatus sources support formal order state semantics; IBKR callbacks support broker-specific lifecycle implementation examples.",
+        "The candidate does not create a universal exchange state machine; it only requires explicit state mapping and reconciliation state handling."
+      ],
+      "required_followups": [],
+      "patch_notes": {
+        "source": [
+          "FIX/FIX dictionary and IBKR are semantic sources; native adapter mapping remains required per venue/broker."
+        ],
+        "content": [
+          "Keep submitted/accepted/partial/filled/cancel/reject/expired/unknown/reconciliation_required as CEK-TA logical states, not guaranteed native labels."
+        ],
+        "boundary": [
+          "No hard gate or live order action is created by this reviewed/caveat item."
+        ],
+        "conflict": [
+          "Replay may simulate states; Live Execution owns real state truth and adapter mapping."
+        ]
+      }
+    },
+    {
+      "candidate_id": "cand_20260612_phase37_live_risk_position_reconciliation_required_001",
+      "research_task_id": "P37-G-L03",
+      "decision": "needs_more_evidence",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "reasons": [
+        "IBKR position/account sources support the need for position updates and reconciliation, but reviewed/caveat-only requires an internal CEK-TA position_reconciliation schema.",
+        "The package does not define required fields such as local_position_ref, broker_position_ref, account_statement_ref, discrepancy_type, mismatch_qty, mismatch_notional, stale_source, reconciliation_action, owner and audit_trace."
+      ],
+      "required_followups": [
+        "Upload or inline CEK-TA position_reconciliation contract/schema.",
+        "Define source priority, reconciliation cadence, mismatch classification, missing-source handling, and what reconciliation_required permits or forbids.",
+        "Clarify owner split: Live Execution owns real account/broker position truth; Risk may consume reconciliation status but does not own broker truth."
+      ],
+      "patch_notes": {
+        "source": [
+          "Broker API docs support data availability, not the complete CEK-TA reconciliation field contract."
+        ],
+        "content": [
+          "Add required/optional field table, mismatch taxonomy, source priority and stale/unknown handling."
+        ],
+        "boundary": [
+          "reconciliation_required is evidence/control state, not automatic trade advice or risk threshold recommendation."
+        ],
+        "conflict": [
+          "Must align with Data Engineering lineage, Live Execution account truth and Risk Management final gate consumption."
+        ]
+      }
+    },
+    {
+      "candidate_id": "cand_20260612_phase37_live_risk_kill_switch_required_001",
+      "research_task_id": "P37-G-L04",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "reasons": [
+        "CME Kill Switch and pre-trade risk sources support order-entry block and cancellation controls; FIA/SEC support automated-trading safeguard context.",
+        "The candidate correctly frames kill switch as execution safety control, not strategy judgment."
+      ],
+      "required_followups": [],
+      "patch_notes": {
+        "source": [
+          "CME/FIA/SEC are venue/regulatory/industry examples; external projects need their own broker/venue mapping."
+        ],
+        "content": [
+          "Keep kill switch, order-entry block, cancel working orders, manual override and recovery as control capabilities."
+        ],
+        "boundary": [
+          "Reviewed/caveat-only does not enable actual kill switch operation or hard gate authority."
+        ],
+        "conflict": [
+          "Live Execution owns kill/cancel implementation; Risk owner defines policy and escalation."
+        ]
+      }
+    },
+    {
+      "candidate_id": "cand_20260612_phase37_live_risk_exchange_adapter_error_contract_required_001",
+      "research_task_id": "P37-G-L05",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "medium_high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "reasons": [
+        "IBKR/Binance/FIX/SEC sources support that live adapters must handle API behavior, order validation constraints, rejects and status outcomes explicitly.",
+        "The reviewed/caveat-only claim is limited to requiring structured error contracts; it does not prescribe a universal error-code taxonomy."
+      ],
+      "required_followups": [
+        "Before approved-level materialization, add CEK-TA adapter_error_contract schema with retryability, severity, source, recoverability and owner fields."
+      ],
+      "patch_notes": {
+        "source": [
+          "External broker/exchange docs are implementation examples; they do not replace a project-specific adapter error taxonomy."
+        ],
+        "content": [
+          "Structured errors must distinguish network, auth, rate-limit, validation, risk reject, unknown state and missing execution report."
+        ],
+        "boundary": [
+          "No string exception may drive live decisioning; no execution action is authorized by this knowledge item."
+        ],
+        "conflict": [
+          "Adapter error truth belongs to Live Execution; Risk consumes normalized risk-relevant errors."
+        ]
+      }
+    },
+    {
+      "candidate_id": "cand_20260612_phase37_live_risk_order_fill_trade_log_required_001",
+      "research_task_id": "P37-G-L06",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "reasons": [
+        "FIX Execution Report, CME audit trail and IBKR callback sources support auditable records for orders, fills, rejects, cancels, fees and state changes.",
+        "The candidate remains a logging/audit boundary and does not include account facts or private strategy parameters."
+      ],
+      "required_followups": [],
+      "patch_notes": {
+        "source": [
+          "FIX/CME/IBKR support order/fill/status/audit semantics; project schema still maps physical log fields."
+        ],
+        "content": [
+          "Logs must link decision, order request, broker response, fill, reject/cancel, fee, slippage, risk trigger and manual action."
+        ],
+        "boundary": [
+          "Auditability does not imply live permission or strategy validity."
+        ],
+        "conflict": [
+          "Live Execution owns real execution logs; Risk owns risk-trigger logs; Backtest/Replay may reference but not overwrite."
+        ]
+      }
+    },
+    {
+      "candidate_id": "cand_20260612_phase37_live_risk_single_trade_risk_limit_required_001",
+      "research_task_id": "P37-G-L07",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "reasons": [
+        "SEC 15c3-5, CFTC 17 CFR 1.11, CME pre-trade controls and FIA guidance support pre-trade controls for order size/capital/credit/volume risk.",
+        "The candidate properly avoids numeric thresholds; thresholds must remain project-owner policy."
+      ],
+      "required_followups": [],
+      "patch_notes": {
+        "source": [
+          "Regulatory/industry sources support risk-control principle, not CEK-TA threshold values."
+        ],
+        "content": [
+          "Single-trade risk checks should be expressed as required policy fields, not values."
+        ],
+        "boundary": [
+          "No risk threshold advice; no hard gate activation in this audit result."
+        ],
+        "conflict": [
+          "Risk Management owns policy; Live Execution enforces only after project-defined policy is configured."
+        ]
+      }
+    },
+    {
+      "candidate_id": "cand_20260612_phase37_live_risk_daily_loss_limit_required_001",
+      "research_task_id": "P37-G-L08",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "medium_high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "reasons": [
+        "SEC/CFTC/CME/FIA sources support loss/capital controls as a risk-management boundary.",
+        "The claim is acceptable as caveat-only because it requires definition of loss basis, reset timezone, freeze and recovery flow without providing threshold numbers."
+      ],
+      "required_followups": [
+        "Before approved/default use, add a daily_loss_policy schema with realized/unrealized basis, reset timezone, freeze state, manual recovery and owner fields."
+      ],
+      "patch_notes": {
+        "source": [
+          "External sources support the control principle but not project-specific daily-loss policy values."
+        ],
+        "content": [
+          "Treat trigger threshold as a project-owned placeholder, not a recommended number."
+        ],
+        "boundary": [
+          "No threshold advice; no live stop command is created by this reviewed/caveat item."
+        ],
+        "conflict": [
+          "Risk owner defines policy; Live Execution enforces configured state only."
+        ]
+      }
+    },
+    {
+      "candidate_id": "cand_20260612_phase37_live_risk_max_open_positions_required_001",
+      "research_task_id": "P37-G-L09",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "reasons": [
+        "SEC/CFTC/CME/FIX sources support pre-trade limits and order/quantity state control.",
+        "The candidate does not prescribe numeric maximum positions or order counts, so reviewed/caveat-only is acceptable."
+      ],
+      "required_followups": [],
+      "patch_notes": {
+        "source": [
+          "Regulatory and exchange sources support limit controls, not universal numeric limits."
+        ],
+        "content": [
+          "Represent max position/order checks as policy-defined fields and reason codes."
+        ],
+        "boundary": [
+          "No risk threshold numbers; no actual hard gate is enabled."
+        ],
+        "conflict": [
+          "Risk Management owns limits; Live Execution owns current order/position truth."
+        ]
+      }
+    },
+    {
+      "candidate_id": "cand_20260612_phase37_live_risk_portfolio_exposure_limit_required_001",
+      "research_task_id": "P37-G-L10",
+      "decision": "needs_more_evidence",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "reasons": [
+        "SEC/CFTC/CME/QuantConnect sources support exposure and risk-control principles, but reviewed/caveat-only requires a CEK-TA exposure taxonomy.",
+        "The package does not define exposure dimensions, net/gross exposure, directional exposure, correlated-asset grouping, account/strategy/asset hierarchy, aggregation rules, stale pricing handling, owner and audit trace fields."
+      ],
+      "required_followups": [
+        "Upload or inline CEK-TA exposure taxonomy / portfolio_exposure_limit schema.",
+        "Define account, strategy, instrument, venue, correlated asset, sector/theme/direction grouping and aggregation rules.",
+        "Clarify that threshold values are project-owned and absent from CEK-TA knowledge."
+      ],
+      "patch_notes": {
+        "source": [
+          "QuantConnect exposure examples are platform-specific and cannot serve as CEK-TA taxonomy."
+        ],
+        "content": [
+          "Add exposure taxonomy, aggregation rules, source price policy, gross/net notional definitions and owner mapping."
+        ],
+        "boundary": [
+          "No exposure threshold advice; no default guidance or actual hard gate."
+        ],
+        "conflict": [
+          "Risk Management owns exposure policy; Market/Data owners provide instrument grouping/price/reference data."
+        ]
+      }
+    },
+    {
+      "candidate_id": "cand_20260612_phase37_live_risk_consecutive_loss_stop_required_001",
+      "research_task_id": "P37-G-L11",
+      "decision": "needs_more_evidence",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "reasons": [
+        "FIA/CFTC/CME/QuantConnect sources support automated risk controls generally, but the consecutive-loss stop rule is a CEK-TA/project policy taxonomy.",
+        "The package does not define loss event basis, streak window, reset condition, freeze action, human review flow, interaction with daily loss/single trade/portfolio limits, owner and audit trace fields."
+      ],
+      "required_followups": [
+        "Upload or inline consecutive_loss_stop_policy schema.",
+        "Define loss_event_basis, time_window, streak_count source, reset conditions, freeze state, review workflow, unlock rule and interaction with other risk gates.",
+        "Keep all thresholds as project-owned placeholders, not CEK-TA recommendations."
+      ],
+      "patch_notes": {
+        "source": [
+          "General automated-risk-control sources are insufficient for the full consecutive-loss policy field contract."
+        ],
+        "content": [
+          "Add event/window/reset/freeze/manual-review schema and priority relative to single-trade, daily-loss and exposure controls."
+        ],
+        "boundary": [
+          "No threshold advice; no live stop command; caveat-only only."
+        ],
+        "conflict": [
+          "Risk Management owns policy; Live Execution only applies configured execution state."
+        ]
+      }
+    },
+    {
+      "candidate_id": "cand_20260612_phase37_live_risk_hard_risk_gate_precedes_execution_001",
+      "research_task_id": "P37-G-L12",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "reasons": [
+        "SEC/CFTC/CME/FIA sources strongly support deterministic pre-trade risk controls before market access/order entry.",
+        "The phrase hard risk gate is acceptable only as a caveat-only governance concept; this audit does not enable an actual hard gate or thresholds."
+      ],
+      "required_followups": [
+        "Formal item must display reviewed/caveat_only boundary beside the phrase hard risk gate to prevent machine interpretation as hard_gate_allowed=true."
+      ],
+      "patch_notes": {
+        "source": [
+          "Regulatory and venue sources support pre-trade controls; exact policy implementation remains project-owned."
+        ],
+        "content": [
+          "State that AI scoring/strategy signals cannot bypass final risk checks."
+        ],
+        "boundary": [
+          "reviewed/caveat_only does not equal actual hard_gate_allowed; no risk threshold advice; no live execution permission."
+        ],
+        "conflict": [
+          "Risk Management owns final gate policy; Live Execution enforces configured checks; AI Engineering only references."
+        ]
+      }
+    }
+  ],
+  "global_patch_notes": {
+    "source": [
+      "SEC/CFTC/NIST/CME/FIA/FIX/IBKR/Binance/QuantConnect sources support principles, regulatory/industry requirements, or venue/broker/platform semantics only.",
+      "No broker, venue or platform document should be generalized into a universal market rule."
+    ],
+    "content": [
+      "Live Execution owns API permissions, order state, adapter errors, real orders/fills/fees, position reconciliation and audit logs.",
+      "Risk Management owns deterministic pre-trade risk policy, risk limits, daily loss, portfolio exposure, loss-streak policies and kill/stop event boundaries."
+    ],
+    "boundary": [
+      "reviewed/caveat_only is not approved, not default guidance and not an executable hard gate.",
+      "No buy/sell point, position size, leverage, SL/TP, live execution advice or risk threshold value may be generated."
+    ],
+    "conflict": [
+      "AI scoring / Agent may cite these rules but cannot bypass deterministic final gate.",
+      "Replay/Simulation only simulates; Live Execution / Risk Management own real orders, real states and real risk actions."
+    ]
+  },
+  "safety_pollution_check": {
+    "chinese_encoding_issue_found": false,
+    "mock_or_test_pollution_found": false,
+    "account_facts_found": false,
+    "secrets_found": false,
+    "private_strategy_parameters_found": false,
+    "trade_execution_advice_found": false,
+    "risk_threshold_numbers_found": false
+  }
+}

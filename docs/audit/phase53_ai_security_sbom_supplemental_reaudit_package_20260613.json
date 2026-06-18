@@ -1,0 +1,302 @@
+{
+  "package_id": "phase53_ai_security_sbom_supplemental_reaudit_package_20260613",
+  "generated_at": "2026-06-13",
+  "phase": "Phase 53",
+  "task_id": "CEK-TA-524",
+  "purpose": "对 Phase 53 reviewed-preparation 审计中仍为 needs_more_evidence 的两条 AI Engineering 候选进行补证复审，判断是否可进入 accepted_for_reviewed_caveat_only。",
+  "audit_scope": {
+    "candidate_count": 2,
+    "allowed_decisions": [
+      "accepted_for_reviewed_caveat_only",
+      "needs_more_evidence",
+      "rejected",
+      "blocked"
+    ],
+    "forbidden_decisions": [
+      "approved",
+      "default_guidance",
+      "hard_gate",
+      "legal_opinion",
+      "security_pass_claim",
+      "trade_execution_advice",
+      "risk_threshold_advice"
+    ],
+    "hard_boundaries": [
+      "candidate 不是正式知识；本包最多只能允许进入 formal reviewed/caveat_only 准备。",
+      "不得创建 approved，不得进入默认指导队列，不得启用 hard gate。",
+      "不得输出漏洞利用步骤、绕过安全控制、实盘交易许可、买卖点、仓位、杠杆、止损止盈或风险阈值。",
+      "AI Security / SBOM 只能作为 AI Engineering 治理、审计、发布和供应链上下文，不替代 Trading Engineering、Risk Management、Live Execution 或法律/合规 owner。"
+    ]
+  },
+  "source_package": {
+    "previous_audit_result_id": "audit_phase53_reviewed_preparation_20260613",
+    "previous_package_id": "phase53_reviewed_preparation_audit_package_20260613",
+    "previous_decision_summary": {
+      "P53-AI-SEC01": "needs_more_evidence",
+      "P53-AI-SBOM01": "needs_more_evidence"
+    }
+  },
+  "candidate_results_to_reaudit": [
+    {
+      "candidate_id": "cand_20260613_phase53_trading_ai_agent_threat_model_required_001",
+      "research_task_id": "P53-AI-SEC01",
+      "current_status": "needs_more_evidence",
+      "candidate_path": "codex-expert-kit/rag/candidates/KB_AI_ENGINEERING/cand_20260613_phase53_trading_ai_agent_threat_model_required_001.json",
+      "claim_summary": "交易 AI Agent 必须把 prompt injection、tool misuse、memory poisoning、excessive agency、overreliance、sensitive information disclosure 和 supply chain compromise 作为独立威胁面建模；LLM/RAG/MCP 只能提供分析、审计、解释和检索辅助，不能绕过 deterministic final gate、Risk Management 或 Live Execution owner。",
+      "previous_blockers": [
+        "需要 MCP/tool governance internal contract extract 或 hash。",
+        "需要 memory governance contract extract。",
+        "需要 final_gate_boundary contract extract。"
+      ],
+      "supplemental_evidence": {
+        "internal_contract_extracts": [
+          {
+            "source_id": "src_phase3_mcp_server_spec_permission_model",
+            "title": "CEK-TA Knowledge MCP Server Spec / Permission Model",
+            "path": "codex-expert-kit/mcp/mcp_server_spec.md",
+            "contract_hash_required_for_formal": true,
+            "extract": "MCP server 是只读专业知识访问层；默认 read_knowledge/read_sources/read_conflict_status 为 true，write_knowledge、approve_knowledge、trade、read_account、read_secret 为 false。工具不得暴露 secrets、API keys、account data、raw orders 或 private project facts；confirmed unresolved conflicts must block authoritative guidance。",
+            "supports": [
+              "tool_permission_boundary",
+              "MCP/tool governance",
+              "read-only retrieval",
+              "no trade / no secret / no account access"
+            ]
+          },
+          {
+            "source_id": "src_phase43_project_memory_contract",
+            "title": "Phase 43 Project Memory Contract",
+            "path": "docs/contracts/phase43_project_memory_contract.md",
+            "contract_hash_required_for_formal": true,
+            "extract": "MemoryItem v0.1 包含 source、relations、lifecycle、review、write_policy、security、retrieval、integrity 字段。AI 只能创建 proposed memory；active 必须由人工、规则引擎或受控审核流程设置；不允许静默覆盖 active memory；deprecated/rejected memory 不得作为当前事实默认注入。",
+            "supports": [
+              "memory governance",
+              "memory_write_policy",
+              "memory poisoning boundary",
+              "no AI direct active memory write"
+            ]
+          },
+          {
+            "source_id": "src_phase43_project_memory_mcp_api_contract",
+            "title": "Phase 43 Project Memory MCP/API Contract",
+            "path": "docs/contracts/phase43_project_memory_mcp_api_contract.md",
+            "contract_hash_required_for_formal": true,
+            "extract": "search_memory/get_memory 为只读；propose_memory 只能提交 status=proposed 且 review_required=true；update_memory_status 和 supersede_memory 属于受控写入，并必须产生 audit_event_id。",
+            "supports": [
+              "memory MCP/API permission boundary",
+              "write gate",
+              "audit event requirement"
+            ]
+          },
+          {
+            "source_id": "src_phase41_hybrid_scoring_runtime_contract_final_gate",
+            "title": "Phase 41 Hybrid Scoring 运行时契约 / Deterministic Final Gate",
+            "path": "docs/contracts/phase41_hybrid_scoring_runtime_contract.md",
+            "contract_hash_required_for_formal": true,
+            "extract": "表格/统计模型负责 numeric scoring；Qwen3/LLM 负责审计解释、reason code、RAG 引用、缺字段检查和人工复核摘要；Deterministic Final Gate 负责最终交易权限、阻断、降级、仓位上限、安全停机和审计追踪。scorer_output 不能包含 allow/block/size/kill_switch；LLM 不允许最终 gate。",
+            "supports": [
+              "final_gate_boundary",
+              "LLM cannot bypass deterministic gate",
+              "scorer/Qwen/final-gate role split"
+            ]
+          }
+        ],
+        "external_sources": [
+          {
+            "source_id": "src_owasp_genai_security_project",
+            "title": "OWASP GenAI Security Project",
+            "url": "https://genai.owasp.org/",
+            "source_type": "security_standard_project",
+            "publisher": "OWASP",
+            "accessed_at": "2026-06-13",
+            "reliability": "high",
+            "relevance": "high",
+            "evidence_summary": "OWASP GenAI Security Project covers LLM/agent security risks including prompt injection, memory/context poisoning and agentic application risks. It supports using a threat-model and mitigation framing rather than treating LLM/agent output as trusted authority.",
+            "limitations": [
+              "OWASP provides security taxonomy and mitigation guidance, not CEK-TA-specific trading permissions or final-gate policy."
+            ]
+          },
+          {
+            "source_id": "src_nist_ai_rmf",
+            "title": "NIST Artificial Intelligence Risk Management Framework",
+            "url": "https://www.nist.gov/itl/ai-risk-management-framework",
+            "source_type": "government_framework",
+            "publisher": "NIST",
+            "accessed_at": "2026-06-13",
+            "reliability": "high",
+            "relevance": "medium_high",
+            "evidence_summary": "NIST AI RMF supports AI risk governance across the AI lifecycle and reinforces provenance, accountability, monitoring and risk management framing.",
+            "limitations": [
+              "NIST AI RMF is a general framework and does not define CEK-TA MCP, memory or trading final-gate fields."
+            ]
+          }
+        ]
+      },
+      "proposed_patch": {
+        "source": [
+          "将 MCP permission、Project Memory、Memory MCP/API 和 Phase 41 final gate 契约作为 CEK-TA 内部字段边界来源。",
+          "OWASP / NIST 只作为通用 AI/agent security 风险治理来源，不替代 CEK-TA 内部权限契约。"
+        ],
+        "content": [
+          "把 claim 写成 threat model / audit checklist / governance boundary。",
+          "明确 AI/RAG/MCP/memory 只能辅助检索、审计、解释和候选记忆 proposed，不得绕过 deterministic final gate。"
+        ],
+        "boundary": [
+          "不得包含漏洞利用步骤。",
+          "不得把 threat model 写成安全通过证明。",
+          "不得生成交易许可、风险阈值、订单动作或 hard gate。"
+        ],
+        "conflict": [
+          "Risk Management / Live Execution / deterministic final gate 拥有最终交易动作；AI Engineering 只拥有治理、审计和说明边界。"
+        ]
+      },
+      "requested_audit_decision": "accepted_for_reviewed_caveat_only"
+    },
+    {
+      "candidate_id": "cand_20260613_phase53_ai_sbom_model_sbom_required_001",
+      "research_task_id": "P53-AI-SBOM01",
+      "current_status": "needs_more_evidence",
+      "candidate_path": "codex-expert-kit/rag/candidates/KB_AI_ENGINEERING/cand_20260613_phase53_ai_sbom_model_sbom_required_001.json",
+      "claim_summary": "交易 AI 项目的 model/prompt/RAG/scorer/calibrator/final-gate 组合发布必须记录 AI SBOM / Model SBOM / dataset and dependency inventory；SBOM 只提供供应链透明度和审计上下文，不等于安全通过、发布批准、合规满足或 hard gate。",
+      "previous_blockers": [
+        "需要 CycloneDX ML-BOM 或 SPDX AI / Dataset Profile 作为 model/dataset/dependency schema 直接来源。",
+        "或需要 CEK-TA model_registry / artifact_registry contract extract。",
+        "需要明确 SBOM 不是安全通过证明、发布批准、合规满足声明或 hard gate。"
+      ],
+      "supplemental_evidence": {
+        "external_sources": [
+          {
+            "source_id": "src_cyclonedx_mlbom",
+            "title": "CycloneDX Machine Learning Bill of Materials (AI/ML-BOM)",
+            "url": "https://cyclonedx.org/capabilities/mlbom/",
+            "source_type": "industry_standard",
+            "publisher": "CycloneDX / OWASP Foundation",
+            "accessed_at": "2026-06-13",
+            "reliability": "high",
+            "relevance": "high",
+            "evidence_summary": "CycloneDX ML-BOM represents critical information about AI/ML models, datasets, dependencies, dataset provenance, training methodologies and AI framework configuration, supporting transparency and risk assessment.",
+            "limitations": [
+              "ML-BOM provides inventory/transparency schema; it does not itself approve release, prove model safety, or authorize trading decisions."
+            ]
+          },
+          {
+            "source_id": "src_spdx_ai_profile",
+            "title": "SPDX Specification 3.0.1 AI Profile",
+            "url": "https://spdx.github.io/spdx-spec/v3.0.1/model/AI/AI/",
+            "source_type": "industry_standard",
+            "publisher": "SPDX",
+            "accessed_at": "2026-06-13",
+            "reliability": "high",
+            "relevance": "high",
+            "evidence_summary": "SPDX AI Profile is designed to document and share information about AI software packages/systems and defines concepts/data elements for AI system and model artifacts, including models and datasets.",
+            "limitations": [
+              "SPDX AI Profile supports documentation and provenance; it is not a CEK-TA release approval workflow or hard gate."
+            ]
+          },
+          {
+            "source_id": "src_nist_ai_rmf_pdf",
+            "title": "NIST AI Risk Management Framework 1.0",
+            "url": "https://nvlpubs.nist.gov/nistpubs/ai/nist.ai.100-1.pdf",
+            "source_type": "government_framework",
+            "publisher": "NIST",
+            "accessed_at": "2026-06-13",
+            "reliability": "high",
+            "relevance": "medium_high",
+            "evidence_summary": "NIST AI RMF supports maintaining training data provenance and decision attribution to improve transparency and accountability.",
+            "limitations": [
+              "NIST AI RMF is not an SBOM schema and does not define CEK-TA model/prompt/RAG/final-gate release artifacts."
+            ]
+          }
+        ],
+        "internal_contract_extracts": [
+          {
+            "source_id": "src_phase40_composite_release_artifact_contract",
+            "title": "Phase 40 Composite Release Artifact Contract",
+            "path": "docs/contracts/phase40_composite_release_artifact_contract.md",
+            "contract_hash_required_for_formal": true,
+            "extract": "CompositeReleaseUnit 绑定 numeric_model_version、calibrator_version、threshold_policy_version、prompt_version、rag_index_version、rag_snapshot_hash、llm_model_version、final_gate_policy_version 和 code_version_hash；CompositeArtifactReleaseManifest 记录 model_artifact_uri、calibrator_artifact_uri、prompt_registry_uri、rag_index_uri、threshold_policy_uri、final_gate_policy_uri、rollback target 和 kill switch policy。",
+            "supports": [
+              "CEK-TA composite artifact inventory",
+              "model/prompt/RAG/final-gate version binding",
+              "artifact registry / release manifest boundary"
+            ]
+          },
+          {
+            "source_id": "src_phase40_release_manifest_kill_switch_contract",
+            "title": "Phase 40 Release Manifest Kill Switch Contract",
+            "path": "docs/contracts/phase40_release_manifest_kill_switch_contract.md",
+            "contract_hash_required_for_formal": true,
+            "extract": "ReleaseSafetyChecklist 包含 rollback_target_present、kill_switch_policy_present、kill_switch_tested_at、rollback_drill_status、secret_scan_status、human_approval_record_ref 和 monitoring_plan_ref。kill switch 是发布控制，不是交易策略逻辑；secret scan 不得保存密钥正文；rollback drill 不等于自动上线许可。",
+            "supports": [
+              "SBOM is not release approval",
+              "release safety checklist",
+              "secret scan / rollback / human approval boundary"
+            ]
+          },
+          {
+            "source_id": "src_phase42_database_storage_contract_manifest_tables",
+            "title": "Phase 42 交易 AI 数据库与数据契约 / manifest 表",
+            "path": "docs/contracts/phase42_database_storage_contract.md",
+            "contract_hash_required_for_formal": true,
+            "extract": "数据库契约要求 scoring/gating 决策绑定 audit_trace_id；模型、prompt、RAG、数据集、feature snapshot、release manifest 等版本必须作为可追踪 manifest 或引用保存，final_gate/score_result/llm_audit_result 默认 append-only。",
+            "supports": [
+              "artifact lineage",
+              "audit trace",
+              "manifest storage"
+            ]
+          }
+        ]
+      },
+      "proposed_patch": {
+        "source": [
+          "CycloneDX ML-BOM 和 SPDX AI Profile 作为 model/dataset/dependency inventory 直接来源。",
+          "NIST AI RMF 作为 provenance/accountability 支撑来源。",
+          "Phase 40/42 内部契约作为 CEK-TA artifact/release/manifest 字段边界来源。"
+        ],
+        "content": [
+          "AI SBOM / Model SBOM 必须记录模型、数据集、依赖、prompt、RAG snapshot、calibrator、threshold/final-gate policy、release manifest、artifact URI/hash 和来源边界。",
+          "SBOM 只能提供供应链透明度、审计上下文和发布审核输入。"
+        ],
+        "boundary": [
+          "SBOM 不是安全通过证明。",
+          "SBOM 不是发布批准。",
+          "SBOM 不是合规满足声明。",
+          "SBOM 不得创建 hard gate、交易许可或风险阈值。"
+        ],
+        "conflict": [
+          "Release approval、kill switch、rollback、secret scan 和 final gate policy 仍由 Phase 40/外接项目 owner 管理；AI Engineering 只定义 inventory 和审计边界。"
+        ]
+      },
+      "requested_audit_decision": "accepted_for_reviewed_caveat_only"
+    }
+  ],
+  "quality_gate": {
+    "candidate_count_matches_scope": true,
+    "all_candidates_have_sources": true,
+    "internal_contract_extracts_present": true,
+    "external_direct_sources_present_for_sbom": true,
+    "approved_created": 0,
+    "default_guidance_created": 0,
+    "hard_gate_created": 0,
+    "gate_status": "ready_for_external_reaudit"
+  },
+  "expected_auditor_output": {
+    "required_format": "JSON",
+    "required_fields": [
+      "audit_result_id",
+      "package_id",
+      "summary",
+      "candidate_results[].candidate_id",
+      "candidate_results[].research_task_id",
+      "candidate_results[].decision",
+      "candidate_results[].reviewed_allowed",
+      "candidate_results[].approved_allowed",
+      "candidate_results[].default_guidance_allowed",
+      "candidate_results[].hard_gate_allowed",
+      "candidate_results[].reasons",
+      "candidate_results[].required_followups",
+      "candidate_results[].patch_notes"
+    ],
+    "instruction": "请严格审计本补证包，必要时联网搜索相关专业网站、权威资料、案例和数据。只允许在 accepted_for_reviewed_caveat_only / needs_more_evidence / rejected / blocked 中选择；不得批准 approved、default guidance 或 hard gate。"
+  }
+}

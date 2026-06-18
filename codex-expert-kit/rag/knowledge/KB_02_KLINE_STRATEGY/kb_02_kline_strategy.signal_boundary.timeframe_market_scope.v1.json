@@ -1,0 +1,179 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_02_kline_strategy.signal_boundary.timeframe_market_scope.v1",
+  "title": "K线和技术指标信号必须绑定周期、市场和样本边界",
+  "metadata": {
+    "partition_id": "KB_02_KLINE_STRATEGY",
+    "domain": "kline_strategy",
+    "subdomain": "signal_boundary",
+    "rule_type": "principle",
+    "content_type": "json",
+    "project_binding": "none",
+    "tree_node_id": "kt.kline_strategy",
+    "tree_path": "CEK-TA / Trading Engineering / Kline Strategy",
+    "canonical_node_id": "kt.trading_engineering.strategy_engineering.signal_boundary",
+    "canonical_tree_path": "CEK-TA / Trading Engineering / Strategy Engineering / Signal Boundary",
+    "risk_level": "medium",
+    "used_for": [
+      "strategy_design",
+      "code_review",
+      "backtest_review",
+      "trade_analysis",
+      "mcp",
+      "vue_audit_ui"
+    ],
+    "claim_type": "methodological_constraint",
+    "classification_notes": "UI tree node is kt.kline_strategy; canonical classification is kt.trading_engineering.strategy_engineering.signal_boundary."
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "general",
+    "data_granularity": "kline",
+    "project_type": "kline_trend_strategy",
+    "applies_when": [
+      "设计、评估或审计 K线形态、技术指标、价格形态识别和信号过滤规则",
+      "需要判断某个信号能否跨市场、跨周期或跨样本复用"
+    ],
+    "not_applicable_when": [
+      "只讨论订单执行、资金费率或交易所 API 行为",
+      "已有独立研究证明该信号在明确市场、周期和样本外仍有效，但仍需保留边界"
+    ]
+  },
+  "content": {
+    "statement": "K线形态和技术指标信号不得被描述为跨市场、跨周期、跨样本的通用真理；每个信号必须声明市场、周期、样本、数据处理和验证边界。",
+    "rationale": "技术分析信号可能在特定样本中显示统计信息，但其有效性依赖识别方法、样本区间、资产池、周期和交易成本。缺少边界会把研究结论误用成普适规则。",
+    "procedure": [
+      "声明 signal 的 market、asset、timeframe、data_granularity 和样本区间。",
+      "记录指标参数、价格复权或数据清洗规则。",
+      "使用样本外、跨周期或跨市场测试验证泛化。",
+      "在检索和报告中返回 not_applicable_when。"
+    ],
+    "examples": [
+      "某形态在美股日线样本中有统计信息，不等于在加密 1m K线中可直接使用。"
+    ],
+    "anti_patterns": [
+      "看到某个形态历史胜率高就直接迁移到所有市场。",
+      "只展示一个周期的回测，不说明参数和样本选择。"
+    ],
+    "validation": [
+      "检查报告是否写明周期和市场。",
+      "检查是否有样本外或跨市场验证。",
+      "检查是否考虑交易成本和数据清洗。"
+    ],
+    "risk_notes": [
+      "该知识不判断任何具体指标是否可盈利。",
+      "该知识不提供买卖点。"
+    ],
+    "citation_notes": "Lo、Mamaysky、Wang 的技术分析研究使用系统化识别和大样本比较，并指出部分技术指标在其样本中可能有增量信息；这支持将技术信号作为需经边界化验证的经验假设，而不是普适真理。"
+  },
+  "assumptions": [
+    "讨论对象是 K线、指标或形态类信号。",
+    "信号有效性需要统计验证和边界声明。"
+  ],
+  "source_evidence": [
+    {
+      "source_id": "src_seed_010",
+      "source_title": "Foundations of Technical Analysis: Computational Algorithms, Statistical Inference, and Empirical Implementation",
+      "source_url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=228099",
+      "source_type": "paper",
+      "publisher": "SSRN / NBER Working Paper",
+      "published_at": "2000-03-01",
+      "accessed_at": "2026-06-08",
+      "version": "NBER Working Paper No. w7613",
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "该研究用系统化方法评估技术形态，支持技术信号必须绑定识别方法、样本和统计验证边界。",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 88,
+    "score_version": "1.0.0",
+    "primary_source_count": 1,
+    "supporting_source_count": 0,
+    "limitations": [
+      "来源样本主要是历史美股日数据；应用到其他市场和周期必须重新验证。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "kb_04_backtest.bias.multiple_testing_overfit.v1"
+    ],
+    "conflicts": [],
+    "resolution_summary": "该知识要求信号边界化，与回测多重测试审计一致。",
+    "default_recommendation": "use_as_guidance"
+  },
+  "review": {
+    "confidence": "high",
+    "freshness": "stable",
+    "review_status": "approved",
+    "reviewer": "codex",
+    "reviewed_at": "2026-06-08",
+    "created_at": "2026-06-08",
+    "updated_at": "2026-06-08",
+    "open_questions": [
+      "后续可补充更多技术分析样本外验证和 data snooping 研究。"
+    ],
+    "decision_log": [
+      {
+        "at": "2026-06-08",
+        "actor": "codex",
+        "decision": "approved",
+        "reason": "来源可靠，边界清晰，不构成交易信号。"
+      }
+    ],
+    "approval_status": "approved",
+    "default_guidance_allowed": true,
+    "source_candidate_id": null,
+    "ai_audit_result_id": null
+  },
+  "contribution": {
+    "contribution_id": null,
+    "source_project": null,
+    "sanitization_status": "not_applicable",
+    "private_data_removed": true,
+    "generic_mapping_notes": "通用信号边界知识。"
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于审计和解释 CEK-TA / Trading Engineering / Strategy Engineering / Signal Boundary 范围内的专业边界。",
+      "用于提醒用户补充适用范围、来源、冲突状态和验证条件。",
+      "用于阻止 AI 把未满足边界的知识当成默认交易建议。"
+    ],
+    "not_allowed": [
+      "不得据此生成买卖点、仓位、杠杆或实盘执行指令。",
+      "不得在缺少适用边界、来源或冲突状态时作为默认指导。",
+      "不得把 reviewed 或 caveat_only 知识表述为 approved 结论。"
+    ],
+    "required_context": [
+      "project_type",
+      "market",
+      "asset",
+      "timeframe",
+      "data_granularity",
+      "task_type"
+    ],
+    "fallback_behavior": "cite_with_caveat"
+  },
+  "machine_gate": {
+    "default_guidance": "allow",
+    "reason": "approved; default_guidance_allowed=true; sources, conflict, freshness, and privacy gates passed.",
+    "requires_human_escalation": false,
+    "blocking_reasons": [],
+    "checked_at": "2026-06-09",
+    "gate_version": "1.0.0"
+  },
+  "recommended_extra_sources": [
+    {
+      "title": "Sullivan, Timmermann, White, 1999, Data-Snooping, Technical Trading Rule Performance, and the Bootstrap",
+      "source_url": null,
+      "source_type": "paper",
+      "purpose": "补强技术交易规则的数据窥探和 bootstrap 检验边界。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_1"
+    }
+  ]
+}

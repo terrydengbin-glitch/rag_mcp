@@ -1,0 +1,453 @@
+{
+  "package_id": "phase42_p1_p003_supplemental_reaudit_package_20260611",
+  "package_type": "candidate_ai_reaudit_package",
+  "schema_version": "1.0.0",
+  "generated_at": "2026-06-11",
+  "language": "zh-CN",
+  "source_audit_result_id": "audit_result_phase42_p1_candidate_audit_package_20260611_strict_v1",
+  "source_package_id": "phase42_p1_candidate_audit_package_20260611",
+  "phase": "42",
+  "title": "Phase 42 P1 P42-P1-003 补证后二审包",
+  "purpose": "请只审计 P42-P1-003 在补充 CEK-TA formal index / citation resolver / RAG vector storage 内部契约后，是否可升级为 accepted_for_draft。",
+  "strict_boundaries": [
+    "本包不能创建 reviewed、approved、default guidance 或 hard gate。",
+    "accepted_for_draft 只表示可进入后续 formal draft/reviewed 准备，不等于 reviewed 或 approved。",
+    "Qdrant payload index 只能证明工具能力；formal_knowledge_id/citation status/source version 属于 CEK-TA provenance contract。",
+    "Vector DB 仍只能作为 retrieval index，不能成为 canonical store。"
+  ],
+  "audit_instructions": [
+    "检查补充的 CEK-TA 内部契约是否足以覆盖 formal_knowledge_id、citation_resolution_status、source/version metadata。",
+    "检查 claim 是否已经拆分 Qdrant 工具能力与 CEK-TA provenance contract。",
+    "检查是否仍存在来源不足、claim 过强、默认指导越权或 Trading Engineering 污染。",
+    "输出 decision 只能是 accepted_for_draft、needs_more_evidence、rejected 或 blocked。"
+  ],
+  "required_output_schema": {
+    "audit_result_id": "string",
+    "auditor": "string",
+    "audited_at": "string",
+    "package_id": "phase42_p1_p003_supplemental_reaudit_package_20260611",
+    "summary": {
+      "total": 1,
+      "accepted_for_draft": 0,
+      "needs_more_evidence": 0,
+      "rejected": 0,
+      "blocked": 0,
+      "reviewed_allowed": 0,
+      "approved_allowed": 0,
+      "default_guidance_allowed": 0,
+      "hard_gate_allowed": 0
+    },
+    "candidate_results": [
+      {
+        "candidate_id": "string",
+        "research_task_id": "P42-P1-003",
+        "decision": "accepted_for_draft | needs_more_evidence | rejected | blocked",
+        "confidence": "high | medium | low",
+        "reviewed_allowed": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "reasons": [
+          "string"
+        ],
+        "required_followups": [
+          "string"
+        ],
+        "proposed_handoff_patch": {
+          "source_patch_notes": [
+            "string"
+          ],
+          "content_patch_notes": [
+            "string"
+          ],
+          "boundary_patch_notes": [
+            "string"
+          ],
+          "conflict_patch_notes": [
+            "string"
+          ]
+        }
+      }
+    ]
+  },
+  "candidate_count": 1,
+  "candidates": [
+    {
+      "schema_version": "1.0.0",
+      "candidate_id": "cand_20260611_phase42_p42_p1_003_qdrant_payload_index_metadata_filter_rule_001",
+      "research_task_id": "P42-P1-003",
+      "status": {
+        "review_status": "needs_more_evidence",
+        "ingestion_decision": "ready_for_reaudit",
+        "decision_reason": "已补齐 CEK-TA provenance/citation/internal contract 证据，等待 P42-P1-003 二审。",
+        "created_at": "2026-06-11",
+        "updated_at": "2026-06-11"
+      },
+      "classification": {
+        "tree_node_id": "kt.ai_engineering.database_storage_engineering.vector_store_retrieval_storage",
+        "canonical_node_id": "kt.ai_engineering.database_storage_engineering.vector_store_retrieval_storage",
+        "tree_path": "CEK-TA / AI Engineering / Database Data Contract And Storage Engineering",
+        "related_nodes": [
+          "kt.rag_engineering",
+          "kt.project_integration",
+          "kt.ai_engineering.model_release_governance"
+        ],
+        "partition_id": "KB_AI_26_DATABASE_STORAGE",
+        "domain": "storage_engineering",
+        "subdomain": "vector_store_retrieval_storage",
+        "rule_type": "governance_rule",
+        "used_for": [
+          "trading_ai_storage",
+          "llm_training",
+          "trading_gating_scoring",
+          "rag_engineering",
+          "mcp",
+          "vue_audit_ui",
+          "external_ai_ide"
+        ]
+      },
+      "claim": {
+        "claim_id": "claim_001",
+        "statement": "Qdrant payload indexes should be created for metadata fields repeatedly used in filtered retrieval; CEK-TA RAG results must separately preserve source provenance, formal_knowledge_id, citation resolution status and version metadata through CEK-TA contracts.",
+        "normalized_claim": "phase42.qdrant_payload_index_metadata_filter_rule.v1",
+        "claim_type": "metadata_filter_rule",
+        "storage_role": "vector_index",
+        "evidence_summary": "Qdrant documents vector indexes and payload indexes, emphasizing combined vector and traditional indexing for filtered search.；Qdrant search documentation recommends payload indexes for fields used in filtered vector search.；Qdrant filtering documentation explains payload conditions, nested object filters and metadata-based retrieval constraints.；CEK-TA Phase 42 RAG/vector 契约定义 source、chunk、formal knowledge id、version metadata 与 citation_result 回链。；Phase 41 citation resolver 契约定义 citation_resolution_status 和 unsupported claim 降级/阻断语义。",
+        "interpretation_notes": "本条拆分两层语义：Qdrant 文档只支撑 payload index/filtering 工具能力；formal_knowledge_id、citation status、source/version provenance 由 CEK-TA 内部契约约束。",
+        "claim_strength": "medium",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general",
+        "asset": "general",
+        "timeframe": "general",
+        "data_granularity": "general",
+        "project_type": "trading_ai_gating_scoring_storage",
+        "applies_when": [
+          "外接项目正在设计交易 AI gating/scoring 的数据库、数据契约、RAG 存储、审计日志、迁移、备份或生命周期治理。",
+          "该规则用于判断是否引入更复杂的向量库、feature store、model registry、RLS 或 pgAudit 等增强组件。"
+        ],
+        "not_applicable_when": [
+          "用户需要具体买卖点、仓位、止损止盈、K 线形态、策略参数或实盘下单建议。",
+          "知识点主要描述 fill model、订单状态机、交易所异常处理、实盘风控阈值或交易收益本体，应路由到 Trading Engineering。",
+          "用户正在请求直接创建生产数据库、启用 RLS/pgAudit、执行迁移或引入外部服务；这必须另起实现 Phase 并由开发者确认。"
+        ],
+        "assumptions": [
+          "外接项目提供私有交易事实、真实表名、吞吐量、延迟和部署环境；CEK-TA 只沉淀可复用专业规则。",
+          "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+        ],
+        "limitations": [
+          "本条仍是 candidate，需要外部 AI/人工审计确认来源充分性、适用边界和是否需要补充实测 benchmark 或部署实例。",
+          "本条不创建真实数据库，不执行迁移，不改变 MCP 写权限，不引入外部服务依赖。"
+        ]
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 在外接交易 AI 项目中设计数据库、schema、migration、audit ledger、RAG/vector storage 和生命周期治理契约。",
+          "用于生成任务卡、接口契约、测试计划、审计 checklist 和候选知识补证问题。",
+          "用于阻断 Vector DB 成为事实主库、LLM audit 写 final_gate、无 audit_trace_id 决策或无来源默认指导。"
+        ],
+        "not_allowed": [
+          "不得据此生成买卖点、仓位、杠杆、止损止盈或实盘下单建议。",
+          "不得据此直接创建生产数据库、执行迁移、启用 RLS/pgAudit 或修改外部项目真实数据库。",
+          "不得把 candidate 当作 reviewed/approved 默认指导。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_id": "src_qdrant_indexing",
+          "source_title": "Qdrant Documentation: Indexing",
+          "source_url": "https://qdrant.tech/documentation/manage-data/indexing/",
+          "source_type": "official_doc",
+          "publisher": "Qdrant",
+          "published_at": null,
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "reliability": "high",
+          "score": 86,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "Qdrant documents vector indexes and payload indexes, emphasizing combined vector and traditional indexing for filtered search.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_qdrant_search",
+          "source_title": "Qdrant Documentation: Search",
+          "source_url": "https://qdrant.tech/documentation/search/search/",
+          "source_type": "official_doc",
+          "publisher": "Qdrant",
+          "published_at": null,
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "reliability": "high",
+          "score": 84,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "Qdrant search documentation recommends payload indexes for fields used in filtered vector search.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_qdrant_filtering",
+          "source_title": "Qdrant Documentation: Filtering",
+          "source_url": "https://qdrant.tech/documentation/search/filtering/",
+          "source_type": "official_doc",
+          "publisher": "Qdrant",
+          "published_at": null,
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "reliability": "high",
+          "score": 84,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "Qdrant filtering documentation explains payload conditions, nested object filters and metadata-based retrieval constraints.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_phase42_rag_vector_storage_contract",
+          "source_title": "Phase 42 RAG / Vector Storage 契约",
+          "source_url": "docs/contracts/phase42_rag_vector_storage_contract.md",
+          "source_type": "internal_contract",
+          "publisher": "CEK-TA",
+          "published_at": null,
+          "accessed_at": "2026-06-11",
+          "version": "phase42",
+          "reliability": "high",
+          "score": 86,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [
+            "内部契约只证明 CEK-TA 项目治理语义，不替代 Qdrant 官方工具能力说明。"
+          ],
+          "evidence_summary": "契约定义 rag_document、rag_chunk、embedding_record、vector_index_manifest、citation_result；要求检索结果回链 source document、chunk、formal knowledge id、source_uri、license 和版本。",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_phase41_citation_resolver_contract",
+          "source_title": "Phase 41 Hybrid Scoring Runtime Contract: citation resolver",
+          "source_url": "docs/contracts/phase41_hybrid_scoring_runtime_contract.md",
+          "source_type": "internal_contract",
+          "publisher": "CEK-TA",
+          "published_at": null,
+          "accessed_at": "2026-06-11",
+          "version": "phase41",
+          "reliability": "high",
+          "score": 84,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [
+            "该契约用于 CEK-TA hybrid scoring runtime，不证明 Qdrant 本身具备 CEK-TA citation resolver。"
+          ],
+          "evidence_summary": "契约定义 rag_citation_response、citation_resolution_status、unsupported_claim detector；当 citation unresolved/no_source/conflict/stale/out_of_scope 时必须降级或阻断。",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_external_ai_active_retrieval_protocol",
+          "source_title": "外部项目 AI 主动检索协议",
+          "source_url": "docs/contracts/external_ai_active_retrieval_protocol.md",
+          "source_type": "internal_contract",
+          "publisher": "CEK-TA",
+          "published_at": null,
+          "accessed_at": "2026-06-11",
+          "version": "phase35",
+          "reliability": "high",
+          "score": 82,
+          "relevance": "medium",
+          "freshness": "stable",
+          "limitations": [
+            "该协议定义外部项目 AI 检索和引用要求，不替代具体 vector DB 文档。"
+          ],
+          "evidence_summary": "协议要求外部项目 AI 在专业判断前主动检索 CEK-TA，并输出 citation、knowledge_id、review_status 与边界说明。",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "high",
+        "score": 86,
+        "score_version": "1.1.0",
+        "primary_source_count": 6,
+        "supporting_source_count": 0,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "Qdrant 来源支持 payload index/filtering；formal_knowledge_id、citation resolver 和 source provenance 由 CEK-TA 内部契约补足。",
+          "本候选仍需二审确认补证是否足以升级 accepted_for_draft。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "checked_against": [
+          "docs/research/phase42_database_storage_scope.md",
+          "docs/contracts/phase42_database_storage_contract.md",
+          "docs/contracts/phase42_rag_vector_storage_contract.md",
+          "docs/tasks/phase42_database_data_contract_storage_engineering.md"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与 Phase 42 P0 formal reviewed 知识的直接冲突；P1 候选不会进入默认指导，也不会创建真实数据库。",
+        "approval_allowed": false
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "Phase 42 P1 candidate audit does not allow default guidance; formal reviewed requires later reviewed gate.",
+        "requires_human_escalation": true
+      },
+      "review": {
+        "confidence": "medium",
+        "freshness": "time_sensitive",
+        "reviewer": "external_ai_and_codex_alignment",
+        "reviewed_at": "2026-06-11",
+        "open_questions": [
+          "审计时确认该候选是否需要补充更贴近交易 AI storage 的 benchmark、部署实例、成本边界或回滚策略。"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-11",
+            "actor": "codex",
+            "action": "created",
+            "reason": "Phase 42 P1 database/storage engineering candidate expansion."
+          },
+          {
+            "at": "2026-06-11",
+            "actor": "codex",
+            "action": "phase42_p1_audit_result_imported",
+            "reason": "external audit decision=needs_more_evidence",
+            "audit_result_id": "audit_result_phase42_p1_candidate_audit_package_20260611_strict_v1"
+          },
+          {
+            "at": "2026-06-11",
+            "actor": "codex",
+            "action": "phase42_p1_p003_supplemented",
+            "reason": "按审计报告补充 CEK-TA RAG/vector、citation resolver 和主动检索协议来源。",
+            "source_ids": [
+              "src_phase42_rag_vector_storage_contract",
+              "src_phase41_citation_resolver_contract",
+              "src_external_ai_active_retrieval_protocol"
+            ]
+          }
+        ],
+        "ai_audit": {
+          "audit_result_id": "audit_result_phase42_p1_candidate_audit_package_20260611_strict_v1",
+          "package_id": "phase42_p1_candidate_audit_package_20260611",
+          "auditor": "external_ai_strict_audit_transcribed_by_codex",
+          "audited_at": "2026-06-11",
+          "decision": "needs_more_evidence",
+          "confidence": "medium",
+          "reviewed_allowed": false,
+          "approved_allowed": false,
+          "default_guidance_allowed": false,
+          "hard_gate_allowed": false,
+          "reasons": [
+            "Qdrant 来源支持 payload index 与 filtering。",
+            "formal_knowledge_id、source provenance、version metadata 属于 CEK-TA formal index/citation resolver 语义，不能只由 Qdrant 文档支撑。"
+          ],
+          "required_followups": [
+            "补充 Phase42 RAG / Vector Storage Contract。",
+            "补充 CitationResolver / FormalKnowledgeLink 相关内部契约。",
+            "拆分 Qdrant 工具能力与 CEK-TA provenance contract。"
+          ],
+          "source_audit": {
+            "status": "warning",
+            "notes": [
+              "Qdrant 来源支持 payload index 与 filtering。",
+              "formal_knowledge_id、source provenance、version metadata 属于 CEK-TA formal index/citation resolver 语义，不能只由 Qdrant 文档支撑。"
+            ]
+          },
+          "conflict_audit": {
+            "status": "pass",
+            "notes": [
+              "未发现与 Phase 42 P0 formal reviewed 知识的直接冲突。"
+            ]
+          },
+          "scope_audit": {
+            "status": "pass",
+            "notes": [
+              "分类保持在 AI Engineering / Database Storage Engineering。",
+              "未混入 K 线、fill model、仓位、止损止盈或实盘执行本体。"
+            ]
+          },
+          "classification_audit": {
+            "status": "pass",
+            "notes": [
+              "canonical_node_id 属于 kt.ai_engineering.database_storage_engineering.*。"
+            ]
+          },
+          "proposed_handoff_patch": {
+            "source_patch_notes": [
+              "补充 Phase42 RAG / Vector Storage Contract。",
+              "补充 CitationResolver / FormalKnowledgeLink 相关内部契约。",
+              "拆分 Qdrant 工具能力与 CEK-TA provenance contract。"
+            ],
+            "content_patch_notes": [
+              "补充 Phase42 RAG / Vector Storage Contract。",
+              "补充 CitationResolver / FormalKnowledgeLink 相关内部契约。",
+              "拆分 Qdrant 工具能力与 CEK-TA provenance contract。"
+            ],
+            "boundary_patch_notes": [
+              "不得创建真实数据库、执行迁移、启用工具或改变 MCP/API 写权限。",
+              "不得进入 reviewed、approved、default guidance 或 hard gate。"
+            ],
+            "conflict_patch_notes": [
+              "P1 工具能力只能作为条件增强项，不能覆盖 P0 canonical store 和 deterministic final gate 边界。"
+            ]
+          },
+          "boundary": "Phase 42 P1 first audit does not allow reviewed, approved, default guidance or hard gate."
+        },
+        "supplement_status": "ready_for_reaudit",
+        "supplemental_evidence": {
+          "supplemented_at": "2026-06-11",
+          "reason": "补充 CEK-TA formal index、citation resolver 和 RAG/vector storage 内部契约证据。",
+          "verified_source_ids": [
+            "src_phase42_rag_vector_storage_contract",
+            "src_phase41_citation_resolver_contract",
+            "src_external_ai_active_retrieval_protocol"
+          ],
+          "claim_split": [
+            "Qdrant payload index/filtering = 工具能力。",
+            "formal_knowledge_id/citation/source version = CEK-TA provenance contract。"
+          ],
+          "expected_reaudit_decision": "accepted_for_draft 或继续 needs_more_evidence。"
+        }
+      },
+      "copyright": {
+        "stores_full_text": false,
+        "stores_long_quote": false,
+        "summary_only": true,
+        "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+        "reuse_risk": "low"
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_ai_database_storage.phase42.qdrant_payload_index_metadata_filter_rule.v1",
+        "target_schema": "cek_ta_knowledge_item",
+        "target_review_status": "blocked",
+        "skill_candidate": false,
+        "eval_case_candidate": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "workflow": {
+        "stage": "needs_more_evidence",
+        "queue_group": "needs_more_evidence",
+        "formal_knowledge_id": null,
+        "formal_review_status": null,
+        "ai_audit_result_id": "audit_result_phase42_p1_candidate_audit_package_20260611_strict_v1",
+        "hidden_from_default_queue": true,
+        "next_action": "export_ai_audit",
+        "default_guidance_allowed": false,
+        "visible_in_default_guidance_queue": false,
+        "hard_gate_allowed": false
+      },
+      "phase42_trace": {
+        "priority": "P1",
+        "related_contracts": [
+          "docs/research/phase42_database_storage_scope.md",
+          "docs/contracts/phase42_database_storage_contract.md",
+          "docs/contracts/phase42_rag_vector_storage_contract.md",
+          "docs/tasks/phase42_database_data_contract_storage_engineering.md"
+        ],
+        "scope_boundary": "AI Engineering database/storage only; Trading Engineering body is reference-only."
+      }
+    }
+  ]
+}

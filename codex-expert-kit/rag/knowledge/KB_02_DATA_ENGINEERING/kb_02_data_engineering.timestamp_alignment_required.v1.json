@@ -1,0 +1,324 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_02_data_engineering.timestamp_alignment_required.v1",
+  "title": "交易研究、回测、训练和复盘使用市场数据前，必须声明事件时间、接收时间、bar 起始/结束时间和决策时间的含义；缺少时间角色定义时不得进行特征对齐或标签归因。",
+  "metadata": {
+    "partition_id": "KB_02_DATA_ENGINEERING",
+    "domain": "trading_engineering",
+    "subdomain": "timestamp_alignment",
+    "rule_type": "data_contract_rule",
+    "claim_type": "data_quality_rule",
+    "content_type": "json",
+    "project_binding": "none",
+    "tree_node_id": "kt.trading_engineering.data_engineering",
+    "tree_path": "CEK-TA / Trading Engineering / Data Engineering",
+    "canonical_node_id": "kt.trading_engineering.data_engineering",
+    "canonical_tree_path": "CEK-TA / Trading Engineering / Data Engineering",
+    "risk_level": "medium",
+    "used_for": [
+      "trading_data_contract",
+      "backtest_data_audit",
+      "ai_training_dataset_boundary",
+      "external_project_rag_retrieval"
+    ],
+    "source_candidate_id": "cand_20260611_phase37_data_engineering_timestamp_alignment_required_001",
+    "research_task_id": "P37-B-D01",
+    "phase": "Phase 37",
+    "classification_notes": "Phase 37 Data Engineering formal reviewed/caveat_only；这是 Trading Engineering 数据规则本体，不是 AI Engineering 训练/RAG/MCP 本体规则，也不是 approved/default guidance。"
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "general",
+    "data_granularity": "event_or_bar",
+    "project_type": "trading_ai_support_layer",
+    "applies_when": [
+      "接入 trade、quote、OHLCV、订单簿或特征表",
+      "构建训练样本、回测样本、标签或交易复盘数据"
+    ],
+    "not_applicable_when": [
+      "只展示原始数据字段说明且不做对齐、训练或回测",
+      "外部数据源已经提供经过审计的时间角色映射且当前只保存引用",
+      "需要具体交易策略参数、账户事实、交易所私有配置、密钥或实盘权限时，应由外接项目事实层处理。",
+      "AI Engineering 只能引用本规则，不得把本规则改写为模型训练、MCP 或 RAG 本体规则。"
+    ]
+  },
+  "content": {
+    "statement": "交易研究、回测、训练和复盘使用市场数据前，必须声明事件时间、接收时间、bar 起始/结束时间和决策时间的含义；缺少时间角色定义时不得进行特征对齐或标签归因。",
+    "rationale": "本候选定义交易数据工程边界，不输出买卖点、仓位、止损止盈、杠杆或实盘执行建议。",
+    "procedure": [
+      "确认当前问题属于 Trading Engineering / Data Engineering 数据规则本体，而不是 AI Engineering 训练、RAG 或 MCP 本体。",
+      "检查来源、字段语义、供应商/交易所适用范围、数据版本、时间角色和质量报告边界。",
+      "返回本知识时必须携带 source_evidence、review_status、machine_gate、适用范围和不适用场景。"
+    ],
+    "examples": [],
+    "anti_patterns": [
+      "把供应商字段名当作所有市场数据源的统一字段语义。",
+      "未声明时间戳、时区、版本、调整、缺失或重复处理规则就进入回测、训练或评估。",
+      "把 reviewed/caveat_only 知识说成 approved 默认指导。"
+    ],
+    "validation": [
+      "source_evidence 非空，且来源类型覆盖对应的数据工程维度。",
+      "conflict_status 只能是 none、resolved 或 none_known_in_visible_context。",
+      "machine_gate.default_guidance 必须为 caveat_only，review.default_guidance_allowed 必须为 false。"
+    ],
+    "risk_notes": [
+      "本批来源包含数据供应商、数据库、数据质量框架、特征存储和交易所/指数/参考数据资料，仍需要外部 AI/人工严格审计。",
+      "供应商和框架文档只能支撑通用工程边界，不能替代具体外接项目的数据契约。",
+      "本候选不提供任何投资建议或实盘执行许可。",
+      "供应商字段只作为证据样例，不得泛化成所有 vendor 的统一 timestamp 字段。",
+      "本条为 formal reviewed/caveat_only，不是 approved；不得作为默认指导或 hard gate。",
+      "不得据此生成买卖点、仓位、杠杆、止损止盈或实盘执行建议。",
+      "AI Engineering 只能引用本 Trading Engineering 数据工程规则本体，不得复制改写为模型训练、RAG 或 MCP 本体规则。"
+    ],
+    "citation_notes": "Databento documents primary timestamps, including ts_recv and ts_event, and sorting/indexing timestamp behavior.; Databento trade records distinguish matching-engine event timestamps from capture/receive timestamps.; Databricks documents point-in-time correct training datasets and explains that future data leakage can impair model performance.",
+    "audit_patch_notes": {
+      "source": [
+        "补入 Databento OHLCV/BBO interval docs 作为 bar 起始/结束/空区间语义来源。"
+      ],
+      "content": [
+        "将字段拆为 event_time、vendor_receive_time、bar_start_time、bar_end_time、available_time、decision_time；decision_time 只能来自外部项目事实层。"
+      ],
+      "boundary": [
+        "供应商字段只作为证据样例，不得泛化成所有 vendor 的统一 timestamp 字段。"
+      ],
+      "conflict": []
+    }
+  },
+  "assumptions": [
+    "候选用于 CEK-TA 通用支持层知识库，而不是某个项目私有数据源配置。",
+    "所有数据工程结论必须保留来源、时间戳、版本、schema、修复和验证边界。",
+    "候选通过外部审计前不能进入正式 reviewed 知识库。"
+  ],
+  "source_evidence": [
+    {
+      "source_id": "src_001",
+      "source_title": "Common fields, enums, and types",
+      "source_url": "https://databento.com/docs/standards-and-conventions/common-fields-enums-types",
+      "source_type": "market_data_vendor_official_doc",
+      "publisher": "Databento",
+      "published_at": null,
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "Databento documents primary timestamps, including ts_recv and ts_event, and sorting/indexing timestamp behavior.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_002",
+      "source_title": "Trades schema",
+      "source_url": "https://databento.com/docs/schemas-and-data-formats/trades",
+      "source_type": "market_data_vendor_official_doc",
+      "publisher": "Databento",
+      "published_at": null,
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "Databento trade records distinguish matching-engine event timestamps from capture/receive timestamps.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_003",
+      "source_title": "Time series feature tables and point-in-time joins",
+      "source_url": "https://docs.databricks.com/aws/en/machine-learning/feature-store/time-series",
+      "source_type": "feature_store_official_doc",
+      "publisher": "Databricks",
+      "published_at": null,
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "Databricks documents point-in-time correct training datasets and explains that future data leakage can impair model performance.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_004",
+      "source_title": "What is data leakage in machine learning?",
+      "source_url": "https://www.ibm.com/think/topics/data-leakage-machine-learning",
+      "source_type": "engineering_reference",
+      "publisher": "IBM",
+      "published_at": null,
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "medium_high",
+      "relevance": "medium_high",
+      "evidence_summary": "IBM explains data leakage as using information unavailable at prediction time, inflating model performance.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_audit_extra_001",
+      "source_title": "Databento OHLCV schema",
+      "source_url": "https://databento.com/docs/schemas-and-data-formats/ohlcv",
+      "source_type": "reviewed_preparation_required_extra_source",
+      "publisher": "unknown",
+      "published_at": null,
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "medium",
+      "relevance": "medium_high",
+      "evidence_summary": "bar interval/no-record semantics",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_audit_extra_002",
+      "source_title": "Databento BBO schemas",
+      "source_url": "https://databento.com/docs/schemas-and-data-formats/bbo",
+      "source_type": "reviewed_preparation_required_extra_source",
+      "publisher": "unknown",
+      "published_at": null,
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "medium",
+      "relevance": "medium_high",
+      "evidence_summary": "interval/no-record/forward-fill semantics",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 84.8,
+    "score_version": "phase37_data_engineering_reviewed_preparation_source_scoring_v1",
+    "primary_source_count": 3,
+    "supporting_source_count": 3,
+    "low_reliability_source_count": 0,
+    "limitations": [
+      "正式入库前必须由外部审计确认 claim 没有超出来源可证明范围。",
+      "vendor/framework 文档按其自身产品适用，不能自动泛化为所有交易所或所有数据平台实现。",
+      "补入 Databento OHLCV/BBO interval docs 作为 bar 起始/结束/空区间语义来源。",
+      "本条为 formal reviewed/caveat_only；不是 approved，不得进入默认指导或 hard gate。",
+      "外部审计未提供完整 CEK-TA formal KB，因此冲突结论限于可见上下文。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none_known_in_visible_context",
+    "checked_against": [
+      "Phase 36/38/40/41 AI Engineering 知识边界",
+      "现有 KB_01_QUANT_FOUNDATION formal 知识",
+      "Phase 37 Trading 与 AI 跨分支引用契约"
+    ],
+    "conflicts": [],
+    "resolution_summary": "reviewed/caveat_only preparation audit passed for this item; full formal KB conflict coverage remains a runtime validation concern.",
+    "default_recommendation": "caveat_only_until_human_approval"
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于 AI IDE 或外接项目审计交易数据工程契约和边界。",
+      "用于提示用户补充来源、时间戳、时区、schema、版本、symbol、调整、缺失、重复和质量报告条件。",
+      "用于 RAG/MCP/SearchLab 以 caveat 方式返回来源和边界。"
+    ],
+    "not_allowed": [
+      "不得据此生成买卖点、仓位、杠杆、止损止盈或实盘执行建议。",
+      "不得把 reviewed/caveat_only 当作 approved 默认指导。",
+      "不得绕过外接项目事实层、数据供应商契约、风控 hard gate 或人工治理流程。"
+    ],
+    "required_context": [
+      "canonical_node_id=kt.trading_engineering.data_engineering",
+      "必须返回 source_evidence、review_status、conflict_status、machine_gate 和不适用场景。"
+    ],
+    "fallback_behavior": "cite_with_caveat"
+  },
+  "machine_gate": {
+    "default_guidance": "caveat_only",
+    "reason": "CEK-TA-389: reviewed-preparation audit allowed formal reviewed/caveat_only only; no approved/default/hard gate.",
+    "requires_human_escalation": true,
+    "blocking_reasons": [
+      "reviewed_not_approved",
+      "default_guidance_allowed_false",
+      "hard_gate_allowed_false"
+    ],
+    "checked_at": "2026-06-11",
+    "gate_version": "1.0.0",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "recommended_extra_sources": [],
+  "review": {
+    "confidence": "high",
+    "freshness": "mixed",
+    "review_status": "reviewed",
+    "reviewer": "codex",
+    "reviewed_at": "2026-06-11",
+    "created_at": "2026-06-11",
+    "updated_at": "2026-06-11",
+    "default_guidance_allowed": false,
+    "approved_allowed": false,
+    "hard_gate_allowed": false,
+    "approval_status": "not_requested",
+    "source_candidate_id": "cand_20260611_phase37_data_engineering_timestamp_alignment_required_001",
+    "ai_audit_result_id": "audit_result_phase37_data_engineering_reviewed_preparation_20260611_strict_v1",
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase37_data_engineering_reviewed_preparation_20260611_strict_v1",
+      "source_package_id": "phase37_data_engineering_reviewed_preparation_audit_package_20260611",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "required_patches": {
+        "source": [
+          "补入 Databento OHLCV/BBO interval docs 作为 bar 起始/结束/空区间语义来源。"
+        ],
+        "content": [
+          "将字段拆为 event_time、vendor_receive_time、bar_start_time、bar_end_time、available_time、decision_time；decision_time 只能来自外部项目事实层。"
+        ],
+        "boundary": [
+          "供应商字段只作为证据样例，不得泛化成所有 vendor 的统一 timestamp 字段。"
+        ],
+        "conflict": []
+      },
+      "required_extra_sources": [
+        {
+          "title": "Databento OHLCV schema",
+          "url": "https://databento.com/docs/schemas-and-data-formats/ohlcv",
+          "purpose": "bar interval/no-record semantics"
+        },
+        {
+          "title": "Databento BBO schemas",
+          "url": "https://databento.com/docs/schemas-and-data-formats/bbo",
+          "purpose": "interval/no-record/forward-fill semantics"
+        }
+      ]
+    },
+    "open_questions": [],
+    "decision_log": [
+      {
+        "at": "2026-06-11",
+        "actor": "external_ai_strict_audit",
+        "decision": "accepted_for_reviewed_caveat_only",
+        "reason": "Databento 对 ts_event/ts_recv 等时间角色的区分、OHLCV/BBO 区间语义和 Databricks point-in-time join 能支撑 reviewed/caveat_only 级时间角色边界。; 该条是 CEK-TA 数据契约/审计 schema 规则，不是交易所或监管通用硬要求。"
+      },
+      {
+        "at": "2026-06-11",
+        "actor": "codex",
+        "decision": "reviewed",
+        "reason": "CEK-TA-389: formal reviewed/caveat_only created; approved/default guidance/hard gate all disabled."
+      }
+    ]
+  },
+  "contribution": {
+    "contribution_id": null,
+    "source_project": null,
+    "sanitization_status": "not_applicable",
+    "private_data_removed": true,
+    "generic_mapping_notes": "Generated from Phase 37 public-source Trading Engineering Data Engineering candidate; no project-private trading facts included."
+  },
+  "copyright": {
+    "stores_full_text": false,
+    "stores_long_quote": false,
+    "summary_only": true,
+    "license_notes": "仅保存来源链接、元数据和摘要，不保存长段原文。",
+    "reuse_risk": "low"
+  },
+  "phase37_conversion": {
+    "source_candidate_status": "accepted",
+    "source_ingestion_decision": "accepted_for_draft",
+    "promoted_by_task": "CEK-TA-389",
+    "reviewed_allowed": true,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  }
+}

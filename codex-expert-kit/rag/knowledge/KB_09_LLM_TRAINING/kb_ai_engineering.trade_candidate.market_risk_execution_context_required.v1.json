@@ -1,0 +1,431 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_ai_engineering.trade_candidate.market_risk_execution_context_required.v1",
+  "title": "交易候选进入 LLM scoring/gating 前必须携带决策时点的 `market_context_ref`、",
+  "metadata": {
+    "partition_id": "KB_09_LLM_TRAINING",
+    "domain": "llm_training",
+    "subdomain": "training_dataset_schema_engineering",
+    "rule_type": "checklist",
+    "content_type": "json",
+    "project_binding": "none",
+    "tree_node_id": "kt.llm_training.training_dataset_schema_engineering",
+    "tree_path": "CEK-TA / AI Engineering",
+    "canonical_node_id": "kt.llm_training.training_dataset_schema_engineering",
+    "canonical_tree_path": "CEK-TA / AI Engineering",
+    "risk_level": "medium",
+    "used_for": [
+      "llm_training",
+      "trading_gating_scoring",
+      "rag_engineering",
+      "mcp",
+      "vue_audit_ui"
+    ],
+    "source_candidate_id": "cand_20260609_ai_engineering_trade_candidate_market_risk_execution_context_required_v1_001",
+    "research_task_id": "RIT-P36-B-S07",
+    "claim_type": "ai_governance_rule",
+    "classification_notes": "Phase 36 AI Engineering reviewed knowledge; UI tree and canonical node are inherited from candidate classification. Trading rule bodies must remain in Trading Engineering."
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "general",
+    "data_granularity": "general",
+    "project_type": "trading_llm_assistant",
+    "applies_when": [
+      "外接项目把 trade candidate 提交给 LLM 做 pre-trade scoring、soft gating、risk review 或 dataset review。",
+      "交易候选需要引用市场状态、风险预算、执行成本、fill/slippage 或 broker/execution context。",
+      "项目能够提供 owner-defined context schema、context hash、decision_timestamp 和 review_owner。"
+    ],
+    "not_applicable_when": [
+      "项目要求 CEK-TA 定义具体 market regime、risk budget、fill model、slippage model 或 execution rule 本体。",
+      "用户需要具体买卖点、仓位、止损止盈、策略参数或实盘订单执行。",
+      "context 只能由 LLM 现场猜测或从自然语言中补全。"
+    ]
+  },
+  "content": {
+    "statement": "交易候选进入 LLM scoring/gating 前必须携带决策时点的 `market_context_ref`、`risk_context_ref` 和 `execution_context_ref`，且这些引用必须来自 owner-defined schema；缺少、过期或冲突的 context 必须降级为 `needs_more_evidence` 或 `human_review`，不得由 LLM 自行补全。",
+    "rationale": "本条只定义 AI Engineering 的 context refs、缺失状态、review action 和审计字段；market/risk/execution 语义本体由 Trading Engineering 或项目 owner 管理。 审计结论：补证后可以升级为 accepted_for_draft。rewritten statement 已与 normalized_claim 对齐：交易候选进入 LLM scoring/gating 前必须携带 decision-time market_context_ref、risk_context_ref 和 execution_context_ref，且这些引用必须来自 owner-defined schema；缺失、过期或冲突的 context 必须降级为 needs_more_evidence 或 human_review，LLM 不得自行补全。FINRA 15-09 支持算法交易风险、测试、控制和监督；QuantConnect trading/orders 与 reality modeling 支持 execution context、fills、fees、slippage、brokerage/reality models；Feast/scikit-learn 支持 decision-time 可见性与泄漏防护；Datasheets 支持数据 composition、intended use 和 limitations 文档化。",
+    "procedure": [
+      "确认项目事实匹配 applies_when，且没有命中 not_applicable_when。",
+      "按 source_patch_notes 检查来源是否足够支撑 statement。",
+      "按 content_patch_notes 补齐正式实现、schema、字段和 checklist。",
+      "按 boundary_patch_notes 确认没有把交易规则本体、项目私有参数或实盘执行规则写入 AI Engineering。",
+      "保留 required_followups，后续由来源增强或治理任务继续关闭。"
+    ],
+    "examples": [],
+    "anti_patterns": [
+      "把 reviewed 知识当作 approved 默认指导。",
+      "把 AI Engineering 规则扩写成具体交易阈值、仓位、买卖点或执行参数。",
+      "忽略审计结果中的来源限制、适用范围和后续补强要求。"
+    ],
+    "validation": [
+      "source_evidence 至少 2 条，且没有 low-only 来源。",
+      "conflict_status 为 none 或 resolved。",
+      "review_status 为 reviewed 时 machine_gate 必须是 caveat_only。",
+      "MCP/SearchLab 默认指导不得把本条当作 approved 返回。"
+    ],
+    "risk_notes": [
+      "补证后仍需外部 AI/人工二次审计确认 context refs 是否足以支持 normalized_claim。",
+      "本条不得替代 Trading Engineering 中的风控、执行、回放或成本模型知识。",
+      "AI Engineering 只定义 context refs、缺失状态、过期状态、冲突状态、review action 和审计字段。",
+      "market context、risk budget、execution cost、fill model、slippage、fees、liquidity、broker context 和 execution semantics 由 Trading Engineering 管理。",
+      "不得写入具体 K 线条件、market regime 公式、买卖点、仓位、止损止盈、订单路由、账户规则或策略参数。",
+      "如果 LLM 输出试图补全缺失 context，应记录为 hallucinated_context_attempt / needs_review，而不是进入评分证据。",
+      "与 trade_candidate.snapshot_required_before_scoring 重叠但不等价：snapshot 是 decision-time 容器，本条是 market/risk/execution context refs 子规则。",
+      "与 scoring_rubric.risk_reward_quality、risk_ledger.false_allow_cost_record_required、trade_data.fee_slippage_execution_cost_required 互链。",
+      "与 task_taxonomy.pre_trade_post_trade_task_separation、feature_schema.decision_time_only、outcome_schema.post_trade_fields_separated 强互补。",
+      "未发现需要 rejected 的直接冲突；accepted_for_draft 仍不等于 approved。",
+      "补 market_risk_execution_context_schema.json。",
+      "补 Trading Engineering owner policy。",
+      "补 context_freshness_status / context_conflict_status enum。",
+      "补 eval cases：missing risk context、missing execution cost、stale context、LLM invents market context、context used as final allow。",
+      "补 Vue audit UI 字段：market_context_ref、risk_context_ref、execution_context_ref、context_status、review_owner。"
+    ],
+    "citation_notes": "FINRA 15-09 支持算法交易风险、测试、交易系统和合规控制；QuantConnect 订单、fill、fee、slippage 与 reality modeling 文档支持 execution context refs；Feast point-in-time correctness 与 scikit-learn leakage 支撑决策时点可见性；Datasheets 支持 context composition 和 intended use 文档化。",
+    "audit_patch_notes": {
+      "source_patch_notes": [
+        "保留 FINRA 15-09 作为算法交易监督、风险评估、测试、交易系统与合规控制来源。",
+        "保留 QuantConnect Trading and Orders / Reality Modeling 作为 execution_context_ref、order_ref、fill_ref、fee/slippage/cost model refs 的工程来源。",
+        "保留 Feast point-in-time correctness 与 scikit-learn data leakage 作为 decision-time visibility 和 future-info 防护来源。",
+        "保留 Datasheets for Datasets 作为 context composition、recommended/prohibited use 和 limitations supporting source。",
+        "补 CEK-TA market_risk_execution_context_contract.md 作为内部主契约，声明 market/risk/execution semantics 由 Trading Engineering 或 project owner 提供。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议保留补证写法：Before LLM scoring/gating, each trade candidate must carry decision-time market_context_ref, risk_context_ref and execution_context_ref from owner-defined schemas; missing, stale or conflicting context must downgrade to needs_more_evidence or human_review.",
+        "建议字段：trade_candidate_id、decision_timestamp、market_context_ref、risk_context_ref、execution_context_ref、cost_model_ref、liquidity_context_ref、source_mode、context_freshness_status、context_conflict_status、review_owner。",
+        "market/risk/execution context 只能是外部引用、hash 或脱敏摘要，不是 AI Engineering 内部交易规则正文。",
+        "缺少 owner-defined context 时，不得生成 default allow、高置信评分、risk/reward conclusion 或交易指导。",
+        "context refs 应和 snapshot_id、strategy_version_ref、source_mode、execution_cost_status 互链。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 只定义 context refs、缺失状态、过期状态、冲突状态、review action 和审计字段。",
+        "market context、risk budget、execution cost、fill model、slippage、fees、liquidity、broker context 和 execution semantics 由 Trading Engineering 管理。",
+        "不得写入具体 K 线条件、market regime 公式、买卖点、仓位、止损止盈、订单路由、账户规则或策略参数。",
+        "如果 LLM 输出试图补全缺失 context，应记录为 hallucinated_context_attempt / needs_review，而不是进入评分证据。"
+      ],
+      "conflict_patch_notes": [
+        "与 trade_candidate.snapshot_required_before_scoring 重叠但不等价：snapshot 是 decision-time 容器，本条是 market/risk/execution context refs 子规则。",
+        "与 scoring_rubric.risk_reward_quality、risk_ledger.false_allow_cost_record_required、trade_data.fee_slippage_execution_cost_required 互链。",
+        "与 task_taxonomy.pre_trade_post_trade_task_separation、feature_schema.decision_time_only、outcome_schema.post_trade_fields_separated 强互补。",
+        "未发现需要 rejected 的直接冲突；accepted_for_draft 仍不等于 approved。"
+      ],
+      "required_followups": [
+        "补 market_risk_execution_context_schema.json。",
+        "补 Trading Engineering owner policy。",
+        "补 context_freshness_status / context_conflict_status enum。",
+        "补 eval cases：missing risk context、missing execution cost、stale context、LLM invents market context、context used as final allow。",
+        "补 Vue audit UI 字段：market_context_ref、risk_context_ref、execution_context_ref、context_status、review_owner。"
+      ]
+    }
+  },
+  "assumptions": [
+    "外接项目提供项目事实、私有交易数据和策略上下文；CEK-TA 只沉淀可复用专业规则。",
+    "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+  ],
+  "source_evidence": [
+    {
+      "source_id": "src_datasheets",
+      "source_title": "Datasheets for Datasets",
+      "source_url": "https://arxiv.org/abs/1803.09010",
+      "source_type": "paper",
+      "publisher": "arXiv",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "The paper supports documenting dataset motivation, composition, collection, intended use, maintenance, and limitations.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_sklearn_pitfalls",
+      "source_title": "Common pitfalls and recommended practices | scikit-learn",
+      "source_url": "https://scikit-learn.org/stable/common_pitfalls.html",
+      "source_type": "official_doc",
+      "publisher": "scikit-learn",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "scikit-learn documents inconsistent preprocessing and data leakage pitfalls, including fitting transformations only on training data.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_finra_regulatory_notice_15_09",
+      "source_title": "FINRA Regulatory Notice 15-09",
+      "source_url": "https://www.finra.org/industry/notices/15-09",
+      "source_type": "standard_or_risk_framework",
+      "publisher": "FINRA",
+      "published_at": "2015-03-26",
+      "accessed_at": "2026-06-09",
+      "version": "Regulatory Notice 15-09",
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "FINRA 15-09 提供算法交易监督和控制实践，覆盖风险评估、软件开发、测试、交易系统和合规，可支撑 market/risk/execution context refs、测试控制和 owner review。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_quantconnect_trading_and_orders",
+      "source_title": "Trading and Orders | QuantConnect",
+      "source_url": "https://www.quantconnect.com/docs/v2/writing-algorithms/live-trading/trading-and-orders",
+      "source_type": "official_doc",
+      "publisher": "QuantConnect",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "QuantConnect 说明 live/backtest 订单、order events、brokerage messages，以及 fill、fee、slippage、margin models 等交易执行建模要素，可支撑 order_ref、fill_ref 和 execution_context_ref。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_quantconnect_reality_modeling",
+      "source_title": "Reality Modelling | QuantConnect",
+      "source_url": "https://www.quantconnect.com/docs/v1/algorithm-reference/reality-modelling",
+      "source_type": "official_doc",
+      "publisher": "QuantConnect",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "QuantConnect reality modeling 文档说明 brokerage models 会设置 fees、fill models、slippage models 和交易市场，可支撑 cost_model_ref、fee_model_ref、fill_model_ref 和 slippage_model_ref。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_feast_point_in_time_correctness",
+      "source_title": "Feast Feature Store quickstart",
+      "source_url": "https://docs.feast.dev/getting-started",
+      "source_type": "official_doc",
+      "publisher": "Feast",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "medium",
+      "evidence_summary": "Feast 文档说明 feature store 支持 batch/real-time features，并使用 point-in-time correctness 防止未来特征值泄漏到模型，可支撑 decision_timestamp、feature cutoff 和 context_ref 的时点边界。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_datasheets_for_datasets",
+      "source_title": "Datasheets for Datasets",
+      "source_url": "https://arxiv.org/abs/1803.09010",
+      "source_type": "paper",
+      "publisher": "arXiv",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "Datasheets for Datasets 要求记录 dataset motivation、composition、collection process、recommended uses、limitations 和 maintenance，适合支撑 trade data source、composition、allowed_use/prohibited_use 文档化。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_occ_fed_fdic_revised_model_risk_2026",
+      "source_title": "Model Risk Management: Revised Guidance",
+      "source_url": "https://occ.gov/news-issuances/bulletins/2026/bulletin-2026-13.html",
+      "source_type": "standard_or_risk_framework",
+      "publisher": "OCC / Federal Reserve / FDIC",
+      "published_at": "2026-04-17",
+      "accessed_at": "2026-06-09",
+      "version": "OCC Bulletin 2026-13 / SR 26-2",
+      "reliability": "high",
+      "relevance": "medium",
+      "evidence_summary": "2026 年跨机构模型风险管理修订指南支持模型治理、验证、变更控制和风险分层；同时需注明 generative AI 和 agentic AI 不在其直接范围内，只能作为模型风险治理类比来源。",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 90,
+    "score_version": "1.0.0",
+    "primary_source_count": 2,
+    "supporting_source_count": 6,
+    "low_reliability_source_count": 0,
+    "limitations": [
+      "本条为 reviewed 知识，来源和审计补丁已记录；默认指导仍需后续人工治理升级 approved。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "docs/contracts/ai_engineering_gating_scoring_contract.md",
+      "docs/contracts/ai_engineering_knowledge_item_policy.md",
+      "docs/tasks/phase36_ai_engineering_gating_scoring_knowledge.md"
+    ],
+    "conflicts": [],
+    "resolution_summary": "未发现与当前 CEK-TA formal knowledge 的直接冲突；候选不会进入默认指导。",
+    "default_recommendation": "caveat_only_until_approved"
+  },
+  "review": {
+    "confidence": "medium",
+    "freshness": "time_sensitive",
+    "review_status": "reviewed",
+    "reviewer": "codex",
+    "reviewed_at": "2026-06-09",
+    "created_at": "2026-06-09",
+    "updated_at": "2026-06-09",
+    "open_questions": [
+      "审计时确认该候选是否应与相邻 AI Engineering 规则合并、拆分，或改路由到 Trading Engineering。",
+      "补 market_risk_execution_context_schema.json。",
+      "补 Trading Engineering owner policy。",
+      "补 context_freshness_status / context_conflict_status enum。",
+      "补 eval cases：missing risk context、missing execution cost、stale context、LLM invents market context、context used as final allow。",
+      "补 Vue audit UI 字段：market_context_ref、risk_context_ref、execution_context_ref、context_status、review_owner。"
+    ],
+    "decision_log": [
+      {
+        "at": "2026-06-09",
+        "actor": "external_ai",
+        "decision": "accepted_for_draft",
+        "reason": "补证后可以升级为 accepted_for_draft。rewritten statement 已与 normalized_claim 对齐：交易候选进入 LLM scoring/gating 前必须携带 decision-time market_context_ref、risk_context_ref 和 execution_context_ref，且这些引用必须来自 owner-defined schema；缺失、过期或冲突的 context 必须降级为 needs_more_evidence 或 human_review，LLM 不得自行补全。FINRA 15-09 支持算法交易风险、测试、控制和监督；QuantConnect trading/orders 与 reality modeling 支持 execution context、fills、fees、slippage、brokerage/reality models；Feast/scikit-learn 支持 decision-time 可见性与泄漏防护；Datasheets 支持数据 composition、intended use 和 limitations 文档化。",
+        "audit_result_id": "audit_result_phase36_batch09_sft_trade_data_supplemental_reaudit_20260609_gpt55_pro_strict_sources"
+      },
+      {
+        "at": "2026-06-09",
+        "actor": "codex",
+        "decision": "converted_to_reviewed",
+        "reason": "按 Phase 36 批量审计结果优化候选并转为 formal reviewed；未升级 approved。",
+        "audit_result_id": "audit_result_phase36_batch09_sft_trade_data_supplemental_reaudit_20260609_gpt55_pro_strict_sources"
+      }
+    ],
+    "approval_status": "not_requested",
+    "default_guidance_allowed": false,
+    "source_candidate_id": "cand_20260609_ai_engineering_trade_candidate_market_risk_execution_context_required_v1_001",
+    "ai_audit_result_id": "audit_result_phase36_batch09_sft_trade_data_supplemental_reaudit_20260609_gpt55_pro_strict_sources",
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase36_batch09_sft_trade_data_supplemental_reaudit_20260609_gpt55_pro_strict_sources",
+      "source_package_id": "phase36_batch09_sft_trade_data_supplemental_audit_package_20260609",
+      "decision": "accepted_for_draft",
+      "reason": "补证后可以升级为 accepted_for_draft。rewritten statement 已与 normalized_claim 对齐：交易候选进入 LLM scoring/gating 前必须携带 decision-time market_context_ref、risk_context_ref 和 execution_context_ref，且这些引用必须来自 owner-defined schema；缺失、过期或冲突的 context 必须降级为 needs_more_evidence 或 human_review，LLM 不得自行补全。FINRA 15-09 支持算法交易风险、测试、控制和监督；QuantConnect trading/orders 与 reality modeling 支持 execution context、fills、fees、slippage、brokerage/reality models；Feast/scikit-learn 支持 decision-time 可见性与泄漏防护；Datasheets 支持数据 composition、intended use 和 limitations 文档化。",
+      "source_patch_notes": [
+        "保留 FINRA 15-09 作为算法交易监督、风险评估、测试、交易系统与合规控制来源。",
+        "保留 QuantConnect Trading and Orders / Reality Modeling 作为 execution_context_ref、order_ref、fill_ref、fee/slippage/cost model refs 的工程来源。",
+        "保留 Feast point-in-time correctness 与 scikit-learn data leakage 作为 decision-time visibility 和 future-info 防护来源。",
+        "保留 Datasheets for Datasets 作为 context composition、recommended/prohibited use 和 limitations supporting source。",
+        "补 CEK-TA market_risk_execution_context_contract.md 作为内部主契约，声明 market/risk/execution semantics 由 Trading Engineering 或 project owner 提供。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议保留补证写法：Before LLM scoring/gating, each trade candidate must carry decision-time market_context_ref, risk_context_ref and execution_context_ref from owner-defined schemas; missing, stale or conflicting context must downgrade to needs_more_evidence or human_review.",
+        "建议字段：trade_candidate_id、decision_timestamp、market_context_ref、risk_context_ref、execution_context_ref、cost_model_ref、liquidity_context_ref、source_mode、context_freshness_status、context_conflict_status、review_owner。",
+        "market/risk/execution context 只能是外部引用、hash 或脱敏摘要，不是 AI Engineering 内部交易规则正文。",
+        "缺少 owner-defined context 时，不得生成 default allow、高置信评分、risk/reward conclusion 或交易指导。",
+        "context refs 应和 snapshot_id、strategy_version_ref、source_mode、execution_cost_status 互链。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 只定义 context refs、缺失状态、过期状态、冲突状态、review action 和审计字段。",
+        "market context、risk budget、execution cost、fill model、slippage、fees、liquidity、broker context 和 execution semantics 由 Trading Engineering 管理。",
+        "不得写入具体 K 线条件、market regime 公式、买卖点、仓位、止损止盈、订单路由、账户规则或策略参数。",
+        "如果 LLM 输出试图补全缺失 context，应记录为 hallucinated_context_attempt / needs_review，而不是进入评分证据。"
+      ],
+      "conflict_patch_notes": [
+        "与 trade_candidate.snapshot_required_before_scoring 重叠但不等价：snapshot 是 decision-time 容器，本条是 market/risk/execution context refs 子规则。",
+        "与 scoring_rubric.risk_reward_quality、risk_ledger.false_allow_cost_record_required、trade_data.fee_slippage_execution_cost_required 互链。",
+        "与 task_taxonomy.pre_trade_post_trade_task_separation、feature_schema.decision_time_only、outcome_schema.post_trade_fields_separated 强互补。",
+        "未发现需要 rejected 的直接冲突；accepted_for_draft 仍不等于 approved。"
+      ],
+      "required_followups": [
+        "补 market_risk_execution_context_schema.json。",
+        "补 Trading Engineering owner policy。",
+        "补 context_freshness_status / context_conflict_status enum。",
+        "补 eval cases：missing risk context、missing execution cost、stale context、LLM invents market context、context used as final allow。",
+        "补 Vue audit UI 字段：market_context_ref、risk_context_ref、execution_context_ref、context_status、review_owner。"
+      ]
+    },
+    "approved_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "contribution": {
+    "contribution_id": null,
+    "source_project": null,
+    "sanitization_status": "not_applicable",
+    "private_data_removed": true,
+    "generic_mapping_notes": "Phase 36 public-source AI Engineering candidate; no project-private trading facts included."
+  },
+  "copyright": {
+    "stores_full_text": false,
+    "stores_long_quote": false,
+    "summary_only": true,
+    "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+    "reuse_risk": "low"
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于审计 AI Engineering、LLM 训练、RAG/MCP、部署、安全或治理链路。",
+      "用于提醒外接项目补齐来源、适用边界、冲突状态、审计记录和人工审批。",
+      "用于 reviewed/audit 模式下带 caveat 引用。"
+    ],
+    "not_allowed": [
+      "不得生成买卖点、仓位、杠杆、止损止盈或实盘执行指令。",
+      "不得覆盖确定性风控、交易执行系统或人工审批。",
+      "不得作为 approved/default guidance 直接返回。"
+    ],
+    "required_context": [
+      "project_type",
+      "task_type",
+      "mode",
+      "strategy_version",
+      "data_boundary",
+      "review_status"
+    ],
+    "fallback_behavior": "cite_with_caveat"
+  },
+  "machine_gate": {
+    "default_guidance": "caveat_only",
+    "reason": "reviewed only; accepted_for_draft is not approved; default guidance requires later human governance approval.",
+    "requires_human_escalation": true,
+    "blocking_reasons": [
+      "not_approved",
+      "phase36_batch_reviewed_only"
+    ],
+    "checked_at": "2026-06-09",
+    "gate_version": "1.0.0",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "recommended_extra_sources": [
+    {
+      "title": "保留 FINRA 15-09 作为算法交易监督、风险评估、测试、交易系统与合规控制来源。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_1"
+    },
+    {
+      "title": "保留 QuantConnect Trading and Orders / Reality Modeling 作为 execution_context_ref、order_ref、fill_ref、fee/slippage/cost model refs 的工程来源。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_2"
+    },
+    {
+      "title": "保留 Feast point-in-time correctness 与 scikit-learn data leakage 作为 decision-time visibility 和 future-info 防护来源。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_3"
+    },
+    {
+      "title": "保留 Datasheets for Datasets 作为 context composition、recommended/prohibited use 和 limitations supporting source。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_4"
+    },
+    {
+      "title": "补 CEK-TA market_risk_execution_context_contract.md 作为内部主契约，声明 market/risk/execution semantics 由 Trading Engineering 或 project owner 提供。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_5"
+    }
+  ]
+}

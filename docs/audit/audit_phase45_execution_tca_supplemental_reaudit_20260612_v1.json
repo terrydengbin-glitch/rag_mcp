@@ -1,0 +1,94 @@
+{
+  "audit_result_id": "audit_phase45_execution_tca_supplemental_reaudit_20260612_v1",
+  "auditor": "external_ai_strict_audit",
+  "audited_at": "2026-06-12",
+  "package_id": "phase45_execution_tca_supplemental_reaudit_package_20260612",
+  "summary": {
+    "total": 2,
+    "accepted_for_draft": 2,
+    "needs_more_evidence": 0,
+    "rejected": 0,
+    "blocked": 0
+  },
+  "candidate_results": [
+    {
+      "candidate_id": "cand_20260612_phase45_execution_tca_p45_a_tca03_001",
+      "research_task_id": "P45-A-TCA03",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "FIXatdl 官方文档和 IBKR VWAP/TWAP/POV 资料足以支撑 execution scheduling / participation algorithm 边界，但不支撑策略 alpha。"
+      ],
+      "required_followups": [
+        "保留 broker-specific / venue-specific 限制。",
+        "明确 VWAP/TWAP/POV 只是 execution scheduling / participation algorithm，不是交易信号。",
+        "FIXatdl 只能证明算法订单接口和参数语义，不能证明 TCA 指标、best execution 义务或 CEK-TA 风控边界。"
+      ],
+      "patch_notes": {
+        "source": [
+          "FIXatdl 可作为 algo order interface / parameter semantics 主来源。",
+          "IBKR VWAP/TWAP/POV 可作为 broker-specific execution algo 示例来源。"
+        ],
+        "content": [
+          "将不得绕过订单、风控、流动性、市场状态约束标记为 CEK-TA 内部边界。"
+        ],
+        "boundary": [
+          "不得输出买卖点、仓位、杠杆、止损止盈或实盘执行建议。"
+        ],
+        "conflict": [
+          "未发现与 Trading Engineering / Live Execution / Execution TCA 分区冲突。"
+        ]
+      }
+    },
+    {
+      "candidate_id": "cand_20260612_phase45_execution_tca_p45_a_tca06_001",
+      "research_task_id": "P45-A-TCA06",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "Bailey PBO 与 White Reality Check 足以支撑 execution-derived alpha 必须转入独立策略研究验证流程。"
+      ],
+      "required_followups": [
+        "明确本条不证明 execution-derived feature 有 alpha。",
+        "若外接项目声称低滑点、VWAP outperform、routing improvement 是 alpha，必须转入 Strategy Research / Backtest Validation 分支。",
+        "增加 cross-reference: kt.backtest.bias / kt.strategy_research.validation_boundary。"
+      ],
+      "patch_notes": {
+        "source": [
+          "CFA / QuantConnect 支撑 execution cost、fill、slippage、fee、implementation cost 边界。",
+          "Bailey PBO / White Reality Check 支撑策略验证、过拟合和 data snooping 边界。"
+        ],
+        "content": [
+          "保留默认只能改善或解释 implementation cost。",
+          "保留若写成 alpha，必须独立验证。"
+        ],
+        "boundary": [
+          "不能把执行算法、TCA 优化、低滑点或 benchmark outperform 直接写成交易信号。"
+        ],
+        "conflict": [
+          "与 Execution TCA 分区不冲突，但需要显式引用 Strategy Research 验证分支。"
+        ]
+      }
+    }
+  ],
+  "hard_boundaries": {
+    "reviewed_allowed": false,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "trade_execution_advice_allowed": false,
+    "risk_threshold_advice_allowed": false
+  },
+  "global_notes": [
+    "两条补证候选均可从 needs_more_evidence 升级为 accepted_for_draft。",
+    "本次二审不允许 reviewed、approved、default guidance 或 hard gate。"
+  ]
+}

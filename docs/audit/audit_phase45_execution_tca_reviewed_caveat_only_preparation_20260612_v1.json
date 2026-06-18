@@ -1,0 +1,181 @@
+{
+  "audit_result_id": "audit_phase45_execution_tca_reviewed_caveat_only_preparation_20260612_v1",
+  "auditor": "external_ai_strict_audit",
+  "audited_at": "2026-06-12",
+  "package_id": "phase45_execution_tca_reviewed_preparation_audit_package_20260612",
+  "summary": {
+    "total": 6,
+    "accepted_for_reviewed_caveat_only": 6,
+    "needs_more_evidence": 0,
+    "rejected": 0,
+    "blocked": 0
+  },
+  "candidate_results": [
+    {
+      "candidate_id": "",
+      "research_task_id": "P45-A-TCA01",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "implementation shortfall、显性/隐性成本、market impact、delay、opportunity cost 的证据充足。"
+      ],
+      "patch_notes": {
+        "source": [
+          "CFA 是 TCA 概念主来源；平台文档只能作为实现 supporting。"
+        ],
+        "content": [
+          "必须记录解释为 CEK-TA Execution TCA reviewed/caveat_only 内部字段要求，不是全球监管硬规则。"
+        ],
+        "boundary": [
+          "不得把 TCA 结果当作策略 alpha 或交易许可。"
+        ],
+        "conflict": [
+          "未发现与 Live Execution / Trade Analysis 分区冲突。"
+        ]
+      }
+    },
+    {
+      "candidate_id": "",
+      "research_task_id": "P45-A-TCA02",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "CFA 支撑 arrival price、VWAP、TWAP 等 benchmark 选择边界。"
+      ],
+      "patch_notes": {
+        "source": [
+          "CFA 是 benchmark selection 主来源；FINRA 仅作 best execution context supporting。"
+        ],
+        "content": [
+          "benchmark 必须绑定使用目的、时间窗口、订单类型、数据源和不可解释范围。"
+        ],
+        "boundary": [
+          "不得从单一 benchmark 表现推导执行整体好。"
+        ],
+        "conflict": [
+          "无明显冲突。"
+        ]
+      }
+    },
+    {
+      "candidate_id": "",
+      "research_task_id": "P45-A-TCA03",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "FIXatdl 和 IBKR 文档足以支撑 VWAP/TWAP/POV 属于 execution algo / participation algo 语义。"
+      ],
+      "patch_notes": {
+        "source": [
+          "FIXatdl 只能证明算法订单接口和参数语义；IBKR 只能作为 broker-specific 示例。"
+        ],
+        "content": [
+          "VWAP/TWAP/POV 是 execution scheduling / participation algorithm，不是交易信号。"
+        ],
+        "boundary": [
+          "不得泛化为所有交易所或所有市场。"
+        ],
+        "conflict": [
+          "未发现与 Live Execution / Execution TCA 分区冲突。"
+        ]
+      }
+    },
+    {
+      "candidate_id": "",
+      "research_task_id": "P45-A-TCA04",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "delay cost、market impact、spread/fee/slippage、opportunity cost 拆分有 CFA 直接支撑。"
+      ],
+      "patch_notes": {
+        "source": [
+          "CFA 是成本拆分主来源；QuantConnect 只能作为 fill/slippage/fee 建模辅助。"
+        ],
+        "content": [
+          "缺失 benchmark / arrival_price / order_ts / unfilled_qty 时应输出 missing-data reason code。"
+        ],
+        "boundary": [
+          "不得把 opportunity cost 静默忽略，也不得直接归因成策略胜率问题。"
+        ],
+        "conflict": [
+          "无明显冲突。"
+        ]
+      }
+    },
+    {
+      "candidate_id": "",
+      "research_task_id": "P45-A-TCA05",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "FINRA 5310 和 SEC Rule 606 足以支撑 best execution / routing context，但必须保留辖区边界。"
+      ],
+      "patch_notes": {
+        "source": [
+          "FINRA/SEC 只支撑美国 broker-dealer / NMS stocks / listed options 等语境。"
+        ],
+        "content": [
+          "routing context 应保留 market、venue、order、conflict、disclosure、execution_result。"
+        ],
+        "boundary": [
+          "不能泛化到 crypto、外汇、离岸交易所或所有 broker。"
+        ],
+        "conflict": [
+          "无明显冲突。"
+        ]
+      }
+    },
+    {
+      "candidate_id": "",
+      "research_task_id": "P45-A-TCA06",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "Bailey PBO 和 White Reality Check 足以支撑 execution-derived alpha 必须进入独立策略验证流程。"
+      ],
+      "patch_notes": {
+        "source": [
+          "CFA/QuantConnect 支撑 execution cost/fill/slippage 边界；Bailey/White 支撑过拟合和 data snooping 边界。"
+        ],
+        "content": [
+          "本条不证明任何 execution feature 具有 alpha；只要求若主张 alpha 必须独立验证。"
+        ],
+        "boundary": [
+          "低滑点、VWAP outperform、routing improvement 默认只能解释 implementation cost。"
+        ],
+        "conflict": [
+          "显式引用 Strategy Research / Backtest Validation；与 Execution TCA 分区不冲突。"
+        ]
+      }
+    }
+  ],
+  "global_required_patches": [
+    "修正 workflow.forbidden_next_decisions 与 conversion_target.target_review_status=reviewed 的元数据冲突。",
+    "formal reviewed 只能是 caveat_only，approved/default guidance/hard gate 必须保持 false。"
+  ]
+}

@@ -1,0 +1,292 @@
+{
+  "schema_version": "1.1.0-candidate",
+  "candidate_id": "cand_20260612_phase45_stress_scenario_p45_e_stress06_001",
+  "research_task_id": "P45-E-STRESS06",
+  "status": {
+    "review_status": "formalized",
+    "ingestion_decision": "formal_reviewed_created",
+    "decision_reason": "reviewed/caveat_only 准备审计通过，已创建 formal reviewed/caveat_only。",
+    "created_at": "2026-06-12",
+    "updated_at": "2026-06-12"
+  },
+  "classification": {
+    "tree_node_id": "kt.risk_management.stress_scenario",
+    "canonical_node_id": "kt.risk_management.stress_scenario",
+    "tree_path": "CEK-TA / Trading Engineering / Risk Management / Scenario Stress Risk",
+    "related_nodes": [
+      "kt.risk_management.layered_risk_controls",
+      "kt.live_execution.resilience_incident_log",
+      "kt.trading_engineering.live_execution.execution_tca",
+      "kt.trade_analysis.review_reason_code"
+    ],
+    "partition_id": "KB_07_RISK_MANAGEMENT",
+    "domain": "risk_management",
+    "subdomain": "scenario_stress_risk",
+    "rule_type": "stress_risk_boundary_rule",
+    "claim_type": "stress_test_permission_boundary_rule",
+    "used_for": [
+      "trading_ai_project_design_audit",
+      "stress_testing_review",
+      "scenario_risk_checklist",
+      "external_project_rag_retrieval"
+    ],
+    "classification_notes": "P45-E 只补压力测试、情景风险和尾部风险边界；不设置任何 CEK-TA 通用风险阈值，不启用 hard gate。"
+  },
+  "claim": {
+    "claim_id": "claim_p45_e_stress06",
+    "title": "压力测试通过不等于交易许可",
+    "statement": "压力测试结果只能作为风险复核、资本/流动性规划、人工审批、scenario backlog 或风险 owner 决策输入；通过某个压力测试不得直接生成买卖点、仓位、杠杆、止损止盈、实盘放行或 hard gate 结论。",
+    "normalized_claim": "phase45_stress_scenario.stress_test_not_trade_permission.v1",
+    "evidence_summary": "BCBS stress testing principles cover objectives, governance, policies, processes, methodology, resources and documentation for stress-testing frameworks.；FIA covers automated trading risk controls, exchange volatility controls, post-trade analysis, testing and system safeguards.；PFMI supports stress testing, liquidity-risk management and extreme-but-plausible scenario analysis for financial market infrastructures.",
+    "interpretation_notes": "本候选只定义压力测试、场景风险、流动性压力、尾部损失和风险复核边界，不输出风险阈值、交易参数或实盘执行建议。",
+    "claim_strength": "candidate",
+    "performance_claim": false
+  },
+  "applicability": {
+    "market": "general_with_clearing_venue_broker_and_jurisdiction_caveats",
+    "asset": "general",
+    "timeframe": "stress_scenario_and_risk_review_context",
+    "data_granularity": "portfolio_exposure_scenario_market_liquidity_risk_events",
+    "project_type": "trading_ai_support_layer",
+    "applies_when": [
+      "外接项目需要设计场景压力测试、流动性压力、相关性失效、跳空/隔夜风险、尾部亏损复核或 stress result governance。",
+      "AI IDE 需要判断风险评估是否把普通回测指标误当作 stress test。",
+      "需要把 scenario result、risk owner、人工审批和 deterministic final gate 分开建模。"
+    ],
+    "not_applicable_when": [
+      "用户要求具体风险阈值、仓位、杠杆、止损止盈、买卖点、交易许可或实盘执行动作。",
+      "需要外接项目真实账户、清算、保证金、融资或实时市场事实时，应由外接项目事实层提供。",
+      "需要监管资本、清算资源或合规结论时，应由对应机构/合规/legal owner 判断。"
+    ],
+    "assumptions": [
+      "Stress Testing / Scenario Risk 是风险复核与治理上下文，不是策略 alpha。",
+      "所有 stress、liquidity、clearing、CCP、banking 和 exchange 来源必须声明适用边界。",
+      "候选通过外部审计前不能进入 formal reviewed 知识库。"
+    ],
+    "limitations": [
+      "PFMI、BCBS、CCP、CME、DTCC 来源多为 FMI、银行、清算或交易所风险管理语境，不等同于所有交易项目规则。",
+      "压力测试不能替代 live risk gate、market data truth、order truth 或 portfolio owner 决策。",
+      "本候选不包含任何项目私有风险阈值或交易参数。"
+    ]
+  },
+  "source_refs": [
+    {
+      "source_title": "Basel Committee Stress Testing Principles",
+      "source_url": "https://www.bis.org/bcbs/publ/d450.htm",
+      "source_type": "professional_body",
+      "publisher": "Bank for International Settlements / BCBS",
+      "reliability": "high",
+      "score": 92,
+      "freshness": "stable",
+      "evidence_summary": "BCBS stress testing principles cover objectives, governance, policies, processes, methodology, resources and documentation for stress-testing frameworks.",
+      "limitations": [
+        "Bank/supervisory stress-testing framework; not a CEK-TA trading gate or strategy-performance standard."
+      ],
+      "source_id": "src_001",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "Best Practices for Automated Trading Risk Controls and System Safeguards",
+      "source_url": "https://www.fia.org/sites/default/files/2024-07/FIA_WP_AUTOMATED%20TRADING%20RISK%20CONTROLS_FINAL_0.pdf",
+      "source_type": "professional_body",
+      "publisher": "FIA",
+      "reliability": "high",
+      "score": 90,
+      "freshness": "time_sensitive",
+      "evidence_summary": "FIA covers automated trading risk controls, exchange volatility controls, post-trade analysis, testing and system safeguards.",
+      "limitations": [
+        "Industry best practice; not a binding rule and not a CEK-TA threshold source."
+      ],
+      "source_id": "src_002",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "CPMI-IOSCO Principles for Financial Market Infrastructures",
+      "source_url": "https://www.iosco.org/library/pubdocs/pdf/IOSCOPD377.pdf",
+      "source_type": "professional_body",
+      "publisher": "CPMI-IOSCO",
+      "reliability": "high",
+      "score": 93,
+      "freshness": "stable",
+      "evidence_summary": "PFMI supports stress testing, liquidity-risk management and extreme-but-plausible scenario analysis for financial market infrastructures.",
+      "limitations": [
+        "FMI/CCP-focused principles; must be mapped carefully to trading-system project risk review."
+      ],
+      "source_id": "src_003",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 91.67,
+    "score_version": "phase45_source_scoring_v1",
+    "primary_source_count": 3,
+    "supporting_source_count": 0,
+    "low_reliability_source_count": 0,
+    "mandatory_downgrades": [],
+    "limitations": [
+      "正式 reviewed 前必须由外部审计确认 claim 没有超出来源可证明范围。",
+      "FMI、CCP、banking、exchange 来源必须保留 jurisdiction、clearing、venue 和 product caveat。",
+      "若后续使用内部 stress_result schema，需要提供 contract extract 或 hash。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "Phase 37 Risk Management formal reviewed knowledge",
+      "Phase 45 Layered Risk formal reviewed knowledge",
+      "Phase 45 Resilience Incident Log formal reviewed knowledge",
+      "Phase 45 Execution TCA formal reviewed knowledge"
+    ],
+    "conflicts": [],
+    "resolution_summary": "未发现与现有 formal reviewed 知识的直接冲突；P45-E 只补场景压力、流动性压力、尾部风险和 stress result governance 边界。",
+    "approval_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "risk_threshold_advice_allowed": false
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于提醒 AI IDE 区分 backtest drawdown、scenario stress、liquidity stress、tail loss 和 final gate。",
+      "用于生成压力测试设计 checklist、schema review、RAG 检索上下文和风险 reason code。",
+      "用于检查外接项目是否把 stress test 通过结果误写成交易许可或默认放行。"
+    ],
+    "not_allowed": [
+      "不得生成具体风险阈值、仓位、杠杆、买卖点、止损止盈、交易许可或实盘执行建议。",
+      "不得把候选知识当作 approved 或默认指导。",
+      "不得替外接项目启用 hard gate、拒单、停机、撤单或解锁流程。"
+    ]
+  },
+  "machine_gate": {
+    "default_guidance": "deny",
+    "reason": "candidate only; pending external strict audit; no reviewed/approved/default/hard gate.",
+    "requires_human_escalation": false,
+    "hidden_from_default_queue": true,
+    "visible_in_default_guidance_queue": false,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "risk_threshold_advice_allowed": false
+  },
+  "review": {
+    "review_status": "candidate_ready",
+    "review_mode": "external_strict_audit_required",
+    "confidence": "medium_high",
+    "freshness": "mixed",
+    "reviewer": null,
+    "reviewed_at": null,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "risk_threshold_advice_allowed": false,
+    "audit_log": [
+      {
+        "at": "2026-06-12",
+        "actor": "codex",
+        "action": "phase45_stress_scenario_candidate_generated",
+        "reason": "Generated from Phase 45 P45-E task queue with professional, clearing and exchange sources."
+      },
+      {
+        "at": "2026-06-12",
+        "actor": "external_ai_strict_audit",
+        "action": "phase45_stress_scenario_candidate_audit_imported",
+        "reason": "accepted_for_draft / confidence=high",
+        "audit_result_id": "audit_phase45_stress_scenario_candidate_20260612_external_strict"
+      },
+      {
+        "at": "2026-06-12",
+        "actor": "codex",
+        "action": "phase45_stress_scenario_formal_reviewed_created",
+        "reason": "created formal reviewed/caveat_only from reviewed-preparation audit result",
+        "audit_result_id": "audit_phase45_stress_scenario_reviewed_preparation_20260612",
+        "formal_knowledge_id": "kb_phase45_stress_scenario.stress_test_not_trade_permission.v1"
+      }
+    ],
+    "ai_audit": {
+      "audit_result_id": "audit_phase45_stress_scenario_candidate_20260612_external_strict",
+      "package_id": "phase45_stress_scenario_candidate_audit_package_20260612",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "reasons": [
+        "压力测试结果只能作为风险复核、资本/流动性规划、人工审批、scenario backlog 或 owner 决策输入，这与 BCBS/PFMI 的治理语境一致。",
+        "claim 明确禁止压力测试通过直接生成买卖点、仓位、杠杆、止损止盈、实盘放行或 hard gate，边界正确。",
+        "未发现交易参数、风险阈值、私有账户事实、密钥、交易所私有配置或实盘敏感信息。"
+      ],
+      "required_followups": [
+        "进入 draft 时明确 stress_test_passed 只能进入 review input，不得进入 execution permission 字段。",
+        "如后续引入 stress_result schema，需要提供内部 contract extract 或 hash。",
+        "保留 PFMI/BCBS/FIA 的机构和行业实践 caveat。"
+      ],
+      "patch_notes": {
+        "source": [
+          "保留 BCBS stress testing principles、FIA automated trading risk controls、PFMI。"
+        ],
+        "content": [
+          "建议把 stress_result_governance 拆成 risk_review_input、owner_decision_input、scenario_backlog_input、not_trade_permission。"
+        ],
+        "boundary": [
+          "不得生成交易许可。",
+          "不得生成 hard gate。",
+          "不得生成风险阈值、仓位、杠杆、止损止盈或实盘执行建议。"
+        ],
+        "conflict": []
+      }
+    }
+  },
+  "workflow": {
+    "stage": "formalized_reviewed",
+    "queue_group": "formalized",
+    "source_phase": "45",
+    "source_task_id": "CEK-TA-465",
+    "batch": "P45-E Stress Testing / Scenario Risk",
+    "formal_knowledge_id": "kb_phase45_stress_scenario.stress_test_not_trade_permission.v1",
+    "formal_knowledge_path": "codex-expert-kit/rag/knowledge/KB_07_RISK_MANAGEMENT/kb_phase45_stress_scenario.stress_test_not_trade_permission.v1.json",
+    "allowed_next_decisions": [
+      "reviewed_preparation",
+      "needs_more_evidence",
+      "rejected"
+    ],
+    "forbidden_next_decisions": [
+      "approved",
+      "default_guidance",
+      "hard_gate",
+      "risk_threshold_advice"
+    ],
+    "conversion_target": {
+      "proposed_knowledge_id": "kb_phase45_stress_scenario.stress_test_not_trade_permission.v1",
+      "target_review_status": "reviewed",
+      "target_machine_gate": "caveat_only",
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false
+    },
+    "formal_review_status": "reviewed",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "risk_threshold_advice_allowed": false,
+    "hidden_from_default_queue": true,
+    "next_action": "none"
+  },
+  "contribution": {
+    "source": "phase45_professional_research",
+    "private_data_removed": true,
+    "project_specific_details_removed": true,
+    "notes": "Generated for external strict audit; no project account, key, position, threshold, or private strategy data included."
+  }
+}

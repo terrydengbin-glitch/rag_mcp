@@ -1,0 +1,73 @@
+{
+  "audit_result_id": "audit_result_phase58_backtest_sim_live_equivalence_chain_20260616_strict_v1",
+  "package_id": "phase58_backtest_sim_live_equivalence_chain_candidate_audit_package_20260616",
+  "audited_at": "2026-06-16",
+  "source_attachment": "C:/Users/dove/.codex/attachments/9655b201-5da2-4732-9999-91e9d26914af/pasted-text.txt",
+  "summary": {
+    "total": 1,
+    "accepted_for_draft": 1,
+    "needs_more_evidence": 0,
+    "rejected": 0,
+    "blocked": 0
+  },
+  "candidate_results": [
+    {
+      "candidate_id": "cand_20260616_phase58_backtest_sim_live_equivalent_chain_001",
+      "research_task_id": "P58-RSL-001",
+      "decision": "accepted_for_draft",
+      "confidence": "medium_high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "trade_execution_advice_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "reasons": [
+        "候选核心主张被 NautilusTrader common core / live reconciliation、QuantConnect paper/live/backtest 差异、HftBacktest replay/fill caveat 等资料支持。",
+        "候选没有错误声称 paper、sandbox、replay 或 backtest 等同 live，而是强调只有同链条或字段级等效证明时才可比较。",
+        "候选与既有 paper_trading_not_equal_live、simulation_live_gap_report_required、execution_cost_consistency_required 不冲突，属于更高层的环境等效性整合规则。",
+        "字段骨架合理，但进入 reviewed 前必须补充 venue、instrument、broker、order semantics、account/margin、cost components、time provenance、reconciliation tolerance 等字段。"
+      ],
+      "required_followups": [
+        "进入 reviewed/caveat_only 前，补充 environment_equivalence_manifest 或 equivalent_chain_manifest schema。",
+        "把 minimum_equivalence_fields 扩展为市场/venue/instrument、订单语义、账户/成本、时钟、reconciliation、数据质量和缺失字段策略。",
+        "将 NautilusTrader、QuantConnect、HftBacktest 资料标注为 implementation pattern / supporting source，不得写成所有系统的强制物理实现。",
+        "明确 environment_gap_report_id 不是 live permission，不得触发自动下单、自动拒单、自动停机或 hard gate。",
+        "补充与 Backtest owner、Replay owner、Paper owner、Live Execution owner、Risk owner、Data owner 的 owner mapping。"
+      ],
+      "patch_notes": {
+        "source": [
+          "NautilusTrader 可作为 same-core/same-actors/same-execution-semantics 的强实现示例，但不能泛化为所有系统必须同一物理代码。",
+          "QuantConnect Paper Trading、QuantConnect Reconciliation、HftBacktest Order Fill 应作为 paper/live/backtest/replay 差异的主要证据源。",
+          "建议补充具体交易所/经纪商规则来源，例如 Binance Futures filters/order status/API error mapping，作为 CEK-TA 外接项目 venue-specific mapping 示例。"
+        ],
+        "content": [
+          "将候选改写为：同一策略名称不足以证明环境等效；必须证明共同核心、共同执行语义，或提供字段级版本映射、差异报告和 reconciliation 证据。",
+          "minimum_equivalence_fields 增补 venue_id、broker_id、instrument_id、symbol_mapping_version、contract_spec_version、order_type、time_in_force、post_only、reduce_only、reject_code_mapping_version、fee_schedule_version、funding_or_borrow_cost_model_version、reconciliation_policy_id、reconciliation_tolerance_policy、missing_event_policy。",
+          "明确结果可比较不等于策略有效、不等于可实盘、不等于风险许可。"
+        ],
+        "boundary": [
+          "accepted_for_draft 不是 reviewed、approved、default guidance 或 hard gate。",
+          "不得生成买卖点、仓位、杠杆、止损止盈、实盘执行建议、自动下单许可或自动风控 hard gate。",
+          "environment gap / equivalence report 只能用于证据审计和推进评审，不得直接触发交易执行。"
+        ],
+        "conflict": [
+          "与 paper_trading_not_equal_live 不冲突：本候选强化 paper/live 不等价，需要字段级差异证明。",
+          "与 simulation_live_gap_report_required 不冲突：本候选把 gap report 提升为 backtest/replay/paper/live 通用等效链条的一部分。",
+          "与 Live Execution / Risk Management owner 边界不冲突：Replay/Simulation 只模拟和审计，真实订单、真实成交、真实账户、真实拒单和真实风控事实仍归对应 owner。"
+        ]
+      },
+      "recommended_extra_sources": [
+        "QuantConnect Live Trading Reconciliation",
+        "QuantConnect Trading and Orders / Key Concepts",
+        "QuantConnect Reality Modeling: Fills, Slippage, Fees, Buying Power",
+        "Interactive Brokers Paper Trading / live execution limitations",
+        "NautilusTrader Execution / RiskEngine / Live Reconciliation docs",
+        "CEK-TA environment_equivalence_manifest schema",
+        "CEK-TA backtest_run_manifest / replay_run_manifest / paper_run_manifest / live_execution_reconciliation_report schema",
+        "Venue-specific rulebook and adapter mapping, e.g. Binance Futures filters, order status, error codes, fee/funding rules"
+      ]
+    }
+  ],
+  "final_note": "可以进 accepted_for_draft，但只能作为环境等效性审计原则草稿；不能升级、不能默认指导、不能 hard gate。下一步重点是补 environment_equivalence_manifest 字段契约。"
+}

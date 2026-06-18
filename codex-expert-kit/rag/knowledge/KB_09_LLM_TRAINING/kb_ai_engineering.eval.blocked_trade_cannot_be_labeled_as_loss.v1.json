@@ -1,0 +1,400 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_ai_engineering.eval.blocked_trade_cannot_be_labeled_as_loss.v1",
+  "title": "被 gate 阻断或过滤的交易没有 observed execution outcome，不能仅因为被阻断就标记为 ",
+  "metadata": {
+    "partition_id": "KB_09_LLM_TRAINING",
+    "domain": "llm_training",
+    "subdomain": "evaluation_governance",
+    "rule_type": "decision_rule",
+    "content_type": "json",
+    "project_binding": "none",
+    "tree_node_id": "kt.llm_training.model_training_engineering",
+    "tree_path": "CEK-TA / AI Engineering",
+    "canonical_node_id": "kt.llm_training.model_training_engineering",
+    "canonical_tree_path": "CEK-TA / AI Engineering",
+    "risk_level": "medium",
+    "used_for": [
+      "llm_training",
+      "trading_gating_scoring",
+      "rag_engineering",
+      "mcp",
+      "vue_audit_ui"
+    ],
+    "source_candidate_id": "cand_20260609_ai_engineering_eval_blocked_trade_cannot_be_labeled_as_loss_v1_001",
+    "research_task_id": "RIT-P36-N-03",
+    "claim_type": "llm_eval_rule",
+    "classification_notes": "Phase 36 AI Engineering reviewed knowledge; UI tree and canonical node are inherited from candidate classification. Trading rule bodies must remain in Trading Engineering."
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "general",
+    "data_granularity": "general",
+    "project_type": "trading_llm_assistant",
+    "applies_when": [
+      "交易候选被 LLM gate、risk gate、规则过滤或人工过滤阻断，没有真实执行结果。",
+      "外接项目想把 blocked trade 放入监督训练、偏好训练、eval、false_block review 或 risk ledger。",
+      "只能观察 old/logging policy 允许并执行的交易结果。"
+    ],
+    "not_applicable_when": [
+      "交易已经实际执行并有完整成交、费用、滑点和 outcome 记录。",
+      "项目已有已审批的 off-policy evaluation、simulation、paper replay 或人工复盘证据。",
+      "需要定义成交模拟、fill model、滑点、回测或实盘执行事实，应路由到 Trading Engineering。"
+    ]
+  },
+  "content": {
+    "statement": "被 gate 阻断或过滤的交易没有 observed execution outcome，不能仅因为被阻断就标记为 loss；除非有 approved off-policy、simulation 或 human review evidence，否则应标记为 counterfactual_missing、blocked_no_outcome 或 needs_human_review。",
+    "rationale": "本候选是 counterfactual outcome family 的 label action 子规则：它不是说被阻断交易一定好或坏，而是规定不能把缺失反事实结果伪装成真实 loss 标签。 审计结论：补证后已满足第一次审计要求。statement 明确规定被 gate 阻断或过滤的交易没有 observed execution outcome，不能仅因为被阻断就标记为 loss；source_refs 增加 Counterfactual Risk Minimization、logged bandit feedback 和 OPE 资料，能直接支撑未执行动作反馈不可观测、需要 counterfactual / off-policy 处理这一标签语义规则。因此可升级为 accepted_for_draft。",
+    "procedure": [
+      "确认项目事实匹配 applies_when，且没有命中 not_applicable_when。",
+      "按 source_patch_notes 检查来源是否足够支撑 statement。",
+      "按 content_patch_notes 补齐正式实现、schema、字段和 checklist。",
+      "按 boundary_patch_notes 确认没有把交易规则本体、项目私有参数或实盘执行规则写入 AI Engineering。",
+      "保留 required_followups，后续由来源增强或治理任务继续关闭。"
+    ],
+    "examples": [],
+    "anti_patterns": [
+      "把 reviewed 知识当作 approved 默认指导。",
+      "把 AI Engineering 规则扩写成具体交易阈值、仓位、买卖点或执行参数。",
+      "忽略审计结果中的来源限制、适用范围和后续补强要求。"
+    ],
+    "validation": [
+      "source_evidence 至少 2 条，且没有 low-only 来源。",
+      "conflict_status 为 none 或 resolved。",
+      "review_status 为 reviewed 时 machine_gate 必须是 caveat_only。",
+      "MCP/SearchLab 默认指导不得把本条当作 approved 返回。"
+    ],
+    "risk_notes": [
+      "blocked_no_outcome 不等于交易本应 allow，也不等于交易一定盈利。",
+      "missed profit、unrealized PnL 或事后价格路径不能自动转成 LLM 训练标签。",
+      "AI Engineering 只定义 label semantics 和审计字段，交易执行和回测假设由 Trading Engineering 维护。",
+      "AI Engineering 只定义 label semantics、counterfactual outcome status、审计字段和训练阻断规则。",
+      "交易结果模拟、成交假设、回测、fill model、slippage、fees 和实盘执行事实由 Trading Engineering 维护。",
+      "不得把具体交易、买卖点、账户、订单、仓位或策略参数写入本知识项。",
+      "与 eval.counterfactual_outcome_missing_for_blocked_trades 高度相关，建议形成父子结构：counterfactual_outcome_missing 为原理父项，本条为 label action 子项。",
+      "与 label_schema.no_pnl_only_label、business_objective.success_metric_not_only_pnl、eval.off_policy_evaluation_required_for_gate_policy 应互链。",
+      "未发现直接冲突；不建议 rejected。",
+      "补 blocked_trade_label_schema.json。",
+      "补 counterfactual_outcome_status enum。",
+      "补 label_reason_code：blocked_no_execution、counterfactual_missing、simulation_supported、ope_supported、human_reviewed。",
+      "补 eval cases：blocked trade later profitable、blocked trade later loss、blocked no fill、paper-only simulated outcome。"
+    ],
+    "citation_notes": "Counterfactual Risk Minimization 与 logged bandit feedback 文献说明日志只观测被历史策略选择动作的反馈，未执行动作需要反事实或离策略处理；OPE 资料支持用历史日志评估不同策略时必须处理 logging policy 与未观测反馈问题。",
+    "audit_patch_notes": {
+      "source_patch_notes": [
+        "将 Counterfactual Risk Minimization: Learning from Logged Bandit Feedback 设为主来源，用于支撑 logged feedback 只观测历史策略选择动作的反馈。",
+        "保留 off-policy evaluation / logged bandit feedback 资料作为 supporting source，用于支撑 logging policy、propensity、counterfactual missing 等字段。",
+        "OpenAI evals、scikit-learn CV、Rules of ML 只作为评估流程和 split discipline 的 supporting sources，不应作为 blocked trade label rule 的主证据。",
+        "建议与 eval.counterfactual_outcome_missing_for_blocked_trades 共用来源，减少重复。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议保留补充包写法：被 gate 阻断或过滤的交易没有 observed execution outcome，不能仅因为被阻断就标记为 loss。",
+        "建议字段：trade_candidate_id、gate_decision、executed_flag、observed_outcome_available、counterfactual_outcome_status、label_value、label_reason_code、ope_method_id、simulation_ref、reviewer。",
+        "允许状态：counterfactual_missing、blocked_no_outcome、needs_human_review、simulation_supported、approved_ope_supported。",
+        "明确 missed profit、unrealized PnL、事后价格路径不能自动转成 LLM 训练真值标签。",
+        "如果有 approved off-policy、simulation、paper replay 或 human review evidence，可以生成带 evidence_type 的标签，但不能伪装成普通 observed execution loss。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 只定义 label semantics、counterfactual outcome status、审计字段和训练阻断规则。",
+        "交易结果模拟、成交假设、回测、fill model、slippage、fees 和实盘执行事实由 Trading Engineering 维护。",
+        "不得把具体交易、买卖点、账户、订单、仓位或策略参数写入本知识项。"
+      ],
+      "conflict_patch_notes": [
+        "与 eval.counterfactual_outcome_missing_for_blocked_trades 高度相关，建议形成父子结构：counterfactual_outcome_missing 为原理父项，本条为 label action 子项。",
+        "与 label_schema.no_pnl_only_label、business_objective.success_metric_not_only_pnl、eval.off_policy_evaluation_required_for_gate_policy 应互链。",
+        "未发现直接冲突；不建议 rejected。"
+      ],
+      "required_followups": [
+        "补 blocked_trade_label_schema.json。",
+        "补 counterfactual_outcome_status enum。",
+        "补 label_reason_code：blocked_no_execution、counterfactual_missing、simulation_supported、ope_supported、human_reviewed。",
+        "补 eval cases：blocked trade later profitable、blocked trade later loss、blocked no fill、paper-only simulated outcome。"
+      ]
+    }
+  },
+  "assumptions": [
+    "外接项目提供项目事实、私有交易数据和策略上下文；CEK-TA 只沉淀可复用专业规则。",
+    "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+  ],
+  "source_evidence": [
+    {
+      "source_id": "src_openai_evals",
+      "source_title": "Working with evals | OpenAI API",
+      "source_url": "https://platform.openai.com/docs/guides/evals?api-mode=chat",
+      "source_type": "official_doc",
+      "publisher": "OpenAI",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "OpenAI evals documentation supports programmatic evaluation setup and workflow-specific quality checks before relying on model behavior.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_sklearn_cv",
+      "source_title": "Cross-validation: evaluating estimator performance | scikit-learn",
+      "source_url": "https://scikit-learn.org/stable/modules/cross_validation.html",
+      "source_type": "official_doc",
+      "publisher": "scikit-learn",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "scikit-learn cross-validation guidance supports held-out evaluation, splitting discipline, and avoiding evaluation on training data.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_rules_ml",
+      "source_title": "Rules of Machine Learning",
+      "source_url": "https://martin.zinkevich.org/rules_of_ml/rules_of_ml.pdf",
+      "source_type": "paper",
+      "publisher": "Google / Martin Zinkevich",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "medium",
+      "relevance": "high",
+      "evidence_summary": "Rules of ML discusses train/serve consistency, baselines, monitoring, and production ML safeguards.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_pmlr_counterfactual_risk_minimization",
+      "source_title": "Counterfactual Risk Minimization: Learning from Logged Bandit Feedback",
+      "source_url": "https://proceedings.mlr.press/v37/swaminathan15.html",
+      "source_type": "paper",
+      "publisher": "PMLR",
+      "published_at": "2015",
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "CRM 文献说明 logged bandit feedback 只包含历史策略选择动作的反馈，学习或评估新策略需要反事实处理。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_arxiv_off_policy_logged_bandit_surrogate",
+      "source_title": "Off-Policy Evaluation and Learning from Logged Bandit Feedback: Error Reduction via Surrogate Policy",
+      "source_url": "https://arxiv.org/abs/1808.00232",
+      "source_type": "paper",
+      "publisher": "arXiv",
+      "published_at": "2018-08-01",
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "medium",
+      "relevance": "high",
+      "evidence_summary": "该论文讨论从 logged bandit feedback 做 off-policy evaluation 和 learning，支持历史日志反馈不完整时不能直接当普通监督标签。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_arxiv_effective_eval_multiple_loggers",
+      "source_title": "Effective Evaluation using Logged Bandit Feedback from Multiple Loggers",
+      "source_url": "https://arxiv.org/abs/1703.06180",
+      "source_type": "paper",
+      "publisher": "arXiv",
+      "published_at": "2017-03-18",
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "medium",
+      "relevance": "medium",
+      "evidence_summary": "该文说明可用不同 logging policies 的日志进行 counterfactual estimators 评估，支持记录 logging policy 与反馈可观测性。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_occ_fed_fdic_revised_model_risk_2026",
+      "source_title": "Model Risk Management: Revised Guidance",
+      "source_url": "https://occ.gov/news-issuances/bulletins/2026/bulletin-2026-13.html",
+      "source_type": "standard_or_risk_framework",
+      "publisher": "OCC / Federal Reserve / FDIC",
+      "published_at": "2026-04-17",
+      "accessed_at": "2026-06-09",
+      "version": "OCC Bulletin 2026-13 / SR 26-2",
+      "reliability": "high",
+      "relevance": "medium",
+      "evidence_summary": "2026 年跨机构模型风险管理修订指南支持模型治理、验证、变更控制和风险分层；同时需注明 generative AI 和 agentic AI 不在其直接范围内，只能作为模型风险治理类比来源。",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 81,
+    "score_version": "1.0.0",
+    "primary_source_count": 2,
+    "supporting_source_count": 5,
+    "low_reliability_source_count": 0,
+    "limitations": [
+      "本条为 reviewed 知识，来源和审计补丁已记录；默认指导仍需后续人工治理升级 approved。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "docs/contracts/ai_engineering_gating_scoring_contract.md",
+      "docs/contracts/ai_engineering_knowledge_item_policy.md",
+      "docs/tasks/phase36_ai_engineering_gating_scoring_knowledge.md"
+    ],
+    "conflicts": [],
+    "resolution_summary": "未发现与当前 CEK-TA formal knowledge 的直接冲突；候选不会进入默认指导。",
+    "default_recommendation": "caveat_only_until_approved"
+  },
+  "review": {
+    "confidence": "medium",
+    "freshness": "time_sensitive",
+    "review_status": "reviewed",
+    "reviewer": "codex",
+    "reviewed_at": "2026-06-09",
+    "created_at": "2026-06-09",
+    "updated_at": "2026-06-09",
+    "open_questions": [
+      "检查 blocked trade 不能直接标 loss 的 label action 是否有 counterfactual/logged feedback 来源支撑，并是否与父规则 counterfactual_outcome_missing 区分。",
+      "是否与相邻 reviewed 知识重复，应该作为父子规则、互链规则还是合并？",
+      "是否仍需要更多领域直接来源或内部 schema contract？",
+      "补 blocked_trade_label_schema.json。",
+      "补 counterfactual_outcome_status enum。",
+      "补 label_reason_code：blocked_no_execution、counterfactual_missing、simulation_supported、ope_supported、human_reviewed。",
+      "补 eval cases：blocked trade later profitable、blocked trade later loss、blocked no fill、paper-only simulated outcome。"
+    ],
+    "decision_log": [
+      {
+        "at": "2026-06-09",
+        "actor": "external_ai",
+        "decision": "accepted_for_draft",
+        "reason": "补证后已满足第一次审计要求。statement 明确规定被 gate 阻断或过滤的交易没有 observed execution outcome，不能仅因为被阻断就标记为 loss；source_refs 增加 Counterfactual Risk Minimization、logged bandit feedback 和 OPE 资料，能直接支撑未执行动作反馈不可观测、需要 counterfactual / off-policy 处理这一标签语义规则。因此可升级为 accepted_for_draft。",
+        "audit_result_id": "audit_result_phase36_batch03_supplemental_reaudit_20260609_gpt55_pro_strict_sources"
+      },
+      {
+        "at": "2026-06-09",
+        "actor": "codex",
+        "decision": "converted_to_reviewed",
+        "reason": "按 Phase 36 批量审计结果优化候选并转为 formal reviewed；未升级 approved。",
+        "audit_result_id": "audit_result_phase36_batch03_supplemental_reaudit_20260609_gpt55_pro_strict_sources"
+      }
+    ],
+    "approval_status": "not_requested",
+    "default_guidance_allowed": false,
+    "source_candidate_id": "cand_20260609_ai_engineering_eval_blocked_trade_cannot_be_labeled_as_loss_v1_001",
+    "ai_audit_result_id": "audit_result_phase36_batch03_supplemental_reaudit_20260609_gpt55_pro_strict_sources",
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase36_batch03_supplemental_reaudit_20260609_gpt55_pro_strict_sources",
+      "source_package_id": "phase36_batch03_supplemental_audit_package_20260609",
+      "decision": "accepted_for_draft",
+      "reason": "补证后已满足第一次审计要求。statement 明确规定被 gate 阻断或过滤的交易没有 observed execution outcome，不能仅因为被阻断就标记为 loss；source_refs 增加 Counterfactual Risk Minimization、logged bandit feedback 和 OPE 资料，能直接支撑未执行动作反馈不可观测、需要 counterfactual / off-policy 处理这一标签语义规则。因此可升级为 accepted_for_draft。",
+      "source_patch_notes": [
+        "将 Counterfactual Risk Minimization: Learning from Logged Bandit Feedback 设为主来源，用于支撑 logged feedback 只观测历史策略选择动作的反馈。",
+        "保留 off-policy evaluation / logged bandit feedback 资料作为 supporting source，用于支撑 logging policy、propensity、counterfactual missing 等字段。",
+        "OpenAI evals、scikit-learn CV、Rules of ML 只作为评估流程和 split discipline 的 supporting sources，不应作为 blocked trade label rule 的主证据。",
+        "建议与 eval.counterfactual_outcome_missing_for_blocked_trades 共用来源，减少重复。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议保留补充包写法：被 gate 阻断或过滤的交易没有 observed execution outcome，不能仅因为被阻断就标记为 loss。",
+        "建议字段：trade_candidate_id、gate_decision、executed_flag、observed_outcome_available、counterfactual_outcome_status、label_value、label_reason_code、ope_method_id、simulation_ref、reviewer。",
+        "允许状态：counterfactual_missing、blocked_no_outcome、needs_human_review、simulation_supported、approved_ope_supported。",
+        "明确 missed profit、unrealized PnL、事后价格路径不能自动转成 LLM 训练真值标签。",
+        "如果有 approved off-policy、simulation、paper replay 或 human review evidence，可以生成带 evidence_type 的标签，但不能伪装成普通 observed execution loss。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 只定义 label semantics、counterfactual outcome status、审计字段和训练阻断规则。",
+        "交易结果模拟、成交假设、回测、fill model、slippage、fees 和实盘执行事实由 Trading Engineering 维护。",
+        "不得把具体交易、买卖点、账户、订单、仓位或策略参数写入本知识项。"
+      ],
+      "conflict_patch_notes": [
+        "与 eval.counterfactual_outcome_missing_for_blocked_trades 高度相关，建议形成父子结构：counterfactual_outcome_missing 为原理父项，本条为 label action 子项。",
+        "与 label_schema.no_pnl_only_label、business_objective.success_metric_not_only_pnl、eval.off_policy_evaluation_required_for_gate_policy 应互链。",
+        "未发现直接冲突；不建议 rejected。"
+      ],
+      "required_followups": [
+        "补 blocked_trade_label_schema.json。",
+        "补 counterfactual_outcome_status enum。",
+        "补 label_reason_code：blocked_no_execution、counterfactual_missing、simulation_supported、ope_supported、human_reviewed。",
+        "补 eval cases：blocked trade later profitable、blocked trade later loss、blocked no fill、paper-only simulated outcome。"
+      ]
+    },
+    "approved_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "contribution": {
+    "contribution_id": null,
+    "source_project": null,
+    "sanitization_status": "not_applicable",
+    "private_data_removed": true,
+    "generic_mapping_notes": "Phase 36 public-source AI Engineering candidate; no project-private trading facts included."
+  },
+  "copyright": {
+    "stores_full_text": false,
+    "stores_long_quote": false,
+    "summary_only": true,
+    "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+    "reuse_risk": "low"
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于审计 AI Engineering、LLM 训练、RAG/MCP、部署、安全或治理链路。",
+      "用于提醒外接项目补齐来源、适用边界、冲突状态、审计记录和人工审批。",
+      "用于 reviewed/audit 模式下带 caveat 引用。"
+    ],
+    "not_allowed": [
+      "不得生成买卖点、仓位、杠杆、止损止盈或实盘执行指令。",
+      "不得覆盖确定性风控、交易执行系统或人工审批。",
+      "不得作为 approved/default guidance 直接返回。"
+    ],
+    "required_context": [
+      "project_type",
+      "task_type",
+      "mode",
+      "strategy_version",
+      "data_boundary",
+      "review_status"
+    ],
+    "fallback_behavior": "cite_with_caveat"
+  },
+  "machine_gate": {
+    "default_guidance": "caveat_only",
+    "reason": "reviewed only; accepted_for_draft is not approved; default guidance requires later human governance approval.",
+    "requires_human_escalation": true,
+    "blocking_reasons": [
+      "not_approved",
+      "phase36_batch_reviewed_only"
+    ],
+    "checked_at": "2026-06-09",
+    "gate_version": "1.0.0",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "recommended_extra_sources": [
+    {
+      "title": "将 Counterfactual Risk Minimization: Learning from Logged Bandit Feedback 设为主来源，用于支撑 logged feedback 只观测历史策略选择动作的反馈。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_1"
+    },
+    {
+      "title": "保留 off-policy evaluation / logged bandit feedback 资料作为 supporting source，用于支撑 logging policy、propensity、counterfactual missing 等字段。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_2"
+    },
+    {
+      "title": "OpenAI evals、scikit-learn CV、Rules of ML 只作为评估流程和 split discipline 的 supporting sources，不应作为 blocked trade label rule 的主证据。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_3"
+    },
+    {
+      "title": "建议与 eval.counterfactual_outcome_missing_for_blocked_trades 共用来源，减少重复。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_4"
+    }
+  ]
+}

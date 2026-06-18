@@ -1,0 +1,327 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_ai_engineering.data_license.market_data_license_check_required.v1",
+  "title": "市场数据进入训练、评估或再分发前必须检查授权、用途、非展示使用和供应商限制。",
+  "metadata": {
+    "partition_id": "KB_AI_ENGINEERING",
+    "domain": "ai_engineering",
+    "subdomain": "ai_security_privacy_compliance",
+    "rule_type": "decision_rule",
+    "content_type": "json",
+    "project_binding": "none",
+    "tree_node_id": "kt.ai_security_privacy_compliance",
+    "tree_path": "CEK-TA / AI Engineering",
+    "canonical_node_id": "kt.ai_security_privacy_compliance",
+    "canonical_tree_path": "CEK-TA / AI Engineering",
+    "risk_level": "high",
+    "used_for": [
+      "llm_training",
+      "trading_gating_scoring",
+      "rag_engineering",
+      "mcp",
+      "vue_audit_ui"
+    ],
+    "source_candidate_id": "cand_20260609_ai_engineering_data_license_market_data_license_check_required_v1_001",
+    "research_task_id": "RIT-P36-N-07",
+    "claim_type": "ai_governance_rule",
+    "classification_notes": "Phase 36 AI Engineering reviewed knowledge; UI tree and canonical node are inherited from candidate classification. Trading rule bodies must remain in Trading Engineering."
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "general",
+    "data_granularity": "general",
+    "project_type": "trading_llm_assistant",
+    "applies_when": [
+      "外接项目正在构建或审计交易 LLM gating/scoring、训练数据、评估、RAG/MCP、部署或治理链路。",
+      "该规则用于阻断数据泄漏、权限越界、无来源默认指导、训练/评估污染或上线前治理缺口。"
+    ],
+    "not_applicable_when": [
+      "用户需要具体买卖点、仓位、止损止盈、策略参数或实盘订单执行。",
+      "知识点主要描述 K 线结构、市场微观结构、回测模型、fill model 或交易风控本体，应路由到 Trading Engineering。"
+    ]
+  },
+  "content": {
+    "statement": "市场数据进入训练、评估或再分发前必须检查授权、用途、非展示使用和供应商限制。",
+    "rationale": "本候选仅沉淀 AI Engineering 中训练、评估、RAG/MCP、安全、部署或治理规则；不定义 K 线信号、具体交易策略、订单执行规则或账户参数。 审计结论：方向成立。市场数据进入训练、评估、RAG、再分发、非展示使用或 AI solution 前必须检查授权、用途、供应商限制、derived data、redistribution 和 non-display 许可。当前来源足够支持 license-governed concern，但 Nasdaq 来源需要更可审计的当前协议或条款快照。",
+    "procedure": [
+      "确认项目事实匹配 applies_when，且没有命中 not_applicable_when。",
+      "按 source_patch_notes 检查来源是否足够支撑 statement。",
+      "按 content_patch_notes 补齐正式实现、schema、字段和 checklist。",
+      "按 boundary_patch_notes 确认没有把交易规则本体、项目私有参数或实盘执行规则写入 AI Engineering。",
+      "保留 required_followups，后续由来源增强或治理任务继续关闭。"
+    ],
+    "examples": [],
+    "anti_patterns": [
+      "把 reviewed 知识当作 approved 默认指导。",
+      "把 AI Engineering 规则扩写成具体交易阈值、仓位、买卖点或执行参数。",
+      "忽略审计结果中的来源限制、适用范围和后续补强要求。"
+    ],
+    "validation": [
+      "source_evidence 至少 2 条，且没有 low-only 来源。",
+      "conflict_status 为 none 或 resolved。",
+      "review_status 为 reviewed 时 machine_gate 必须是 caveat_only。",
+      "MCP/SearchLab 默认指导不得把本条当作 approved 返回。"
+    ],
+    "risk_notes": [
+      "本条仍是 candidate，需要外部 AI/人工审计确认来源充分性、适用边界和是否需要拆分。",
+      "本条不是法律意见，只是 AI Engineering 的合规 gate。",
+      "不得将私有合同、供应商账号、商业条款或数据权限细节沉淀为通用 KB 内容。",
+      "交易所/供应商数据再分发和 derived data 产品规则应由项目法律/合规确认。",
+      "与 data_privacy.no_secret_or_account_identifier_in_training 和 data_asset pool rules 互补。",
+      "未发现直接冲突。",
+      "补 market data license checklist。",
+      "补 vendor_terms_snapshot_id 字段。",
+      "补 compliance_review_required=true 的触发条件。"
+    ],
+    "citation_notes": "Nasdaq data terms describe restrictions and provider terms for data copying, redistribution, use, and compliance.；CME Group ILA materials support treating market data usage, redistribution, and non-display use as license-governed concerns.",
+    "audit_patch_notes": {
+      "source_patch_notes": [
+        "保留 CME Group License Data / Market Data Policy Education Center，支持 internal display、internal non-display、distribution、derived/custom products、AI solutions compliance。",
+        "Nasdaq Data Terms 页面可能动态加载，建议补 Nasdaq Global Data Agreement、供应商合同、数据产品条款或可审计快照。",
+        "补项目级 vendor contract reference，但不得把私有合同全文写入知识库。",
+        "建议补 legal/compliance review 来源或内部 policy。"
+      ],
+      "content_patch_notes": [
+        "正式 draft 增加 license_check schema：vendor、dataset_name、contract_id、allowed_use_training、allowed_use_eval、allowed_use_rag、allowed_use_redistribution、non_display_allowed、derived_data_allowed、retention_limit、subprocessor_allowed、model_provider_upload_allowed、reviewer、reviewed_at。",
+        "明确 license check 是上线/导入前 gate，未通过则阻断训练、评估或再分发。",
+        "加入 vendor-specific restrictions must override generic CEK-TA guidance。"
+      ],
+      "boundary_patch_notes": [
+        "本条不是法律意见，只是 AI Engineering 的合规 gate。",
+        "不得将私有合同、供应商账号、商业条款或数据权限细节沉淀为通用 KB 内容。",
+        "交易所/供应商数据再分发和 derived data 产品规则应由项目法律/合规确认。"
+      ],
+      "conflict_patch_notes": [
+        "与 data_privacy.no_secret_or_account_identifier_in_training 和 data_asset pool rules 互补。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 market data license checklist。",
+        "补 vendor_terms_snapshot_id 字段。",
+        "补 compliance_review_required=true 的触发条件。"
+      ]
+    }
+  },
+  "assumptions": [
+    "外接项目提供项目事实、私有交易数据和策略上下文；CEK-TA 只沉淀可复用专业规则。",
+    "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+  ],
+  "source_evidence": [
+    {
+      "source_id": "src_nasdaq",
+      "source_title": "Nasdaq Data Terms",
+      "source_url": "https://data.nasdaq.com/terms",
+      "source_type": "exchange_rule",
+      "publisher": "Nasdaq",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "Nasdaq data terms describe restrictions and provider terms for data copying, redistribution, use, and compliance.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_cme",
+      "source_title": "CME Group Information License Agreement Guide",
+      "source_url": "https://www.cmegroup.com/content/dam/cmegroup/market-data/files/information-license-agreement-ila-guide.pdf",
+      "source_type": "exchange_rule",
+      "publisher": "CME Group",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "CME Group ILA materials support treating market data usage, redistribution, and non-display use as license-governed concerns.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_occ_fed_fdic_revised_model_risk_2026",
+      "source_title": "Model Risk Management: Revised Guidance",
+      "source_url": "https://occ.gov/news-issuances/bulletins/2026/bulletin-2026-13.html",
+      "source_type": "standard_or_risk_framework",
+      "publisher": "OCC / Federal Reserve / FDIC",
+      "published_at": "2026-04-17",
+      "accessed_at": "2026-06-09",
+      "version": "OCC Bulletin 2026-13 / SR 26-2",
+      "reliability": "high",
+      "relevance": "medium",
+      "evidence_summary": "2026 年跨机构模型风险管理修订指南支持模型治理、验证、变更控制和风险分层；同时需注明 generative AI 和 agentic AI 不在其直接范围内，只能作为模型风险治理类比来源。",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 90,
+    "score_version": "1.0.0",
+    "primary_source_count": 2,
+    "supporting_source_count": 1,
+    "low_reliability_source_count": 0,
+    "limitations": [
+      "本条为 reviewed 知识，来源和审计补丁已记录；默认指导仍需后续人工治理升级 approved。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "docs/contracts/ai_engineering_gating_scoring_contract.md",
+      "docs/contracts/ai_engineering_knowledge_item_policy.md",
+      "docs/tasks/phase36_ai_engineering_gating_scoring_knowledge.md"
+    ],
+    "conflicts": [],
+    "resolution_summary": "未发现与当前 CEK-TA formal knowledge 的直接冲突；候选不会进入默认指导。",
+    "default_recommendation": "caveat_only_until_approved"
+  },
+  "review": {
+    "confidence": "medium",
+    "freshness": "time_sensitive",
+    "review_status": "reviewed",
+    "reviewer": "codex",
+    "reviewed_at": "2026-06-09",
+    "created_at": "2026-06-09",
+    "updated_at": "2026-06-09",
+    "open_questions": [
+      "审计时确认该候选是否应与相邻 AI Engineering 规则合并、拆分，或改路由到 Trading Engineering。",
+      "补 market data license checklist。",
+      "补 vendor_terms_snapshot_id 字段。",
+      "补 compliance_review_required=true 的触发条件。"
+    ],
+    "decision_log": [
+      {
+        "at": "2026-06-09",
+        "actor": "external_ai",
+        "decision": "accepted_for_draft",
+        "reason": "方向成立。市场数据进入训练、评估、RAG、再分发、非展示使用或 AI solution 前必须检查授权、用途、供应商限制、derived data、redistribution 和 non-display 许可。当前来源足够支持 license-governed concern，但 Nasdaq 来源需要更可审计的当前协议或条款快照。",
+        "audit_result_id": "audit_result_phase36_ai_engineering_batch_01_of_10_20260609_gpt55_pro"
+      },
+      {
+        "at": "2026-06-09",
+        "actor": "codex",
+        "decision": "converted_to_reviewed",
+        "reason": "按 Phase 36 批量审计结果优化候选并转为 formal reviewed；未升级 approved。",
+        "audit_result_id": "audit_result_phase36_ai_engineering_batch_01_of_10_20260609_gpt55_pro"
+      }
+    ],
+    "approval_status": "not_requested",
+    "default_guidance_allowed": false,
+    "source_candidate_id": "cand_20260609_ai_engineering_data_license_market_data_license_check_required_v1_001",
+    "ai_audit_result_id": "audit_result_phase36_ai_engineering_batch_01_of_10_20260609_gpt55_pro",
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase36_ai_engineering_batch_01_of_10_20260609_gpt55_pro",
+      "source_package_id": "phase36_ai_engineering_candidate_audit_batch_01_of_10_20260609",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立。市场数据进入训练、评估、RAG、再分发、非展示使用或 AI solution 前必须检查授权、用途、供应商限制、derived data、redistribution 和 non-display 许可。当前来源足够支持 license-governed concern，但 Nasdaq 来源需要更可审计的当前协议或条款快照。",
+      "source_patch_notes": [
+        "保留 CME Group License Data / Market Data Policy Education Center，支持 internal display、internal non-display、distribution、derived/custom products、AI solutions compliance。",
+        "Nasdaq Data Terms 页面可能动态加载，建议补 Nasdaq Global Data Agreement、供应商合同、数据产品条款或可审计快照。",
+        "补项目级 vendor contract reference，但不得把私有合同全文写入知识库。",
+        "建议补 legal/compliance review 来源或内部 policy。"
+      ],
+      "content_patch_notes": [
+        "正式 draft 增加 license_check schema：vendor、dataset_name、contract_id、allowed_use_training、allowed_use_eval、allowed_use_rag、allowed_use_redistribution、non_display_allowed、derived_data_allowed、retention_limit、subprocessor_allowed、model_provider_upload_allowed、reviewer、reviewed_at。",
+        "明确 license check 是上线/导入前 gate，未通过则阻断训练、评估或再分发。",
+        "加入 vendor-specific restrictions must override generic CEK-TA guidance。"
+      ],
+      "boundary_patch_notes": [
+        "本条不是法律意见，只是 AI Engineering 的合规 gate。",
+        "不得将私有合同、供应商账号、商业条款或数据权限细节沉淀为通用 KB 内容。",
+        "交易所/供应商数据再分发和 derived data 产品规则应由项目法律/合规确认。"
+      ],
+      "conflict_patch_notes": [
+        "与 data_privacy.no_secret_or_account_identifier_in_training 和 data_asset pool rules 互补。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 market data license checklist。",
+        "补 vendor_terms_snapshot_id 字段。",
+        "补 compliance_review_required=true 的触发条件。"
+      ]
+    },
+    "approved_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "contribution": {
+    "contribution_id": null,
+    "source_project": null,
+    "sanitization_status": "not_applicable",
+    "private_data_removed": true,
+    "generic_mapping_notes": "Phase 36 public-source AI Engineering candidate; no project-private trading facts included."
+  },
+  "copyright": {
+    "stores_full_text": false,
+    "stores_long_quote": false,
+    "summary_only": true,
+    "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+    "reuse_risk": "low"
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于审计 AI Engineering、LLM 训练、RAG/MCP、部署、安全或治理链路。",
+      "用于提醒外接项目补齐来源、适用边界、冲突状态、审计记录和人工审批。",
+      "用于 reviewed/audit 模式下带 caveat 引用。"
+    ],
+    "not_allowed": [
+      "不得生成买卖点、仓位、杠杆、止损止盈或实盘执行指令。",
+      "不得覆盖确定性风控、交易执行系统或人工审批。",
+      "不得作为 approved/default guidance 直接返回。"
+    ],
+    "required_context": [
+      "project_type",
+      "task_type",
+      "mode",
+      "strategy_version",
+      "data_boundary",
+      "review_status"
+    ],
+    "fallback_behavior": "cite_with_caveat"
+  },
+  "machine_gate": {
+    "default_guidance": "caveat_only",
+    "reason": "reviewed only; accepted_for_draft is not approved; default guidance requires later human governance approval.",
+    "requires_human_escalation": true,
+    "blocking_reasons": [
+      "not_approved",
+      "phase36_batch_reviewed_only"
+    ],
+    "checked_at": "2026-06-09",
+    "gate_version": "1.0.0",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "recommended_extra_sources": [
+    {
+      "title": "保留 CME Group License Data / Market Data Policy Education Center，支持 internal display、internal non-display、distribution、derived/custom products、AI solutions compliance。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_1"
+    },
+    {
+      "title": "Nasdaq Data Terms 页面可能动态加载，建议补 Nasdaq Global Data Agreement、供应商合同、数据产品条款或可审计快照。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_2"
+    },
+    {
+      "title": "补项目级 vendor contract reference，但不得把私有合同全文写入知识库。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_3"
+    },
+    {
+      "title": "建议补 legal/compliance review 来源或内部 policy。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_4"
+    }
+  ]
+}

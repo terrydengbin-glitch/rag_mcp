@@ -1,0 +1,212 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_04_backtest.fill_model.ohlc_same_bar_path_ambiguity.v1",
+  "title": "只用 OHLC K线不能确定同一根 bar 内止盈止损的真实先后顺序",
+  "metadata": {
+    "partition_id": "KB_04_BACKTEST",
+    "domain": "backtest",
+    "subdomain": "fill_model",
+    "rule_type": "principle",
+    "content_type": "json",
+    "project_binding": "none",
+    "tree_node_id": "kt.backtest.bias",
+    "tree_path": "CEK-TA / Trading Engineering / Backtest / Bias",
+    "canonical_node_id": "kt.trading_engineering.backtest.fill_assumption",
+    "canonical_tree_path": "CEK-TA / Trading Engineering / Backtest / Fill Assumption",
+    "risk_level": "high",
+    "used_for": [
+      "strategy_design",
+      "code_review",
+      "backtest_review",
+      "replay",
+      "simulation",
+      "live_trading",
+      "trade_analysis",
+      "mcp",
+      "vue_audit_ui"
+    ],
+    "claim_type": "backtest_validity_rule",
+    "classification_notes": "UI tree node is kt.backtest.bias; canonical classification is kt.trading_engineering.backtest.fill_assumption."
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "general",
+    "data_granularity": "kline",
+    "project_type": "general",
+    "applies_when": [
+      "回测或模拟只使用 OHLC bar 数据",
+      "同一根 bar 的 high 和 low 同时触及止盈和止损阈值",
+      "需要判断策略的成交顺序、收益、回撤或风控结果是否可信"
+    ],
+    "not_applicable_when": [
+      "拥有可验证的 tick、trade、order book 或更细粒度路径数据，并且成交模型使用该路径",
+      "策略规则明确约定了保守优先、乐观优先或双情景评估，并在报告中披露",
+      "问题只涉及收盘价信号，不涉及同 bar 内成交顺序"
+    ]
+  },
+  "content": {
+    "statement": "当仅有 OHLC K线数据时，如果同一根 bar 同时触及止盈和止损，回测系统不能声称知道真实先后顺序；必须显式声明 fill model 假设或使用更细粒度数据验证。",
+    "rationale": "OHLC 只给出开、高、低、收四个价格点，不能还原 bar 内价格路径。框架可以定义自己的成交规则，但该规则是模型假设，不是市场事实。",
+    "procedure": [
+      "检查策略是否可能在同一根 bar 内同时触发 entry、stop、take-profit 或 trailing stop。",
+      "检查回测框架如何处理 limit、stop、stop-limit 和 market order。",
+      "若仅有 OHLC，要求在报告中披露保守、乐观或双情景成交假设。",
+      "对高风险策略使用更细粒度数据、回放或实盘模拟做一致性验证。",
+      "Codex 审查回测代码时，必须搜索同 bar 成交、high/low 触发和止盈止损优先级逻辑。"
+    ],
+    "examples": [
+      "一根 1m K线的 high 高于止盈价、low 低于止损价，只凭 OHLC 无法知道先止盈还是先止损。",
+      "框架把 stop 优先当成保守假设是可接受的，但报告必须说明这是模型规则。"
+    ],
+    "anti_patterns": [
+      "把 OHLC 回测中的最优成交路径当作真实成交。",
+      "没有说明同 bar 冲突时采用 stop-first、target-first 还是双情景。",
+      "用 1m K线高低点模拟高频止损策略，却不说明路径不确定性。"
+    ],
+    "validation": [
+      "构造同一根 bar 同时触发 TP/SL 的测试用例。",
+      "检查回测输出是否随 fill model 选择显著变化。",
+      "用更细粒度数据或 replay 对关键样本做交叉验证。",
+      "确认检索结果带有 data_granularity 和 fill_model_assumption caveat。"
+    ],
+    "risk_notes": [
+      "该知识不否定所有 OHLC 回测，只要求披露和测试成交假设。",
+      "对实盘和模拟盘，真实成交还受订单簿、延迟、滑点、部分成交和交易所规则影响。",
+      "该知识不得被解释为具体交易建议。"
+    ],
+    "citation_notes": "Backtrader 文档说明框架用 OHLC 点对 limit/stop/stop-limit 进行可推断的撮合模拟；QuantConnect 文档说明 fill models 和 slippage models 用于模拟券商成交行为。这些来源支持将成交顺序视为模型假设而非 OHLC 可直接证明的事实。"
+  },
+  "assumptions": [
+    "输入数据是聚合 K线或 bar 数据。",
+    "bar 内部真实价格路径不可从 OHLC 完整恢复。",
+    "回测系统可能有自己的成交模型，但必须被视为假设。"
+  ],
+  "source_evidence": [
+    {
+      "source_id": "src_seed_002",
+      "source_title": "Backtrader Orders - Creation/Execution",
+      "source_url": "https://www.backtrader.com/docu/order-creation-execution/order-creation-execution/",
+      "source_type": "framework_doc",
+      "publisher": "Backtrader",
+      "published_at": null,
+      "accessed_at": "2026-06-08",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "Backtrader 说明其使用 Open/High/Low/Close 点对 limit、stop、stop-limit 订单做执行推断，支持将这类执行结果视为框架成交模型。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_seed_003",
+      "source_title": "QuantConnect Trade Fills - Key Concepts",
+      "source_url": "https://www.quantconnect.com/docs/v2/writing-algorithms/reality-modeling/trade-fills/key-concepts",
+      "source_type": "framework_doc",
+      "publisher": "QuantConnect",
+      "published_at": null,
+      "accessed_at": "2026-06-08",
+      "version": "v2 docs",
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "QuantConnect 文档说明 fill models 用于模拟订单成交价格和数量，并可与 slippage model 协作，支持显式声明成交模型假设。",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 88,
+    "score_version": "1.0.0",
+    "primary_source_count": 0,
+    "supporting_source_count": 2,
+    "limitations": [
+      "来源是框架文档，支持实现语义和成交模型边界；后续可补充市场微观结构或回测方法论文。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "kb_04_backtest.bias.multiple_testing_overfit.v1"
+    ],
+    "conflicts": [],
+    "resolution_summary": "该知识讨论数据粒度与成交路径假设，与多重测试偏差属于不同回测风险维度，无直接冲突。",
+    "default_recommendation": "use_as_guidance"
+  },
+  "review": {
+    "confidence": "high",
+    "freshness": "stable",
+    "review_status": "approved",
+    "reviewer": "codex",
+    "reviewed_at": "2026-06-08",
+    "created_at": "2026-06-08",
+    "updated_at": "2026-06-08",
+    "open_questions": [
+      "后续可补充各主流回测框架对同 bar TP/SL 优先级的具体差异表。"
+    ],
+    "decision_log": [
+      {
+        "at": "2026-06-08",
+        "actor": "codex",
+        "decision": "approved",
+        "reason": "来源可追踪，适用边界清晰，规则为保守审计原则，不与现有知识冲突。"
+      }
+    ],
+    "approval_status": "approved",
+    "default_guidance_allowed": true,
+    "source_candidate_id": null,
+    "ai_audit_result_id": null
+  },
+  "contribution": {
+    "contribution_id": null,
+    "source_project": null,
+    "sanitization_status": "not_applicable",
+    "private_data_removed": true,
+    "generic_mapping_notes": "通用回测成交模型知识，不含项目私有事实。"
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于审计和解释 CEK-TA / Trading Engineering / Backtest / Fill Assumption 范围内的专业边界。",
+      "用于提醒用户补充适用范围、来源、冲突状态和验证条件。",
+      "用于阻止 AI 把未满足边界的知识当成默认交易建议。"
+    ],
+    "not_allowed": [
+      "不得据此生成买卖点、仓位、杠杆或实盘执行指令。",
+      "不得在缺少适用边界、来源或冲突状态时作为默认指导。",
+      "不得把 reviewed 或 caveat_only 知识表述为 approved 结论。"
+    ],
+    "required_context": [
+      "project_type",
+      "market",
+      "asset",
+      "timeframe",
+      "data_granularity",
+      "task_type"
+    ],
+    "fallback_behavior": "cite_with_caveat"
+  },
+  "machine_gate": {
+    "default_guidance": "allow",
+    "reason": "approved; default_guidance_allowed=true; sources, conflict, freshness, and privacy gates passed.",
+    "requires_human_escalation": false,
+    "blocking_reasons": [],
+    "checked_at": "2026-06-09",
+    "gate_version": "1.0.0"
+  },
+  "recommended_extra_sources": [
+    {
+      "title": "White, 2000, A Reality Check for Data Snooping",
+      "source_url": null,
+      "source_type": "paper",
+      "purpose": "补强 data snooping、多重测试和样本外检验边界。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_1"
+    },
+    {
+      "title": "Bailey et al., The Probability of Backtest Overfitting",
+      "source_url": null,
+      "source_type": "paper",
+      "purpose": "补强回测过拟合概率、参数搜索和模型选择风险。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_2"
+    }
+  ]
+}

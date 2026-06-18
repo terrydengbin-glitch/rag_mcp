@@ -1,0 +1,356 @@
+{
+  "schema_version": "1.0.0",
+  "candidate_id": "cand_20260608_rag_engineering_metadata_citation_freshness_policy_001",
+  "research_task_id": "CEK-TA-RESEARCH-20260608-023-005",
+  "status": {
+    "review_status": "accepted",
+    "ingestion_decision": "convert_to_knowledge_item",
+    "decision_reason": "AI 审计结果为 accepted_for_draft；本状态只表示候选通过审计并可作为 draft/reviewed 来源，不代表 approved 或默认指导。",
+    "created_at": "2026-06-08",
+    "updated_at": "2026-06-09"
+  },
+  "classification": {
+    "tree_node_id": "kt.ai_engineering.rag_engineering.retrieval_policy",
+    "tree_path": "CEK-TA / AI Engineering / RAG Engineering / Retrieval Policy",
+    "related_nodes": [
+      "kt.ai_engineering.rag_engineering.metadata_schema",
+      "kt.ai_engineering.rag_engineering.citation_policy",
+      "kt.ai_engineering.rag_engineering.source_quality",
+      "kt.ai_engineering.rag_engineering.conflict_aware_retrieval",
+      "kt.ai_engineering.rag_engineering.freshness_policy"
+    ],
+    "partition_id": "KB_10_RAG_ENGINEERING",
+    "domain": "rag_engineering",
+    "subdomain": "retrieval_policy",
+    "rule_type": "procedure",
+    "used_for": [
+      "rag_engineering",
+      "mcp",
+      "vue_audit_ui",
+      "quality_eval",
+      "project_integration"
+    ]
+  },
+  "claim": {
+    "claim_id": "claim_001",
+    "statement": "专业 RAG 默认检索不能只返回相似文本片段；必须返回可审计的 metadata、source_refs/citation、review_status、conflict_status、freshness、适用边界和推荐动作，并在进入默认指导前过滤或阻断无来源、draft/rejected、过期、冲突未消解或项目不匹配的结果。",
+    "normalized_claim": "professional_rag_default_retrieval_requires_metadata_citations_review_conflict_freshness_scope_and_blocking_policy_before_default_guidance",
+    "evidence_summary": "OpenAI File Search/Retrieval 文档支持 vector stores、file citations、include search results、metadata/attribute filtering；Qdrant 文档支持 payload metadata filtering、hybrid search 和 reranking；LangChain 文档将检索定义为从知识库取回外部知识以支撑 RAG；LlamaIndex Citation Query Engine 提供 citation source nodes；Ragas 文档提供 context precision、context recall、faithfulness 等 RAG 质量指标。CEK-TA search_result_contract 已定义 source_refs、conflict_status、freshness 和 recommended_next_action。",
+    "interpretation_notes": "本候选把通用 RAG 检索能力提升为 CEK-TA 专业知识库默认策略：交易/实盘/LLM 训练场景不能让模型自行猜测来源、版本和冲突，应在检索层输出和阻断层显式处理。",
+    "claim_strength": "strong",
+    "performance_claim": false
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "general",
+    "data_granularity": "general",
+    "project_type": "trading_llm_assistant",
+    "applies_when": [
+      "Codex、MCP、Vue3 SearchLab 或外部项目通过 CEK-TA 检索专业知识",
+      "检索结果可能影响交易工程、回测审计、模拟盘、实盘风控、LLM 训练或项目接入决策",
+      "知识库包含不同 review_status、freshness、conflict_status、source_type、项目边界或版本状态的条目"
+    ],
+    "not_applicable_when": [
+      "仅做无业务影响的全文搜索调试，且结果明确不作为专业指导",
+      "只浏览候选知识审计队列，并明确标注 candidate/draft 状态",
+      "下游系统已经在更严格的独立治理层完成来源、冲突、版本和权限过滤"
+    ],
+    "assumptions": [
+      "知识条目在入库时已经保留 metadata、source_refs、review_status、conflict_status 和 freshness",
+      "检索系统可以使用 metadata/filter 或 post-filter 实现默认指导阻断",
+      "候选规则不要求使用某个唯一向量数据库或 RAG 框架"
+    ],
+    "limitations": [
+      "OpenAI File Search、Qdrant、LangChain、LlamaIndex、Ragas 的具体 API 会变化，time_sensitive 使用前需复核版本",
+      "metadata filtering 和 citation 不能自动保证答案正确，仍需要检索评测和人工审计",
+      "本候选是 CEK-TA 默认检索治理规则，不代表所有普通问答系统都必须采用同样严格门槛"
+    ]
+  },
+  "source_refs": [
+    {
+      "source_id": "src_001",
+      "source_title": "OpenAI File Search",
+      "source_url": "https://platform.openai.com/docs/guides/tools-file-search/",
+      "source_type": "official_doc",
+      "publisher": "OpenAI",
+      "published_at": null,
+      "accessed_at": "2026-06-08",
+      "version": "Responses API File Search docs",
+      "reliability": "high",
+      "score": 93,
+      "relevance": "high",
+      "freshness": "time_sensitive",
+      "limitations": [
+        "OpenAI 托管 file_search 行为和限制可能随 API 版本变化。"
+      ],
+      "evidence_summary": "官方文档说明 File Search 使用 vector stores 检索文件，可返回 file citations，可 include file_search_call.results，并支持 metadata filtering。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_002",
+      "source_title": "OpenAI Retrieval",
+      "source_url": "https://platform.openai.com/docs/guides/retrieval",
+      "source_type": "official_doc",
+      "publisher": "OpenAI",
+      "published_at": null,
+      "accessed_at": "2026-06-08",
+      "version": "Retrieval API docs",
+      "reliability": "high",
+      "score": 92,
+      "relevance": "high",
+      "freshness": "time_sensitive",
+      "limitations": [
+        "OpenAI Retrieval API 的对象、价格和过滤字段可能变化。"
+      ],
+      "evidence_summary": "官方文档说明 vector stores 是语义搜索和 file search 的索引容器，文件可带 attributes 并用于检索过滤。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_003",
+      "source_title": "Qdrant Documentation",
+      "source_url": "https://qdrant.tech/documentation/",
+      "source_type": "framework_doc",
+      "publisher": "Qdrant",
+      "published_at": null,
+      "accessed_at": "2026-06-08",
+      "version": "Qdrant documentation 2026",
+      "reliability": "high",
+      "score": 88,
+      "relevance": "medium",
+      "freshness": "time_sensitive",
+      "limitations": [
+        "Qdrant 是向量数据库/搜索引擎来源，不直接定义 CEK-TA 的知识治理状态流。"
+      ],
+      "evidence_summary": "Qdrant 文档覆盖 payload metadata、filtering、hybrid queries、reranking 和 search relevance，支持将 metadata/filter 作为 RAG 检索工程能力。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_004",
+      "source_title": "LangChain Retrieval",
+      "source_url": "https://docs.langchain.com/oss/python/langchain/retrieval",
+      "source_type": "framework_doc",
+      "publisher": "LangChain",
+      "published_at": null,
+      "accessed_at": "2026-06-08",
+      "version": "LangChain docs 2026",
+      "reliability": "medium",
+      "score": 80,
+      "relevance": "medium",
+      "freshness": "time_sensitive",
+      "limitations": [
+        "LangChain 文档主要解释检索与 RAG 架构，不直接规定 citation 和 conflict policy。"
+      ],
+      "evidence_summary": "文档说明检索从知识库取回相关外部知识，作为 RAG 基础，以补充模型静态知识和有限上下文。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_005",
+      "source_title": "LlamaIndex Citation Query Engine",
+      "source_url": "https://docs.llamaindex.ai/en/v0.10.17/api_reference/query/query_engines/citation_query_engine.html",
+      "source_type": "framework_doc",
+      "publisher": "LlamaIndex",
+      "published_at": null,
+      "accessed_at": "2026-06-08",
+      "version": "v0.10.17 docs",
+      "reliability": "medium",
+      "score": 78,
+      "relevance": "medium",
+      "freshness": "time_sensitive",
+      "limitations": [
+        "具体 API 文档版本较旧，正式实现前需复核当前版本。"
+      ],
+      "evidence_summary": "文档描述 CitationQueryEngine 可创建 citation source nodes，支持回答与源节点之间建立引用关系。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_006",
+      "source_title": "Ragas Available Metrics",
+      "source_url": "https://docs.ragas.io/en/latest/concepts/metrics/available_metrics/",
+      "source_type": "framework_doc",
+      "publisher": "Ragas",
+      "published_at": null,
+      "accessed_at": "2026-06-08",
+      "version": "Ragas docs 2026",
+      "reliability": "medium",
+      "score": 81,
+      "relevance": "medium",
+      "freshness": "time_sensitive",
+      "limitations": [
+        "Ragas 指标通常需要评测集和 LLM judge/规则配置，不能单独证明业务正确性。"
+      ],
+      "evidence_summary": "文档列出 context precision、context recall、faithfulness 等 RAG 评测指标，支持将检索质量和答案忠实度纳入回归评测。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_007",
+      "source_title": "CEK-TA Search Result Contract",
+      "source_url": "codex-expert-kit/rag/search_result_contract.md",
+      "source_type": "internal_report",
+      "publisher": "CEK-TA",
+      "published_at": "2026-06-08",
+      "accessed_at": "2026-06-08",
+      "version": "1.0.0",
+      "reliability": "medium",
+      "score": 86,
+      "relevance": "high",
+      "freshness": "stable",
+      "limitations": [
+        "内部契约来源，只能支撑 CEK-TA 系统行为，不单独支撑外部 RAG 通用真理。"
+      ],
+      "evidence_summary": "CEK-TA 检索契约要求结果返回 source_refs、review_status、conflict_status、freshness、applicable_scope 和 recommended_next_action，并定义阻断规则。",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 87,
+    "score_version": "1.0.0",
+    "primary_source_count": 6,
+    "supporting_source_count": 1,
+    "low_reliability_source_count": 0,
+    "mandatory_downgrades": [],
+    "limitations": [
+      "来源覆盖 RAG 工程能力、引用、过滤和评测，但 conflict-aware retrieval 属于 CEK-TA 治理组合规则，需与本项目现有 source_quality / conflict_detection 规则一起审计。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "resolved",
+    "checked_against": [
+      "kb_09_rag_engineering.source_quality.unsourced_default_block.v1",
+      "kb_08_llm_training.eval_and_risk.source_boundary_human_escalation.v1"
+    ],
+    "conflicts": [
+      {
+        "knowledge_id": "kb_09_rag_engineering.source_quality.unsourced_default_block.v1",
+        "conflict_type": "scope_conflict",
+        "severity": "informational",
+        "overlap_scope": {
+          "domain": "rag_engineering",
+          "subdomain": "source_quality",
+          "market": "general",
+          "timeframe": "general",
+          "data_granularity": "general"
+        },
+        "candidate_claim": "专业 RAG 默认检索必须返回 metadata/citation/review/conflict/freshness/scope 并阻断不安全默认指导。",
+        "existing_claim": "没有 source_evidence 的知识不得成为 approved，也不得在 default_guidance 模式下作为 Codex 专业指导返回。",
+        "resolution": "现有知识是无来源阻断的单项门槛；本候选是完整检索输出和阻断策略。两者可并存，正式 draft 应引用 existing item。",
+        "default_recommendation": "treat_as_complementary_candidate",
+        "requires_human_review": true
+      },
+      {
+        "knowledge_id": "kb_08_llm_training.eval_and_risk.source_boundary_human_escalation.v1",
+        "conflict_type": "scope_conflict",
+        "severity": "informational",
+        "overlap_scope": {
+          "domain": "llm_training",
+          "subdomain": "eval_and_risk",
+          "market": "general",
+          "timeframe": "general",
+          "data_granularity": "general"
+        },
+        "candidate_claim": "RAG 检索层必须输出来源、边界、冲突、freshness 和推荐动作。",
+        "existing_claim": "LLM 在缺来源、边界或高风险时应返回 ask_human 或 refresh_source。",
+        "resolution": "现有知识定义 LLM 输出和人工升级边界；本候选定义检索层需要提供的字段。两者上下游互补。",
+        "default_recommendation": "treat_as_complementary_candidate",
+        "requires_human_review": true
+      }
+    ],
+    "resolution_summary": "候选与现有 RAG/LLM 治理知识是互补关系；正式 draft 应明确层级：source quality gate -> retrieval result contract -> LLM answer boundary。",
+    "approval_allowed": true
+  },
+  "review": {
+    "confidence": "high",
+    "freshness": "time_sensitive",
+    "reviewer": "external_ai_and_codex_alignment",
+    "reviewed_at": "2026-06-09",
+    "open_questions": [
+      "正式 draft 是否拆成 metadata/citation policy、conflict-aware retrieval、freshness policy 三条知识？",
+      "CEK-TA 是否需要把 OpenAI File Search 作为一种实现来源，而不是默认依赖？",
+      "是否要补充一个 eval_case，验证无来源、draft、rejected、confirmed conflict、deprecated 均被阻断？"
+    ],
+    "audit_log": [
+      {
+        "at": "2026-06-08",
+        "actor": "codex",
+        "action": "created",
+        "reason": "根据 Phase 23 P0 队列启动 KB_10_RAG_ENGINEERING 专业知识采集。"
+      },
+      {
+        "at": "2026-06-08",
+        "actor": "codex",
+        "action": "sourced",
+        "reason": "记录 OpenAI、Qdrant、LangChain、LlamaIndex、Ragas 和 CEK-TA 检索契约作为来源。"
+      },
+      {
+        "at": "2026-06-08",
+        "actor": "codex",
+        "action": "classified",
+        "reason": "归类到 KB_10_RAG_ENGINEERING / rag_engineering.retrieval_policy / procedure。"
+      },
+      {
+        "at": "2026-06-08",
+        "actor": "codex",
+        "action": "conflict_checked",
+        "reason": "已与现有无来源阻断和 LLM source boundary 知识比对，结论为互补。"
+      },
+      {
+        "at": "2026-06-09",
+        "actor": "GPT-5.5 Thinking",
+        "action": "ai_audit_result_received",
+        "reason": "accepted_for_draft / confidence=high",
+        "audit_result_id": "audit_20260609_cek_ta_candidate_ai_audit_001"
+      },
+      {
+        "at": "2026-06-09",
+        "actor": "codex",
+        "action": "candidate_marked_accepted_after_ai_audit",
+        "reason": "根据用户提供的 AI 审计结果和 CEK-TA 边界，将候选设为 accepted_for_draft；不得视为 approved。",
+        "audit_result_id": "audit_20260609_cek_ta_candidate_ai_audit_001"
+      }
+    ],
+    "ai_audit": {
+      "audit_result_id": "audit_20260609_cek_ta_candidate_ai_audit_001",
+      "package_id": "cek_ta_candidate_ai_audit_20260608",
+      "auditor": "GPT-5.5 Thinking",
+      "audited_at": "2026-06-09T00:00:00+09:00",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reasons": [
+        "OpenAI File Search 支持 metadata filtering 和 include search results。",
+        "RAG 质量评估、citation、metadata gate 的组合规则合理。"
+      ],
+      "required_followups": [
+        "明确 conflict_status、review_status、freshness gate 是 CEK-TA 组合治理规则，不是单个外部框架标准。"
+      ],
+      "patch_notes": [
+        "在正式知识中标明该条是 CEK-TA 专业知识库默认策略。"
+      ],
+      "boundary": "accepted_for_draft/reviewed is not approved; approved requires a later human governance task."
+    }
+  },
+  "copyright": {
+    "stores_full_text": false,
+    "stores_long_quote": false,
+    "summary_only": true,
+    "license_notes": "仅保存官方/框架文档链接和摘要，不保存长段原文。",
+    "reuse_risk": "low"
+  },
+  "conversion_target": {
+    "proposed_knowledge_id": "kb_10_rag_engineering.retrieval_policy.metadata_citation_freshness_conflict_gate.v1",
+    "target_schema": "cek_ta_knowledge_item",
+    "target_review_status": "draft",
+    "skill_candidate": false,
+    "eval_case_candidate": true
+  },
+  "workflow": {
+    "stage": "formalized_reviewed",
+    "queue_group": "formalized",
+    "formal_knowledge_id": "kb_10_rag_engineering.retrieval_policy.metadata_citation_freshness_conflict_gate.v1",
+    "formal_review_status": "reviewed",
+    "ai_audit_result_id": "audit_20260609_cek_ta_candidate_ai_audit_001",
+    "hidden_from_default_queue": true,
+    "next_action": "none",
+    "formal_knowledge_path": "codex-expert-kit/rag/knowledge/KB_10_RAG_ENGINEERING/kb_10_rag_engineering.retrieval_policy.metadata_citation_freshness_conflict_gate.v1.json"
+  }
+}

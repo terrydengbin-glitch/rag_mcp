@@ -1,0 +1,371 @@
+{
+  "audit_package_id": "phase58_backtest_sim_live_equivalence_reviewed_preparation_audit_package_20260616",
+  "created_at": "2026-06-16",
+  "phase": "Phase 58",
+  "scope": "single_candidate_reviewed_preparation",
+  "audit_goal": "严格审计 Phase 58 回测 / 回放 / 模拟盘 / 实盘等效链条候选是否可从 accepted_for_draft 进入 formal reviewed/caveat_only 准备。不得创建 approved、default guidance 或 hard gate。",
+  "hard_boundaries": {
+    "candidate_is_not_formal_knowledge": true,
+    "max_allowed_decision": "accepted_for_reviewed_caveat_only",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "trade_execution_advice_allowed": false,
+    "risk_threshold_advice_allowed": false,
+    "must_not_generate": [
+      "买卖点",
+      "仓位",
+      "杠杆",
+      "止损止盈",
+      "实盘执行建议",
+      "自动下单许可",
+      "自动拒单",
+      "自动停机",
+      "自动风控 hard gate"
+    ]
+  },
+  "candidate": {
+    "candidate_id": "cand_20260616_phase58_backtest_sim_live_equivalent_chain_001",
+    "research_task_id": "P58-RSL-001",
+    "candidate_path": "codex-expert-kit/rag/candidates/KB_05_REPLAY_SIMULATION/cand_20260616_phase58_backtest_sim_live_equivalent_chain_001.json",
+    "current_status": {
+      "review_status": "accepted",
+      "ingestion_decision": "accepted_for_draft",
+      "ai_audit_result_id": "audit_result_phase58_backtest_sim_live_equivalence_chain_20260616_strict_v1",
+      "confidence": "medium_high"
+    },
+    "title": "回测、回放、模拟盘和实盘只有共享真实或等效策略链条时才具备可比性",
+    "statement": "同一交易系统中，策略名称相同不足以证明回测、回放、模拟盘和实盘等效；必须证明共同核心、共同执行语义，或提供字段级版本映射、差异报告和 reconciliation 证据。只有当信号生成、数据可用时间、事件时钟、风控检查、订单意图、成交/成本/延迟模型、订单状态机、仓位/账户同步和审计日志走同一真实链条，或有字段级映射和差异报告证明等效链条时，结果才可比较并用于推进评审。",
+    "classification": {
+      "partition_id": "KB_05_REPLAY_SIMULATION",
+      "tree_node_id": "kt.replay_simulation.execution_semantics",
+      "canonical_node_id": "kt.trading_engineering.replay_simulation.execution_semantics",
+      "related_nodes": [
+        "kt.trading_engineering.backtest.reproducibility",
+        "kt.trading_engineering.backtest.bias",
+        "kt.trading_engineering.live_execution.order_state_machine",
+        "kt.trading_engineering.risk_management.pre_trade_risk",
+        "kt.trading_engineering.trade_analysis.execution_quality"
+      ]
+    }
+  },
+  "contract_inline": {
+    "contract_id": "phase58_environment_equivalence_manifest_contract",
+    "contract_path": "docs/contracts/phase58_environment_equivalence_manifest_contract.md",
+    "contract_sha256": "A0A54CBA6F4B0C3DA4E58A83EFEA81D98A4A7A37558A37E07538CA4B91E3CA31",
+    "contract_status": "reviewed_preparation_supporting_contract",
+    "contract_goal": "定义 environment_equivalence_manifest，用于审计同一策略在 backtest、replay、paper/sandbox 和 live 环境之间是否具备可比性。",
+    "hard_boundaries": [
+      "candidate 不是正式知识",
+      "accepted_for_draft 不等于 reviewed",
+      "reviewed/caveat_only 准备不等于 approved",
+      "不允许 default guidance",
+      "不允许 hard gate",
+      "不生成买卖点、仓位、杠杆、止损止盈或实盘执行建议",
+      "environment_gap_report 只能作为证据审计与推进评审材料"
+    ],
+    "logical_objects": [
+      "manifest_identity",
+      "environment_scope",
+      "strategy_identity",
+      "market_instrument_identity",
+      "data_time_identity",
+      "signal_decision_identity",
+      "risk_chain_identity",
+      "order_intent_identity",
+      "order_state_identity",
+      "execution_assumption_identity",
+      "account_cost_identity",
+      "reconciliation_identity",
+      "gap_report_identity",
+      "owner_mapping",
+      "missing_field_policy",
+      "audit_trace"
+    ],
+    "schema_extract": {
+      "manifest_identity_required": [
+        "manifest_id",
+        "schema_version",
+        "created_at",
+        "created_by",
+        "project_id",
+        "purpose",
+        "review_mode"
+      ],
+      "environment_scope_required": [
+        "source_environment",
+        "target_environment",
+        "comparison_window_start",
+        "comparison_window_end",
+        "promotion_stage",
+        "claim_scope"
+      ],
+      "strategy_identity_required": [
+        "strategy_id",
+        "strategy_code_version",
+        "strategy_config_hash",
+        "strategy_entrypoint_ref",
+        "shared_core_evidence",
+        "shared_core_notes"
+      ],
+      "market_instrument_identity_required": [
+        "market",
+        "venue_id",
+        "broker_id",
+        "instrument_id",
+        "symbol",
+        "symbol_mapping_version",
+        "contract_spec_version",
+        "tick_size",
+        "lot_size",
+        "min_notional",
+        "price_precision",
+        "qty_precision",
+        "session_calendar_version",
+        "liquidity_regime_ref"
+      ],
+      "data_time_identity_required": [
+        "data_source_id",
+        "data_version",
+        "data_available_time_policy_id",
+        "exchange_event_time",
+        "local_receive_time",
+        "decision_time",
+        "order_send_time",
+        "ack_time",
+        "fill_time",
+        "timezone_policy",
+        "bar_build_policy",
+        "resampling_policy",
+        "lookahead_guard_version",
+        "warmup_state_snapshot_id"
+      ],
+      "signal_decision_identity_required": [
+        "signal_schema_version",
+        "decision_policy_version",
+        "signal_event_id",
+        "decision_event_id",
+        "order_intent_id",
+        "input_feature_set_version",
+        "feature_available_time_policy_id",
+        "forbidden_future_fields_checked"
+      ],
+      "risk_chain_identity_required": [
+        "risk_check_chain_version",
+        "pre_trade_risk_policy_id",
+        "position_limit_policy_id",
+        "exposure_limit_policy_id",
+        "account_mode",
+        "margin_mode",
+        "leverage_policy_version",
+        "risk_decision_event_id"
+      ],
+      "order_intent_identity_required": [
+        "order_intent_schema_version",
+        "order_intent_id",
+        "side",
+        "quantity_policy_ref",
+        "order_type",
+        "time_in_force",
+        "post_only",
+        "reduce_only",
+        "client_order_id_policy",
+        "cancel_replace_policy",
+        "routing_context_ref",
+        "adapter_mapping_ref"
+      ],
+      "order_state_identity_required": [
+        "order_state_machine_version",
+        "venue_order_status_mapping_version",
+        "reject_code_mapping_version",
+        "partial_fill_policy",
+        "cancel_ack_policy",
+        "unknown_outcome_policy",
+        "live_order_event_source_ref"
+      ],
+      "execution_assumption_identity_required": [
+        "fill_model_version",
+        "fee_model_version",
+        "fee_schedule_version",
+        "maker_taker_flag_policy",
+        "slippage_model_version",
+        "latency_model_version",
+        "spread_model_version",
+        "market_impact_model_version",
+        "funding_or_borrow_cost_model_version",
+        "settlement_model_version",
+        "cost_component_mapping_ref"
+      ],
+      "account_cost_identity_required": [
+        "position_account_source_policy",
+        "cash_source_policy",
+        "collateral_currency",
+        "account_snapshot_id",
+        "fee_currency_policy",
+        "settlement_state_ref",
+        "account_reconciliation_report_id"
+      ],
+      "reconciliation_identity_required": [
+        "reconciliation_policy_id",
+        "reconciliation_tolerance_policy",
+        "position_reconciliation_report_id",
+        "order_reconciliation_report_id",
+        "missing_event_policy",
+        "external_order_policy",
+        "gap_classification"
+      ],
+      "gap_report_identity_required": [
+        "environment_gap_report_id",
+        "data_time_gap",
+        "event_clock_gap",
+        "risk_check_gap",
+        "order_intent_gap",
+        "order_state_gap",
+        "fill_cost_latency_gap",
+        "position_account_gap",
+        "reconciliation_gap",
+        "venue_adapter_gap",
+        "audit_trace_gap",
+        "known_non_equivalence"
+      ],
+      "missing_field_policy_required": [
+        "required_field_missing_action",
+        "optional_field_missing_action",
+        "unknown_value_action",
+        "default_value_allowed",
+        "default_value_justification"
+      ],
+      "audit_trace_required": [
+        "audit_trace_id",
+        "source_artifacts",
+        "source_hashes",
+        "created_by",
+        "review_status",
+        "candidate_id",
+        "decision_log"
+      ]
+    },
+    "owner_mapping": {
+      "Backtest": "backtest_run_manifest、策略版本、参数版本、数据版本、回测成本/fill 假设和复现信息",
+      "Replay / Simulation": "replay clock、事件路径、模拟成交、延迟模型、gap report 和模拟证据边界",
+      "Paper / Sandbox": "paper broker、实时数据、虚拟账户、模拟成交、paper/live 差异和 paper run manifest",
+      "Live Execution": "真实订单、真实成交、真实拒单、撤单、费用、订单状态、broker/exchange API 事实和 reconciliation",
+      "Risk Management": "事前风控、账户限制、保证金/暴露/风险状态和风险事件",
+      "Data Engineering": "数据来源、版本、available_time、symbol mapping、contract spec、质量报告和时区策略",
+      "Market Microstructure": "session、auction、halt、rollover、liquidity regime、tick size、lot size 和 venue 状态",
+      "Trade Analysis": "只消费结果做事后归因、质量复盘、reason code 和研究标签，不拥有执行许可",
+      "AI Engineering": "只能引用 manifest 和 gap report 做 scoring/audit explanation，不拥有交易执行、阈值或 hard gate"
+    },
+    "machine_gate": {
+      "default_guidance": "deny",
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "trade_execution_advice_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "review_visibility": "candidate_or_reviewed_caveat_only",
+      "requires_human_escalation": true
+    }
+  },
+  "sources": [
+    {
+      "source_id": "src_001",
+      "title": "NautilusTrader Architecture",
+      "url": "https://nautilustrader.io/docs/latest/concepts/architecture/",
+      "role": "Backtest/Sandbox/Live environment and common core implementation pattern"
+    },
+    {
+      "source_id": "src_002",
+      "title": "NautilusTrader Live Trading",
+      "url": "https://nautilustrader.io/docs/latest/concepts/live/",
+      "role": "same actors/strategies/execution algorithms and live reconciliation boundary"
+    },
+    {
+      "source_id": "src_003",
+      "title": "QuantConnect Paper Trading",
+      "url": "https://www.quantconnect.com/docs/v2/cloud-platform/live-trading/brokerages/quantconnect-paper-trading",
+      "role": "paper trading uses live data but simulated fills and fictional capital"
+    },
+    {
+      "source_id": "src_004",
+      "title": "HftBacktest Order Fill",
+      "url": "https://hftbacktest.readthedocs.io/en/latest/order_fill.html",
+      "role": "replay fill caveat, no market impact, live discrepancy adjustment"
+    },
+    {
+      "source_id": "src_006",
+      "title": "QuantConnect Live Trading Reconciliation",
+      "url": "https://www.quantconnect.com/docs/v2/cloud-platform/live-trading/reconciliation",
+      "role": "backtest/live divergence categories and reconciliation evidence"
+    }
+  ],
+  "audit_instruction": {
+    "language": "zh-CN",
+    "must_search_external_sources": true,
+    "search_requirement": "必须搜索相关专业网站、资料、案例和数据，对审计包进行严格审计；重点核验 environment_equivalence_manifest 字段是否足以支撑 reviewed/caveat_only，以及是否有字段越界、owner 冲突或误导为 live permission。",
+    "review_questions": [
+      "contract_inline 是否足以补齐首轮审计要求的 environment_equivalence_manifest 字段契约？",
+      "字段是否覆盖 market/venue/instrument、订单语义、账户/成本、时钟、reconciliation、数据质量和缺失字段策略？",
+      "owner mapping 是否正确保留 Backtest、Replay、Paper、Live Execution、Risk、Data、Market、Trade Analysis 和 AI Engineering 边界？",
+      "候选是否可以进入 accepted_for_reviewed_caveat_only？",
+      "是否仍应保留为 accepted_for_draft 或 needs_more_evidence？",
+      "是否存在 approved/default guidance/hard gate 风险？"
+    ],
+    "allowed_decisions": [
+      "accepted_for_reviewed_caveat_only",
+      "needs_more_evidence",
+      "rejected",
+      "blocked"
+    ],
+    "forbidden_decisions": [
+      "approved",
+      "default_guidance",
+      "hard_gate"
+    ]
+  },
+  "output_schema": {
+    "audit_result_id": "string",
+    "package_id": "phase58_backtest_sim_live_equivalence_reviewed_preparation_audit_package_20260616",
+    "summary": {
+      "total": "number",
+      "accepted_for_reviewed_caveat_only": "number",
+      "needs_more_evidence": "number",
+      "rejected": "number",
+      "blocked": "number"
+    },
+    "candidate_results": [
+      {
+        "candidate_id": "string",
+        "research_task_id": "string",
+        "decision": "accepted_for_reviewed_caveat_only | needs_more_evidence | rejected | blocked",
+        "confidence": "low | medium | medium_high | high",
+        "reviewed_allowed": "boolean",
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "trade_execution_advice_allowed": false,
+        "risk_threshold_advice_allowed": false,
+        "reasons": [
+          "string"
+        ],
+        "required_followups": [
+          "string"
+        ],
+        "patch_notes": {
+          "source": [
+            "string"
+          ],
+          "content": [
+            "string"
+          ],
+          "boundary": [
+            "string"
+          ],
+          "conflict": [
+            "string"
+          ]
+        }
+      }
+    ]
+  }
+}

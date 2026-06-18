@@ -1,0 +1,487 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_ai_engineering.capability_boundary.llm_not_primary_price_predictor.v1",
+  "title": "LLM 默认不得作为交易数值预测或执行权威",
+  "metadata": {
+    "partition_id": "KB_09_LLM_TRAINING",
+    "domain": "llm_training",
+    "subdomain": "trading_llm_task_taxonomy",
+    "rule_type": "principle",
+    "content_type": "json",
+    "project_binding": "none",
+    "tree_node_id": "kt.llm_training.trading_llm_task_taxonomy",
+    "tree_path": "CEK-TA / AI Engineering",
+    "canonical_node_id": "kt.llm_training.trading_llm_task_taxonomy",
+    "canonical_tree_path": "CEK-TA / AI Engineering",
+    "risk_level": "medium",
+    "used_for": [
+      "llm_training",
+      "trading_gating_scoring",
+      "rag_engineering",
+      "mcp",
+      "vue_audit_ui"
+    ],
+    "source_candidate_id": "cand_20260609_ai_engineering_capability_boundary_llm_not_primary_price_predictor_v1_001",
+    "research_task_id": "RIT-P36-D-B12",
+    "claim_type": "risk_boundary_rule",
+    "classification_notes": "本条是 AI Engineering 能力边界原则父项；职责矩阵由 kb_ai_engineering.capability_boundary.numeric_model_vs_llm_role_split.v1 承接。交易规则本体仍归 Trading Engineering。"
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "general",
+    "data_granularity": "general",
+    "project_type": "trading_llm_assistant",
+    "applies_when": [
+      "外接项目使用 LLM 做交易候选解释、交易质量评分、风险门控辅助、RAG/MCP 检索或人工复核辅助。",
+      "系统需要判断 LLM、数值模型、确定性风控、执行引擎和人工审批之间的职责边界。",
+      "知识被用于 reviewed/audit 模式下的架构审计、训练数据审计、上线准入审计或事故复盘。"
+    ],
+    "not_applicable_when": [
+      "仅讨论离线文本摘要、文档整理或非交易高影响决策的普通办公助手。",
+      "具体 K 线形态、交易指标、数值预测模型、回测方法、fill model、仓位和订单执行规则本体；这些应路由到 Trading Engineering。",
+      "已经由项目私有 validated_numeric_model 例外流程批准、并具备独立验证、监控、回滚和 owner 签字的受控研究或上线场景。"
+    ]
+  },
+  "content": {
+    "statement": "默认情况下，LLM 输出不得作为 primary numeric price forecast、最终风险阈值权威、仓位 sizing 权威或订单执行权威；除非通过 validated_numeric_model 例外审批，并具备独立验证、校准、监控、回滚、人工审批和 Trading Engineering owner 责任链。",
+    "rationale": "补充审计证据支持 CEK-TA 的默认工程安全边界：LLM 在置信度校准、金融事实一致性、数值/时间序列/交易信号推理和高影响金融自动化方面必须经过验证和人工治理。该规则不是声称 LLM 永远不能预测价格，而是要求默认禁止越权，例外必须有完整验证和审批链。",
+    "procedure": [
+      "识别当前 LLM 输出是否会影响数值价格预测、最终风控阈值、仓位 sizing、止损止盈或订单执行。",
+      "若 LLM 仅用于检索、解释、来源摘要、候选评分、reason code 或人工复核辅助，可在 reviewed/audit 模式下带 caveat 引用。",
+      "若 LLM 输出试图成为 hard allow、最终风险 gate、仓位或执行依据，必须阻断并要求 validated_numeric_model 例外审批。",
+      "例外审批必须记录独立验证、校准、shadow/paper 证据、监控、回滚、人工审批和 Trading Engineering owner。",
+      "MCP/SearchLab 返回本条时必须显示 reviewed/caveat_only，不能作为 approved 默认指导。"
+    ],
+    "examples": [],
+    "anti_patterns": [
+      "把 LLM 自然语言判断直接当作交易 hard allow。",
+      "让 LLM 直接设置仓位、杠杆、止损止盈或调用 broker action。",
+      "用未校准的 LLM confidence 当作概率或风险阈值。",
+      "把本规则写成“LLM 永远不能做任何价格预测研究”的绝对断言。",
+      "把项目私有策略、账户、订单、阈值或真实交易事实写入 CEK-TA 通用知识。"
+    ],
+    "validation": [
+      "检查 review.review_status 是否为 reviewed，且 machine_gate.default_guidance 为 caveat_only。",
+      "检查 source_evidence 是否包含治理、校准、金融幻觉、金融 benchmark 和高影响金融人工审查相关证据。",
+      "检查架构中 LLM 输出是否不能直接 hard allow 交易、设置仓位、修改止损止盈或调用 broker action。",
+      "检查例外审批是否包含 model_card、dataset_card、eval_report、calibration_report、monitoring_plan、rollback_plan、human_approval 和 Trading Engineering owner。"
+    ],
+    "risk_notes": [
+      "AI Engineering 只沉淀 LLM 角色边界、评估、校准、审计、human review、安全降级和工具权限规则。",
+      "Trading Engineering 管理数值预测模型、K 线/特征工程、回测、fill model、风控阈值、仓位、订单执行和实盘交易风控本体。",
+      "OCC/Fed/FDIC 2026 模型风险指南仅作为模型治理类比来源，不能作为 GenAI/agentic AI 能力边界的直接证据。",
+      "FinTradeBench 是金融推理 benchmark/preprint 证据，不能过度推广为所有市场、所有时间框架、所有 LLM 的定论。",
+      "本条与 role split matrix 子项互补，后续可在不改变语义的情况下合并为同一知识 family。"
+    ],
+    "citation_notes": "NIST AI RMF、FINRA 15-09、OCC/Fed/FDIC 模型风险治理资料支持治理、验证、监督和控制；ACL 2024 LLM calibration survey、金融 hallucination 研究和 FinTradeBench 支持 LLM 在置信度、金融事实一致性、数值/时间序列/交易信号推理上的限制；OpenAI usage policies 支持高影响金融自动化需要人工审查。",
+    "audit_patch_notes": {
+      "source_patch_notes": [
+        "将 src_fed_model_risk 更新或标注为 2026 OCC/Fed/FDIC revised model risk guidance，并明确其 generative AI / agentic AI 不在直接适用范围内，只作为模型风险治理、验证、监控和治理控制的 supporting source。",
+        "保留 NIST AI RMF 作为 AI 风险治理、生命周期管理、测量和管理来源。",
+        "保留 FINRA AI / FINRA 15-09 作为证券行业 AI/算法交易监督、测试验证、风险评估和控制来源。",
+        "将 ACL 2024 LLM confidence calibration survey、Deficiency of LLMs in Finance、FinTradeBench 升级为本条的直接能力限制或近直接证据。",
+        "保留 OpenAI Usage Policies 作为高影响金融自动化必须有人类审查的安全边界来源，但不要把它作为 LLM 金融预测性能证据。",
+        "补 Model Cards for Model Reporting，支持 intended use、limitations、evaluation procedures 和 out-of-scope use 文档化。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议改为：By default, LLM outputs must not be used as the primary numeric price forecast, final risk-threshold authority, position-sizing authority, or order-execution authority unless a validated_numeric_model exception is approved.",
+        "删除或弱化“LLM 不应作为主要价格预测器”的绝对化表述，改为 CEK-TA 默认工程边界和上线准入规则。",
+        "增加例外条件字段：exception_ticket_id、validated_numeric_model_id、model_card_id、dataset_card_id、eval_report_id、calibration_report_id、monitoring_plan_id、rollback_plan_id、human_approval_id、trading_engineering_owner。",
+        "增加默认允许角色：retriever、explainer、evidence_summarizer、candidate_scorer、reason_code_generator、human_review_assistant。",
+        "增加默认禁止角色：primary_price_forecaster、final_risk_gate、position_sizer、order_executor、stop_loss_or_take_profit_setter、broker_action_tool。",
+        "明确 LLM score、reason code 或自然语言判断不得直接 hard allow 交易；若进入 gating，只能作为可审计辅助信号，并受 deterministic final gate 约束。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 只沉淀 LLM 角色边界、评估、校准、审计、human review、安全降级和工具权限规则。",
+        "Trading Engineering 管理数值预测模型、K 线/特征工程、回测、fill model、风控阈值、仓位、订单执行和实盘交易风控本体。",
+        "知识库不得写入具体交易策略、阈值、仓位、止损止盈、账户配置、订单细节或私有交易事实。",
+        "如外接项目确需 LLM 参与数值预测，应以项目私有 validated_numeric_model 或 research experiment 处理，并由 Trading Engineering owner 签字。"
+      ],
+      "conflict_patch_notes": [
+        "与 cand_20260609_ai_engineering_capability_boundary_numeric_model_vs_llm_role_split_v1_001 高度重叠；建议本条作为原则父项，第二条作为职责矩阵子项，或合并为一个 formal knowledge family。",
+        "应与 runtime_final_gate_deterministic_engine_required、llm_role_boundary_no_direct_order_execution、llm_role_boundary_scorer_not_executor、calibration_threshold_requires_shadow_data 互链。",
+        "补充包记录当前未发现与 CEK-TA formal knowledge 的直接冲突；但候选仍不得进入默认指导。"
+      ],
+      "required_followups": [
+        "补 role_boundary_contract.md 或 architecture_boundary.md。",
+        "补 validated_numeric_model_exception_checklist。",
+        "补 role_split_matrix：LLM role、numeric model role、deterministic gate role、execution engine role。",
+        "在正式 draft 中写明 FinTradeBench 是 benchmark/preprint 性质，不能过度推广为所有市场、所有时间框架、所有 LLM 的定论。",
+        "在正式 draft 中写明 OCC 2026 model risk guidance 对 GenAI/agentic AI 的范围限制。"
+      ]
+    },
+    "allowed_llm_roles": [
+      "retriever",
+      "explainer",
+      "evidence_summarizer",
+      "candidate_scorer",
+      "reason_code_generator",
+      "human_review_assistant"
+    ],
+    "forbidden_default_roles": [
+      "primary_price_forecaster",
+      "final_risk_gate",
+      "position_sizer",
+      "order_executor",
+      "stop_loss_or_take_profit_setter",
+      "broker_action_tool"
+    ],
+    "validated_numeric_model_exception_required_fields": [
+      "exception_ticket_id",
+      "validated_numeric_model_id",
+      "model_card_id",
+      "dataset_card_id",
+      "eval_report_id",
+      "calibration_report_id",
+      "monitoring_plan_id",
+      "rollback_plan_id",
+      "human_approval_id",
+      "trading_engineering_owner"
+    ]
+  },
+  "assumptions": [
+    "外接项目提供项目事实、私有交易数据和策略上下文；CEK-TA 只沉淀可复用专业规则。",
+    "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。",
+    "本规则是 CEK-TA 内部工程安全边界，不是否定所有 LLM 金融预测研究的绝对科学结论。",
+    "任何 LLM 参与数值预测、风险阈值、仓位或执行的例外，都必须通过 validated_numeric_model 或 research experiment 审批链。"
+  ],
+  "source_evidence": [
+    {
+      "source_id": "src_fed_model_risk",
+      "source_title": "Supervisory Guidance on Model Risk Management",
+      "source_url": "https://www.federalreserve.gov/frrs/guidance/supervisory-guidance-on-model-risk-management.htm",
+      "source_type": "standard_or_risk_framework",
+      "publisher": "Federal Reserve",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "美国监管模型风险管理指南支持模型治理、独立验证、变更控制和持续监控；本条只将其作为模型风险治理类比来源，不把它当作 LLM 金融预测能力证据。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_nist",
+      "source_title": "AI Risk Management Framework | NIST",
+      "source_url": "https://www.nist.gov/itl/ai-risk-management-framework",
+      "source_type": "standard_or_risk_framework",
+      "publisher": "NIST",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "NIST AI RMF 支持在 AI 系统设计、部署、监控全生命周期中进行治理、风险映射、度量和管理。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_finra_ai",
+      "source_title": "AI in the Securities Industry | FINRA",
+      "source_url": "https://www.finra.org/rules-guidance/key-topics/fintech/report/artificial-intelligence-in-the-securities-industry/key-challenges",
+      "source_type": "standard_or_risk_framework",
+      "publisher": "FINRA",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "FINRA 关于证券行业 AI 的资料支持 AI 使用中的监督、测试、治理和合规风险控制。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_acl_2024_llm_confidence_calibration_survey",
+      "source_title": "A Survey of Confidence Estimation and Calibration in Large Language Models",
+      "source_url": "https://aclanthology.org/2024.naacl-long.366/",
+      "source_type": "paper",
+      "publisher": "ACL Anthology",
+      "published_at": "2024-06-01",
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "NAACL 2024 综述支持 LLM 置信度估计和校准需要专门验证，模型输出分数不能天然视为可靠概率或硬执行依据。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_arxiv_2023_llm_finance_hallucination",
+      "source_title": "Deficiency of Large Language Models in Finance: An Empirical Examination of Hallucination",
+      "source_url": "https://arxiv.org/abs/2311.15548",
+      "source_type": "paper",
+      "publisher": "arXiv",
+      "published_at": "2023-11-27",
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "该金融 hallucination 研究支持通用 LLM 在金融任务中可能出现事实不一致和幻觉风险，因此不能无验证承担高影响金融自动化职责。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_arxiv_2026_fintradebench",
+      "source_title": "FinTradeBench: A Financial Reasoning Benchmark for LLMs",
+      "source_url": "https://arxiv.org/abs/2603.19225",
+      "source_type": "paper",
+      "publisher": "arXiv",
+      "published_at": "2026-03-19",
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "medium",
+      "relevance": "high",
+      "evidence_summary": "FinTradeBench 作为金融推理 benchmark/preprint，提示当前 LLM 在数值、时间序列和交易信号推理上仍有挑战；该证据不能过度推广为所有市场和所有模型的绝对结论。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_openai_usage_policies_high_impact_finance",
+      "source_title": "OpenAI Usage Policies",
+      "source_url": "https://openai.com/policies/usage-policies/?Tag=TV%252525252520Segment",
+      "source_type": "official_doc",
+      "publisher": "OpenAI",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "medium",
+      "evidence_summary": "OpenAI 使用政策为高影响金融自动化提供安全边界参考：相关场景需要人工审查，不能无监督自动作出重大金融决策。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_finra_regulatory_notice_15_09",
+      "source_title": "Regulatory Notice 15-09: Guidance on Effective Supervision and Control Practices for Firms Engaging in Algorithmic Trading Strategies",
+      "source_url": "https://www.finra.org/industry/notices/15-09",
+      "source_type": "standard_or_risk_framework",
+      "publisher": "FINRA",
+      "published_at": "2015-03-01",
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "medium",
+      "evidence_summary": "FINRA 15-09 支持自动化交易系统在开发、测试、监督、控制、变更和合规沟通上的治理要求。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_hf_2023_financebench",
+      "source_title": "FinanceBench: A New Benchmark for Financial Question Answering",
+      "source_url": "https://huggingface.co/papers/2311.11944",
+      "source_type": "paper",
+      "publisher": "Hugging Face Papers",
+      "published_at": "2023-11-20",
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "medium",
+      "relevance": "medium",
+      "evidence_summary": "FinanceBench 作为金融问答 benchmark 说明金融领域需要可验证来源和严谨评估，支持本条的引用与评估边界。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_occ_fed_fdic_revised_model_risk_2026",
+      "source_title": "Model Risk Management: Revised Guidance",
+      "source_url": "https://occ.gov/news-issuances/bulletins/2026/bulletin-2026-13.html",
+      "source_type": "standard_or_risk_framework",
+      "publisher": "OCC / Federal Reserve / FDIC",
+      "published_at": "2026-04-17",
+      "accessed_at": "2026-06-09",
+      "version": "OCC Bulletin 2026-13 / SR 26-2",
+      "reliability": "high",
+      "relevance": "medium",
+      "evidence_summary": "2026 年 OCC/Fed/FDIC 修订模型风险指南支持模型治理、验证、变更控制和风险分层；需注明 generative AI 和 agentic AI 不在其直接范围内，只作为模型风险治理类比来源。",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 86,
+    "score_version": "1.0.0",
+    "primary_source_count": 2,
+    "supporting_source_count": 8,
+    "low_reliability_source_count": 0,
+    "limitations": [
+      "本条为 reviewed 知识，来源和审计补丁已记录；默认指导仍需后续人工治理升级 approved。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "docs/contracts/ai_engineering_gating_scoring_contract.md",
+      "docs/contracts/ai_engineering_knowledge_item_policy.md",
+      "docs/tasks/phase36_ai_engineering_gating_scoring_knowledge.md"
+    ],
+    "conflicts": [],
+    "resolution_summary": "未发现与当前 CEK-TA formal knowledge 的直接冲突；候选不会进入默认指导。",
+    "default_recommendation": "caveat_only_until_approved"
+  },
+  "review": {
+    "confidence": "medium",
+    "freshness": "time_sensitive",
+    "review_status": "reviewed",
+    "reviewer": "codex",
+    "reviewed_at": "2026-06-09",
+    "created_at": "2026-06-09",
+    "updated_at": "2026-06-09",
+    "open_questions": [
+      "是否后续把 principle 与 role_split_matrix 合并为同一 formal knowledge family，需要单独治理任务确认。",
+      "是否创建 role_boundary_contract.md、validated_numeric_model_exception_checklist 和 eval case 专项任务。"
+    ],
+    "decision_log": [
+      {
+        "at": "2026-06-09",
+        "actor": "external_ai",
+        "decision": "accepted_for_draft",
+        "reason": "补充证据已足够支撑 CEK-TA 内部默认安全边界：LLM 输出不应默认成为 primary numeric price forecasting、final risk-threshold authority 或 execution authority。ACL 2024 calibration survey、金融 hallucination 研究和 FinTradeBench 支持 LLM 在置信度、金融事实一致性、数值/时间序列/交易信号推理上的限制；NIST AI RMF、FINRA 15-09、OCC 2026 model risk guidance 和 OpenAI usage policies 支持治理、验证、监督、高影响金融场景 human review 与安全边界。但正式 draft 必须避免写成“LLM 永远不能预测价格”的普适科学定论，应写成默认禁止 + 例外审批的工程规则。",
+        "audit_result_id": "audit_result_phase36_capability_boundary_supplemental_reaudit_20260609_gpt55_pro"
+      },
+      {
+        "at": "2026-06-09",
+        "actor": "codex",
+        "decision": "converted_to_reviewed",
+        "reason": "按 Phase 36 批量审计结果优化候选并转为 formal reviewed；未升级 approved。",
+        "audit_result_id": "audit_result_phase36_capability_boundary_supplemental_reaudit_20260609_gpt55_pro"
+      }
+    ],
+    "approval_status": "not_requested",
+    "default_guidance_allowed": false,
+    "source_candidate_id": "cand_20260609_ai_engineering_capability_boundary_llm_not_primary_price_predictor_v1_001",
+    "ai_audit_result_id": "audit_result_phase36_capability_boundary_supplemental_reaudit_20260609_gpt55_pro",
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase36_capability_boundary_supplemental_reaudit_20260609_gpt55_pro",
+      "source_package_id": "phase36_capability_boundary_supplemental_audit_package_20260609",
+      "decision": "accepted_for_draft",
+      "reason": "补充证据已足够支撑 CEK-TA 内部默认安全边界：LLM 输出不应默认成为 primary numeric price forecasting、final risk-threshold authority 或 execution authority。ACL 2024 calibration survey、金融 hallucination 研究和 FinTradeBench 支持 LLM 在置信度、金融事实一致性、数值/时间序列/交易信号推理上的限制；NIST AI RMF、FINRA 15-09、OCC 2026 model risk guidance 和 OpenAI usage policies 支持治理、验证、监督、高影响金融场景 human review 与安全边界。但正式 draft 必须避免写成“LLM 永远不能预测价格”的普适科学定论，应写成默认禁止 + 例外审批的工程规则。",
+      "source_patch_notes": [
+        "将 src_fed_model_risk 更新或标注为 2026 OCC/Fed/FDIC revised model risk guidance，并明确其 generative AI / agentic AI 不在直接适用范围内，只作为模型风险治理、验证、监控和治理控制的 supporting source。",
+        "保留 NIST AI RMF 作为 AI 风险治理、生命周期管理、测量和管理来源。",
+        "保留 FINRA AI / FINRA 15-09 作为证券行业 AI/算法交易监督、测试验证、风险评估和控制来源。",
+        "将 ACL 2024 LLM confidence calibration survey、Deficiency of LLMs in Finance、FinTradeBench 升级为本条的直接能力限制或近直接证据。",
+        "保留 OpenAI Usage Policies 作为高影响金融自动化必须有人类审查的安全边界来源，但不要把它作为 LLM 金融预测性能证据。",
+        "补 Model Cards for Model Reporting，支持 intended use、limitations、evaluation procedures 和 out-of-scope use 文档化。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议改为：By default, LLM outputs must not be used as the primary numeric price forecast, final risk-threshold authority, position-sizing authority, or order-execution authority unless a validated_numeric_model exception is approved.",
+        "删除或弱化“LLM 不应作为主要价格预测器”的绝对化表述，改为 CEK-TA 默认工程边界和上线准入规则。",
+        "增加例外条件字段：exception_ticket_id、validated_numeric_model_id、model_card_id、dataset_card_id、eval_report_id、calibration_report_id、monitoring_plan_id、rollback_plan_id、human_approval_id、trading_engineering_owner。",
+        "增加默认允许角色：retriever、explainer、evidence_summarizer、candidate_scorer、reason_code_generator、human_review_assistant。",
+        "增加默认禁止角色：primary_price_forecaster、final_risk_gate、position_sizer、order_executor、stop_loss_or_take_profit_setter、broker_action_tool。",
+        "明确 LLM score、reason code 或自然语言判断不得直接 hard allow 交易；若进入 gating，只能作为可审计辅助信号，并受 deterministic final gate 约束。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 只沉淀 LLM 角色边界、评估、校准、审计、human review、安全降级和工具权限规则。",
+        "Trading Engineering 管理数值预测模型、K 线/特征工程、回测、fill model、风控阈值、仓位、订单执行和实盘交易风控本体。",
+        "知识库不得写入具体交易策略、阈值、仓位、止损止盈、账户配置、订单细节或私有交易事实。",
+        "如外接项目确需 LLM 参与数值预测，应以项目私有 validated_numeric_model 或 research experiment 处理，并由 Trading Engineering owner 签字。"
+      ],
+      "conflict_patch_notes": [
+        "与 cand_20260609_ai_engineering_capability_boundary_numeric_model_vs_llm_role_split_v1_001 高度重叠；建议本条作为原则父项，第二条作为职责矩阵子项，或合并为一个 formal knowledge family。",
+        "应与 runtime_final_gate_deterministic_engine_required、llm_role_boundary_no_direct_order_execution、llm_role_boundary_scorer_not_executor、calibration_threshold_requires_shadow_data 互链。",
+        "补充包记录当前未发现与 CEK-TA formal knowledge 的直接冲突；但候选仍不得进入默认指导。"
+      ],
+      "required_followups": [
+        "补 role_boundary_contract.md 或 architecture_boundary.md。",
+        "补 validated_numeric_model_exception_checklist。",
+        "补 role_split_matrix：LLM role、numeric model role、deterministic gate role、execution engine role。",
+        "在正式 draft 中写明 FinTradeBench 是 benchmark/preprint 性质，不能过度推广为所有市场、所有时间框架、所有 LLM 的定论。",
+        "在正式 draft 中写明 OCC 2026 model risk guidance 对 GenAI/agentic AI 的范围限制。"
+      ]
+    },
+    "approved_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "contribution": {
+    "contribution_id": null,
+    "source_project": null,
+    "sanitization_status": "not_applicable",
+    "private_data_removed": true,
+    "generic_mapping_notes": "Phase 36 public-source AI Engineering candidate; no project-private trading facts included."
+  },
+  "copyright": {
+    "stores_full_text": false,
+    "stores_long_quote": false,
+    "summary_only": true,
+    "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+    "reuse_risk": "low"
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于提醒外接项目声明 LLM 与数值模型、确定性风控、执行引擎和人工 owner 的职责边界。",
+      "用于审计 LLM scoring/gating 项目是否存在越权执行、未校准置信度、无人工审查或无回滚方案。",
+      "用于 reviewed/audit 模式下带 caveat 引用能力边界和例外审批条件。"
+    ],
+    "not_allowed": [
+      "不得据此生成买卖点、仓位、杠杆、止损止盈或实盘执行指令。",
+      "不得把 reviewed/caveat_only 当作 approved/default guidance。",
+      "不得把本条解释为 LLM 金融预测研究在所有条件下都不可能成立。"
+    ],
+    "required_context": [
+      "project_type",
+      "task_type",
+      "mode",
+      "strategy_version",
+      "data_boundary",
+      "review_status"
+    ],
+    "fallback_behavior": "cite_with_caveat"
+  },
+  "machine_gate": {
+    "default_guidance": "caveat_only",
+    "reason": "formal reviewed only; accepted_for_draft is not approved; default guidance requires later human governance approval.",
+    "requires_human_escalation": true,
+    "blocking_reasons": [
+      "not_approved",
+      "phase36_batch_reviewed_only"
+    ],
+    "checked_at": "2026-06-09",
+    "gate_version": "1.0.0",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "recommended_extra_sources": [
+    {
+      "title": "将 src_fed_model_risk 更新或标注为 2026 OCC/Fed/FDIC revised model risk guidance，并明确其 generative AI / agentic AI 不在直接适用范围内，只作为模型风险治理、验证、监控和治理控制的 supporting source。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_1"
+    },
+    {
+      "title": "保留 NIST AI RMF 作为 AI 风险治理、生命周期管理、测量和管理来源。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_2"
+    },
+    {
+      "title": "保留 FINRA AI / FINRA 15-09 作为证券行业 AI/算法交易监督、测试验证、风险评估和控制来源。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_3"
+    },
+    {
+      "title": "将 ACL 2024 LLM confidence calibration survey、Deficiency of LLMs in Finance、FinTradeBench 升级为本条的直接能力限制或近直接证据。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_4"
+    },
+    {
+      "title": "保留 OpenAI Usage Policies 作为高影响金融自动化必须有人类审查的安全边界来源，但不要把它作为 LLM 金融预测性能证据。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_5"
+    },
+    {
+      "title": "补 Model Cards for Model Reporting，支持 intended use、limitations、evaluation procedures 和 out-of-scope use 文档化。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_6"
+    }
+  ]
+}

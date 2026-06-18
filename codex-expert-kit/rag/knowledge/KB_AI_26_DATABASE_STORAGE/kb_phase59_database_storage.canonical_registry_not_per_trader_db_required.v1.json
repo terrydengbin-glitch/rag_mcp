@@ -1,0 +1,417 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_phase59_database_storage.canonical_registry_not_per_trader_db_required.v1",
+  "title": "canonical registry 默认集中治理，AI Trader 默认逻辑隔离；物理分库作为例外",
+  "metadata": {
+    "partition_id": "KB_AI_26_DATABASE_STORAGE",
+    "domain": "ai_engineering",
+    "subdomain": "database_storage_engineering",
+    "rule_type": "canonical_registry_storage_rule",
+    "claim_type": "governance_storage_constraint",
+    "content_type": "json",
+    "project_binding": "none",
+    "classification_notes": "本条主归属 AI Engineering / Database Storage。它不规定交易本体，而是约束 canonical registry、audit ledger 与 AI Trader unit 逻辑隔离的关系。",
+    "tree_node_id": "kt.ai_engineering.database_storage_engineering.relational_core_schema",
+    "tree_path": "CEK-TA / AI Engineering / Database Data Contract And Storage Engineering / Relational Core Schema",
+    "canonical_node_id": "kt.ai_engineering.database_storage_engineering.relational_core_schema",
+    "canonical_tree_path": "CEK-TA / AI Engineering / Database Data Contract And Storage Engineering / Relational Core Schema",
+    "risk_level": "medium_high",
+    "used_for": [
+      "ai_trader_database_architecture_review",
+      "canonical_registry_design_audit",
+      "audit_ledger_boundary_review",
+      "external_project_rag_retrieval"
+    ],
+    "related_nodes": [
+      "kt.ai_engineering.database_storage_engineering.audit_log_ledger",
+      "kt.ai_engineering.database_storage_engineering.data_contract_lineage",
+      "kt.ai_engineering.database_storage_engineering.feature_store_storage",
+      "kt.project_support.integration_contract"
+    ],
+    "source_candidate_id": "cand_20260617_phase59_canonical_registry_not_per_trader_db_001",
+    "research_task_id": "P59-MFS-003",
+    "phase": "Phase 59",
+    "formalization_task_id": "CEK-TA-570",
+    "review_mode": "reviewed_caveat_only"
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "project_lifecycle",
+    "data_granularity": "registry_audit_ledger_dataset_manifest",
+    "project_type": "trading_ai_support_layer",
+    "applies_when": [
+      "外接项目需要管理多个 AI Trader、Unit、策略版本、训练集版本或模型版本",
+      "需要审计 dataset、feature schema、label policy、readiness、promotion 和回滚链路",
+      "需要防止向量库、日志片段、临时文件或 notebook 输出成为事实主库"
+    ],
+    "not_applicable_when": [
+      "只讨论离线一次性实验且不进入训练、评估、发布、审计或外部项目复用",
+      "用户要求真实数据库 DDL、分片方案、云服务选型或成本估算",
+      "用户要求交易信号、买卖点、仓位、杠杆、止损止盈或实盘执行建议"
+    ]
+  },
+  "content": {
+    "statement": "Trading AI 项目应默认保留中央 canonical registry / audit ledger 作为 unit、dataset、manifest、feature schema、audit trace、readiness 和 lineage 的事实索引与治理入口。AI Trader、Unit 或策略版本默认通过 unit_id、unit_version、strategy_id、strategy_version 等字段逻辑隔离；当合规隔离、客户密钥、监管边界、地域隔离、超大规模或运维约束成立时，可以采用物理分库、schema 隔离或 hybrid pool/silo/bridge 架构，但必须保留全局索引、跨库 lineage reconciliation 和 audit trace。向量库、cache、日志片段或临时文件不得替代 canonical registry / audit ledger。",
+    "rationale": "本条不是数据库部署命令，不创建真实数据库，不强制单体库或分布式库；它只约束事实索引、审计账本和逻辑隔离边界。",
+    "procedure": [
+      "Confirm the request is about storage, feature-store, dataset manifest, registry, lineage, or audit-ledger boundaries.",
+      "Return source evidence, reviewed status, machine gate, applicability, and non-applicability boundaries with the answer.",
+      "Route trading signal, position, leverage, stop-loss, take-profit, live execution, or risk-threshold requests to the proper Trading Engineering owner.",
+      "Treat this item as reviewed/caveat_only and never as approved default guidance or a hard gate."
+    ],
+    "examples": [],
+    "anti_patterns": [
+      "Treating a wide analytical export as the canonical raw/high-frequency store.",
+      "Using vector DB, cache, notebook outputs, or log fragments as the canonical registry or audit ledger.",
+      "Reading dataset readiness, dataset_hash, or feature availability as model quality, launch permission, or trading permission.",
+      "Turning this reviewed/caveat_only item into DDL, migration, database vendor mandate, trade execution advice, default guidance, or hard gate."
+    ],
+    "validation": [
+      "source_evidence is non-empty and official/internal contract sources are present.",
+      "review.review_status is reviewed and machine_gate.default_guidance is caveat_only.",
+      "approved_allowed, default_guidance_allowed, hard_gate_allowed, trade_execution_advice_allowed, and ddl_or_migration_allowed are all false.",
+      "MCP/SearchLab/KnowledgeTree can retrieve the item from formal knowledge index after rebuild."
+    ],
+    "risk_notes": [
+      "本条不反对在超大规模或合规隔离场景做物理分区、schema 隔离或多库部署；但这些必须由单独架构任务证明。",
+      "本条不替代安全、权限、备份恢复、迁移和 retention 的完整数据库治理知识。",
+      "本条不证明某一数据库技术优于其他技术。",
+      "物理分库不是默认要求，但在合规隔离、客户密钥、监管边界、地域隔离、超大规模、性能或运维约束成立时可以作为例外设计。",
+      "采用物理拆库或 hybrid 架构时，必须定义 tenant isolation policy、cross-database lineage reconciliation、全局 audit trace 和回滚策略。",
+      "不得输出数据库 DDL。",
+      "不得输出 migration。",
+      "不得作为默认强制架构。",
+      "不得作为 hard gate。",
+      "Reviewed/caveat_only only; not approved and not default guidance.",
+      "This item does not create a database, execute a migration, mandate a vendor, or provide trading execution advice."
+    ],
+    "citation_notes": "Phase 42 内部契约支撑 canonical facts、audit_trace_id 和 registry/ledger 事实存储；Feast 支撑统一访问层抽象底层数据基础设施；Iceberg 支撑逻辑数据集与物理布局解耦；ClickHouse/kdb+ 仅作为高频数据物理分层参考。",
+    "required_fields_or_contract": [
+      "canonical_registry_id",
+      "audit_trace_id",
+      "unit_id",
+      "unit_version",
+      "tenant_isolation_policy",
+      "cross_database_lineage_reconciliation",
+      "global_audit_trace_policy",
+      "rollback_policy"
+    ],
+    "sample_chain": [],
+    "audit_patch_notes": {
+      "source_patch_notes": [
+        "Feast Registry 可作为 central feature metadata catalog 证据。",
+        "OpenLineage 可作为 dataset/job/run lineage metadata 证据。",
+        "Azure SQL / AWS SaaS tenant isolation 文档应作为物理隔离例外证据。"
+      ],
+      "content_patch_notes": [
+        "central canonical registry / audit ledger 是治理默认值，不是绝对物理单库要求。",
+        "AI Trader 可以逻辑隔离；当合规、密钥、性能、地域、客户隔离要求成立时，可以物理拆分，但必须保留全局索引或跨库 lineage。"
+      ],
+      "boundary_patch_notes": [
+        "不得输出数据库 DDL。",
+        "不得输出 migration。",
+        "不得作为默认强制架构。",
+        "不得作为 hard gate。"
+      ],
+      "conflict_patch_notes": [
+        "与 Phase 42 canonical facts / audit_trace / dataset manifest 不冲突。",
+        "与多租户合规隔离不冲突，但必须显式加入例外策略。"
+      ]
+    }
+  },
+  "assumptions": [
+    "外接项目可按性能、规模和安全需求选择不同物理存储，但必须保留可审计 canonical identity。",
+    "unit_id / unit_version 是逻辑隔离，不代表物理分库。",
+    "本候选通过严格审计前不得进入正式 reviewed 知识库。",
+    "pool / silo / bridge 三类隔离模型需要在外接项目架构任务中明确选择和证明。",
+    "compliance_isolation_required、customer_key_required、regulatory_boundary_required、scale_sharding_required 等例外字段应在 reviewed 前补齐或声明不适用。"
+  ],
+  "source_evidence": [
+    {
+      "source_id": "src_internal_phase42_contract",
+      "source_title": "Phase 42 Database Storage Contract",
+      "source_url": "docs/contracts/phase42_database_storage_contract.md",
+      "source_type": "internal_contract",
+      "publisher": "CEK-TA",
+      "published_at": null,
+      "accessed_at": "2026-06-17",
+      "version": null,
+      "reliability": "medium_high",
+      "relevance": "high",
+      "evidence_summary": "CEK-TA internal contract defines canonical records, audit trace, relational facts, dataset manifests and storage governance boundaries.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_p59_feast_intro",
+      "source_title": "Feast documentation",
+      "source_url": "https://docs.feast.dev/",
+      "source_type": "official_doc",
+      "publisher": "Feast",
+      "published_at": null,
+      "accessed_at": "2026-06-17",
+      "version": null,
+      "reliability": "high",
+      "relevance": "medium_high",
+      "evidence_summary": "Feast describes a feature platform that abstracts underlying data infrastructure for training and serving feature access.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_p59_iceberg_partitioning",
+      "source_title": "Partitioning",
+      "source_url": "https://iceberg.apache.org/docs/latest/partitioning/",
+      "source_type": "official_doc",
+      "publisher": "Apache Iceberg",
+      "published_at": null,
+      "accessed_at": "2026-06-17",
+      "version": null,
+      "reliability": "high",
+      "relevance": "medium",
+      "evidence_summary": "Iceberg supports hidden partitioning and partition evolution, illustrating logical/physical decoupling.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_p59_kx_architecture",
+      "source_title": "Architecture",
+      "source_url": "https://code.kx.com/q/architecture/",
+      "source_type": "official_doc",
+      "publisher": "KX",
+      "published_at": null,
+      "accessed_at": "2026-06-17",
+      "version": null,
+      "reliability": "high",
+      "relevance": "medium",
+      "evidence_summary": "KX architecture documentation illustrates specialized data services for high-volume real-time and historical data.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_p59_feast_registry",
+      "source_title": "Registry",
+      "source_url": "https://docs.feast.dev/getting-started/components/registry",
+      "source_type": "official_doc",
+      "publisher": "Feast",
+      "published_at": null,
+      "accessed_at": "2026-06-17",
+      "version": null,
+      "reliability": "high",
+      "relevance": "medium_high",
+      "evidence_summary": "Feast documents a registry as a source of truth for feature definitions and metadata, supporting a central metadata registry pattern.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_p59_openlineage_object_model",
+      "source_title": "OpenLineage object model",
+      "source_url": "https://openlineage.io/docs/spec/object-model/",
+      "source_type": "official_doc",
+      "publisher": "OpenLineage",
+      "published_at": null,
+      "accessed_at": "2026-06-17",
+      "version": null,
+      "reliability": "high",
+      "relevance": "medium_high",
+      "evidence_summary": "OpenLineage object model supports job, run and dataset lineage metadata, relevant to cross-store lineage reconciliation.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_p59_azure_sql_saas_tenancy_patterns",
+      "source_title": "SaaS tenancy app design patterns",
+      "source_url": "https://learn.microsoft.com/en-us/azure/azure-sql/database/saas-tenancy-app-design-patterns?view=azuresql",
+      "source_type": "official_doc",
+      "publisher": "Microsoft Azure",
+      "published_at": null,
+      "accessed_at": "2026-06-17",
+      "version": null,
+      "reliability": "high",
+      "relevance": "medium_high",
+      "evidence_summary": "Azure SQL documents multitenant SaaS design patterns, supporting tenant isolation as an explicit architecture choice rather than a default per-trader database split.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_p59_aws_saas_bridge_model",
+      "source_title": "The bridge model",
+      "source_url": "https://docs.aws.amazon.com/whitepapers/latest/saas-tenant-isolation-strategies/the-bridge-model.html",
+      "source_type": "official_doc",
+      "publisher": "AWS",
+      "published_at": null,
+      "accessed_at": "2026-06-17",
+      "version": null,
+      "reliability": "high",
+      "relevance": "medium",
+      "evidence_summary": "AWS documents bridge-style SaaS tenant isolation, supporting hybrid isolation choices when compliance, scale, or operations require physical separation.",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "medium_high",
+    "score": 84.0,
+    "primary_source_count": 8,
+    "source_count": 8,
+    "limitations": [
+      "中央 registry / audit ledger 字段本体主要来自 CEK-TA 内部契约，需外部审计确认。",
+      "外部资料证明逻辑/物理解耦和访问抽象，不直接证明 CEK-TA 的全部字段名。"
+    ],
+    "source_quality_notes": [
+      "Reviewed/caveat_only: sources support architecture and contract boundaries, not database mandates, trading advice, or model-performance claims.",
+      "Official technology and vendor documents are implementation-pattern evidence and must not be treated as mandatory CEK-TA dependencies."
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none_known_in_visible_context",
+    "checked_against": [
+      "Phase 42 Database / Storage reviewed knowledge",
+      "Phase 43 External Project AI Memory contract",
+      "Phase 55 runtime acceptance baseline"
+    ],
+    "conflicts": [],
+    "resolution_summary": "未发现与可见正式知识直接冲突；本条将 unit/trader 隔离定义为逻辑字段，避免物理分库默认化。",
+    "approval_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "review": {
+    "review_status": "reviewed",
+    "confidence": "medium_high",
+    "freshness": "mixed",
+    "reviewer": "external_ai_strict_audit_and_codex_backwrite",
+    "reviewed_at": "2026-06-17",
+    "approval_allowed": false,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "open_questions": [
+      "将标题改为“central registry 默认集中治理，AI Trader 默认逻辑隔离；物理分库作为例外”。",
+      "补充 tenant isolation policy，明确 pool / silo / bridge 三类隔离模型。",
+      "补充 compliance_isolation_required、customer_key_required、regulatory_boundary_required、scale_sharding_required 等例外字段。",
+      "补充 cross-database lineage reconciliation 方案，防止物理拆库后 lineage 丢失。"
+    ],
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase59_reviewed_preparation_20260617_strict_v1",
+      "candidate_id": "cand_20260617_phase59_canonical_registry_not_per_trader_db_001",
+      "research_task_id": "P59-MFS-003",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "medium_high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "trade_execution_advice_allowed": false,
+      "ddl_or_migration_allowed": false,
+      "upstream_candidate_audit_result_id": "audit_result_phase59_microstructure_feature_store_candidate_20260617_strict_v1"
+    },
+    "audit_log": [
+      {
+        "at": "2026-06-17",
+        "actor": "codex",
+        "action": "created",
+        "reason": "根据 Phase 59 用户架构建议和专业资料搜索生成候选知识。"
+      },
+      {
+        "at": "2026-06-17",
+        "actor": "external_ai_strict_audit",
+        "action": "phase59_candidate_audit_imported",
+        "reason": "accepted_for_draft / confidence=medium",
+        "audit_result_id": "audit_result_phase59_microstructure_feature_store_candidate_20260617_strict_v1",
+        "patch_notes": {
+          "source": [
+            "Feast Registry 可作为 central feature metadata catalog 证据。",
+            "OpenLineage 可作为 dataset/job/run lineage metadata 证据。",
+            "Azure SQL / AWS SaaS tenant isolation 文档应作为物理隔离例外证据。"
+          ],
+          "content": [
+            "central canonical registry / audit ledger 是治理默认值，不是绝对物理单库要求。",
+            "AI Trader 可以逻辑隔离；当合规、密钥、性能、地域、客户隔离要求成立时，可以物理拆分，但必须保留全局索引或跨库 lineage。"
+          ],
+          "boundary": [
+            "不得输出数据库 DDL。",
+            "不得输出 migration。",
+            "不得作为默认强制架构。",
+            "不得作为 hard gate。"
+          ],
+          "conflict": [
+            "与 Phase 42 canonical facts / audit_trace / dataset manifest 不冲突。",
+            "与多租户合规隔离不冲突，但必须显式加入例外策略。"
+          ]
+        }
+      },
+      {
+        "at": "2026-06-17",
+        "actor": "external_ai_strict_audit",
+        "action": "phase59_reviewed_preparation_audit_passed",
+        "reason": "accepted_for_reviewed_caveat_only; approved/default/hard gate remain forbidden.",
+        "audit_result_id": "audit_result_phase59_reviewed_preparation_20260617_strict_v1"
+      },
+      {
+        "at": "2026-06-17",
+        "actor": "codex",
+        "action": "formal_reviewed_caveat_only_created",
+        "reason": "CEK-TA-570 materialized formal reviewed/caveat_only knowledge."
+      }
+    ],
+    "source_candidate_id": "cand_20260617_phase59_canonical_registry_not_per_trader_db_001",
+    "ai_audit_result_id": "audit_result_phase59_reviewed_preparation_20260617_strict_v1"
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于审计外接项目是否把每个 AI Trader 默认做成独立物理库。",
+      "用于提醒 AI IDE 保留 canonical registry、audit ledger、dataset manifest 和 audit_trace_id。",
+      "用于生成数据库/存储架构评审问题。"
+    ],
+    "not_allowed": [
+      "不得强制外接项目使用单一物理数据库。",
+      "不得否定合规隔离或超大规模场景下有证明的物理分区/多库设计。",
+      "不得生成交易信号、买卖点、仓位、杠杆、止损止盈或实盘执行建议。"
+    ]
+  },
+  "machine_gate": {
+    "default_guidance": "caveat_only",
+    "reason": "Formal reviewed/caveat_only only; not approved, not default guidance, not hard gate.",
+    "requires_human_escalation": true,
+    "hidden_from_default_queue": true,
+    "visible_in_default_guidance_queue": false,
+    "reviewed_allowed": true,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "trade_execution_advice_allowed": false,
+    "ddl_or_migration_allowed": false,
+    "database_selection_mandate_allowed": false
+  },
+  "contract_refs": [
+    {
+      "contract_id": "phase59_microstructure_feature_store_hybrid_snapshot_contract",
+      "path": "docs/contracts/phase59_microstructure_feature_store_hybrid_snapshot_contract.md",
+      "sections": [
+        "4.1 canonical_registry_identity",
+        "4.2 audit_ledger_identity",
+        "5 Owner Mapping"
+      ]
+    },
+    {
+      "contract_id": "phase42_database_storage_contract",
+      "path": "docs/contracts/phase42_database_storage_contract.md",
+      "sections": [
+        "canonical records",
+        "audit_trace_id",
+        "dataset_snapshot_manifest"
+      ]
+    }
+  ],
+  "workflow": {
+    "source_candidate_id": "cand_20260617_phase59_canonical_registry_not_per_trader_db_001",
+    "source_candidate_path": "codex-expert-kit/rag/candidates/KB_AI_26_DATABASE_STORAGE/cand_20260617_phase59_canonical_registry_not_per_trader_db_001.json",
+    "formalized_by_task_id": "CEK-TA-570",
+    "formalized_at": "2026-06-17",
+    "review_mode": "reviewed_caveat_only",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "contribution": {
+    "origin": "phase59_research_ingestion",
+    "private_data_removed": true,
+    "contains_project_private_strategy": false,
+    "contains_secret": false,
+    "contains_account_facts": false,
+    "formalized_from_candidate": "cand_20260617_phase59_canonical_registry_not_per_trader_db_001"
+  }
+}

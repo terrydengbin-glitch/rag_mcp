@@ -1,0 +1,59 @@
+{
+  "report_id": "phase32_rebuilt_archived_candidate_ui_report",
+  "task_id": "CEK-TA-494",
+  "generated_at": "2026-06-12",
+  "status": "pass",
+  "scope": {
+    "phase": "Phase 32",
+    "purpose": "将已重建且已有 formal reviewed 替代知识的 rejected 候选从普通已拒绝队列拆分为已重建归档。",
+    "does_not_change": [
+      "不删除 rejected 原始候选",
+      "不修改 rejected 原始审计结论",
+      "不把 reviewed 升级为 approved",
+      "不启用 default guidance",
+      "不启用 hard gate"
+    ]
+  },
+  "contract": {
+    "new_queue_group": "rebuilt_archived",
+    "new_stage": "rebuilt_archived",
+    "classification_rule": "原候选为 rejected，且存在同 research_task_id 或派生 research_task_id 的替代候选，替代候选已回链 formal reviewed 知识。",
+    "ui_label": "已重建归档"
+  },
+  "counts_after_regeneration": {
+    "candidate_total": 483,
+    "rebuilt_archived_queue_group": 14,
+    "ordinary_rejected_queue_group": 0,
+    "replacement_candidate_id_present": 14
+  },
+  "deliverables": [
+    "codex-expert-kit/rag/scripts/build_ui_candidate_fixture.py",
+    "ui/src/types.ts",
+    "ui/src/components/StatusBadge.vue",
+    "ui/src/views/IngestionReview.vue",
+    "ui/src/data/phase23Candidates.ts",
+    "docs/index_tasks.md",
+    "docs/tasks/phase32_candidate_to_reviewed_workflow.md"
+  ],
+  "tests": [
+    {
+      "command": "python codex-expert-kit/rag/scripts/build_ui_candidate_fixture.py",
+      "status": "pass",
+      "result": "wrote ui/src/data/phase23Candidates.ts with 483 candidates"
+    },
+    {
+      "command": "python -m py_compile codex-expert-kit/rag/scripts/build_ui_candidate_fixture.py",
+      "status": "pass"
+    },
+    {
+      "command": "python codex-expert-kit/rag/scripts/validate_no_mojibake.py",
+      "status": "pass",
+      "result": "failure_count=0"
+    },
+    {
+      "command": "npm --prefix ui run build",
+      "status": "pass",
+      "notes": "Vite chunk size warning remains non-blocking and unrelated to this task."
+    }
+  ]
+}

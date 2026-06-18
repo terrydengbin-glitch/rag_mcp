@@ -1,0 +1,303 @@
+{
+  "schema_version": "1.1.0-candidate",
+  "candidate_id": "cand_20260617_phase60_p1_realtime_sim_health_monitor_required_001",
+  "research_task_id": "P60-P1-04",
+  "status": {
+    "review_status": "formalized",
+    "ingestion_decision": "formal_reviewed_created",
+    "decision_reason": "Phase 60 reviewed-preparation strict audit allowed this item to become formal reviewed/caveat_only.",
+    "created_at": "2026-06-17",
+    "updated_at": "2026-06-18"
+  },
+  "classification": {
+    "tree_node_id": "kt.live_execution",
+    "canonical_node_id": "kt.live_execution",
+    "tree_path": "CEK-TA / Trading Engineering / Live Execution",
+    "related_nodes": [
+      "kt.trading_engineering",
+      "kt.replay_simulation",
+      "kt.live_execution",
+      "kt.risk_management",
+      "kt.data_engineering",
+      "kt.market_microstructure"
+    ],
+    "partition_id": "KB_06_LIVE_EXECUTION",
+    "domain": "live_execution",
+    "subdomain": "environment_health_monitoring",
+    "rule_type": "runtime_observability_rule",
+    "claim_type": "health_evidence_requirement",
+    "used_for": [
+      "runtime_observability",
+      "paper_trading_monitoring",
+      "adapter_healthcheck",
+      "external_project_rag_retrieval"
+    ],
+    "classification_notes": "Phase 60 P1 增强环境治理候选；只用于 sandbox/replay/paper/canary 的测试、监控、晋级和 gap 审计，不接管策略、实盘执行或风控阈值。"
+  },
+  "claim": {
+    "claim_id": "claim_p60_p1_04",
+    "title": "realtime simulation 必须记录心跳、断线、延迟和数据 stale 状态",
+    "statement": "实时模拟和 sandbox execution 必须记录 heartbeat、disconnect、reconnect、latency、data stale、order event lag、adapter error 和 recovery evidence；这些指标只能说明环境健康和 adapter 稳定性，不等于交易许可或策略有效。",
+    "normalized_claim": "phase60.p1.realtime_sim_health_monitor_required.v1",
+    "evidence_summary": "Google SRE describes monitoring systems with symptoms, causes and golden signals such as latency, traffic, errors and saturation.；NautilusTrader separates backtest, sandbox and live contexts while sharing core runtime architecture.；CEK-TA internal contract defines EnvironmentManifest fields, owner boundaries and machine gate restrictions.",
+    "interpretation_notes": "本候选是 Phase 60 P1 增强治理知识，只允许外部审计后进入 accepted_for_draft；不得直接 reviewed、approved、default guidance 或 hard gate。",
+    "claim_strength": "medium_high",
+    "performance_claim": false
+  },
+  "applicability": {
+    "market": "general_with_platform_or_venue_specific_mapping",
+    "asset": "general",
+    "timeframe": "sandbox_replay_paper_or_live_canary_environment",
+    "data_granularity": "api_message_order_event_fill_event_health_metric_or_gap_report",
+    "project_type": "trading_ai_support_layer",
+    "applies_when": [
+      "外接项目设计 sandbox、UAT、testnet、replay、paper trading 或 live canary 环境治理",
+      "需要审计 adapter certification、scenario library、paper account state、runtime health、canary rollback 或 environment drift",
+      "需要把 Phase 60 P0 manifest/gap report 扩展为更完整的测试治理证据"
+    ],
+    "not_applicable_when": [
+      "需要生成买卖点、仓位、杠杆、止损止盈、风险阈值或实盘执行建议",
+      "需要直接证明策略有效、live-ready 或收益优势",
+      "没有平台、broker、exchange、API 版本、环境类型或数据来源证据"
+    ],
+    "assumptions": [
+      "候选用于 CEK-TA 通用支持层知识库，不包含外接项目私有策略参数。",
+      "每条候选都需要外部 AI/人工严格审计后才能进入 accepted_for_draft。",
+      "平台和工具来源只能作为 implementation pattern 或 supporting source。"
+    ],
+    "limitations": [
+      "P1 增强知识不能替代 P0 的 EnvironmentManifest、PromotionDecision 和 GapReport。",
+      "候选不能自动创建 reviewed、approved、default guidance 或 hard gate。",
+      "本候选不提供投资建议、订单建议、风险阈值或实盘许可。"
+    ]
+  },
+  "source_refs": [
+    {
+      "source_title": "Monitoring Distributed Systems",
+      "source_url": "https://sre.google/sre-book/monitoring-distributed-systems/",
+      "source_type": "engineering_book",
+      "publisher": "Google SRE",
+      "reliability": "high",
+      "score": 84,
+      "freshness": "stable",
+      "evidence_summary": "Google SRE describes monitoring systems with symptoms, causes and golden signals such as latency, traffic, errors and saturation.",
+      "limitations": [
+        "General SRE source; apply to trading environments only through CEK-TA boundary mapping."
+      ],
+      "source_id": "src_sre_monitoring",
+      "accessed_at": "2026-06-17",
+      "relevance": "medium_high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "NautilusTrader Architecture",
+      "source_url": "https://nautilustrader.io/docs/latest/concepts/architecture/",
+      "source_type": "framework_doc",
+      "publisher": "NautilusTrader",
+      "reliability": "high",
+      "score": 86,
+      "freshness": "time_sensitive",
+      "evidence_summary": "NautilusTrader separates backtest, sandbox and live contexts while sharing core runtime architecture.",
+      "limitations": [
+        "Framework-specific; use as environment implementation pattern."
+      ],
+      "source_id": "src_nautilus_arch",
+      "accessed_at": "2026-06-17",
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "Phase 60 Sandbox / Replay / Paper Environment Contract",
+      "source_url": "docs/contracts/phase60_sandbox_replay_paper_environment_contract.md",
+      "source_type": "internal_contract",
+      "publisher": "CEK-TA",
+      "reliability": "high",
+      "score": 88,
+      "freshness": "current",
+      "evidence_summary": "CEK-TA internal contract defines EnvironmentManifest fields, owner boundaries and machine gate restrictions.",
+      "limitations": [
+        "Internal schema; candidate requires external audit before accepted_for_draft or reviewed."
+      ],
+      "source_id": "src_phase60_env_contract",
+      "accessed_at": "2026-06-17",
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "source_count": 3,
+    "primary_source_count": 2,
+    "quality_level": "medium_high",
+    "limitations": [
+      "候选来源需要外部严格审计；vendor/tool 文档不得过度泛化。"
+    ],
+    "freshness": "mixed"
+  },
+  "content": {
+    "statement": "实时模拟和 sandbox execution 必须记录 heartbeat、disconnect、reconnect、latency、data stale、order event lag、adapter error 和 recovery evidence；这些指标只能说明环境健康和 adapter 稳定性，不等于交易许可或策略有效。",
+    "required_fields_or_contract": [
+      "environment_id",
+      "environment_type",
+      "adapter_or_scenario_version",
+      "evidence_source_id",
+      "audit_trace_id",
+      "owner",
+      "known_limitations",
+      "not_live_permission",
+      "health_monitor_not_live_permission",
+      "heartbeat_policy",
+      "disconnect_event_id",
+      "reconnect_event_id",
+      "data_stale_policy",
+      "order_event_lag_policy",
+      "adapter_error_reason_code"
+    ],
+    "procedure": [
+      "识别环境类型、平台、broker/exchange、API 版本和数据来源。",
+      "记录候选主题所需的 evidence 字段、owner 和限制。",
+      "将通过/失败写入 gap report 或 promotion decision，不直接写成实盘许可。"
+    ],
+    "anti_patterns": [
+      "把 paper/replay/sandbox/canary 表现写成策略有效。",
+      "把 vendor-specific 行为泛化为所有市场。",
+      "把测试通过写成 approved、default guidance、hard gate 或自动交易许可。"
+    ],
+    "validation": [
+      "外部 AI/人工严格审计 source、content、boundary、conflict patch notes。",
+      "正式转换前做完整 KB 冲突、重复和 owner 边界检查。"
+    ],
+    "risk_notes": [
+      "测试环境的通过结果容易被误读为 live-ready。",
+      "环境健康、认证、场景覆盖或 canary 观察都不能替代 Risk/Live owner 的正式决策。",
+      "Phase 60 P1 只能作为增强治理证据，不替代 P0 EnvironmentManifest / PromotionDecision / GapReport。",
+      "certification、scenario、paper reset、health、canary、drift 结果不得解释为 live-ready、收益证明、交易许可或 hard gate。"
+    ]
+  },
+  "review": {
+    "review_status": "formalized",
+    "reviewed_by": "external_ai_strict_audit",
+    "reviewed_at": "2026-06-17",
+    "default_guidance_allowed": false,
+    "approved_allowed": false,
+    "hard_gate_allowed": false,
+    "notes": "Accepted for draft only. Requires reviewed-preparation audit before formal reviewed/caveat_only.",
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase60_p1_reviewed_preparation_20260618_strict_v1",
+      "package_id": "phase60_p1_reviewed_preparation_audit_package_20260617",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "medium_high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "formal_knowledge_id": "kb_phase60_live_execution.environment_health.monitor_required.v1",
+      "required_followups": [
+        "正式写入时保留 Google SRE 通用工程来源边界。",
+        "补充交易系统 adapter-specific heartbeat / reconnect 示例作为后续 reviewed 增强来源。",
+        "保留 health_monitor_not_live_permission=true。"
+      ],
+      "patch_notes": {
+        "source": [
+          "Google SRE 是通用工程来源，必须通过 CEK-TA trading boundary mapping 使用。"
+        ],
+        "content": [
+          "health monitor 证明环境健康和 adapter 稳定性，不证明策略有效。"
+        ],
+        "boundary": [
+          "不得交易许可，不得 hard gate。"
+        ],
+        "conflict": [
+          "与 Live Execution observability 不冲突，但 owner 要保留。"
+        ]
+      }
+    }
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "known_conflicts": [],
+    "potential_conflicts": [
+      "可能与 Phase 60 P0、Phase 58 环境等效链条、Phase 37 Replay/Live/Risk 知识重叠；正式转换前必须做重复和 owner 边界检查。"
+    ],
+    "resolution_summary": "Phase 60 P1 candidate audit accepted this item for draft only; reviewed/approved/default guidance/hard gate remain forbidden.",
+    "approval_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于提醒外接项目记录环境治理证据和 gap report。",
+      "用于审计 sandbox/replay/paper/canary 是否保留 owner 和边界。",
+      "用于阻止 AI 把测试环境结果泛化为 live-ready。"
+    ],
+    "not_allowed": [
+      "不得生成买卖点、仓位、杠杆、止损止盈或风险阈值。",
+      "不得授权实盘、自动拒单、自动停机或 hard gate。",
+      "不得把 candidate 当作正式 reviewed 或 approved 知识。"
+    ]
+  },
+  "machine_gate": {
+    "default_guidance": "deny",
+    "reviewed_allowed": false,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "trade_execution_advice_allowed": false,
+    "risk_threshold_advice_allowed": false,
+    "requires_human_escalation": true,
+    "reason": "accepted_for_draft only; reviewed-preparation audit required before formal reviewed/caveat_only."
+  },
+  "conversion_target": {
+    "proposed_knowledge_id": "kb_phase60_live_execution.environment_health.monitor_required.v1",
+    "target_partition": "KB_06_LIVE_EXECUTION",
+    "target_review_status": "accepted_for_draft_pending_reviewed_preparation",
+    "default_guidance_target": "deny",
+    "hard_gate_target": "deny"
+  },
+  "workflow": {
+    "stage": "formalized_reviewed",
+    "queue_group": "formalized",
+    "hidden_from_default_queue": true,
+    "next_action": "runtime_linkage_validation",
+    "formal_knowledge_id": "kb_phase60_live_execution.environment_health.monitor_required.v1",
+    "formal_review_status": "reviewed",
+    "current_task_id": "CEK-TA-586",
+    "visible_in_default_guidance_queue": false,
+    "formalization_allowed": true,
+    "formal_knowledge_path": "codex-expert-kit/rag/knowledge/KB_06_LIVE_EXECUTION/kb_phase60_live_execution.environment_health.monitor_required.v1.json",
+    "ai_audit_result_id": "audit_result_phase60_p1_reviewed_preparation_20260618_strict_v1",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "audit_log": [
+    {
+      "event": "candidate_created",
+      "at": "2026-06-17",
+      "by": "codex",
+      "notes": "Phase 60 P1 候选生成，等待严格审计。"
+    },
+    {
+      "event": "strict_ai_audit_imported",
+      "at": "2026-06-17",
+      "by": "codex",
+      "task_id": "CEK-TA-584",
+      "audit_result_id": "audit_result_phase60_p1_candidate_20260617_strict_v1",
+      "decision": "accepted_for_draft",
+      "notes": "Candidate moved to accepted_for_draft only; no formal reviewed knowledge created."
+    },
+    {
+      "event": "formal_reviewed_caveat_only_created",
+      "at": "2026-06-18",
+      "by": "codex",
+      "task_id": "CEK-TA-586",
+      "audit_result_id": "audit_result_phase60_p1_reviewed_preparation_20260618_strict_v1",
+      "formal_knowledge_id": "kb_phase60_live_execution.environment_health.monitor_required.v1",
+      "notes": "Formal reviewed/caveat_only created; no approved/default/hard gate."
+    }
+  ],
+  "copyright": {
+    "stores_full_text": false,
+    "stores_long_quote": false,
+    "summary_only": true
+  }
+}

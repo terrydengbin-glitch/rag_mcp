@@ -1,0 +1,195 @@
+{
+  "schema_version": "1.0.0",
+  "candidate_id": "cand_20260609_ai_engineering_leakage_train_test_contamination_block_v1_001",
+  "research_task_id": "RIT-P36-A-T09",
+  "status": {
+    "review_status": "accepted",
+    "ingestion_decision": "convert_to_knowledge_item",
+    "decision_reason": "Phase 36 batch AI audit decision: accepted_for_draft. 该状态不是 approved。",
+    "created_at": "2026-06-09",
+    "updated_at": "2026-06-09"
+  },
+  "classification": {
+    "tree_node_id": "kt.llm_training.model_training_engineering",
+    "tree_path": "CEK-TA / AI Engineering",
+    "related_nodes": [],
+    "partition_id": "KB_09_LLM_TRAINING",
+    "domain": "llm_training",
+    "subdomain": "leakage",
+    "rule_type": "risk_boundary",
+    "used_for": [
+      "llm_training",
+      "rag_engineering",
+      "mcp",
+      "vue_audit_ui"
+    ]
+  },
+  "claim": {
+    "claim_id": "claim_001",
+    "statement": "Training and evaluation data must be separated before feature selection, transforms, prompt/example selection, or model tuning to avoid contamination and optimistic metrics.",
+    "normalized_claim": "leakage.train_test_contamination_block.v1",
+    "evidence_summary": "scikit-learn official docs warn about leakage from fitting preprocessing on test data and about overusing test sets for tuning.",
+    "interpretation_notes": "This candidate is scoped to AI Engineering governance for LLM trade quality scoring/gating systems. It does not define trading signals, order execution rules, or strategy parameters.",
+    "claim_strength": "medium",
+    "performance_claim": false
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "general",
+    "data_granularity": "general",
+    "project_type": "trading_llm_assistant",
+    "applies_when": [
+      "Building or auditing LLM training, RAG, MCP, evaluation, or governance for trade quality scoring/gating assistants."
+    ],
+    "not_applicable_when": [
+      "The task asks for concrete trading entries, exits, position sizing, account-specific settings, or live order execution."
+    ],
+    "assumptions": [
+      "External projects provide project facts and private data; CEK-TA stores only generalized reusable knowledge."
+    ],
+    "limitations": [
+      "Candidate requires human or AI audit before conversion to formal reviewed knowledge."
+    ]
+  },
+  "source_refs": [
+    {
+      "source_id": "src_005",
+      "source_title": "Common pitfalls and recommended practices: Data leakage",
+      "source_url": "https://scikit-learn.org/stable/common_pitfalls.html",
+      "source_type": "official_doc",
+      "publisher": "scikit-learn",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "score": 88,
+      "relevance": "high",
+      "freshness": "time_sensitive",
+      "limitations": [],
+      "evidence_summary": "scikit-learn warns that data leakage makes evaluation overly optimistic and recommends splitting train/test before fitting transforms.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_006",
+      "source_title": "Cross-validation: evaluating estimator performance",
+      "source_url": "https://scikit-learn.org/stable/modules/cross_validation.html",
+      "source_type": "official_doc",
+      "publisher": "scikit-learn",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "score": 88,
+      "relevance": "high",
+      "freshness": "time_sensitive",
+      "limitations": [],
+      "evidence_summary": "scikit-learn documents evaluation with held-out data and warns against repeated test-set tuning.",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 88,
+    "score_version": "1.0.0",
+    "primary_source_count": 2,
+    "supporting_source_count": 0,
+    "low_reliability_source_count": 0,
+    "mandatory_downgrades": [],
+    "limitations": [
+      "Sources support the engineering boundary; final formal knowledge should add CEK-TA-specific examples and conflict links."
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "docs/contracts/ai_engineering_gating_scoring_contract.md",
+      "docs/contracts/ai_engineering_knowledge_item_policy.md"
+    ],
+    "conflicts": [],
+    "resolution_summary": "No direct conflict found in current CEK-TA formal knowledge. Candidate is not default guidance.",
+    "approval_allowed": true
+  },
+  "review": {
+    "confidence": "medium",
+    "freshness": "stable",
+    "reviewer": "external_ai_and_codex_alignment",
+    "reviewed_at": "2026-06-09",
+    "open_questions": [
+      "Should this candidate be split or merged with adjacent AI Engineering policy cards during formal draft conversion?"
+    ],
+    "audit_log": [
+      {
+        "at": "2026-06-09",
+        "actor": "codex",
+        "action": "created",
+        "reason": "Phase 36 first P0-Core AI Engineering collection batch."
+      },
+      {
+        "at": "2026-06-09",
+        "actor": "external_ai",
+        "action": "phase36_batch_audit_result_received",
+        "reason": "方向充分成立，statement 与 normalized_claim 对齐。训练与评估数据必须在特征选择、transform、prompt/example selection、model tuning 前分离；否则会造成 contamination 和 optimistic metrics。scikit-learn 官方文档直接支持该规则。",
+        "audit_result_id": "audit_result_phase36_ai_engineering_batch_05_of_10_20260609_gpt55_pro_strict_sources"
+      }
+    ],
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase36_ai_engineering_batch_05_of_10_20260609_gpt55_pro_strict_sources",
+      "source_package_id": "phase36_ai_engineering_candidate_audit_batch_05_of_10_20260609",
+      "decision": "accepted_for_draft",
+      "reason": "方向充分成立，statement 与 normalized_claim 对齐。训练与评估数据必须在特征选择、transform、prompt/example selection、model tuning 前分离；否则会造成 contamination 和 optimistic metrics。scikit-learn 官方文档直接支持该规则。",
+      "source_patch_notes": [
+        "保留 scikit-learn common pitfalls / data leakage 作为主来源。",
+        "保留 scikit-learn cross-validation 作为 held-out validation / final test separation 来源。",
+        "补第二批已二审通过的 dataset.deduplication_required，覆盖 exact/near duplicate overlap。",
+        "补 split_manifest / contamination_check_report 内部 schema。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 可基本保留。",
+        "建议扩展到 LLM 场景：prompt/example selection、RAG construction、fine-tuning、DPO selection、threshold tuning 都不得使用 final eval/test/gold。",
+        "建议字段：split_id、train_dataset_id、eval_dataset_id、gold_dataset_id、transform_fit_scope、prompt_selection_scope、overlap_check_id、contamination_status。",
+        "污染发现后应 block_promotion 或重建 split。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 管理 split、hash、overlap check 和 promotion gate。",
+        "原始交易样本、策略上下文和订单信息只保留引用或 hash。",
+        "业务等价样本判断可路由到项目 data owner 或 Trading Engineering。"
+      ],
+      "conflict_patch_notes": [
+        "与 dataset.train_validation_test_split_required、dataset.deduplication_required、eval_case.no_training_overlap_required 强互补。",
+        "与 leakage.label_in_input_forbidden 区分：字段泄漏 vs split contamination。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 contamination_check_report_schema.json。",
+        "补 action enum：block_promotion、rebuild_split、move_to_validation、create_new_holdout。",
+        "补 eval cases：test used for prompt selection、gold in RAG index、train/eval near duplicate。"
+      ],
+      "boundary": "accepted_for_draft 不是 approved；reviewed 不会进入默认指导。"
+    }
+  },
+  "copyright": {
+    "stores_full_text": false,
+    "stores_long_quote": false,
+    "summary_only": true,
+    "license_notes": "Only source links and short summaries are stored.",
+    "reuse_risk": "low"
+  },
+  "conversion_target": {
+    "proposed_knowledge_id": "kb_ai_engineering.leakage.train_test_contamination_block.v1",
+    "target_schema": "cek_ta_knowledge_item",
+    "target_review_status": "draft",
+    "skill_candidate": false,
+    "eval_case_candidate": true
+  },
+  "workflow": {
+    "stage": "formalized_reviewed",
+    "queue_group": "formalized",
+    "formal_knowledge_id": "kb_ai_engineering.leakage.train_test_contamination_block.v1",
+    "formal_review_status": "reviewed",
+    "ai_audit_result_id": "audit_result_phase36_ai_engineering_batch_05_of_10_20260609_gpt55_pro_strict_sources",
+    "hidden_from_default_queue": true,
+    "next_action": "none",
+    "formal_knowledge_path": "codex-expert-kit/rag/knowledge/KB_09_LLM_TRAINING/kb_ai_engineering.leakage.train_test_contamination_block.v1.json"
+  }
+}

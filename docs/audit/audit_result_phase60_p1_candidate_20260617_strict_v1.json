@@ -1,0 +1,265 @@
+{
+  "audit_result_id": "audit_result_phase60_p1_candidate_20260617_strict_v1",
+  "package_id": "phase60_p1_candidate_audit_package_20260617",
+  "audited_at": "2026-06-17",
+  "summary": {
+    "total": 6,
+    "accepted_for_draft": 6,
+    "needs_more_evidence": 0,
+    "rejected": 0,
+    "blocked": 0
+  },
+  "global_required_patch": [
+    "将所有 candidate.conflict_audit.approval_allowed 从 true 改为 false。",
+    "明确 Phase 60 P1 只能作为增强治理证据，不替代 P0 EnvironmentManifest / PromotionDecision / GapReport。",
+    "所有 certification、scenario、paper reset、health、canary、drift 结果均不得解释为 live-ready、收益证明、交易许可或 hard gate。",
+    "所有 FIX、broker、paper、canary、monitoring 来源必须保留平台、工具或工程语境边界。"
+  ],
+  "candidate_results": [
+    {
+      "candidate_id": "cand_20260617_phase60_p1_fix_broker_certification_required_001",
+      "research_task_id": "P60-P1-01",
+      "decision": "accepted_for_draft",
+      "confidence": "medium_high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "required_followups": [
+        "修复 conflict_audit.approval_allowed=false。",
+        "补 certification_result_not_live_permission=true。",
+        "补 certified_message_types、certified_order_lifecycle_cases、adapter_certification_scope。",
+        "明确 TT / Paxos / FIXSIM 均为平台或工具来源，不是 universal rule。"
+      ],
+      "patch_notes": {
+        "source": [
+          "TT 是 TT-specific certification process。",
+          "FIXSIM 是 vendor tool source，只能作为 testing workflow example。",
+          "Paxos 是 crypto brokerage FIX certification example。"
+        ],
+        "content": [
+          "certification 只能作为 adapter 契约测试证据。",
+          "不得证明策略收益、真实流动性或 live permission。"
+        ],
+        "boundary": [
+          "不得 reviewed、approved、default guidance 或 hard gate。"
+        ],
+        "conflict": [
+          "与 Phase 45 order semantics 可能重叠，需做 adapter/order lifecycle alias。"
+        ]
+      },
+      "field_patches": [
+        "certification_result_not_live_permission",
+        "adapter_certification_scope",
+        "certified_message_types",
+        "certified_order_lifecycle_cases"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260617_phase60_p1_replay_scenario_library_versioned_001",
+      "research_task_id": "P60-P1-02",
+      "decision": "accepted_for_draft",
+      "confidence": "medium",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "required_followups": [
+        "修复 conflict_audit.approval_allowed=false。",
+        "补 scenario_result_not_profit_evidence=true。",
+        "补 scenario_library_not_live_permission=true。",
+        "补更直接的回归测试、simulation reproducibility、dataset snapshot manifest 来源。",
+        "补最小 scenario schema：scenario_id、dataset_version、event_clock、seed、assumption_hash、expected_observation。"
+      ],
+      "patch_notes": {
+        "source": [
+          "J.P. Morgan / ABIDES 类资料支持 replay/simulation 区分，但不直接定义 CEK-TA scenario schema。",
+          "NautilusTrader 只能作为 framework context source。"
+        ],
+        "content": [
+          "scenario library 是测试覆盖证据，不是策略有效证据。"
+        ],
+        "boundary": [
+          "不得收益证明，不得 live-ready，不得 hard gate。"
+        ],
+        "conflict": [
+          "与 Phase 37 replay/simulation 可能重叠，应作为测试场景治理补充。"
+        ]
+      },
+      "field_patches": [
+        "scenario_result_not_profit_evidence",
+        "scenario_library_not_live_permission",
+        "scenario_id",
+        "dataset_version",
+        "event_clock",
+        "seed",
+        "assumption_hash",
+        "expected_observation"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260617_phase60_p1_paper_account_reset_trace_required_001",
+      "research_task_id": "P60-P1-03",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "required_followups": [
+        "修复 conflict_audit.approval_allowed=false。",
+        "补 paper_account_state_not_live_account_fact=true。",
+        "补 paper_account_reset_event_id、initial_cash、position_seed_ref、paper_broker_model_version。",
+        "补 paper_account_api_key_scope。"
+      ],
+      "patch_notes": {
+        "source": [
+          "Alpaca / QuantConnect 均为平台特定来源，不代表所有 broker。"
+        ],
+        "content": [
+          "paper reset、initial cash、position seed 会改变评估语义，必须进 audit trace。"
+        ],
+        "boundary": [
+          "不得混入 live account facts。"
+        ],
+        "conflict": [
+          "与 Phase 60 P0 paper_not_live 一致，应作为 paper account state 子项。"
+        ]
+      },
+      "field_patches": [
+        "paper_account_state_not_live_account_fact",
+        "paper_account_reset_event_id",
+        "initial_cash",
+        "position_seed_ref",
+        "paper_broker_model_version",
+        "paper_account_api_key_scope"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260617_phase60_p1_realtime_sim_health_monitor_required_001",
+      "research_task_id": "P60-P1-04",
+      "decision": "accepted_for_draft",
+      "confidence": "medium_high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "required_followups": [
+        "修复 conflict_audit.approval_allowed=false。",
+        "补 health_monitor_not_live_permission=true。",
+        "补 heartbeat_policy、disconnect_event_id、reconnect_event_id、data_stale_policy、order_event_lag_policy、adapter_error_reason_code。"
+      ],
+      "patch_notes": {
+        "source": [
+          "Google SRE 是通用工程来源，必须通过 CEK-TA trading boundary mapping 使用。",
+          "NautilusTrader 只能作为环境实现模式来源。"
+        ],
+        "content": [
+          "health monitor 证明环境健康和 adapter 稳定性，不证明策略有效。"
+        ],
+        "boundary": [
+          "不得交易许可，不得 hard gate。"
+        ],
+        "conflict": [
+          "与 Live Execution observability 不冲突，但 owner 要保留。"
+        ]
+      },
+      "field_patches": [
+        "health_monitor_not_live_permission",
+        "heartbeat_policy",
+        "disconnect_event_id",
+        "reconnect_event_id",
+        "data_stale_policy",
+        "order_event_lag_policy",
+        "adapter_error_reason_code"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260617_phase60_p1_live_canary_rollback_owner_required_001",
+      "research_task_id": "P60-P1-05",
+      "decision": "accepted_for_draft",
+      "confidence": "medium_high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "required_followups": [
+        "修复 conflict_audit.approval_allowed=false。",
+        "补 canary_not_full_live_permission=true。",
+        "补 canary_scope、stop_condition_ref、rollback_plan_ref、risk_owner、live_execution_owner、manual_review_required、residual_gap。",
+        "补交易系统特定 live canary / broker risk owner 来源后，才能考虑 reviewed/caveat_only。"
+      ],
+      "patch_notes": {
+        "source": [
+          "LaunchDarkly / Google SRE / Google Cloud Deploy 是软件部署来源，不是交易实盘风控来源。"
+        ],
+        "content": [
+          "live canary 是小范围真实环境观察阶段，不是 full live。"
+        ],
+        "boundary": [
+          "不得自动扩大到 full live。",
+          "不得默认 hard gate。",
+          "不得生成上线许可。"
+        ],
+        "conflict": [
+          "与 Phase 60 promotion decision / Risk owner 边界一致。"
+        ]
+      },
+      "field_patches": [
+        "canary_not_full_live_permission",
+        "canary_scope",
+        "stop_condition_ref",
+        "rollback_plan_ref",
+        "risk_owner",
+        "live_execution_owner",
+        "manual_review_required",
+        "residual_gap"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260617_phase60_p1_environment_drift_monitor_required_001",
+      "research_task_id": "P60-P1-06",
+      "decision": "accepted_for_draft",
+      "confidence": "medium_high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "required_followups": [
+        "修复 conflict_audit.approval_allowed=false。",
+        "补 drift_report_not_live_permission=true。",
+        "补 baseline_environment、comparison_environment、fill_drift、fee_drift、latency_drift、reject_drift、cancel_drift、order_state_drift、data_staleness_drift、risk_event_drift。",
+        "补 QuantConnect live reconciliation 或 Nautilus live reconciliation 作为 reviewed 前直接来源。"
+      ],
+      "patch_notes": {
+        "source": [
+          "QuantConnect / Alpaca 是平台特定来源。",
+          "Google SRE 是通用监控来源。"
+        ],
+        "content": [
+          "environment drift report 是差异趋势治理材料，不是通过证书。"
+        ],
+        "boundary": [
+          "不得收益证明，不得交易许可，不得 hard gate。"
+        ],
+        "conflict": [
+          "与 Phase 58 / Phase 60 P0 gap report 一致，应作为 drift 子报告。"
+        ]
+      },
+      "field_patches": [
+        "drift_report_not_live_permission",
+        "baseline_environment",
+        "comparison_environment",
+        "fill_drift",
+        "fee_drift",
+        "latency_drift",
+        "reject_drift",
+        "cancel_drift",
+        "order_state_drift",
+        "data_staleness_drift",
+        "risk_event_drift",
+        "human_review_required"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,82 @@
+{
+  "report_id": "phase50_vue3_lazy_loading_validation_report",
+  "generated_at": "2026-06-13",
+  "phase": "Phase 50",
+  "tasks": [
+    "CEK-TA-499",
+    "CEK-TA-500",
+    "CEK-TA-501",
+    "CEK-TA-502",
+    "CEK-TA-503",
+    "CEK-TA-504"
+  ],
+  "contract": "docs/contracts/phase50_vue3_data_loading_contract.md",
+  "static_json_fixtures": [
+    {
+      "path": "ui/public/data/phase23Candidates.json",
+      "count": 483,
+      "size_bytes": 5901659
+    },
+    {
+      "path": "ui/public/data/formalKnowledgeItems.json",
+      "count": 479,
+      "size_bytes": 3254907
+    },
+    {
+      "path": "ui/public/data/knowledgeTreeNodes.json",
+      "count": 121,
+      "size_bytes": 100907
+    }
+  ],
+  "bundle_result": {
+    "phase49_main_js_baseline_bytes": 7299060,
+    "phase50_main_js_bytes": 231749,
+    "phase50_main_js_gzip_bytes": 72710,
+    "reduction_ratio": 0.9683,
+    "status": "pass"
+  },
+  "tests": [
+    {
+      "command": "python -m py_compile codex-expert-kit/rag/scripts/build_ui_candidate_fixture.py codex-expert-kit/rag/scripts/build_ui_knowledge_fixture.py codex-expert-kit/rag/scripts/build_ui_knowledge_tree_fixture.py",
+      "result": "pass"
+    },
+    {
+      "command": "JSON envelope validation for ui/public/data/*.json",
+      "result": "pass"
+    },
+    {
+      "command": "npm --prefix ui run build",
+      "result": "pass"
+    },
+    {
+      "command": "npm --prefix ui run test:e2e",
+      "result": "pass",
+      "passed": 26,
+      "failed": 0
+    },
+    {
+      "command": "python codex-expert-kit/rag/scripts/validate_no_mojibake.py",
+      "result": "pass",
+      "failure_count": 0
+    }
+  ],
+  "runtime_checks": [
+    "知识树页会请求 /data/phase23Candidates.json",
+    "知识树页会请求 /data/formalKnowledgeItems.json",
+    "知识树页会请求 /data/knowledgeTreeNodes.json",
+    "候选页刷新后继续显示分页队列",
+    "知识树详情页刷新后继续显示知识卡和详情",
+    "关键页面显示中文加载状态"
+  ],
+  "governance_boundaries": {
+    "knowledge_status_changed": false,
+    "approved_or_default_guidance_changed": false,
+    "mcp_permission_changed": false,
+    "database_introduced": false
+  },
+  "residual_risks": [
+    "当前第一阶段仍一次性 fetch 三个静态 JSON；后续如知识库继续放大，可再拆成 index + page/detail JSON。",
+    "SearchLab 运行时测试数据仍是小型 TS fixture，当前不构成首包风险。",
+    "旧 TS 大 fixture 仍保留用于回滚，但已不再被 auditStore 直接 import。"
+  ]
+}

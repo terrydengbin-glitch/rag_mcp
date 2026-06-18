@@ -1,0 +1,431 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_ai_engineering.trade_data.raw_trade_record_required_fields.v1",
+  "title": "进入 LLM training/eval/review 链路的 raw trade record 必须具备最小 sc",
+  "metadata": {
+    "partition_id": "KB_09_LLM_TRAINING",
+    "domain": "llm_training",
+    "subdomain": "trade_data",
+    "rule_type": "checklist",
+    "content_type": "json",
+    "project_binding": "none",
+    "tree_node_id": "kt.llm_training.training_dataset_schema_engineering",
+    "tree_path": "CEK-TA / AI Engineering",
+    "canonical_node_id": "kt.llm_training.training_dataset_schema_engineering",
+    "canonical_tree_path": "CEK-TA / AI Engineering",
+    "risk_level": "medium",
+    "used_for": [
+      "llm_training",
+      "trading_gating_scoring",
+      "rag_engineering",
+      "mcp",
+      "vue_audit_ui"
+    ],
+    "source_candidate_id": "cand_20260609_ai_engineering_trade_data_raw_trade_record_required_fields_v1_001",
+    "research_task_id": "RIT-P36-B-S01",
+    "claim_type": "ai_governance_rule",
+    "classification_notes": "Phase 36 AI Engineering reviewed knowledge; UI tree and canonical node are inherited from candidate classification. Trading rule bodies must remain in Trading Engineering."
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "general",
+    "data_granularity": "general",
+    "project_type": "trading_llm_assistant",
+    "applies_when": [
+      "外接项目把原始交易记录转换为 trade candidate snapshot、labeling record、SFT example、preference pair 或 eval case。",
+      "raw trade record 会被用于训练、评估、SearchLab 审计、RAG 证据或 post-trade review。",
+      "项目需要用 schema validation 阻断缺字段、字段角色混乱或私有数据泄漏。"
+    ],
+    "not_applicable_when": [
+      "数据只是一次性人工说明，不进入训练、评估、RAG、MCP 或候选知识库。",
+      "需要定义具体订单生命周期、成交状态机或券商字段含义，应路由到 Trading Engineering。",
+      "用户需要具体买卖点、仓位、止损止盈、策略参数或实盘订单执行。"
+    ]
+  },
+  "content": {
+    "statement": "进入 LLM training/eval/review 链路的 raw trade record 必须具备最小 schema：`trade_record_id`、`trade_candidate_id`、`decision_timestamp`、`source_mode`、`snapshot_id`、`strategy_version_ref`、`instrument_ref`、`order_ref`、`fill_ref`、`fee_slippage_ref`、`outcome_context_ref`、`privacy_scan_status` 和 `license_status`；缺少核心字段时必须 `block_training` 或 `needs_more_evidence`。",
+    "rationale": "本条只定义 raw trade record schema、field role、缺失字段 gate 和隐私/license 状态；真实订单、账户、成交明细和策略规则留在外接项目或 Trading Engineering。 审计结论：补证后可以升级为 accepted_for_draft。rewritten statement 已与 normalized_claim 对齐：进入 LLM training/eval/review 链路的 raw trade record 必须具备最小 schema，包括 trade_record_id、trade_candidate_id、decision_timestamp、source_mode、snapshot_id、strategy_version_ref、instrument_ref、order_ref、fill_ref、fee_slippage_ref、outcome_context_ref、privacy_scan_status 和 license_status；缺少核心字段时 block_training 或 needs_more_evidence。JSON Schema / required properties、TFDV schema validation、Datasheets 和 QuantConnect orders/fills 来源足以支撑进入 draft。但正式 draft 应明确该字段集合是 CEK-TA minimum recommended schema，可按任务分层拆分 required / conditional_required。",
+    "procedure": [
+      "确认项目事实匹配 applies_when，且没有命中 not_applicable_when。",
+      "按 source_patch_notes 检查来源是否足够支撑 statement。",
+      "按 content_patch_notes 补齐正式实现、schema、字段和 checklist。",
+      "按 boundary_patch_notes 确认没有把交易规则本体、项目私有参数或实盘执行规则写入 AI Engineering。",
+      "保留 required_followups，后续由来源增强或治理任务继续关闭。"
+    ],
+    "examples": [],
+    "anti_patterns": [
+      "把 reviewed 知识当作 approved 默认指导。",
+      "把 AI Engineering 规则扩写成具体交易阈值、仓位、买卖点或执行参数。",
+      "忽略审计结果中的来源限制、适用范围和后续补强要求。"
+    ],
+    "validation": [
+      "source_evidence 至少 2 条，且没有 low-only 来源。",
+      "conflict_status 为 none 或 resolved。",
+      "review_status 为 reviewed 时 machine_gate 必须是 caveat_only。",
+      "MCP/SearchLab 默认指导不得把本条当作 approved 返回。"
+    ],
+    "risk_notes": [
+      "补证后仍需外部 AI/人工二次审计确认 required fields 是否过宽或应拆分。",
+      "本条不得要求 CEK-TA 存储真实订单、账户、broker token 或私有成交明细。",
+      "AI Engineering 定义 raw trade record schema、field_role、required/conditional-required 规则、缺失字段 gate 和审计 UI。",
+      "真实订单、账户、broker tokens、成交明细、策略规则、执行事实和券商字段语义保留在 Trading Engineering / project private domain。",
+      "不得把具体订单生命周期、成交状态机、K 线信号、策略参数、仓位或止损止盈规则写入 AI Engineering。",
+      "字段业务含义和条件必填逻辑由 Trading Engineering / project owner 提供，AI Engineering 只记录 owner_ref。",
+      "与 data_quality.missing_core_fields_block_training、dataset.schema_required、trade_candidate.snapshot_required_before_scoring 强相关，建议作为 trade_data schema family。",
+      "与第十批 training_data.trade_sample_schema_required 预计重复，应统一 canonical schema：raw_trade_record_required_fields 管原始记录，trade_sample_schema_required 管训练样本抽象层。",
+      "与 leakage.label_in_input_forbidden、outcome_schema.post_trade_fields_separated、data_privacy.no_secret_or_account_identifier_in_training 互链。",
+      "未发现需要 rejected 的直接冲突；accepted_for_draft 仍不等于 approved。",
+      "补 raw_trade_record_schema.json。",
+      "补 required_field / conditional_required / field_role enum。",
+      "补 external_ref_only 字段规范。",
+      "补 eval cases：missing trade_record_id、missing decision_timestamp、source_mode missing、order/fill refs included as raw sensitive data、post-trade outcome mixed into input。",
+      "补 Vue audit UI 字段：missing_core_fields、field_role_conflicts、privacy_scan_status、license_status。"
+    ],
+    "citation_notes": "JSON Schema 与 TFDV 支持 required fields、schema validation 和 missing feature anomaly；Datasheets 支持数据组成、采集过程、用途与限制文档化；QuantConnect orders 支持 order events/fill refs；OpenAI model optimization 支持先定义任务和 eval baseline 再做模型优化。",
+    "audit_patch_notes": {
+      "source_patch_notes": [
+        "保留 JSON Schema Specification / required properties 作为 required fields 和 schema validation 主来源。",
+        "保留 TFDV 作为 schema validation、missing feature anomaly、train/serve skew supporting source。",
+        "保留 Datasheets for Datasets 作为数据组成、采集过程、用途、限制和维护说明来源。",
+        "保留 QuantConnect Trading and Orders 作为 order_ref、fill_ref、execution context 的交易工程来源。",
+        "建议补 CEK-TA raw_trade_record_schema.json 作为内部主契约，并将字段拆成 required、conditional_required、external_ref_only。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议保留补证方向，但把字段分层：core_required、task_required、conditional_required。",
+        "建议字段：trade_record_id、trade_candidate_id、decision_timestamp、source_mode、snapshot_id、strategy_version_ref、instrument_ref、order_ref、fill_ref、fee_slippage_ref、outcome_context_ref、privacy_scan_status、license_status、field_role_map。",
+        "明确 raw trade record 不等于 AI Engineering 知识正文；AI Engineering 只保存 schema、hash、外部引用、脱敏摘要和 validation status。",
+        "缺少核心字段时应 block_training / exclude_from_eval / needs_more_evidence；字段角色冲突时应触发 leakage check。",
+        "order_ref、fill_ref、fee_slippage_ref 必须是外部引用，不得包含原始 broker token、账户、完整订单明细或私有成交明细。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 定义 raw trade record schema、field_role、required/conditional-required 规则、缺失字段 gate 和审计 UI。",
+        "真实订单、账户、broker tokens、成交明细、策略规则、执行事实和券商字段语义保留在 Trading Engineering / project private domain。",
+        "不得把具体订单生命周期、成交状态机、K 线信号、策略参数、仓位或止损止盈规则写入 AI Engineering。",
+        "字段业务含义和条件必填逻辑由 Trading Engineering / project owner 提供，AI Engineering 只记录 owner_ref。"
+      ],
+      "conflict_patch_notes": [
+        "与 data_quality.missing_core_fields_block_training、dataset.schema_required、trade_candidate.snapshot_required_before_scoring 强相关，建议作为 trade_data schema family。",
+        "与第十批 training_data.trade_sample_schema_required 预计重复，应统一 canonical schema：raw_trade_record_required_fields 管原始记录，trade_sample_schema_required 管训练样本抽象层。",
+        "与 leakage.label_in_input_forbidden、outcome_schema.post_trade_fields_separated、data_privacy.no_secret_or_account_identifier_in_training 互链。",
+        "未发现需要 rejected 的直接冲突；accepted_for_draft 仍不等于 approved。"
+      ],
+      "required_followups": [
+        "补 raw_trade_record_schema.json。",
+        "补 required_field / conditional_required / field_role enum。",
+        "补 external_ref_only 字段规范。",
+        "补 eval cases：missing trade_record_id、missing decision_timestamp、source_mode missing、order/fill refs included as raw sensitive data、post-trade outcome mixed into input。",
+        "补 Vue audit UI 字段：missing_core_fields、field_role_conflicts、privacy_scan_status、license_status。"
+      ]
+    }
+  },
+  "assumptions": [
+    "外接项目提供项目事实、私有交易数据和策略上下文；CEK-TA 只沉淀可复用专业规则。",
+    "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+  ],
+  "source_evidence": [
+    {
+      "source_id": "src_openai_model",
+      "source_title": "Model optimization | OpenAI API",
+      "source_url": "https://platform.openai.com/docs/guides/model-optimization",
+      "source_type": "official_doc",
+      "publisher": "OpenAI",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "OpenAI model optimization guidance supports defining task objectives, choosing between prompting, RAG, fine-tuning, and evaluating quality before model changes.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_nist",
+      "source_title": "AI Risk Management Framework | NIST",
+      "source_url": "https://www.nist.gov/itl/ai-risk-management-framework",
+      "source_type": "standard_or_risk_framework",
+      "publisher": "NIST",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "NIST AI RMF supports governance, mapping, measurement, and management of AI risks across design, deployment, and monitoring.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_json_schema_specification",
+      "source_title": "JSON Schema Specification",
+      "source_url": "https://json-schema.org/specification",
+      "source_type": "standard_or_risk_framework",
+      "publisher": "JSON Schema",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "JSON Schema 官方规范将 Core 与 Validation 分开，Validation 定义 required、properties、type、enum 等验证关键字，可支撑输出 schema conformance 和 required fields gate。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_json_schema_required_properties",
+      "source_title": "JSON Schema required properties",
+      "source_url": "https://tour.json-schema.org/content/01-Getting-Started/03-Required-Properties",
+      "source_type": "official_doc",
+      "publisher": "JSON Schema",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "medium",
+      "evidence_summary": "JSON Schema required 关键字要求 listed properties 必须存在，缺失时数据无效，适合支撑 required_fields 和 schema_validation_report。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_tfdv_schema_generation_validation",
+      "source_title": "TensorFlow Data Validation install and capabilities | TFX",
+      "source_url": "https://www.tensorflow.org/tfx/data_validation/install",
+      "source_type": "official_doc",
+      "publisher": "TensorFlow",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "medium",
+      "evidence_summary": "TFDV 能自动生成 data schema，并发现 missing features、out-of-range values、wrong feature types 等异常，可支撑 raw trade record required fields 的机器校验。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_datasheets_for_datasets",
+      "source_title": "Datasheets for Datasets",
+      "source_url": "https://arxiv.org/abs/1803.09010",
+      "source_type": "paper",
+      "publisher": "arXiv",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "Datasheets for Datasets 要求记录 dataset motivation、composition、collection process、recommended uses、limitations 和 maintenance，适合支撑 trade data source、composition、allowed_use/prohibited_use 文档化。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_quantconnect_trading_and_orders",
+      "source_title": "Trading and Orders | QuantConnect",
+      "source_url": "https://www.quantconnect.com/docs/v2/writing-algorithms/live-trading/trading-and-orders",
+      "source_type": "official_doc",
+      "publisher": "QuantConnect",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "QuantConnect 说明 live/backtest 订单、order events、brokerage messages，以及 fill、fee、slippage、margin models 等交易执行建模要素，可支撑 order_ref、fill_ref 和 execution_context_ref。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_occ_fed_fdic_revised_model_risk_2026",
+      "source_title": "Model Risk Management: Revised Guidance",
+      "source_url": "https://occ.gov/news-issuances/bulletins/2026/bulletin-2026-13.html",
+      "source_type": "standard_or_risk_framework",
+      "publisher": "OCC / Federal Reserve / FDIC",
+      "published_at": "2026-04-17",
+      "accessed_at": "2026-06-09",
+      "version": "OCC Bulletin 2026-13 / SR 26-2",
+      "reliability": "high",
+      "relevance": "medium",
+      "evidence_summary": "2026 年跨机构模型风险管理修订指南支持模型治理、验证、变更控制和风险分层；同时需注明 generative AI 和 agentic AI 不在其直接范围内，只能作为模型风险治理类比来源。",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 90,
+    "score_version": "1.0.0",
+    "primary_source_count": 2,
+    "supporting_source_count": 6,
+    "low_reliability_source_count": 0,
+    "limitations": [
+      "本条为 reviewed 知识，来源和审计补丁已记录；默认指导仍需后续人工治理升级 approved。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "docs/contracts/ai_engineering_gating_scoring_contract.md",
+      "docs/contracts/ai_engineering_knowledge_item_policy.md",
+      "docs/tasks/phase36_ai_engineering_gating_scoring_knowledge.md"
+    ],
+    "conflicts": [],
+    "resolution_summary": "未发现与当前 CEK-TA formal knowledge 的直接冲突；候选不会进入默认指导。",
+    "default_recommendation": "caveat_only_until_approved"
+  },
+  "review": {
+    "confidence": "medium",
+    "freshness": "time_sensitive",
+    "review_status": "reviewed",
+    "reviewer": "codex",
+    "reviewed_at": "2026-06-09",
+    "created_at": "2026-06-09",
+    "updated_at": "2026-06-09",
+    "open_questions": [
+      "审计时确认该候选是否应与相邻 AI Engineering 规则合并、拆分，或改路由到 Trading Engineering。",
+      "补 raw_trade_record_schema.json。",
+      "补 required_field / conditional_required / field_role enum。",
+      "补 external_ref_only 字段规范。",
+      "补 eval cases：missing trade_record_id、missing decision_timestamp、source_mode missing、order/fill refs included as raw sensitive data、post-trade outcome mixed into input。",
+      "补 Vue audit UI 字段：missing_core_fields、field_role_conflicts、privacy_scan_status、license_status。"
+    ],
+    "decision_log": [
+      {
+        "at": "2026-06-09",
+        "actor": "external_ai",
+        "decision": "accepted_for_draft",
+        "reason": "补证后可以升级为 accepted_for_draft。rewritten statement 已与 normalized_claim 对齐：进入 LLM training/eval/review 链路的 raw trade record 必须具备最小 schema，包括 trade_record_id、trade_candidate_id、decision_timestamp、source_mode、snapshot_id、strategy_version_ref、instrument_ref、order_ref、fill_ref、fee_slippage_ref、outcome_context_ref、privacy_scan_status 和 license_status；缺少核心字段时 block_training 或 needs_more_evidence。JSON Schema / required properties、TFDV schema validation、Datasheets 和 QuantConnect orders/fills 来源足以支撑进入 draft。但正式 draft 应明确该字段集合是 CEK-TA minimum recommended schema，可按任务分层拆分 required / conditional_required。",
+        "audit_result_id": "audit_result_phase36_batch09_sft_trade_data_supplemental_reaudit_20260609_gpt55_pro_strict_sources"
+      },
+      {
+        "at": "2026-06-09",
+        "actor": "codex",
+        "decision": "converted_to_reviewed",
+        "reason": "按 Phase 36 批量审计结果优化候选并转为 formal reviewed；未升级 approved。",
+        "audit_result_id": "audit_result_phase36_batch09_sft_trade_data_supplemental_reaudit_20260609_gpt55_pro_strict_sources"
+      }
+    ],
+    "approval_status": "not_requested",
+    "default_guidance_allowed": false,
+    "source_candidate_id": "cand_20260609_ai_engineering_trade_data_raw_trade_record_required_fields_v1_001",
+    "ai_audit_result_id": "audit_result_phase36_batch09_sft_trade_data_supplemental_reaudit_20260609_gpt55_pro_strict_sources",
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase36_batch09_sft_trade_data_supplemental_reaudit_20260609_gpt55_pro_strict_sources",
+      "source_package_id": "phase36_batch09_sft_trade_data_supplemental_audit_package_20260609",
+      "decision": "accepted_for_draft",
+      "reason": "补证后可以升级为 accepted_for_draft。rewritten statement 已与 normalized_claim 对齐：进入 LLM training/eval/review 链路的 raw trade record 必须具备最小 schema，包括 trade_record_id、trade_candidate_id、decision_timestamp、source_mode、snapshot_id、strategy_version_ref、instrument_ref、order_ref、fill_ref、fee_slippage_ref、outcome_context_ref、privacy_scan_status 和 license_status；缺少核心字段时 block_training 或 needs_more_evidence。JSON Schema / required properties、TFDV schema validation、Datasheets 和 QuantConnect orders/fills 来源足以支撑进入 draft。但正式 draft 应明确该字段集合是 CEK-TA minimum recommended schema，可按任务分层拆分 required / conditional_required。",
+      "source_patch_notes": [
+        "保留 JSON Schema Specification / required properties 作为 required fields 和 schema validation 主来源。",
+        "保留 TFDV 作为 schema validation、missing feature anomaly、train/serve skew supporting source。",
+        "保留 Datasheets for Datasets 作为数据组成、采集过程、用途、限制和维护说明来源。",
+        "保留 QuantConnect Trading and Orders 作为 order_ref、fill_ref、execution context 的交易工程来源。",
+        "建议补 CEK-TA raw_trade_record_schema.json 作为内部主契约，并将字段拆成 required、conditional_required、external_ref_only。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议保留补证方向，但把字段分层：core_required、task_required、conditional_required。",
+        "建议字段：trade_record_id、trade_candidate_id、decision_timestamp、source_mode、snapshot_id、strategy_version_ref、instrument_ref、order_ref、fill_ref、fee_slippage_ref、outcome_context_ref、privacy_scan_status、license_status、field_role_map。",
+        "明确 raw trade record 不等于 AI Engineering 知识正文；AI Engineering 只保存 schema、hash、外部引用、脱敏摘要和 validation status。",
+        "缺少核心字段时应 block_training / exclude_from_eval / needs_more_evidence；字段角色冲突时应触发 leakage check。",
+        "order_ref、fill_ref、fee_slippage_ref 必须是外部引用，不得包含原始 broker token、账户、完整订单明细或私有成交明细。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 定义 raw trade record schema、field_role、required/conditional-required 规则、缺失字段 gate 和审计 UI。",
+        "真实订单、账户、broker tokens、成交明细、策略规则、执行事实和券商字段语义保留在 Trading Engineering / project private domain。",
+        "不得把具体订单生命周期、成交状态机、K 线信号、策略参数、仓位或止损止盈规则写入 AI Engineering。",
+        "字段业务含义和条件必填逻辑由 Trading Engineering / project owner 提供，AI Engineering 只记录 owner_ref。"
+      ],
+      "conflict_patch_notes": [
+        "与 data_quality.missing_core_fields_block_training、dataset.schema_required、trade_candidate.snapshot_required_before_scoring 强相关，建议作为 trade_data schema family。",
+        "与第十批 training_data.trade_sample_schema_required 预计重复，应统一 canonical schema：raw_trade_record_required_fields 管原始记录，trade_sample_schema_required 管训练样本抽象层。",
+        "与 leakage.label_in_input_forbidden、outcome_schema.post_trade_fields_separated、data_privacy.no_secret_or_account_identifier_in_training 互链。",
+        "未发现需要 rejected 的直接冲突；accepted_for_draft 仍不等于 approved。"
+      ],
+      "required_followups": [
+        "补 raw_trade_record_schema.json。",
+        "补 required_field / conditional_required / field_role enum。",
+        "补 external_ref_only 字段规范。",
+        "补 eval cases：missing trade_record_id、missing decision_timestamp、source_mode missing、order/fill refs included as raw sensitive data、post-trade outcome mixed into input。",
+        "补 Vue audit UI 字段：missing_core_fields、field_role_conflicts、privacy_scan_status、license_status。"
+      ]
+    },
+    "approved_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "contribution": {
+    "contribution_id": null,
+    "source_project": null,
+    "sanitization_status": "not_applicable",
+    "private_data_removed": true,
+    "generic_mapping_notes": "Phase 36 public-source AI Engineering candidate; no project-private trading facts included."
+  },
+  "copyright": {
+    "stores_full_text": false,
+    "stores_long_quote": false,
+    "summary_only": true,
+    "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+    "reuse_risk": "low"
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于审计 AI Engineering、LLM 训练、RAG/MCP、部署、安全或治理链路。",
+      "用于提醒外接项目补齐来源、适用边界、冲突状态、审计记录和人工审批。",
+      "用于 reviewed/audit 模式下带 caveat 引用。"
+    ],
+    "not_allowed": [
+      "不得生成买卖点、仓位、杠杆、止损止盈或实盘执行指令。",
+      "不得覆盖确定性风控、交易执行系统或人工审批。",
+      "不得作为 approved/default guidance 直接返回。"
+    ],
+    "required_context": [
+      "project_type",
+      "task_type",
+      "mode",
+      "strategy_version",
+      "data_boundary",
+      "review_status"
+    ],
+    "fallback_behavior": "cite_with_caveat"
+  },
+  "machine_gate": {
+    "default_guidance": "caveat_only",
+    "reason": "reviewed only; accepted_for_draft is not approved; default guidance requires later human governance approval.",
+    "requires_human_escalation": true,
+    "blocking_reasons": [
+      "not_approved",
+      "phase36_batch_reviewed_only"
+    ],
+    "checked_at": "2026-06-09",
+    "gate_version": "1.0.0",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "recommended_extra_sources": [
+    {
+      "title": "保留 JSON Schema Specification / required properties 作为 required fields 和 schema validation 主来源。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_1"
+    },
+    {
+      "title": "保留 TFDV 作为 schema validation、missing feature anomaly、train/serve skew supporting source。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_2"
+    },
+    {
+      "title": "保留 Datasheets for Datasets 作为数据组成、采集过程、用途、限制和维护说明来源。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_3"
+    },
+    {
+      "title": "保留 QuantConnect Trading and Orders 作为 order_ref、fill_ref、execution context 的交易工程来源。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_4"
+    },
+    {
+      "title": "建议补 CEK-TA raw_trade_record_schema.json 作为内部主契约，并将字段拆成 required、conditional_required、external_ref_only。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_5"
+    }
+  ]
+}

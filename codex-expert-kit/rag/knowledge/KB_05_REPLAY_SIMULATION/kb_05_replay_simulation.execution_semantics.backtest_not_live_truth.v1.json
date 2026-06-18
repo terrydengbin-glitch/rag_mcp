@@ -1,0 +1,187 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_05_replay_simulation.execution_semantics.backtest_not_live_truth.v1",
+  "title": "模拟盘和实盘执行语义不能用回测成交结果直接替代",
+  "metadata": {
+    "partition_id": "KB_05_REPLAY_SIMULATION",
+    "domain": "replay_simulation",
+    "subdomain": "execution_semantics",
+    "rule_type": "principle",
+    "content_type": "json",
+    "project_binding": "none",
+    "tree_node_id": "kt.replay_simulation.fill_model",
+    "tree_path": "CEK-TA / Trading Engineering / Replay Simulation / Fill Model",
+    "canonical_node_id": "kt.trading_engineering.replay_simulation.execution_semantics",
+    "canonical_tree_path": "CEK-TA / Trading Engineering / Replay Simulation / Execution Semantics",
+    "risk_level": "high",
+    "used_for": [
+      "code_review",
+      "backtest_review",
+      "replay",
+      "simulation",
+      "live_trading",
+      "trade_analysis",
+      "mcp",
+      "vue_audit_ui"
+    ],
+    "claim_type": "execution_safety_rule",
+    "classification_notes": "UI tree node is kt.replay_simulation.fill_model; canonical classification is kt.trading_engineering.replay_simulation.execution_semantics."
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "multi",
+    "timeframe": "general",
+    "data_granularity": "general",
+    "project_type": "high_fidelity_simulator",
+    "applies_when": [
+      "需要把回测策略迁移到回放、模拟盘或实盘",
+      "需要比较回测成交、模拟成交和真实成交日志"
+    ],
+    "not_applicable_when": [
+      "只评估静态信号，不产生订单",
+      "使用真实成交日志做事后分析且不模拟成交"
+    ]
+  },
+  "content": {
+    "statement": "回测成交结果只能代表回测模型下的模拟输出，不能直接替代模拟盘或实盘执行语义；迁移时必须重新定义订单生命周期、延迟、滑点、部分成交、拒单和撤单规则。",
+    "rationale": "实盘执行涉及经纪商/交易所规则、网络延迟、盘口、部分成交、订单状态和权限。回测通常简化这些过程，因此直接复用回测成交会造成模拟盘和实盘行为偏差。",
+    "procedure": [
+      "为回放、模拟盘和实盘分别定义订单状态机。",
+      "定义订单提交、确认、部分成交、完全成交、取消、拒绝和过期。",
+      "比较回测 fill model 与目标执行 adapter 的差异。",
+      "用纸面交易或回放日志验证执行语义。"
+    ],
+    "examples": [
+      "回测中限价单在 low 触及后成交，不等于实盘一定排队成交。"
+    ],
+    "anti_patterns": [
+      "把回测成交价直接当作模拟盘 fill。",
+      "忽略部分成交和拒单。",
+      "没有对齐订单生命周期字段。"
+    ],
+    "validation": [
+      "检查 ExecutionAdapter 是否有状态机和错误处理。",
+      "用真实或模拟订单事件回放同一策略。",
+      "比对回测、模拟盘和实盘的订单语义差异。"
+    ],
+    "risk_notes": [
+      "该知识不要求模拟盘完全复刻实盘，但要求差异可见、可审计。"
+    ],
+    "citation_notes": "QuantConnect fill model 文档说明成交模型用于模拟经纪商成交；SEC 和 CFTC 风险控制文档强调自动交易环境的风险控制和系统保障，支持实盘语义需要独立工程定义。"
+  },
+  "assumptions": [
+    "系统存在回测到模拟盘或实盘迁移。",
+    "执行层有订单生命周期和错误处理。"
+  ],
+  "source_evidence": [
+    {
+      "source_id": "src_seed_003",
+      "source_title": "QuantConnect Trade Fills - Key Concepts",
+      "source_url": "https://www.quantconnect.com/docs/v2/writing-algorithms/reality-modeling/trade-fills/key-concepts",
+      "source_type": "framework_doc",
+      "publisher": "QuantConnect",
+      "published_at": null,
+      "accessed_at": "2026-06-08",
+      "version": "v2 docs",
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "文档说明 fill models 用于模拟经纪商成交，支持区分模型输出和真实执行。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_seed_011",
+      "source_title": "SEC Risk Management Controls for Brokers or Dealers With Market Access",
+      "source_url": "https://www.sec.gov/rules-regulations/2011/06/risk-management-controls-brokers-or-dealers-market-access",
+      "source_type": "official_doc",
+      "publisher": "U.S. Securities and Exchange Commission",
+      "published_at": "2011-06-27",
+      "accessed_at": "2026-06-08",
+      "version": "Rule 15c3-5 overview",
+      "reliability": "high",
+      "relevance": "medium",
+      "evidence_summary": "市场接入规则强调风险控制、订单阈值和错误订单预防，支持实盘执行语义需要独立风控处理。",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 87,
+    "score_version": "1.0.0",
+    "primary_source_count": 1,
+    "supporting_source_count": 1,
+    "limitations": [
+      "具体实盘 adapter 行为仍需交易所和项目实现文档补充。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "kb_04_backtest.fill_model.explicit_slippage_fee_assumptions.v1"
+    ],
+    "conflicts": [],
+    "resolution_summary": "该知识把回测成交模型边界扩展到模拟盘/实盘迁移，无冲突。",
+    "default_recommendation": "use_as_guidance"
+  },
+  "review": {
+    "confidence": "high",
+    "freshness": "time_sensitive",
+    "review_status": "approved",
+    "reviewer": "codex",
+    "reviewed_at": "2026-06-08",
+    "created_at": "2026-06-08",
+    "updated_at": "2026-06-08",
+    "open_questions": [
+      "后续可按 Binance Futures、IBKR 等 adapter 增加具体执行状态对照表。"
+    ],
+    "decision_log": [
+      {
+        "at": "2026-06-08",
+        "actor": "codex",
+        "decision": "approved",
+        "reason": "来源可靠，边界明确，对其他项目接入价值高。"
+      }
+    ],
+    "approval_status": "approved",
+    "default_guidance_allowed": true,
+    "source_candidate_id": null,
+    "ai_audit_result_id": null
+  },
+  "contribution": {
+    "contribution_id": null,
+    "source_project": null,
+    "sanitization_status": "not_applicable",
+    "private_data_removed": true,
+    "generic_mapping_notes": "通用执行语义知识。"
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于审计和解释 CEK-TA / Trading Engineering / Replay Simulation / Execution Semantics 范围内的专业边界。",
+      "用于提醒用户补充适用范围、来源、冲突状态和验证条件。",
+      "用于阻止 AI 把未满足边界的知识当成默认交易建议。"
+    ],
+    "not_allowed": [
+      "不得据此生成买卖点、仓位、杠杆或实盘执行指令。",
+      "不得在缺少适用边界、来源或冲突状态时作为默认指导。",
+      "不得把 reviewed 或 caveat_only 知识表述为 approved 结论。",
+      "不得绕过人工风险确认或项目事实核验。"
+    ],
+    "required_context": [
+      "project_type",
+      "market",
+      "asset",
+      "timeframe",
+      "data_granularity",
+      "task_type"
+    ],
+    "fallback_behavior": "cite_with_caveat"
+  },
+  "machine_gate": {
+    "default_guidance": "allow",
+    "reason": "approved; default_guidance_allowed=true; sources, conflict, freshness, and privacy gates passed.",
+    "requires_human_escalation": false,
+    "blocking_reasons": [],
+    "checked_at": "2026-06-09",
+    "gate_version": "1.0.0"
+  },
+  "recommended_extra_sources": []
+}

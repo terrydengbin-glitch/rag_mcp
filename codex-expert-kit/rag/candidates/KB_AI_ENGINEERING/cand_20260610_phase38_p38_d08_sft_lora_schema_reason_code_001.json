@@ -1,0 +1,278 @@
+{
+  "schema_version": "1.0.0",
+  "candidate_id": "cand_20260610_phase38_p38_d08_sft_lora_schema_reason_code_001",
+  "research_task_id": "P38-D08",
+  "priority": "P0-Extended",
+  "status": {
+    "review_status": "accepted",
+    "ingestion_decision": "accepted_for_draft",
+    "decision_reason": "补证二审通过：PEFT/LoRA、structured output 与 JSON Schema 来源已补足；LoRA 不作为事实来源。 仅进入 formal draft 队列，不是 reviewed、approved、default guidance 或 hard gate。",
+    "created_at": "2026-06-10",
+    "updated_at": "2026-06-10"
+  },
+  "classification": {
+    "tree_node_id": "kt.ai_engineering.llm_audit_assistant",
+    "canonical_node_id": "kt.ai_engineering.llm_audit_assistant",
+    "tree_path": "CEK-TA / AI Engineering",
+    "related_nodes": [
+      "kt.trading_engineering"
+    ],
+    "partition_id": "KB_AI_23_LLM_AUDIT_ASSISTANT",
+    "domain": "llm_training",
+    "subdomain": "llm_audit_assistant",
+    "rule_type": "checklist",
+    "used_for": [
+      "llm_training",
+      "trading_gating_scoring",
+      "rag_engineering",
+      "mcp",
+      "vue_audit_ui"
+    ]
+  },
+  "claim": {
+    "claim_id": "claim_001",
+    "statement": "SFT LoRA 仅用于稳定输出 schema 和 reason code",
+    "normalized_claim": "phase38.sft_lora_schema_reason_code.v1",
+    "evidence_summary": "SFT LoRA 仅用于稳定输出 schema、reason code 和审计格式；格式约束仍应由 JSON Schema/structured output 校验，LoRA 不提供事实来源。",
+    "interpretation_notes": "本条只补 AI Engineering 方法和审计边界；交易规则本体、fill/cost/risk/execution 仍由 Trading Engineering 提供。",
+    "claim_strength": "medium",
+    "performance_claim": false
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "general",
+    "data_granularity": "general",
+    "project_type": "trading_llm_assistant",
+    "applies_when": [
+      "外接项目正在扩展交易 LLM gating/scoring 的 P0-Extended 或 P1 能力。",
+      "该规则用于完善模型选择、解释、校准漂移、数据质量、审计助手训练、shadow/OPE、发布治理或 RAG 引用治理。"
+    ],
+    "not_applicable_when": [
+      "用户需要具体买卖点、仓位、止损止盈、策略参数或实盘订单执行。",
+      "知识点主要描述 K 线结构、市场微观结构、回测模型、fill model 或交易风控本体，应路由到 Trading Engineering。"
+    ],
+    "assumptions": [
+      "外接项目提供项目事实、私有交易数据和策略上下文；CEK-TA 只沉淀可复用专业规则。",
+      "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+    ],
+    "limitations": [
+      "本条仍是 candidate，需要外部 AI/人工审计确认来源充分性、适用边界和是否需要拆分。",
+      "P0-Extended 不是 POC 前全部硬门；具体上线门槛需由 release governance 任务另行确认。"
+    ]
+  },
+  "source_refs": [
+    {
+      "source_id": "src_trl_sft",
+      "source_title": "SFT Trainer - Hugging Face TRL",
+      "source_url": "https://huggingface.co/docs/trl/en/sft_trainer",
+      "source_type": "official_doc",
+      "publisher": "Hugging Face",
+      "published_at": null,
+      "accessed_at": "2026-06-10",
+      "version": null,
+      "reliability": "high",
+      "score": 84,
+      "relevance": "high",
+      "freshness": "time_sensitive",
+      "limitations": [],
+      "evidence_summary": "TRL SFT Trainer documentation supports supervised fine-tuning workflows.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_trl",
+      "source_title": "TRL documentation - Hugging Face",
+      "source_url": "https://huggingface.co/docs/trl/en/index",
+      "source_type": "official_doc",
+      "publisher": "Hugging Face",
+      "published_at": null,
+      "accessed_at": "2026-06-10",
+      "version": null,
+      "reliability": "high",
+      "score": 84,
+      "relevance": "high",
+      "freshness": "time_sensitive",
+      "limitations": [],
+      "evidence_summary": "TRL documents SFT, DPO, trainer APIs, dataset formats, and post-training workflows.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_nist_ai_rmf",
+      "source_title": "NIST AI Risk Management Framework",
+      "source_url": "https://www.nist.gov/itl/ai-risk-management-framework",
+      "source_type": "governance_framework",
+      "publisher": "NIST",
+      "published_at": null,
+      "accessed_at": "2026-06-10",
+      "version": null,
+      "reliability": "high",
+      "score": 88,
+      "relevance": "high",
+      "freshness": "time_sensitive",
+      "limitations": [],
+      "evidence_summary": "NIST AI RMF supports AI governance, measurement, management, and trustworthy AI practices.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_hf_peft_lora",
+      "source_title": "LoRA - Hugging Face PEFT",
+      "source_url": "https://huggingface.co/docs/peft/package_reference/lora",
+      "source_type": "official_doc",
+      "publisher": "Hugging Face",
+      "accessed_at": "2026-06-10",
+      "reliability": "high",
+      "score": 86,
+      "relevance": "high",
+      "freshness": "time_sensitive",
+      "evidence_summary": "Hugging Face PEFT documents LoRA as parameter-efficient fine-tuning by adapting low-rank matrices instead of full model weights.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_hf_structured_output",
+      "source_title": "Structured Outputs with Inference Providers",
+      "source_url": "https://huggingface.co/docs/inference-providers/en/guides/structured-output",
+      "source_type": "official_doc",
+      "publisher": "Hugging Face",
+      "accessed_at": "2026-06-10",
+      "reliability": "high",
+      "score": 84,
+      "relevance": "high",
+      "freshness": "time_sensitive",
+      "evidence_summary": "Hugging Face structured output docs support using JSON Schema to obtain predictable, parsable model responses.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_json_schema_docs",
+      "source_title": "JSON Schema Documentation",
+      "source_url": "https://json-schema.org/docs",
+      "source_type": "official_doc",
+      "publisher": "JSON Schema",
+      "accessed_at": "2026-06-10",
+      "reliability": "high",
+      "score": 86,
+      "relevance": "high",
+      "freshness": "time_sensitive",
+      "evidence_summary": "JSON Schema supports declarative validation of JSON object structure, required fields, types, and enum constraints.",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 86,
+    "score_version": "1.0.0",
+    "primary_source_count": 6,
+    "supporting_source_count": 0,
+    "low_reliability_source_count": 0,
+    "mandatory_downgrades": [],
+    "limitations": [
+      "来源支持通用 AI/ML/RAG/MCP/治理工程原则；正式知识转换时需补 CEK-TA 具体上下游引用和冲突链接。",
+      "已按 Phase 38 P0-Extended/P1 严格审计补充 claim-specific 来源和 CEK-TA 内部契约；仍需二审后才能进入 formal draft。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "docs/contracts/phase38_ai_scoring_gate_runtime_contract.md",
+      "docs/contracts/phase38_training_data_and_eval_contract.md",
+      "docs/tasks/phase38_ai_model_platform_poc_knowledge.md",
+      "docs/tasks/phase37_trading_engineering_knowledge_expansion.md",
+      "docs/contracts/phase38_rag_citation_and_reason_taxonomy_contract.md"
+    ],
+    "conflicts": [],
+    "resolution_summary": "未发现与当前 Phase 38 契约的直接冲突；候选不会进入默认指导，交易规则本体仍路由到 Phase 37。",
+    "approval_allowed": false
+  },
+  "review": {
+    "confidence": "medium",
+    "freshness": "time_sensitive",
+    "reviewer": "external_ai_reaudit_plus_codex_import",
+    "reviewed_at": "2026-06-10",
+    "open_questions": [
+      "进入 formal draft 转换时必须保留二审 patch notes 和 default_guidance=false。"
+    ],
+    "audit_log": [
+      {
+        "at": "2026-06-10",
+        "actor": "codex",
+        "action": "created",
+        "reason": "Phase 38 P0-Extended candidate expansion."
+      },
+      {
+        "at": "2026-06-10",
+        "actor": "codex",
+        "action": "extended_p1_audit_needs_more_evidence",
+        "reason": "需补证后重新审计。"
+      },
+      {
+        "at": "2026-06-10",
+        "actor": "codex",
+        "action": "extended_p1_supplemental_evidence_added",
+        "reason": "SFT LoRA 仅用于稳定输出 schema、reason code 和审计格式；格式约束仍应由 JSON Schema/structured output 校验，LoRA 不提供事实来源。"
+      },
+      {
+        "at": "2026-06-10",
+        "actor": "codex",
+        "action": "extended_p1_supplemental_reaudit_accepted_for_draft",
+        "reason": "PEFT/LoRA、structured output 与 JSON Schema 来源已补足；LoRA 不作为事实来源。"
+      },
+      {
+        "at": "2026-06-11",
+        "actor": "codex",
+        "action": "formal_reviewed_created",
+        "reason": "CEK-TA-341: formal reviewed knowledge written to codex-expert-kit/rag/knowledge/KB_AI_23_LLM_AUDIT_ASSISTANT/kb_ai_engineering.phase38.sft_lora_schema_reason_code.v1.json."
+      }
+    ],
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase38_extended_p1_supplemental_reaudit_20260610_strict_v2",
+      "source_package_id": "phase38_extended_p1_supplemental_audit_package_20260610",
+      "decision": "accepted_for_draft",
+      "allowed_next_stage": "formal_reviewed_knowledge",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "notes": "PEFT/LoRA、structured output 与 JSON Schema 来源已补足；LoRA 不作为事实来源。"
+    },
+    "default_guidance_allowed": false
+  },
+  "copyright": {
+    "stores_full_text": false,
+    "stores_long_quote": false,
+    "summary_only": true,
+    "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+    "reuse_risk": "low"
+  },
+  "conversion_target": {
+    "proposed_knowledge_id": "kb_ai_engineering.phase38.sft_lora_schema_reason_code.v1",
+    "target_schema": "cek_ta_knowledge_item",
+    "target_review_status": "reviewed",
+    "skill_candidate": false,
+    "eval_case_candidate": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "quality_gate": {
+    "minimum_source_count": 2,
+    "has_required_source_type": true,
+    "not_default_guidance": true,
+    "trading_boundary_checked": true
+  },
+  "workflow": {
+    "stage": "formalized_reviewed",
+    "queue_group": "formalized",
+    "formal_knowledge_id": "kb_ai_engineering.phase38.sft_lora_schema_reason_code.v1",
+    "formal_review_status": "reviewed",
+    "ai_audit_result_id": "audit_result_phase38_extended_p1_supplemental_reaudit_20260610_strict_v2",
+    "hidden_from_default_queue": true,
+    "next_action": "none",
+    "visible_in_default_guidance_queue": false,
+    "default_guidance_allowed": false,
+    "knowledge_path": "codex-expert-kit/rag/knowledge/KB_AI_23_LLM_AUDIT_ASSISTANT/kb_ai_engineering.phase38.sft_lora_schema_reason_code.v1.json",
+    "formal_knowledge_path": "codex-expert-kit/rag/knowledge/KB_AI_23_LLM_AUDIT_ASSISTANT/kb_ai_engineering.phase38.sft_lora_schema_reason_code.v1.json"
+  },
+  "reviewed_allowed": false,
+  "approved_allowed": false,
+  "default_guidance_allowed": false,
+  "hard_gate_allowed": false,
+  "draft_conversion_allowed": true
+}

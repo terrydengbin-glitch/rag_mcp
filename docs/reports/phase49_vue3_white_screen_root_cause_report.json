@@ -1,0 +1,68 @@
+{
+  "report_id": "phase49_vue3_white_screen_root_cause_report",
+  "generated_at": "2026-06-13",
+  "phase": "Phase 49",
+  "task_id": "CEK-TA-495",
+  "title": "Vue3 刷新白屏根因报告",
+  "scope": {
+    "in_scope": [
+      "定位 Vue3 审计工作台刷新后页面全白的问题",
+      "确认当前本项目 dev server 与其他项目端口边界",
+      "确认磁盘 fixture 与 Vite dev server 返回模块是否一致"
+    ],
+    "out_of_scope": [
+      "不修改知识治理状态",
+      "不关闭其他项目端口",
+      "不改变 MCP/API 权限",
+      "不改变 Vue3 信息架构"
+    ]
+  },
+  "observed_symptom": {
+    "browser": "刷新后页面全白",
+    "vue_mount": "#app 为空",
+    "body_text_length": 0,
+    "page_error": "The requested module '/src/data/phase23Candidates.ts?...' does not provide an export named 'phase23CandidateFixtureGeneratedAt'"
+  },
+  "port_boundary_check": {
+    "cek_ta_dev_server": {
+      "port": 5191,
+      "process": "node.exe",
+      "command": "vite --host 127.0.0.1 --port 5191 --strictPort",
+      "action": "只检查并复用本项目进程"
+    },
+    "other_project_server": {
+      "port": 5188,
+      "process": "node.exe",
+      "project_path": "E:/collector/traders/abnormal_enchanced",
+      "action": "未关闭、未重启、未修改"
+    }
+  },
+  "root_cause": {
+    "summary": "Vite dev server 缓存了被生成器重写过程中的空 fixture 模块，浏览器刷新时继续加载坏模块，导致 Vue 入口 import 失败并白屏。",
+    "evidence": [
+      "磁盘上的 ui/src/data/phase23Candidates.ts 存在 phase23CandidateFixtureGeneratedAt 导出。",
+      "同一时间从 dev server 请求 /src/data/phase23Candidates.ts 时返回近似空模块，仅包含 sourceMappingURL。",
+      "npm --prefix ui run build 可以通过，说明源码本身不是语法错误。",
+      "重新生成 fixture 后，dev server 返回模块恢复，知识树页面 #app 非空。"
+    ],
+    "contributing_factors": [
+      "phase23Candidates.ts 约 5.8 MB，formalKnowledgeItems.ts 约 3.2 MB，属于大体量生成 fixture。",
+      "原生成脚本直接覆盖目标文件，Vite watcher 有机会在空文件或半写文件状态触发转换缓存。",
+      "前端 e2e 断言有部分历史节点名和统计数未同步当前知识树，容易把断言过期误判成前端挂掉。"
+    ]
+  },
+  "fix_summary": {
+    "atomic_fixture_write": [
+      "codex-expert-kit/rag/scripts/build_ui_candidate_fixture.py",
+      "codex-expert-kit/rag/scripts/build_ui_knowledge_fixture.py",
+      "codex-expert-kit/rag/scripts/build_ui_knowledge_tree_fixture.py"
+    ],
+    "vite_watcher": "ui/vite.config.ts 增加 server.watch.awaitWriteFinish",
+    "e2e_contract_alignment": "ui/tests/e2e/audit-workbench.spec.ts 对齐当前 canonical node、L2 统计和中文状态标签"
+  },
+  "residual_risks": [
+    "首包仍然偏大，后续建议另开任务做 JSON/API 懒加载或分页。",
+    "如果未来仍用非原子方式生成 ui/src/data/*.ts，可能再次触发半写缓存。",
+    "如果部署到没有 SPA fallback 的静态服务器，createWebHistory 直刷深路由仍可能 404，需要另行处理。"
+  ]
+}

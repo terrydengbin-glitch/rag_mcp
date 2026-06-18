@@ -1,0 +1,378 @@
+{
+  "schema_version": "1.1.0-candidate",
+  "candidate_id": "cand_20260617_phase60_p1_live_canary_rollback_owner_required_001",
+  "research_task_id": "P60-P1-05",
+  "status": {
+    "review_status": "formalized",
+    "ingestion_decision": "formal_reviewed_created",
+    "decision_reason": "Phase 60 reviewed-preparation strict audit allowed this item to become formal reviewed/caveat_only.",
+    "created_at": "2026-06-17",
+    "updated_at": "2026-06-18"
+  },
+  "classification": {
+    "tree_node_id": "kt.risk_management",
+    "canonical_node_id": "kt.risk_management",
+    "tree_path": "CEK-TA / Trading Engineering / Risk Management",
+    "related_nodes": [
+      "kt.trading_engineering",
+      "kt.replay_simulation",
+      "kt.live_execution",
+      "kt.risk_management",
+      "kt.data_engineering",
+      "kt.market_microstructure"
+    ],
+    "partition_id": "KB_07_RISK_MANAGEMENT",
+    "domain": "risk_management",
+    "subdomain": "live_canary_governance",
+    "rule_type": "live_canary_boundary_rule",
+    "claim_type": "rollback_governance_requirement",
+    "used_for": [
+      "live_canary_review",
+      "promotion_decision",
+      "risk_owner_review",
+      "external_project_rag_retrieval"
+    ],
+    "classification_notes": "Phase 60 P1 增强环境治理候选；只用于 sandbox/replay/paper/canary 的测试、监控、晋级和 gap 审计，不接管策略、实盘执行或风控阈值。"
+  },
+  "claim": {
+    "claim_id": "claim_p60_p1_05",
+    "title": "live canary 必须有 rollback、停止条件和 owner",
+    "statement": "live canary 只能作为小范围真实环境观察阶段，必须记录 scope、stop_condition_ref、rollback_plan_ref、owner、manual_review_required 和 residual_gap；canary 通过不得自动扩大为 full live 或默认 hard gate。",
+    "normalized_claim": "phase60.p1.live_canary_rollback_owner_required.v1",
+    "evidence_summary": "LaunchDarkly documents canary releases as gradual exposure to a subset of users before broader rollout.；Google SRE describes monitoring systems with symptoms, causes and golden signals such as latency, traffic, errors and saturation.；CEK-TA internal contract defines promotion decisions, gap report fields, required evidence and hard boundaries.",
+    "interpretation_notes": "本候选是 Phase 60 P1 增强治理知识，只允许外部审计后进入 accepted_for_draft；不得直接 reviewed、approved、default guidance 或 hard gate。",
+    "claim_strength": "medium_high",
+    "performance_claim": false
+  },
+  "applicability": {
+    "market": "general_with_platform_or_venue_specific_mapping",
+    "asset": "general",
+    "timeframe": "sandbox_replay_paper_or_live_canary_environment",
+    "data_granularity": "api_message_order_event_fill_event_health_metric_or_gap_report",
+    "project_type": "trading_ai_support_layer",
+    "applies_when": [
+      "外接项目设计 sandbox、UAT、testnet、replay、paper trading 或 live canary 环境治理",
+      "需要审计 adapter certification、scenario library、paper account state、runtime health、canary rollback 或 environment drift",
+      "需要把 Phase 60 P0 manifest/gap report 扩展为更完整的测试治理证据"
+    ],
+    "not_applicable_when": [
+      "需要生成买卖点、仓位、杠杆、止损止盈、风险阈值或实盘执行建议",
+      "需要直接证明策略有效、live-ready 或收益优势",
+      "没有平台、broker、exchange、API 版本、环境类型或数据来源证据"
+    ],
+    "assumptions": [
+      "候选用于 CEK-TA 通用支持层知识库，不包含外接项目私有策略参数。",
+      "每条候选都需要外部 AI/人工严格审计后才能进入 accepted_for_draft。",
+      "平台和工具来源只能作为 implementation pattern 或 supporting source。"
+    ],
+    "limitations": [
+      "P1 增强知识不能替代 P0 的 EnvironmentManifest、PromotionDecision 和 GapReport。",
+      "候选不能自动创建 reviewed、approved、default guidance 或 hard gate。",
+      "本候选不提供投资建议、订单建议、风险阈值或实盘许可。"
+    ]
+  },
+  "source_refs": [
+    {
+      "source_title": "Canary deployments",
+      "source_url": "https://launchdarkly.com/docs/home/releases/canary",
+      "source_type": "engineering_doc",
+      "publisher": "LaunchDarkly",
+      "reliability": "medium_high",
+      "score": 78,
+      "freshness": "time_sensitive",
+      "evidence_summary": "LaunchDarkly documents canary releases as gradual exposure to a subset of users before broader rollout.",
+      "limitations": [
+        "Software deployment source; trading live canary requires stricter broker, risk and execution boundaries."
+      ],
+      "source_id": "src_launchdarkly_canary",
+      "accessed_at": "2026-06-17",
+      "relevance": "medium",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "Monitoring Distributed Systems",
+      "source_url": "https://sre.google/sre-book/monitoring-distributed-systems/",
+      "source_type": "engineering_book",
+      "publisher": "Google SRE",
+      "reliability": "high",
+      "score": 84,
+      "freshness": "stable",
+      "evidence_summary": "Google SRE describes monitoring systems with symptoms, causes and golden signals such as latency, traffic, errors and saturation.",
+      "limitations": [
+        "General SRE source; apply to trading environments only through CEK-TA boundary mapping."
+      ],
+      "source_id": "src_sre_monitoring",
+      "accessed_at": "2026-06-17",
+      "relevance": "medium_high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "Phase 60 Environment Promotion Decision and Gap Report Contract",
+      "source_url": "docs/contracts/phase60_environment_promotion_gap_report_contract.md",
+      "source_type": "internal_contract",
+      "publisher": "CEK-TA",
+      "reliability": "high",
+      "score": 88,
+      "freshness": "current",
+      "evidence_summary": "CEK-TA internal contract defines promotion decisions, gap report fields, required evidence and hard boundaries.",
+      "limitations": [
+        "Internal schema; candidate requires external audit before formal reviewed."
+      ],
+      "source_id": "src_phase60_gap_contract",
+      "accessed_at": "2026-06-17",
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_fia_automated_trading_risk_controls",
+      "source_title": "Best Practices for Automated Trading Risk Controls and System Safeguards",
+      "source_url": "https://www.fia.org/sites/default/files/2024-07/FIA_WP_AUTOMATED%20TRADING%20RISK%20CONTROLS_FINAL_0.pdf",
+      "source_type": "industry_guidance",
+      "publisher": "FIA",
+      "reliability": "high",
+      "score": 86,
+      "freshness": "stable",
+      "evidence_summary": "FIA discusses automated trading risk controls, granular pre-trade controls, kill switches, monitoring and governance responsibilities.",
+      "limitations": [
+        "Industry guidance; not legal advice and not a fixed CEK-TA threshold source."
+      ],
+      "accessed_at": "2026-06-18",
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_cftc_automated_trading_safeguards",
+      "source_title": "Concept Release on Risk Controls and System Safeguards for Automated Trading Environments",
+      "source_url": "https://www.federalregister.gov/documents/2013/09/12/2013-22185/concept-release-on-risk-controls-and-system-safeguards-for-automated-trading-environments",
+      "source_type": "regulatory_source",
+      "publisher": "CFTC / Federal Register",
+      "reliability": "high",
+      "score": 82,
+      "freshness": "stable",
+      "evidence_summary": "The CFTC concept release discusses risk controls and safeguards for automated trading environments.",
+      "limitations": [
+        "Regulatory context source; does not define CEK-TA canary schema or live permission."
+      ],
+      "accessed_at": "2026-06-18",
+      "relevance": "medium_high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_google_sre_canarying_releases",
+      "source_title": "Canarying Releases",
+      "source_url": "https://sre.google/workbook/canarying-releases/",
+      "source_type": "engineering_book",
+      "publisher": "Google SRE",
+      "reliability": "high",
+      "score": 82,
+      "freshness": "stable",
+      "evidence_summary": "Google SRE documents canarying releases as exposing changes to small production traffic subsets and evaluating safety before wider rollout.",
+      "limitations": [
+        "Software deployment source; trading canary requires risk and live execution owner mapping."
+      ],
+      "accessed_at": "2026-06-18",
+      "relevance": "medium_high",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "source_count": 6,
+    "primary_source_count": 4,
+    "quality_level": "medium_high",
+    "limitations": [
+      "候选来源需要外部严格审计；vendor/tool 文档不得过度泛化。"
+    ],
+    "freshness": "mixed"
+  },
+  "content": {
+    "statement": "live canary 只能作为小范围真实环境观察阶段，必须记录 scope、stop_condition_ref、rollback_plan_ref、owner、manual_review_required 和 residual_gap；canary 通过不得自动扩大为 full live 或默认 hard gate。",
+    "required_fields_or_contract": [
+      "environment_id",
+      "environment_type",
+      "adapter_or_scenario_version",
+      "evidence_source_id",
+      "audit_trace_id",
+      "owner",
+      "known_limitations",
+      "not_live_permission",
+      "canary_not_full_live_permission",
+      "canary_scope",
+      "stop_condition_ref",
+      "rollback_plan_ref",
+      "risk_owner",
+      "live_execution_owner",
+      "manual_review_required",
+      "residual_gap"
+    ],
+    "procedure": [
+      "识别环境类型、平台、broker/exchange、API 版本和数据来源。",
+      "记录候选主题所需的 evidence 字段、owner 和限制。",
+      "将通过/失败写入 gap report 或 promotion decision，不直接写成实盘许可。"
+    ],
+    "anti_patterns": [
+      "把 paper/replay/sandbox/canary 表现写成策略有效。",
+      "把 vendor-specific 行为泛化为所有市场。",
+      "把测试通过写成 approved、default guidance、hard gate 或自动交易许可。"
+    ],
+    "validation": [
+      "外部 AI/人工严格审计 source、content、boundary、conflict patch notes。",
+      "正式转换前做完整 KB 冲突、重复和 owner 边界检查。"
+    ],
+    "risk_notes": [
+      "测试环境的通过结果容易被误读为 live-ready。",
+      "环境健康、认证、场景覆盖或 canary 观察都不能替代 Risk/Live owner 的正式决策。",
+      "Phase 60 P1 只能作为增强治理证据，不替代 P0 EnvironmentManifest / PromotionDecision / GapReport。",
+      "certification、scenario、paper reset、health、canary、drift 结果不得解释为 live-ready、收益证明、交易许可或 hard gate。"
+    ]
+  },
+  "review": {
+    "review_status": "formalized",
+    "reviewed_by": "external_ai_strict_audit",
+    "reviewed_at": "2026-06-17",
+    "default_guidance_allowed": false,
+    "approved_allowed": false,
+    "hard_gate_allowed": false,
+    "notes": "Accepted for draft only. Requires reviewed-preparation audit before formal reviewed/caveat_only.",
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase60_p1_needs_evidence_supplemental_reaudit_20260618_strict_v1",
+      "package_id": "phase60_p1_needs_evidence_supplemental_reaudit_package_20260618",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "medium_high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "formal_knowledge_id": "kb_phase60_risk_management.live_canary.rollback_owner_required.v1",
+      "required_followups": [
+        "正式写入 reviewed/caveat_only 时保留 canary_not_full_live_permission=true。",
+        "保留 manual_review_required=true。",
+        "标注 Google SRE / LaunchDarkly 为软件部署来源，FIA / CFTC 为行业/监管治理来源。",
+        "项目落地时必须补 venue-specific broker/exchange risk owner mapping。"
+      ],
+      "patch_notes": {
+        "source": [
+          "Google SRE / LaunchDarkly 支撑 canary 小范围发布、监控和回滚模式。",
+          "FIA / CFTC 支撑自动化交易风险控制、系统保护和治理责任。"
+        ],
+        "content": [
+          "live canary 是小范围真实环境观察阶段，不是 full live。",
+          "必须记录 scope、stop_condition_ref、rollback_plan_ref、risk_owner、live_execution_owner、manual_review_required 和 residual_gap。"
+        ],
+        "boundary": [
+          "不得自动扩大为 full live。",
+          "不得上线许可。",
+          "不得交易许可。",
+          "不得 hard gate。",
+          "不得风险阈值建议。"
+        ],
+        "conflict": [
+          "与 Phase 60 PromotionDecision / Risk owner 边界一致。",
+          "与 Live Execution owner 不冲突，真实执行事实仍归 Live Execution owner。"
+        ]
+      }
+    }
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "known_conflicts": [],
+    "potential_conflicts": [
+      "可能与 Phase 60 P0、Phase 58 环境等效链条、Phase 37 Replay/Live/Risk 知识重叠；正式转换前必须做重复和 owner 边界检查。"
+    ],
+    "resolution_summary": "Phase 60 P1 candidate audit accepted this item for draft only; reviewed/approved/default guidance/hard gate remain forbidden.",
+    "approval_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于提醒外接项目记录环境治理证据和 gap report。",
+      "用于审计 sandbox/replay/paper/canary 是否保留 owner 和边界。",
+      "用于阻止 AI 把测试环境结果泛化为 live-ready。"
+    ],
+    "not_allowed": [
+      "不得生成买卖点、仓位、杠杆、止损止盈或风险阈值。",
+      "不得授权实盘、自动拒单、自动停机或 hard gate。",
+      "不得把 candidate 当作正式 reviewed 或 approved 知识。"
+    ]
+  },
+  "machine_gate": {
+    "default_guidance": "deny",
+    "reviewed_allowed": false,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "trade_execution_advice_allowed": false,
+    "risk_threshold_advice_allowed": false,
+    "requires_human_escalation": true,
+    "reason": "accepted_for_draft only; reviewed-preparation audit required before formal reviewed/caveat_only."
+  },
+  "conversion_target": {
+    "proposed_knowledge_id": "kb_phase60_risk_management.live_canary.rollback_owner_required.v1",
+    "target_partition": "KB_07_RISK_MANAGEMENT",
+    "target_review_status": "accepted_for_draft_pending_reviewed_preparation",
+    "default_guidance_target": "deny",
+    "hard_gate_target": "deny"
+  },
+  "workflow": {
+    "stage": "formalized_reviewed",
+    "queue_group": "formalized",
+    "hidden_from_default_queue": true,
+    "next_action": "runtime_linkage_validation",
+    "formal_knowledge_id": "kb_phase60_risk_management.live_canary.rollback_owner_required.v1",
+    "formal_review_status": "reviewed",
+    "current_task_id": "CEK-TA-588",
+    "visible_in_default_guidance_queue": false,
+    "formalization_allowed": true,
+    "ai_audit_result_id": "audit_result_phase60_p1_needs_evidence_supplemental_reaudit_20260618_strict_v1",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "formal_knowledge_path": "codex-expert-kit/rag/knowledge/KB_07_RISK_MANAGEMENT/kb_phase60_risk_management.live_canary.rollback_owner_required.v1.json"
+  },
+  "audit_log": [
+    {
+      "event": "candidate_created",
+      "at": "2026-06-17",
+      "by": "codex",
+      "notes": "Phase 60 P1 候选生成，等待严格审计。"
+    },
+    {
+      "event": "strict_ai_audit_imported",
+      "at": "2026-06-17",
+      "by": "codex",
+      "task_id": "CEK-TA-584",
+      "audit_result_id": "audit_result_phase60_p1_candidate_20260617_strict_v1",
+      "decision": "accepted_for_draft",
+      "notes": "Candidate moved to accepted_for_draft only; no formal reviewed knowledge created."
+    },
+    {
+      "event": "reviewed_preparation_needs_more_evidence",
+      "at": "2026-06-18",
+      "by": "codex",
+      "task_id": "CEK-TA-586",
+      "audit_result_id": "audit_result_phase60_p1_reviewed_preparation_20260618_strict_v1",
+      "notes": "P60-P1-05 needs more direct source evidence before formal reviewed/caveat_only."
+    },
+    {
+      "event": "supplemental_evidence_added",
+      "at": "2026-06-18",
+      "by": "codex",
+      "task_id": "CEK-TA-587",
+      "notes": "Added direct supplemental sources for Phase 60 P1 needs_more_evidence reaudit."
+    },
+    {
+      "event": "formal_reviewed_caveat_only_created",
+      "at": "2026-06-18",
+      "by": "codex",
+      "task_id": "CEK-TA-588",
+      "audit_result_id": "audit_result_phase60_p1_needs_evidence_supplemental_reaudit_20260618_strict_v1",
+      "formal_knowledge_id": "kb_phase60_risk_management.live_canary.rollback_owner_required.v1",
+      "notes": "Formal reviewed/caveat_only created; no approved/default/hard gate."
+    }
+  ],
+  "copyright": {
+    "stores_full_text": false,
+    "stores_long_quote": false,
+    "summary_only": true
+  }
+}

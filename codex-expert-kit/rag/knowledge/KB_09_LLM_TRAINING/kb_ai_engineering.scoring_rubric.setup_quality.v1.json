@@ -1,0 +1,415 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_ai_engineering.scoring_rubric.setup_quality.v1",
+  "title": "`setup_quality` 只能记录为 owner-defined review dimension 或 rea",
+  "metadata": {
+    "partition_id": "KB_09_LLM_TRAINING",
+    "domain": "llm_training",
+    "subdomain": "trading_scoring_gating_training",
+    "rule_type": "checklist",
+    "content_type": "json",
+    "project_binding": "none",
+    "tree_node_id": "kt.llm_training.trading_scoring_gating_training",
+    "tree_path": "CEK-TA / AI Engineering",
+    "canonical_node_id": "kt.llm_training.trading_scoring_gating_training",
+    "canonical_tree_path": "CEK-TA / AI Engineering",
+    "risk_level": "medium",
+    "used_for": [
+      "llm_training",
+      "trading_gating_scoring",
+      "rag_engineering",
+      "mcp",
+      "vue_audit_ui"
+    ],
+    "source_candidate_id": "cand_20260609_ai_engineering_scoring_rubric_setup_quality_v1_001",
+    "research_task_id": "RIT-P36-C-15",
+    "claim_type": "ai_governance_rule",
+    "classification_notes": "Phase 36 AI Engineering reviewed knowledge; UI tree and canonical node are inherited from candidate classification. Trading rule bodies must remain in Trading Engineering."
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "general",
+    "data_granularity": "general",
+    "project_type": "trading_llm_assistant",
+    "applies_when": [
+      "外接项目正在构建或审计交易 LLM gating/scoring 的 scoring rubric 输出。",
+      "需要把 rubric 细分维度作为结构化 reason-code / review dimension，而不是最终交易许可。",
+      "项目能提供对应的 owner-defined *_ref、证据引用、review_owner 或校准报告。"
+    ],
+    "not_applicable_when": [
+      "需要定义 K 线 setup、入场/出场条件、策略参数、止损止盈或订单逻辑时，应路由到 Trading Engineering。",
+      "用户需要具体买卖点、仓位、止损止盈、策略参数或实盘订单执行。"
+    ]
+  },
+  "content": {
+    "statement": "`setup_quality` 只能记录为 owner-defined review dimension 或 reason-code category，必须引用 `setup_quality_ref` 与 `strategy_version_ref`；AI Engineering 不得定义交易 setup、K 线结构、入场条件或策略有效性。",
+    "rationale": "本条只沉淀 AI Engineering scoring rubric 字段、引用、审计状态和降级动作；具体交易语义由 Trading Engineering 或项目 owner 提供。 审计结论：补证后可以升级为 accepted_for_draft，但必须限定为内部 review dimension / reason-code category。rewritten statement 已与 normalized_claim 对齐：setup_quality 只能记录为 owner-defined review dimension 或 reason-code category，必须引用 setup_quality_ref 与 strategy_version_ref；AI Engineering 不得定义交易 setup、K 线结构、入场条件或策略有效性。外部来源主要支持 intended use、limitations、治理和算法交易监督，真正支撑该边界的是 CEK-TA 内部 rubric dimension contract。因此本条可进入 draft，但正式 reviewed 前必须补 Trading Engineering setup taxonomy / strategy_version_ref contract。",
+    "procedure": [
+      "确认项目事实匹配 applies_when，且没有命中 not_applicable_when。",
+      "按 source_patch_notes 检查来源是否足够支撑 statement。",
+      "按 content_patch_notes 补齐正式实现、schema、字段和 checklist。",
+      "按 boundary_patch_notes 确认没有把交易规则本体、项目私有参数或实盘执行规则写入 AI Engineering。",
+      "保留 required_followups，后续由来源增强或治理任务继续关闭。"
+    ],
+    "examples": [],
+    "anti_patterns": [
+      "把 reviewed 知识当作 approved 默认指导。",
+      "把 AI Engineering 规则扩写成具体交易阈值、仓位、买卖点或执行参数。",
+      "忽略审计结果中的来源限制、适用范围和后续补强要求。"
+    ],
+    "validation": [
+      "source_evidence 至少 2 条，且没有 low-only 来源。",
+      "conflict_status 为 none 或 resolved。",
+      "review_status 为 reviewed 时 machine_gate 必须是 caveat_only。",
+      "MCP/SearchLab 默认指导不得把本条当作 approved 返回。"
+    ],
+    "risk_notes": [
+      "补证后仍需外部 AI/人工二次审计确认是否可转 accepted_for_draft。",
+      "本条不得单独作为 approved 默认指导。",
+      "AI Engineering 只定义字段、引用、缺失状态、reason_codes、fallback_action 和 UI 展示。",
+      "Trading Engineering / project owner 管理 setup 定义、K 线结构、入场/出场条件、策略版本、策略适配和交易有效性判断。",
+      "不得在 AI Engineering KB 写入具体 K 线条件、买卖点、仓位、止损止盈、策略参数、订单执行逻辑或实盘交易规则。",
+      "与 scoring_rubric.reason_code_required 是父子关系。",
+      "与 label_schema.multi_dimensional_trade_quality、lineage.model_prompt_rag_data_strategy_bound_together 互补：setup_quality 需要 strategy_version_ref，但不持有 strategy 本体。",
+      "与 Trading Engineering 边界风险较高，正式 draft 必须强制 setup_quality_ref / strategy_version_ref。",
+      "未发现需要 rejected 的直接冲突；accepted_for_draft 仍不等于 approved。",
+      "补 setup_quality_schema.json。",
+      "补 Trading Engineering setup taxonomy / strategy_version_ref contract。",
+      "补 setup_quality_status enum。",
+      "补 eval cases：LLM invents setup、missing setup_ref、setup conflicts with strategy version、setup_quality used as final allow、setup_quality used to define entry condition。"
+    ],
+    "citation_notes": "Model Cards / NIST 支持 intended use、limitations 和治理边界；CEK-TA contract 明确 setup_quality 只能保存 setup_quality_ref、strategy_version_ref 和审计状态，setup 本体由 Trading Engineering 提供。",
+    "audit_patch_notes": {
+      "source_patch_notes": [
+        "保留 Model Cards 作为 intended use、limitations、evaluation context 的 supporting source。",
+        "保留 NIST AI RMF / AI RMF Core 作为治理和风险管理 supporting source。",
+        "保留 FINRA 15-09 作为算法交易治理、测试和控制 supporting source，不要把它写成 setup_quality 定义来源。",
+        "保留 CEK-TA scoring_rubric_dimension_contract 作为内部主契约，明确 setup_quality 只存 setup_quality_ref、strategy_version_ref 和审计状态。",
+        "正式 draft 应补 Trading Engineering setup taxonomy 或 strategy_version_ref contract，否则不得进入 reviewed。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议保留补证写法：setup_quality 只能记录为 owner-defined review dimension 或 reason-code category，必须引用 setup_quality_ref 与 strategy_version_ref；AI Engineering 不得定义交易 setup、K 线结构、入场条件或策略有效性。",
+        "建议字段：setup_quality_ref、setup_quality_status、strategy_version_ref、evidence_refs、review_owner、reason_codes、fallback_action。",
+        "setup_quality_status 建议枚举：fit、partial_fit、unknown、conflict、out_of_scope、needs_review。",
+        "无 setup_quality_ref 或 strategy_version_ref 时，不得给出 setup_quality 高分，也不得用于 hard allow。",
+        "明确 setup_quality 是评分解释维度，不是交易 setup 定义、策略信号或执行许可。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 只定义字段、引用、缺失状态、reason_codes、fallback_action 和 UI 展示。",
+        "Trading Engineering / project owner 管理 setup 定义、K 线结构、入场/出场条件、策略版本、策略适配和交易有效性判断。",
+        "不得在 AI Engineering KB 写入具体 K 线条件、买卖点、仓位、止损止盈、策略参数、订单执行逻辑或实盘交易规则。"
+      ],
+      "conflict_patch_notes": [
+        "与 scoring_rubric.reason_code_required 是父子关系。",
+        "与 label_schema.multi_dimensional_trade_quality、lineage.model_prompt_rag_data_strategy_bound_together 互补：setup_quality 需要 strategy_version_ref，但不持有 strategy 本体。",
+        "与 Trading Engineering 边界风险较高，正式 draft 必须强制 setup_quality_ref / strategy_version_ref。",
+        "未发现需要 rejected 的直接冲突；accepted_for_draft 仍不等于 approved。"
+      ],
+      "required_followups": [
+        "补 setup_quality_schema.json。",
+        "补 Trading Engineering setup taxonomy / strategy_version_ref contract。",
+        "补 setup_quality_status enum。",
+        "补 eval cases：LLM invents setup、missing setup_ref、setup conflicts with strategy version、setup_quality used as final allow、setup_quality used to define entry condition。"
+      ]
+    }
+  },
+  "assumptions": [
+    "外接项目提供项目事实、私有交易数据和策略上下文；CEK-TA 只沉淀可复用专业规则。",
+    "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+  ],
+  "source_evidence": [
+    {
+      "source_id": "src_openai_evals",
+      "source_title": "Working with evals | OpenAI API",
+      "source_url": "https://platform.openai.com/docs/guides/evals?api-mode=chat",
+      "source_type": "official_doc",
+      "publisher": "OpenAI",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "OpenAI evals documentation supports programmatic evaluation setup and workflow-specific quality checks before relying on model behavior.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_model_cards",
+      "source_title": "Model Cards for Model Reporting",
+      "source_url": "https://arxiv.org/abs/1810.03993",
+      "source_type": "paper",
+      "publisher": "arXiv",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "Model Cards support documenting intended use, performance, limitations, and ethical considerations for model deployment and review.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_nist",
+      "source_title": "AI Risk Management Framework | NIST",
+      "source_url": "https://www.nist.gov/itl/ai-risk-management-framework",
+      "source_type": "standard_or_risk_framework",
+      "publisher": "NIST",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "NIST AI RMF supports governance, mapping, measurement, and management of AI risks across design, deployment, and monitoring.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_nist_ai_rmf_core",
+      "source_title": "AI RMF Core",
+      "source_url": "https://airc.nist.gov/airmf-resources/airmf/5-sec-core/",
+      "source_type": "standard_or_risk_framework",
+      "publisher": "NIST",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": "AI RMF 1.0",
+      "reliability": "high",
+      "relevance": "medium",
+      "evidence_summary": "NIST AI RMF Core 组织 govern、map、measure、manage 风险管理活动，可支撑 rubric 维度需要 owner、测量、管理和审计边界。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_finra_regulatory_notice_15_09",
+      "source_title": "FINRA Regulatory Notice 15-09",
+      "source_url": "https://www.finra.org/rules-guidance/notices/15-09",
+      "source_type": "standard_or_risk_framework",
+      "publisher": "FINRA",
+      "published_at": "2015-03-01",
+      "accessed_at": "2026-06-09",
+      "version": "Regulatory Notice 15-09",
+      "reliability": "high",
+      "relevance": "medium",
+      "evidence_summary": "FINRA 15-09 支持算法交易系统的监督、测试、控制、开发部署和后续监控，可支撑 rule_compliance 只能基于显式 rule_refs/policy_refs 审计，不能由 LLM 发明规则。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_cek_ta_scoring_rubric_dimension_contract",
+      "source_title": "AI Engineering Scoring Rubric 维度边界契约",
+      "source_url": "docs/contracts/ai_engineering_scoring_rubric_dimension_contract.md",
+      "source_type": "internal_report",
+      "publisher": "CEK-TA",
+      "published_at": "2026-06-09",
+      "accessed_at": "2026-06-09",
+      "version": "1.0.0",
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "CEK-TA 内部契约规定 AI Engineering 只保存 rubric 字段、引用、缺失状态、reason codes 和审计字段；市场 regime、setup、risk/reward、rule registry 和阈值本体由 Trading Engineering 或项目 owner 提供。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_occ_fed_fdic_revised_model_risk_2026",
+      "source_title": "Model Risk Management: Revised Guidance",
+      "source_url": "https://occ.gov/news-issuances/bulletins/2026/bulletin-2026-13.html",
+      "source_type": "standard_or_risk_framework",
+      "publisher": "OCC / Federal Reserve / FDIC",
+      "published_at": "2026-04-17",
+      "accessed_at": "2026-06-09",
+      "version": "OCC Bulletin 2026-13 / SR 26-2",
+      "reliability": "high",
+      "relevance": "medium",
+      "evidence_summary": "2026 年跨机构模型风险管理修订指南支持模型治理、验证、变更控制和风险分层；同时需注明 generative AI 和 agentic AI 不在其直接范围内，只能作为模型风险治理类比来源。",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 90,
+    "score_version": "1.0.0",
+    "primary_source_count": 2,
+    "supporting_source_count": 5,
+    "low_reliability_source_count": 0,
+    "limitations": [
+      "本条为 reviewed 知识，来源和审计补丁已记录；默认指导仍需后续人工治理升级 approved。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "docs/contracts/ai_engineering_gating_scoring_contract.md",
+      "docs/contracts/ai_engineering_knowledge_item_policy.md",
+      "docs/tasks/phase36_ai_engineering_gating_scoring_knowledge.md",
+      "docs/contracts/ai_engineering_scoring_rubric_dimension_contract.md",
+      "kb_ai_engineering.scoring_rubric.reason_code_required.v1"
+    ],
+    "conflicts": [],
+    "resolution_summary": "已将通用 reason-code statement 重写为具体 scoring_rubric 维度，并通过 *_ref / owner review 边界避免把交易规则本体写入 AI Engineering。",
+    "default_recommendation": "caveat_only_until_approved"
+  },
+  "review": {
+    "confidence": "medium",
+    "freshness": "time_sensitive",
+    "review_status": "reviewed",
+    "reviewer": "codex",
+    "reviewed_at": "2026-06-09",
+    "created_at": "2026-06-09",
+    "updated_at": "2026-06-09",
+    "open_questions": [
+      "二审确认补证后的维度 statement 是否已经与 normalized_claim 对齐。",
+      "二审确认 *_ref / owner review 边界是否足以阻止 AI Engineering 承载交易规则本体。",
+      "补 setup_quality_schema.json。",
+      "补 Trading Engineering setup taxonomy / strategy_version_ref contract。",
+      "补 eval cases：LLM invents setup、missing setup_ref、setup conflicts with strategy version、setup_quality used as final allow。",
+      "补 setup_quality_schema.json。",
+      "补 Trading Engineering setup taxonomy / strategy_version_ref contract。",
+      "补 setup_quality_status enum。",
+      "补 eval cases：LLM invents setup、missing setup_ref、setup conflicts with strategy version、setup_quality used as final allow、setup_quality used to define entry condition。"
+    ],
+    "decision_log": [
+      {
+        "at": "2026-06-09",
+        "actor": "external_ai",
+        "decision": "accepted_for_draft",
+        "reason": "补证后可以升级为 accepted_for_draft，但必须限定为内部 review dimension / reason-code category。rewritten statement 已与 normalized_claim 对齐：setup_quality 只能记录为 owner-defined review dimension 或 reason-code category，必须引用 setup_quality_ref 与 strategy_version_ref；AI Engineering 不得定义交易 setup、K 线结构、入场条件或策略有效性。外部来源主要支持 intended use、limitations、治理和算法交易监督，真正支撑该边界的是 CEK-TA 内部 rubric dimension contract。因此本条可进入 draft，但正式 reviewed 前必须补 Trading Engineering setup taxonomy / strategy_version_ref contract。",
+        "audit_result_id": "audit_result_phase36_batch08_scoring_rubric_supplemental_reaudit_20260609_gpt55_pro_strict_sources"
+      },
+      {
+        "at": "2026-06-09",
+        "actor": "codex",
+        "decision": "converted_to_reviewed",
+        "reason": "按 Phase 36 批量审计结果优化候选并转为 formal reviewed；未升级 approved。",
+        "audit_result_id": "audit_result_phase36_batch08_scoring_rubric_supplemental_reaudit_20260609_gpt55_pro_strict_sources"
+      }
+    ],
+    "approval_status": "not_requested",
+    "default_guidance_allowed": false,
+    "source_candidate_id": "cand_20260609_ai_engineering_scoring_rubric_setup_quality_v1_001",
+    "ai_audit_result_id": "audit_result_phase36_batch08_scoring_rubric_supplemental_reaudit_20260609_gpt55_pro_strict_sources",
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase36_batch08_scoring_rubric_supplemental_reaudit_20260609_gpt55_pro_strict_sources",
+      "source_package_id": "phase36_batch08_scoring_rubric_supplemental_audit_package_20260609",
+      "decision": "accepted_for_draft",
+      "reason": "补证后可以升级为 accepted_for_draft，但必须限定为内部 review dimension / reason-code category。rewritten statement 已与 normalized_claim 对齐：setup_quality 只能记录为 owner-defined review dimension 或 reason-code category，必须引用 setup_quality_ref 与 strategy_version_ref；AI Engineering 不得定义交易 setup、K 线结构、入场条件或策略有效性。外部来源主要支持 intended use、limitations、治理和算法交易监督，真正支撑该边界的是 CEK-TA 内部 rubric dimension contract。因此本条可进入 draft，但正式 reviewed 前必须补 Trading Engineering setup taxonomy / strategy_version_ref contract。",
+      "source_patch_notes": [
+        "保留 Model Cards 作为 intended use、limitations、evaluation context 的 supporting source。",
+        "保留 NIST AI RMF / AI RMF Core 作为治理和风险管理 supporting source。",
+        "保留 FINRA 15-09 作为算法交易治理、测试和控制 supporting source，不要把它写成 setup_quality 定义来源。",
+        "保留 CEK-TA scoring_rubric_dimension_contract 作为内部主契约，明确 setup_quality 只存 setup_quality_ref、strategy_version_ref 和审计状态。",
+        "正式 draft 应补 Trading Engineering setup taxonomy 或 strategy_version_ref contract，否则不得进入 reviewed。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议保留补证写法：setup_quality 只能记录为 owner-defined review dimension 或 reason-code category，必须引用 setup_quality_ref 与 strategy_version_ref；AI Engineering 不得定义交易 setup、K 线结构、入场条件或策略有效性。",
+        "建议字段：setup_quality_ref、setup_quality_status、strategy_version_ref、evidence_refs、review_owner、reason_codes、fallback_action。",
+        "setup_quality_status 建议枚举：fit、partial_fit、unknown、conflict、out_of_scope、needs_review。",
+        "无 setup_quality_ref 或 strategy_version_ref 时，不得给出 setup_quality 高分，也不得用于 hard allow。",
+        "明确 setup_quality 是评分解释维度，不是交易 setup 定义、策略信号或执行许可。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 只定义字段、引用、缺失状态、reason_codes、fallback_action 和 UI 展示。",
+        "Trading Engineering / project owner 管理 setup 定义、K 线结构、入场/出场条件、策略版本、策略适配和交易有效性判断。",
+        "不得在 AI Engineering KB 写入具体 K 线条件、买卖点、仓位、止损止盈、策略参数、订单执行逻辑或实盘交易规则。"
+      ],
+      "conflict_patch_notes": [
+        "与 scoring_rubric.reason_code_required 是父子关系。",
+        "与 label_schema.multi_dimensional_trade_quality、lineage.model_prompt_rag_data_strategy_bound_together 互补：setup_quality 需要 strategy_version_ref，但不持有 strategy 本体。",
+        "与 Trading Engineering 边界风险较高，正式 draft 必须强制 setup_quality_ref / strategy_version_ref。",
+        "未发现需要 rejected 的直接冲突；accepted_for_draft 仍不等于 approved。"
+      ],
+      "required_followups": [
+        "补 setup_quality_schema.json。",
+        "补 Trading Engineering setup taxonomy / strategy_version_ref contract。",
+        "补 setup_quality_status enum。",
+        "补 eval cases：LLM invents setup、missing setup_ref、setup conflicts with strategy version、setup_quality used as final allow、setup_quality used to define entry condition。"
+      ]
+    },
+    "approved_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "contribution": {
+    "contribution_id": null,
+    "source_project": null,
+    "sanitization_status": "not_applicable",
+    "private_data_removed": true,
+    "generic_mapping_notes": "Phase 36 public-source AI Engineering candidate; no project-private trading facts included."
+  },
+  "copyright": {
+    "stores_full_text": false,
+    "stores_long_quote": false,
+    "summary_only": true,
+    "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+    "reuse_risk": "low"
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于审计 AI Engineering、LLM 训练、RAG/MCP、部署、安全或治理链路。",
+      "用于提醒外接项目补齐来源、适用边界、冲突状态、审计记录和人工审批。",
+      "用于 reviewed/audit 模式下带 caveat 引用。"
+    ],
+    "not_allowed": [
+      "不得生成买卖点、仓位、杠杆、止损止盈或实盘执行指令。",
+      "不得覆盖确定性风控、交易执行系统或人工审批。",
+      "不得作为 approved/default guidance 直接返回。"
+    ],
+    "required_context": [
+      "project_type",
+      "task_type",
+      "mode",
+      "strategy_version",
+      "data_boundary",
+      "review_status"
+    ],
+    "fallback_behavior": "cite_with_caveat"
+  },
+  "machine_gate": {
+    "default_guidance": "caveat_only",
+    "reason": "reviewed only; accepted_for_draft is not approved; default guidance requires later human governance approval.",
+    "requires_human_escalation": true,
+    "blocking_reasons": [
+      "not_approved",
+      "phase36_batch_reviewed_only"
+    ],
+    "checked_at": "2026-06-09",
+    "gate_version": "1.0.0",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "recommended_extra_sources": [
+    {
+      "title": "保留 Model Cards 作为 intended use、limitations、evaluation context 的 supporting source。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_1"
+    },
+    {
+      "title": "保留 NIST AI RMF / AI RMF Core 作为治理和风险管理 supporting source。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_2"
+    },
+    {
+      "title": "保留 FINRA 15-09 作为算法交易治理、测试和控制 supporting source，不要把它写成 setup_quality 定义来源。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_3"
+    },
+    {
+      "title": "保留 CEK-TA scoring_rubric_dimension_contract 作为内部主契约，明确 setup_quality 只存 setup_quality_ref、strategy_version_ref 和审计状态。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_4"
+    },
+    {
+      "title": "正式 draft 应补 Trading Engineering setup taxonomy 或 strategy_version_ref contract，否则不得进入 reviewed。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_5"
+    }
+  ]
+}

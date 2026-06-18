@@ -1,0 +1,607 @@
+{
+  "audit_result_id": "audit_result_phase37_live_risk_candidate_audit_20260612_strict_v1",
+  "auditor": "external_ai_strict_audit",
+  "audited_at": "2026-06-12",
+  "package_id": "phase37_live_risk_candidate_audit_package_20260612",
+  "quality_gate": {
+    "pass": true
+  },
+  "summary": {
+    "total": 12,
+    "accepted_for_draft": 12,
+    "needs_more_evidence": 0,
+    "rejected": 0,
+    "blocked": 0
+  },
+  "hard_boundaries": {
+    "reviewed_allowed": false,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "risk_threshold_advice_allowed": false
+  },
+  "candidate_results": [
+    {
+      "candidate_id": "cand_20260612_phase37_live_risk_least_privilege_api_required_001",
+      "research_task_id": "P37-G-L01",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "reasons": [
+        "NIST least privilege 支撑最小权限原则，SEC/CME 支撑 market access 与 pre-trade control；不得泛化为所有 broker 的具体权限矩阵。"
+      ],
+      "required_followups": [
+        "进入 reviewed/caveat_only 前必须另行导出 reviewed-preparation 审计包。",
+        "不得创建 approved、default guidance 或 hard gate。"
+      ],
+      "patch_notes": {
+        "source": [
+          "SEC/CFTC/NIST/CME/FIA/FIX/IBKR/Binance/QuantConnect 只能支撑原则、监管/行业要求或具体 venue/broker/platform 语义。",
+          "不得把任何 broker、venue、platform 文档写成所有市场通用规则。"
+        ],
+        "content": [
+          "Live Execution 负责 API 权限、订单状态、适配器错误、真实订单/成交/费用、仓位对账和审计日志。",
+          "Risk Management 负责 deterministic pre-trade risk gates、风险限额、日亏损、组合暴露、连续亏损和 kill/stop 事件政策边界。"
+        ],
+        "boundary": [
+          "accepted_for_draft 不是 reviewed、approved、default guidance 或 hard gate。",
+          "不得生成买卖点、仓位、杠杆、止损止盈参数、实盘执行建议或风险阈值数值。"
+        ],
+        "conflict": [
+          "AI scoring / Agent 只能引用这些规则，不能绕过 deterministic final gate。",
+          "Replay/Simulation 只模拟；Live Execution / Risk Management 拥有真实订单、真实状态和风控动作。"
+        ]
+      },
+      "source_assessment": {
+        "source_count": 4,
+        "missing_sources": [],
+        "weak_sources": [],
+        "recommended_extra_sources": []
+      },
+      "classification_assessment": {
+        "is_correct_branch": true,
+        "expected_branch": "Trading Engineering / Live Execution or Risk Management",
+        "misplaced_topics": []
+      }
+    },
+    {
+      "candidate_id": "cand_20260612_phase37_live_risk_order_state_machine_required_001",
+      "research_task_id": "P37-G-L02",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "reasons": [
+        "FIX Execution Report / OrdStatus 支撑订单接收、成交、拒单、取消、过期和 pending 等状态语义。"
+      ],
+      "required_followups": [
+        "进入 reviewed/caveat_only 前必须另行导出 reviewed-preparation 审计包。",
+        "不得创建 approved、default guidance 或 hard gate。"
+      ],
+      "patch_notes": {
+        "source": [
+          "SEC/CFTC/NIST/CME/FIA/FIX/IBKR/Binance/QuantConnect 只能支撑原则、监管/行业要求或具体 venue/broker/platform 语义。",
+          "不得把任何 broker、venue、platform 文档写成所有市场通用规则。"
+        ],
+        "content": [
+          "Live Execution 负责 API 权限、订单状态、适配器错误、真实订单/成交/费用、仓位对账和审计日志。",
+          "Risk Management 负责 deterministic pre-trade risk gates、风险限额、日亏损、组合暴露、连续亏损和 kill/stop 事件政策边界。"
+        ],
+        "boundary": [
+          "accepted_for_draft 不是 reviewed、approved、default guidance 或 hard gate。",
+          "不得生成买卖点、仓位、杠杆、止损止盈参数、实盘执行建议或风险阈值数值。"
+        ],
+        "conflict": [
+          "AI scoring / Agent 只能引用这些规则，不能绕过 deterministic final gate。",
+          "Replay/Simulation 只模拟；Live Execution / Risk Management 拥有真实订单、真实状态和风控动作。"
+        ]
+      },
+      "source_assessment": {
+        "source_count": 4,
+        "missing_sources": [],
+        "weak_sources": [],
+        "recommended_extra_sources": []
+      },
+      "classification_assessment": {
+        "is_correct_branch": true,
+        "expected_branch": "Trading Engineering / Live Execution or Risk Management",
+        "misplaced_topics": []
+      }
+    },
+    {
+      "candidate_id": "cand_20260612_phase37_live_risk_position_reconciliation_required_001",
+      "research_task_id": "P37-G-L03",
+      "decision": "accepted_for_draft",
+      "confidence": "medium_high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "reasons": [
+        "本地订单、成交和仓位必须与 broker/account source 对账；reviewed 前需补 position reconciliation schema。"
+      ],
+      "required_followups": [
+        "进入 reviewed/caveat_only 前必须另行导出 reviewed-preparation 审计包。",
+        "不得创建 approved、default guidance 或 hard gate。"
+      ],
+      "patch_notes": {
+        "source": [
+          "SEC/CFTC/NIST/CME/FIA/FIX/IBKR/Binance/QuantConnect 只能支撑原则、监管/行业要求或具体 venue/broker/platform 语义。",
+          "不得把任何 broker、venue、platform 文档写成所有市场通用规则。"
+        ],
+        "content": [
+          "Live Execution 负责 API 权限、订单状态、适配器错误、真实订单/成交/费用、仓位对账和审计日志。",
+          "Risk Management 负责 deterministic pre-trade risk gates、风险限额、日亏损、组合暴露、连续亏损和 kill/stop 事件政策边界。"
+        ],
+        "boundary": [
+          "accepted_for_draft 不是 reviewed、approved、default guidance 或 hard gate。",
+          "不得生成买卖点、仓位、杠杆、止损止盈参数、实盘执行建议或风险阈值数值。"
+        ],
+        "conflict": [
+          "AI scoring / Agent 只能引用这些规则，不能绕过 deterministic final gate。",
+          "Replay/Simulation 只模拟；Live Execution / Risk Management 拥有真实订单、真实状态和风控动作。"
+        ]
+      },
+      "source_assessment": {
+        "source_count": 4,
+        "missing_sources": [],
+        "weak_sources": [],
+        "recommended_extra_sources": []
+      },
+      "classification_assessment": {
+        "is_correct_branch": true,
+        "expected_branch": "Trading Engineering / Live Execution or Risk Management",
+        "misplaced_topics": []
+      }
+    },
+    {
+      "candidate_id": "cand_20260612_phase37_live_risk_kill_switch_required_001",
+      "research_task_id": "P37-G-L04",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "reasons": [
+        "CME Kill Switch 支撑 block new order entry / cancel working orders；kill switch 是执行安全控制，不是策略判断。"
+      ],
+      "required_followups": [
+        "进入 reviewed/caveat_only 前必须另行导出 reviewed-preparation 审计包。",
+        "不得创建 approved、default guidance 或 hard gate。"
+      ],
+      "patch_notes": {
+        "source": [
+          "SEC/CFTC/NIST/CME/FIA/FIX/IBKR/Binance/QuantConnect 只能支撑原则、监管/行业要求或具体 venue/broker/platform 语义。",
+          "不得把任何 broker、venue、platform 文档写成所有市场通用规则。"
+        ],
+        "content": [
+          "Live Execution 负责 API 权限、订单状态、适配器错误、真实订单/成交/费用、仓位对账和审计日志。",
+          "Risk Management 负责 deterministic pre-trade risk gates、风险限额、日亏损、组合暴露、连续亏损和 kill/stop 事件政策边界。"
+        ],
+        "boundary": [
+          "accepted_for_draft 不是 reviewed、approved、default guidance 或 hard gate。",
+          "不得生成买卖点、仓位、杠杆、止损止盈参数、实盘执行建议或风险阈值数值。"
+        ],
+        "conflict": [
+          "AI scoring / Agent 只能引用这些规则，不能绕过 deterministic final gate。",
+          "Replay/Simulation 只模拟；Live Execution / Risk Management 拥有真实订单、真实状态和风控动作。"
+        ]
+      },
+      "source_assessment": {
+        "source_count": 4,
+        "missing_sources": [],
+        "weak_sources": [],
+        "recommended_extra_sources": []
+      },
+      "classification_assessment": {
+        "is_correct_branch": true,
+        "expected_branch": "Trading Engineering / Live Execution or Risk Management",
+        "misplaced_topics": []
+      }
+    },
+    {
+      "candidate_id": "cand_20260612_phase37_live_risk_exchange_adapter_error_contract_required_001",
+      "research_task_id": "P37-G-L05",
+      "decision": "accepted_for_draft",
+      "confidence": "medium_high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "reasons": [
+        "IBKR、Binance filters、FIX 状态语义支撑 adapter 需要结构化错误契约，不能靠字符串异常驱动实盘决策。"
+      ],
+      "required_followups": [
+        "进入 reviewed/caveat_only 前必须另行导出 reviewed-preparation 审计包。",
+        "不得创建 approved、default guidance 或 hard gate。"
+      ],
+      "patch_notes": {
+        "source": [
+          "SEC/CFTC/NIST/CME/FIA/FIX/IBKR/Binance/QuantConnect 只能支撑原则、监管/行业要求或具体 venue/broker/platform 语义。",
+          "不得把任何 broker、venue、platform 文档写成所有市场通用规则。"
+        ],
+        "content": [
+          "Live Execution 负责 API 权限、订单状态、适配器错误、真实订单/成交/费用、仓位对账和审计日志。",
+          "Risk Management 负责 deterministic pre-trade risk gates、风险限额、日亏损、组合暴露、连续亏损和 kill/stop 事件政策边界。"
+        ],
+        "boundary": [
+          "accepted_for_draft 不是 reviewed、approved、default guidance 或 hard gate。",
+          "不得生成买卖点、仓位、杠杆、止损止盈参数、实盘执行建议或风险阈值数值。"
+        ],
+        "conflict": [
+          "AI scoring / Agent 只能引用这些规则，不能绕过 deterministic final gate。",
+          "Replay/Simulation 只模拟；Live Execution / Risk Management 拥有真实订单、真实状态和风控动作。"
+        ]
+      },
+      "source_assessment": {
+        "source_count": 4,
+        "missing_sources": [],
+        "weak_sources": [],
+        "recommended_extra_sources": []
+      },
+      "classification_assessment": {
+        "is_correct_branch": true,
+        "expected_branch": "Trading Engineering / Live Execution or Risk Management",
+        "misplaced_topics": []
+      }
+    },
+    {
+      "candidate_id": "cand_20260612_phase37_live_risk_order_fill_trade_log_required_001",
+      "research_task_id": "P37-G-L06",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "reasons": [
+        "FIX Execution Report 与审计日志来源支撑订单请求、成交、拒单、撤单、费用、状态迁移和人工操作可追踪。"
+      ],
+      "required_followups": [
+        "进入 reviewed/caveat_only 前必须另行导出 reviewed-preparation 审计包。",
+        "不得创建 approved、default guidance 或 hard gate。"
+      ],
+      "patch_notes": {
+        "source": [
+          "SEC/CFTC/NIST/CME/FIA/FIX/IBKR/Binance/QuantConnect 只能支撑原则、监管/行业要求或具体 venue/broker/platform 语义。",
+          "不得把任何 broker、venue、platform 文档写成所有市场通用规则。"
+        ],
+        "content": [
+          "Live Execution 负责 API 权限、订单状态、适配器错误、真实订单/成交/费用、仓位对账和审计日志。",
+          "Risk Management 负责 deterministic pre-trade risk gates、风险限额、日亏损、组合暴露、连续亏损和 kill/stop 事件政策边界。"
+        ],
+        "boundary": [
+          "accepted_for_draft 不是 reviewed、approved、default guidance 或 hard gate。",
+          "不得生成买卖点、仓位、杠杆、止损止盈参数、实盘执行建议或风险阈值数值。"
+        ],
+        "conflict": [
+          "AI scoring / Agent 只能引用这些规则，不能绕过 deterministic final gate。",
+          "Replay/Simulation 只模拟；Live Execution / Risk Management 拥有真实订单、真实状态和风控动作。"
+        ]
+      },
+      "source_assessment": {
+        "source_count": 4,
+        "missing_sources": [],
+        "weak_sources": [],
+        "recommended_extra_sources": []
+      },
+      "classification_assessment": {
+        "is_correct_branch": true,
+        "expected_branch": "Trading Engineering / Live Execution or Risk Management",
+        "misplaced_topics": []
+      }
+    },
+    {
+      "candidate_id": "cand_20260612_phase37_live_risk_single_trade_risk_limit_required_001",
+      "research_task_id": "P37-G-L07",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "reasons": [
+        "SEC 15c3-5、CFTC 17 CFR 1.11、CME/FIA 支撑 pre-trade risk controls；不得给单笔风险阈值数值。"
+      ],
+      "required_followups": [
+        "进入 reviewed/caveat_only 前必须另行导出 reviewed-preparation 审计包。",
+        "不得创建 approved、default guidance 或 hard gate。"
+      ],
+      "patch_notes": {
+        "source": [
+          "SEC/CFTC/NIST/CME/FIA/FIX/IBKR/Binance/QuantConnect 只能支撑原则、监管/行业要求或具体 venue/broker/platform 语义。",
+          "不得把任何 broker、venue、platform 文档写成所有市场通用规则。"
+        ],
+        "content": [
+          "Live Execution 负责 API 权限、订单状态、适配器错误、真实订单/成交/费用、仓位对账和审计日志。",
+          "Risk Management 负责 deterministic pre-trade risk gates、风险限额、日亏损、组合暴露、连续亏损和 kill/stop 事件政策边界。"
+        ],
+        "boundary": [
+          "accepted_for_draft 不是 reviewed、approved、default guidance 或 hard gate。",
+          "不得生成买卖点、仓位、杠杆、止损止盈参数、实盘执行建议或风险阈值数值。"
+        ],
+        "conflict": [
+          "AI scoring / Agent 只能引用这些规则，不能绕过 deterministic final gate。",
+          "Replay/Simulation 只模拟；Live Execution / Risk Management 拥有真实订单、真实状态和风控动作。"
+        ]
+      },
+      "source_assessment": {
+        "source_count": 4,
+        "missing_sources": [],
+        "weak_sources": [],
+        "recommended_extra_sources": []
+      },
+      "classification_assessment": {
+        "is_correct_branch": true,
+        "expected_branch": "Trading Engineering / Live Execution or Risk Management",
+        "misplaced_topics": []
+      }
+    },
+    {
+      "candidate_id": "cand_20260612_phase37_live_risk_daily_loss_limit_required_001",
+      "research_task_id": "P37-G-L08",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "reasons": [
+        "需定义 realized/unrealized loss 口径、重置时区、冻结动作和恢复流程；阈值必须由项目 owner 配置。"
+      ],
+      "required_followups": [
+        "进入 reviewed/caveat_only 前必须另行导出 reviewed-preparation 审计包。",
+        "不得创建 approved、default guidance 或 hard gate。"
+      ],
+      "patch_notes": {
+        "source": [
+          "SEC/CFTC/NIST/CME/FIA/FIX/IBKR/Binance/QuantConnect 只能支撑原则、监管/行业要求或具体 venue/broker/platform 语义。",
+          "不得把任何 broker、venue、platform 文档写成所有市场通用规则。"
+        ],
+        "content": [
+          "Live Execution 负责 API 权限、订单状态、适配器错误、真实订单/成交/费用、仓位对账和审计日志。",
+          "Risk Management 负责 deterministic pre-trade risk gates、风险限额、日亏损、组合暴露、连续亏损和 kill/stop 事件政策边界。"
+        ],
+        "boundary": [
+          "accepted_for_draft 不是 reviewed、approved、default guidance 或 hard gate。",
+          "不得生成买卖点、仓位、杠杆、止损止盈参数、实盘执行建议或风险阈值数值。"
+        ],
+        "conflict": [
+          "AI scoring / Agent 只能引用这些规则，不能绕过 deterministic final gate。",
+          "Replay/Simulation 只模拟；Live Execution / Risk Management 拥有真实订单、真实状态和风控动作。"
+        ]
+      },
+      "source_assessment": {
+        "source_count": 4,
+        "missing_sources": [],
+        "weak_sources": [],
+        "recommended_extra_sources": []
+      },
+      "classification_assessment": {
+        "is_correct_branch": true,
+        "expected_branch": "Trading Engineering / Live Execution or Risk Management",
+        "misplaced_topics": []
+      }
+    },
+    {
+      "candidate_id": "cand_20260612_phase37_live_risk_max_open_positions_required_001",
+      "research_task_id": "P37-G-L09",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "reasons": [
+        "SEC/CFTC/CME 资料支持订单、资本、信用、数量等 pre-trade 限制；本条未给具体数值，可进入 draft。"
+      ],
+      "required_followups": [
+        "进入 reviewed/caveat_only 前必须另行导出 reviewed-preparation 审计包。",
+        "不得创建 approved、default guidance 或 hard gate。"
+      ],
+      "patch_notes": {
+        "source": [
+          "SEC/CFTC/NIST/CME/FIA/FIX/IBKR/Binance/QuantConnect 只能支撑原则、监管/行业要求或具体 venue/broker/platform 语义。",
+          "不得把任何 broker、venue、platform 文档写成所有市场通用规则。"
+        ],
+        "content": [
+          "Live Execution 负责 API 权限、订单状态、适配器错误、真实订单/成交/费用、仓位对账和审计日志。",
+          "Risk Management 负责 deterministic pre-trade risk gates、风险限额、日亏损、组合暴露、连续亏损和 kill/stop 事件政策边界。"
+        ],
+        "boundary": [
+          "accepted_for_draft 不是 reviewed、approved、default guidance 或 hard gate。",
+          "不得生成买卖点、仓位、杠杆、止损止盈参数、实盘执行建议或风险阈值数值。"
+        ],
+        "conflict": [
+          "AI scoring / Agent 只能引用这些规则，不能绕过 deterministic final gate。",
+          "Replay/Simulation 只模拟；Live Execution / Risk Management 拥有真实订单、真实状态和风控动作。"
+        ]
+      },
+      "source_assessment": {
+        "source_count": 4,
+        "missing_sources": [],
+        "weak_sources": [],
+        "recommended_extra_sources": []
+      },
+      "classification_assessment": {
+        "is_correct_branch": true,
+        "expected_branch": "Trading Engineering / Live Execution or Risk Management",
+        "misplaced_topics": []
+      }
+    },
+    {
+      "candidate_id": "cand_20260612_phase37_live_risk_portfolio_exposure_limit_required_001",
+      "research_task_id": "P37-G-L10",
+      "decision": "accepted_for_draft",
+      "confidence": "medium_high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "reasons": [
+        "组合/账户/品种/方向暴露上限作为 risk control 方向成立；QuantConnect 只能作平台示例，reviewed 前需补 exposure taxonomy。"
+      ],
+      "required_followups": [
+        "进入 reviewed/caveat_only 前必须另行导出 reviewed-preparation 审计包。",
+        "不得创建 approved、default guidance 或 hard gate。"
+      ],
+      "patch_notes": {
+        "source": [
+          "SEC/CFTC/NIST/CME/FIA/FIX/IBKR/Binance/QuantConnect 只能支撑原则、监管/行业要求或具体 venue/broker/platform 语义。",
+          "不得把任何 broker、venue、platform 文档写成所有市场通用规则。"
+        ],
+        "content": [
+          "Live Execution 负责 API 权限、订单状态、适配器错误、真实订单/成交/费用、仓位对账和审计日志。",
+          "Risk Management 负责 deterministic pre-trade risk gates、风险限额、日亏损、组合暴露、连续亏损和 kill/stop 事件政策边界。"
+        ],
+        "boundary": [
+          "accepted_for_draft 不是 reviewed、approved、default guidance 或 hard gate。",
+          "不得生成买卖点、仓位、杠杆、止损止盈参数、实盘执行建议或风险阈值数值。"
+        ],
+        "conflict": [
+          "AI scoring / Agent 只能引用这些规则，不能绕过 deterministic final gate。",
+          "Replay/Simulation 只模拟；Live Execution / Risk Management 拥有真实订单、真实状态和风控动作。"
+        ]
+      },
+      "source_assessment": {
+        "source_count": 4,
+        "missing_sources": [],
+        "weak_sources": [],
+        "recommended_extra_sources": []
+      },
+      "classification_assessment": {
+        "is_correct_branch": true,
+        "expected_branch": "Trading Engineering / Live Execution or Risk Management",
+        "misplaced_topics": []
+      }
+    },
+    {
+      "candidate_id": "cand_20260612_phase37_live_risk_consecutive_loss_stop_required_001",
+      "research_task_id": "P37-G-L11",
+      "decision": "accepted_for_draft",
+      "confidence": "medium",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "reasons": [
+        "方向可接受，但来源偏原则性；reviewed 前必须补亏损事件口径、时间窗口、重置条件、冻结动作和人工复核 schema。"
+      ],
+      "required_followups": [
+        "进入 reviewed/caveat_only 前必须另行导出 reviewed-preparation 审计包。",
+        "不得创建 approved、default guidance 或 hard gate。"
+      ],
+      "patch_notes": {
+        "source": [
+          "SEC/CFTC/NIST/CME/FIA/FIX/IBKR/Binance/QuantConnect 只能支撑原则、监管/行业要求或具体 venue/broker/platform 语义。",
+          "不得把任何 broker、venue、platform 文档写成所有市场通用规则。"
+        ],
+        "content": [
+          "Live Execution 负责 API 权限、订单状态、适配器错误、真实订单/成交/费用、仓位对账和审计日志。",
+          "Risk Management 负责 deterministic pre-trade risk gates、风险限额、日亏损、组合暴露、连续亏损和 kill/stop 事件政策边界。"
+        ],
+        "boundary": [
+          "accepted_for_draft 不是 reviewed、approved、default guidance 或 hard gate。",
+          "不得生成买卖点、仓位、杠杆、止损止盈参数、实盘执行建议或风险阈值数值。"
+        ],
+        "conflict": [
+          "AI scoring / Agent 只能引用这些规则，不能绕过 deterministic final gate。",
+          "Replay/Simulation 只模拟；Live Execution / Risk Management 拥有真实订单、真实状态和风控动作。"
+        ]
+      },
+      "source_assessment": {
+        "source_count": 4,
+        "missing_sources": [],
+        "weak_sources": [],
+        "recommended_extra_sources": []
+      },
+      "classification_assessment": {
+        "is_correct_branch": true,
+        "expected_branch": "Trading Engineering / Live Execution or Risk Management",
+        "misplaced_topics": []
+      }
+    },
+    {
+      "candidate_id": "cand_20260612_phase37_live_risk_hard_risk_gate_precedes_execution_001",
+      "research_task_id": "P37-G-L12",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "reasons": [
+        "SEC/CFTC/CME/FIA 支撑 deterministic pre-trade risk controls 先于市场订单；本轮只允许 draft，不得实际启用 hard gate。"
+      ],
+      "required_followups": [
+        "进入 reviewed/caveat_only 前必须另行导出 reviewed-preparation 审计包。",
+        "不得创建 approved、default guidance 或 hard gate。"
+      ],
+      "patch_notes": {
+        "source": [
+          "SEC/CFTC/NIST/CME/FIA/FIX/IBKR/Binance/QuantConnect 只能支撑原则、监管/行业要求或具体 venue/broker/platform 语义。",
+          "不得把任何 broker、venue、platform 文档写成所有市场通用规则。"
+        ],
+        "content": [
+          "Live Execution 负责 API 权限、订单状态、适配器错误、真实订单/成交/费用、仓位对账和审计日志。",
+          "Risk Management 负责 deterministic pre-trade risk gates、风险限额、日亏损、组合暴露、连续亏损和 kill/stop 事件政策边界。"
+        ],
+        "boundary": [
+          "accepted_for_draft 不是 reviewed、approved、default guidance 或 hard gate。",
+          "不得生成买卖点、仓位、杠杆、止损止盈参数、实盘执行建议或风险阈值数值。"
+        ],
+        "conflict": [
+          "AI scoring / Agent 只能引用这些规则，不能绕过 deterministic final gate。",
+          "Replay/Simulation 只模拟；Live Execution / Risk Management 拥有真实订单、真实状态和风控动作。"
+        ]
+      },
+      "source_assessment": {
+        "source_count": 4,
+        "missing_sources": [],
+        "weak_sources": [],
+        "recommended_extra_sources": []
+      },
+      "classification_assessment": {
+        "is_correct_branch": true,
+        "expected_branch": "Trading Engineering / Live Execution or Risk Management",
+        "misplaced_topics": []
+      }
+    }
+  ],
+  "global_patch_notes": {
+    "source": [
+      "SEC/CFTC/NIST/CME/FIA/FIX/IBKR/Binance/QuantConnect 只能支撑原则、监管/行业要求或具体 venue/broker/platform 语义。",
+      "不得把任何 broker、venue、platform 文档写成所有市场通用规则。"
+    ],
+    "content": [
+      "Live Execution 负责 API 权限、订单状态、适配器错误、真实订单/成交/费用、仓位对账和审计日志。",
+      "Risk Management 负责 deterministic pre-trade risk gates、风险限额、日亏损、组合暴露、连续亏损和 kill/stop 事件政策边界。"
+    ],
+    "boundary": [
+      "accepted_for_draft 不是 reviewed、approved、default guidance 或 hard gate。",
+      "不得生成买卖点、仓位、杠杆、止损止盈参数、实盘执行建议或风险阈值数值。"
+    ],
+    "conflict": [
+      "AI scoring / Agent 只能引用这些规则，不能绕过 deterministic final gate。",
+      "Replay/Simulation 只模拟；Live Execution / Risk Management 拥有真实订单、真实状态和风控动作。"
+    ]
+  }
+}

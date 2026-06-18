@@ -1,0 +1,234 @@
+{
+  "audit_result_id": "audit_phase45_stress_scenario_candidate_20260612_external_strict",
+  "auditor": "GPT-5.5 Thinking",
+  "audited_at": "2026-06-12",
+  "package_id": "phase45_stress_scenario_candidate_audit_package_20260612",
+  "summary": {
+    "total": 6,
+    "accepted_for_draft": 3,
+    "needs_more_evidence": 3,
+    "rejected": 0,
+    "blocked": 0
+  },
+  "hard_boundaries": {
+    "reviewed_allowed": false,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "risk_threshold_advice_allowed": false,
+    "trade_execution_advice_allowed": false
+  },
+  "candidate_results": [
+    {
+      "research_task_id": "P45-E-STRESS01",
+      "candidate_id": "cand_20260612_phase45_stress_scenario_p45_e_stress01_001",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reasons": [
+        "PFMI、BCBS stress testing principles、CME Clearing stress testing practices 足以支撑 historical、hypothetical、scenario-based stress testing、governance、methodology、documentation 和 review 边界。",
+        "claim 明确压力测试不是普通最大回撤回测，方向正确。",
+        "未发现交易参数、风险阈值、仓位、杠杆、止损止盈、交易许可或实盘执行建议。"
+      ],
+      "required_followups": [
+        "进入 draft 时保留 caveat：PFMI 是 FMI/CCP 语境，BCBS 是银行/监管语境，CME 是 clearing 语境。",
+        "将 owner、review frequency、data version 写成 schema 字段要求，不得写固定数值或 hard gate。"
+      ],
+      "patch_notes": {
+        "source": [
+          "保留 PFMI、BCBS stress testing principles、CME Clearing stress testing practices。"
+        ],
+        "content": [
+          "建议把“必须声明复核频率”改为“必须声明复核频率字段和 owner”，避免被误读为默认频率规则。"
+        ],
+        "boundary": [
+          "不得输出交易许可。",
+          "不得输出风险阈值。",
+          "不得把 stress test 结果变成 hard gate。"
+        ],
+        "conflict": []
+      },
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false
+    },
+    {
+      "research_task_id": "P45-E-STRESS02",
+      "candidate_id": "cand_20260612_phase45_stress_scenario_p45_e_stress02_001",
+      "decision": "accepted_for_draft",
+      "confidence": "medium_high",
+      "reasons": [
+        "PFMI、CCP resilience guidance、CME liquidity risk management、DTCC stress testing 足以支撑 liquidity stress 与 price/PnL stress 分层。",
+        "claim 中 funding source、settlement/collateral、liquidation horizon、venue availability 与 clearing liquidity 语境基本匹配。",
+        "market depth 和 bid-ask spread 属于 market liquidity / execution liquidity，当前来源支撑较弱，但不影响进入 draft。"
+      ],
+      "required_followups": [
+        "补 market liquidity / asset liquidity stress 来源，覆盖 market depth、bid-ask spread、market impact、time-to-liquidation。",
+        "明确本条不输出可成交数量、滑点阈值、清仓阈值或交易许可。",
+        "保留 clearing/CCP/venue caveat。"
+      ],
+      "patch_notes": {
+        "source": [
+          "保留 PFMI、CPMI-IOSCO CCP resilience guidance、CME liquidity risk management、DTCC stress testing。",
+          "建议补 ESMA liquidity stress testing、IOSCO liquidity risk management 或 asset liquidity stress 文献。"
+        ],
+        "content": [
+          "把 market depth / bid-ask spread 标为 market liquidity dimension，不能从 clearing liquidity 直接外推。"
+        ],
+        "boundary": [
+          "不得输出具体流动性阈值。",
+          "不得输出 liquidation horizon 数值。",
+          "不得生成交易许可或仓位建议。"
+        ],
+        "conflict": []
+      },
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false
+    },
+    {
+      "research_task_id": "P45-E-STRESS03",
+      "candidate_id": "cand_20260612_phase45_stress_scenario_p45_e_stress03_001",
+      "decision": "needs_more_evidence",
+      "confidence": "medium",
+      "reasons": [
+        "claim 方向正确：压力下常态相关性可能失效，组合分散性需要 stress scenario 复核。",
+        "但当前 source_refs 对 correlation increase、correlation reversal、normal-sample correlation limitation 的直接支撑不足。",
+        "wrong-way risk 在 claim 中出现，但 source_refs 未直接引用更精确的 wrong-way risk / concentration stress 来源。"
+      ],
+      "required_followups": [
+        "补 BCBS counterparty credit risk / wrong-way risk stress testing 直接来源。",
+        "补 concentration risk / correlation stress / diversification breakdown 来源。",
+        "将“相关性反转”说明为 scenario assumption，而不是被当前来源直接证明的必然规律。"
+      ],
+      "patch_notes": {
+        "source": [
+          "新增 wrong-way risk、concentration 和 correlation breakdown 直接来源。"
+        ],
+        "content": [
+          "把“不能用常态样本相关性证明压力时期仍然分散”保留，但标注为风险 caveat。"
+        ],
+        "boundary": [
+          "不得输出相关性阈值。",
+          "不得生成降仓、拒单或 hard gate。"
+        ],
+        "conflict": []
+      },
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false
+    },
+    {
+      "research_task_id": "P45-E-STRESS04",
+      "candidate_id": "cand_20260612_phase45_stress_scenario_p45_e_stress04_001",
+      "decision": "needs_more_evidence",
+      "confidence": "medium",
+      "reasons": [
+        "claim 涉及跳空、隔夜、周末、假日、停牌/恢复、session close/open、价格路径不可见性、订单不可执行窗口、保证金/融资变化和数据可用边界。",
+        "当前 FIA、CME、BCBS 来源只能泛化支撑自动交易风控、波动控制、压力测试框架，不能直接支撑上述全部非连续交易风险细项。",
+        "尤其停牌/恢复、订单不可执行窗口、session close/open 需要交易所规则、市场微结构或 broker/venue 文档直接支持。"
+      ],
+      "required_followups": [
+        "补交易所 market hours / trading halt / reopen / session close-open 规则来源。",
+        "补 gap risk / overnight risk / non-continuous market risk 专业来源。",
+        "补 margin/funding change around close/open 或 weekend/holiday 的 broker/venue 来源。",
+        "把 crypto 24/7 与传统交易所 session 风险分开说明。"
+      ],
+      "patch_notes": {
+        "source": [
+          "FIA 可保留为 automated trading risk controls 背景；新增 gap/overnight/session/halt 直接来源。"
+        ],
+        "content": [
+          "需要明确不同市场：24/7 crypto、futures session、equities halt/auction 的差异。"
+        ],
+        "boundary": [
+          "不得输出隔夜持仓建议。",
+          "不得输出止损止盈或仓位调整。",
+          "不得输出 session 风险阈值或 hard gate。"
+        ],
+        "conflict": []
+      },
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false
+    },
+    {
+      "research_task_id": "P45-E-STRESS05",
+      "candidate_id": "cand_20260612_phase45_stress_scenario_p45_e_stress05_001",
+      "decision": "needs_more_evidence",
+      "confidence": "medium_high",
+      "reasons": [
+        "claim 中 VaR/ES、scenario loss、最大单日/多日损失、liquidity-adjusted loss、模型外事件和样本外覆盖是合理尾部风险复核字段。",
+        "当前来源能支撑 stress governance 和 scenario loss，但不能充分直接支撑 VaR/ES 与 liquidity-adjusted tail loss。",
+        "PF、胜率、均值、普通回撤不能替代尾部风险评估的边界正确，但仍需更直接的 market risk / Expected Shortfall / VaR limitation 来源。"
+      ],
+      "required_followups": [
+        "补 Basel market risk / FRTB Expected Shortfall 来源。",
+        "补 VaR limitation、Expected Shortfall、tail risk 直接来源。",
+        "补 liquidity-adjusted VaR / liquidity horizon / market illiquidity 来源。",
+        "明确 PF、胜率、均值、普通回撤只是 performance/backtest metrics，不是 tail-loss risk measure。"
+      ],
+      "patch_notes": {
+        "source": [
+          "新增 Basel Minimum Capital Requirements for Market Risk / FRTB ES、VaR/ES 或 liquidity-adjusted risk 专业来源。"
+        ],
+        "content": [
+          "把 VaR/ES、scenario loss、liquidity-adjusted loss 分成 tail_loss_review schema 字段。"
+        ],
+        "boundary": [
+          "不得输出 VaR/ES 阈值。",
+          "不得把尾部亏损复核结果变成交易许可。",
+          "不得生成降仓、停机或 hard gate。"
+        ],
+        "conflict": []
+      },
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false
+    },
+    {
+      "research_task_id": "P45-E-STRESS06",
+      "candidate_id": "cand_20260612_phase45_stress_scenario_p45_e_stress06_001",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reasons": [
+        "压力测试结果只能作为风险复核、资本/流动性规划、人工审批、scenario backlog 或 owner 决策输入，这与 BCBS/PFMI 的治理语境一致。",
+        "claim 明确禁止压力测试通过直接生成买卖点、仓位、杠杆、止损止盈、实盘放行或 hard gate，边界正确。",
+        "未发现交易参数、风险阈值、私有账户事实、密钥、交易所私有配置或实盘敏感信息。"
+      ],
+      "required_followups": [
+        "进入 draft 时明确 stress_test_passed 只能进入 review input，不得进入 execution permission 字段。",
+        "如后续引入 stress_result schema，需要提供内部 contract extract 或 hash。",
+        "保留 PFMI/BCBS/FIA 的机构和行业实践 caveat。"
+      ],
+      "patch_notes": {
+        "source": [
+          "保留 BCBS stress testing principles、FIA automated trading risk controls、PFMI。"
+        ],
+        "content": [
+          "建议把 stress_result_governance 拆成 risk_review_input、owner_decision_input、scenario_backlog_input、not_trade_permission。"
+        ],
+        "boundary": [
+          "不得生成交易许可。",
+          "不得生成 hard gate。",
+          "不得生成风险阈值、仓位、杠杆、止损止盈或实盘执行建议。"
+        ],
+        "conflict": []
+      },
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false
+    }
+  ]
+}

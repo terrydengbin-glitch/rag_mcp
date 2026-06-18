@@ -1,0 +1,1449 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CEK-TA 知识树阅读型 UI 原型</title>
+  <style>
+    :root {
+      color-scheme: light;
+      font-family: Inter, "Segoe UI", Arial, sans-serif;
+      --bg: #f5f7fa;
+      --panel: #ffffff;
+      --line: #d8e0e7;
+      --text: #172026;
+      --soft: #65717c;
+      --nav: #102331;
+      --blue: #2563eb;
+      --green: #0f8a5f;
+      --amber: #b7791f;
+      --red: #c2413b;
+      --teal: #0f766e;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--text);
+      background: var(--bg);
+      min-width: 320px;
+    }
+
+    button, input, select { font: inherit; }
+    button { cursor: pointer; }
+    h1, h2, h3, p { margin: 0; }
+    h1 { font-size: 22px; line-height: 1.2; }
+    h2 { font-size: 20px; line-height: 1.25; }
+    h3 {
+      color: var(--soft);
+      font-size: 12px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .app {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 240px minmax(0, 1fr);
+      overflow-x: hidden;
+    }
+
+    .global-sidebar {
+      min-width: 0;
+      background: var(--nav);
+      color: #e8f0f6;
+      padding: 18px 14px;
+    }
+
+    .brand {
+      min-height: 52px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 10px 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, .12);
+      margin-bottom: 14px;
+    }
+
+    .brand-mark {
+      width: 24px;
+      height: 24px;
+      display: grid;
+      place-items: center;
+      border: 1px solid #9fb4c5;
+      border-radius: 6px;
+      color: #ffffff;
+      font-weight: 800;
+      font-size: 13px;
+    }
+
+    .brand strong,
+    .brand span {
+      display: block;
+    }
+
+    .brand span {
+      color: #9fb4c5;
+      font-size: 12px;
+    }
+
+    .global-nav {
+      display: grid;
+      gap: 5px;
+    }
+
+    .global-nav a {
+      min-width: 0;
+      min-height: 38px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 10px;
+      border-radius: 6px;
+      color: #cbd8e3;
+      text-decoration: none;
+      font-weight: 650;
+    }
+
+    .global-nav a.is-current-page {
+      color: #ffffff;
+      background: #1c3b50;
+    }
+
+    .nav-icon {
+      width: 22px;
+      flex: 0 0 auto;
+      text-align: center;
+      color: #d7e5ef;
+      font-size: 15px;
+    }
+
+    .global-nav span:last-child {
+      min-width: 0;
+      overflow-wrap: anywhere;
+    }
+
+    .main-area {
+      min-width: 0;
+      display: grid;
+      grid-template-rows: auto auto minmax(0, 1fr);
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      display: grid;
+      grid-template-columns: minmax(240px, 1.2fr) repeat(4, minmax(130px, .6fr));
+      gap: 8px;
+      padding: 12px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255, 255, 255, .96);
+      backdrop-filter: blur(8px);
+    }
+
+    .search {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+      height: 38px;
+      padding: 0 10px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fff;
+    }
+
+    .search input {
+      width: 100%;
+      min-width: 0;
+      border: 0;
+      outline: 0;
+    }
+
+    select {
+      height: 38px;
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fff;
+      color: var(--text);
+      padding: 0 8px;
+    }
+
+    .shell {
+      min-width: 0;
+      display: grid;
+      grid-template-columns: 300px minmax(0, 1fr) 320px;
+      gap: 14px;
+      padding: 14px;
+    }
+
+    .panel {
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--panel);
+    }
+
+    .tree-nav {
+      position: sticky;
+      top: 74px;
+      max-height: calc(100vh - 92px);
+      overflow: auto;
+      padding: 12px;
+    }
+
+    .tree-nav header,
+    .audit-rail header {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+
+    .muted {
+      color: var(--soft);
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .branch {
+      border-top: 1px solid var(--line);
+      padding-top: 8px;
+      margin-top: 8px;
+    }
+
+    .branch > button,
+    .partition > button,
+    .topic > button,
+    .knowledge-point-button {
+      width: 100%;
+      min-width: 0;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 8px;
+      text-align: left;
+      border: 0;
+      border-radius: 6px;
+      background: transparent;
+      padding: 8px;
+      color: var(--text);
+    }
+
+    .branch > button:hover,
+    .partition > button:hover,
+    .topic > button:hover,
+    .knowledge-point-button:hover {
+      background: #f4f7fa !important;
+    }
+
+    .is-active {
+      background: #eef4f8 !important;
+      box-shadow: inset 0 0 0 1px #cbd9e3;
+    }
+
+    .partition { margin-left: 10px; }
+    .topic {
+      display: none;
+      margin-left: 20px;
+    }
+
+    .partition.is-expanded > .topic {
+      display: block;
+    }
+
+    .branch.is-collapsed > .partition {
+      display: none;
+    }
+
+    .branch > button {
+      border-left: 4px solid #406f6b;
+      background: #f3f8f7;
+    }
+
+    .partition > button {
+      border-left: 4px solid #526f91;
+      background: #f5f8fc;
+    }
+
+    .topic > button {
+      border-left: 4px solid #927348;
+      background: #fbf7ef;
+    }
+
+    .level-tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 18px;
+      width: fit-content;
+      padding: 0 6px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 750;
+    }
+
+    .tag-l1 {
+      color: #245653;
+      background: #dcece9;
+      border: 1px solid #bdd8d4;
+    }
+
+    .tag-l2 {
+      color: #314f73;
+      background: #e4edf7;
+      border: 1px solid #c6d7ea;
+    }
+
+    .tag-l3 {
+      color: #684d22;
+      background: #f2e6d1;
+      border: 1px solid #dfc99f;
+    }
+
+    .node-title {
+      min-width: 0;
+      display: grid;
+      gap: 2px;
+    }
+
+    .node-title strong,
+    .node-title span {
+      overflow-wrap: anywhere;
+    }
+
+    .node-title span {
+      color: var(--soft);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .count-pill {
+      align-self: start;
+      min-height: 22px;
+      display: inline-flex;
+      align-items: center;
+      padding: 0 7px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      color: var(--soft);
+      font-size: 12px;
+      font-weight: 650;
+      white-space: nowrap;
+    }
+
+    .count-pill.has-children::before {
+      content: "+";
+      margin-right: 4px;
+      color: var(--soft);
+      font-weight: 800;
+    }
+
+    .is-expanded > button .count-pill.has-children::before,
+    .branch:not(.is-collapsed) > button .count-pill.has-children::before {
+      content: "-";
+    }
+
+    .content {
+      min-width: 0;
+      display: grid;
+      gap: 12px;
+    }
+
+    .hero {
+      padding: 18px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .breadcrumb {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      color: var(--soft);
+      font-size: 12px;
+    }
+
+    .breadcrumb span {
+      overflow-wrap: anywhere;
+    }
+
+    .title-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .summary {
+      color: #33424e;
+      font-size: 14px;
+      line-height: 1.65;
+      max-width: 860px;
+    }
+
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 6px;
+    }
+
+    .badge {
+      min-height: 22px;
+      display: inline-flex;
+      align-items: center;
+      padding: 0 8px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 650;
+      white-space: nowrap;
+    }
+
+    .ok { color: var(--green); background: #e9f8f1; border-color: #b9e6d1; }
+    .warn { color: var(--amber); background: #fff7e6; border-color: #f2d391; }
+    .info { color: var(--blue); background: #edf4ff; border-color: #c7dafc; }
+    .bad { color: var(--red); background: #fff0ef; border-color: #f3c0bd; }
+
+    .section-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 12px;
+    }
+
+    .section {
+      padding: 14px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .row-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .knowledge-point-button {
+      min-height: 104px;
+      grid-template-columns: minmax(0, 1fr);
+      align-content: start;
+      gap: 8px;
+      padding: 9px;
+      border: 1px solid var(--line);
+      background: #ffffff;
+    }
+
+    .knowledge-point-button .node-title {
+      gap: 1px;
+    }
+
+    .knowledge-point-button strong {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      font-size: 12px;
+      line-height: 1.28;
+    }
+
+    .knowledge-point-button .node-title span {
+      font-size: 11px;
+      line-height: 1.25;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .knowledge-node-id {
+      color: var(--soft);
+      font-size: 11px;
+      line-height: 1.25;
+      overflow-wrap: anywhere;
+    }
+
+    .knowledge-card-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      margin-top: auto;
+      min-width: 0;
+    }
+
+    .knowledge-card-meta .badge {
+      flex: 0 0 auto;
+    }
+
+    .knowledge-toolbar {
+      display: grid;
+      grid-template-columns: minmax(180px, 1fr) minmax(118px, auto) minmax(118px, auto) minmax(96px, auto);
+      gap: 8px;
+      align-items: center;
+    }
+
+    .knowledge-toolbar input,
+    .knowledge-toolbar select {
+      width: 100%;
+      min-width: 0;
+    }
+
+    .knowledge-toolbar input {
+      height: 36px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 0 10px;
+      outline: 0;
+    }
+
+    .knowledge-list-shell {
+      min-height: 520px;
+      max-height: 58vh;
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #f8fbfd;
+      padding: 6px;
+    }
+
+    #knowledgePointList {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 8px;
+      align-content: start;
+    }
+
+    .knowledge-list-meta {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 8px;
+      color: var(--soft);
+      font-size: 12px;
+    }
+
+    .pagination-bar {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      align-items: center;
+      min-height: 36px;
+      padding-top: 2px;
+    }
+
+    .pagination-bar div {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .pagination-bar button {
+      min-height: 30px;
+      padding: 0 10px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fff;
+      color: var(--text);
+    }
+
+    .pagination-bar button.is-page-current {
+      border-color: #8eb7f7;
+      background: #edf4ff;
+      color: var(--blue);
+      font-weight: 750;
+    }
+
+    .knowledge-point-button.is-selected-knowledge {
+      border-color: #8eb7f7;
+      background: #f3f8ff !important;
+    }
+
+    .knowledge-detail {
+      min-width: 0;
+      display: grid;
+      gap: 10px;
+      padding: 12px;
+      border: 1px solid #c7dafc;
+      border-radius: 6px;
+      background: #f7fbff;
+    }
+
+    .knowledge-detail p {
+      color: #33424e;
+      font-size: 14px;
+      line-height: 1.65;
+    }
+
+    .detail-meta {
+      display: grid;
+      grid-template-columns: 120px minmax(0, 1fr);
+      gap: 7px 10px;
+      margin: 0;
+      font-size: 13px;
+    }
+
+    .detail-meta dt {
+      color: var(--soft);
+    }
+
+    .detail-meta dd {
+      margin: 0;
+      font-weight: 650;
+      overflow-wrap: anywhere;
+    }
+
+    .row {
+      min-width: 0;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px;
+      align-items: start;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fbfdff;
+    }
+
+    .row strong,
+    .row span,
+    .row small {
+      overflow-wrap: anywhere;
+    }
+
+    .row small {
+      display: block;
+      color: var(--soft);
+      font-size: 12px;
+      margin-top: 3px;
+    }
+
+    .audit-rail {
+      position: sticky;
+      top: 74px;
+      max-height: calc(100vh - 92px);
+      overflow: auto;
+      padding: 12px;
+      display: grid;
+      gap: 12px;
+      align-content: start;
+    }
+
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .metric {
+      min-width: 0;
+      min-height: 62px;
+      display: grid;
+      align-content: center;
+      gap: 3px;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #f8fbfd;
+    }
+
+    .metric span {
+      color: var(--soft);
+      font-size: 12px;
+    }
+
+    .metric strong {
+      font-size: 22px;
+    }
+
+    .action-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .action-list button {
+      min-height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #c7dafc;
+      border-radius: 6px;
+      background: #edf4ff;
+      color: var(--blue);
+      font-weight: 650;
+    }
+
+    .mobile-tabs {
+      display: none;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      padding: 8px 12px 0;
+    }
+
+    .mobile-tabs button {
+      min-height: 34px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fff;
+      color: var(--text);
+    }
+
+    .mobile-tabs button.is-active-tab {
+      border-color: #8eb7f7;
+      background: #edf4ff;
+      color: var(--blue);
+      font-weight: 650;
+    }
+
+    @media (max-width: 1080px) {
+      .topbar {
+        top: 0;
+        grid-template-columns: 1fr 1fr;
+      }
+      .search {
+        grid-column: 1 / -1;
+      }
+      .shell {
+        grid-template-columns: 260px minmax(0, 1fr);
+      }
+      #knowledgePointList {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+      .audit-rail {
+        grid-column: 1 / -1;
+        position: static;
+        max-height: none;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .app {
+        grid-template-columns: 1fr;
+      }
+
+      .global-sidebar {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr);
+        gap: 10px;
+        padding: 10px;
+      }
+
+      .brand {
+        min-width: 128px;
+        min-height: 42px;
+        padding: 0 8px;
+        border-bottom: 0;
+        margin-bottom: 0;
+      }
+
+      .global-nav {
+        display: flex;
+        overflow-x: auto;
+        gap: 4px;
+        align-items: center;
+      }
+
+      .global-nav a {
+        flex: 0 0 auto;
+        min-height: 34px;
+        padding: 0 9px;
+      }
+
+      .topbar {
+        position: static;
+        grid-template-columns: 1fr;
+      }
+      .mobile-tabs {
+        display: grid;
+      }
+      .shell {
+        display: block;
+        padding: 12px;
+      }
+      .tree-nav,
+      .audit-rail {
+        position: static;
+        max-height: none;
+      }
+      .tree-nav,
+      .content,
+      .audit-rail {
+        display: none;
+      }
+      body[data-mobile-tab="tree"] .tree-nav,
+      body[data-mobile-tab="content"] .content,
+      body[data-mobile-tab="audit"] .audit-rail {
+        display: grid;
+        margin-top: 10px;
+      }
+      .section-grid,
+      .content-grid,
+      .metric-grid {
+        grid-template-columns: 1fr;
+      }
+      #knowledgePointList {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .knowledge-toolbar {
+        grid-template-columns: 1fr 1fr;
+      }
+      .title-row,
+      .row {
+        grid-template-columns: 1fr;
+      }
+      .badge-row {
+        justify-content: flex-start;
+      }
+    }
+  </style>
+</head>
+<body data-mobile-tab="content">
+  <div class="app">
+    <aside class="global-sidebar" aria-label="审计工作台导航">
+      <div class="brand">
+        <span class="brand-mark">C</span>
+        <div>
+          <strong>CEK-TA</strong>
+          <span>Audit</span>
+        </div>
+      </div>
+      <nav class="global-nav">
+        <a href="#"><span class="nav-icon">□</span><span>总览</span></a>
+        <a href="#"><span class="nav-icon">⌕</span><span>知识</span></a>
+        <a href="#" class="is-current-page"><span class="nav-icon">┬</span><span>知识树</span></a>
+        <a href="#"><span class="nav-icon">⇥</span><span>候选</span></a>
+        <a href="#"><span class="nav-icon">◎</span><span>测试</span></a>
+        <a href="#"><span class="nav-icon">◇</span><span>冲突</span></a>
+        <a href="#"><span class="nav-icon">▣</span><span>来源</span></a>
+        <a href="#"><span class="nav-icon">☰</span><span>任务</span></a>
+        <a href="#"><span class="nav-icon">⚑</span><span>接入</span></a>
+        <a href="#"><span class="nav-icon">↥</span><span>倒灌</span></a>
+        <a href="#"><span class="nav-icon">⚙</span><span>设置</span></a>
+      </nav>
+    </aside>
+
+    <section class="main-area">
+      <div class="topbar">
+        <label class="search">
+          <span>搜索</span>
+          <input id="treeSearch" placeholder="Backtest / fill / MCP / 回灌" />
+        </label>
+        <select id="coverageFilter" aria-label="覆盖状态">
+          <option value="all">全部覆盖状态</option>
+          <option value="empty">只看 empty</option>
+          <option value="partial">只看 partial</option>
+          <option value="covered">只看 covered</option>
+        </select>
+        <select id="conflictFilter" aria-label="冲突状态">
+          <option value="all">全部冲突状态</option>
+          <option value="potential">只看 potential</option>
+          <option value="none">只看 none</option>
+        </select>
+        <select id="candidateFilter" aria-label="候选覆盖">
+          <option value="all">全部候选</option>
+          <option value="has_candidates">有候选</option>
+          <option value="no_candidates">无候选</option>
+        </select>
+        <select id="freshnessFilter" aria-label="时效状态">
+          <option value="all">全部时效</option>
+          <option value="time_sensitive">time sensitive</option>
+          <option value="stable">stable</option>
+        </select>
+      </div>
+
+      <div class="mobile-tabs">
+        <button data-tab="tree">目录</button>
+        <button data-tab="content" class="is-active-tab">内容</button>
+        <button data-tab="audit">审计</button>
+      </div>
+
+      <main class="shell">
+      <aside class="panel tree-nav" aria-label="知识树目录">
+        <header>
+          <div>
+            <h1>知识树</h1>
+            <p class="muted">3 主枝 / 13 分区 / 专题叶子</p>
+          </div>
+          <span class="badge info">read only</span>
+        </header>
+
+        <div class="branch">
+          <button class="is-active" data-node="trading">
+            <span class="node-title">
+              <span class="level-tag tag-l1">L1 主枝</span>
+              <strong>Trading Engineering</strong>
+              <span>交易工程</span>
+            </span>
+              <span class="count-pill has-children">8</span>
+          </button>
+          <div class="partition"><button data-node="kb01"><span class="node-title"><span class="level-tag tag-l2">L2 分区</span><strong>KB_01 Quant Foundation</strong><span>EV / R:R / costs / sizing</span></span><span class="count-pill">0</span></button></div>
+          <div class="partition"><button data-node="kb02"><span class="node-title"><span class="level-tag tag-l2">L2 分区</span><strong>KB_02 Data Engineering</strong><span>time alignment / data quality</span></span><span class="count-pill">0</span></button></div>
+          <div class="partition"><button data-node="kb03"><span class="node-title"><span class="level-tag tag-l2">L2 分区</span><strong>KB_03 Strategy Engineering</strong><span>K-line / indicators / microstructure</span></span><span class="count-pill">0</span></button></div>
+          <div class="partition">
+            <button data-node="kb04"><span class="node-title"><span class="level-tag tag-l2">L2 分区</span><strong>KB_04 Backtest</strong><span>bias / cost / metrics / reproducibility</span></span><span class="count-pill has-children">1</span></button>
+            <div class="topic"><button data-node="bias"><span class="node-title"><span class="level-tag tag-l3">L3 专题</span><strong>Backtest Bias</strong><span>lookahead / leakage / overfitting</span></span><span class="count-pill">2</span></button></div>
+          </div>
+          <div class="partition">
+            <button data-node="kb05"><span class="node-title"><span class="level-tag tag-l2">L2 分区</span><strong>KB_05 Replay and Simulation</strong><span>fill / slippage / latency</span></span><span class="count-pill has-children">1</span></button>
+            <div class="topic"><button data-node="fill"><span class="node-title"><span class="level-tag tag-l3">L3 专题</span><strong>Fill Model</strong><span>OHLC same bar / tick replay</span></span><span class="count-pill">1</span></button></div>
+          </div>
+          <div class="partition"><button data-node="kb06"><span class="node-title"><span class="level-tag tag-l2">L2 分区</span><strong>KB_06 Live Execution</strong><span>orders / reconciliation / kill switch</span></span><span class="count-pill">1</span></button></div>
+          <div class="partition"><button data-node="kb07"><span class="node-title"><span class="level-tag tag-l2">L2 分区</span><strong>KB_07 Risk Management</strong><span>risk gates / exposure / loss limits</span></span><span class="count-pill">1</span></button></div>
+          <div class="partition"><button data-node="kb08"><span class="node-title"><span class="level-tag tag-l2">L2 分区</span><strong>KB_08 Trade Analysis</strong><span>quality / taxonomy / R:R decomposition</span></span><span class="count-pill">0</span></button></div>
+        </div>
+
+        <div class="branch">
+          <button data-node="ai">
+            <span class="node-title"><span class="level-tag tag-l1">L1 主枝</span><strong>AI Engineering</strong><span>RAG / MCP / LLM training</span></span>
+            <span class="count-pill has-children">3</span>
+          </button>
+          <div class="partition"><button data-node="kb09"><span class="node-title"><span class="level-tag tag-l2">L2 分区</span><strong>KB_09 LLM Training</strong><span>dataset / eval / leakage control</span></span><span class="count-pill">0</span></button></div>
+          <div class="partition"><button data-node="kb10"><span class="node-title"><span class="level-tag tag-l2">L2 分区</span><strong>KB_10 RAG Engineering</strong><span>metadata / citation / retrieval</span></span><span class="count-pill">1</span></button></div>
+          <div class="partition"><button data-node="kb11"><span class="node-title"><span class="level-tag tag-l2">L2 分区</span><strong>KB_11 MCP and Agent Engineering</strong><span>tool contract / permission / errors</span></span><span class="count-pill">1</span></button></div>
+        </div>
+
+        <div class="branch">
+          <button data-node="support">
+            <span class="node-title"><span class="level-tag tag-l1">L1 主枝</span><strong>Project Support</strong><span>接入 / 回灌 / 治理</span></span>
+            <span class="count-pill has-children">2</span>
+          </button>
+          <div class="partition"><button data-node="kb12"><span class="node-title"><span class="level-tag tag-l2">L2 分区</span><strong>KB_12 Project Integration</strong><span>adapter / healthcheck / truth boundary</span></span><span class="count-pill">1</span></button></div>
+          <div class="partition"><button data-node="kb13"><span class="node-title"><span class="level-tag tag-l2">L2 分区</span><strong>KB_13 Knowledge Governance</strong><span>status lifecycle / conflict gate</span></span><span class="count-pill">1</span></button></div>
+        </div>
+      </aside>
+
+      <section class="content" aria-label="知识阅读区">
+        <article class="panel hero">
+          <div class="breadcrumb" id="breadcrumb">
+            <span>CEK-TA</span><span>/</span><span>Trading Engineering</span>
+          </div>
+          <div class="title-row">
+            <div>
+              <h2 id="nodeTitle">Trading Engineering</h2>
+              <p class="summary" id="nodeSummary">交易工程主枝，覆盖量化基础、数据工程、策略工程、回测、回放模拟、实盘执行、风险管理和交易分析。这里不是策略项目事实，而是可复用的专业知识能力。</p>
+            </div>
+            <div class="badge-row">
+              <span class="badge warn" id="coverageBadge">partial</span>
+              <span class="badge info" id="reviewBadge">reviewed</span>
+              <span class="badge ok" id="conflictBadge">none</span>
+            </div>
+          </div>
+        </article>
+
+        <div class="content-grid">
+          <section class="panel section">
+            <h3>当前范围的知识点</h3>
+            <div class="knowledge-list-meta">
+              <span id="knowledgeResultSummary">显示 1-20 / 1,284 个知识点</span>
+              <span>大规模场景：固定高度滚动 + 分页/虚拟列表预留</span>
+            </div>
+            <div class="knowledge-toolbar">
+              <input id="knowledgeSearch" placeholder="搜索当前范围知识点" />
+              <select id="knowledgeStatusFilter">
+                <option value="all">全部状态</option>
+                <option value="approved">approved</option>
+                <option value="candidate">candidate</option>
+                <option value="gap">gap</option>
+              </select>
+              <select id="knowledgeSort">
+                <option value="relevance">相关度</option>
+                <option value="status">状态</option>
+                <option value="freshness">时效</option>
+                <option value="source_count">来源数</option>
+              </select>
+              <select id="knowledgePageSize">
+                <option value="20">20 / 页</option>
+                <option value="50">50 / 页</option>
+                <option value="100">100 / 页</option>
+              </select>
+            </div>
+            <div class="knowledge-list-shell">
+              <div class="row-list" id="knowledgePointList">
+                <button class="knowledge-point-button is-selected-knowledge" data-knowledge="sameBar">
+                  <span class="node-title">
+                    <strong>Same-candle TP/SL must declare fill ordering</strong>
+                    <span>kt.trading_engineering.replay_simulation.fill_model</span>
+                  </span>
+                  <span class="knowledge-card-meta">
+                    <span class="knowledge-node-id">2 sources</span>
+                    <span class="badge ok">approved</span>
+                  </span>
+                </button>
+                <button class="knowledge-point-button" data-knowledge="timestamp">
+                  <span class="node-title">
+                    <strong>Feature timestamp must be before decision timestamp</strong>
+                    <span>kt.trading_engineering.backtest.bias</span>
+                  </span>
+                  <span class="knowledge-card-meta">
+                    <span class="knowledge-node-id">2 sources</span>
+                    <span class="badge warn">candidate</span>
+                  </span>
+                </button>
+              </div>
+            </div>
+            <div class="pagination-bar">
+              <span class="muted">当前页只渲染可见批次，Vue3 实现时接虚拟列表。</span>
+              <div>
+                <button>上一页</button>
+                <button class="is-page-current">1</button>
+                <button>2</button>
+                <button>3</button>
+                <button>下一页</button>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel section">
+            <h3>知识点内容</h3>
+            <div class="knowledge-detail" id="knowledgeDetail">
+              <div class="title-row">
+                <div>
+                  <h2 id="knowledgeTitle">Same-candle TP/SL must declare fill ordering</h2>
+                  <p id="knowledgeStatement">OHLC-only backtests must explicitly declare how same-candle TP and SL are resolved. Without intrabar path data, the system cannot claim the true order of events.</p>
+                </div>
+                <span class="badge ok" id="knowledgeStatus">approved</span>
+              </div>
+              <dl class="detail-meta">
+                <dt>tree_node_id</dt>
+                <dd id="knowledgeTreeNode">kt.trading_engineering.replay_simulation.fill_model</dd>
+                <dt>适用范围</dt>
+                <dd id="knowledgeAppliesTo">OHLC-only backtest, no trusted tick path.</dd>
+                <dt>不适用</dt>
+                <dd id="knowledgeNotApplicable">Exchange fill events or trusted tick replay prove ordering.</dd>
+                <dt>来源</dt>
+                <dd id="knowledgeSources">2 sources / internal report + framework behavior notes.</dd>
+                <dt>冲突处理</dt>
+                <dd id="knowledgeConflict">Resolved by separating OHLC-only assumptions from tick-path replay assumptions.</dd>
+              </dl>
+            </div>
+          </section>
+
+          <section class="panel section">
+            <h3>Open Gaps</h3>
+            <div class="row-list" id="gapList">
+              <div class="row"><span><strong>权威来源不足</strong><small>风险管理、数据工程、LLM training 仍需持续采集</small></span><span class="badge warn">gap</span></div>
+              <div class="row"><span><strong>专题叶子不完整</strong><small>每个 KB 分区后续需要拆出更细 Level 3 专题</small></span><span class="badge warn">gap</span></div>
+            </div>
+          </section>
+
+          <section class="panel section">
+            <h3>使用边界</h3>
+            <div class="row-list">
+              <div class="row"><span><strong>MCP</strong><small>只读检索，不写知识、不审批、不交易</small></span><span class="badge info">read only</span></div>
+              <div class="row"><span><strong>回灌</strong><small>其他项目只能进入 contributions/proposed</small></span><span class="badge info">proposed</span></div>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <aside class="panel audit-rail" aria-label="审计摘要">
+        <header>
+          <div>
+            <h2>审计摘要</h2>
+            <p class="muted" id="nodeId">kt.trading_engineering</p>
+          </div>
+          <span class="badge info">Vue Audit</span>
+        </header>
+
+        <div class="metric-grid">
+          <div class="metric"><span>正式知识</span><strong id="approvedCount">2</strong></div>
+          <div class="metric"><span>候选知识</span><strong id="candidateCount">7</strong></div>
+          <div class="metric"><span>来源</span><strong id="sourceCount">3</strong></div>
+          <div class="metric"><span>缺口</span><strong id="gapCount">6</strong></div>
+          <div class="metric"><span>冲突</span><strong id="conflictCount">1</strong></div>
+          <div class="metric"><span>时效</span><strong id="freshnessCount">2</strong></div>
+        </div>
+
+        <section>
+          <h3>下一步动作</h3>
+          <div class="action-list">
+            <button>查看候选 /ingestion?tree_node_id=...</button>
+            <button>带入 SearchLab 检索测试</button>
+            <button>复制 canonical_node_id</button>
+          </div>
+        </section>
+
+        <section>
+          <h3>人工审核提醒</h3>
+          <div class="row-list">
+            <div class="row"><span><strong>draft/candidate 不可作为默认指导</strong><small>必须经过来源、冲突、适用边界审计</small></span></div>
+            <div class="row"><span><strong>外部项目回灌不可直写</strong><small>必须 proposed -> reviewed -> accepted</small></span></div>
+          </div>
+        </section>
+      </aside>
+      </main>
+    </section>
+  </div>
+
+  <script>
+    const nodes = {
+      trading: {
+        title: "Trading Engineering",
+        id: "kt.trading_engineering",
+        path: "CEK-TA / Trading Engineering",
+        summary: "交易工程主枝，覆盖量化基础、数据工程、策略工程、回测、回放模拟、实盘执行、风险管理和交易分析。这里不是策略项目事实，而是可复用的专业知识能力。",
+        coverage: "partial",
+        review: "reviewed",
+        conflict: "none",
+        approved: 2,
+        candidates: 7,
+        sources: 3,
+        gaps: 6,
+        conflicts: 1,
+        freshness: 2,
+        totalKnowledge: 1284
+      },
+      kb04: {
+        title: "KB_04 Backtest",
+        id: "kt.trading_engineering.backtest",
+        path: "CEK-TA / Trading Engineering / Backtest",
+        summary: "回测可信度分区，关注偏差、数据泄漏、过拟合、成本模型、指标解释、walk-forward 和可复现性。这个分区优先服务 backtest_review 和 strategy_iteration。",
+        coverage: "partial",
+        review: "reviewed",
+        conflict: "potential",
+        approved: 1,
+        candidates: 1,
+        sources: 1,
+        gaps: 2,
+        conflicts: 1,
+        freshness: 0,
+        totalKnowledge: 236
+      },
+      bias: {
+        title: "Backtest Bias",
+        id: "kt.trading_engineering.backtest.bias",
+        path: "CEK-TA / Trading Engineering / Backtest / Bias",
+        summary: "专题叶子，聚焦 lookahead、data leakage、survivorship bias、selection bias 和 overfitting。只有来源完整、边界明确、冲突消解后，才能作为默认专业指导。",
+        coverage: "partial",
+        review: "reviewed",
+        conflict: "none",
+        approved: 1,
+        candidates: 2,
+        sources: 3,
+        gaps: 1,
+        conflicts: 0,
+        freshness: 0,
+        totalKnowledge: 87
+      },
+      kb10: {
+        title: "KB_10 RAG Engineering",
+        id: "kt.ai_engineering.rag_engineering",
+        path: "CEK-TA / AI Engineering / RAG Engineering",
+        summary: "RAG 工程分区，覆盖 metadata、chunking、retrieval、rerank、citation、source quality、conflict-aware retrieval 和 freshness policy。",
+        coverage: "partial",
+        review: "reviewed",
+        conflict: "none",
+        approved: 0,
+        candidates: 1,
+        sources: 0,
+        gaps: 1,
+        conflicts: 0,
+        freshness: 1,
+        totalKnowledge: 318
+      },
+      kb13: {
+        title: "KB_13 Knowledge Governance",
+        id: "kt.knowledge_governance",
+        path: "CEK-TA / Project Support / Knowledge Governance",
+        summary: "知识治理分区，覆盖状态生命周期、来源策略、冲突阻断、版本治理、废弃机制和贡献审核。",
+        coverage: "partial",
+        review: "reviewed",
+        conflict: "none",
+        approved: 0,
+        candidates: 1,
+        sources: 0,
+        gaps: 1,
+        conflicts: 0,
+        freshness: 0,
+        totalKnowledge: 164
+      }
+    };
+
+    const knowledgeByNode = {
+      trading: ["sameBar", "timestamp", "terminalReport", "riskGate"],
+      kb04: ["timestamp", "overfit", "sameBar"],
+      bias: ["timestamp", "overfit"],
+      kb05: ["sameBar", "slippage"],
+      fill: ["sameBar", "slippage"],
+      kb06: ["terminalReport"],
+      kb07: ["riskGate"],
+      kb10: ["sourceGate"],
+      kb11: ["mcpContract"],
+      kb12: ["adapterBoundary"],
+      kb13: ["statusGate"],
+      ai: ["sourceGate", "mcpContract"],
+      support: ["adapterBoundary", "statusGate"]
+    };
+
+    const knowledgeItems = {
+      sameBar: {
+        title: "Same-candle TP/SL must declare fill ordering",
+        status: "approved",
+        tone: "ok",
+        sourceCount: 2,
+        treeNode: "kt.trading_engineering.replay_simulation.fill_model",
+        statement: "OHLC-only backtests must explicitly declare how same-candle TP and SL are resolved. Without intrabar path data, the system cannot claim the true order of events.",
+        appliesTo: "OHLC-only backtest, no trusted tick path.",
+        notApplicable: "Exchange fill events or trusted tick replay prove ordering.",
+        sources: "2 sources / internal report + framework behavior notes.",
+        conflict: "Resolved by separating OHLC-only assumptions from tick-path replay assumptions."
+      },
+      timestamp: {
+        title: "Feature timestamp must be before decision timestamp",
+        status: "candidate",
+        tone: "warn",
+        sourceCount: 2,
+        treeNode: "kt.trading_engineering.backtest.bias",
+        statement: "Backtest features must be proven available before the strategy decision timestamp, otherwise leakage can inflate metrics.",
+        appliesTo: "Historical evaluation, feature engineering, model signals, indicator pipelines.",
+        notApplicable: "Pure historical documentation with no model decision.",
+        sources: "Candidate sources need strengthening.",
+        conflict: "No known direct conflict; source quality still needs review."
+      },
+      overfit: {
+        title: "Parameter search must be separated from final evaluation",
+        status: "gap",
+        tone: "warn",
+        sourceCount: 0,
+        treeNode: "kt.trading_engineering.backtest.bias",
+        statement: "Repeated parameter search over the same sample can overfit strategy rules. Final claims need separate validation or walk-forward evidence.",
+        appliesTo: "Backtest review, strategy iteration, optimization workflows.",
+        notApplicable: "Exploratory notebooks with no performance claim.",
+        sources: "Open gap: paper/book source required.",
+        conflict: "No conflict recorded."
+      },
+      terminalReport: {
+        title: "ExecutionAdapter must emit terminal ExecutionReport",
+        status: "reviewed",
+        tone: "info",
+        sourceCount: 1,
+        treeNode: "kt.trading_engineering.live_execution.order_state_machine",
+        statement: "Every terminal order state must emit an ExecutionReport with fills, errors, warnings, and position snapshots.",
+        appliesTo: "Live execution adapters, paper trading adapters, exchange integration review.",
+        notApplicable: "Manual research notes without execution events.",
+        sources: "1 source / engineering article.",
+        conflict: "No conflict recorded."
+      },
+      riskGate: {
+        title: "Risk gate must block unsafe new exposure",
+        status: "candidate",
+        tone: "warn",
+        sourceCount: 2,
+        treeNode: "kt.trading_engineering.risk_management.risk_gate",
+        statement: "Pre-trade risk gates should block new exposure when daily loss, leverage, or portfolio exposure limits are breached.",
+        appliesTo: "Risk review, live trading, simulation safety gate.",
+        notApplicable: "Offline research with no order generation.",
+        sources: "Candidate sources under review.",
+        conflict: "No blocking conflict; scope needs explicit assumptions."
+      },
+      slippage: {
+        title: "Simulation fill model must declare slippage and latency assumptions",
+        status: "gap",
+        tone: "warn",
+        sourceCount: 0,
+        treeNode: "kt.trading_engineering.replay_simulation.fill_model",
+        statement: "Replay and simulation results should not be compared to live outcomes unless fill, slippage, fee, and latency assumptions are declared.",
+        appliesTo: "Replay, paper trading, backtest-to-live readiness.",
+        notApplicable: "Pure accounting of already executed fills.",
+        sources: "Open gap: framework or official source required.",
+        conflict: "No conflict recorded."
+      },
+      sourceGate: {
+        title: "Unsourced knowledge must not become default guidance",
+        status: "approved",
+        tone: "ok",
+        sourceCount: 3,
+        treeNode: "kt.ai_engineering.rag_engineering.retrieval_policy",
+        statement: "Knowledge without source evidence must not become approved and must not be returned as default professional guidance.",
+        appliesTo: "RAG retrieval, SearchLab, MCP knowledge responses.",
+        notApplicable: "Draft brainstorming not used as guidance.",
+        sources: "3 sources / governance and RAG policy.",
+        conflict: "Aligned with MCP read-only and citation contracts."
+      },
+      mcpContract: {
+        title: "MCP tools require contract, permission and error schemas",
+        status: "candidate",
+        tone: "warn",
+        sourceCount: 4,
+        treeNode: "kt.ai_engineering.mcp_engineering.tool_contract",
+        statement: "Knowledge MCP tools must declare name, purpose, input/output schema, error schema, permission boundary, rate/size limits, audit fields and tests.",
+        appliesTo: "MCP tool design, external project integration, agent routing.",
+        notApplicable: "Private scripts not exposed to LLM tool calling.",
+        sources: "Candidate sources include MCP docs and CEK-TA spec.",
+        conflict: "No conflict; version freshness must be checked."
+      },
+      adapterBoundary: {
+        title: "Project Adapter must preserve project fact boundary",
+        status: "approved",
+        tone: "ok",
+        sourceCount: 1,
+        treeNode: "kt.project_integration.adapter",
+        statement: "External project adapters must separate project facts from reusable CEK-TA knowledge and must not store raw private facts in CEK-TA.",
+        appliesTo: "Other project integration, healthcheck, contribution review.",
+        notApplicable: "Internal CEK-TA-only mock data.",
+        sources: "1 source / project adapter runbook.",
+        conflict: "No conflict recorded."
+      },
+      statusGate: {
+        title: "Knowledge lifecycle must block unsafe default guidance",
+        status: "candidate",
+        tone: "warn",
+        sourceCount: 2,
+        treeNode: "kt.knowledge_governance.status_lifecycle",
+        statement: "Knowledge must pass sourced, classified, conflict_checked and reviewed gates before accepted or approved use.",
+        appliesTo: "Candidate ingestion, contribution review, MCP/SearchLab default guidance.",
+        notApplicable: "Temporary draft notes not shown to users.",
+        sources: "Candidate sources and CEK-TA governance rules.",
+        conflict: "No conflict; requires human review before promotion."
+      }
+    };
+
+    function tone(value) {
+      if (value === "none" || value === "covered" || value === "approved") return "ok";
+      if (value === "potential" || value === "partial") return "warn";
+      if (value === "confirmed" || value === "empty") return "bad";
+      return "info";
+    }
+
+    function setNode(key) {
+      const node = nodes[key] || nodes.trading;
+      document.querySelectorAll(".tree-nav button").forEach((btn) => btn.classList.remove("is-active"));
+      const active = document.querySelector(`[data-node="${key}"]`);
+      if (active) active.classList.add("is-active");
+      document.getElementById("breadcrumb").innerHTML = node.path.split(" / ").map((part) => `<span>${part}</span>`).join("<span>/</span>");
+      document.getElementById("nodeTitle").textContent = node.title;
+      document.getElementById("nodeSummary").textContent = node.summary;
+      document.getElementById("nodeId").textContent = node.id;
+      document.getElementById("approvedCount").textContent = node.approved;
+      document.getElementById("candidateCount").textContent = node.candidates;
+      document.getElementById("sourceCount").textContent = node.sources;
+      document.getElementById("gapCount").textContent = node.gaps;
+      document.getElementById("conflictCount").textContent = node.conflicts;
+      document.getElementById("freshnessCount").textContent = node.freshness;
+      for (const [id, value] of [["coverageBadge", node.coverage], ["reviewBadge", node.review], ["conflictBadge", node.conflict]]) {
+        const el = document.getElementById(id);
+        el.textContent = value;
+        el.className = `badge ${tone(value)}`;
+      }
+      renderKnowledgeList(key);
+    }
+
+    let currentKnowledgeNodeKey = "trading";
+
+    function renderKnowledgeList(nodeKey) {
+      currentKnowledgeNodeKey = nodeKey;
+      const list = getFilteredKnowledgeList(nodeKey);
+      const container = document.getElementById("knowledgePointList");
+      const total = (nodes[nodeKey] || nodes.trading).totalKnowledge || list.length;
+      const pageSize = Number(document.getElementById("knowledgePageSize").value || 20);
+      const visibleCount = Math.min(pageSize, total);
+      document.getElementById("knowledgeResultSummary").textContent = `显示 1-${visibleCount} / ${total.toLocaleString()} 个知识点`;
+      container.innerHTML = list.map((id, index) => {
+        const item = knowledgeItems[id];
+        return `
+          <button class="knowledge-point-button ${index === 0 ? "is-selected-knowledge" : ""}" data-knowledge="${id}">
+            <span class="node-title">
+              <strong>${item.title}</strong>
+              <span>${item.treeNode}</span>
+            </span>
+            <span class="knowledge-card-meta">
+              <span class="knowledge-node-id">${item.sourceCount} sources</span>
+              <span class="badge ${item.tone}">${item.status}</span>
+            </span>
+          </button>
+        `;
+      }).join("");
+      container.querySelectorAll("[data-knowledge]").forEach((btn) => {
+        btn.addEventListener("click", () => setKnowledge(btn.dataset.knowledge));
+      });
+      if (list.length) {
+        setKnowledge(list[0]);
+      } else {
+        container.innerHTML = `<div class="row"><span><strong>没有匹配的知识点</strong><small>调整搜索词或状态过滤。</small></span><span class="badge warn">empty</span></div>`;
+      }
+    }
+
+    function getFilteredKnowledgeList(nodeKey) {
+      const baseList = knowledgeByNode[nodeKey] || knowledgeByNode.trading;
+      const q = document.getElementById("knowledgeSearch").value.trim().toLowerCase();
+      const status = document.getElementById("knowledgeStatusFilter").value;
+      return baseList.filter((id) => {
+        const item = knowledgeItems[id];
+        const text = `${item.title} ${item.treeNode} ${item.statement} ${item.status}`.toLowerCase();
+        return (!q || text.includes(q)) && (status === "all" || item.status === status);
+      });
+    }
+
+    function setKnowledge(id) {
+      const item = knowledgeItems[id] || knowledgeItems.sameBar;
+      document.querySelectorAll(".knowledge-point-button").forEach((btn) => {
+        btn.classList.toggle("is-selected-knowledge", btn.dataset.knowledge === id);
+      });
+      document.getElementById("knowledgeTitle").textContent = item.title;
+      document.getElementById("knowledgeStatement").textContent = item.statement;
+      document.getElementById("knowledgeStatus").textContent = item.status;
+      document.getElementById("knowledgeStatus").className = `badge ${item.tone}`;
+      document.getElementById("knowledgeTreeNode").textContent = item.treeNode;
+      document.getElementById("knowledgeAppliesTo").textContent = item.appliesTo;
+      document.getElementById("knowledgeNotApplicable").textContent = item.notApplicable;
+      document.getElementById("knowledgeSources").textContent = item.sources;
+      document.getElementById("knowledgeConflict").textContent = item.conflict;
+    }
+
+    document.querySelectorAll("[data-node]").forEach((btn) => {
+      btn.addEventListener("click", (event) => {
+        const branch = btn.closest(".branch");
+        const partition = btn.closest(".partition");
+        const isBranchButton = branch && branch.firstElementChild === btn;
+        const isPartitionButton = partition && partition.firstElementChild === btn;
+
+        if (isBranchButton) {
+          branch.classList.toggle("is-collapsed");
+        }
+
+        if (isPartitionButton && partition.querySelector(".topic")) {
+          partition.classList.toggle("is-expanded");
+        }
+
+        setNode(btn.dataset.node);
+        if (window.innerWidth <= 760) setMobileTab("content");
+        event.stopPropagation();
+      });
+    });
+
+    function setMobileTab(tab) {
+      document.body.dataset.mobileTab = tab;
+      document.querySelectorAll(".mobile-tabs button").forEach((btn) => {
+        btn.classList.toggle("is-active-tab", btn.dataset.tab === tab);
+      });
+    }
+
+    document.querySelectorAll(".mobile-tabs button").forEach((btn) => {
+      btn.addEventListener("click", () => setMobileTab(btn.dataset.tab));
+    });
+
+    document.getElementById("treeSearch").addEventListener("input", (event) => {
+      const q = event.target.value.trim().toLowerCase();
+      document.querySelectorAll(".partition, .topic, .branch").forEach((row) => {
+        row.style.display = !q || row.textContent.toLowerCase().includes(q) ? "" : "none";
+      });
+    });
+
+    ["knowledgeSearch", "knowledgeStatusFilter", "knowledgeSort", "knowledgePageSize"].forEach((id) => {
+      document.getElementById(id).addEventListener("input", () => renderKnowledgeList(currentKnowledgeNodeKey));
+      document.getElementById(id).addEventListener("change", () => renderKnowledgeList(currentKnowledgeNodeKey));
+    });
+
+    renderKnowledgeList("trading");
+  </script>
+</body>
+</html>

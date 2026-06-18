@@ -1,0 +1,435 @@
+{
+  "schema_version": "1.0.0",
+  "candidate_id": "cand_20260610_phase41_p41_f08_hybrid_scoring_runtime_scorer_calibrator_rag_qwen3_final_gate_latency_budget_timeout_fallback_fail_to_review_fail_closed_001",
+  "research_task_id": "P41-F08",
+  "status": {
+    "review_status": "accepted",
+    "ingestion_decision": "accepted_for_draft",
+    "decision_reason": "二审 accepted_for_draft 且 reviewed_allowed=true；已生成 formal reviewed knowledge。",
+    "created_at": "2026-06-10",
+    "updated_at": "2026-06-10"
+  },
+  "classification": {
+    "tree_node_id": "kt.ai_engineering.model_release_governance.hybrid_runtime_contract",
+    "canonical_node_id": "kt.ai_engineering.model_release_governance.hybrid_runtime_contract",
+    "tree_path": "CEK-TA / AI Engineering / Hybrid Scoring And Qwen3 Audit",
+    "related_nodes": [
+      "kt.trading_engineering",
+      "kt.rag_engineering",
+      "kt.ai_feedback_governance"
+    ],
+    "partition_id": "KB_AI_25_MODEL_RELEASE_GOVERNANCE",
+    "domain": "ai_governance",
+    "subdomain": "hybrid_runtime_contract",
+    "rule_type": "governance_rule",
+    "used_for": [
+      "llm_training",
+      "trading_gating_scoring",
+      "hybrid_scoring",
+      "rag_engineering",
+      "mcp",
+      "vue_audit_ui"
+    ]
+  },
+  "claim": {
+    "claim_id": "claim_001",
+    "statement": "hybrid scoring runtime 必须为 scorer、calibrator、RAG、Qwen3 audit 和 final gate 分别定义 latency_budget_ms、timeout_ms、fallback_action、fail_to_review 或 fail_closed 策略；任何组件故障不得默认 allow，paper/live 下 final_gate_timeout 必须 fail_closed。",
+    "normalized_claim": "phase41.hybrid_scoring_runtime_scorer_calibrator_rag_qwen3_final_gate_latency_budget_timeout_fallback_fail_to_review_fail_closed.v1",
+    "claim_type": "runtime_fallback_rule",
+    "model_role": "final_gate",
+    "priority": "P0-Extended",
+    "evidence_summary": "Google SRE overload 来源支撑请求过载时需要降级、拒绝或保护系统可用性。；FCA 综述强调算法交易需要治理、测试、变更控制、监控和 kill switch 等控制。；SEC Knight Capital 案例说明自动化交易系统缺乏充分控制、审查和保护会造成重大损失。；契约明确 top_features 只能用于审计和 debug，不能作为因果结论或 final gate 权限。",
+    "interpretation_notes": "本候选只沉淀 AI Engineering 的模型选择、训练增强、校准不确定性、特征服务、Qwen3 审计助手或平台治理规则；交易规则本体必须路由到 Phase 37 / Trading Engineering。",
+    "claim_strength": "medium",
+    "performance_claim": false
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "general",
+    "data_granularity": "general",
+    "project_type": "trading_llm_gating_scoring",
+    "applies_when": [
+      "外接项目已完成基本 hybrid scoring POC，正在评估增强模型、平台、解释、校准、不确定性、服务化或发布治理。",
+      "该规则用于限制增强能力的引入时机、职责边界、审计证据和回滚条件。"
+    ],
+    "not_applicable_when": [
+      "用户需要具体买卖点、仓位、止损止盈、K 线形态、策略参数或实盘订单执行。",
+      "知识点主要描述 fill model、订单状态机、实盘风控阈值、交易所异常处理或交易收益本体，应路由到 Trading Engineering。"
+    ],
+    "assumptions": [
+      "P0-Extended/P1 是增强能力，不应阻塞 POC 主链路。",
+      "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+    ],
+    "limitations": [
+      "本条仍是 candidate，需要外部 AI/人工审计确认来源充分性、适用边界和是否需要补充工程实例。",
+      "Fallback may route to human review, rule baseline, or safe degradation; it must not create automatic allow/block without final-gate policy.",
+      "fallback 只能路由到 human review、safe degradation、rule baseline 或 fail_closed；不得在缺少 final-gate policy 时自动 allow/block。"
+    ]
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于提醒 AI IDE 区分必需能力与条件增强能力。",
+      "用于生成任务卡、接口契约、测试计划、审计 checklist 和候选知识补证问题。",
+      "用于阻断增强平台或模型能力绕过 deterministic final gate、人工审批和 RAG 引用边界。"
+    ],
+    "not_allowed": [
+      "不得据此生成买卖点、仓位、杠杆、止损止盈或实盘下单建议。",
+      "不得据此把 P1 平台工具变成默认依赖。",
+      "不得把 candidate 当作 reviewed/approved 默认指导。"
+    ]
+  },
+  "source_refs": [
+    {
+      "source_id": "src_phase41_runtime",
+      "source_title": "Phase 41 hybrid scoring runtime contract",
+      "source_url": "docs/contracts/phase41_hybrid_scoring_runtime_contract.md",
+      "source_type": "internal_contract",
+      "publisher": "CEK-TA",
+      "published_at": null,
+      "accessed_at": "2026-06-10",
+      "version": null,
+      "reliability": "high",
+      "score": 88,
+      "relevance": "high",
+      "freshness": "stable",
+      "limitations": [],
+      "evidence_summary": "Phase 41 runtime contract defines scorer, calibrator, Qwen3 audit assistant, RAG and deterministic final gate boundaries.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_vllm_serve",
+      "source_title": "vllm serve CLI documentation",
+      "source_url": "https://docs.vllm.ai/en/stable/cli/serve/",
+      "source_type": "official_doc",
+      "publisher": "vLLM",
+      "published_at": null,
+      "accessed_at": "2026-06-10",
+      "version": null,
+      "reliability": "high",
+      "score": 82,
+      "relevance": "high",
+      "freshness": "time_sensitive",
+      "limitations": [],
+      "evidence_summary": "vLLM serve documents serving options including scheduling controls relevant to latency and throughput.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_nist_ai_rmf",
+      "source_title": "NIST AI Risk Management Framework",
+      "source_url": "https://www.nist.gov/itl/ai-risk-management-framework",
+      "source_type": "governance_framework",
+      "publisher": "NIST",
+      "published_at": null,
+      "accessed_at": "2026-06-10",
+      "version": null,
+      "reliability": "high",
+      "score": 88,
+      "relevance": "high",
+      "freshness": "stable",
+      "limitations": [],
+      "evidence_summary": "NIST AI RMF provides governance practices for mapping, measuring and managing AI risks.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_google_sre_slo",
+      "source_title": "Service Level Objectives - Google SRE Book",
+      "source_url": "https://sre.google/sre-book/service-level-objectives/",
+      "source_type": "book",
+      "publisher": "Google SRE",
+      "published_at": null,
+      "accessed_at": "2026-06-10",
+      "version": null,
+      "reliability": "high",
+      "score": 86,
+      "relevance": "high",
+      "freshness": "stable",
+      "limitations": [
+        "支撑 SLO/预算思想，不定义交易系统放行策略。"
+      ],
+      "evidence_summary": "Google SRE SLO 来源支撑以明确目标、指标和预算管理服务可靠性。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_google_sre_overload",
+      "source_title": "Handling Overload - Google SRE Book",
+      "source_url": "https://sre.google/sre-book/handling-overload/",
+      "source_type": "book",
+      "publisher": "Google SRE",
+      "published_at": null,
+      "accessed_at": "2026-06-10",
+      "version": null,
+      "reliability": "high",
+      "score": 86,
+      "relevance": "high",
+      "freshness": "stable",
+      "limitations": [
+        "支撑过载和降级处理，不授权交易自动放行。"
+      ],
+      "evidence_summary": "Google SRE overload 来源支撑请求过载时需要降级、拒绝或保护系统可用性。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_fca_algo_trading_review",
+      "source_title": "Algorithmic Trading Compliance in Wholesale Markets",
+      "source_url": "https://www.fca.org.uk/publication/multi-firm-reviews/algorithmic-trading-compliance-wholesale-markets.pdf",
+      "source_type": "regulator_review",
+      "publisher": "FCA",
+      "published_at": null,
+      "accessed_at": "2026-06-10",
+      "version": null,
+      "reliability": "high",
+      "score": 88,
+      "relevance": "high",
+      "freshness": "stable",
+      "limitations": [
+        "监管综述支撑算法交易控制和治理，不定义本项目具体阈值。"
+      ],
+      "evidence_summary": "FCA 综述强调算法交易需要治理、测试、变更控制、监控和 kill switch 等控制。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_sec_knight_capital",
+      "source_title": "SEC Charges Knight Capital With Violations of Market Access Rule",
+      "source_url": "https://www.sec.gov/newsroom/press-releases/2013-222",
+      "source_type": "regulator_release",
+      "publisher": "SEC",
+      "published_at": "2013-10-16",
+      "accessed_at": "2026-06-10",
+      "version": null,
+      "reliability": "high",
+      "score": 88,
+      "relevance": "high",
+      "freshness": "stable",
+      "limitations": [
+        "事故监管来源用于说明自动化交易控制缺失风险，不证明某个模型有效。"
+      ],
+      "evidence_summary": "SEC Knight Capital 案例说明自动化交易系统缺乏充分控制、审查和保护会造成重大损失。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_phase41_runtime_contract",
+      "source_title": "CEK-TA Phase 41 Hybrid Scoring Runtime Contract",
+      "source_url": "docs/contracts/phase41_hybrid_scoring_runtime_contract.md",
+      "source_type": "internal_contract",
+      "publisher": "CEK-TA",
+      "published_at": "2026-06-10",
+      "accessed_at": "2026-06-10",
+      "version": "draft",
+      "reliability": "high",
+      "score": 90,
+      "relevance": "high",
+      "freshness": "time_sensitive",
+      "limitations": [
+        "内部契约只证明 CEK-TA 字段和权限边界，不替代外部专业来源。"
+      ],
+      "evidence_summary": "契约明确 top_features 只能用于审计和 debug，不能作为因果结论或 final gate 权限。",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 88,
+    "score_version": "1.1.0",
+    "primary_source_count": 8,
+    "supporting_source_count": 0,
+    "low_reliability_source_count": 0,
+    "mandatory_downgrades": [],
+    "limitations": [
+      "增强能力来源多为官方文档、论文或内部契约；正式化时必须保留条件引入边界。",
+      "补证后仍需外部 AI/人工二审确认 claim-specific 充分性，不能直接转 reviewed 或 approved。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "docs/contracts/phase41_hybrid_scoring_runtime_contract.md",
+      "docs/contracts/phase41_tabular_llm_training_data_contract.md",
+      "docs/research/phase41_hybrid_scoring_qwen3_scope.md",
+      "docs/tasks/phase41_hybrid_scoring_qwen3_audit_stack.md"
+    ],
+    "conflicts": [],
+    "resolution_summary": "补证后未发现直接理论冲突；仍需二审确认来源充分性和 AI/Trading 分支边界。",
+    "approval_allowed": false
+  },
+  "machine_gate": {
+    "default_guidance": "deny",
+    "reason": "supplemented candidate awaiting reaudit; not reviewed, approved, default guidance, or hard gate.",
+    "requires_human_escalation": true
+  },
+  "review": {
+    "confidence": "medium",
+    "freshness": "time_sensitive",
+    "reviewer": "codex_supplemental_evidence",
+    "reviewed_at": "2026-06-10",
+    "open_questions": [
+      "请二审确认补证后是否 accepted_for_draft；如果仍不足，请返回 needs_more_evidence 或 rejected。",
+      "即使二审通过，本条仍只能进入 formal reviewed draft 准备流程，不得直接 approved、default guidance 或 hard gate。"
+    ],
+    "audit_log": [
+      {
+        "at": "2026-06-10",
+        "actor": "codex",
+        "action": "created",
+        "reason": "Phase 41 P0-Extended/P1 joint candidate expansion."
+      },
+      {
+        "at": "2026-06-10",
+        "actor": "codex",
+        "action": "phase41_extended_p1_audit_needs_more_evidence",
+        "reason": "需补证后重新审计。"
+      },
+      {
+        "at": "2026-06-10",
+        "actor": "codex",
+        "action": "phase41_extended_p1_supplemental_evidence_ready",
+        "reason": "按严格审计意见补证并准备二审。"
+      },
+      {
+        "at": "2026-06-10",
+        "actor": "codex",
+        "action": "phase41_extended_p1_formal_reviewed_created",
+        "reason": "CEK-TA-333: formal reviewed knowledge written to codex-expert-kit/rag/knowledge/KB_AI_25_MODEL_RELEASE_GOVERNANCE/kb_ai_hybrid_scoring.phase41.hybrid_scoring_runtime_scorer_calibrator_rag_qwen3_final_gate_latency_budget_timeout_fallback_fail_to_review_fail_closed.v1.json."
+      }
+    ],
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "reviewed_allowed": true,
+    "approved_allowed": false,
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase41_extended_p1_supplemental_reaudit_20260610_strict_v2",
+      "source_package_id": "phase41_extended_p1_supplemental_reaudit_package_20260610",
+      "candidate_id": "cand_20260610_phase41_p41_f08_hybrid_scoring_runtime_scorer_calibrator_rag_qwen3_final_gate_latency_budget_timeout_fallback_fail_to_review_fail_closed_001",
+      "research_task_id": "P41-F08",
+      "decision": "accepted_for_draft",
+      "reason": "SRE, FCA algorithmic-trading control, SEC Knight Capital risk case, and Phase 41 runtime contract now support latency budget, timeout, fallback, fail-to-review, and fail-closed controls.",
+      "source_patch_notes": [
+        "Add SRE timeout/fallback/canary/incident source and, ideally, SEC Knight/FCA algorithmic trading controls as risk case evidence."
+      ],
+      "content_patch_notes": [
+        "Define per-component latency_budget_ms, timeout_ms, fallback_action, fail_closed_or_fail_to_review policy, and kill_switch_ref."
+      ],
+      "boundary_patch_notes": [
+        "Fallback may route to human review, rule baseline, or safe degradation; it must not create automatic allow/block without final-gate policy."
+      ],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false conflicts with package hard boundary that candidate knowledge must not enter default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before any draft conversion."
+      ],
+      "required_followups": [
+        "add_sre_fallback_source",
+        "add_algorithmic_control_case_source"
+      ],
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "import_policy": "strict audit result may route candidates only; formal reviewed/approved creation is blocked.",
+      "supplemental_evidence": {
+        "status": "ready_for_reaudit",
+        "added_at": "2026-06-10",
+        "task_id": "CEK-TA-332",
+        "previous_statement": "hybrid scoring runtime 必须定义 scorer、calibrator、RAG、Qwen3 和 final gate 的 latency budget、timeout、fallback、fail-to-review / fail-closed 策略",
+        "patched_statement": "hybrid scoring runtime 必须为 scorer、calibrator、RAG、Qwen3 audit 和 final gate 分别定义 latency_budget_ms、timeout_ms、fallback_action、fail_to_review 或 fail_closed 策略；任何组件故障不得默认 allow，paper/live 下 final_gate_timeout 必须 fail_closed。",
+        "added_source_ids": [
+          "src_google_sre_slo",
+          "src_google_sre_overload",
+          "src_fca_algo_trading_review",
+          "src_sec_knight_capital",
+          "src_phase41_runtime_contract"
+        ],
+        "all_supplemental_source_ids": [
+          "src_google_sre_slo",
+          "src_google_sre_overload",
+          "src_fca_algo_trading_review",
+          "src_sec_knight_capital",
+          "src_phase41_runtime_contract"
+        ],
+        "supplemental_notes": [
+          "Google SRE 来源支撑 SLO、延迟预算、过载保护和降级思路。",
+          "FCA 算法交易治理和 SEC Knight Capital 案例支撑自动化交易控制、测试、监控和 kill switch 的必要性。",
+          "Phase 41 runtime contract 已定义 latency/fallback schema 和 fail-closed 硬规则。"
+        ],
+        "remaining_boundary": "fallback 只能路由到 human review、safe degradation、rule baseline 或 fail_closed；不得在缺少 final-gate policy 时自动 allow/block。",
+        "reaudit_request": "请判断补证后是否 accepted_for_draft；不得直接 reviewed/approved/default/hard gate。"
+      },
+      "allowed_next_stage": "formal_reviewed_knowledge"
+    }
+  },
+  "copyright": {
+    "stores_full_text": false,
+    "stores_long_quote": false,
+    "summary_only": true,
+    "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+    "reuse_risk": "low"
+  },
+  "conversion_target": {
+    "proposed_knowledge_id": "kb_ai_hybrid_scoring.phase41.hybrid_scoring_runtime_scorer_calibrator_rag_qwen3_final_gate_latency_budget_timeout_fallback_fail_to_review_fail_closed.v1",
+    "target_schema": "cek_ta_knowledge_item",
+    "target_review_status": "reviewed",
+    "skill_candidate": false,
+    "eval_case_candidate": true,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "workflow": {
+    "stage": "formalized_reviewed",
+    "queue_group": "formalized",
+    "formal_knowledge_id": "kb_ai_hybrid_scoring.phase41.hybrid_scoring_runtime_scorer_calibrator_rag_qwen3_final_gate_latency_budget_timeout_fallback_fail_to_review_fail_closed.v1",
+    "formal_review_status": "reviewed",
+    "ai_audit_result_id": "audit_result_phase41_extended_p1_supplemental_reaudit_20260610_strict_v2",
+    "hidden_from_default_queue": true,
+    "next_action": "none",
+    "default_guidance_allowed": false,
+    "visible_in_default_guidance_queue": false,
+    "knowledge_path": "codex-expert-kit/rag/knowledge/KB_AI_25_MODEL_RELEASE_GOVERNANCE/kb_ai_hybrid_scoring.phase41.hybrid_scoring_runtime_scorer_calibrator_rag_qwen3_final_gate_latency_budget_timeout_fallback_fail_to_review_fail_closed.v1.json",
+    "formal_knowledge_path": "codex-expert-kit/rag/knowledge/KB_AI_25_MODEL_RELEASE_GOVERNANCE/kb_ai_hybrid_scoring.phase41.hybrid_scoring_runtime_scorer_calibrator_rag_qwen3_final_gate_latency_budget_timeout_fallback_fail_to_review_fail_closed.v1.json"
+  },
+  "phase41_trace": {
+    "priority": "P0-Extended",
+    "source_hint": "SEC Knight、FCA algorithmic controls、SRE sources",
+    "related_contracts": [
+      "docs/contracts/phase41_hybrid_scoring_runtime_contract.md",
+      "docs/contracts/phase41_tabular_llm_training_data_contract.md",
+      "docs/research/phase41_hybrid_scoring_qwen3_scope.md",
+      "docs/tasks/phase41_hybrid_scoring_qwen3_audit_stack.md"
+    ],
+    "scope_boundary": "AI Engineering enhancement only; Trading Engineering knowledge body is reference-only.",
+    "audit_patch_notes": {
+      "source_patch_notes": [
+        "Add SRE timeout/fallback/canary/incident source and, ideally, SEC Knight/FCA algorithmic trading controls as risk case evidence."
+      ],
+      "content_patch_notes": [
+        "Define per-component latency_budget_ms, timeout_ms, fallback_action, fail_closed_or_fail_to_review policy, and kill_switch_ref."
+      ],
+      "boundary_patch_notes": [
+        "Fallback may route to human review, rule baseline, or safe degradation; it must not create automatic allow/block without final-gate policy."
+      ],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false conflicts with package hard boundary that candidate knowledge must not enter default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before any draft conversion."
+      ],
+      "required_followups": [
+        "add_sre_fallback_source",
+        "add_algorithmic_control_case_source"
+      ]
+    },
+    "supplemental_evidence_ready": true,
+    "supplemental_evidence_added_at": "2026-06-10",
+    "supplemental_task_id": "CEK-TA-332",
+    "supplemental_source_ids": [
+      "src_google_sre_slo",
+      "src_google_sre_overload",
+      "src_fca_algo_trading_review",
+      "src_sec_knight_capital",
+      "src_phase41_runtime_contract"
+    ],
+    "supplemental_constraints": {
+      "required_runtime_fields": [
+        "latency_budget_ms",
+        "timeout_ms",
+        "fallback_action",
+        "fail_closed_or_fail_to_review",
+        "kill_switch_ref"
+      ]
+    }
+  }
+}

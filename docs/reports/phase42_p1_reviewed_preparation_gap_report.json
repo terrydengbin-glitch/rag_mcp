@@ -1,0 +1,122 @@
+{
+  "report_id": "phase42_p1_reviewed_preparation_gap_report",
+  "generated_at": "2026-06-11",
+  "phase": "42",
+  "candidate_count": 6,
+  "quality_gate": {
+    "gate_id": "phase42_p1_reviewed_preparation_quality_gate",
+    "generated_at": "2026-06-11",
+    "candidate_count": 6,
+    "expected_count": 6,
+    "failure_count": 0,
+    "failures": [],
+    "gate_status": "pass",
+    "boundary": "This gate only exports reviewed-preparation audit. It does not create formal knowledge."
+  },
+  "node_counts": {
+    "kt.ai_engineering.database_storage_engineering.feature_store_storage": 1,
+    "kt.ai_engineering.database_storage_engineering.model_registry_release_storage": 1,
+    "kt.ai_engineering.database_storage_engineering.security_privacy_access_control": 1,
+    "kt.ai_engineering.database_storage_engineering.vector_store_retrieval_storage": 3
+  },
+  "candidate_summaries": [
+    {
+      "candidate_id": "cand_20260611_phase42_p42_p1_001_pgvector_vs_qdrant_selection_boundary_001",
+      "research_task_id": "P42-P1-001",
+      "statement": "pgvector and Qdrant selection must be a storage-boundary decision: pgvector is suitable when vector retrieval should stay close to PostgreSQL metadata and transactional governance, while Qdrant is suitable when a dedicated vector service with payload filtering and operational scaling is justified; neither may replace the canonical source of truth.",
+      "canonical_node_id": "kt.ai_engineering.database_storage_engineering.vector_store_retrieval_storage",
+      "proposed_knowledge_id": "kb_ai_database_storage.phase42.pgvector_vs_qdrant_selection_boundary.v1",
+      "source_count": 3,
+      "source_types": [
+        "official_doc"
+      ],
+      "conflict_status": "none",
+      "current_reviewed_allowed": false,
+      "current_default_guidance_allowed": false,
+      "current_hard_gate_allowed": false
+    },
+    {
+      "candidate_id": "cand_20260611_phase42_p42_p1_002_hnsw_vs_ivfflat_selection_boundary_001",
+      "research_task_id": "P42-P1-002",
+      "statement": "HNSW and IVFFlat selection must be based on measured latency, recall, memory, build-time and update-pattern tradeoffs; index type must not be selected by default without a benchmark tied to the retrieval workload.",
+      "canonical_node_id": "kt.ai_engineering.database_storage_engineering.vector_store_retrieval_storage",
+      "proposed_knowledge_id": "kb_ai_database_storage.phase42.hnsw_vs_ivfflat_selection_boundary.v1",
+      "source_count": 3,
+      "source_types": [
+        "official_doc"
+      ],
+      "conflict_status": "none",
+      "current_reviewed_allowed": false,
+      "current_default_guidance_allowed": false,
+      "current_hard_gate_allowed": false
+    },
+    {
+      "candidate_id": "cand_20260611_phase42_p42_p1_003_qdrant_payload_index_metadata_filter_rule_001",
+      "research_task_id": "P42-P1-003",
+      "statement": "Qdrant payload indexes should be created for metadata fields repeatedly used in filtered retrieval; CEK-TA RAG results must separately preserve source provenance, formal_knowledge_id, citation resolution status and version metadata through CEK-TA contracts.",
+      "canonical_node_id": "kt.ai_engineering.database_storage_engineering.vector_store_retrieval_storage",
+      "proposed_knowledge_id": "kb_ai_database_storage.phase42.qdrant_payload_index_metadata_filter_rule.v1",
+      "source_count": 6,
+      "source_types": [
+        "internal_contract",
+        "official_doc"
+      ],
+      "conflict_status": "none",
+      "current_reviewed_allowed": false,
+      "current_default_guidance_allowed": false,
+      "current_hard_gate_allowed": false
+    },
+    {
+      "candidate_id": "cand_20260611_phase42_p42_p1_004_feast_adoption_boundary_after_offline_online_parity_pressure_001",
+      "research_task_id": "P42-P1-004",
+      "statement": "Feast should be introduced only when offline/online feature parity, point-in-time retrieval, feature reuse and serving latency create enough pressure to justify a feature store; simpler manifest-based pipelines remain acceptable before that threshold.",
+      "canonical_node_id": "kt.ai_engineering.database_storage_engineering.feature_store_storage",
+      "proposed_knowledge_id": "kb_ai_database_storage.phase42.feast_adoption_boundary_after_offline_online_parity_pressure.v1",
+      "source_count": 3,
+      "source_types": [
+        "official_doc"
+      ],
+      "conflict_status": "none",
+      "current_reviewed_allowed": false,
+      "current_default_guidance_allowed": false,
+      "current_hard_gate_allowed": false
+    },
+    {
+      "candidate_id": "cand_20260611_phase42_p42_p1_005_mlflow_registry_adoption_boundary_after_release_manifest_complexity_001",
+      "research_task_id": "P42-P1-005",
+      "statement": "MLflow Model Registry should be introduced when model versions, aliases, tags, metadata, release manifests and deployment organization exceed simple file-based release tracking; it must complement, not replace, scorer/calibrator/prompt/RAG index version binding.",
+      "canonical_node_id": "kt.ai_engineering.database_storage_engineering.model_registry_release_storage",
+      "proposed_knowledge_id": "kb_ai_database_storage.phase42.mlflow_registry_adoption_boundary_after_release_manifest_complexity.v1",
+      "source_count": 3,
+      "source_types": [
+        "official_doc"
+      ],
+      "conflict_status": "none",
+      "current_reviewed_allowed": false,
+      "current_default_guidance_allowed": false,
+      "current_hard_gate_allowed": false
+    },
+    {
+      "candidate_id": "cand_20260611_phase42_p42_p1_006_rls_pgaudit_adoption_boundary_001",
+      "research_task_id": "P42-P1-006",
+      "statement": "PostgreSQL RLS and pgAudit should be adopted when row-level access boundaries, tenant/project isolation or audit-grade database activity tracing are required; they require explicit policy design, performance review and log-retention planning before production use.",
+      "canonical_node_id": "kt.ai_engineering.database_storage_engineering.security_privacy_access_control",
+      "proposed_knowledge_id": "kb_ai_database_storage.phase42.rls_pgaudit_adoption_boundary.v1",
+      "source_count": 5,
+      "source_types": [
+        "cloud_provider_doc",
+        "official_doc"
+      ],
+      "conflict_status": "none",
+      "current_reviewed_allowed": false,
+      "current_default_guidance_allowed": false,
+      "current_hard_gate_allowed": false
+    }
+  ],
+  "audit_package_path": "E:\\collector\\rag\\docs\\audit\\phase42_p1_reviewed_preparation_audit_package_20260611.json",
+  "formal_knowledge_created": 0,
+  "approved_created": 0,
+  "default_guidance_created": 0,
+  "hard_gate_created": 0,
+  "next_action": "等待 reviewed/caveat_only 准备审计结果后，再按 Phase 32 工作流创建 formal reviewed 知识。"
+}

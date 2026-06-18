@@ -1,0 +1,122 @@
+{
+  "report_id": "phase51_knowledge_tree_large_scope_performance_report",
+  "generated_at": "2026-06-13T05:51:54+00:00",
+  "phase": "Phase 51",
+  "status": "pass",
+  "deliverables": {
+    "contract": "docs/contracts/phase51_knowledge_tree_scope_paging_contract.md",
+    "scope_index": "ui/public/data/knowledgeTreeScopeIndex.json",
+    "scope_index_script": "codex-expert-kit/rag/scripts/build_ui_knowledge_tree_scope_index.py",
+    "data_client": "ui/src/services/knowledgeDataClient.ts",
+    "store": "ui/src/stores/auditStore.ts",
+    "view": "ui/src/views/KnowledgeTreeView.vue",
+    "debounce_composable": "ui/src/composables/useDebouncedRef.ts",
+    "playwright_spec": "ui/tests/e2e/knowledge-tree-performance.spec.ts"
+  },
+  "scope_index": {
+    "schema_version": "phase51.scope_index.v1",
+    "node_count": 121,
+    "bytes": 355813,
+    "largest_scopes_by_formal_knowledge": [
+      {
+        "node_id": "kt",
+        "knowledge_total": 479,
+        "candidate_total": 483,
+        "reviewed": 469,
+        "approved": 10,
+        "accepted_for_draft": 469,
+        "needs_more_evidence": 0,
+        "rejected": 14,
+        "source_count": 4429,
+        "open_gap_count": 8,
+        "conflict_count": 10
+      },
+      {
+        "node_id": "kt.ai_engineering",
+        "knowledge_total": 326,
+        "candidate_total": 338,
+        "reviewed": 324,
+        "approved": 2,
+        "accepted_for_draft": 324,
+        "needs_more_evidence": 0,
+        "rejected": 14,
+        "source_count": 2926,
+        "open_gap_count": 5,
+        "conflict_count": 6
+      },
+      {
+        "node_id": "kt.trading_engineering",
+        "knowledge_total": 152,
+        "candidate_total": 145,
+        "reviewed": 145,
+        "approved": 7,
+        "accepted_for_draft": 145,
+        "needs_more_evidence": 0,
+        "rejected": 0,
+        "source_count": 1500,
+        "open_gap_count": 3,
+        "conflict_count": 4
+      },
+      {
+        "node_id": "kt.ai_engineering.llm_training",
+        "knowledge_total": 81,
+        "candidate_total": 80,
+        "reviewed": 80,
+        "approved": 1,
+        "accepted_for_draft": 80,
+        "needs_more_evidence": 0,
+        "rejected": 0,
+        "source_count": 705,
+        "open_gap_count": 0,
+        "conflict_count": 0
+      },
+      {
+        "node_id": "kt.ai_engineering.continuous_learning",
+        "knowledge_total": 39,
+        "candidate_total": 42,
+        "reviewed": 39,
+        "approved": 0,
+        "accepted_for_draft": 39,
+        "needs_more_evidence": 0,
+        "rejected": 3,
+        "source_count": 410,
+        "open_gap_count": 0,
+        "conflict_count": 6
+      }
+    ]
+  },
+  "performance_budget": {
+    "first_interactive_ms": 2000,
+    "branch_switch_no_blank": true,
+    "max_rendered_cards_default": 30,
+    "max_rendered_cards_page_100_with_buffer": 40,
+    "search_debounce_ms": 250,
+    "search_min_length": 2
+  },
+  "tests": [
+    {
+      "command": "npm --prefix ui run build",
+      "status": "pass"
+    },
+    {
+      "command": "npm --prefix ui run test:e2e",
+      "status": "pass",
+      "passed": 32
+    },
+    {
+      "command": "python codex-expert-kit/rag/scripts/validate_no_mojibake.py",
+      "status": "pass_after_report_patch"
+    }
+  ],
+  "boundaries": [
+    "未改变 candidate、reviewed、approved、default guidance 或 hard gate 状态语义。",
+    "未新增数据库。",
+    "未改变 MCP tool 权限。",
+    "范围索引只服务 Vue3 展示性能，不作为 RAG 排名事实源。"
+  ],
+  "rollback": [
+    "可保留 Phase 50 的静态 JSON 懒加载。",
+    "如虚拟滚动异常，可回退到分页摘要卡，但不回退到全量首包 import。",
+    "如范围索引异常，可临时让 store 使用扫描 fallback。"
+  ]
+}

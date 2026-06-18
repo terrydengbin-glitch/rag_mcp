@@ -1,0 +1,384 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_ai_engineering.trade_data.strategy_id_and_version_required.v1",
+  "title": "用于 LLM training、eval、RAG、preference data 或 gate/scoring re",
+  "metadata": {
+    "partition_id": "KB_09_LLM_TRAINING",
+    "domain": "llm_training",
+    "subdomain": "trade_data",
+    "rule_type": "checklist",
+    "content_type": "json",
+    "project_binding": "none",
+    "tree_node_id": "kt.llm_training.training_dataset_schema_engineering",
+    "tree_path": "CEK-TA / AI Engineering",
+    "canonical_node_id": "kt.llm_training.training_dataset_schema_engineering",
+    "canonical_tree_path": "CEK-TA / AI Engineering",
+    "risk_level": "medium",
+    "used_for": [
+      "llm_training",
+      "trading_gating_scoring",
+      "rag_engineering",
+      "mcp",
+      "vue_audit_ui"
+    ],
+    "source_candidate_id": "cand_20260609_ai_engineering_trade_data_strategy_id_and_version_required_v1_001",
+    "research_task_id": "RIT-P36-B-S02",
+    "claim_type": "ai_governance_rule",
+    "classification_notes": "Phase 36 AI Engineering reviewed knowledge; UI tree and canonical node are inherited from candidate classification. Trading rule bodies must remain in Trading Engineering."
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "general",
+    "data_granularity": "general",
+    "project_type": "trading_llm_assistant",
+    "applies_when": [
+      "交易记录、候选交易、复盘记录或打分样本将被转换为 LLM 训练、评估、RAG 检索、偏好数据或 gating/scoring 审核数据。",
+      "样本、数据集或评估结果依赖具体策略版本、策略 owner、策略注册表或 release manifest 做解释和回溯。",
+      "外接项目需要证明某个训练样本、eval case 或 gate 决策绑定到了明确策略版本。"
+    ],
+    "not_applicable_when": [
+      "任务是在定义策略逻辑、K 线形态、入场出场条件、仓位公式、止损止盈或订单执行规则；这些内容应进入 Trading Engineering。",
+      "样本完全不依赖策略版本，例如纯通用数据格式校验示例。",
+      "用户试图把策略参数或私有交易规则正文写入 CEK-TA 通用 AI Engineering 知识库。"
+    ]
+  },
+  "content": {
+    "statement": "用于 LLM training、eval、RAG、preference data 或 gate/scoring review 的 trade data 必须包含 strategy_id、strategy_version_ref 和 strategy_owner_ref；这些字段只能引用 Trading Engineering 或外接项目的策略注册表，不得把策略逻辑、参数、K 线规则或执行规则写入 AI Engineering。缺失或无法解析时必须 block_training、exclude_from_eval 或标记 needs_more_evidence。",
+    "rationale": "本条只定义 AI Engineering 可保存的策略引用字段和缺失字段处理；策略本体、K 线逻辑、买卖条件、仓位、止损止盈、回测和执行规则必须归 Trading Engineering 或外接项目策略注册表管理。 审计结论：补证后可以升级为 accepted_for_draft。rewritten statement 已经与 candidate_id / normalized_claim 对齐：用于 LLM training、eval、RAG、preference data 或 gate/scoring review 的 trade data 必须包含 strategy_id、strategy_version_ref 和 strategy_owner_ref；这些字段只能引用 Trading Engineering 或外接项目策略注册表，不得把策略逻辑、参数、K 线规则或执行规则写入 AI Engineering。MLflow、DVC 和 Datasheets 来源足以支撑 lineage、dataset / artifact versioning、数据组成与用途说明；但 strategy registry 本体仍是 CEK-TA / Trading Engineering 内部契约问题，正式 reviewed 前必须补 strategy_version_ref_contract 或 strategy registry contract。",
+    "procedure": [
+      "确认项目事实匹配 applies_when，且没有命中 not_applicable_when。",
+      "按 source_patch_notes 检查来源是否足够支撑 statement。",
+      "按 content_patch_notes 补齐正式实现、schema、字段和 checklist。",
+      "按 boundary_patch_notes 确认没有把交易规则本体、项目私有参数或实盘执行规则写入 AI Engineering。",
+      "保留 required_followups，后续由来源增强或治理任务继续关闭。"
+    ],
+    "examples": [],
+    "anti_patterns": [
+      "把 reviewed 知识当作 approved 默认指导。",
+      "把 AI Engineering 规则扩写成具体交易阈值、仓位、买卖点或执行参数。",
+      "忽略审计结果中的来源限制、适用范围和后续补强要求。"
+    ],
+    "validation": [
+      "source_evidence 至少 2 条，且没有 low-only 来源。",
+      "conflict_status 为 none 或 resolved。",
+      "review_status 为 reviewed 时 machine_gate 必须是 caveat_only。",
+      "MCP/SearchLab 默认指导不得把本条当作 approved 返回。"
+    ],
+    "risk_notes": [
+      "本条已完成补证二审并进入 formal reviewed；剩余的字段命名、来源增强和与 training_data.strategy_version_required 的父子化关系作为后续治理增强项追踪。",
+      "CEK-TA 当前只定义引用字段，不提供真实 strategy registry 实现。",
+      "AI Engineering 只定义 strategy_id / strategy_version_ref / strategy_owner_ref 的字段、引用关系、缺失状态、allowed_use 和审计要求。",
+      "Trading Engineering 或外接项目策略注册表管理策略本体、版本语义、K 线逻辑、买卖条件、仓位、止损止盈、回测和实盘执行。",
+      "不得把策略参数、交易规则、账户配置、订单细节或私有策略事实写入 AI Engineering 知识库。",
+      "与 training_data.strategy_version_required 高度重叠，建议父子化：本条作为 trade_data / raw record / review data 的字段规则；training_data.strategy_version_required 作为 strategy-dependent training sample 的样本层规则。",
+      "与 versioning.model_prompt_rag_strategy_snapshot_required 和 lineage.model_prompt_rag_data_strategy_bound_together 互补：本条管单条样本字段，versioning / lineage 条管 release or gate manifest。",
+      "不建议合并进 Trading Engineering，因为本条只保存引用字段和审计状态，不承载策略本体。",
+      "补 strategy_version_ref_contract.md。",
+      "补 trade_data_strategy_ref_schema.json。",
+      "补 strategy_owner_ref / strategy_registry_ref 字段定义。",
+      "补 allowed_use enum：training、eval、rag、preference_data、gate_review、audit_only、not_applicable。",
+      "补 eval cases：missing strategy_id、strategy_version_ref points to private strategy body、strategy version changed without new dataset version、LLM attempts to infer strategy rules。"
+    ],
+    "citation_notes": "MLflow Tracking 支持记录参数、代码版本、指标、输出文件、run metadata、artifacts 和数据集关联指标；DVC .dvc 文件支持用 Git 版本化数据占位元数据；Datasheets for Datasets 支持记录数据集组成、用途和限制。这些来源共同支撑 trade data 必须保存可追踪的策略版本引用，而不是保存策略本体。",
+    "audit_patch_notes": {
+      "source_patch_notes": [
+        "保留 MLflow Tracking 和 MLflow Dataset Tracking 作为 run、dataset、artifact、metrics、metadata 与 lineage 的主来源。",
+        "保留 DVC .dvc files / data versioning 作为数据版本追踪来源。",
+        "保留 Datasheets for Datasets 作为数据组成、用途、限制与维护说明来源。",
+        "OpenAI model optimization 只能作为 method selection / evaluation supporting source，不应作为 strategy_id / strategy_version_ref 字段主来源。",
+        "正式 draft 必须补内部来源：strategy_version_ref_contract.md、Trading Engineering strategy registry contract 或 release_manifest schema。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议保留补证方向：trade data used for LLM training, eval, RAG, preference data or gate/scoring review must include strategy_id, strategy_version_ref and strategy_owner_ref, but must not store strategy logic in AI Engineering.",
+        "建议字段：trade_record_id、trade_candidate_id、strategy_id、strategy_version_ref、strategy_owner_ref、source_mode、allowed_use、review_status、lineage_manifest_id。",
+        "strategy_version_ref 必须是外部引用、hash 或 registry id，不得包含策略正文、K 线条件、阈值、仓位、止损止盈或执行规则。",
+        "缺失 strategy_id / strategy_version_ref 时，strategy-dependent sample 应 block_training 或 exclude_from_eval；通用格式测试样本可标记 not_applicable 或 needs_review，但不得进入策略依赖 scoring eval。",
+        "建议将本条定义为 trade_data 层字段规则，而不是训练样本层全部规则。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 只定义 strategy_id / strategy_version_ref / strategy_owner_ref 的字段、引用关系、缺失状态、allowed_use 和审计要求。",
+        "Trading Engineering 或外接项目策略注册表管理策略本体、版本语义、K 线逻辑、买卖条件、仓位、止损止盈、回测和实盘执行。",
+        "不得把策略参数、交易规则、账户配置、订单细节或私有策略事实写入 AI Engineering 知识库。"
+      ],
+      "conflict_patch_notes": [
+        "与 training_data.strategy_version_required 高度重叠，建议父子化：本条作为 trade_data / raw record / review data 的字段规则；training_data.strategy_version_required 作为 strategy-dependent training sample 的样本层规则。",
+        "与 versioning.model_prompt_rag_strategy_snapshot_required 和 lineage.model_prompt_rag_data_strategy_bound_together 互补：本条管单条样本字段，versioning / lineage 条管 release or gate manifest。",
+        "不建议合并进 Trading Engineering，因为本条只保存引用字段和审计状态，不承载策略本体。"
+      ],
+      "required_followups": [
+        "补 strategy_version_ref_contract.md。",
+        "补 trade_data_strategy_ref_schema.json。",
+        "补 strategy_owner_ref / strategy_registry_ref 字段定义。",
+        "补 allowed_use enum：training、eval、rag、preference_data、gate_review、audit_only、not_applicable。",
+        "补 eval cases：missing strategy_id、strategy_version_ref points to private strategy body、strategy version changed without new dataset version、LLM attempts to infer strategy rules。"
+      ]
+    }
+  },
+  "assumptions": [
+    "外接项目提供项目事实、私有交易数据和策略上下文；CEK-TA 只沉淀可复用专业规则。",
+    "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+  ],
+  "source_evidence": [
+    {
+      "source_id": "src_mlflow_tracking_2026",
+      "source_title": "MLflow Tracking",
+      "source_url": "https://mlflow.org/docs/latest/ml/tracking/",
+      "source_type": "official_doc",
+      "publisher": "MLflow",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "MLflow Tracking records parameters, code versions, metrics, output files, run metadata, artifacts, and dataset-linked metrics, supporting run and release lineage for ML systems.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_dvc_files_2026",
+      "source_title": ".dvc Files | Data Version Control",
+      "source_url": "https://dvc.org/doc/user-guide/project-structure/dvc-files",
+      "source_type": "official_doc",
+      "publisher": "DVC",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "DVC .dvc files act as Git-versioned placeholders containing the metadata needed to track target data over time.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_datasheets_for_datasets_2018",
+      "source_title": "Datasheets for Datasets",
+      "source_url": "https://arxiv.org/abs/1803.09010",
+      "source_type": "paper",
+      "publisher": "arXiv",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "Datasheets for Datasets supports documenting dataset motivation, composition, collection process, recommended uses, maintenance, and limitations for transparency and accountability.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_openai_model_optimization_2026",
+      "source_title": "Model optimization | OpenAI API",
+      "source_url": "https://platform.openai.com/docs/guides/model-optimization",
+      "source_type": "official_doc",
+      "publisher": "OpenAI",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "medium",
+      "evidence_summary": "OpenAI model optimization guidance supports task definition, choosing prompting/RAG/fine-tuning approaches, and evaluating quality before model changes.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_occ_fed_fdic_revised_model_risk_2026",
+      "source_title": "Model Risk Management: Revised Guidance",
+      "source_url": "https://occ.gov/news-issuances/bulletins/2026/bulletin-2026-13.html",
+      "source_type": "standard_or_risk_framework",
+      "publisher": "OCC / Federal Reserve / FDIC",
+      "published_at": "2026-04-17",
+      "accessed_at": "2026-06-09",
+      "version": "OCC Bulletin 2026-13 / SR 26-2",
+      "reliability": "high",
+      "relevance": "medium",
+      "evidence_summary": "2026 年跨机构模型风险管理修订指南支持模型治理、验证、变更控制和风险分层；同时需注明 generative AI 和 agentic AI 不在其直接范围内，只能作为模型风险治理类比来源。",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 90,
+    "score_version": "1.0.0",
+    "primary_source_count": 2,
+    "supporting_source_count": 3,
+    "low_reliability_source_count": 0,
+    "limitations": [
+      "本条为 reviewed 知识，来源和审计补丁已记录；默认指导仍需后续人工治理升级 approved。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "docs/contracts/ai_engineering_gating_scoring_contract.md",
+      "docs/contracts/ai_engineering_knowledge_item_policy.md",
+      "docs/tasks/phase36_ai_engineering_gating_scoring_knowledge.md"
+    ],
+    "conflicts": [],
+    "resolution_summary": "补证后未发现与当前 CEK-TA formal knowledge 的直接冲突；仍需二次审计确认是否与相邻规则合并或父子化。候选不会进入默认指导。",
+    "default_recommendation": "caveat_only_until_approved"
+  },
+  "review": {
+    "confidence": "medium",
+    "freshness": "time_sensitive",
+    "review_status": "reviewed",
+    "reviewer": "codex",
+    "reviewed_at": "2026-06-09",
+    "created_at": "2026-06-09",
+    "updated_at": "2026-06-09",
+    "open_questions": [
+      "请重点审计 strategy_id/strategy_version_ref/strategy_owner_ref 是否应作为 trade_data 层字段，是否需要和 training_data.strategy_version_required 合并或父子化。",
+      "二次审计通过后只能进入 accepted_for_draft -> formal reviewed；不得直接进入 approved 或 machine_gate allow。",
+      "补 strategy_version_ref_contract.md。",
+      "补 trade_data_strategy_ref_schema.json。",
+      "补 strategy_owner_ref / strategy_registry_ref 字段定义。",
+      "补 allowed_use enum：training、eval、rag、preference_data、gate_review、audit_only、not_applicable。",
+      "补 eval cases：missing strategy_id、strategy_version_ref points to private strategy body、strategy version changed without new dataset version、LLM attempts to infer strategy rules。"
+    ],
+    "decision_log": [
+      {
+        "at": "2026-06-09",
+        "actor": "external_ai",
+        "decision": "accepted_for_draft",
+        "reason": "补证后可以升级为 accepted_for_draft。rewritten statement 已经与 candidate_id / normalized_claim 对齐：用于 LLM training、eval、RAG、preference data 或 gate/scoring review 的 trade data 必须包含 strategy_id、strategy_version_ref 和 strategy_owner_ref；这些字段只能引用 Trading Engineering 或外接项目策略注册表，不得把策略逻辑、参数、K 线规则或执行规则写入 AI Engineering。MLflow、DVC 和 Datasheets 来源足以支撑 lineage、dataset / artifact versioning、数据组成与用途说明；但 strategy registry 本体仍是 CEK-TA / Trading Engineering 内部契约问题，正式 reviewed 前必须补 strategy_version_ref_contract 或 strategy registry contract。",
+        "audit_result_id": "audit_result_phase36_batch10_strategy_training_example_supplemental_reaudit_20260609_gpt55_pro_strict_sources"
+      },
+      {
+        "at": "2026-06-09",
+        "actor": "codex",
+        "decision": "converted_to_reviewed",
+        "reason": "按 Phase 36 批量审计结果优化候选并转为 formal reviewed；未升级 approved。",
+        "audit_result_id": "audit_result_phase36_batch10_strategy_training_example_supplemental_reaudit_20260609_gpt55_pro_strict_sources"
+      }
+    ],
+    "approval_status": "not_requested",
+    "default_guidance_allowed": false,
+    "source_candidate_id": "cand_20260609_ai_engineering_trade_data_strategy_id_and_version_required_v1_001",
+    "ai_audit_result_id": "audit_result_phase36_batch10_strategy_training_example_supplemental_reaudit_20260609_gpt55_pro_strict_sources",
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase36_batch10_strategy_training_example_supplemental_reaudit_20260609_gpt55_pro_strict_sources",
+      "source_package_id": "phase36_batch10_strategy_training_example_supplemental_audit_package_20260609",
+      "decision": "accepted_for_draft",
+      "reason": "补证后可以升级为 accepted_for_draft。rewritten statement 已经与 candidate_id / normalized_claim 对齐：用于 LLM training、eval、RAG、preference data 或 gate/scoring review 的 trade data 必须包含 strategy_id、strategy_version_ref 和 strategy_owner_ref；这些字段只能引用 Trading Engineering 或外接项目策略注册表，不得把策略逻辑、参数、K 线规则或执行规则写入 AI Engineering。MLflow、DVC 和 Datasheets 来源足以支撑 lineage、dataset / artifact versioning、数据组成与用途说明；但 strategy registry 本体仍是 CEK-TA / Trading Engineering 内部契约问题，正式 reviewed 前必须补 strategy_version_ref_contract 或 strategy registry contract。",
+      "source_patch_notes": [
+        "保留 MLflow Tracking 和 MLflow Dataset Tracking 作为 run、dataset、artifact、metrics、metadata 与 lineage 的主来源。",
+        "保留 DVC .dvc files / data versioning 作为数据版本追踪来源。",
+        "保留 Datasheets for Datasets 作为数据组成、用途、限制与维护说明来源。",
+        "OpenAI model optimization 只能作为 method selection / evaluation supporting source，不应作为 strategy_id / strategy_version_ref 字段主来源。",
+        "正式 draft 必须补内部来源：strategy_version_ref_contract.md、Trading Engineering strategy registry contract 或 release_manifest schema。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议保留补证方向：trade data used for LLM training, eval, RAG, preference data or gate/scoring review must include strategy_id, strategy_version_ref and strategy_owner_ref, but must not store strategy logic in AI Engineering.",
+        "建议字段：trade_record_id、trade_candidate_id、strategy_id、strategy_version_ref、strategy_owner_ref、source_mode、allowed_use、review_status、lineage_manifest_id。",
+        "strategy_version_ref 必须是外部引用、hash 或 registry id，不得包含策略正文、K 线条件、阈值、仓位、止损止盈或执行规则。",
+        "缺失 strategy_id / strategy_version_ref 时，strategy-dependent sample 应 block_training 或 exclude_from_eval；通用格式测试样本可标记 not_applicable 或 needs_review，但不得进入策略依赖 scoring eval。",
+        "建议将本条定义为 trade_data 层字段规则，而不是训练样本层全部规则。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 只定义 strategy_id / strategy_version_ref / strategy_owner_ref 的字段、引用关系、缺失状态、allowed_use 和审计要求。",
+        "Trading Engineering 或外接项目策略注册表管理策略本体、版本语义、K 线逻辑、买卖条件、仓位、止损止盈、回测和实盘执行。",
+        "不得把策略参数、交易规则、账户配置、订单细节或私有策略事实写入 AI Engineering 知识库。"
+      ],
+      "conflict_patch_notes": [
+        "与 training_data.strategy_version_required 高度重叠，建议父子化：本条作为 trade_data / raw record / review data 的字段规则；training_data.strategy_version_required 作为 strategy-dependent training sample 的样本层规则。",
+        "与 versioning.model_prompt_rag_strategy_snapshot_required 和 lineage.model_prompt_rag_data_strategy_bound_together 互补：本条管单条样本字段，versioning / lineage 条管 release or gate manifest。",
+        "不建议合并进 Trading Engineering，因为本条只保存引用字段和审计状态，不承载策略本体。"
+      ],
+      "required_followups": [
+        "补 strategy_version_ref_contract.md。",
+        "补 trade_data_strategy_ref_schema.json。",
+        "补 strategy_owner_ref / strategy_registry_ref 字段定义。",
+        "补 allowed_use enum：training、eval、rag、preference_data、gate_review、audit_only、not_applicable。",
+        "补 eval cases：missing strategy_id、strategy_version_ref points to private strategy body、strategy version changed without new dataset version、LLM attempts to infer strategy rules。"
+      ]
+    },
+    "approved_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "contribution": {
+    "contribution_id": null,
+    "source_project": null,
+    "sanitization_status": "not_applicable",
+    "private_data_removed": true,
+    "generic_mapping_notes": "Phase 36 public-source AI Engineering candidate; no project-private trading facts included."
+  },
+  "copyright": {
+    "stores_full_text": false,
+    "stores_long_quote": false,
+    "summary_only": true,
+    "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+    "reuse_risk": "low"
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于审计 AI Engineering、LLM 训练、RAG/MCP、部署、安全或治理链路。",
+      "用于提醒外接项目补齐来源、适用边界、冲突状态、审计记录和人工审批。",
+      "用于 reviewed/audit 模式下带 caveat 引用。"
+    ],
+    "not_allowed": [
+      "不得生成买卖点、仓位、杠杆、止损止盈或实盘执行指令。",
+      "不得覆盖确定性风控、交易执行系统或人工审批。",
+      "不得作为 approved/default guidance 直接返回。"
+    ],
+    "required_context": [
+      "project_type",
+      "task_type",
+      "mode",
+      "strategy_version",
+      "data_boundary",
+      "review_status"
+    ],
+    "fallback_behavior": "cite_with_caveat"
+  },
+  "machine_gate": {
+    "default_guidance": "caveat_only",
+    "reason": "reviewed only; accepted_for_draft is not approved; default guidance requires later human governance approval.",
+    "requires_human_escalation": true,
+    "blocking_reasons": [
+      "not_approved",
+      "phase36_batch_reviewed_only"
+    ],
+    "checked_at": "2026-06-09",
+    "gate_version": "1.0.0",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "recommended_extra_sources": [
+    {
+      "title": "保留 MLflow Tracking 和 MLflow Dataset Tracking 作为 run、dataset、artifact、metrics、metadata 与 lineage 的主来源。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_1"
+    },
+    {
+      "title": "保留 DVC .dvc files / data versioning 作为数据版本追踪来源。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_2"
+    },
+    {
+      "title": "保留 Datasheets for Datasets 作为数据组成、用途、限制与维护说明来源。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_3"
+    },
+    {
+      "title": "OpenAI model optimization 只能作为 method selection / evaluation supporting source，不应作为 strategy_id / strategy_version_ref 字段主来源。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_4"
+    },
+    {
+      "title": "正式 draft 必须补内部来源：strategy_version_ref_contract.md、Trading Engineering strategy registry contract 或 release_manifest schema。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_5"
+    }
+  ]
+}

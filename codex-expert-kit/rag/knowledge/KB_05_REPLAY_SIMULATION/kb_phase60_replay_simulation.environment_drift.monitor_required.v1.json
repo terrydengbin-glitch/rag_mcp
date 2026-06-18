@@ -1,0 +1,366 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_phase60_replay_simulation.environment_drift.monitor_required.v1",
+  "title": "environment drift monitor 必须比较 replay、paper、canary 与 live 的差异趋势",
+  "metadata": {
+    "partition_id": "KB_05_REPLAY_SIMULATION",
+    "domain": "replay_simulation",
+    "subdomain": "environment_drift",
+    "rule_type": "environment_drift_governance_rule",
+    "claim_type": "drift_report_requirement",
+    "content_type": "json",
+    "project_binding": "none",
+    "tree_node_id": "kt.replay_simulation",
+    "tree_path": "CEK-TA / Trading Engineering / Replay Simulation",
+    "canonical_node_id": "kt.replay_simulation",
+    "canonical_tree_path": "CEK-TA / Trading Engineering / Replay Simulation",
+    "related_nodes": [
+      "kt.trading_engineering",
+      "kt.replay_simulation",
+      "kt.live_execution",
+      "kt.risk_management",
+      "kt.data_engineering",
+      "kt.market_microstructure"
+    ],
+    "risk_level": "medium_high",
+    "used_for": [
+      "environment_drift_review",
+      "external_project_rag_retrieval",
+      "mcp",
+      "paper_live_gap",
+      "promotion_decision",
+      "searchlab",
+      "vue_audit_ui"
+    ],
+    "classification_notes": "Phase 60 P1 增强环境治理候选；只用于 sandbox/replay/paper/canary 的测试、监控、晋级和 gap 审计，不接管策略、实盘执行或风控阈值。",
+    "source_candidate_id": "cand_20260617_phase60_p1_environment_drift_monitor_required_001",
+    "research_task_id": "P60-P1-06",
+    "phase": "Phase 60",
+    "formalization_task_id": "CEK-TA-588",
+    "review_mode": "reviewed_caveat_only"
+  },
+  "applicability": {
+    "market": "general_with_platform_or_venue_specific_mapping",
+    "asset": "general",
+    "timeframe": "sandbox_replay_paper_or_live_canary_environment",
+    "data_granularity": "api_message_order_event_fill_event_health_metric_or_gap_report",
+    "project_type": "trading_ai_support_layer",
+    "applies_when": [
+      "外接项目设计 sandbox、UAT、testnet、replay、paper trading 或 live canary 环境治理",
+      "需要审计 adapter certification、scenario library、paper account state、runtime health、canary rollback 或 environment drift",
+      "需要把 Phase 60 P0 manifest/gap report 扩展为更完整的测试治理证据"
+    ],
+    "not_applicable_when": [
+      "需要生成买卖点、仓位、杠杆、止损止盈、风险阈值或实盘执行建议",
+      "需要直接证明策略有效、live-ready 或收益优势",
+      "没有平台、broker、exchange、API 版本、环境类型或数据来源证据"
+    ]
+  },
+  "content": {
+    "statement": "外接项目必须把 replay、paper、canary 与 live 的 fill、fee、latency、reject、cancel、order_state、data_staleness 和 risk_event 差异做成 environment drift report；drift report 是治理和人工复核材料，不是收益证明、交易许可或 hard gate。",
+    "rationale": "本候选是 Phase 60 P1 增强治理知识，只允许外部审计后进入 accepted_for_draft；不得直接 reviewed、approved、default guidance 或 hard gate。",
+    "procedure": [
+      "确认当前问题属于 sandbox、testnet、historical replay、realtime simulation、paper trading、live canary 或 live 环境治理。",
+      "要求外接项目提供 environment_manifest、gap_report、promotion_decision 或 order lifecycle mapping 的可审计证据。",
+      "返回来源、适用范围、不适用场景、owner 边界和 caveat，不返回交易执行许可。",
+      "遇到 live permission、risk threshold、hard gate 或实盘动作请求时，路由给外接项目 Live Execution / Risk Management owner。"
+    ],
+    "anti_patterns": [
+      "把 static API sandbox mocked response 当作真实市场行为。",
+      "把 testnet 订单、余额或成交写成 production fact。",
+      "把 paper trading 盈亏写成 live-ready 或策略有效。",
+      "把 historical replay fill 写成真实队列位置、真实 market impact 或 live 可成交性。",
+      "把 environment_manifest、promotion_decision 或 gap_report 写成实盘许可、自动晋级、自动拒单、自动停机或 hard gate。"
+    ],
+    "validation": [
+      "检查 source_evidence 是否至少包含官方/框架/标准/内部契约来源。",
+      "检查 conflict_audit.approval_allowed=false。",
+      "检查 machine_gate.default_guidance=caveat_only 且 approved/default/hard gate 均为 false。",
+      "检查内容没有买卖点、仓位、杠杆、止损止盈、风险阈值或 live permission。"
+    ],
+    "risk_notes": [
+      "P1 增强知识不能替代 P0 的 EnvironmentManifest、PromotionDecision 和 GapReport。",
+      "候选不能自动创建 reviewed、approved、default guidance 或 hard gate。",
+      "本候选不提供投资建议、订单建议、风险阈值或实盘许可。",
+      "不得收益证明。",
+      "不得交易许可。",
+      "不得 hard gate。",
+      "不得 live permission。",
+      "reviewed/caveat_only 只允许作为审计上下文、RAG 检索和项目方案 review；不等于 approved。",
+      "平台、broker、exchange 和 framework 来源必须保留具体适用范围，不得泛化为所有市场。"
+    ],
+    "citation_notes": "QuantConnect documents paper trading as live real-time data with fictional capital and simulated fills.；Alpaca documents paper trading as a test environment and discusses limitations such as market impact, latency, queue position, fees and dividends.；Google SRE describes monitoring systems with symptoms, causes and golden signals such as latency, traffic, errors and saturation.",
+    "required_followups": [
+      "正式写入 reviewed/caveat_only 时保留 drift_report_not_live_permission=true。",
+      "保留 human_review_required。",
+      "与 Phase 58 / Phase 60 P0 gap report 建立 drift 子报告关系。",
+      "标注 QuantConnect / NautilusTrader 为平台或框架来源，不得泛化为所有 broker。"
+    ],
+    "audit_patch_notes": {
+      "source_patch_notes": [
+        "QuantConnect live reconciliation 支撑 model prediction 与 live brokerage execution 偏差。",
+        "NautilusTrader live reconciliation 支撑 venue state 与 internal state 对齐。",
+        "Google SRE 可作为 drift monitor 的通用监控来源。"
+      ],
+      "content_patch_notes": [
+        "environment drift report 应覆盖 fill、fee、latency、reject、cancel、order_state、data_staleness、risk_event 等差异趋势。",
+        "drift report 是治理和人工复核材料。"
+      ],
+      "boundary_patch_notes": [
+        "不得收益证明。",
+        "不得交易许可。",
+        "不得 hard gate。",
+        "不得 live permission。"
+      ],
+      "conflict_patch_notes": [
+        "与 Phase 58 / Phase 60 P0 gap report 一致，应作为 drift 子报告。",
+        "与 Live Execution owner 不冲突，真实订单和仓位 reconciliation 仍归 Live Execution owner。"
+      ]
+    }
+  },
+  "assumptions": [
+    "候选用于 CEK-TA 通用支持层知识库，不包含外接项目私有策略参数。",
+    "每条候选都需要外部 AI/人工严格审计后才能进入 accepted_for_draft。",
+    "平台和工具来源只能作为 implementation pattern 或 supporting source。"
+  ],
+  "source_evidence": [
+    {
+      "source_id": "src_quantconnect_paper",
+      "source_title": "QuantConnect Paper Trading",
+      "source_url": "https://www.quantconnect.com/docs/v2/cloud-platform/live-trading/brokerages/quantconnect-paper-trading",
+      "source_type": "platform_doc",
+      "publisher": "QuantConnect",
+      "published_at": null,
+      "accessed_at": "2026-06-17",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "QuantConnect documents paper trading as live real-time data with fictional capital and simulated fills.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_alpaca_paper",
+      "source_title": "Paper Trading",
+      "source_url": "https://docs.alpaca.markets/us/docs/paper-trading",
+      "source_type": "official_doc",
+      "publisher": "Alpaca",
+      "published_at": null,
+      "accessed_at": "2026-06-17",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "Alpaca documents paper trading as a test environment and discusses limitations such as market impact, latency, queue position, fees and dividends.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_sre_monitoring",
+      "source_title": "Monitoring Distributed Systems",
+      "source_url": "https://sre.google/sre-book/monitoring-distributed-systems/",
+      "source_type": "engineering_book",
+      "publisher": "Google SRE",
+      "published_at": null,
+      "accessed_at": "2026-06-17",
+      "version": null,
+      "reliability": "high",
+      "relevance": "medium_high",
+      "evidence_summary": "Google SRE describes monitoring systems with symptoms, causes and golden signals such as latency, traffic, errors and saturation.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_phase60_gap_contract",
+      "source_title": "Phase 60 Environment Promotion Decision and Gap Report Contract",
+      "source_url": "docs/contracts/phase60_environment_promotion_gap_report_contract.md",
+      "source_type": "internal_contract",
+      "publisher": "CEK-TA",
+      "published_at": null,
+      "accessed_at": "2026-06-17",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "CEK-TA internal contract defines promotion decisions, gap report fields, required evidence and hard boundaries.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_quantconnect_live_reconciliation",
+      "source_title": "Reconciliation",
+      "source_url": "https://www.quantconnect.com/docs/v2/writing-algorithms/live-trading/reconciliation",
+      "source_type": "platform_doc",
+      "publisher": "QuantConnect",
+      "published_at": null,
+      "accessed_at": "2026-06-18",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "QuantConnect documents deviations between model predictions and live brokerage fills, fees and order execution and the need for reconciliation.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_nautilus_live_reconciliation",
+      "source_title": "Live Trading",
+      "source_url": "https://nautilustrader.io/docs/latest/concepts/live/",
+      "source_type": "framework_doc",
+      "publisher": "NautilusTrader",
+      "published_at": null,
+      "accessed_at": "2026-06-18",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "NautilusTrader documents execution reconciliation aligning venue actual order and position state with internal event-built state.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_nautilus_continuous_reconciliation",
+      "source_title": "Configure a Live Trading Node",
+      "source_url": "https://nautilustrader.io/docs/nightly/how_to/configure_live_trading/",
+      "source_type": "framework_doc",
+      "publisher": "NautilusTrader",
+      "published_at": null,
+      "accessed_at": "2026-06-18",
+      "version": null,
+      "reliability": "medium_high",
+      "relevance": "high",
+      "evidence_summary": "NautilusTrader describes continuous reconciliation by checking in-flight orders, open orders, position status and own order books.",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "medium_high",
+    "score": 84,
+    "source_count": 7,
+    "primary_source_count": 4,
+    "limitations": [
+      "候选来源需要外部严格审计；vendor/tool 文档不得过度泛化。"
+    ],
+    "source_quality_notes": [
+      "Reviewed/caveat_only sources support environment governance and audit boundaries, not strategy profitability or live permission.",
+      "Platform, broker, exchange and framework sources are implementation-pattern evidence and must retain scope caveats."
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "known_conflicts": [],
+    "potential_conflicts": [
+      "可能与 Phase 60 P0、Phase 58 环境等效链条、Phase 37 Replay/Live/Risk 知识重叠；正式转换前必须做重复和 owner 边界检查。"
+    ],
+    "resolution_summary": "Phase 60 P1 candidate audit accepted this item for draft only; reviewed/approved/default guidance/hard gate remain forbidden.",
+    "approval_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "approved_allowed": false
+  },
+  "review": {
+    "review_status": "reviewed",
+    "confidence": "high",
+    "freshness": "mixed",
+    "reviewer": "external_ai_strict_audit_and_codex_backwrite",
+    "reviewed_at": "2026-06-18",
+    "source_candidate_id": "cand_20260617_phase60_p1_environment_drift_monitor_required_001",
+    "ai_audit_result_id": "audit_result_phase60_p1_needs_evidence_supplemental_reaudit_20260618_strict_v1",
+    "approval_status": "not_requested",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase60_p1_needs_evidence_supplemental_reaudit_20260618_strict_v1",
+      "package_id": "phase60_p1_needs_evidence_supplemental_reaudit_package_20260618",
+      "candidate_id": "cand_20260617_phase60_p1_environment_drift_monitor_required_001",
+      "research_task_id": "P60-P1-06",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "trade_execution_advice_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "live_permission_allowed": false,
+      "required_followups": [
+        "正式写入 reviewed/caveat_only 时保留 drift_report_not_live_permission=true。",
+        "保留 human_review_required。",
+        "与 Phase 58 / Phase 60 P0 gap report 建立 drift 子报告关系。",
+        "标注 QuantConnect / NautilusTrader 为平台或框架来源，不得泛化为所有 broker。"
+      ],
+      "patch_notes": {
+        "source": [
+          "QuantConnect live reconciliation 支撑 model prediction 与 live brokerage execution 偏差。",
+          "NautilusTrader live reconciliation 支撑 venue state 与 internal state 对齐。",
+          "Google SRE 可作为 drift monitor 的通用监控来源。"
+        ],
+        "content": [
+          "environment drift report 应覆盖 fill、fee、latency、reject、cancel、order_state、data_staleness、risk_event 等差异趋势。",
+          "drift report 是治理和人工复核材料。"
+        ],
+        "boundary": [
+          "不得收益证明。",
+          "不得交易许可。",
+          "不得 hard gate。",
+          "不得 live permission。"
+        ],
+        "conflict": [
+          "与 Phase 58 / Phase 60 P0 gap report 一致，应作为 drift 子报告。",
+          "与 Live Execution owner 不冲突，真实订单和仓位 reconciliation 仍归 Live Execution owner。"
+        ]
+      }
+    },
+    "audit_log": [
+      {
+        "at": "2026-06-18",
+        "actor": "external_ai_strict_audit",
+        "action": "phase60_reviewed_preparation_audit_passed",
+        "reason": "accepted_for_reviewed_caveat_only; approved/default/hard gate remain forbidden.",
+        "audit_result_id": "audit_result_phase60_p1_needs_evidence_supplemental_reaudit_20260618_strict_v1"
+      },
+      {
+        "at": "2026-06-18",
+        "actor": "codex",
+        "action": "formal_reviewed_caveat_only_created",
+        "reason": "CEK-TA-588 materialized formal reviewed/caveat_only knowledge."
+      }
+    ]
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于提醒外接项目记录环境治理证据和 gap report。",
+      "用于审计 sandbox/replay/paper/canary 是否保留 owner 和边界。",
+      "用于阻止 AI 把测试环境结果泛化为 live-ready。"
+    ],
+    "not_allowed": [
+      "不得生成买卖点、仓位、杠杆、止损止盈或风险阈值。",
+      "不得授权实盘、自动拒单、自动停机或 hard gate。",
+      "不得把 candidate 当作正式 reviewed 或 approved 知识。"
+    ]
+  },
+  "machine_gate": {
+    "default_guidance": "caveat_only",
+    "reason": "Formal reviewed/caveat_only only; not approved, not default guidance, not hard gate, not live permission.",
+    "requires_human_escalation": true,
+    "hidden_from_default_queue": true,
+    "visible_in_default_guidance_queue": false,
+    "reviewed_allowed": true,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "trade_execution_advice_allowed": false,
+    "risk_threshold_advice_allowed": false,
+    "live_permission_allowed": false
+  },
+  "contract_refs": [],
+  "workflow": {
+    "source_candidate_id": "cand_20260617_phase60_p1_environment_drift_monitor_required_001",
+    "source_candidate_path": "codex-expert-kit/rag/candidates/KB_05_REPLAY_SIMULATION/cand_20260617_phase60_p1_environment_drift_monitor_required_001.json",
+    "formalized_by_task_id": "CEK-TA-588",
+    "formalized_at": "2026-06-18",
+    "review_mode": "reviewed_caveat_only",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "live_permission_allowed": false
+  },
+  "contribution": {
+    "formalized_from_candidate": "cand_20260617_phase60_p1_environment_drift_monitor_required_001",
+    "private_data_removed": true,
+    "contains_project_private_strategy": false,
+    "contains_secret": false,
+    "contains_account_facts": false
+  }
+}

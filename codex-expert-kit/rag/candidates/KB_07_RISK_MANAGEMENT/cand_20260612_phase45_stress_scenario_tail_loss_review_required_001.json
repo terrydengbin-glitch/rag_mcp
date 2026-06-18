@@ -1,0 +1,357 @@
+{
+  "schema_version": "1.1.0-candidate",
+  "candidate_id": "cand_20260612_phase45_stress_scenario_p45_e_stress05_001",
+  "research_task_id": "P45-E-STRESS05",
+  "status": {
+    "review_status": "formalized",
+    "ingestion_decision": "formal_reviewed_created",
+    "decision_reason": "reviewed/caveat_only 准备审计通过，已创建 formal reviewed/caveat_only。",
+    "created_at": "2026-06-12",
+    "updated_at": "2026-06-12"
+  },
+  "classification": {
+    "tree_node_id": "kt.risk_management.stress_scenario",
+    "canonical_node_id": "kt.risk_management.stress_scenario",
+    "tree_path": "CEK-TA / Trading Engineering / Risk Management / Scenario Stress Risk",
+    "related_nodes": [
+      "kt.risk_management.layered_risk_controls",
+      "kt.live_execution.resilience_incident_log",
+      "kt.trading_engineering.live_execution.execution_tca",
+      "kt.trade_analysis.review_reason_code"
+    ],
+    "partition_id": "KB_07_RISK_MANAGEMENT",
+    "domain": "risk_management",
+    "subdomain": "scenario_stress_risk",
+    "rule_type": "stress_risk_boundary_rule",
+    "claim_type": "tail_loss_review_rule",
+    "used_for": [
+      "trading_ai_project_design_audit",
+      "stress_testing_review",
+      "scenario_risk_checklist",
+      "external_project_rag_retrieval"
+    ],
+    "classification_notes": "P45-E 只补压力测试、情景风险和尾部风险边界；不设置任何 CEK-TA 通用风险阈值，不启用 hard gate。"
+  },
+  "claim": {
+    "claim_id": "claim_p45_e_stress05",
+    "title": "尾部亏损必须配合压力场景复核",
+    "statement": "尾部亏损复核应把 VaR、Expected Shortfall、scenario loss、最大单日/多日损失、liquidity horizon、liquidity-adjusted loss、模型外事件和样本外覆盖分开声明。Profit Factor、胜率、均值和普通回撤只能作为绩效/回测指标，不能替代尾部风险评估；不得输出 VaR/ES 阈值、交易许可、降仓、停机或 hard gate。",
+    "normalized_claim": "phase45_stress_scenario.tail_loss_review_required.v1",
+    "evidence_summary": "BCBS market-risk standard 支撑 Expected Shortfall 与市场风险框架；Basel MAR33 支撑 liquidity horizon / stressed ES；Acerbi-Tasche 研究支撑 Expected Shortfall 作为 worst-tail average loss 风险度量。",
+    "interpretation_notes": "本候选只定义压力测试、场景风险、流动性压力、尾部损失和风险复核边界，不输出风险阈值、交易参数或实盘执行建议。",
+    "claim_strength": "candidate",
+    "performance_claim": false
+  },
+  "applicability": {
+    "market": "general_with_clearing_venue_broker_and_jurisdiction_caveats",
+    "asset": "general",
+    "timeframe": "stress_scenario_and_risk_review_context",
+    "data_granularity": "portfolio_exposure_scenario_market_liquidity_risk_events",
+    "project_type": "trading_ai_support_layer",
+    "applies_when": [
+      "外接项目需要设计场景压力测试、流动性压力、相关性失效、跳空/隔夜风险、尾部亏损复核或 stress result governance。",
+      "AI IDE 需要判断风险评估是否把普通回测指标误当作 stress test。",
+      "需要把 scenario result、risk owner、人工审批和 deterministic final gate 分开建模。"
+    ],
+    "not_applicable_when": [
+      "用户要求具体风险阈值、仓位、杠杆、止损止盈、买卖点、交易许可或实盘执行动作。",
+      "需要外接项目真实账户、清算、保证金、融资或实时市场事实时，应由外接项目事实层提供。",
+      "需要监管资本、清算资源或合规结论时，应由对应机构/合规/legal owner 判断。"
+    ],
+    "assumptions": [
+      "Stress Testing / Scenario Risk 是风险复核与治理上下文，不是策略 alpha。",
+      "所有 stress、liquidity、clearing、CCP、banking 和 exchange 来源必须声明适用边界。",
+      "候选通过外部审计前不能进入 formal reviewed 知识库。"
+    ],
+    "limitations": [
+      "PFMI、BCBS、CCP、CME、DTCC 来源多为 FMI、银行、清算或交易所风险管理语境，不等同于所有交易项目规则。",
+      "压力测试不能替代 live risk gate、market data truth、order truth 或 portfolio owner 决策。",
+      "本候选不包含任何项目私有风险阈值或交易参数。"
+    ]
+  },
+  "source_refs": [
+    {
+      "source_title": "Basel Committee Stress Testing Principles",
+      "source_url": "https://www.bis.org/bcbs/publ/d450.htm",
+      "source_type": "professional_body",
+      "publisher": "Bank for International Settlements / BCBS",
+      "reliability": "high",
+      "score": 92,
+      "freshness": "stable",
+      "evidence_summary": "BCBS stress testing principles cover objectives, governance, policies, processes, methodology, resources and documentation for stress-testing frameworks.",
+      "limitations": [
+        "Bank/supervisory stress-testing framework; not a CEK-TA trading gate or strategy-performance standard."
+      ],
+      "source_id": "src_001",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "CPMI-IOSCO Principles for Financial Market Infrastructures",
+      "source_url": "https://www.iosco.org/library/pubdocs/pdf/IOSCOPD377.pdf",
+      "source_type": "professional_body",
+      "publisher": "CPMI-IOSCO",
+      "reliability": "high",
+      "score": 93,
+      "freshness": "stable",
+      "evidence_summary": "PFMI supports stress testing, liquidity-risk management and extreme-but-plausible scenario analysis for financial market infrastructures.",
+      "limitations": [
+        "FMI/CCP-focused principles; must be mapped carefully to trading-system project risk review."
+      ],
+      "source_id": "src_002",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "DTCC Stress Testing",
+      "source_url": "https://www.dtcc.com/managing-risk/financial-risk-management/stress-testing",
+      "source_type": "official_platform_doc",
+      "publisher": "DTCC",
+      "reliability": "high",
+      "score": 86,
+      "freshness": "time_sensitive",
+      "evidence_summary": "DTCC states stress testing measures stress-scenario impact on credit and liquidity exposures and financial resources for each clearing agency.",
+      "limitations": [
+        "Clearing-agency risk management context; not a trading-strategy approval source."
+      ],
+      "source_id": "src_003",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "Minimum capital requirements for market risk",
+      "source_url": "https://www.bis.org/bcbs/publ/d457.htm",
+      "source_type": "professional_body",
+      "publisher": "Basel Committee on Banking Supervision",
+      "reliability": "high",
+      "score": 92,
+      "freshness": "time_sensitive",
+      "relevance": "high",
+      "evidence_summary": "BCBS market-risk standard supports the revised market-risk framework and Expected Shortfall as a market-risk measure.",
+      "limitations": [
+        "Bank capital framework; not a CEK-TA trading threshold or strategy approval source."
+      ],
+      "source_id": "src_supp_001",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "Basel Framework MAR33 Internal models approach",
+      "source_url": "https://www.bis.org/basel_framework/chapter/MAR/33.htm",
+      "source_type": "professional_body",
+      "publisher": "Bank for International Settlements",
+      "reliability": "high",
+      "score": 91,
+      "freshness": "time_sensitive",
+      "relevance": "high",
+      "evidence_summary": "Basel MAR33 supports liquidity horizons and stressed expected shortfall calculations in the market-risk internal models approach.",
+      "limitations": [
+        "Regulatory capital model context; not a project-level risk threshold source."
+      ],
+      "source_id": "src_supp_002",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "Expected Shortfall: a natural coherent alternative to Value at Risk",
+      "source_url": "https://faculty.washington.edu/ezivot/econ589/acertasc.pdf",
+      "source_type": "professional_research",
+      "publisher": "Acerbi and Tasche",
+      "reliability": "medium_high",
+      "score": 84,
+      "freshness": "stable",
+      "relevance": "high",
+      "evidence_summary": "Acerbi and Tasche discuss Expected Shortfall as a coherent alternative to Value at Risk and as an average of worst-tail losses.",
+      "limitations": [
+        "Research source; does not define CEK-TA schema or trading permissions."
+      ],
+      "source_id": "src_supp_003",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 89.67,
+    "score_version": "phase45_source_scoring_v1",
+    "primary_source_count": 6,
+    "supporting_source_count": 0,
+    "low_reliability_source_count": 0,
+    "mandatory_downgrades": [],
+    "limitations": [
+      "正式 reviewed 前必须由外部审计确认 claim 没有超出来源可证明范围。",
+      "FMI、CCP、banking、exchange 来源必须保留 jurisdiction、clearing、venue 和 product caveat。",
+      "若后续使用内部 stress_result schema，需要提供 contract extract 或 hash。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "Phase 37 Risk Management formal reviewed knowledge",
+      "Phase 45 Layered Risk formal reviewed knowledge",
+      "Phase 45 Resilience Incident Log formal reviewed knowledge",
+      "Phase 45 Execution TCA formal reviewed knowledge"
+    ],
+    "conflicts": [],
+    "resolution_summary": "未发现与现有 formal reviewed 知识的直接冲突；P45-E 只补场景压力、流动性压力、尾部风险和 stress result governance 边界。",
+    "approval_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "risk_threshold_advice_allowed": false
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于提醒 AI IDE 区分 backtest drawdown、scenario stress、liquidity stress、tail loss 和 final gate。",
+      "用于生成压力测试设计 checklist、schema review、RAG 检索上下文和风险 reason code。",
+      "用于检查外接项目是否把 stress test 通过结果误写成交易许可或默认放行。"
+    ],
+    "not_allowed": [
+      "不得生成具体风险阈值、仓位、杠杆、买卖点、止损止盈、交易许可或实盘执行建议。",
+      "不得把候选知识当作 approved 或默认指导。",
+      "不得替外接项目启用 hard gate、拒单、停机、撤单或解锁流程。"
+    ]
+  },
+  "machine_gate": {
+    "default_guidance": "deny",
+    "reason": "candidate only; pending external strict audit; no reviewed/approved/default/hard gate.",
+    "requires_human_escalation": false,
+    "hidden_from_default_queue": true,
+    "visible_in_default_guidance_queue": false,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "risk_threshold_advice_allowed": false
+  },
+  "review": {
+    "review_status": "candidate_ready",
+    "review_mode": "external_strict_audit_required",
+    "confidence": "medium_high",
+    "freshness": "mixed",
+    "reviewer": null,
+    "reviewed_at": null,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "risk_threshold_advice_allowed": false,
+    "audit_log": [
+      {
+        "at": "2026-06-12",
+        "actor": "codex",
+        "action": "phase45_stress_scenario_candidate_generated",
+        "reason": "Generated from Phase 45 P45-E task queue with professional, clearing and exchange sources."
+      },
+      {
+        "at": "2026-06-12",
+        "actor": "codex",
+        "action": "phase45_stress_scenario_needs_more_evidence_supplemented",
+        "reason": "按首轮严格审计意见补直接来源，等待再审。",
+        "audit_result_id": "audit_phase45_stress_scenario_candidate_20260612_external_strict"
+      },
+      {
+        "at": "2026-06-12",
+        "actor": "external_ai_strict_audit",
+        "action": "phase45_stress_scenario_supplemental_reaudit_imported",
+        "reason": "accepted_for_draft; no reviewed/approved/default/hard gate.",
+        "audit_result_id": "audit_phase45_stress_scenario_supplemental_reaudit_20260612"
+      },
+      {
+        "at": "2026-06-12",
+        "actor": "codex",
+        "action": "phase45_stress_scenario_formal_reviewed_created",
+        "reason": "created formal reviewed/caveat_only from reviewed-preparation audit result",
+        "audit_result_id": "audit_phase45_stress_scenario_reviewed_preparation_20260612",
+        "formal_knowledge_id": "kb_phase45_stress_scenario.tail_loss_review_required.v1"
+      }
+    ],
+    "ai_audit": {
+      "audit_result_id": "audit_phase45_stress_scenario_supplemental_reaudit_20260612",
+      "package_id": "phase45_stress_scenario_supplemental_reaudit_package_20260612",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "reasons": [
+        "Expected Shortfall、VaR/ES、liquidity horizon、liquidity-adjusted tail loss 直接证据已补入。",
+        "Basel market risk standard 和 MAR33 足以支撑 Expected Shortfall 与 liquidity horizon 在市场风险框架中的使用。",
+        "Acerbi-Tasche 支撑 Expected Shortfall 作为 worst-tail average loss 风险度量。",
+        "claim 已明确 PF、胜率、均值和普通回撤只是绩效/回测指标，不能替代尾部风险评估。",
+        "claim 明确不得输出 VaR/ES 阈值、交易许可、降仓、停机或 hard gate。"
+      ],
+      "required_followups": [
+        "保留 caveat：Basel / MAR33 是银行监管资本和市场风险模型语境，不是 CEK-TA 交易阈值来源。",
+        "将 VaR、Expected Shortfall、scenario loss、liquidity horizon、liquidity-adjusted loss 拆成 tail_loss_review schema 字段。",
+        "如后续进入 reviewed，需要补内部 stress_result / tail_loss_review contract extract。"
+      ],
+      "patch_notes": {
+        "source": [
+          "保留 BCBS stress testing principles、PFMI、DTCC stress testing。",
+          "新增 Basel Minimum Capital Requirements for Market Risk、Basel MAR33、Acerbi-Tasche Expected Shortfall。"
+        ],
+        "content": [
+          "保留 VaR、Expected Shortfall、scenario loss、最大单日/多日损失、liquidity horizon、liquidity-adjusted loss、模型外事件和样本外覆盖字段。",
+          "保留 performance/backtest metrics 与 tail risk metrics 的边界。"
+        ],
+        "boundary": [
+          "不得输出 VaR/ES 阈值。",
+          "不得把尾部亏损复核结果变成交易许可。",
+          "不得生成降仓、停机或 hard gate。"
+        ],
+        "conflict": []
+      }
+    }
+  },
+  "workflow": {
+    "stage": "formalized_reviewed",
+    "queue_group": "formalized",
+    "source_phase": "45",
+    "source_task_id": "CEK-TA-465",
+    "batch": "P45-E Stress Testing / Scenario Risk",
+    "formal_knowledge_id": "kb_phase45_stress_scenario.tail_loss_review_required.v1",
+    "formal_knowledge_path": "codex-expert-kit/rag/knowledge/KB_07_RISK_MANAGEMENT/kb_phase45_stress_scenario.tail_loss_review_required.v1.json",
+    "allowed_next_decisions": [
+      "reviewed_preparation",
+      "needs_more_evidence",
+      "rejected"
+    ],
+    "forbidden_next_decisions": [
+      "approved",
+      "default_guidance",
+      "hard_gate",
+      "risk_threshold_advice"
+    ],
+    "conversion_target": {
+      "proposed_knowledge_id": "kb_phase45_stress_scenario.tail_loss_review_required.v1",
+      "target_review_status": "reviewed",
+      "target_machine_gate": "caveat_only",
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false
+    },
+    "formal_review_status": "reviewed",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "risk_threshold_advice_allowed": false,
+    "hidden_from_default_queue": true,
+    "next_action": "none"
+  },
+  "contribution": {
+    "source": "phase45_professional_research",
+    "private_data_removed": true,
+    "project_specific_details_removed": true,
+    "notes": "Generated for external strict audit; no project account, key, position, threshold, or private strategy data included."
+  }
+}

@@ -1,0 +1,439 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_ai_engineering.scoring_rubric.risk_reward_quality.v1",
+  "title": "`risk_reward_quality` 只能作为结构化 rubric 维度使用，必须引用 `risk_conte",
+  "metadata": {
+    "partition_id": "KB_09_LLM_TRAINING",
+    "domain": "llm_training",
+    "subdomain": "trading_scoring_gating_training",
+    "rule_type": "checklist",
+    "content_type": "json",
+    "project_binding": "none",
+    "tree_node_id": "kt.llm_training.trading_scoring_gating_training",
+    "tree_path": "CEK-TA / AI Engineering",
+    "canonical_node_id": "kt.llm_training.trading_scoring_gating_training",
+    "canonical_tree_path": "CEK-TA / AI Engineering",
+    "risk_level": "medium",
+    "used_for": [
+      "llm_training",
+      "trading_gating_scoring",
+      "rag_engineering",
+      "mcp",
+      "vue_audit_ui"
+    ],
+    "source_candidate_id": "cand_20260609_ai_engineering_scoring_rubric_risk_reward_quality_v1_001",
+    "research_task_id": "RIT-P36-C-16",
+    "claim_type": "ai_governance_rule",
+    "classification_notes": "Phase 36 AI Engineering reviewed knowledge; UI tree and canonical node are inherited from candidate classification. Trading rule bodies must remain in Trading Engineering."
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "general",
+    "data_granularity": "general",
+    "project_type": "trading_llm_assistant",
+    "applies_when": [
+      "外接项目正在构建或审计交易 LLM gating/scoring 的 scoring rubric 输出。",
+      "需要把 rubric 细分维度作为结构化 reason-code / review dimension，而不是最终交易许可。",
+      "项目能提供对应的 owner-defined *_ref、证据引用、review_owner 或校准报告。"
+    ],
+    "not_applicable_when": [
+      "需要计算具体策略收益、仓位影响、滑点、fill model、机会成本金额或阈值时，应路由到 Trading Engineering。",
+      "用户需要具体买卖点、仓位、止损止盈、策略参数或实盘订单执行。"
+    ]
+  },
+  "content": {
+    "statement": "`risk_reward_quality` 只能作为结构化 rubric 维度使用，必须引用 `risk_context_ref`、`reward_context_ref` 或 `cost_matrix_ref`、证据和 owner review；AI Engineering 不得计算或暗示策略收益、仓位影响或机会成本。",
+    "rationale": "本条只沉淀 AI Engineering scoring rubric 字段、引用、审计状态和降级动作；具体交易语义由 Trading Engineering 或项目 owner 提供。 审计结论：补证后可以升级为 accepted_for_draft。rewritten statement 已与 normalized_claim 对齐：risk_reward_quality 只能作为结构化 rubric 维度使用，必须引用 risk_context_ref、reward_context_ref 或 cost_matrix_ref、evidence_refs 和 owner review；AI Engineering 不得计算或暗示策略收益、仓位影响或机会成本。scikit-learn threshold tuning / cost-sensitive threshold 来源直接支持阈值和分类决策应根据具体 metric、business cost 或 cost matrix 设定，而不是由默认阈值或 LLM 自行决定。正式 draft 仍必须声明：该条不计算具体交易收益或机会成本。",
+    "procedure": [
+      "确认项目事实匹配 applies_when，且没有命中 not_applicable_when。",
+      "按 source_patch_notes 检查来源是否足够支撑 statement。",
+      "按 content_patch_notes 补齐正式实现、schema、字段和 checklist。",
+      "按 boundary_patch_notes 确认没有把交易规则本体、项目私有参数或实盘执行规则写入 AI Engineering。",
+      "保留 required_followups，后续由来源增强或治理任务继续关闭。"
+    ],
+    "examples": [],
+    "anti_patterns": [
+      "把 reviewed 知识当作 approved 默认指导。",
+      "把 AI Engineering 规则扩写成具体交易阈值、仓位、买卖点或执行参数。",
+      "忽略审计结果中的来源限制、适用范围和后续补强要求。"
+    ],
+    "validation": [
+      "source_evidence 至少 2 条，且没有 low-only 来源。",
+      "conflict_status 为 none 或 resolved。",
+      "review_status 为 reviewed 时 machine_gate 必须是 caveat_only。",
+      "MCP/SearchLab 默认指导不得把本条当作 approved 返回。"
+    ],
+    "risk_notes": [
+      "补证后仍需外部 AI/人工二次审计确认是否可转 accepted_for_draft。",
+      "本条不得单独作为 approved 默认指导。",
+      "AI Engineering 只管理 rubric schema、引用字段、reason_codes、review status 和 UI 展示。",
+      "Trading Engineering / project owner 管理具体风险收益解释、成本函数、机会成本、收益口径、仓位影响、滑点、fill model 和交易阈值。",
+      "不得把具体收益目标、风控预算、仓位规则、止损止盈、策略参数或订单逻辑写入 AI Engineering。",
+      "与 scoring_rubric.reason_code_required 是父子关系。",
+      "与 risk_ledger.false_allow_cost_record_required、gating.false_allow_more_dangerous_than_false_block、business_objective.success_metric_not_only_pnl 互补。",
+      "与 calibration.threshold_requires_shadow_data 和 approval.hard_gate_enable_requires_approval 互补：任何基于 cost/risk context 的阈值变更仍需 shadow evidence 和审批。",
+      "未发现需要 rejected 的直接冲突；accepted_for_draft 仍不等于 approved。",
+      "补 risk_reward_quality_schema.json。",
+      "补 cost_matrix_ref / risk_context_ref / reward_context_ref owner 规则。",
+      "补 Trading Engineering owner override policy。",
+      "补 eval cases：risk context missing、LLM invents risk/reward、PnL-only reward claim、Trading Engineering override required、risk_reward_quality used as final allow。"
+    ],
+    "citation_notes": "scikit-learn threshold tuning 和 cost-sensitive learning 支持阈值/成本矩阵需要明确目标和成本；CEK-TA contract 规定具体 risk/reward 语义由 Trading Engineering 提供。",
+    "audit_patch_notes": {
+      "source_patch_notes": [
+        "保留 scikit-learn classification threshold tuning，支持 decision threshold 应选择与 use case 匹配的 meaningful metric。",
+        "保留 scikit-learn cost-sensitive threshold 示例，支持 misclassification cost matrix / business cost 可影响阈值选择。",
+        "保留 NIST AI RMF Core，支持 risk owner、risk treatment、impact/likelihood 和治理流程。",
+        "保留 Model Cards / OpenAI evals 作为 intended use、limitations 和 eval workflow supporting sources。",
+        "保留 CEK-TA scoring_rubric_dimension_contract 作为内部主契约，明确 AI Engineering 只存 cost/risk/reward 引用而非交易收益本体。",
+        "建议互链第四批二审通过的 gating.false_allow_more_dangerous_than_false_block 和第七批 risk_ledger.false_allow_cost_record_required。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议保留补证写法：risk_reward_quality 只能作为结构化 rubric 维度使用，必须引用 risk_context_ref、reward_context_ref 或 cost_matrix_ref、evidence_refs 和 owner review。",
+        "建议字段：risk_context_ref、reward_context_ref、cost_matrix_ref、risk_reward_quality_status、evidence_refs、review_owner、reason_codes、fallback_action。",
+        "增加 forbidden rule：AI Engineering 不得计算策略收益、仓位影响、滑点、fill model、机会成本金额、风险预算或阈值。",
+        "如果缺少 cost_matrix_ref / risk_context_ref / owner_review，应标记 needs_more_evidence 或 needs_review，不得输出 high-quality risk/reward 结论。",
+        "risk_reward_quality 不得直接驱动 hard allow；它只能作为 audit/review dimension 或 scoring explanation。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 只管理 rubric schema、引用字段、reason_codes、review status 和 UI 展示。",
+        "Trading Engineering / project owner 管理具体风险收益解释、成本函数、机会成本、收益口径、仓位影响、滑点、fill model 和交易阈值。",
+        "不得把具体收益目标、风控预算、仓位规则、止损止盈、策略参数或订单逻辑写入 AI Engineering。"
+      ],
+      "conflict_patch_notes": [
+        "与 scoring_rubric.reason_code_required 是父子关系。",
+        "与 risk_ledger.false_allow_cost_record_required、gating.false_allow_more_dangerous_than_false_block、business_objective.success_metric_not_only_pnl 互补。",
+        "与 calibration.threshold_requires_shadow_data 和 approval.hard_gate_enable_requires_approval 互补：任何基于 cost/risk context 的阈值变更仍需 shadow evidence 和审批。",
+        "未发现需要 rejected 的直接冲突；accepted_for_draft 仍不等于 approved。"
+      ],
+      "required_followups": [
+        "补 risk_reward_quality_schema.json。",
+        "补 cost_matrix_ref / risk_context_ref / reward_context_ref owner 规则。",
+        "补 Trading Engineering owner override policy。",
+        "补 eval cases：risk context missing、LLM invents risk/reward、PnL-only reward claim、Trading Engineering override required、risk_reward_quality used as final allow。"
+      ]
+    }
+  },
+  "assumptions": [
+    "外接项目提供项目事实、私有交易数据和策略上下文；CEK-TA 只沉淀可复用专业规则。",
+    "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+  ],
+  "source_evidence": [
+    {
+      "source_id": "src_openai_evals",
+      "source_title": "Working with evals | OpenAI API",
+      "source_url": "https://platform.openai.com/docs/guides/evals?api-mode=chat",
+      "source_type": "official_doc",
+      "publisher": "OpenAI",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "OpenAI evals documentation supports programmatic evaluation setup and workflow-specific quality checks before relying on model behavior.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_model_cards",
+      "source_title": "Model Cards for Model Reporting",
+      "source_url": "https://arxiv.org/abs/1810.03993",
+      "source_type": "paper",
+      "publisher": "arXiv",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "Model Cards support documenting intended use, performance, limitations, and ethical considerations for model deployment and review.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_nist",
+      "source_title": "AI Risk Management Framework | NIST",
+      "source_url": "https://www.nist.gov/itl/ai-risk-management-framework",
+      "source_type": "standard_or_risk_framework",
+      "publisher": "NIST",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "NIST AI RMF supports governance, mapping, measurement, and management of AI risks across design, deployment, and monitoring.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_sklearn_classification_threshold",
+      "source_title": "Tuning the decision threshold for class prediction",
+      "source_url": "https://scikit-learn.org/stable/modules/classification_threshold.html",
+      "source_type": "official_doc",
+      "publisher": "scikit-learn",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": "1.9.0",
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "scikit-learn threshold tuning 支持把模型分数转换为类别前需要明确优化目标和约束，可支撑 risk_reward_quality 必须引用 risk_context/cost_matrix，而不是由 LLM 自行定义收益风险。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_sklearn_cost_sensitive_threshold",
+      "source_title": "Post-tuning the decision threshold for cost-sensitive learning",
+      "source_url": "https://scikit-learn.org/stable/auto_examples/model_selection/plot_cost_sensitive_learning.html",
+      "source_type": "official_doc",
+      "publisher": "scikit-learn",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": "1.9.0",
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "cost-sensitive threshold 示例使用 misclassification cost matrix，可支撑 risk_reward_quality 需要 cost_matrix_ref / risk_context_ref，不能只凭自然语言分数推断交易价值。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_nist_ai_rmf_core",
+      "source_title": "AI RMF Core",
+      "source_url": "https://airc.nist.gov/airmf-resources/airmf/5-sec-core/",
+      "source_type": "standard_or_risk_framework",
+      "publisher": "NIST",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": "AI RMF 1.0",
+      "reliability": "high",
+      "relevance": "medium",
+      "evidence_summary": "NIST AI RMF Core 组织 govern、map、measure、manage 风险管理活动，可支撑 rubric 维度需要 owner、测量、管理和审计边界。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_cek_ta_scoring_rubric_dimension_contract",
+      "source_title": "AI Engineering Scoring Rubric 维度边界契约",
+      "source_url": "docs/contracts/ai_engineering_scoring_rubric_dimension_contract.md",
+      "source_type": "internal_report",
+      "publisher": "CEK-TA",
+      "published_at": "2026-06-09",
+      "accessed_at": "2026-06-09",
+      "version": "1.0.0",
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "CEK-TA 内部契约规定 AI Engineering 只保存 rubric 字段、引用、缺失状态、reason codes 和审计字段；市场 regime、setup、risk/reward、rule registry 和阈值本体由 Trading Engineering 或项目 owner 提供。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_occ_fed_fdic_revised_model_risk_2026",
+      "source_title": "Model Risk Management: Revised Guidance",
+      "source_url": "https://occ.gov/news-issuances/bulletins/2026/bulletin-2026-13.html",
+      "source_type": "standard_or_risk_framework",
+      "publisher": "OCC / Federal Reserve / FDIC",
+      "published_at": "2026-04-17",
+      "accessed_at": "2026-06-09",
+      "version": "OCC Bulletin 2026-13 / SR 26-2",
+      "reliability": "high",
+      "relevance": "medium",
+      "evidence_summary": "2026 年跨机构模型风险管理修订指南支持模型治理、验证、变更控制和风险分层；同时需注明 generative AI 和 agentic AI 不在其直接范围内，只能作为模型风险治理类比来源。",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 90,
+    "score_version": "1.0.0",
+    "primary_source_count": 2,
+    "supporting_source_count": 6,
+    "low_reliability_source_count": 0,
+    "limitations": [
+      "本条为 reviewed 知识，来源和审计补丁已记录；默认指导仍需后续人工治理升级 approved。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "docs/contracts/ai_engineering_gating_scoring_contract.md",
+      "docs/contracts/ai_engineering_knowledge_item_policy.md",
+      "docs/tasks/phase36_ai_engineering_gating_scoring_knowledge.md",
+      "docs/contracts/ai_engineering_scoring_rubric_dimension_contract.md",
+      "kb_ai_engineering.scoring_rubric.reason_code_required.v1"
+    ],
+    "conflicts": [],
+    "resolution_summary": "已将通用 reason-code statement 重写为具体 scoring_rubric 维度，并通过 *_ref / owner review 边界避免把交易规则本体写入 AI Engineering。",
+    "default_recommendation": "caveat_only_until_approved"
+  },
+  "review": {
+    "confidence": "medium",
+    "freshness": "time_sensitive",
+    "review_status": "reviewed",
+    "reviewer": "codex",
+    "reviewed_at": "2026-06-09",
+    "created_at": "2026-06-09",
+    "updated_at": "2026-06-09",
+    "open_questions": [
+      "二审确认补证后的维度 statement 是否已经与 normalized_claim 对齐。",
+      "二审确认 *_ref / owner review 边界是否足以阻止 AI Engineering 承载交易规则本体。",
+      "补 risk_reward_quality_schema.json。",
+      "补 cost_matrix_ref / risk_context_ref owner 规则。",
+      "补 eval cases：risk context missing、LLM invents risk/reward、PnL-only reward claim、Trading Engineering override required。",
+      "补 risk_reward_quality_schema.json。",
+      "补 cost_matrix_ref / risk_context_ref / reward_context_ref owner 规则。",
+      "补 Trading Engineering owner override policy。",
+      "补 eval cases：risk context missing、LLM invents risk/reward、PnL-only reward claim、Trading Engineering override required、risk_reward_quality used as final allow。"
+    ],
+    "decision_log": [
+      {
+        "at": "2026-06-09",
+        "actor": "external_ai",
+        "decision": "accepted_for_draft",
+        "reason": "补证后可以升级为 accepted_for_draft。rewritten statement 已与 normalized_claim 对齐：risk_reward_quality 只能作为结构化 rubric 维度使用，必须引用 risk_context_ref、reward_context_ref 或 cost_matrix_ref、evidence_refs 和 owner review；AI Engineering 不得计算或暗示策略收益、仓位影响或机会成本。scikit-learn threshold tuning / cost-sensitive threshold 来源直接支持阈值和分类决策应根据具体 metric、business cost 或 cost matrix 设定，而不是由默认阈值或 LLM 自行决定。正式 draft 仍必须声明：该条不计算具体交易收益或机会成本。",
+        "audit_result_id": "audit_result_phase36_batch08_scoring_rubric_supplemental_reaudit_20260609_gpt55_pro_strict_sources"
+      },
+      {
+        "at": "2026-06-09",
+        "actor": "codex",
+        "decision": "converted_to_reviewed",
+        "reason": "按 Phase 36 批量审计结果优化候选并转为 formal reviewed；未升级 approved。",
+        "audit_result_id": "audit_result_phase36_batch08_scoring_rubric_supplemental_reaudit_20260609_gpt55_pro_strict_sources"
+      }
+    ],
+    "approval_status": "not_requested",
+    "default_guidance_allowed": false,
+    "source_candidate_id": "cand_20260609_ai_engineering_scoring_rubric_risk_reward_quality_v1_001",
+    "ai_audit_result_id": "audit_result_phase36_batch08_scoring_rubric_supplemental_reaudit_20260609_gpt55_pro_strict_sources",
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase36_batch08_scoring_rubric_supplemental_reaudit_20260609_gpt55_pro_strict_sources",
+      "source_package_id": "phase36_batch08_scoring_rubric_supplemental_audit_package_20260609",
+      "decision": "accepted_for_draft",
+      "reason": "补证后可以升级为 accepted_for_draft。rewritten statement 已与 normalized_claim 对齐：risk_reward_quality 只能作为结构化 rubric 维度使用，必须引用 risk_context_ref、reward_context_ref 或 cost_matrix_ref、evidence_refs 和 owner review；AI Engineering 不得计算或暗示策略收益、仓位影响或机会成本。scikit-learn threshold tuning / cost-sensitive threshold 来源直接支持阈值和分类决策应根据具体 metric、business cost 或 cost matrix 设定，而不是由默认阈值或 LLM 自行决定。正式 draft 仍必须声明：该条不计算具体交易收益或机会成本。",
+      "source_patch_notes": [
+        "保留 scikit-learn classification threshold tuning，支持 decision threshold 应选择与 use case 匹配的 meaningful metric。",
+        "保留 scikit-learn cost-sensitive threshold 示例，支持 misclassification cost matrix / business cost 可影响阈值选择。",
+        "保留 NIST AI RMF Core，支持 risk owner、risk treatment、impact/likelihood 和治理流程。",
+        "保留 Model Cards / OpenAI evals 作为 intended use、limitations 和 eval workflow supporting sources。",
+        "保留 CEK-TA scoring_rubric_dimension_contract 作为内部主契约，明确 AI Engineering 只存 cost/risk/reward 引用而非交易收益本体。",
+        "建议互链第四批二审通过的 gating.false_allow_more_dangerous_than_false_block 和第七批 risk_ledger.false_allow_cost_record_required。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议保留补证写法：risk_reward_quality 只能作为结构化 rubric 维度使用，必须引用 risk_context_ref、reward_context_ref 或 cost_matrix_ref、evidence_refs 和 owner review。",
+        "建议字段：risk_context_ref、reward_context_ref、cost_matrix_ref、risk_reward_quality_status、evidence_refs、review_owner、reason_codes、fallback_action。",
+        "增加 forbidden rule：AI Engineering 不得计算策略收益、仓位影响、滑点、fill model、机会成本金额、风险预算或阈值。",
+        "如果缺少 cost_matrix_ref / risk_context_ref / owner_review，应标记 needs_more_evidence 或 needs_review，不得输出 high-quality risk/reward 结论。",
+        "risk_reward_quality 不得直接驱动 hard allow；它只能作为 audit/review dimension 或 scoring explanation。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 只管理 rubric schema、引用字段、reason_codes、review status 和 UI 展示。",
+        "Trading Engineering / project owner 管理具体风险收益解释、成本函数、机会成本、收益口径、仓位影响、滑点、fill model 和交易阈值。",
+        "不得把具体收益目标、风控预算、仓位规则、止损止盈、策略参数或订单逻辑写入 AI Engineering。"
+      ],
+      "conflict_patch_notes": [
+        "与 scoring_rubric.reason_code_required 是父子关系。",
+        "与 risk_ledger.false_allow_cost_record_required、gating.false_allow_more_dangerous_than_false_block、business_objective.success_metric_not_only_pnl 互补。",
+        "与 calibration.threshold_requires_shadow_data 和 approval.hard_gate_enable_requires_approval 互补：任何基于 cost/risk context 的阈值变更仍需 shadow evidence 和审批。",
+        "未发现需要 rejected 的直接冲突；accepted_for_draft 仍不等于 approved。"
+      ],
+      "required_followups": [
+        "补 risk_reward_quality_schema.json。",
+        "补 cost_matrix_ref / risk_context_ref / reward_context_ref owner 规则。",
+        "补 Trading Engineering owner override policy。",
+        "补 eval cases：risk context missing、LLM invents risk/reward、PnL-only reward claim、Trading Engineering override required、risk_reward_quality used as final allow。"
+      ]
+    },
+    "approved_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "contribution": {
+    "contribution_id": null,
+    "source_project": null,
+    "sanitization_status": "not_applicable",
+    "private_data_removed": true,
+    "generic_mapping_notes": "Phase 36 public-source AI Engineering candidate; no project-private trading facts included."
+  },
+  "copyright": {
+    "stores_full_text": false,
+    "stores_long_quote": false,
+    "summary_only": true,
+    "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+    "reuse_risk": "low"
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于审计 AI Engineering、LLM 训练、RAG/MCP、部署、安全或治理链路。",
+      "用于提醒外接项目补齐来源、适用边界、冲突状态、审计记录和人工审批。",
+      "用于 reviewed/audit 模式下带 caveat 引用。"
+    ],
+    "not_allowed": [
+      "不得生成买卖点、仓位、杠杆、止损止盈或实盘执行指令。",
+      "不得覆盖确定性风控、交易执行系统或人工审批。",
+      "不得作为 approved/default guidance 直接返回。"
+    ],
+    "required_context": [
+      "project_type",
+      "task_type",
+      "mode",
+      "strategy_version",
+      "data_boundary",
+      "review_status"
+    ],
+    "fallback_behavior": "cite_with_caveat"
+  },
+  "machine_gate": {
+    "default_guidance": "caveat_only",
+    "reason": "reviewed only; accepted_for_draft is not approved; default guidance requires later human governance approval.",
+    "requires_human_escalation": true,
+    "blocking_reasons": [
+      "not_approved",
+      "phase36_batch_reviewed_only"
+    ],
+    "checked_at": "2026-06-09",
+    "gate_version": "1.0.0",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "recommended_extra_sources": [
+    {
+      "title": "保留 scikit-learn classification threshold tuning，支持 decision threshold 应选择与 use case 匹配的 meaningful metric。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_1"
+    },
+    {
+      "title": "保留 scikit-learn cost-sensitive threshold 示例，支持 misclassification cost matrix / business cost 可影响阈值选择。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_2"
+    },
+    {
+      "title": "保留 NIST AI RMF Core，支持 risk owner、risk treatment、impact/likelihood 和治理流程。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_3"
+    },
+    {
+      "title": "保留 Model Cards / OpenAI evals 作为 intended use、limitations 和 eval workflow supporting sources。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_4"
+    },
+    {
+      "title": "保留 CEK-TA scoring_rubric_dimension_contract 作为内部主契约，明确 AI Engineering 只存 cost/risk/reward 引用而非交易收益本体。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_5"
+    },
+    {
+      "title": "建议互链第四批二审通过的 gating.false_allow_more_dangerous_than_false_block 和第七批 risk_ledger.false_allow_cost_record_required。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_6"
+    }
+  ]
+}

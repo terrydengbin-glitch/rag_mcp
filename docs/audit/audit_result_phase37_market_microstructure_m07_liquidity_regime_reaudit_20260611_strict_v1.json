@@ -1,0 +1,59 @@
+{
+  "audit_result_id": "audit_result_phase37_market_microstructure_m07_liquidity_regime_reaudit_20260611_strict_v1",
+  "auditor": "external_ai_strict_audit",
+  "audited_at": "2026-06-11",
+  "package_id": "phase37_market_microstructure_m07_liquidity_regime_reaudit_package_20260611",
+  "quality_gate": {
+    "pass": true,
+    "reason": "M07 supplemental evidence accepted; reviewed/caveat_only only."
+  },
+  "summary": {
+    "total": 1,
+    "accepted_for_reviewed_caveat_only": 1,
+    "needs_more_evidence": 0,
+    "rejected": 0,
+    "blocked": 0
+  },
+  "results": [
+    {
+      "candidate_id": "cand_20260611_phase37_market_microstructure_liquidity_regime_required_001",
+      "research_task_id": "P37-D-M07",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "patch_notes": {
+        "source": [
+          "NYSE / Nasdaq / CME / Databento 只能证明各自 venue、product、dataset 或 schema 的语义，不能泛化为所有市场。",
+          "外接项目如果使用 crypto perpetuals、非美股票、其他期货品类、期权或外汇，必须补对应交易所的 session calendar、market status、contract spec、expiry/roll rule。"
+        ],
+        "content": [
+          "normal_continuous、pre_open_or_open_auction、closing_auction_or_close、holiday_or_early_close、halt_pause_reopen、rollover_or_expiry、stressed_liquidity、thin_or_off_hours 必须写成 CEK-TA internal liquidity regime labels，不是外部通用标准。",
+          "每个 regime 标签至少应带 market、venue、instrument、session_timezone、regime_start_time、regime_end_time、evidence_source_id、calendar_or_status_version 和 confidence。"
+        ],
+        "boundary": [
+          "本条只能约束解释、分层回测、特征适用范围、审计和人工/风控复核上下文。",
+          "不得从 liquidity regime 标签生成买卖点、仓位、杠杆、止损止盈或交易许可。",
+          "真正的拒单、阻断或自动风控只能由外接项目的 Risk Management / Live Execution owner 定义。"
+        ],
+        "conflict": [
+          "正式 materialize reviewed/caveat_only 前仍需完整 KB 冲突、重复和 owner 边界检查。",
+          "与 M11 thin market execution risk、Execution/Risk owner 边界只 cross-reference，不覆盖其阻断权限。"
+        ]
+      },
+      "reason": "NYSE、Nasdaq、CME、Databento 的直接来源覆盖 session、auction、halt/pause/reopen、holiday/early-close、expiration/rollover 和 vendor market-status schema，可支撑 CEK-TA 内部 liquidity regime taxonomy 的 caveat-only 知识。"
+    }
+  ],
+  "global_notes": [
+    "本审计不创建 approved/default guidance/hard gate。",
+    "所有 regime labels 是 CEK-TA internal labels，不是外部通用标准。",
+    "本条不生成买卖点、仓位、杠杆、止损止盈或实盘执行建议。"
+  ],
+  "source_candidate_snapshot": {
+    "candidate_id": "cand_20260611_phase37_market_microstructure_liquidity_regime_required_001",
+    "source_count": 12,
+    "taxonomy_contract_id": "cek_ta_liquidity_regime_taxonomy_v1"
+  }
+}

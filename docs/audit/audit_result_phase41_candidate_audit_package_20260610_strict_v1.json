@@ -1,0 +1,545 @@
+{
+  "audit_result_id": "audit_result_phase41_candidate_audit_package_20260610_strict_v1",
+  "source_package_id": "phase41_candidate_audit_package_20260610",
+  "audit_date": "2026-06-10",
+  "decision": "conditional_accept_for_formal_draft_queue_with_rejections",
+  "global_findings": [
+    "Package quality_gate passes candidate_count=22, but all candidates set workflow.hidden_from_default_queue=false, conflicting with the hard boundary that candidates must not become default guidance.",
+    "Three candidates contain empty slug identifiers phase41..v1 / kb_ai_hybrid_scoring.phase41..v1 and must be rejected/rebuilt before any import.",
+    "Several Qwen3/RAG claims lack direct RAG faithfulness/citation-resolver/internal-contract evidence; these should remain needs_more_evidence.",
+    "No candidate is approved, reviewed, default-guidance eligible, or hard-gate eligible."
+  ],
+  "global_required_patches": [
+    {
+      "patch_id": "default_queue_guard",
+      "required": true,
+      "fields": {
+        "workflow.hidden_from_default_queue": true,
+        "workflow.visible_in_default_guidance_queue": false,
+        "conversion_target.default_guidance_allowed": false,
+        "conversion_target.hard_gate_allowed": false
+      }
+    },
+    {
+      "patch_id": "permission_guard",
+      "required": true,
+      "fields": {
+        "reviewed_allowed": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      }
+    }
+  ],
+  "decisions": [
+    {
+      "candidate_id": "cand_20260610_phase41_p41_a01_rule_baseline_logistic_regression_lightgbm_xgboost_catboost_001",
+      "research_task_id": "P41-A01",
+      "decision": "accepted_for_draft",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "Official model-family sources support Logistic Regression, LightGBM, XGBoost, and CatBoost as candidate families; the statement already treats CatBoost as conditional and does not preselect a winner.",
+      "source_patch_notes": [],
+      "content_patch_notes": [
+        "Keep CatBoost conditional, not mandatory; state that Rule baseline, Logistic Regression, LightGBM, and XGBoost are the P0 comparison set, with CatBoost triggered by categorical-feature burden."
+      ],
+      "boundary_patch_notes": [],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false conflicts with package hard boundary that candidates must not become default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before any draft conversion."
+      ],
+      "required_followups": [
+        "Add explicit split_manifest_ref and metric_set_version fields to the comparison protocol."
+      ]
+    },
+    {
+      "candidate_id": "cand_20260610_phase41_p41_a02_logistic_regression_baseline_001",
+      "research_task_id": "P41-A02",
+      "decision": "accepted_for_draft",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "scikit-learn LogisticRegression and calibration documentation support its use as a transparent baseline and calibration probe.",
+      "source_patch_notes": [],
+      "content_patch_notes": [
+        "Do not state Logistic Regression is best-performing; state it is a transparency/calibration baseline."
+      ],
+      "boundary_patch_notes": [],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false conflicts with package hard boundary that candidates must not become default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before any draft conversion."
+      ],
+      "required_followups": [
+        "Add baseline_model_card fields: coefficients_available, calibration_baseline, and limitations."
+      ]
+    },
+    {
+      "candidate_id": "cand_20260610_phase41_p41_a03_lightgbm_xgboost_gbdt_001",
+      "research_task_id": "P41-A03",
+      "decision": "accepted_for_draft",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "LightGBM and XGBoost official docs and papers support them as strong GBDT candidates; the same split/metric requirement is correct but should be explicitly linked to model-selection/time-series split evidence.",
+      "source_patch_notes": [
+        "Add scikit-learn model_selection/TimeSeriesSplit or an internal split_manifest contract to directly support same-time-split evaluation."
+      ],
+      "content_patch_notes": [
+        "Require same split_manifest_hash, same label_policy_version, and same metric_set_version for both candidates."
+      ],
+      "boundary_patch_notes": [],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false conflicts with package hard boundary that candidates must not become default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before any draft conversion."
+      ],
+      "required_followups": [
+        "add_time_split_or_split_manifest_source"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260610_phase41_p41_a05__001",
+      "research_task_id": "P41-A05",
+      "decision": "rejected",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "Hard structural failure: candidate_id and normalized/proposed knowledge IDs contain an empty slug: phase41..v1 / kb_ai_hybrid_scoring.phase41..v1. The claim direction is useful, but the candidate must be rebuilt to avoid polluting the formal index.",
+      "source_patch_notes": [
+        "After rebuild, add claim-specific sources for latency/cost/governance trade-offs, not only NIST and MLflow."
+      ],
+      "content_patch_notes": [
+        "Rebuild as phase41.model_selection_business_cost_latency_explainability_calibration_governance.v1."
+      ],
+      "boundary_patch_notes": [],
+      "conflict_patch_notes": [
+        "Empty slug is a blocking index-integrity failure; do not import this candidate."
+      ],
+      "required_followups": [
+        "rebuild_candidate_id_and_slug",
+        "add_latency_and_cost_evaluation_sources"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260610_phase41_p41_b01_bad_trade_false_allow_class_weight_sample_weight_001",
+      "research_task_id": "P41-B01",
+      "decision": "needs_more_evidence",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "class_weight/sample_weight sources support imbalance handling, but the claim also requires recalibration after weighting/sampling; current source_refs do not include direct probability calibration evidence.",
+      "source_patch_notes": [
+        "Add scikit-learn probability calibration / CalibrationDisplay source."
+      ],
+      "content_patch_notes": [
+        "Require recalibration_report_id after class weighting, sampling, or resampling changes."
+      ],
+      "boundary_patch_notes": [],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false conflicts with package hard boundary that candidates must not become default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before any draft conversion."
+      ],
+      "required_followups": [
+        "add_calibration_source",
+        "add_recalibration_after_weighting_test"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260610_phase41_p41_b02_hpo_train_validation_holdout_calibration_shadow_paper_incident_pool_001",
+      "research_task_id": "P41-B02",
+      "decision": "accepted_for_draft",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "scikit-learn leakage/common-pitfalls and calibration-set separation support keeping HPO away from holdout/calibration/shadow/paper/incident pools.",
+      "source_patch_notes": [],
+      "content_patch_notes": [
+        "Define HPO input whitelist: train_set and validation_set only; all other sets are read-prohibited."
+      ],
+      "boundary_patch_notes": [],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false conflicts with package hard boundary that candidates must not become default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before any draft conversion."
+      ],
+      "required_followups": [
+        "add_hpo_data_access_unit_test"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260610_phase41_p41_b03__001",
+      "research_task_id": "P41-B03",
+      "decision": "rejected",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "Hard structural failure: normalized_claim and proposed_knowledge_id are empty slug values phase41..v1 / kb_ai_hybrid_scoring.phase41..v1. The time-aware split claim itself is valid but must be rebuilt.",
+      "source_patch_notes": [
+        "Retain scikit-learn TimeSeriesSplit and common-pitfalls sources after rebuild."
+      ],
+      "content_patch_notes": [
+        "Rebuild as phase41.time_aware_split_no_random_shuffle.v1."
+      ],
+      "boundary_patch_notes": [],
+      "conflict_patch_notes": [
+        "Empty slug is a blocking index-integrity failure; do not import this candidate."
+      ],
+      "required_followups": [
+        "rebuild_candidate_id_and_slug"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260610_phase41_p41_b05_dataset_hash_split_manifest_hash_feature_schema_version_label_policy_version_001",
+      "research_task_id": "P41-B05",
+      "decision": "accepted_for_draft",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "DVC/MLflow/NIST sources are sufficient for draft-level dataset and artifact lineage, with a required manifest schema patch.",
+      "source_patch_notes": [],
+      "content_patch_notes": [
+        "Require dataset_hash, split_manifest_hash, feature_schema_version, label_policy_version, and source lineage in TrainingDatasetManifest."
+      ],
+      "boundary_patch_notes": [],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false conflicts with package hard boundary that candidates must not become default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before any draft conversion."
+      ],
+      "required_followups": [
+        "add_training_dataset_manifest_schema"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260610_phase41_p41_c01_raw_score_final_gate_001",
+      "research_task_id": "P41-C01",
+      "decision": "accepted_for_draft",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "scikit-learn calibration documentation directly supports raw score/probability calibration boundaries, and NIST supports governance separation.",
+      "source_patch_notes": [],
+      "content_patch_notes": [
+        "Distinguish raw_score, rank_score, calibrated_probability, and final_gate_input."
+      ],
+      "boundary_patch_notes": [
+        "raw_score may be logged or used for ranking only; it must not be interpreted as calibrated probability or final action."
+      ],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false conflicts with package hard boundary that candidates must not become default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before any draft conversion."
+      ],
+      "required_followups": []
+    },
+    {
+      "candidate_id": "cand_20260610_phase41_p41_c02_calibration_set_scorer_001",
+      "research_task_id": "P41-C02",
+      "decision": "accepted_for_draft",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "scikit-learn explicitly recommends fitting calibrators on data independent of the classifier training data; the claim is directly supported.",
+      "source_patch_notes": [],
+      "content_patch_notes": [
+        "Add calibration_set_hash and calibration_independence_check."
+      ],
+      "boundary_patch_notes": [],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false conflicts with package hard boundary that candidates must not become default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before any draft conversion."
+      ],
+      "required_followups": [
+        "add_calibration_independence_test"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260610_phase41_p41_c03_threshold_policy_false_allow_false_block_review_capacity_001",
+      "research_task_id": "P41-C03",
+      "decision": "needs_more_evidence",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "The threshold-policy claim requires cost-sensitive thresholding and human-review capacity/budget support. Current source_refs include generic model evaluation/calibration but not cost-sensitive thresholding or review-capacity contract.",
+      "source_patch_notes": [
+        "Add scikit-learn decision threshold / cost-sensitive threshold source and a Phase41 review_capacity_policy contract."
+      ],
+      "content_patch_notes": [
+        "Add cost_matrix_version, false_allow_cost_ref, false_block_cost_ref, review_capacity_snapshot_ref, overflow_policy, and owner_approval_ref."
+      ],
+      "boundary_patch_notes": [],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false conflicts with package hard boundary that candidates must not become default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before any draft conversion."
+      ],
+      "required_followups": [
+        "add_cost_sensitive_threshold_source",
+        "add_review_capacity_contract"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260610_phase41_p41_d01_point_in_time_feature_join_feature_available_time_decision_time_001",
+      "research_task_id": "P41-D01",
+      "decision": "accepted_for_draft",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "Point-in-time feature joins and leakage prevention are directly supported by feature-store and leakage sources, but the source_refs should point to a point-in-time-specific page rather than generic Feast docs.",
+      "source_patch_notes": [
+        "Replace generic src_feast_docs with Feast point-in-time joins or Databricks point-in-time feature joins."
+      ],
+      "content_patch_notes": [
+        "Require feature_available_time <= decision_time and block feature rows with late availability."
+      ],
+      "boundary_patch_notes": [],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false conflicts with package hard boundary that candidates must not become default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before any draft conversion."
+      ],
+      "required_followups": [
+        "add_point_in_time_join_source",
+        "add_feature_available_time_unit_test"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260610_phase41_p41_d02__001",
+      "research_task_id": "P41-D02",
+      "decision": "rejected",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "Hard structural failure: normalized_claim and proposed_knowledge_id contain empty slug phase41..v1 / kb_ai_hybrid_scoring.phase41..v1. The offline/online parity claim is valid but cannot be imported in this form.",
+      "source_patch_notes": [
+        "After rebuild, add Feast offline/online serving parity or TFDV training-serving skew source."
+      ],
+      "content_patch_notes": [
+        "Rebuild as phase41.offline_online_feature_parity_default_guidance_block.v1."
+      ],
+      "boundary_patch_notes": [],
+      "conflict_patch_notes": [
+        "Empty slug is a blocking index-integrity failure; do not import this candidate."
+      ],
+      "required_followups": [
+        "rebuild_candidate_id_and_slug",
+        "add_offline_online_parity_source"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260610_phase41_p41_d03_feature_lineage_source_object_ref_lineage_ref_schema_version_001",
+      "research_task_id": "P41-D03",
+      "decision": "accepted_for_draft",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "DVC, Feast, and MLflow are adequate draft sources for lineage, feature schema, and artifact tracking.",
+      "source_patch_notes": [],
+      "content_patch_notes": [
+        "Add source_object_ref, lineage_ref, feature_schema_version, missing_value_policy, owner, and deprecation_policy."
+      ],
+      "boundary_patch_notes": [],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false conflicts with package hard boundary that candidates must not become default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before any draft conversion."
+      ],
+      "required_followups": [
+        "add_feature_lineage_schema"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260610_phase41_p41_d04_label_observation_window_decision_time_scorer_features_outcome_ai_engineering_001",
+      "research_task_id": "P41-D04",
+      "decision": "accepted_for_draft",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "The anti-leakage direction is sound and supported by common-pitfalls/time-aware split/data-validation sources, but needs a stronger label-observation-window contract.",
+      "source_patch_notes": [
+        "Add point-in-time / label observation window source or internal Phase41 label_horizon contract."
+      ],
+      "content_patch_notes": [
+        "Require label_observation_window_end > decision_time and forbid outcome-derived features in scorer input."
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering may define label observation metadata but must not define trading PnL, fill/cost, or execution-quality formulas."
+      ],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false conflicts with package hard boundary that candidates must not become default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before any draft conversion."
+      ],
+      "required_followups": [
+        "add_label_observation_window_contract"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260610_phase41_p41_e01_qwen3_numeric_scorer_final_gate_001",
+      "research_task_id": "P41-E01",
+      "decision": "accepted_for_draft",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "Qwen documentation supports Qwen3 as a language model; NIST and JSON Schema support governance/structured-output boundaries. The role boundary is correct for draft.",
+      "source_patch_notes": [
+        "Add Phase41 runtime contract as an explicit source_ref for the 'not numeric scorer/final gate/fact source' boundary."
+      ],
+      "content_patch_notes": [
+        "Qwen3 may produce audit recommendations only; final_decision must not be a Qwen3 output field."
+      ],
+      "boundary_patch_notes": [],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false conflicts with package hard boundary that candidates must not become default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before any draft conversion."
+      ],
+      "required_followups": [
+        "add_runtime_contract_source"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260610_phase41_p41_e02_qwen3_strict_json_recommendation_reason_codes_missing_fields_unsupported_claims_knowledge_refs_001",
+      "research_task_id": "P41-E02",
+      "decision": "accepted_for_draft",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "JSON Schema directly supports strict JSON validation and required fields; Qwen documentation supports LLM output generation, so this can enter draft.",
+      "source_patch_notes": [],
+      "content_patch_notes": [
+        "Define schema_version, recommendation enum, reason_codes enum source, missing_fields, unsupported_claims, knowledge_refs, and citation_resolution_status."
+      ],
+      "boundary_patch_notes": [],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false conflicts with package hard boundary that candidates must not become default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before any draft conversion."
+      ],
+      "required_followups": [
+        "add_json_schema_validation_test"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260610_phase41_p41_e03_qwen3_rag_abstain_needs_human_review_001",
+      "research_task_id": "P41-E03",
+      "decision": "needs_more_evidence",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "No-hit/no-source/conflict abstain requires RAG faithfulness, citation resolver, and no-source policy evidence. Current JSON Schema/NIST/OWASP sources are not sufficiently direct.",
+      "source_patch_notes": [
+        "Add Ragas/DeepEval/Promptfoo faithfulness or context-faithfulness sources and Phase41/CEK-TA citation resolver contract."
+      ],
+      "content_patch_notes": [
+        "Define no_hit, unresolved_citation, conflicting_sources, and stale_source routing to abstain or needs_human_review."
+      ],
+      "boundary_patch_notes": [],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false conflicts with package hard boundary that candidates must not become default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before any draft conversion."
+      ],
+      "required_followups": [
+        "add_rag_faithfulness_source",
+        "add_citation_resolver_contract"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260610_phase41_p41_e05_qwen3_sft_reason_code_001",
+      "research_task_id": "P41-E05",
+      "decision": "accepted_for_draft",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "TRL/SFT sources support supervised post-training. The boundary that SFT trains audit format rather than trading probabilities is acceptable for draft but needs explicit schema/citation eval gates.",
+      "source_patch_notes": [
+        "Add JSON Schema / structured output source and Phase41 reason taxonomy/citation contract."
+      ],
+      "content_patch_notes": [
+        "SFT objectives must be schema_valid_rate, reason_code_consistency, citation_resolved_rate, and unsupported_claim_rate, not PnL or final gate accuracy."
+      ],
+      "boundary_patch_notes": [],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false conflicts with package hard boundary that candidates must not become default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before any draft conversion."
+      ],
+      "required_followups": [
+        "add_post_sft_regression_eval"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260610_phase41_p41_e09_rag_context_qwen3_prompt_injection_guard_citation_resolver_unsupported_claim_detector_schema_validation_001",
+      "research_task_id": "P41-E09",
+      "decision": "needs_more_evidence",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "OWASP supports treating prompts/RAG content as untrusted input and JSON Schema supports validation, but citation_resolver and unsupported_claim_detector require RAG-grounding and internal contract sources.",
+      "source_patch_notes": [
+        "Add Ragas/Promptfoo context-faithfulness plus CEK-TA/Phase41 citation resolver and unsupported_claim detector contracts."
+      ],
+      "content_patch_notes": [
+        "Separate prompt_injection_guard, citation_resolution_status, unsupported_claims, and schema_validation_status fields."
+      ],
+      "boundary_patch_notes": [],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false conflicts with package hard boundary that candidates must not become default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before any draft conversion."
+      ],
+      "required_followups": [
+        "add_rag_grounding_source",
+        "add_unsupported_claim_detector_contract"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260610_phase41_p41_f01_final_gate_scorer_risk_bucket_threshold_policy_allow_block_reduce_size_deterministic_final_gate_qwen3_recommendation_raw_model_score_001",
+      "research_task_id": "P41-F01",
+      "decision": "accepted_for_draft",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "The corrected final-gate boundary is now sound: calibrated scorer signals and threshold policy can be inputs, but deterministic final gate retains action authority.",
+      "source_patch_notes": [
+        "Add algorithmic trading controls / incident case source, e.g. SEC Knight or FCA algorithmic trading controls, to support hard runtime governance."
+      ],
+      "content_patch_notes": [
+        "Define allowed final gate inputs: calibrated_probability, risk_bucket, threshold_policy_version, rule_hits_ref, owner_approval_ref, kill_switch_status."
+      ],
+      "boundary_patch_notes": [
+        "Qwen3 recommendation and raw model score must never directly set allow/block/reduce_size."
+      ],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false conflicts with package hard boundary that candidates must not become default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before any draft conversion."
+      ],
+      "required_followups": []
+    },
+    {
+      "candidate_id": "cand_20260610_phase41_p41_f02_composite_release_manifest_scorer_calibrator_threshold_qwen3_prompt_rag_index_reason_taxonomy_rollback_target_001",
+      "research_task_id": "P41-F02",
+      "decision": "needs_more_evidence",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "MLflow/DVC/NIST support model/data versioning and governance, but not the full composite release unit covering scorer, calibrator, threshold, Qwen3 prompt, RAG index, reason taxonomy, and rollback target.",
+      "source_patch_notes": [
+        "Add a Phase41 CompositeReleaseManifest contract or equivalent internal release-unit schema."
+      ],
+      "content_patch_notes": [
+        "Define CompositeReleaseUnit and CompositeRollbackTarget with scorer_version, calibrator_version, threshold_policy_version, qwen_prompt_version, rag_index_version, reason_taxonomy_version, owner_approval_ref, and rollback_target."
+      ],
+      "boundary_patch_notes": [],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false conflicts with package hard boundary that candidates must not become default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before any draft conversion."
+      ],
+      "required_followups": [
+        "add_composite_release_manifest_contract"
+      ]
+    }
+  ],
+  "batch_summary": {
+    "accepted_count": 14,
+    "needs_more_evidence_count": 5,
+    "rejected_count": 3,
+    "misrouted_to_trading_count": 0,
+    "reviewed_allowed_count": 0,
+    "approved_allowed_count": 0,
+    "default_guidance_allowed_count": 0,
+    "hard_gate_allowed_count": 0
+  }
+}

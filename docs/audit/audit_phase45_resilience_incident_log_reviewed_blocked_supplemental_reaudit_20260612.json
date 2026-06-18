@@ -1,0 +1,107 @@
+{
+  "audit_result_id": "audit_phase45_resilience_incident_log_reviewed_blocked_supplemental_reaudit_20260612",
+  "auditor": "external_ai_strict_audit",
+  "audited_at": "2026-06-12",
+  "package_id": "phase45_resilience_incident_log_reviewed_blocked_supplemental_reaudit_package_20260612",
+  "summary": {
+    "total": 2,
+    "accepted_for_reviewed_caveat_only": 2,
+    "needs_more_evidence": 0,
+    "rejected": 0,
+    "blocked": 0
+  },
+  "hard_boundaries": {
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "risk_threshold_advice_allowed": false,
+    "automatic_live_action_allowed": false
+  },
+  "candidate_results": [
+    {
+      "research_task_id": "P45-D-OPS04",
+      "candidate_id": "cand_20260612_phase45_resilience_incident_log_p45_d_ops04_001",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "reasons": [
+        "上轮 blocked 点已修复：statement 已明确为 CEK-TA reviewed/caveat_only 内部事故 taxonomy，而不是外部监管或标准强制分类。",
+        "taxonomy 使用范围已限制为 audit、review、priority queue、post-incident review、RAG 检索上下文。",
+        "claim 明确不得自动触发交易动作、风控阈值、停机阈值、拒单、撤单、重发订单或 hard gate。",
+        "Reg SCI、NIST、Google SRE 只作为事故响应和复盘框架来源；具体 taxonomy 字段由 CEK-TA runtime contract 提供本体来源，来源分工合理。"
+      ],
+      "required_followups": [
+        "正式 reviewed/caveat_only 文本必须保留：该 taxonomy 是 CEK-TA internal taxonomy，不是监管原文分类。",
+        "正式文本必须保留：taxonomy label 只能进入 audit/review/priority queue，不得进入 execution gate。",
+        "如未来扩展为自动化治理，必须另开任务重新审计，不得从本条推导 hard gate。"
+      ],
+      "patch_notes": {
+        "source": [
+          "保留 NIST SP 800-61、Reg SCI、FINRA 4370、Google SRE Postmortem Culture。",
+          "CEK-TA runtime contract 作为 incident_taxonomy schema 的字段本体来源。"
+        ],
+        "content": [
+          "保留 system_availability、data_quality、order_and_fill、risk_policy、account_and_funding、external_dependency、market_state、human_action 八类为 CEK-TA 内部建议分类。",
+          "保留 category、impact_area、affected_system、market_impact、data_quality、order_state、human_action、audit_trace_id 字段。"
+        ],
+        "boundary": [
+          "不得生成交易动作。",
+          "不得生成风控阈值。",
+          "不得生成停机阈值。",
+          "不得生成拒单、撤单、重发订单或 hard gate。"
+        ],
+        "conflict": []
+      }
+    },
+    {
+      "research_task_id": "P45-D-OPS06",
+      "candidate_id": "cand_20260612_phase45_resilience_incident_log_p45_d_ops06_001",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "reasons": [
+        "上轮缺口已补齐：SEC Rule 17a-4、FINRA 4511、CFTC 1.31 已纳入，足以支撑金融记录保存、电子记录、audit trail、真实性、可靠性和生产要求的 caveat_only 边界。",
+        "NIST SP 800-92 被正确限定为通用 log management 来源。",
+        "OpenTelemetry 被正确限定为 observability/telemetry 来源，不再被误用为金融审计账本或 retention 标准。",
+        "CEK-TA runtime contract 提供 audit_ledger_event schema 和 log layer boundaries，外部监管/标准来源提供 supporting evidence，来源分工合理。",
+        "claim 已明确 debug_log、telemetry_log、incident_log、audit_ledger、order_truth_source 分层；普通 debug 日志不能替代 audit ledger，audit ledger 也不能替代 broker/venue/order source of truth。"
+      ],
+      "required_followups": [
+        "正式 reviewed/caveat_only 文本必须保留 jurisdiction_scope，不得给出统一 retention 数值。",
+        "正式文本必须保留：SEC/FINRA/CFTC 来源具有美国 broker-dealer、FINRA member、CFTC records entity 等适用边界。",
+        "正式文本必须保留：audit ledger 不得推导交易许可、不得触发 hard gate、自动恢复、自动撤单或自动重发。",
+        "如外接项目不受 SEC/FINRA/CFTC 管辖，应由其 jurisdiction/platform/compliance owner 提供等价记录保存规则。"
+      ],
+      "patch_notes": {
+        "source": [
+          "保留 SEC Rule 17a-4 / SEC electronic recordkeeping amendments。",
+          "保留 FINRA Rule 4511。",
+          "保留 CFTC Regulation 1.31。",
+          "保留 NIST SP 800-92 作为通用日志治理来源。",
+          "保留 OpenTelemetry 作为 telemetry/traces/metrics/logs 来源。",
+          "CEK-TA runtime contract 作为 audit_ledger_event schema 字段本体来源。"
+        ],
+        "content": [
+          "保留 retention_policy_ref、jurisdiction_scope、完整性校验、访问/删除审计、关联 ID、时间源、归档恢复和最小必要字段。",
+          "保留 debug_log、telemetry_log、incident_log、audit_ledger、order_truth_source 分层。",
+          "保留 audit ledger 不能替代 broker/venue/order source of truth。"
+        ],
+        "boundary": [
+          "不得写死 retention 数值。",
+          "不得输出交易许可。",
+          "不得触发 hard gate。",
+          "不得自动恢复、自动撤单或自动重发订单。"
+        ],
+        "conflict": []
+      }
+    }
+  ]
+}

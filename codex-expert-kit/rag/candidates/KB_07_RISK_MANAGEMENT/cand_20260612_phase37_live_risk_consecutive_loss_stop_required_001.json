@@ -1,0 +1,455 @@
+{
+  "schema_version": "1.1.0-candidate",
+  "candidate_id": "cand_20260612_phase37_live_risk_consecutive_loss_stop_required_001",
+  "research_task_id": "P37-G-L11",
+  "status": {
+    "review_status": "reviewed",
+    "ingestion_decision": "accepted_for_reviewed_caveat_only",
+    "decision_reason": "补证再审允许 formal reviewed/caveat_only；不允许 approved/default guidance/hard gate/risk threshold advice。",
+    "created_at": "2026-06-12",
+    "updated_at": "2026-06-12"
+  },
+  "classification": {
+    "tree_node_id": "kt.risk_management.pre_trade_gates",
+    "canonical_node_id": "kt.risk_management.pre_trade_gates",
+    "tree_path": "CEK-TA / Trading Engineering / Risk Management / Pre-trade Risk Gates",
+    "related_nodes": [
+      "kt.trading_engineering",
+      "kt.live_execution",
+      "kt.risk_management",
+      "kt.replay_simulation",
+      "kt.market_microstructure",
+      "kt.ai_engineering.llm_training"
+    ],
+    "partition_id": "KB_07_RISK_MANAGEMENT",
+    "domain": "risk_management",
+    "subdomain": "loss_streak",
+    "rule_type": "live_risk_boundary_rule",
+    "claim_type": "risk_policy_boundary",
+    "used_for": [
+      "live_readiness_review",
+      "risk_gate_design_review",
+      "external_project_rag_retrieval",
+      "ai_trader_project_gap_audit"
+    ],
+    "classification_notes": "本候选主归属 Trading Engineering / Risk Management。AI Engineering 只能引用本规则，不得把实盘执行或风险管理本体改写为模型训练规则。"
+  },
+  "claim": {
+    "claim_id": "claim_p37_g_l11",
+    "title": "连续亏损停止规则必须定义",
+    "statement": "若交易系统使用连续亏损停止规则，必须定义亏损事件口径、时间窗口政策引用、计数来源、重置条件、冻结动作、人工复核、解锁流程，以及与单笔风险、日亏损和组合暴露规则的优先级；不得写入 CEK-TA 推荐阈值。",
+    "normalized_claim": "risk_management.consecutive_loss_stop_required.v1",
+    "evidence_summary": "内联 consecutive_loss_stop_policy schema，定义 loss_event_basis、time_window_policy_ref、streak_count_source、reset_condition、freeze_action、manual_review_required、unlock_process_ref、priority_order_ref 和 audit_trace 字段。 外部监管、broker、venue、platform 文档只作为原则或实现模式支撑，字段本体以 CEK-TA 内部契约为准。",
+    "interpretation_notes": "本候选只定义实盘执行与风险管理边界，不输出买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+    "claim_strength": "reviewed_caveat_only_pending_reaudit",
+    "performance_claim": false
+  },
+  "applicability": {
+    "market": "general_with_broker_venue_specific_mapping",
+    "asset": "general",
+    "timeframe": "live_or_paper_to_live_readiness",
+    "data_granularity": "orders_fills_positions_account_risk_events",
+    "project_type": "trading_ai_support_layer",
+    "applies_when": [
+      "审计外接项目的实盘执行、订单状态机、仓位对账、交易所适配器、risk gate 或 kill switch 设计",
+      "把 AI scoring / strategy signal 接入实盘前，需要确认 deterministic final gate 和执行安全边界"
+    ],
+    "not_applicable_when": [
+      "需要生成买卖点、仓位、杠杆、止损止盈或具体下单建议",
+      "问题属于回测、回放或模拟假设，应由 Backtest / Replay Simulation 分支处理",
+      "没有 broker、venue、account、order、position、risk policy 或 audit trace 上下文"
+    ],
+    "assumptions": [
+      "候选用于 CEK-TA 通用支持层知识库，不包含外接项目私有账户事实、密钥或策略参数。",
+      "实盘执行和风控规则必须按 broker、venue、asset、account、policy 和时间版本映射。",
+      "候选通过外部审计前不能进入正式 reviewed 知识库。"
+    ],
+    "limitations": [
+      "监管、交易所、broker 和平台来源只能支持原则和实现模式，不能替代外接项目自己的风控政策。",
+      "风险限制阈值必须由外接项目 owner 设定，本知识库不提供阈值数值建议。",
+      "本候选不提供任何投资建议或实盘许可。",
+      "本候选只约束 Live Execution / Risk Management 字段、状态和审计边界。",
+      "本候选不得生成买卖点、仓位、杠杆、止损止盈、实盘执行建议或风险阈值数值。",
+      "实际拒单、停机、冻结、解锁和恢复动作仍由外接项目正式 risk_policy_id 和 execution system 决定。"
+    ]
+  },
+  "source_refs": [
+    {
+      "source_title": "Best Practices for Automated Trading Risk Controls and System Safeguards",
+      "source_url": "https://www.fia.org/sites/default/files/2024-07/FIA_WP_AUTOMATED%20TRADING%20RISK%20CONTROLS_FINAL_0.pdf",
+      "source_type": "industry_guidance",
+      "publisher": "FIA",
+      "reliability": "medium_high",
+      "score": 84,
+      "freshness": "time_sensitive",
+      "evidence_summary": "FIA discusses automated trading risk controls such as maximum order size and kill switches from trader, broker, and venue perspectives.",
+      "limitations": [
+        "Industry guidance; not a substitute for project-specific risk policy."
+      ],
+      "source_id": "src_001",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "17 CFR 1.11 Risk Management Program",
+      "source_url": "https://www.ecfr.gov/current/title-17/chapter-I/part-1/subject-group-ECFR812208927193be3/section-1.11",
+      "source_type": "regulatory_rule",
+      "publisher": "eCFR / CFTC",
+      "reliability": "high",
+      "score": 90,
+      "freshness": "time_sensitive",
+      "evidence_summary": "CFTC risk management program rules include controls designed to prevent erroneous orders exceeding capital, credit, or volume thresholds.",
+      "limitations": [
+        "US futures commission merchant context; supports risk-control principle, not CEK-TA parameter values."
+      ],
+      "source_id": "src_002",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "Risk Management - Key Concepts",
+      "source_url": "https://www.quantconnect.com/docs/v2/writing-algorithms/algorithm-framework/risk-management/key-concepts",
+      "source_type": "platform_doc",
+      "publisher": "QuantConnect",
+      "reliability": "medium_high",
+      "score": 78,
+      "freshness": "time_sensitive",
+      "evidence_summary": "QuantConnect risk management models include trailing stop, option hedging, sector exposure, and flash crash detection examples.",
+      "limitations": [
+        "Platform-specific model examples; not CEK-TA mandatory tooling or live permission."
+      ],
+      "source_id": "src_003",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "relevance": "medium_high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "Pre-Trade Risk Management",
+      "source_url": "https://www.cmegroup.com/solutions/market-access/globex/trade-on-globex/pre-trade-risk-management.html",
+      "source_type": "exchange_risk_doc",
+      "publisher": "CME Group",
+      "reliability": "medium_high",
+      "score": 84,
+      "freshness": "time_sensitive",
+      "evidence_summary": "CME describes pre-trade risk management across limit, order, permissions management, dashboards, reports, and audit trail.",
+      "limitations": [
+        "CME-specific systems; use as exchange pattern, not universal requirement."
+      ],
+      "source_id": "src_004",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "relevance": "medium_high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_p37_live_risk_contract_consecutive_loss_stop_policy",
+      "source_title": "Phase 37 Live/Risk Reconciliation Exposure Loss Policy Contract",
+      "source_url": "docs/contracts/phase37_live_risk_reconciliation_exposure_loss_policy_contract.md",
+      "source_type": "internal_contract_schema_extract",
+      "publisher": "CEK-TA",
+      "published_at": "2026-06-12",
+      "accessed_at": "2026-06-12",
+      "version": "1.0.0",
+      "reliability": "high",
+      "relevance": "high",
+      "score": 92,
+      "evidence_summary": "内联 consecutive_loss_stop_policy schema，定义 loss_event_basis、time_window_policy_ref、streak_count_source、reset_condition、freeze_action、manual_review_required、unlock_process_ref、priority_order_ref 和 audit_trace 字段。",
+      "limitations": [
+        "该来源只定义 CEK-TA 内部逻辑字段、owner 边界和审计状态，外部项目可映射等价字段。",
+        "该来源只支撑 reviewed/caveat_only 再审，不支撑 approved、default guidance、hard gate 或风险阈值建议。"
+      ],
+      "contract_sha256": "16b28ab273acb96d90b1bb05221fe3f85b3f5b37942aaa997b6d673d5559a892",
+      "schema_object": "consecutive_loss_stop_policy",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "medium_high",
+    "score": 84.0,
+    "score_version": "phase37_live_risk_source_scoring_v1",
+    "primary_source_count": 4,
+    "supporting_source_count": 4,
+    "low_reliability_source_count": 0,
+    "mandatory_downgrades": [],
+    "limitations": [
+      "正式入库前必须由外部审计确认 claim 没有超出来源可证明范围。",
+      "broker/venue/platform 文档不得被泛化为所有市场通用规则。",
+      "CEK-TA Live/Risk 内部契约已内联到再审包，支撑字段本体、owner 边界和机器门禁。",
+      "监管、broker、venue 和平台文档只能支撑原则或实现模式，不得泛化为所有市场通用规则。",
+      "本轮仍只请求 reviewed/caveat_only，不请求 approved、default guidance、hard gate 或风险阈值建议。"
+    ],
+    "internal_contract_evidence_status": "inline_contract_and_schema_extract_added",
+    "internal_contract_sha256": "16b28ab273acb96d90b1bb05221fe3f85b3f5b37942aaa997b6d673d5559a892"
+  },
+  "conflict_audit": {
+    "conflict_status": "none_known_in_visible_context",
+    "checked_against": [
+      "Phase 37 Trading 与 AI 跨分支引用契约",
+      "Replay / Simulation execution cost and gap-report boundaries",
+      "Market Microstructure venue/session boundaries",
+      "AI Engineering deterministic final gate boundaries"
+    ],
+    "conflicts": [],
+    "resolution_summary": "CEK-TA-440 已补充 Live/Risk 内部契约和 schema extract；仍需外部再审确认是否可进入 formal reviewed/caveat_only。",
+    "approval_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "risk_threshold_advice_allowed": false
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于提醒 AI IDE 设计实盘执行和风险管理时必须声明权限、状态、对账、日志、限额和安全停机边界。",
+      "用于审计 AI trader 项目是否缺少 deterministic final gate、order-state trace、position reconciliation 或 risk policy。",
+      "用于阻止 AI scoring 或策略信号绕过实盘执行和风控 owner。"
+    ],
+    "not_allowed": [
+      "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘订单。",
+      "不得把候选知识当作 reviewed、approved、default guidance 或 hard gate。",
+      "不得提供任何具体风险阈值、账户配置、交易所私有配置或资金划转建议。"
+    ],
+    "requires_context": [
+      "broker",
+      "venue",
+      "account_scope",
+      "order_type",
+      "risk_policy_id",
+      "permission_scope",
+      "position_source",
+      "audit_trace_id"
+    ]
+  },
+  "machine_gate": {
+    "default_guidance": "deny",
+    "reason": "已补内部契约并等待 reviewed/caveat_only 再审；不得作为默认指导、hard gate 或风险阈值建议。",
+    "requires_human_escalation": true,
+    "hidden_from_default_queue": true,
+    "visible_in_default_guidance_queue": false,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "risk_threshold_advice_allowed": false
+  },
+  "conversion_target": {
+    "proposed_knowledge_id": "kb_07_risk_management.consecutive_loss_stop_required.v1",
+    "target_review_status": "reviewed",
+    "default_guidance_after_conversion": "deny_until_reviewed_caveat_only_audit",
+    "formalization_blockers": [
+      "requires_reviewed_preparation_audit"
+    ],
+    "reviewed_allowed": true,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "risk_threshold_advice_allowed": false
+  },
+  "workflow": {
+    "phase": "37",
+    "task_id": "CEK-TA-435",
+    "stage": "formalized_reviewed",
+    "queue_group": "formalized",
+    "next_allowed_decisions": [
+      "accepted_for_reviewed_caveat_only",
+      "needs_more_evidence",
+      "rejected",
+      "blocked"
+    ],
+    "forbidden_decisions": [
+      "approved",
+      "default_guidance",
+      "hard_gate"
+    ],
+    "formalization_allowed": true,
+    "next_action": "none",
+    "ai_audit_result_id": "audit_result_phase37_live_risk_blocked_supplemental_reaudit_20260612_strict_v1",
+    "formal_knowledge_id": "kb_07_risk_management.consecutive_loss_stop_required.v1",
+    "formal_review_status": "reviewed",
+    "default_guidance_allowed": false,
+    "approved_allowed": false,
+    "hard_gate_allowed": false,
+    "hidden_from_default_queue": true,
+    "visible_in_default_guidance_queue": false,
+    "reviewed_preparation_audit_result_id": "audit_result_phase37_live_risk_blocked_supplemental_reaudit_20260612_strict_v1",
+    "risk_threshold_advice_allowed": false,
+    "current_task_id": "CEK-TA-440",
+    "formal_knowledge_path": "codex-expert-kit/rag/knowledge/KB_07_RISK_MANAGEMENT/kb_07_risk_management.consecutive_loss_stop_required.v1.json",
+    "knowledge_path": "codex-expert-kit/rag/knowledge/KB_07_RISK_MANAGEMENT/kb_07_risk_management.consecutive_loss_stop_required.v1.json"
+  },
+  "contribution": {
+    "origin": "codex_research_ingestion_phase37",
+    "private_data_removed": true,
+    "contains_account_facts": false,
+    "contains_secret": false,
+    "contains_project_private_strategy": false
+  },
+  "review": {
+    "audit_log": [
+      {
+        "at": "2026-06-12",
+        "actor": "external_ai_strict_audit",
+        "action": "phase37_live_risk_first_audit_imported",
+        "reason": "accepted_for_draft / confidence=medium",
+        "audit_result_id": "audit_result_phase37_live_risk_candidate_audit_20260612_strict_v1",
+        "patch_notes": [
+          "source: SEC/CFTC/NIST/CME/FIA/FIX/IBKR/Binance/QuantConnect 只能支撑原则、监管/行业要求或具体 venue/broker/platform 语义。",
+          "source: 不得把任何 broker、venue、platform 文档写成所有市场通用规则。",
+          "content: Live Execution 负责 API 权限、订单状态、适配器错误、真实订单/成交/费用、仓位对账和审计日志。",
+          "content: Risk Management 负责 deterministic pre-trade risk gates、风险限额、日亏损、组合暴露、连续亏损和 kill/stop 事件政策边界。",
+          "boundary: accepted_for_draft 不是 reviewed、approved、default guidance 或 hard gate。",
+          "boundary: 不得生成买卖点、仓位、杠杆、止损止盈参数、实盘执行建议或风险阈值数值。",
+          "conflict: AI scoring / Agent 只能引用这些规则，不能绕过 deterministic final gate。",
+          "conflict: Replay/Simulation 只模拟；Live Execution / Risk Management 拥有真实订单、真实状态和风控动作。"
+        ]
+      },
+      {
+        "at": "2026-06-12",
+        "actor": "codex",
+        "action": "phase37_live_risk_reviewed_preparation_needs_more_evidence",
+        "reason": "CEK-TA-439: FIA/CFTC/CME/QuantConnect sources support automated risk controls generally, but the consecutive-loss stop rule is a CEK-TA/project policy taxonomy.; The package does not define loss event basis, streak window, reset condition, freeze action, human review flow, interaction with daily loss/single trade/portfolio limits, owner and audit trace fields.",
+        "audit_result_id": "audit_result_phase37_live_risk_reviewed_preparation_20260612_strict_v1"
+      },
+      {
+        "at": "2026-06-12",
+        "actor": "codex",
+        "action": "phase37_live_risk_blocked_contract_supplemented",
+        "reason": "CEK-TA-440: 补充 consecutive_loss_stop_policy 内部契约、schema extract、contract hash 和 owner 边界。",
+        "audit_result_id": "pending_phase37_live_risk_blocked_supplemental_reaudit_package_20260612"
+      },
+      {
+        "at": "2026-06-12",
+        "actor": "codex",
+        "action": "phase37_live_risk_blocked_supplemental_formal_reviewed_created",
+        "reason": "CEK-TA-441: formal reviewed/caveat_only written to codex-expert-kit/rag/knowledge/KB_07_RISK_MANAGEMENT/kb_07_risk_management.consecutive_loss_stop_required.v1.json.",
+        "audit_result_id": "audit_result_phase37_live_risk_blocked_supplemental_reaudit_20260612_strict_v1"
+      }
+    ],
+    "reviewer": "external_ai_and_codex_alignment",
+    "reviewed_at": "2026-06-12",
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase37_live_risk_candidate_audit_20260612_strict_v1",
+      "package_id": "phase37_live_risk_candidate_audit_package_20260612",
+      "auditor": "external_ai_strict_audit",
+      "audited_at": "2026-06-12",
+      "decision": "accepted_for_draft",
+      "confidence": "medium",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "reasons": [
+        "方向可接受，但来源偏原则性；reviewed 前必须补亏损事件口径、时间窗口、重置条件、冻结动作和人工复核 schema。"
+      ],
+      "required_followups": [
+        "进入 reviewed/caveat_only 前必须另行导出 reviewed-preparation 审计包。",
+        "不得创建 approved、default guidance 或 hard gate。"
+      ],
+      "patch_notes": [
+        "source: SEC/CFTC/NIST/CME/FIA/FIX/IBKR/Binance/QuantConnect 只能支撑原则、监管/行业要求或具体 venue/broker/platform 语义。",
+        "source: 不得把任何 broker、venue、platform 文档写成所有市场通用规则。",
+        "content: Live Execution 负责 API 权限、订单状态、适配器错误、真实订单/成交/费用、仓位对账和审计日志。",
+        "content: Risk Management 负责 deterministic pre-trade risk gates、风险限额、日亏损、组合暴露、连续亏损和 kill/stop 事件政策边界。",
+        "boundary: accepted_for_draft 不是 reviewed、approved、default guidance 或 hard gate。",
+        "boundary: 不得生成买卖点、仓位、杠杆、止损止盈参数、实盘执行建议或风险阈值数值。",
+        "conflict: AI scoring / Agent 只能引用这些规则，不能绕过 deterministic final gate。",
+        "conflict: Replay/Simulation 只模拟；Live Execution / Risk Management 拥有真实订单、真实状态和风控动作。"
+      ],
+      "patch_note_groups": {
+        "source": [
+          "SEC/CFTC/NIST/CME/FIA/FIX/IBKR/Binance/QuantConnect 只能支撑原则、监管/行业要求或具体 venue/broker/platform 语义。",
+          "不得把任何 broker、venue、platform 文档写成所有市场通用规则。"
+        ],
+        "content": [
+          "Live Execution 负责 API 权限、订单状态、适配器错误、真实订单/成交/费用、仓位对账和审计日志。",
+          "Risk Management 负责 deterministic pre-trade risk gates、风险限额、日亏损、组合暴露、连续亏损和 kill/stop 事件政策边界。"
+        ],
+        "boundary": [
+          "accepted_for_draft 不是 reviewed、approved、default guidance 或 hard gate。",
+          "不得生成买卖点、仓位、杠杆、止损止盈参数、实盘执行建议或风险阈值数值。"
+        ],
+        "conflict": [
+          "AI scoring / Agent 只能引用这些规则，不能绕过 deterministic final gate。",
+          "Replay/Simulation 只模拟；Live Execution / Risk Management 拥有真实订单、真实状态和风控动作。"
+        ]
+      },
+      "source_assessment": {
+        "source_count": 4,
+        "missing_sources": [],
+        "weak_sources": [],
+        "recommended_extra_sources": []
+      },
+      "classification_assessment": {
+        "is_correct_branch": true,
+        "expected_branch": "Trading Engineering / Live Execution or Risk Management",
+        "misplaced_topics": []
+      },
+      "boundary": "accepted_for_draft is not reviewed or approved; this audit does not allow default guidance or hard gate."
+    },
+    "open_questions": [
+      "审计方是否认可 consecutive_loss_stop_policy schema 足以支撑 L11 的 reviewed/caveat_only 字段本体？",
+      "审计方是否确认本候选仍只能进入 formal reviewed/caveat_only，而不能进入 approved、default guidance、hard gate 或风险阈值建议？",
+      "审计方是否发现与 Data Engineering、Market Microstructure、Replay/Simulation、Live Execution 或 Risk Management owner 边界冲突？"
+    ],
+    "reviewed_preparation_audit": {
+      "audit_result_id": "audit_result_phase37_live_risk_blocked_supplemental_reaudit_20260612_strict_v1",
+      "package_id": "phase37_live_risk_blocked_supplemental_reaudit_package_20260612",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "reasons": [
+        "consecutive_loss_stop_policy 已覆盖 loss_event_basis、time_window_policy_ref、streak_count_source、reset_condition、freeze_action、manual_review_required、unlock_process_ref、priority_order_ref，以及与 single_trade_risk、daily_loss、portfolio_exposure 的交互关系。"
+      ],
+      "required_followups": [
+        "正式 materialize reviewed/caveat_only 前仍需完整 CEK-TA formal KB 冲突、重复和 owner 边界检查。",
+        "保留内部契约是字段本体主来源；外部监管、broker、venue、platform 和行业资料仅作 supporting source 或 implementation pattern。"
+      ],
+      "patch_notes": {
+        "source": [
+          "SEC/CFTC/NIST/CME/FIA/FIX/IBKR/Binance/QuantConnect 只能作为原则、监管/行业要求、venue/broker/platform 语义或 implementation pattern，不得替代 CEK-TA 内部字段契约。"
+        ],
+        "content": [
+          "missing_source、stale、unknown、policy_missing、unresolved 不得静默当作仓位 0、within_policy 或可继续正常交易。"
+        ],
+        "boundary": [
+          "reconciliation_required、review_required、freeze_new_entries_until_project_policy_resolves 只能表示证据/政策状态，不等于 CEK-TA 自动拒单、停机、撤单、解锁或 hard gate。",
+          "不得生成买卖点、仓位、杠杆、止损止盈、实盘执行建议或风险阈值数值。"
+        ],
+        "conflict": [
+          "Live Execution 拥有真实 API/session、订单、成交、费用、broker/account position truth 和执行日志；Risk Management 拥有 policy、暴露、连续亏损停止和最终风险状态；AI Engineering 只能引用 reason code，不能拥有阈值或执行动作。"
+        ]
+      }
+    },
+    "contract_reaudit": {
+      "package_id": "phase37_live_risk_blocked_supplemental_reaudit_package_20260612",
+      "previous_audit_result_id": "audit_result_phase37_live_risk_reviewed_preparation_20260612_strict_v1",
+      "schema_object": "consecutive_loss_stop_policy",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "required_checks": [
+        "contract_full_text_present",
+        "schema_extract_present",
+        "contract_sha256_present",
+        "owner_boundary_present",
+        "threshold_values_absent",
+        "no_trade_execution_advice"
+      ]
+    }
+  },
+  "_inline_contract_evidence": {
+    "task_id": "CEK-TA-440",
+    "contract_path": "docs/contracts/phase37_live_risk_reconciliation_exposure_loss_policy_contract.md",
+    "contract_sha256": "16b28ab273acb96d90b1bb05221fe3f85b3f5b37942aaa997b6d673d5559a892",
+    "schema_extract_id": "phase37_live_risk_reconciliation_exposure_loss_policy_schema_extract_v1",
+    "schema_object": "consecutive_loss_stop_policy"
+  }
+}

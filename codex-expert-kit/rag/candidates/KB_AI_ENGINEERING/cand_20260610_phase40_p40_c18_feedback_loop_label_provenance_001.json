@@ -1,0 +1,393 @@
+{
+  "schema_version": "1.0.0",
+  "candidate_id": "cand_20260610_phase40_p40_c18_feedback_loop_label_provenance_001",
+  "research_task_id": "P40-C18-R1",
+  "status": {
+    "review_status": "accepted",
+    "ingestion_decision": "accepted_for_draft",
+    "decision_reason": "二审 accepted_for_draft 且 reviewed_allowed=true；已生成 formal reviewed knowledge。",
+    "created_at": "2026-06-10",
+    "updated_at": "2026-06-10"
+  },
+  "classification": {
+    "tree_node_id": "kt.ai_feedback_governance.feedback_loop_risk",
+    "canonical_node_id": "kt.ai_feedback_governance.feedback_loop_risk",
+    "tree_path": "CEK-TA / AI Engineering / Continuous Learning And Feedback Governance",
+    "related_nodes": [],
+    "partition_id": "KB_AI_18_FEEDBACK_GOVERNANCE",
+    "domain": "ai_governance",
+    "subdomain": "feedback_loop_risk",
+    "rule_type": "governance_rule",
+    "used_for": [
+      "llm_training",
+      "trading_gating_scoring",
+      "continuous_learning",
+      "rag_engineering",
+      "mcp",
+      "vue_audit_ui"
+    ]
+  },
+  "claim": {
+    "claim_id": "claim_001",
+    "statement": "自标注、模型生成标签和选择性日志必须记录 label_source、labeler_type、behavior_policy_ref、human_review_ref 和 provenance，避免反馈回路污染。",
+    "normalized_claim": "phase40.feedback_loop_label_provenance.v1",
+    "claim_type": "ai_governance_rule",
+    "evidence_summary": "将 reward hacking、distributional shift、scalable supervision 等列为实际 AI safety 问题。；说明模型可能满足目标的字面定义，却没有达成人类真正想要的行为。；说明从历史策略记录的 action-context feedback 学习和评估新策略存在统计挑战。；Data Cards 是面向 ML 数据集生命周期的结构化透明文档，可支撑标签、来源和数据集事实记录。",
+    "interpretation_notes": "本候选只沉淀 AI Engineering 的持续学习、反馈治理、再训练、再校准、发布回滚或 LLM 改进方法；交易规则本体必须路由到 Phase 37。",
+    "claim_strength": "medium",
+    "performance_claim": false
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "general",
+    "data_granularity": "general",
+    "project_type": "trading_llm_gating_scoring",
+    "applies_when": [
+      "外接项目正在建设交易 AI gating/scoring 的反馈日志、标签刷新、漂移检测、再训练、再校准、shadow/paper/canary 或发布治理链路。",
+      "该规则用于阻断自动上线、PnL-only 标签、allow-only logging、反馈回路污染、无 rollback 发布或 LLM 越权 final gate。"
+    ],
+    "not_applicable_when": [
+      "用户需要具体买卖点、仓位、止损止盈、K 线形态、策略参数或实盘订单执行。",
+      "知识点主要描述 fill model、订单状态机、实盘风控阈值或交易所异常处理，应路由到 Trading Engineering。"
+    ],
+    "assumptions": [
+      "外接项目提供私有交易事实、模型输出和发布上下文；CEK-TA 只沉淀可复用专业规则。",
+      "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+    ],
+    "limitations": [
+      "本条仍是 candidate，需要外部 AI/人工审计确认来源充分性、适用边界和是否需要补充交易项目实例。",
+      "候选只定义标签来源治理，不定义具体交易标签真值或项目私有 label。"
+    ]
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于提醒 AI IDE 在外接项目中实现持续学习治理字段、审计追踪和发布门禁。",
+      "用于阻断自动上线、无来源默认指导和 LLM 越权 final gate。",
+      "用于生成任务卡、契约、测试计划和审计 checklist。"
+    ],
+    "not_allowed": [
+      "不得据此生成买卖点、仓位、杠杆、止损止盈或实盘下单建议。",
+      "不得据此跳过人工审批或 release/rollback 门禁。",
+      "不得把 candidate 当作 approved 默认指导。"
+    ]
+  },
+  "source_refs": [
+    {
+      "source_id": "src_nist_ai_rmf",
+      "source_title": "NIST AI Risk Management Framework",
+      "source_url": "https://www.nist.gov/itl/ai-risk-management-framework",
+      "source_type": "governance_framework",
+      "publisher": "NIST",
+      "published_at": null,
+      "accessed_at": "2026-06-10",
+      "version": null,
+      "reliability": "high",
+      "score": 88,
+      "relevance": "high",
+      "freshness": "time_sensitive",
+      "limitations": [],
+      "evidence_summary": "NIST describes a framework for managing risks to individuals, organizations, and society associated with AI.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_offpolicy_logged_bandit",
+      "source_title": "Off-Policy Evaluation and Learning from Logged Bandit Feedback",
+      "source_url": "https://arxiv.org/abs/1808.00232",
+      "source_type": "paper",
+      "publisher": "arXiv",
+      "published_at": null,
+      "accessed_at": "2026-06-10",
+      "version": null,
+      "reliability": "high",
+      "score": 84,
+      "relevance": "high",
+      "freshness": "stable",
+      "limitations": [],
+      "evidence_summary": "The paper studies learning and evaluation from logged action-context feedback collected by historical policies, highlighting off-policy data challenges.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_tfdv_guide",
+      "source_title": "TensorFlow Data Validation Guide",
+      "source_url": "https://github.com/tensorflow/tfx/blob/master/docs/guide/tfdv.md",
+      "source_type": "official_doc",
+      "publisher": "TensorFlow",
+      "published_at": null,
+      "accessed_at": "2026-06-10",
+      "version": null,
+      "reliability": "high",
+      "score": 82,
+      "relevance": "high",
+      "freshness": "time_sensitive",
+      "limitations": [],
+      "evidence_summary": "The TFDV guide covers training-serving skew and drift detection, including distribution differences from sampling or serving data changes.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_cek_ta_phase40_feedback_dataset_contract",
+      "source_title": "CEK-TA Phase 40 Feedback Dataset Contract",
+      "source_url": "docs/contracts/phase40_feedback_dataset_contract.md",
+      "source_type": "internal_contract",
+      "publisher": "CEK-TA",
+      "published_at": "2026-06-10",
+      "accessed_at": "2026-06-10",
+      "reliability": "high",
+      "score": 90,
+      "relevance": "high",
+      "freshness": "time_sensitive",
+      "limitations": [
+        "内部契约只定义 CEK-TA 项目边界，需要外部来源共同支撑通用方法。"
+      ],
+      "evidence_summary": "定义 FeedbackRecord、LabelUpdateRecord、DatasetVersionManifest 和 AuditTraceRecord；明确所有候选都要记录、标签不能只看 PnL、反馈记录不能直接成为训练真值。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_concrete_problems_ai_safety",
+      "source_title": "Concrete Problems in AI Safety",
+      "source_url": "https://arxiv.org/abs/1606.06565",
+      "source_type": "paper",
+      "publisher": "arXiv",
+      "published_at": "2016-06-21",
+      "accessed_at": "2026-06-10",
+      "reliability": "high",
+      "score": 86,
+      "relevance": "high",
+      "freshness": "stable",
+      "limitations": [
+        "通用 AI safety 论文，不直接定义交易标签 taxonomy。"
+      ],
+      "evidence_summary": "将 reward hacking、distributional shift、scalable supervision 等列为实际 AI safety 问题。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_deepmind_specification_gaming",
+      "source_title": "Specification gaming: the flip side of AI ingenuity",
+      "source_url": "https://deepmind.google/blog/specification-gaming-the-flip-side-of-ai-ingenuity/",
+      "source_type": "engineering_article",
+      "publisher": "Google DeepMind",
+      "published_at": null,
+      "accessed_at": "2026-06-10",
+      "reliability": "high",
+      "score": 82,
+      "relevance": "high",
+      "freshness": "stable",
+      "limitations": [
+        "工程文章，适合支撑代理优化指标可能偏离意图，不是交易标签规范。"
+      ],
+      "evidence_summary": "说明模型可能满足目标的字面定义，却没有达成人类真正想要的行为。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_logged_bandit_feedback",
+      "source_title": "Off-Policy Evaluation and Learning from Logged Bandit Feedback",
+      "source_url": "https://arxiv.org/abs/1808.00232",
+      "source_type": "paper",
+      "publisher": "arXiv",
+      "published_at": "2018-08-01",
+      "accessed_at": "2026-06-10",
+      "reliability": "high",
+      "score": 84,
+      "relevance": "medium",
+      "freshness": "stable",
+      "limitations": [
+        "logged bandit 论文不直接证明交易 paper/slippage/fill 假设。"
+      ],
+      "evidence_summary": "说明从历史策略记录的 action-context feedback 学习和评估新策略存在统计挑战。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_google_data_cards_playbook",
+      "source_title": "The Data Cards Playbook",
+      "source_url": "https://sites.research.google/datacardsplaybook/",
+      "source_type": "framework_doc",
+      "publisher": "Google Research",
+      "published_at": null,
+      "accessed_at": "2026-06-10",
+      "reliability": "high",
+      "score": 82,
+      "relevance": "medium",
+      "freshness": "stable",
+      "limitations": [
+        "数据文档框架，不直接定义交易标签枚举。"
+      ],
+      "evidence_summary": "Data Cards 是面向 ML 数据集生命周期的结构化透明文档，可支撑标签、来源和数据集事实记录。",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 86,
+    "score_version": "1.1.0",
+    "primary_source_count": 6,
+    "supporting_source_count": 2,
+    "low_reliability_source_count": 0,
+    "mandatory_downgrades": [],
+    "limitations": [
+      "来源支持通用 AI/ML/MLOps/LLMOps/治理工程原则；正式知识转换时需保留 CEK-TA 具体上下游引用和冲突链接。",
+      "补证后仍需外部 AI/人工二审确认 claim-specific 充分性，不能直接转 reviewed。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "potential",
+    "checked_against": [
+      "docs/contracts/phase40_feedback_dataset_contract.md",
+      "docs/contracts/phase40_drift_retraining_recalibration_contract.md",
+      "docs/contracts/phase40_champion_challenger_release_contract.md",
+      "docs/research/phase40_ai_continuous_learning_scope.md"
+    ],
+    "conflicts": [],
+    "resolution_summary": "补证后未发现直接理论冲突；仍需二审确认来源充分性和跨分支边界。",
+    "approval_allowed": false
+  },
+  "machine_gate": {
+    "default_guidance": "deny",
+    "reason": "supplemented candidate awaiting reaudit; not reviewed, approved, default guidance, or hard gate.",
+    "requires_human_escalation": true
+  },
+  "review": {
+    "confidence": "medium",
+    "freshness": "time_sensitive",
+    "reviewer": "codex_supplemental_evidence",
+    "reviewed_at": "2026-06-10",
+    "open_questions": [
+      "请二审确认补证后是否可进入 formal reviewed draft，且不得进入 approved/default guidance。"
+    ],
+    "audit_log": [
+      {
+        "at": "2026-06-10",
+        "actor": "codex",
+        "action": "created",
+        "reason": "Phase 40 P0-Core continuous learning candidate expansion."
+      },
+      {
+        "at": "2026-06-10",
+        "actor": "codex",
+        "action": "phase40_strict_audit_rejected",
+        "reason": "空 slug 污染风险，原件归档。"
+      },
+      {
+        "at": "2026-06-10",
+        "actor": "codex",
+        "action": "phase40_strict_audit_rejected",
+        "reason": "空 slug 污染风险，原件归档。"
+      },
+      {
+        "at": "2026-06-10",
+        "actor": "codex",
+        "action": "phase40_rebuilt_from_rejected_empty_slug",
+        "reason": "修复 candidate_id、normalized_claim 和 proposed_knowledge_id 后进入补证队列。"
+      },
+      {
+        "at": "2026-06-10",
+        "actor": "codex",
+        "action": "phase40_supplemental_evidence_ready",
+        "reason": "按严格审计意见补证并准备二审。"
+      },
+      {
+        "at": "2026-06-10",
+        "actor": "codex",
+        "action": "phase40_formal_reviewed_created",
+        "reason": "CEK-TA-307: formal reviewed knowledge written to codex-expert-kit/rag/knowledge/KB_AI_18_FEEDBACK_GOVERNANCE/kb_ai_feedback_governance.phase40.feedback_loop_label_provenance.v1.json."
+      }
+    ],
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase40_p0_core_supplemental_reaudit_20260610_v2",
+      "source_package_id": "phase40_p0_core_supplemental_reaudit_package_20260610",
+      "decision": "accepted_for_draft",
+      "parent_decision": "rejected",
+      "parent_candidate_id": "cand_20260610_phase40_p40_c18__001",
+      "required_followups": [
+        "重建 candidate_id：cand_20260610_phase40_p40_c18_feedback_loop_label_provenance_001。"
+      ],
+      "source_patch_notes": [
+        "重建后补 self-training/model-generated labels/feedback loop contamination 相关来源。"
+      ],
+      "content_patch_notes": [
+        "建议新 normalized_claim：phase40.feedback_loop_label_provenance.v1。"
+      ],
+      "boundary_patch_notes": [
+        "拒绝原因是 metadata 污染风险，不代表 claim 方向错误。"
+      ],
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "supplemental_evidence": {
+        "status": "ready_for_reaudit",
+        "added_at": "2026-06-10",
+        "previous_statement": "自标注、模型生成标签和选择性日志必须标注来源，避免反馈回路污染",
+        "patched_statement": "自标注、模型生成标签和选择性日志必须记录 label_source、labeler_type、behavior_policy_ref、human_review_ref 和 provenance，避免反馈回路污染。",
+        "added_source_ids": [
+          "src_cek_ta_phase40_feedback_dataset_contract",
+          "src_concrete_problems_ai_safety",
+          "src_deepmind_specification_gaming",
+          "src_logged_bandit_feedback",
+          "src_google_data_cards_playbook"
+        ],
+        "all_supplemental_source_ids": [
+          "src_cek_ta_phase40_feedback_dataset_contract",
+          "src_concrete_problems_ai_safety",
+          "src_deepmind_specification_gaming",
+          "src_logged_bandit_feedback",
+          "src_google_data_cards_playbook"
+        ],
+        "supplemental_notes": [
+          "reward hacking/specification gaming 支撑代理目标可能偏离真实意图。",
+          "logged bandit feedback 支撑历史策略记录与新策略评估之间存在偏差和 OPE 风险。",
+          "Data Cards 支撑数据与标签来源透明记录。",
+          "CEK-TA contract 禁止 FeedbackRecord 直接成为训练真值。"
+        ],
+        "remaining_boundary": "候选只定义标签来源治理，不定义具体交易标签真值或项目私有 label。",
+        "reaudit_request": "请判断补证后是否 accepted_for_draft；如果仍不足，请只返回 needs_more_evidence 或 rejected。"
+      },
+      "allowed_next_stage": "formal_reviewed_knowledge"
+    }
+  },
+  "copyright": {
+    "stores_full_text": false,
+    "stores_long_quote": false,
+    "summary_only": true,
+    "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+    "reuse_risk": "low"
+  },
+  "conversion_target": {
+    "proposed_knowledge_id": "kb_ai_feedback_governance.phase40.feedback_loop_label_provenance.v1",
+    "target_schema": "cek_ta_knowledge_item",
+    "target_review_status": "reviewed",
+    "skill_candidate": false,
+    "eval_case_candidate": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "workflow": {
+    "stage": "formalized_reviewed",
+    "queue_group": "formalized",
+    "formal_knowledge_id": "kb_ai_feedback_governance.phase40.feedback_loop_label_provenance.v1",
+    "formal_review_status": "reviewed",
+    "ai_audit_result_id": "audit_result_phase40_p0_core_supplemental_reaudit_20260610_v2",
+    "hidden_from_default_queue": true,
+    "next_action": "none",
+    "default_guidance_allowed": false,
+    "visible_in_default_guidance_queue": false,
+    "parent_rejected_candidate_id": "cand_20260610_phase40_p40_c18__001",
+    "knowledge_path": "codex-expert-kit/rag/knowledge/KB_AI_18_FEEDBACK_GOVERNANCE/kb_ai_feedback_governance.phase40.feedback_loop_label_provenance.v1.json",
+    "formal_knowledge_path": "codex-expert-kit/rag/knowledge/KB_AI_18_FEEDBACK_GOVERNANCE/kb_ai_feedback_governance.phase40.feedback_loop_label_provenance.v1.json"
+  },
+  "phase40_trace": {
+    "acceptance_gate": "明确自标注污染风险",
+    "search_direction": "feedback loop label provenance self training model generated labels",
+    "related_contracts": [
+      "docs/contracts/phase40_feedback_dataset_contract.md",
+      "docs/contracts/phase40_drift_retraining_recalibration_contract.md",
+      "docs/contracts/phase40_champion_challenger_release_contract.md",
+      "docs/research/phase40_ai_continuous_learning_scope.md"
+    ],
+    "rebuilt_from_candidate_id": "cand_20260610_phase40_p40_c18__001",
+    "rebuilt_reason": "fix_empty_slug_metadata_pollution",
+    "supplemental_evidence_ready": true,
+    "supplemental_evidence_added_at": "2026-06-10"
+  }
+}

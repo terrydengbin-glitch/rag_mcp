@@ -1,0 +1,3342 @@
+{
+  "package_id": "phase37_backtest_candidate_audit_package_20260611",
+  "created_at": "2026-06-11",
+  "created_by": "codex",
+  "phase": "37",
+  "task_id": "CEK-TA-413",
+  "scope": {
+    "branch": "Trading Engineering",
+    "partition_id": "KB_04_BACKTEST",
+    "tree_node_id": "kt.trading_engineering.backtest",
+    "batch": "P37-E Backtest / 回测可信度",
+    "candidate_count": 12,
+    "target": "审计回测可信度本体知识候选，包括 lookahead/data leakage、survivorship、参数搜索、walk-forward、样本外、成本、滑点、指标解释和复现版本。"
+  },
+  "hard_boundaries": {
+    "candidate_not_formal": true,
+    "accepted_for_draft_not_reviewed": true,
+    "reviewed_not_approved": true,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "trade_execution_advice_allowed": false,
+    "must_not_create_formal_knowledge": true,
+    "must_not_generate": [
+      "买卖点",
+      "仓位",
+      "杠杆",
+      "止损止盈参数",
+      "实盘执行建议"
+    ]
+  },
+  "audit_instructions": [
+    "必须搜索相关的专业网站、论文、官方文档、资料、案例和数据，对本审计包进行严格审计。",
+    "逐条检查来源是否足以支撑 claim，教育材料、平台文档和框架文档不得被过度泛化。",
+    "检查是否正确归类到 Trading Engineering / Backtest，不得混入 Data Engineering、Replay、Live Execution、Risk Management 或 AI Engineering 本体。",
+    "检查每条候选是否清楚声明适用范围、不适用场景、假设、限制、来源质量和 AI 使用边界。",
+    "重点审计 lookahead bias、data leakage、data snooping、过拟合、walk-forward、样本外验证、交易成本、滑点、fill 假设、指标解释和可复现性。",
+    "检查是否有中文乱码、mock/test 污染、项目私有策略参数、账户事实、密钥或实盘敏感信息。",
+    "输出只能是 accepted_for_draft、needs_more_evidence、rejected 或 blocked；不得输出 reviewed、approved、default guidance 或 hard gate。"
+  ],
+  "required_output_schema": {
+    "audit_result_id": "string",
+    "auditor": "string",
+    "audited_at": "YYYY-MM-DD",
+    "package_id": "phase37_backtest_candidate_audit_package_20260611",
+    "summary": {
+      "total": 12,
+      "accepted_for_draft": 0,
+      "needs_more_evidence": 0,
+      "rejected": 0,
+      "blocked": 0
+    },
+    "candidate_results": [
+      {
+        "candidate_id": "string",
+        "research_task_id": "string",
+        "decision": "accepted_for_draft | needs_more_evidence | rejected | blocked",
+        "confidence": "low | medium | high",
+        "reviewed_allowed": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "reasons": [
+          "string"
+        ],
+        "required_followups": [
+          "string"
+        ],
+        "patch_notes": {
+          "source": [
+            "string"
+          ],
+          "content": [
+            "string"
+          ],
+          "boundary": [
+            "string"
+          ],
+          "conflict": [
+            "string"
+          ]
+        },
+        "source_assessment": {
+          "source_count": 0,
+          "missing_sources": [
+            "string"
+          ],
+          "weak_sources": [
+            "string"
+          ],
+          "recommended_extra_sources": [
+            "string"
+          ]
+        },
+        "classification_assessment": {
+          "correct_partition": true,
+          "expected_partition": "KB_04_BACKTEST",
+          "correct_tree_node": true,
+          "notes": "string"
+        },
+        "boundary_assessment": {
+          "no_trade_advice": true,
+          "candidate_only": true,
+          "requires_external_project_facts": true
+        }
+      }
+    ]
+  },
+  "quality_gate": {
+    "gate_id": "phase37_backtest_candidate_audit_package_quality_gate",
+    "checked_at": "2026-06-11",
+    "phase": "37",
+    "task_id": "CEK-TA-413",
+    "package_id": "phase37_backtest_candidate_audit_package_20260611",
+    "candidate_count": 12,
+    "expected_count": 12,
+    "gate_status": "pass",
+    "failures": [],
+    "warnings": [
+      "本包只审计 candidate；不得直接创建 reviewed、approved、default guidance 或 hard gate。",
+      "Backtest 知识只能约束回测可信度、偏差、成本、验证和复现边界，不得证明任何策略盈利。"
+    ]
+  },
+  "candidates": [
+    {
+      "schema_version": "1.1.0-candidate",
+      "candidate_id": "cand_20260611_phase37_backtest_cost_model_required_001",
+      "research_task_id": "P37-E-B07",
+      "status": {
+        "review_status": "candidate_ready",
+        "ingestion_decision": "candidate_ready",
+        "decision_reason": "Phase 37 Backtest 候选知识已生成，等待外部严格审计；不得 reviewed/approved/default/hard gate。",
+        "created_at": "2026-06-11",
+        "updated_at": "2026-06-11"
+      },
+      "classification": {
+        "tree_node_id": "kt.trading_engineering.backtest",
+        "canonical_node_id": "kt.trading_engineering.backtest",
+        "tree_path": "CEK-TA / Trading Engineering / Backtest",
+        "related_nodes": [
+          "kt.trading_engineering",
+          "kt.trading_engineering.data_engineering",
+          "kt.kline_strategy",
+          "kt.market_microstructure",
+          "kt.replay_simulation",
+          "kt.live_execution",
+          "kt.risk_management",
+          "kt.ai_engineering.llm_training"
+        ],
+        "partition_id": "KB_04_BACKTEST",
+        "domain": "backtest",
+        "subdomain": "cost_model",
+        "rule_type": "backtest_reliability_boundary_rule",
+        "claim_type": "execution_cost_boundary_rule",
+        "used_for": [
+          "backtest_review",
+          "strategy_validation_audit",
+          "ai_trader_project_gap_audit",
+          "external_project_rag_retrieval"
+        ],
+        "classification_notes": "本候选主归属 Trading Engineering / Backtest。AI Engineering 只能引用本规则，不得把回测可信度规则改写为模型训练或 RAG/MCP 本体规则。"
+      },
+      "claim": {
+        "claim_id": "claim_p37_e_b07",
+        "title": "回测必须显式声明成本模型",
+        "statement": "Backtest 必须显式声明佣金、交易所费用、借贷/融资成本、税费、市场冲击和机会成本等成本模型；未扣成本的收益不得作为净表现证据。",
+        "normalized_claim": "backtest.cost_model_required.v1",
+        "evidence_summary": "CFA Institute frames execution around liquidity needs, market conditions, execution risk, opportunity cost, market impact and trade cost analysis.；QuantConnect fee models simulate brokerage transaction fees to make backtest results more realistic.；QuantConnect defines slippage as the difference between expected and actual fill price and models it for more realistic backtests.",
+        "interpretation_notes": "本候选只定义回测可信度、偏差、成本、验证和复现边界，不输出买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+        "claim_strength": "medium_high",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general_with_market_specific_mapping",
+        "asset": "general",
+        "timeframe": "historical_evaluation",
+        "data_granularity": "historical_market_data_and_orders",
+        "project_type": "trading_ai_support_layer",
+        "applies_when": [
+          "审计策略回测、参数搜索、指标解释、成本模型、fill 假设或复现实验包",
+          "把回测结果用于 AI scoring、策略筛选、paper/live 前置评估或研究报告"
+        ],
+        "not_applicable_when": [
+          "需要直接生成买卖点、仓位、杠杆、止损止盈或实盘执行建议",
+          "没有历史数据版本、策略规则版本或 evaluation timestamp",
+          "问题属于 live execution、risk hard gate 或交易所实盘订单规则，应由对应分支处理"
+        ],
+        "assumptions": [
+          "候选用于 CEK-TA 通用支持层知识库，不包含任何外接项目私有策略参数。",
+          "回测结论必须保留数据、成本、执行、样本、参数搜索、验证和复现边界。",
+          "候选通过外部审计前不能进入正式 reviewed 知识库。"
+        ],
+        "limitations": [
+          "论文和专业机构资料支持方法边界，不能证明任何特定策略有效。",
+          "平台文档只可作为实现语义示例，外接项目必须映射自己的 backtest engine、broker、交易所和数据供应商。",
+          "本候选不提供任何投资建议或实盘执行许可。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_title": "Trade Strategy and Execution",
+          "source_url": "https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/trade-strategy-execution",
+          "source_type": "professional_curriculum",
+          "publisher": "CFA Institute",
+          "published_at": "2026-01-01",
+          "reliability": "high",
+          "score": 88,
+          "freshness": "time_sensitive",
+          "evidence_summary": "CFA Institute frames execution around liquidity needs, market conditions, execution risk, opportunity cost, market impact and trade cost analysis.",
+          "limitations": [
+            "Supports cost and execution boundary; not a backtest platform contract."
+          ],
+          "source_id": "src_001",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Transaction Fees - Key Concepts",
+          "source_url": "https://www.quantconnect.com/docs/v2/writing-algorithms/reality-modeling/transaction-fees/key-concepts",
+          "source_type": "platform_doc",
+          "publisher": "QuantConnect",
+          "published_at": null,
+          "reliability": "medium_high",
+          "score": 82,
+          "freshness": "time_sensitive",
+          "evidence_summary": "QuantConnect fee models simulate brokerage transaction fees to make backtest results more realistic.",
+          "limitations": [
+            "Platform-specific; external projects must map actual brokerage/exchange fees."
+          ],
+          "source_id": "src_002",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Slippage Models - Key Concepts",
+          "source_url": "https://www.quantconnect.com/docs/v2/writing-algorithms/reality-modeling/slippage/key-concepts",
+          "source_type": "platform_doc",
+          "publisher": "QuantConnect",
+          "published_at": null,
+          "reliability": "medium_high",
+          "score": 82,
+          "freshness": "time_sensitive",
+          "evidence_summary": "QuantConnect defines slippage as the difference between expected and actual fill price and models it for more realistic backtests.",
+          "limitations": [
+            "Platform-specific; supports slippage concept and modeling boundary."
+          ],
+          "source_id": "src_003",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Trade Fills - Key Concepts",
+          "source_url": "https://www.quantconnect.com/docs/v2/writing-algorithms/reality-modeling/trade-fills/key-concepts",
+          "source_type": "platform_doc",
+          "publisher": "QuantConnect",
+          "published_at": null,
+          "reliability": "medium_high",
+          "score": 82,
+          "freshness": "time_sensitive",
+          "evidence_summary": "QuantConnect explains fill models, spread costs and interaction with slippage models for backtest order fills.",
+          "limitations": [
+            "Platform-specific semantics; external projects must map their own fill model."
+          ],
+          "source_id": "src_004",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "medium_high",
+        "score": 83.5,
+        "score_version": "phase37_backtest_source_scoring_v1",
+        "primary_source_count": 3,
+        "supporting_source_count": 1,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "正式入库前必须由外部审计确认 claim 没有超出来源可证明范围。",
+          "平台文档只能证明平台语义，不能单独证明策略有效或实盘可执行。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none_known_in_visible_context",
+        "checked_against": [
+          "Phase 37 Trading 与 AI 跨分支引用契约",
+          "现有 Backtest formal seed 知识",
+          "Data Engineering / Replay / Live Execution / Risk Management owner 边界"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与可见正式知识的直接冲突；本候选只定义 Backtest 可信度边界，AI Engineering 只能引用。",
+        "approval_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 检索 Backtest 可信度、偏差、成本、验证和复现边界。",
+          "用于审计交易项目方案中是否缺少回测证据、成本模型、样本外、walk-forward 或复现实验包。",
+          "用于辅助外接项目设计 backtest review checklist、reason code 和 evidence gate。"
+        ],
+        "not_allowed": [
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+          "不得把候选知识当作 reviewed、approved、default guidance 或 hard gate。",
+          "不得绕过外接项目事实层、数据契约、执行适配器、风控 hard gate 或人工治理流程。"
+        ]
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "Phase 37 Backtest candidate requires external strict audit before formal reviewed/caveat_only.",
+        "requires_human_escalation": true,
+        "hidden_from_default_queue": true,
+        "visible_in_default_guidance_queue": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "review": {
+        "confidence": "medium_high",
+        "freshness": "mixed",
+        "reviewer": "codex_research_ingestion",
+        "reviewed_at": "2026-06-11",
+        "open_questions": [
+          "外部审计是否认为来源足以支撑该 claim？",
+          "是否需要补充更强的一手论文、平台文档、交易成本/TCA 或 reproducibility 来源？",
+          "是否存在与现有 Backtest formal seed 知识、Replay fill model、Data Engineering versioning 或 Risk Management 的重叠，需要合并或拆分？"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-11",
+            "actor": "codex",
+            "action": "created",
+            "reason": "根据 Phase 37 P37-E Backtest 队列生成 Trading Engineering 候选知识。"
+          },
+          {
+            "at": "2026-06-11",
+            "actor": "codex",
+            "action": "sourced",
+            "reason": "记录专业机构、论文、平台和复现实验框架来源摘要。"
+          }
+        ]
+      },
+      "workflow": {
+        "stage": "pending_external_audit",
+        "queue_group": "pending",
+        "current_task_id": "CEK-TA-412",
+        "next_action": "export_ai_audit",
+        "next_allowed_decisions": [
+          "accepted_for_draft",
+          "needs_more_evidence",
+          "rejected"
+        ],
+        "forbidden_decisions": [
+          "reviewed",
+          "approved",
+          "default_guidance",
+          "hard_gate"
+        ],
+        "formalization_allowed": false,
+        "conversion_target": {
+          "proposed_knowledge_id": "kb_04_backtest.cost_model_required.v1",
+          "target_review_status": "draft",
+          "target_default_guidance": "deny",
+          "reviewed_allowed": false,
+          "approved_allowed": false,
+          "default_guidance_allowed": false,
+          "hard_gate_allowed": false
+        },
+        "ai_audit_result_id": null,
+        "formal_knowledge_id": null,
+        "formal_review_status": null,
+        "default_guidance_allowed": false,
+        "approved_allowed": false,
+        "hard_gate_allowed": false,
+        "hidden_from_default_queue": true,
+        "visible_in_default_guidance_queue": false
+      },
+      "contribution": {
+        "origin": "codex_research_ingestion_phase37",
+        "private_data_removed": true,
+        "contains_account_facts": false,
+        "contains_secret": false,
+        "contains_project_private_strategy": false
+      }
+    },
+    {
+      "schema_version": "1.1.0-candidate",
+      "candidate_id": "cand_20260611_phase37_backtest_data_leakage_block_001",
+      "research_task_id": "P37-E-B02",
+      "status": {
+        "review_status": "candidate_ready",
+        "ingestion_decision": "candidate_ready",
+        "decision_reason": "Phase 37 Backtest 候选知识已生成，等待外部严格审计；不得 reviewed/approved/default/hard gate。",
+        "created_at": "2026-06-11",
+        "updated_at": "2026-06-11"
+      },
+      "classification": {
+        "tree_node_id": "kt.trading_engineering.backtest",
+        "canonical_node_id": "kt.trading_engineering.backtest",
+        "tree_path": "CEK-TA / Trading Engineering / Backtest",
+        "related_nodes": [
+          "kt.trading_engineering",
+          "kt.trading_engineering.data_engineering",
+          "kt.kline_strategy",
+          "kt.market_microstructure",
+          "kt.replay_simulation",
+          "kt.live_execution",
+          "kt.risk_management",
+          "kt.ai_engineering.llm_training"
+        ],
+        "partition_id": "KB_04_BACKTEST",
+        "domain": "backtest",
+        "subdomain": "data_leakage",
+        "rule_type": "backtest_reliability_boundary_rule",
+        "claim_type": "data_leakage_block",
+        "used_for": [
+          "backtest_review",
+          "strategy_validation_audit",
+          "ai_trader_project_gap_audit",
+          "external_project_rag_retrieval"
+        ],
+        "classification_notes": "本候选主归属 Trading Engineering / Backtest。AI Engineering 只能引用本规则，不得把回测可信度规则改写为模型训练或 RAG/MCP 本体规则。"
+      },
+      "claim": {
+        "claim_id": "claim_p37_e_b02",
+        "title": "数据泄漏必须阻断",
+        "statement": "Backtest、训练或评估中，任何标签、未来收益、未来成交、未来复权或样本外信息不得进入当时应不可见的特征或规则选择流程。",
+        "normalized_claim": "backtest.data_leakage_block.v1",
+        "evidence_summary": "CFA Institute frames backtesting as approximating the real-life investment process, including rolling-window processes, rules, portfolio formation, rebalancing, performance and risk profiles.；White formalizes data snooping risk when data is reused for inference or model selection, where apparently good results may arise by chance.；Bailey et al. propose Probability of Backtest Overfitting and cross-validation methods for strategy selection risk.",
+        "interpretation_notes": "本候选只定义回测可信度、偏差、成本、验证和复现边界，不输出买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+        "claim_strength": "medium_high",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general_with_market_specific_mapping",
+        "asset": "general",
+        "timeframe": "historical_evaluation",
+        "data_granularity": "historical_market_data_and_orders",
+        "project_type": "trading_ai_support_layer",
+        "applies_when": [
+          "审计策略回测、参数搜索、指标解释、成本模型、fill 假设或复现实验包",
+          "把回测结果用于 AI scoring、策略筛选、paper/live 前置评估或研究报告"
+        ],
+        "not_applicable_when": [
+          "需要直接生成买卖点、仓位、杠杆、止损止盈或实盘执行建议",
+          "没有历史数据版本、策略规则版本或 evaluation timestamp",
+          "问题属于 live execution、risk hard gate 或交易所实盘订单规则，应由对应分支处理"
+        ],
+        "assumptions": [
+          "候选用于 CEK-TA 通用支持层知识库，不包含任何外接项目私有策略参数。",
+          "回测结论必须保留数据、成本、执行、样本、参数搜索、验证和复现边界。",
+          "候选通过外部审计前不能进入正式 reviewed 知识库。"
+        ],
+        "limitations": [
+          "论文和专业机构资料支持方法边界，不能证明任何特定策略有效。",
+          "平台文档只可作为实现语义示例，外接项目必须映射自己的 backtest engine、broker、交易所和数据供应商。",
+          "本候选不提供任何投资建议或实盘执行许可。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_title": "Backtesting & Simulation",
+          "source_url": "https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/backtesting-and-simulation",
+          "source_type": "professional_curriculum",
+          "publisher": "CFA Institute",
+          "published_at": "2026-01-01",
+          "reliability": "high",
+          "score": 88,
+          "freshness": "time_sensitive",
+          "evidence_summary": "CFA Institute frames backtesting as approximating the real-life investment process, including rolling-window processes, rules, portfolio formation, rebalancing, performance and risk profiles.",
+          "limitations": [
+            "Professional curriculum source; use for process and boundary, not for a specific trading edge."
+          ],
+          "source_id": "src_001",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "A Reality Check for Data Snooping",
+          "source_url": "https://www.ssc.wisc.edu/~bhansen/718/White2000.pdf",
+          "source_type": "academic_paper",
+          "publisher": "Econometrica",
+          "published_at": "2000-09-01",
+          "reliability": "high",
+          "score": 90,
+          "freshness": "stable",
+          "evidence_summary": "White formalizes data snooping risk when data is reused for inference or model selection, where apparently good results may arise by chance.",
+          "limitations": [
+            "Academic inference source; does not provide a platform implementation."
+          ],
+          "source_id": "src_002",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "The Probability of Backtest Overfitting",
+          "source_url": "https://www.davidhbailey.com/dhbpapers/backtest-overfitting.pdf",
+          "source_type": "academic_paper",
+          "publisher": "SSRN / Journal of Computational Finance",
+          "published_at": "2016-01-01",
+          "reliability": "high",
+          "score": 88,
+          "freshness": "stable",
+          "evidence_summary": "Bailey et al. propose Probability of Backtest Overfitting and cross-validation methods for strategy selection risk.",
+          "limitations": [
+            "Academic metric source; not an execution or production readiness rule."
+          ],
+          "source_id": "src_003",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "MLflow Tracking",
+          "source_url": "https://mlflow.org/docs/latest/tracking.html",
+          "source_type": "framework_doc",
+          "publisher": "MLflow",
+          "published_at": null,
+          "reliability": "medium_high",
+          "score": 82,
+          "freshness": "time_sensitive",
+          "evidence_summary": "MLflow Tracking records parameters, metrics, artifacts and source/version metadata for reproducible experiments.",
+          "limitations": [
+            "Framework implementation example; not mandatory for CEK-TA."
+          ],
+          "source_id": "src_004",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "medium_high",
+        "score": 87.0,
+        "score_version": "phase37_backtest_source_scoring_v1",
+        "primary_source_count": 3,
+        "supporting_source_count": 1,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "正式入库前必须由外部审计确认 claim 没有超出来源可证明范围。",
+          "平台文档只能证明平台语义，不能单独证明策略有效或实盘可执行。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none_known_in_visible_context",
+        "checked_against": [
+          "Phase 37 Trading 与 AI 跨分支引用契约",
+          "现有 Backtest formal seed 知识",
+          "Data Engineering / Replay / Live Execution / Risk Management owner 边界"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与可见正式知识的直接冲突；本候选只定义 Backtest 可信度边界，AI Engineering 只能引用。",
+        "approval_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 检索 Backtest 可信度、偏差、成本、验证和复现边界。",
+          "用于审计交易项目方案中是否缺少回测证据、成本模型、样本外、walk-forward 或复现实验包。",
+          "用于辅助外接项目设计 backtest review checklist、reason code 和 evidence gate。"
+        ],
+        "not_allowed": [
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+          "不得把候选知识当作 reviewed、approved、default guidance 或 hard gate。",
+          "不得绕过外接项目事实层、数据契约、执行适配器、风控 hard gate 或人工治理流程。"
+        ]
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "Phase 37 Backtest candidate requires external strict audit before formal reviewed/caveat_only.",
+        "requires_human_escalation": true,
+        "hidden_from_default_queue": true,
+        "visible_in_default_guidance_queue": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "review": {
+        "confidence": "medium_high",
+        "freshness": "mixed",
+        "reviewer": "codex_research_ingestion",
+        "reviewed_at": "2026-06-11",
+        "open_questions": [
+          "外部审计是否认为来源足以支撑该 claim？",
+          "是否需要补充更强的一手论文、平台文档、交易成本/TCA 或 reproducibility 来源？",
+          "是否存在与现有 Backtest formal seed 知识、Replay fill model、Data Engineering versioning 或 Risk Management 的重叠，需要合并或拆分？"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-11",
+            "actor": "codex",
+            "action": "created",
+            "reason": "根据 Phase 37 P37-E Backtest 队列生成 Trading Engineering 候选知识。"
+          },
+          {
+            "at": "2026-06-11",
+            "actor": "codex",
+            "action": "sourced",
+            "reason": "记录专业机构、论文、平台和复现实验框架来源摘要。"
+          }
+        ]
+      },
+      "workflow": {
+        "stage": "pending_external_audit",
+        "queue_group": "pending",
+        "current_task_id": "CEK-TA-412",
+        "next_action": "export_ai_audit",
+        "next_allowed_decisions": [
+          "accepted_for_draft",
+          "needs_more_evidence",
+          "rejected"
+        ],
+        "forbidden_decisions": [
+          "reviewed",
+          "approved",
+          "default_guidance",
+          "hard_gate"
+        ],
+        "formalization_allowed": false,
+        "conversion_target": {
+          "proposed_knowledge_id": "kb_04_backtest.data_leakage_block.v1",
+          "target_review_status": "draft",
+          "target_default_guidance": "deny",
+          "reviewed_allowed": false,
+          "approved_allowed": false,
+          "default_guidance_allowed": false,
+          "hard_gate_allowed": false
+        },
+        "ai_audit_result_id": null,
+        "formal_knowledge_id": null,
+        "formal_review_status": null,
+        "default_guidance_allowed": false,
+        "approved_allowed": false,
+        "hard_gate_allowed": false,
+        "hidden_from_default_queue": true,
+        "visible_in_default_guidance_queue": false
+      },
+      "contribution": {
+        "origin": "codex_research_ingestion_phase37",
+        "private_data_removed": true,
+        "contains_account_facts": false,
+        "contains_secret": false,
+        "contains_project_private_strategy": false
+      }
+    },
+    {
+      "schema_version": "1.1.0-candidate",
+      "candidate_id": "cand_20260611_phase37_backtest_lookahead_bias_block_001",
+      "research_task_id": "P37-E-B01",
+      "status": {
+        "review_status": "candidate_ready",
+        "ingestion_decision": "candidate_ready",
+        "decision_reason": "Phase 37 Backtest 候选知识已生成，等待外部严格审计；不得 reviewed/approved/default/hard gate。",
+        "created_at": "2026-06-11",
+        "updated_at": "2026-06-11"
+      },
+      "classification": {
+        "tree_node_id": "kt.trading_engineering.backtest",
+        "canonical_node_id": "kt.trading_engineering.backtest",
+        "tree_path": "CEK-TA / Trading Engineering / Backtest",
+        "related_nodes": [
+          "kt.trading_engineering",
+          "kt.trading_engineering.data_engineering",
+          "kt.kline_strategy",
+          "kt.market_microstructure",
+          "kt.replay_simulation",
+          "kt.live_execution",
+          "kt.risk_management",
+          "kt.ai_engineering.llm_training"
+        ],
+        "partition_id": "KB_04_BACKTEST",
+        "domain": "backtest",
+        "subdomain": "bias",
+        "rule_type": "backtest_reliability_boundary_rule",
+        "claim_type": "data_leakage_block",
+        "used_for": [
+          "backtest_review",
+          "strategy_validation_audit",
+          "ai_trader_project_gap_audit",
+          "external_project_rag_retrieval"
+        ],
+        "classification_notes": "本候选主归属 Trading Engineering / Backtest。AI Engineering 只能引用本规则，不得把回测可信度规则改写为模型训练或 RAG/MCP 本体规则。"
+      },
+      "claim": {
+        "claim_id": "claim_p37_e_b01",
+        "title": "Lookahead bias 必须阻断",
+        "statement": "Backtest 的特征、信号、调仓、成交和指标计算不得使用 decision_time 之后才可获得的数据；一旦发现 lookahead bias，该回测不得作为策略有效性证据。",
+        "normalized_claim": "backtest.lookahead_bias_block.v1",
+        "evidence_summary": "CFA Institute frames backtesting as approximating the real-life investment process, including rolling-window processes, rules, portfolio formation, rebalancing, performance and risk profiles.；White formalizes data snooping risk when data is reused for inference or model selection, where apparently good results may arise by chance.；QuantConnect explains fill models, spread costs and interaction with slippage models for backtest order fills.",
+        "interpretation_notes": "本候选只定义回测可信度、偏差、成本、验证和复现边界，不输出买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+        "claim_strength": "medium_high",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general_with_market_specific_mapping",
+        "asset": "general",
+        "timeframe": "historical_evaluation",
+        "data_granularity": "historical_market_data_and_orders",
+        "project_type": "trading_ai_support_layer",
+        "applies_when": [
+          "审计策略回测、参数搜索、指标解释、成本模型、fill 假设或复现实验包",
+          "把回测结果用于 AI scoring、策略筛选、paper/live 前置评估或研究报告"
+        ],
+        "not_applicable_when": [
+          "需要直接生成买卖点、仓位、杠杆、止损止盈或实盘执行建议",
+          "没有历史数据版本、策略规则版本或 evaluation timestamp",
+          "问题属于 live execution、risk hard gate 或交易所实盘订单规则，应由对应分支处理"
+        ],
+        "assumptions": [
+          "候选用于 CEK-TA 通用支持层知识库，不包含任何外接项目私有策略参数。",
+          "回测结论必须保留数据、成本、执行、样本、参数搜索、验证和复现边界。",
+          "候选通过外部审计前不能进入正式 reviewed 知识库。"
+        ],
+        "limitations": [
+          "论文和专业机构资料支持方法边界，不能证明任何特定策略有效。",
+          "平台文档只可作为实现语义示例，外接项目必须映射自己的 backtest engine、broker、交易所和数据供应商。",
+          "本候选不提供任何投资建议或实盘执行许可。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_title": "Backtesting & Simulation",
+          "source_url": "https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/backtesting-and-simulation",
+          "source_type": "professional_curriculum",
+          "publisher": "CFA Institute",
+          "published_at": "2026-01-01",
+          "reliability": "high",
+          "score": 88,
+          "freshness": "time_sensitive",
+          "evidence_summary": "CFA Institute frames backtesting as approximating the real-life investment process, including rolling-window processes, rules, portfolio formation, rebalancing, performance and risk profiles.",
+          "limitations": [
+            "Professional curriculum source; use for process and boundary, not for a specific trading edge."
+          ],
+          "source_id": "src_001",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "A Reality Check for Data Snooping",
+          "source_url": "https://www.ssc.wisc.edu/~bhansen/718/White2000.pdf",
+          "source_type": "academic_paper",
+          "publisher": "Econometrica",
+          "published_at": "2000-09-01",
+          "reliability": "high",
+          "score": 90,
+          "freshness": "stable",
+          "evidence_summary": "White formalizes data snooping risk when data is reused for inference or model selection, where apparently good results may arise by chance.",
+          "limitations": [
+            "Academic inference source; does not provide a platform implementation."
+          ],
+          "source_id": "src_002",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Trade Fills - Key Concepts",
+          "source_url": "https://www.quantconnect.com/docs/v2/writing-algorithms/reality-modeling/trade-fills/key-concepts",
+          "source_type": "platform_doc",
+          "publisher": "QuantConnect",
+          "published_at": null,
+          "reliability": "medium_high",
+          "score": 82,
+          "freshness": "time_sensitive",
+          "evidence_summary": "QuantConnect explains fill models, spread costs and interaction with slippage models for backtest order fills.",
+          "limitations": [
+            "Platform-specific semantics; external projects must map their own fill model."
+          ],
+          "source_id": "src_003",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "MLflow Tracking",
+          "source_url": "https://mlflow.org/docs/latest/tracking.html",
+          "source_type": "framework_doc",
+          "publisher": "MLflow",
+          "published_at": null,
+          "reliability": "medium_high",
+          "score": 82,
+          "freshness": "time_sensitive",
+          "evidence_summary": "MLflow Tracking records parameters, metrics, artifacts and source/version metadata for reproducible experiments.",
+          "limitations": [
+            "Framework implementation example; not mandatory for CEK-TA."
+          ],
+          "source_id": "src_004",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "medium_high",
+        "score": 85.5,
+        "score_version": "phase37_backtest_source_scoring_v1",
+        "primary_source_count": 3,
+        "supporting_source_count": 1,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "正式入库前必须由外部审计确认 claim 没有超出来源可证明范围。",
+          "平台文档只能证明平台语义，不能单独证明策略有效或实盘可执行。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none_known_in_visible_context",
+        "checked_against": [
+          "Phase 37 Trading 与 AI 跨分支引用契约",
+          "现有 Backtest formal seed 知识",
+          "Data Engineering / Replay / Live Execution / Risk Management owner 边界"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与可见正式知识的直接冲突；本候选只定义 Backtest 可信度边界，AI Engineering 只能引用。",
+        "approval_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 检索 Backtest 可信度、偏差、成本、验证和复现边界。",
+          "用于审计交易项目方案中是否缺少回测证据、成本模型、样本外、walk-forward 或复现实验包。",
+          "用于辅助外接项目设计 backtest review checklist、reason code 和 evidence gate。"
+        ],
+        "not_allowed": [
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+          "不得把候选知识当作 reviewed、approved、default guidance 或 hard gate。",
+          "不得绕过外接项目事实层、数据契约、执行适配器、风控 hard gate 或人工治理流程。"
+        ]
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "Phase 37 Backtest candidate requires external strict audit before formal reviewed/caveat_only.",
+        "requires_human_escalation": true,
+        "hidden_from_default_queue": true,
+        "visible_in_default_guidance_queue": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "review": {
+        "confidence": "medium_high",
+        "freshness": "mixed",
+        "reviewer": "codex_research_ingestion",
+        "reviewed_at": "2026-06-11",
+        "open_questions": [
+          "外部审计是否认为来源足以支撑该 claim？",
+          "是否需要补充更强的一手论文、平台文档、交易成本/TCA 或 reproducibility 来源？",
+          "是否存在与现有 Backtest formal seed 知识、Replay fill model、Data Engineering versioning 或 Risk Management 的重叠，需要合并或拆分？"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-11",
+            "actor": "codex",
+            "action": "created",
+            "reason": "根据 Phase 37 P37-E Backtest 队列生成 Trading Engineering 候选知识。"
+          },
+          {
+            "at": "2026-06-11",
+            "actor": "codex",
+            "action": "sourced",
+            "reason": "记录专业机构、论文、平台和复现实验框架来源摘要。"
+          }
+        ]
+      },
+      "workflow": {
+        "stage": "pending_external_audit",
+        "queue_group": "pending",
+        "current_task_id": "CEK-TA-412",
+        "next_action": "export_ai_audit",
+        "next_allowed_decisions": [
+          "accepted_for_draft",
+          "needs_more_evidence",
+          "rejected"
+        ],
+        "forbidden_decisions": [
+          "reviewed",
+          "approved",
+          "default_guidance",
+          "hard_gate"
+        ],
+        "formalization_allowed": false,
+        "conversion_target": {
+          "proposed_knowledge_id": "kb_04_backtest.lookahead_bias_block.v1",
+          "target_review_status": "draft",
+          "target_default_guidance": "deny",
+          "reviewed_allowed": false,
+          "approved_allowed": false,
+          "default_guidance_allowed": false,
+          "hard_gate_allowed": false
+        },
+        "ai_audit_result_id": null,
+        "formal_knowledge_id": null,
+        "formal_review_status": null,
+        "default_guidance_allowed": false,
+        "approved_allowed": false,
+        "hard_gate_allowed": false,
+        "hidden_from_default_queue": true,
+        "visible_in_default_guidance_queue": false
+      },
+      "contribution": {
+        "origin": "codex_research_ingestion_phase37",
+        "private_data_removed": true,
+        "contains_account_facts": false,
+        "contains_secret": false,
+        "contains_project_private_strategy": false
+      }
+    },
+    {
+      "schema_version": "1.1.0-candidate",
+      "candidate_id": "cand_20260611_phase37_backtest_metric_interpretation_boundary_001",
+      "research_task_id": "P37-E-B09",
+      "status": {
+        "review_status": "candidate_ready",
+        "ingestion_decision": "candidate_ready",
+        "decision_reason": "Phase 37 Backtest 候选知识已生成，等待外部严格审计；不得 reviewed/approved/default/hard gate。",
+        "created_at": "2026-06-11",
+        "updated_at": "2026-06-11"
+      },
+      "classification": {
+        "tree_node_id": "kt.trading_engineering.backtest",
+        "canonical_node_id": "kt.trading_engineering.backtest",
+        "tree_path": "CEK-TA / Trading Engineering / Backtest",
+        "related_nodes": [
+          "kt.trading_engineering",
+          "kt.trading_engineering.data_engineering",
+          "kt.kline_strategy",
+          "kt.market_microstructure",
+          "kt.replay_simulation",
+          "kt.live_execution",
+          "kt.risk_management",
+          "kt.ai_engineering.llm_training"
+        ],
+        "partition_id": "KB_04_BACKTEST",
+        "domain": "backtest",
+        "subdomain": "metrics",
+        "rule_type": "backtest_reliability_boundary_rule",
+        "claim_type": "metric_interpretation_boundary",
+        "used_for": [
+          "backtest_review",
+          "strategy_validation_audit",
+          "ai_trader_project_gap_audit",
+          "external_project_rag_retrieval"
+        ],
+        "classification_notes": "本候选主归属 Trading Engineering / Backtest。AI Engineering 只能引用本规则，不得把回测可信度规则改写为模型训练或 RAG/MCP 本体规则。"
+      },
+      "claim": {
+        "claim_id": "claim_p37_e_b09",
+        "title": "回测指标必须带解释边界",
+        "statement": "Sharpe、Sortino、profit factor、win rate、drawdown、hit ratio、turnover 等回测指标必须结合成本、样本长度、交易次数、尾部风险、非正态和选择偏差解释。",
+        "normalized_claim": "backtest.metric_interpretation_boundary.v1",
+        "evidence_summary": "CFA Institute frames backtesting as approximating the real-life investment process, including rolling-window processes, rules, portfolio formation, rebalancing, performance and risk profiles.；The Deflated Sharpe Ratio corrects for selection bias under multiple testing and non-normal returns, addressing inflated backtest performance.；Bailey et al. propose Probability of Backtest Overfitting and cross-validation methods for strategy selection risk.",
+        "interpretation_notes": "本候选只定义回测可信度、偏差、成本、验证和复现边界，不输出买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+        "claim_strength": "medium_high",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general_with_market_specific_mapping",
+        "asset": "general",
+        "timeframe": "historical_evaluation",
+        "data_granularity": "historical_market_data_and_orders",
+        "project_type": "trading_ai_support_layer",
+        "applies_when": [
+          "审计策略回测、参数搜索、指标解释、成本模型、fill 假设或复现实验包",
+          "把回测结果用于 AI scoring、策略筛选、paper/live 前置评估或研究报告"
+        ],
+        "not_applicable_when": [
+          "需要直接生成买卖点、仓位、杠杆、止损止盈或实盘执行建议",
+          "没有历史数据版本、策略规则版本或 evaluation timestamp",
+          "问题属于 live execution、risk hard gate 或交易所实盘订单规则，应由对应分支处理"
+        ],
+        "assumptions": [
+          "候选用于 CEK-TA 通用支持层知识库，不包含任何外接项目私有策略参数。",
+          "回测结论必须保留数据、成本、执行、样本、参数搜索、验证和复现边界。",
+          "候选通过外部审计前不能进入正式 reviewed 知识库。"
+        ],
+        "limitations": [
+          "论文和专业机构资料支持方法边界，不能证明任何特定策略有效。",
+          "平台文档只可作为实现语义示例，外接项目必须映射自己的 backtest engine、broker、交易所和数据供应商。",
+          "本候选不提供任何投资建议或实盘执行许可。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_title": "Backtesting & Simulation",
+          "source_url": "https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/backtesting-and-simulation",
+          "source_type": "professional_curriculum",
+          "publisher": "CFA Institute",
+          "published_at": "2026-01-01",
+          "reliability": "high",
+          "score": 88,
+          "freshness": "time_sensitive",
+          "evidence_summary": "CFA Institute frames backtesting as approximating the real-life investment process, including rolling-window processes, rules, portfolio formation, rebalancing, performance and risk profiles.",
+          "limitations": [
+            "Professional curriculum source; use for process and boundary, not for a specific trading edge."
+          ],
+          "source_id": "src_001",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "The Deflated Sharpe Ratio: Correcting for Selection Bias, Backtest Overfitting and Non-Normality",
+          "source_url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2460551",
+          "source_type": "academic_paper",
+          "publisher": "SSRN / Journal of Portfolio Management",
+          "published_at": "2014-01-01",
+          "reliability": "high",
+          "score": 88,
+          "freshness": "stable",
+          "evidence_summary": "The Deflated Sharpe Ratio corrects for selection bias under multiple testing and non-normal returns, addressing inflated backtest performance.",
+          "limitations": [
+            "Supports overfitting/selection-bias metrics; not a standalone approval rule."
+          ],
+          "source_id": "src_002",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "The Probability of Backtest Overfitting",
+          "source_url": "https://www.davidhbailey.com/dhbpapers/backtest-overfitting.pdf",
+          "source_type": "academic_paper",
+          "publisher": "SSRN / Journal of Computational Finance",
+          "published_at": "2016-01-01",
+          "reliability": "high",
+          "score": 88,
+          "freshness": "stable",
+          "evidence_summary": "Bailey et al. propose Probability of Backtest Overfitting and cross-validation methods for strategy selection risk.",
+          "limitations": [
+            "Academic metric source; not an execution or production readiness rule."
+          ],
+          "source_id": "src_003",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Backtesting Report",
+          "source_url": "https://www.quantconnect.com/docs/v2/cloud-platform/backtesting/report",
+          "source_type": "platform_doc",
+          "publisher": "QuantConnect",
+          "published_at": null,
+          "reliability": "medium_high",
+          "score": 80,
+          "freshness": "time_sensitive",
+          "evidence_summary": "QuantConnect backtest reports show return distributions, cumulative returns, summary and risk information.",
+          "limitations": [
+            "Report fields are platform-specific; use as example of metric context, not universal schema."
+          ],
+          "source_id": "src_004",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "medium_high",
+        "score": 86.0,
+        "score_version": "phase37_backtest_source_scoring_v1",
+        "primary_source_count": 3,
+        "supporting_source_count": 1,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "正式入库前必须由外部审计确认 claim 没有超出来源可证明范围。",
+          "平台文档只能证明平台语义，不能单独证明策略有效或实盘可执行。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none_known_in_visible_context",
+        "checked_against": [
+          "Phase 37 Trading 与 AI 跨分支引用契约",
+          "现有 Backtest formal seed 知识",
+          "Data Engineering / Replay / Live Execution / Risk Management owner 边界"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与可见正式知识的直接冲突；本候选只定义 Backtest 可信度边界，AI Engineering 只能引用。",
+        "approval_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 检索 Backtest 可信度、偏差、成本、验证和复现边界。",
+          "用于审计交易项目方案中是否缺少回测证据、成本模型、样本外、walk-forward 或复现实验包。",
+          "用于辅助外接项目设计 backtest review checklist、reason code 和 evidence gate。"
+        ],
+        "not_allowed": [
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+          "不得把候选知识当作 reviewed、approved、default guidance 或 hard gate。",
+          "不得绕过外接项目事实层、数据契约、执行适配器、风控 hard gate 或人工治理流程。"
+        ]
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "Phase 37 Backtest candidate requires external strict audit before formal reviewed/caveat_only.",
+        "requires_human_escalation": true,
+        "hidden_from_default_queue": true,
+        "visible_in_default_guidance_queue": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "review": {
+        "confidence": "medium_high",
+        "freshness": "mixed",
+        "reviewer": "codex_research_ingestion",
+        "reviewed_at": "2026-06-11",
+        "open_questions": [
+          "外部审计是否认为来源足以支撑该 claim？",
+          "是否需要补充更强的一手论文、平台文档、交易成本/TCA 或 reproducibility 来源？",
+          "是否存在与现有 Backtest formal seed 知识、Replay fill model、Data Engineering versioning 或 Risk Management 的重叠，需要合并或拆分？"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-11",
+            "actor": "codex",
+            "action": "created",
+            "reason": "根据 Phase 37 P37-E Backtest 队列生成 Trading Engineering 候选知识。"
+          },
+          {
+            "at": "2026-06-11",
+            "actor": "codex",
+            "action": "sourced",
+            "reason": "记录专业机构、论文、平台和复现实验框架来源摘要。"
+          }
+        ]
+      },
+      "workflow": {
+        "stage": "pending_external_audit",
+        "queue_group": "pending",
+        "current_task_id": "CEK-TA-412",
+        "next_action": "export_ai_audit",
+        "next_allowed_decisions": [
+          "accepted_for_draft",
+          "needs_more_evidence",
+          "rejected"
+        ],
+        "forbidden_decisions": [
+          "reviewed",
+          "approved",
+          "default_guidance",
+          "hard_gate"
+        ],
+        "formalization_allowed": false,
+        "conversion_target": {
+          "proposed_knowledge_id": "kb_04_backtest.metric_interpretation_boundary.v1",
+          "target_review_status": "draft",
+          "target_default_guidance": "deny",
+          "reviewed_allowed": false,
+          "approved_allowed": false,
+          "default_guidance_allowed": false,
+          "hard_gate_allowed": false
+        },
+        "ai_audit_result_id": null,
+        "formal_knowledge_id": null,
+        "formal_review_status": null,
+        "default_guidance_allowed": false,
+        "approved_allowed": false,
+        "hard_gate_allowed": false,
+        "hidden_from_default_queue": true,
+        "visible_in_default_guidance_queue": false
+      },
+      "contribution": {
+        "origin": "codex_research_ingestion_phase37",
+        "private_data_removed": true,
+        "contains_account_facts": false,
+        "contains_secret": false,
+        "contains_project_private_strategy": false
+      }
+    },
+    {
+      "schema_version": "1.1.0-candidate",
+      "candidate_id": "cand_20260611_phase37_backtest_out_of_sample_required_001",
+      "research_task_id": "P37-E-B06",
+      "status": {
+        "review_status": "candidate_ready",
+        "ingestion_decision": "candidate_ready",
+        "decision_reason": "Phase 37 Backtest 候选知识已生成，等待外部严格审计；不得 reviewed/approved/default/hard gate。",
+        "created_at": "2026-06-11",
+        "updated_at": "2026-06-11"
+      },
+      "classification": {
+        "tree_node_id": "kt.trading_engineering.backtest",
+        "canonical_node_id": "kt.trading_engineering.backtest",
+        "tree_path": "CEK-TA / Trading Engineering / Backtest",
+        "related_nodes": [
+          "kt.trading_engineering",
+          "kt.trading_engineering.data_engineering",
+          "kt.kline_strategy",
+          "kt.market_microstructure",
+          "kt.replay_simulation",
+          "kt.live_execution",
+          "kt.risk_management",
+          "kt.ai_engineering.llm_training"
+        ],
+        "partition_id": "KB_04_BACKTEST",
+        "domain": "backtest",
+        "subdomain": "validation",
+        "rule_type": "backtest_reliability_boundary_rule",
+        "claim_type": "validation_boundary_rule",
+        "used_for": [
+          "backtest_review",
+          "strategy_validation_audit",
+          "ai_trader_project_gap_audit",
+          "external_project_rag_retrieval"
+        ],
+        "classification_notes": "本候选主归属 Trading Engineering / Backtest。AI Engineering 只能引用本规则，不得把回测可信度规则改写为模型训练或 RAG/MCP 本体规则。"
+      },
+      "claim": {
+        "claim_id": "claim_p37_e_b06",
+        "title": "样本外评估必须存在",
+        "statement": "策略有效性不能只依赖 in-sample 表现；最终结论必须包含样本外、时间后推或独立市场/周期评估，并声明样本外边界和失败条件。",
+        "normalized_claim": "backtest.out_of_sample_required.v1",
+        "evidence_summary": "CFA Institute frames backtesting as approximating the real-life investment process, including rolling-window processes, rules, portfolio formation, rebalancing, performance and risk profiles.；Bailey et al. propose Probability of Backtest Overfitting and cross-validation methods for strategy selection risk.；The Deflated Sharpe Ratio corrects for selection bias under multiple testing and non-normal returns, addressing inflated backtest performance.",
+        "interpretation_notes": "本候选只定义回测可信度、偏差、成本、验证和复现边界，不输出买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+        "claim_strength": "medium_high",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general_with_market_specific_mapping",
+        "asset": "general",
+        "timeframe": "historical_evaluation",
+        "data_granularity": "historical_market_data_and_orders",
+        "project_type": "trading_ai_support_layer",
+        "applies_when": [
+          "审计策略回测、参数搜索、指标解释、成本模型、fill 假设或复现实验包",
+          "把回测结果用于 AI scoring、策略筛选、paper/live 前置评估或研究报告"
+        ],
+        "not_applicable_when": [
+          "需要直接生成买卖点、仓位、杠杆、止损止盈或实盘执行建议",
+          "没有历史数据版本、策略规则版本或 evaluation timestamp",
+          "问题属于 live execution、risk hard gate 或交易所实盘订单规则，应由对应分支处理"
+        ],
+        "assumptions": [
+          "候选用于 CEK-TA 通用支持层知识库，不包含任何外接项目私有策略参数。",
+          "回测结论必须保留数据、成本、执行、样本、参数搜索、验证和复现边界。",
+          "候选通过外部审计前不能进入正式 reviewed 知识库。"
+        ],
+        "limitations": [
+          "论文和专业机构资料支持方法边界，不能证明任何特定策略有效。",
+          "平台文档只可作为实现语义示例，外接项目必须映射自己的 backtest engine、broker、交易所和数据供应商。",
+          "本候选不提供任何投资建议或实盘执行许可。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_title": "Backtesting & Simulation",
+          "source_url": "https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/backtesting-and-simulation",
+          "source_type": "professional_curriculum",
+          "publisher": "CFA Institute",
+          "published_at": "2026-01-01",
+          "reliability": "high",
+          "score": 88,
+          "freshness": "time_sensitive",
+          "evidence_summary": "CFA Institute frames backtesting as approximating the real-life investment process, including rolling-window processes, rules, portfolio formation, rebalancing, performance and risk profiles.",
+          "limitations": [
+            "Professional curriculum source; use for process and boundary, not for a specific trading edge."
+          ],
+          "source_id": "src_001",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "The Probability of Backtest Overfitting",
+          "source_url": "https://www.davidhbailey.com/dhbpapers/backtest-overfitting.pdf",
+          "source_type": "academic_paper",
+          "publisher": "SSRN / Journal of Computational Finance",
+          "published_at": "2016-01-01",
+          "reliability": "high",
+          "score": 88,
+          "freshness": "stable",
+          "evidence_summary": "Bailey et al. propose Probability of Backtest Overfitting and cross-validation methods for strategy selection risk.",
+          "limitations": [
+            "Academic metric source; not an execution or production readiness rule."
+          ],
+          "source_id": "src_002",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "The Deflated Sharpe Ratio: Correcting for Selection Bias, Backtest Overfitting and Non-Normality",
+          "source_url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2460551",
+          "source_type": "academic_paper",
+          "publisher": "SSRN / Journal of Portfolio Management",
+          "published_at": "2014-01-01",
+          "reliability": "high",
+          "score": 88,
+          "freshness": "stable",
+          "evidence_summary": "The Deflated Sharpe Ratio corrects for selection bias under multiple testing and non-normal returns, addressing inflated backtest performance.",
+          "limitations": [
+            "Supports overfitting/selection-bias metrics; not a standalone approval rule."
+          ],
+          "source_id": "src_003",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "A Reality Check for Data Snooping",
+          "source_url": "https://www.ssc.wisc.edu/~bhansen/718/White2000.pdf",
+          "source_type": "academic_paper",
+          "publisher": "Econometrica",
+          "published_at": "2000-09-01",
+          "reliability": "high",
+          "score": 90,
+          "freshness": "stable",
+          "evidence_summary": "White formalizes data snooping risk when data is reused for inference or model selection, where apparently good results may arise by chance.",
+          "limitations": [
+            "Academic inference source; does not provide a platform implementation."
+          ],
+          "source_id": "src_004",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "medium_high",
+        "score": 88.5,
+        "score_version": "phase37_backtest_source_scoring_v1",
+        "primary_source_count": 3,
+        "supporting_source_count": 1,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "正式入库前必须由外部审计确认 claim 没有超出来源可证明范围。",
+          "平台文档只能证明平台语义，不能单独证明策略有效或实盘可执行。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none_known_in_visible_context",
+        "checked_against": [
+          "Phase 37 Trading 与 AI 跨分支引用契约",
+          "现有 Backtest formal seed 知识",
+          "Data Engineering / Replay / Live Execution / Risk Management owner 边界"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与可见正式知识的直接冲突；本候选只定义 Backtest 可信度边界，AI Engineering 只能引用。",
+        "approval_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 检索 Backtest 可信度、偏差、成本、验证和复现边界。",
+          "用于审计交易项目方案中是否缺少回测证据、成本模型、样本外、walk-forward 或复现实验包。",
+          "用于辅助外接项目设计 backtest review checklist、reason code 和 evidence gate。"
+        ],
+        "not_allowed": [
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+          "不得把候选知识当作 reviewed、approved、default guidance 或 hard gate。",
+          "不得绕过外接项目事实层、数据契约、执行适配器、风控 hard gate 或人工治理流程。"
+        ]
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "Phase 37 Backtest candidate requires external strict audit before formal reviewed/caveat_only.",
+        "requires_human_escalation": true,
+        "hidden_from_default_queue": true,
+        "visible_in_default_guidance_queue": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "review": {
+        "confidence": "medium_high",
+        "freshness": "mixed",
+        "reviewer": "codex_research_ingestion",
+        "reviewed_at": "2026-06-11",
+        "open_questions": [
+          "外部审计是否认为来源足以支撑该 claim？",
+          "是否需要补充更强的一手论文、平台文档、交易成本/TCA 或 reproducibility 来源？",
+          "是否存在与现有 Backtest formal seed 知识、Replay fill model、Data Engineering versioning 或 Risk Management 的重叠，需要合并或拆分？"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-11",
+            "actor": "codex",
+            "action": "created",
+            "reason": "根据 Phase 37 P37-E Backtest 队列生成 Trading Engineering 候选知识。"
+          },
+          {
+            "at": "2026-06-11",
+            "actor": "codex",
+            "action": "sourced",
+            "reason": "记录专业机构、论文、平台和复现实验框架来源摘要。"
+          }
+        ]
+      },
+      "workflow": {
+        "stage": "pending_external_audit",
+        "queue_group": "pending",
+        "current_task_id": "CEK-TA-412",
+        "next_action": "export_ai_audit",
+        "next_allowed_decisions": [
+          "accepted_for_draft",
+          "needs_more_evidence",
+          "rejected"
+        ],
+        "forbidden_decisions": [
+          "reviewed",
+          "approved",
+          "default_guidance",
+          "hard_gate"
+        ],
+        "formalization_allowed": false,
+        "conversion_target": {
+          "proposed_knowledge_id": "kb_04_backtest.out_of_sample_required.v1",
+          "target_review_status": "draft",
+          "target_default_guidance": "deny",
+          "reviewed_allowed": false,
+          "approved_allowed": false,
+          "default_guidance_allowed": false,
+          "hard_gate_allowed": false
+        },
+        "ai_audit_result_id": null,
+        "formal_knowledge_id": null,
+        "formal_review_status": null,
+        "default_guidance_allowed": false,
+        "approved_allowed": false,
+        "hard_gate_allowed": false,
+        "hidden_from_default_queue": true,
+        "visible_in_default_guidance_queue": false
+      },
+      "contribution": {
+        "origin": "codex_research_ingestion_phase37",
+        "private_data_removed": true,
+        "contains_account_facts": false,
+        "contains_secret": false,
+        "contains_project_private_strategy": false
+      }
+    },
+    {
+      "schema_version": "1.1.0-candidate",
+      "candidate_id": "cand_20260611_phase37_backtest_parameter_search_separate_from_final_eval_001",
+      "research_task_id": "P37-E-B04",
+      "status": {
+        "review_status": "candidate_ready",
+        "ingestion_decision": "candidate_ready",
+        "decision_reason": "Phase 37 Backtest 候选知识已生成，等待外部严格审计；不得 reviewed/approved/default/hard gate。",
+        "created_at": "2026-06-11",
+        "updated_at": "2026-06-11"
+      },
+      "classification": {
+        "tree_node_id": "kt.trading_engineering.backtest",
+        "canonical_node_id": "kt.trading_engineering.backtest",
+        "tree_path": "CEK-TA / Trading Engineering / Backtest",
+        "related_nodes": [
+          "kt.trading_engineering",
+          "kt.trading_engineering.data_engineering",
+          "kt.kline_strategy",
+          "kt.market_microstructure",
+          "kt.replay_simulation",
+          "kt.live_execution",
+          "kt.risk_management",
+          "kt.ai_engineering.llm_training"
+        ],
+        "partition_id": "KB_04_BACKTEST",
+        "domain": "backtest",
+        "subdomain": "model_selection",
+        "rule_type": "backtest_reliability_boundary_rule",
+        "claim_type": "methodological_constraint",
+        "used_for": [
+          "backtest_review",
+          "strategy_validation_audit",
+          "ai_trader_project_gap_audit",
+          "external_project_rag_retrieval"
+        ],
+        "classification_notes": "本候选主归属 Trading Engineering / Backtest。AI Engineering 只能引用本规则，不得把回测可信度规则改写为模型训练或 RAG/MCP 本体规则。"
+      },
+      "claim": {
+        "claim_id": "claim_p37_e_b04",
+        "title": "参数搜索必须与最终评估分离",
+        "statement": "参数搜索、特征选择、模型选择和规则筛选必须与最终评价样本分离；同一数据被反复用于选择和宣称表现时，必须标注 data snooping / multiple testing 风险。",
+        "normalized_claim": "backtest.parameter_search_separate_from_final_eval.v1",
+        "evidence_summary": "White formalizes data snooping risk when data is reused for inference or model selection, where apparently good results may arise by chance.；Sullivan, Timmermann and White apply bootstrap methods to technical trading rules and data-snooping bias.；The Deflated Sharpe Ratio corrects for selection bias under multiple testing and non-normal returns, addressing inflated backtest performance.",
+        "interpretation_notes": "本候选只定义回测可信度、偏差、成本、验证和复现边界，不输出买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+        "claim_strength": "medium_high",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general_with_market_specific_mapping",
+        "asset": "general",
+        "timeframe": "historical_evaluation",
+        "data_granularity": "historical_market_data_and_orders",
+        "project_type": "trading_ai_support_layer",
+        "applies_when": [
+          "审计策略回测、参数搜索、指标解释、成本模型、fill 假设或复现实验包",
+          "把回测结果用于 AI scoring、策略筛选、paper/live 前置评估或研究报告"
+        ],
+        "not_applicable_when": [
+          "需要直接生成买卖点、仓位、杠杆、止损止盈或实盘执行建议",
+          "没有历史数据版本、策略规则版本或 evaluation timestamp",
+          "问题属于 live execution、risk hard gate 或交易所实盘订单规则，应由对应分支处理"
+        ],
+        "assumptions": [
+          "候选用于 CEK-TA 通用支持层知识库，不包含任何外接项目私有策略参数。",
+          "回测结论必须保留数据、成本、执行、样本、参数搜索、验证和复现边界。",
+          "候选通过外部审计前不能进入正式 reviewed 知识库。"
+        ],
+        "limitations": [
+          "论文和专业机构资料支持方法边界，不能证明任何特定策略有效。",
+          "平台文档只可作为实现语义示例，外接项目必须映射自己的 backtest engine、broker、交易所和数据供应商。",
+          "本候选不提供任何投资建议或实盘执行许可。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_title": "A Reality Check for Data Snooping",
+          "source_url": "https://www.ssc.wisc.edu/~bhansen/718/White2000.pdf",
+          "source_type": "academic_paper",
+          "publisher": "Econometrica",
+          "published_at": "2000-09-01",
+          "reliability": "high",
+          "score": 90,
+          "freshness": "stable",
+          "evidence_summary": "White formalizes data snooping risk when data is reused for inference or model selection, where apparently good results may arise by chance.",
+          "limitations": [
+            "Academic inference source; does not provide a platform implementation."
+          ],
+          "source_id": "src_001",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Data-Snooping, Technical Trading Rule Performance, and the Bootstrap",
+          "source_url": "https://www.jstor.org/stable/222451",
+          "source_type": "academic_paper",
+          "publisher": "Journal of Finance",
+          "published_at": "1999-10-01",
+          "reliability": "high",
+          "score": 88,
+          "freshness": "stable",
+          "evidence_summary": "Sullivan, Timmermann and White apply bootstrap methods to technical trading rules and data-snooping bias.",
+          "limitations": [
+            "JSTOR landing page/source metadata; page-level access may require subscription."
+          ],
+          "source_id": "src_002",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "The Deflated Sharpe Ratio: Correcting for Selection Bias, Backtest Overfitting and Non-Normality",
+          "source_url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2460551",
+          "source_type": "academic_paper",
+          "publisher": "SSRN / Journal of Portfolio Management",
+          "published_at": "2014-01-01",
+          "reliability": "high",
+          "score": 88,
+          "freshness": "stable",
+          "evidence_summary": "The Deflated Sharpe Ratio corrects for selection bias under multiple testing and non-normal returns, addressing inflated backtest performance.",
+          "limitations": [
+            "Supports overfitting/selection-bias metrics; not a standalone approval rule."
+          ],
+          "source_id": "src_003",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "The Probability of Backtest Overfitting",
+          "source_url": "https://www.davidhbailey.com/dhbpapers/backtest-overfitting.pdf",
+          "source_type": "academic_paper",
+          "publisher": "SSRN / Journal of Computational Finance",
+          "published_at": "2016-01-01",
+          "reliability": "high",
+          "score": 88,
+          "freshness": "stable",
+          "evidence_summary": "Bailey et al. propose Probability of Backtest Overfitting and cross-validation methods for strategy selection risk.",
+          "limitations": [
+            "Academic metric source; not an execution or production readiness rule."
+          ],
+          "source_id": "src_004",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "medium_high",
+        "score": 88.5,
+        "score_version": "phase37_backtest_source_scoring_v1",
+        "primary_source_count": 3,
+        "supporting_source_count": 1,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "正式入库前必须由外部审计确认 claim 没有超出来源可证明范围。",
+          "平台文档只能证明平台语义，不能单独证明策略有效或实盘可执行。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none_known_in_visible_context",
+        "checked_against": [
+          "Phase 37 Trading 与 AI 跨分支引用契约",
+          "现有 Backtest formal seed 知识",
+          "Data Engineering / Replay / Live Execution / Risk Management owner 边界"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与可见正式知识的直接冲突；本候选只定义 Backtest 可信度边界，AI Engineering 只能引用。",
+        "approval_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 检索 Backtest 可信度、偏差、成本、验证和复现边界。",
+          "用于审计交易项目方案中是否缺少回测证据、成本模型、样本外、walk-forward 或复现实验包。",
+          "用于辅助外接项目设计 backtest review checklist、reason code 和 evidence gate。"
+        ],
+        "not_allowed": [
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+          "不得把候选知识当作 reviewed、approved、default guidance 或 hard gate。",
+          "不得绕过外接项目事实层、数据契约、执行适配器、风控 hard gate 或人工治理流程。"
+        ]
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "Phase 37 Backtest candidate requires external strict audit before formal reviewed/caveat_only.",
+        "requires_human_escalation": true,
+        "hidden_from_default_queue": true,
+        "visible_in_default_guidance_queue": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "review": {
+        "confidence": "medium_high",
+        "freshness": "mixed",
+        "reviewer": "codex_research_ingestion",
+        "reviewed_at": "2026-06-11",
+        "open_questions": [
+          "外部审计是否认为来源足以支撑该 claim？",
+          "是否需要补充更强的一手论文、平台文档、交易成本/TCA 或 reproducibility 来源？",
+          "是否存在与现有 Backtest formal seed 知识、Replay fill model、Data Engineering versioning 或 Risk Management 的重叠，需要合并或拆分？"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-11",
+            "actor": "codex",
+            "action": "created",
+            "reason": "根据 Phase 37 P37-E Backtest 队列生成 Trading Engineering 候选知识。"
+          },
+          {
+            "at": "2026-06-11",
+            "actor": "codex",
+            "action": "sourced",
+            "reason": "记录专业机构、论文、平台和复现实验框架来源摘要。"
+          }
+        ]
+      },
+      "workflow": {
+        "stage": "pending_external_audit",
+        "queue_group": "pending",
+        "current_task_id": "CEK-TA-412",
+        "next_action": "export_ai_audit",
+        "next_allowed_decisions": [
+          "accepted_for_draft",
+          "needs_more_evidence",
+          "rejected"
+        ],
+        "forbidden_decisions": [
+          "reviewed",
+          "approved",
+          "default_guidance",
+          "hard_gate"
+        ],
+        "formalization_allowed": false,
+        "conversion_target": {
+          "proposed_knowledge_id": "kb_04_backtest.parameter_search_separate_from_final_eval.v1",
+          "target_review_status": "draft",
+          "target_default_guidance": "deny",
+          "reviewed_allowed": false,
+          "approved_allowed": false,
+          "default_guidance_allowed": false,
+          "hard_gate_allowed": false
+        },
+        "ai_audit_result_id": null,
+        "formal_knowledge_id": null,
+        "formal_review_status": null,
+        "default_guidance_allowed": false,
+        "approved_allowed": false,
+        "hard_gate_allowed": false,
+        "hidden_from_default_queue": true,
+        "visible_in_default_guidance_queue": false
+      },
+      "contribution": {
+        "origin": "codex_research_ingestion_phase37",
+        "private_data_removed": true,
+        "contains_account_facts": false,
+        "contains_secret": false,
+        "contains_project_private_strategy": false
+      }
+    },
+    {
+      "schema_version": "1.1.0-candidate",
+      "candidate_id": "cand_20260611_phase37_backtest_profit_factor_drawdown_context_required_001",
+      "research_task_id": "P37-E-B10",
+      "status": {
+        "review_status": "candidate_ready",
+        "ingestion_decision": "candidate_ready",
+        "decision_reason": "Phase 37 Backtest 候选知识已生成，等待外部严格审计；不得 reviewed/approved/default/hard gate。",
+        "created_at": "2026-06-11",
+        "updated_at": "2026-06-11"
+      },
+      "classification": {
+        "tree_node_id": "kt.trading_engineering.backtest",
+        "canonical_node_id": "kt.trading_engineering.backtest",
+        "tree_path": "CEK-TA / Trading Engineering / Backtest",
+        "related_nodes": [
+          "kt.trading_engineering",
+          "kt.trading_engineering.data_engineering",
+          "kt.kline_strategy",
+          "kt.market_microstructure",
+          "kt.replay_simulation",
+          "kt.live_execution",
+          "kt.risk_management",
+          "kt.ai_engineering.llm_training"
+        ],
+        "partition_id": "KB_04_BACKTEST",
+        "domain": "backtest",
+        "subdomain": "metrics",
+        "rule_type": "backtest_reliability_boundary_rule",
+        "claim_type": "metric_interpretation_boundary",
+        "used_for": [
+          "backtest_review",
+          "strategy_validation_audit",
+          "ai_trader_project_gap_audit",
+          "external_project_rag_retrieval"
+        ],
+        "classification_notes": "本候选主归属 Trading Engineering / Backtest。AI Engineering 只能引用本规则，不得把回测可信度规则改写为模型训练或 RAG/MCP 本体规则。"
+      },
+      "claim": {
+        "claim_id": "claim_p37_e_b10",
+        "title": "Profit factor 必须结合回撤和样本语境",
+        "statement": "Profit factor、收益回撤比或类似汇总指标不能单独证明策略质量；必须同时报告 drawdown、交易次数、样本覆盖、成本、尾部亏损和参数选择过程。",
+        "normalized_claim": "backtest.profit_factor_drawdown_context_required.v1",
+        "evidence_summary": "CFA Institute frames backtesting as approximating the real-life investment process, including rolling-window processes, rules, portfolio formation, rebalancing, performance and risk profiles.；The Deflated Sharpe Ratio corrects for selection bias under multiple testing and non-normal returns, addressing inflated backtest performance.；QuantConnect backtest reports show return distributions, cumulative returns, summary and risk information.",
+        "interpretation_notes": "本候选只定义回测可信度、偏差、成本、验证和复现边界，不输出买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+        "claim_strength": "medium_high",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general_with_market_specific_mapping",
+        "asset": "general",
+        "timeframe": "historical_evaluation",
+        "data_granularity": "historical_market_data_and_orders",
+        "project_type": "trading_ai_support_layer",
+        "applies_when": [
+          "审计策略回测、参数搜索、指标解释、成本模型、fill 假设或复现实验包",
+          "把回测结果用于 AI scoring、策略筛选、paper/live 前置评估或研究报告"
+        ],
+        "not_applicable_when": [
+          "需要直接生成买卖点、仓位、杠杆、止损止盈或实盘执行建议",
+          "没有历史数据版本、策略规则版本或 evaluation timestamp",
+          "问题属于 live execution、risk hard gate 或交易所实盘订单规则，应由对应分支处理"
+        ],
+        "assumptions": [
+          "候选用于 CEK-TA 通用支持层知识库，不包含任何外接项目私有策略参数。",
+          "回测结论必须保留数据、成本、执行、样本、参数搜索、验证和复现边界。",
+          "候选通过外部审计前不能进入正式 reviewed 知识库。"
+        ],
+        "limitations": [
+          "论文和专业机构资料支持方法边界，不能证明任何特定策略有效。",
+          "平台文档只可作为实现语义示例，外接项目必须映射自己的 backtest engine、broker、交易所和数据供应商。",
+          "本候选不提供任何投资建议或实盘执行许可。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_title": "Backtesting & Simulation",
+          "source_url": "https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/backtesting-and-simulation",
+          "source_type": "professional_curriculum",
+          "publisher": "CFA Institute",
+          "published_at": "2026-01-01",
+          "reliability": "high",
+          "score": 88,
+          "freshness": "time_sensitive",
+          "evidence_summary": "CFA Institute frames backtesting as approximating the real-life investment process, including rolling-window processes, rules, portfolio formation, rebalancing, performance and risk profiles.",
+          "limitations": [
+            "Professional curriculum source; use for process and boundary, not for a specific trading edge."
+          ],
+          "source_id": "src_001",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "The Deflated Sharpe Ratio: Correcting for Selection Bias, Backtest Overfitting and Non-Normality",
+          "source_url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2460551",
+          "source_type": "academic_paper",
+          "publisher": "SSRN / Journal of Portfolio Management",
+          "published_at": "2014-01-01",
+          "reliability": "high",
+          "score": 88,
+          "freshness": "stable",
+          "evidence_summary": "The Deflated Sharpe Ratio corrects for selection bias under multiple testing and non-normal returns, addressing inflated backtest performance.",
+          "limitations": [
+            "Supports overfitting/selection-bias metrics; not a standalone approval rule."
+          ],
+          "source_id": "src_002",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Backtesting Report",
+          "source_url": "https://www.quantconnect.com/docs/v2/cloud-platform/backtesting/report",
+          "source_type": "platform_doc",
+          "publisher": "QuantConnect",
+          "published_at": null,
+          "reliability": "medium_high",
+          "score": 80,
+          "freshness": "time_sensitive",
+          "evidence_summary": "QuantConnect backtest reports show return distributions, cumulative returns, summary and risk information.",
+          "limitations": [
+            "Report fields are platform-specific; use as example of metric context, not universal schema."
+          ],
+          "source_id": "src_003",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "A Reality Check for Data Snooping",
+          "source_url": "https://www.ssc.wisc.edu/~bhansen/718/White2000.pdf",
+          "source_type": "academic_paper",
+          "publisher": "Econometrica",
+          "published_at": "2000-09-01",
+          "reliability": "high",
+          "score": 90,
+          "freshness": "stable",
+          "evidence_summary": "White formalizes data snooping risk when data is reused for inference or model selection, where apparently good results may arise by chance.",
+          "limitations": [
+            "Academic inference source; does not provide a platform implementation."
+          ],
+          "source_id": "src_004",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "medium_high",
+        "score": 86.5,
+        "score_version": "phase37_backtest_source_scoring_v1",
+        "primary_source_count": 3,
+        "supporting_source_count": 1,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "正式入库前必须由外部审计确认 claim 没有超出来源可证明范围。",
+          "平台文档只能证明平台语义，不能单独证明策略有效或实盘可执行。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none_known_in_visible_context",
+        "checked_against": [
+          "Phase 37 Trading 与 AI 跨分支引用契约",
+          "现有 Backtest formal seed 知识",
+          "Data Engineering / Replay / Live Execution / Risk Management owner 边界"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与可见正式知识的直接冲突；本候选只定义 Backtest 可信度边界，AI Engineering 只能引用。",
+        "approval_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 检索 Backtest 可信度、偏差、成本、验证和复现边界。",
+          "用于审计交易项目方案中是否缺少回测证据、成本模型、样本外、walk-forward 或复现实验包。",
+          "用于辅助外接项目设计 backtest review checklist、reason code 和 evidence gate。"
+        ],
+        "not_allowed": [
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+          "不得把候选知识当作 reviewed、approved、default guidance 或 hard gate。",
+          "不得绕过外接项目事实层、数据契约、执行适配器、风控 hard gate 或人工治理流程。"
+        ]
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "Phase 37 Backtest candidate requires external strict audit before formal reviewed/caveat_only.",
+        "requires_human_escalation": true,
+        "hidden_from_default_queue": true,
+        "visible_in_default_guidance_queue": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "review": {
+        "confidence": "medium_high",
+        "freshness": "mixed",
+        "reviewer": "codex_research_ingestion",
+        "reviewed_at": "2026-06-11",
+        "open_questions": [
+          "外部审计是否认为来源足以支撑该 claim？",
+          "是否需要补充更强的一手论文、平台文档、交易成本/TCA 或 reproducibility 来源？",
+          "是否存在与现有 Backtest formal seed 知识、Replay fill model、Data Engineering versioning 或 Risk Management 的重叠，需要合并或拆分？"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-11",
+            "actor": "codex",
+            "action": "created",
+            "reason": "根据 Phase 37 P37-E Backtest 队列生成 Trading Engineering 候选知识。"
+          },
+          {
+            "at": "2026-06-11",
+            "actor": "codex",
+            "action": "sourced",
+            "reason": "记录专业机构、论文、平台和复现实验框架来源摘要。"
+          }
+        ]
+      },
+      "workflow": {
+        "stage": "pending_external_audit",
+        "queue_group": "pending",
+        "current_task_id": "CEK-TA-412",
+        "next_action": "export_ai_audit",
+        "next_allowed_decisions": [
+          "accepted_for_draft",
+          "needs_more_evidence",
+          "rejected"
+        ],
+        "forbidden_decisions": [
+          "reviewed",
+          "approved",
+          "default_guidance",
+          "hard_gate"
+        ],
+        "formalization_allowed": false,
+        "conversion_target": {
+          "proposed_knowledge_id": "kb_04_backtest.profit_factor_drawdown_context_required.v1",
+          "target_review_status": "draft",
+          "target_default_guidance": "deny",
+          "reviewed_allowed": false,
+          "approved_allowed": false,
+          "default_guidance_allowed": false,
+          "hard_gate_allowed": false
+        },
+        "ai_audit_result_id": null,
+        "formal_knowledge_id": null,
+        "formal_review_status": null,
+        "default_guidance_allowed": false,
+        "approved_allowed": false,
+        "hard_gate_allowed": false,
+        "hidden_from_default_queue": true,
+        "visible_in_default_guidance_queue": false
+      },
+      "contribution": {
+        "origin": "codex_research_ingestion_phase37",
+        "private_data_removed": true,
+        "contains_account_facts": false,
+        "contains_secret": false,
+        "contains_project_private_strategy": false
+      }
+    },
+    {
+      "schema_version": "1.1.0-candidate",
+      "candidate_id": "cand_20260611_phase37_backtest_reproducibility_package_required_001",
+      "research_task_id": "P37-E-B11",
+      "status": {
+        "review_status": "candidate_ready",
+        "ingestion_decision": "candidate_ready",
+        "decision_reason": "Phase 37 Backtest 候选知识已生成，等待外部严格审计；不得 reviewed/approved/default/hard gate。",
+        "created_at": "2026-06-11",
+        "updated_at": "2026-06-11"
+      },
+      "classification": {
+        "tree_node_id": "kt.trading_engineering.backtest",
+        "canonical_node_id": "kt.trading_engineering.backtest",
+        "tree_path": "CEK-TA / Trading Engineering / Backtest",
+        "related_nodes": [
+          "kt.trading_engineering",
+          "kt.trading_engineering.data_engineering",
+          "kt.kline_strategy",
+          "kt.market_microstructure",
+          "kt.replay_simulation",
+          "kt.live_execution",
+          "kt.risk_management",
+          "kt.ai_engineering.llm_training"
+        ],
+        "partition_id": "KB_04_BACKTEST",
+        "domain": "backtest",
+        "subdomain": "reproducibility",
+        "rule_type": "backtest_reliability_boundary_rule",
+        "claim_type": "reproducibility_contract",
+        "used_for": [
+          "backtest_review",
+          "strategy_validation_audit",
+          "ai_trader_project_gap_audit",
+          "external_project_rag_retrieval"
+        ],
+        "classification_notes": "本候选主归属 Trading Engineering / Backtest。AI Engineering 只能引用本规则，不得把回测可信度规则改写为模型训练或 RAG/MCP 本体规则。"
+      },
+      "claim": {
+        "claim_id": "claim_p37_e_b11",
+        "title": "回测必须具备可复现实验包",
+        "statement": "可用于审计的 backtest 必须保存代码版本、数据版本、参数、运行环境、随机种子、依赖、输出指标、日志和 artifact；缺失复现实验包时不得作为正式证据。",
+        "normalized_claim": "backtest.reproducibility_package_required.v1",
+        "evidence_summary": "MLflow Tracking records parameters, metrics, artifacts and source/version metadata for reproducible experiments.；DVC pipelines define stages, dependencies, outputs and reproducible data workflows.；CFA Institute frames backtesting as approximating the real-life investment process, including rolling-window processes, rules, portfolio formation, rebalancing, performance and risk profiles.",
+        "interpretation_notes": "本候选只定义回测可信度、偏差、成本、验证和复现边界，不输出买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+        "claim_strength": "medium_high",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general_with_market_specific_mapping",
+        "asset": "general",
+        "timeframe": "historical_evaluation",
+        "data_granularity": "historical_market_data_and_orders",
+        "project_type": "trading_ai_support_layer",
+        "applies_when": [
+          "审计策略回测、参数搜索、指标解释、成本模型、fill 假设或复现实验包",
+          "把回测结果用于 AI scoring、策略筛选、paper/live 前置评估或研究报告"
+        ],
+        "not_applicable_when": [
+          "需要直接生成买卖点、仓位、杠杆、止损止盈或实盘执行建议",
+          "没有历史数据版本、策略规则版本或 evaluation timestamp",
+          "问题属于 live execution、risk hard gate 或交易所实盘订单规则，应由对应分支处理"
+        ],
+        "assumptions": [
+          "候选用于 CEK-TA 通用支持层知识库，不包含任何外接项目私有策略参数。",
+          "回测结论必须保留数据、成本、执行、样本、参数搜索、验证和复现边界。",
+          "候选通过外部审计前不能进入正式 reviewed 知识库。"
+        ],
+        "limitations": [
+          "论文和专业机构资料支持方法边界，不能证明任何特定策略有效。",
+          "平台文档只可作为实现语义示例，外接项目必须映射自己的 backtest engine、broker、交易所和数据供应商。",
+          "本候选不提供任何投资建议或实盘执行许可。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_title": "MLflow Tracking",
+          "source_url": "https://mlflow.org/docs/latest/tracking.html",
+          "source_type": "framework_doc",
+          "publisher": "MLflow",
+          "published_at": null,
+          "reliability": "medium_high",
+          "score": 82,
+          "freshness": "time_sensitive",
+          "evidence_summary": "MLflow Tracking records parameters, metrics, artifacts and source/version metadata for reproducible experiments.",
+          "limitations": [
+            "Framework implementation example; not mandatory for CEK-TA."
+          ],
+          "source_id": "src_001",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "DVC Pipelines",
+          "source_url": "https://dvc.org/doc/user-guide/pipelines",
+          "source_type": "framework_doc",
+          "publisher": "DVC",
+          "published_at": null,
+          "reliability": "medium_high",
+          "score": 82,
+          "freshness": "time_sensitive",
+          "evidence_summary": "DVC pipelines define stages, dependencies, outputs and reproducible data workflows.",
+          "limitations": [
+            "Framework implementation example; not mandatory for CEK-TA."
+          ],
+          "source_id": "src_002",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Backtesting & Simulation",
+          "source_url": "https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/backtesting-and-simulation",
+          "source_type": "professional_curriculum",
+          "publisher": "CFA Institute",
+          "published_at": "2026-01-01",
+          "reliability": "high",
+          "score": 88,
+          "freshness": "time_sensitive",
+          "evidence_summary": "CFA Institute frames backtesting as approximating the real-life investment process, including rolling-window processes, rules, portfolio formation, rebalancing, performance and risk profiles.",
+          "limitations": [
+            "Professional curriculum source; use for process and boundary, not for a specific trading edge."
+          ],
+          "source_id": "src_003",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Backtesting Report",
+          "source_url": "https://www.quantconnect.com/docs/v2/cloud-platform/backtesting/report",
+          "source_type": "platform_doc",
+          "publisher": "QuantConnect",
+          "published_at": null,
+          "reliability": "medium_high",
+          "score": 80,
+          "freshness": "time_sensitive",
+          "evidence_summary": "QuantConnect backtest reports show return distributions, cumulative returns, summary and risk information.",
+          "limitations": [
+            "Report fields are platform-specific; use as example of metric context, not universal schema."
+          ],
+          "source_id": "src_004",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "medium_high",
+        "score": 83.0,
+        "score_version": "phase37_backtest_source_scoring_v1",
+        "primary_source_count": 3,
+        "supporting_source_count": 1,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "正式入库前必须由外部审计确认 claim 没有超出来源可证明范围。",
+          "平台文档只能证明平台语义，不能单独证明策略有效或实盘可执行。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none_known_in_visible_context",
+        "checked_against": [
+          "Phase 37 Trading 与 AI 跨分支引用契约",
+          "现有 Backtest formal seed 知识",
+          "Data Engineering / Replay / Live Execution / Risk Management owner 边界"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与可见正式知识的直接冲突；本候选只定义 Backtest 可信度边界，AI Engineering 只能引用。",
+        "approval_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 检索 Backtest 可信度、偏差、成本、验证和复现边界。",
+          "用于审计交易项目方案中是否缺少回测证据、成本模型、样本外、walk-forward 或复现实验包。",
+          "用于辅助外接项目设计 backtest review checklist、reason code 和 evidence gate。"
+        ],
+        "not_allowed": [
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+          "不得把候选知识当作 reviewed、approved、default guidance 或 hard gate。",
+          "不得绕过外接项目事实层、数据契约、执行适配器、风控 hard gate 或人工治理流程。"
+        ]
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "Phase 37 Backtest candidate requires external strict audit before formal reviewed/caveat_only.",
+        "requires_human_escalation": true,
+        "hidden_from_default_queue": true,
+        "visible_in_default_guidance_queue": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "review": {
+        "confidence": "medium_high",
+        "freshness": "mixed",
+        "reviewer": "codex_research_ingestion",
+        "reviewed_at": "2026-06-11",
+        "open_questions": [
+          "外部审计是否认为来源足以支撑该 claim？",
+          "是否需要补充更强的一手论文、平台文档、交易成本/TCA 或 reproducibility 来源？",
+          "是否存在与现有 Backtest formal seed 知识、Replay fill model、Data Engineering versioning 或 Risk Management 的重叠，需要合并或拆分？"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-11",
+            "actor": "codex",
+            "action": "created",
+            "reason": "根据 Phase 37 P37-E Backtest 队列生成 Trading Engineering 候选知识。"
+          },
+          {
+            "at": "2026-06-11",
+            "actor": "codex",
+            "action": "sourced",
+            "reason": "记录专业机构、论文、平台和复现实验框架来源摘要。"
+          }
+        ]
+      },
+      "workflow": {
+        "stage": "pending_external_audit",
+        "queue_group": "pending",
+        "current_task_id": "CEK-TA-412",
+        "next_action": "export_ai_audit",
+        "next_allowed_decisions": [
+          "accepted_for_draft",
+          "needs_more_evidence",
+          "rejected"
+        ],
+        "forbidden_decisions": [
+          "reviewed",
+          "approved",
+          "default_guidance",
+          "hard_gate"
+        ],
+        "formalization_allowed": false,
+        "conversion_target": {
+          "proposed_knowledge_id": "kb_04_backtest.reproducibility_package_required.v1",
+          "target_review_status": "draft",
+          "target_default_guidance": "deny",
+          "reviewed_allowed": false,
+          "approved_allowed": false,
+          "default_guidance_allowed": false,
+          "hard_gate_allowed": false
+        },
+        "ai_audit_result_id": null,
+        "formal_knowledge_id": null,
+        "formal_review_status": null,
+        "default_guidance_allowed": false,
+        "approved_allowed": false,
+        "hard_gate_allowed": false,
+        "hidden_from_default_queue": true,
+        "visible_in_default_guidance_queue": false
+      },
+      "contribution": {
+        "origin": "codex_research_ingestion_phase37",
+        "private_data_removed": true,
+        "contains_account_facts": false,
+        "contains_secret": false,
+        "contains_project_private_strategy": false
+      }
+    },
+    {
+      "schema_version": "1.1.0-candidate",
+      "candidate_id": "cand_20260611_phase37_backtest_slippage_fee_spread_required_001",
+      "research_task_id": "P37-E-B08",
+      "status": {
+        "review_status": "candidate_ready",
+        "ingestion_decision": "candidate_ready",
+        "decision_reason": "Phase 37 Backtest 候选知识已生成，等待外部严格审计；不得 reviewed/approved/default/hard gate。",
+        "created_at": "2026-06-11",
+        "updated_at": "2026-06-11"
+      },
+      "classification": {
+        "tree_node_id": "kt.trading_engineering.backtest",
+        "canonical_node_id": "kt.trading_engineering.backtest",
+        "tree_path": "CEK-TA / Trading Engineering / Backtest",
+        "related_nodes": [
+          "kt.trading_engineering",
+          "kt.trading_engineering.data_engineering",
+          "kt.kline_strategy",
+          "kt.market_microstructure",
+          "kt.replay_simulation",
+          "kt.live_execution",
+          "kt.risk_management",
+          "kt.ai_engineering.llm_training"
+        ],
+        "partition_id": "KB_04_BACKTEST",
+        "domain": "backtest",
+        "subdomain": "fill_cost",
+        "rule_type": "backtest_reliability_boundary_rule",
+        "claim_type": "execution_cost_boundary_rule",
+        "used_for": [
+          "backtest_review",
+          "strategy_validation_audit",
+          "ai_trader_project_gap_audit",
+          "external_project_rag_retrieval"
+        ],
+        "classification_notes": "本候选主归属 Trading Engineering / Backtest。AI Engineering 只能引用本规则，不得把回测可信度规则改写为模型训练或 RAG/MCP 本体规则。"
+      },
+      "claim": {
+        "claim_id": "claim_p37_e_b08",
+        "title": "滑点、手续费和价差必须纳入或声明缺失",
+        "statement": "Backtest 必须说明 fill price、slippage、fee、spread、partial fill 和订单类型假设；若未建模，结论必须降级为 gross research result。",
+        "normalized_claim": "backtest.slippage_fee_spread_required.v1",
+        "evidence_summary": "QuantConnect explains fill models, spread costs and interaction with slippage models for backtest order fills.；QuantConnect defines slippage as the difference between expected and actual fill price and models it for more realistic backtests.；QuantConnect fee models simulate brokerage transaction fees to make backtest results more realistic.",
+        "interpretation_notes": "本候选只定义回测可信度、偏差、成本、验证和复现边界，不输出买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+        "claim_strength": "medium_high",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general_with_market_specific_mapping",
+        "asset": "general",
+        "timeframe": "historical_evaluation",
+        "data_granularity": "historical_market_data_and_orders",
+        "project_type": "trading_ai_support_layer",
+        "applies_when": [
+          "审计策略回测、参数搜索、指标解释、成本模型、fill 假设或复现实验包",
+          "把回测结果用于 AI scoring、策略筛选、paper/live 前置评估或研究报告"
+        ],
+        "not_applicable_when": [
+          "需要直接生成买卖点、仓位、杠杆、止损止盈或实盘执行建议",
+          "没有历史数据版本、策略规则版本或 evaluation timestamp",
+          "问题属于 live execution、risk hard gate 或交易所实盘订单规则，应由对应分支处理"
+        ],
+        "assumptions": [
+          "候选用于 CEK-TA 通用支持层知识库，不包含任何外接项目私有策略参数。",
+          "回测结论必须保留数据、成本、执行、样本、参数搜索、验证和复现边界。",
+          "候选通过外部审计前不能进入正式 reviewed 知识库。"
+        ],
+        "limitations": [
+          "论文和专业机构资料支持方法边界，不能证明任何特定策略有效。",
+          "平台文档只可作为实现语义示例，外接项目必须映射自己的 backtest engine、broker、交易所和数据供应商。",
+          "本候选不提供任何投资建议或实盘执行许可。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_title": "Trade Fills - Key Concepts",
+          "source_url": "https://www.quantconnect.com/docs/v2/writing-algorithms/reality-modeling/trade-fills/key-concepts",
+          "source_type": "platform_doc",
+          "publisher": "QuantConnect",
+          "published_at": null,
+          "reliability": "medium_high",
+          "score": 82,
+          "freshness": "time_sensitive",
+          "evidence_summary": "QuantConnect explains fill models, spread costs and interaction with slippage models for backtest order fills.",
+          "limitations": [
+            "Platform-specific semantics; external projects must map their own fill model."
+          ],
+          "source_id": "src_001",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Slippage Models - Key Concepts",
+          "source_url": "https://www.quantconnect.com/docs/v2/writing-algorithms/reality-modeling/slippage/key-concepts",
+          "source_type": "platform_doc",
+          "publisher": "QuantConnect",
+          "published_at": null,
+          "reliability": "medium_high",
+          "score": 82,
+          "freshness": "time_sensitive",
+          "evidence_summary": "QuantConnect defines slippage as the difference between expected and actual fill price and models it for more realistic backtests.",
+          "limitations": [
+            "Platform-specific; supports slippage concept and modeling boundary."
+          ],
+          "source_id": "src_002",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Transaction Fees - Key Concepts",
+          "source_url": "https://www.quantconnect.com/docs/v2/writing-algorithms/reality-modeling/transaction-fees/key-concepts",
+          "source_type": "platform_doc",
+          "publisher": "QuantConnect",
+          "published_at": null,
+          "reliability": "medium_high",
+          "score": 82,
+          "freshness": "time_sensitive",
+          "evidence_summary": "QuantConnect fee models simulate brokerage transaction fees to make backtest results more realistic.",
+          "limitations": [
+            "Platform-specific; external projects must map actual brokerage/exchange fees."
+          ],
+          "source_id": "src_003",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Trade Strategy and Execution",
+          "source_url": "https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/trade-strategy-execution",
+          "source_type": "professional_curriculum",
+          "publisher": "CFA Institute",
+          "published_at": "2026-01-01",
+          "reliability": "high",
+          "score": 88,
+          "freshness": "time_sensitive",
+          "evidence_summary": "CFA Institute frames execution around liquidity needs, market conditions, execution risk, opportunity cost, market impact and trade cost analysis.",
+          "limitations": [
+            "Supports cost and execution boundary; not a backtest platform contract."
+          ],
+          "source_id": "src_004",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "medium_high",
+        "score": 83.5,
+        "score_version": "phase37_backtest_source_scoring_v1",
+        "primary_source_count": 3,
+        "supporting_source_count": 1,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "正式入库前必须由外部审计确认 claim 没有超出来源可证明范围。",
+          "平台文档只能证明平台语义，不能单独证明策略有效或实盘可执行。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none_known_in_visible_context",
+        "checked_against": [
+          "Phase 37 Trading 与 AI 跨分支引用契约",
+          "现有 Backtest formal seed 知识",
+          "Data Engineering / Replay / Live Execution / Risk Management owner 边界"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与可见正式知识的直接冲突；本候选只定义 Backtest 可信度边界，AI Engineering 只能引用。",
+        "approval_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 检索 Backtest 可信度、偏差、成本、验证和复现边界。",
+          "用于审计交易项目方案中是否缺少回测证据、成本模型、样本外、walk-forward 或复现实验包。",
+          "用于辅助外接项目设计 backtest review checklist、reason code 和 evidence gate。"
+        ],
+        "not_allowed": [
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+          "不得把候选知识当作 reviewed、approved、default guidance 或 hard gate。",
+          "不得绕过外接项目事实层、数据契约、执行适配器、风控 hard gate 或人工治理流程。"
+        ]
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "Phase 37 Backtest candidate requires external strict audit before formal reviewed/caveat_only.",
+        "requires_human_escalation": true,
+        "hidden_from_default_queue": true,
+        "visible_in_default_guidance_queue": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "review": {
+        "confidence": "medium_high",
+        "freshness": "mixed",
+        "reviewer": "codex_research_ingestion",
+        "reviewed_at": "2026-06-11",
+        "open_questions": [
+          "外部审计是否认为来源足以支撑该 claim？",
+          "是否需要补充更强的一手论文、平台文档、交易成本/TCA 或 reproducibility 来源？",
+          "是否存在与现有 Backtest formal seed 知识、Replay fill model、Data Engineering versioning 或 Risk Management 的重叠，需要合并或拆分？"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-11",
+            "actor": "codex",
+            "action": "created",
+            "reason": "根据 Phase 37 P37-E Backtest 队列生成 Trading Engineering 候选知识。"
+          },
+          {
+            "at": "2026-06-11",
+            "actor": "codex",
+            "action": "sourced",
+            "reason": "记录专业机构、论文、平台和复现实验框架来源摘要。"
+          }
+        ]
+      },
+      "workflow": {
+        "stage": "pending_external_audit",
+        "queue_group": "pending",
+        "current_task_id": "CEK-TA-412",
+        "next_action": "export_ai_audit",
+        "next_allowed_decisions": [
+          "accepted_for_draft",
+          "needs_more_evidence",
+          "rejected"
+        ],
+        "forbidden_decisions": [
+          "reviewed",
+          "approved",
+          "default_guidance",
+          "hard_gate"
+        ],
+        "formalization_allowed": false,
+        "conversion_target": {
+          "proposed_knowledge_id": "kb_04_backtest.slippage_fee_spread_required.v1",
+          "target_review_status": "draft",
+          "target_default_guidance": "deny",
+          "reviewed_allowed": false,
+          "approved_allowed": false,
+          "default_guidance_allowed": false,
+          "hard_gate_allowed": false
+        },
+        "ai_audit_result_id": null,
+        "formal_knowledge_id": null,
+        "formal_review_status": null,
+        "default_guidance_allowed": false,
+        "approved_allowed": false,
+        "hard_gate_allowed": false,
+        "hidden_from_default_queue": true,
+        "visible_in_default_guidance_queue": false
+      },
+      "contribution": {
+        "origin": "codex_research_ingestion_phase37",
+        "private_data_removed": true,
+        "contains_account_facts": false,
+        "contains_secret": false,
+        "contains_project_private_strategy": false
+      }
+    },
+    {
+      "schema_version": "1.1.0-candidate",
+      "candidate_id": "cand_20260611_phase37_backtest_strategy_version_and_data_version_required_001",
+      "research_task_id": "P37-E-B12",
+      "status": {
+        "review_status": "candidate_ready",
+        "ingestion_decision": "candidate_ready",
+        "decision_reason": "Phase 37 Backtest 候选知识已生成，等待外部严格审计；不得 reviewed/approved/default/hard gate。",
+        "created_at": "2026-06-11",
+        "updated_at": "2026-06-11"
+      },
+      "classification": {
+        "tree_node_id": "kt.trading_engineering.backtest",
+        "canonical_node_id": "kt.trading_engineering.backtest",
+        "tree_path": "CEK-TA / Trading Engineering / Backtest",
+        "related_nodes": [
+          "kt.trading_engineering",
+          "kt.trading_engineering.data_engineering",
+          "kt.kline_strategy",
+          "kt.market_microstructure",
+          "kt.replay_simulation",
+          "kt.live_execution",
+          "kt.risk_management",
+          "kt.ai_engineering.llm_training"
+        ],
+        "partition_id": "KB_04_BACKTEST",
+        "domain": "backtest",
+        "subdomain": "reproducibility",
+        "rule_type": "backtest_reliability_boundary_rule",
+        "claim_type": "versioning_contract",
+        "used_for": [
+          "backtest_review",
+          "strategy_validation_audit",
+          "ai_trader_project_gap_audit",
+          "external_project_rag_retrieval"
+        ],
+        "classification_notes": "本候选主归属 Trading Engineering / Backtest。AI Engineering 只能引用本规则，不得把回测可信度规则改写为模型训练或 RAG/MCP 本体规则。"
+      },
+      "claim": {
+        "claim_id": "claim_p37_e_b12",
+        "title": "策略版本和数据版本必须绑定",
+        "statement": "Backtest 结果必须绑定 strategy_rule_version、parameter_hash、data_version、calendar/session version、cost/fill model version 和 evaluation timestamp，不能只保存最终指标。",
+        "normalized_claim": "backtest.strategy_version_and_data_version_required.v1",
+        "evidence_summary": "MLflow Tracking records parameters, metrics, artifacts and source/version metadata for reproducible experiments.；DVC pipelines define stages, dependencies, outputs and reproducible data workflows.；CFA Institute frames backtesting as approximating the real-life investment process, including rolling-window processes, rules, portfolio formation, rebalancing, performance and risk profiles.",
+        "interpretation_notes": "本候选只定义回测可信度、偏差、成本、验证和复现边界，不输出买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+        "claim_strength": "medium_high",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general_with_market_specific_mapping",
+        "asset": "general",
+        "timeframe": "historical_evaluation",
+        "data_granularity": "historical_market_data_and_orders",
+        "project_type": "trading_ai_support_layer",
+        "applies_when": [
+          "审计策略回测、参数搜索、指标解释、成本模型、fill 假设或复现实验包",
+          "把回测结果用于 AI scoring、策略筛选、paper/live 前置评估或研究报告"
+        ],
+        "not_applicable_when": [
+          "需要直接生成买卖点、仓位、杠杆、止损止盈或实盘执行建议",
+          "没有历史数据版本、策略规则版本或 evaluation timestamp",
+          "问题属于 live execution、risk hard gate 或交易所实盘订单规则，应由对应分支处理"
+        ],
+        "assumptions": [
+          "候选用于 CEK-TA 通用支持层知识库，不包含任何外接项目私有策略参数。",
+          "回测结论必须保留数据、成本、执行、样本、参数搜索、验证和复现边界。",
+          "候选通过外部审计前不能进入正式 reviewed 知识库。"
+        ],
+        "limitations": [
+          "论文和专业机构资料支持方法边界，不能证明任何特定策略有效。",
+          "平台文档只可作为实现语义示例，外接项目必须映射自己的 backtest engine、broker、交易所和数据供应商。",
+          "本候选不提供任何投资建议或实盘执行许可。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_title": "MLflow Tracking",
+          "source_url": "https://mlflow.org/docs/latest/tracking.html",
+          "source_type": "framework_doc",
+          "publisher": "MLflow",
+          "published_at": null,
+          "reliability": "medium_high",
+          "score": 82,
+          "freshness": "time_sensitive",
+          "evidence_summary": "MLflow Tracking records parameters, metrics, artifacts and source/version metadata for reproducible experiments.",
+          "limitations": [
+            "Framework implementation example; not mandatory for CEK-TA."
+          ],
+          "source_id": "src_001",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "DVC Pipelines",
+          "source_url": "https://dvc.org/doc/user-guide/pipelines",
+          "source_type": "framework_doc",
+          "publisher": "DVC",
+          "published_at": null,
+          "reliability": "medium_high",
+          "score": 82,
+          "freshness": "time_sensitive",
+          "evidence_summary": "DVC pipelines define stages, dependencies, outputs and reproducible data workflows.",
+          "limitations": [
+            "Framework implementation example; not mandatory for CEK-TA."
+          ],
+          "source_id": "src_002",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Backtesting & Simulation",
+          "source_url": "https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/backtesting-and-simulation",
+          "source_type": "professional_curriculum",
+          "publisher": "CFA Institute",
+          "published_at": "2026-01-01",
+          "reliability": "high",
+          "score": 88,
+          "freshness": "time_sensitive",
+          "evidence_summary": "CFA Institute frames backtesting as approximating the real-life investment process, including rolling-window processes, rules, portfolio formation, rebalancing, performance and risk profiles.",
+          "limitations": [
+            "Professional curriculum source; use for process and boundary, not for a specific trading edge."
+          ],
+          "source_id": "src_003",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Trade Fills - Key Concepts",
+          "source_url": "https://www.quantconnect.com/docs/v2/writing-algorithms/reality-modeling/trade-fills/key-concepts",
+          "source_type": "platform_doc",
+          "publisher": "QuantConnect",
+          "published_at": null,
+          "reliability": "medium_high",
+          "score": 82,
+          "freshness": "time_sensitive",
+          "evidence_summary": "QuantConnect explains fill models, spread costs and interaction with slippage models for backtest order fills.",
+          "limitations": [
+            "Platform-specific semantics; external projects must map their own fill model."
+          ],
+          "source_id": "src_004",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "medium_high",
+        "score": 83.5,
+        "score_version": "phase37_backtest_source_scoring_v1",
+        "primary_source_count": 3,
+        "supporting_source_count": 1,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "正式入库前必须由外部审计确认 claim 没有超出来源可证明范围。",
+          "平台文档只能证明平台语义，不能单独证明策略有效或实盘可执行。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none_known_in_visible_context",
+        "checked_against": [
+          "Phase 37 Trading 与 AI 跨分支引用契约",
+          "现有 Backtest formal seed 知识",
+          "Data Engineering / Replay / Live Execution / Risk Management owner 边界"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与可见正式知识的直接冲突；本候选只定义 Backtest 可信度边界，AI Engineering 只能引用。",
+        "approval_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 检索 Backtest 可信度、偏差、成本、验证和复现边界。",
+          "用于审计交易项目方案中是否缺少回测证据、成本模型、样本外、walk-forward 或复现实验包。",
+          "用于辅助外接项目设计 backtest review checklist、reason code 和 evidence gate。"
+        ],
+        "not_allowed": [
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+          "不得把候选知识当作 reviewed、approved、default guidance 或 hard gate。",
+          "不得绕过外接项目事实层、数据契约、执行适配器、风控 hard gate 或人工治理流程。"
+        ]
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "Phase 37 Backtest candidate requires external strict audit before formal reviewed/caveat_only.",
+        "requires_human_escalation": true,
+        "hidden_from_default_queue": true,
+        "visible_in_default_guidance_queue": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "review": {
+        "confidence": "medium_high",
+        "freshness": "mixed",
+        "reviewer": "codex_research_ingestion",
+        "reviewed_at": "2026-06-11",
+        "open_questions": [
+          "外部审计是否认为来源足以支撑该 claim？",
+          "是否需要补充更强的一手论文、平台文档、交易成本/TCA 或 reproducibility 来源？",
+          "是否存在与现有 Backtest formal seed 知识、Replay fill model、Data Engineering versioning 或 Risk Management 的重叠，需要合并或拆分？"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-11",
+            "actor": "codex",
+            "action": "created",
+            "reason": "根据 Phase 37 P37-E Backtest 队列生成 Trading Engineering 候选知识。"
+          },
+          {
+            "at": "2026-06-11",
+            "actor": "codex",
+            "action": "sourced",
+            "reason": "记录专业机构、论文、平台和复现实验框架来源摘要。"
+          }
+        ]
+      },
+      "workflow": {
+        "stage": "pending_external_audit",
+        "queue_group": "pending",
+        "current_task_id": "CEK-TA-412",
+        "next_action": "export_ai_audit",
+        "next_allowed_decisions": [
+          "accepted_for_draft",
+          "needs_more_evidence",
+          "rejected"
+        ],
+        "forbidden_decisions": [
+          "reviewed",
+          "approved",
+          "default_guidance",
+          "hard_gate"
+        ],
+        "formalization_allowed": false,
+        "conversion_target": {
+          "proposed_knowledge_id": "kb_04_backtest.strategy_version_and_data_version_required.v1",
+          "target_review_status": "draft",
+          "target_default_guidance": "deny",
+          "reviewed_allowed": false,
+          "approved_allowed": false,
+          "default_guidance_allowed": false,
+          "hard_gate_allowed": false
+        },
+        "ai_audit_result_id": null,
+        "formal_knowledge_id": null,
+        "formal_review_status": null,
+        "default_guidance_allowed": false,
+        "approved_allowed": false,
+        "hard_gate_allowed": false,
+        "hidden_from_default_queue": true,
+        "visible_in_default_guidance_queue": false
+      },
+      "contribution": {
+        "origin": "codex_research_ingestion_phase37",
+        "private_data_removed": true,
+        "contains_account_facts": false,
+        "contains_secret": false,
+        "contains_project_private_strategy": false
+      }
+    },
+    {
+      "schema_version": "1.1.0-candidate",
+      "candidate_id": "cand_20260611_phase37_backtest_survivorship_selection_bias_check_001",
+      "research_task_id": "P37-E-B03",
+      "status": {
+        "review_status": "candidate_ready",
+        "ingestion_decision": "candidate_ready",
+        "decision_reason": "Phase 37 Backtest 候选知识已生成，等待外部严格审计；不得 reviewed/approved/default/hard gate。",
+        "created_at": "2026-06-11",
+        "updated_at": "2026-06-11"
+      },
+      "classification": {
+        "tree_node_id": "kt.trading_engineering.backtest",
+        "canonical_node_id": "kt.trading_engineering.backtest",
+        "tree_path": "CEK-TA / Trading Engineering / Backtest",
+        "related_nodes": [
+          "kt.trading_engineering",
+          "kt.trading_engineering.data_engineering",
+          "kt.kline_strategy",
+          "kt.market_microstructure",
+          "kt.replay_simulation",
+          "kt.live_execution",
+          "kt.risk_management",
+          "kt.ai_engineering.llm_training"
+        ],
+        "partition_id": "KB_04_BACKTEST",
+        "domain": "backtest",
+        "subdomain": "selection_bias",
+        "rule_type": "backtest_reliability_boundary_rule",
+        "claim_type": "methodological_constraint",
+        "used_for": [
+          "backtest_review",
+          "strategy_validation_audit",
+          "ai_trader_project_gap_audit",
+          "external_project_rag_retrieval"
+        ],
+        "classification_notes": "本候选主归属 Trading Engineering / Backtest。AI Engineering 只能引用本规则，不得把回测可信度规则改写为模型训练或 RAG/MCP 本体规则。"
+      },
+      "claim": {
+        "claim_id": "claim_p37_e_b03",
+        "title": "必须检查幸存者偏差和选择偏差",
+        "statement": "Backtest 必须说明 universe 构建时间点、退市/过期资产、合约换月、样本选择和排除规则；未处理幸存者偏差或选择偏差的结果只能作为候选研究线索。",
+        "normalized_claim": "backtest.survivorship_selection_bias_check.v1",
+        "evidence_summary": "CFA Institute frames backtesting as approximating the real-life investment process, including rolling-window processes, rules, portfolio formation, rebalancing, performance and risk profiles.；White formalizes data snooping risk when data is reused for inference or model selection, where apparently good results may arise by chance.；The Deflated Sharpe Ratio corrects for selection bias under multiple testing and non-normal returns, addressing inflated backtest performance.",
+        "interpretation_notes": "本候选只定义回测可信度、偏差、成本、验证和复现边界，不输出买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+        "claim_strength": "medium_high",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general_with_market_specific_mapping",
+        "asset": "general",
+        "timeframe": "historical_evaluation",
+        "data_granularity": "historical_market_data_and_orders",
+        "project_type": "trading_ai_support_layer",
+        "applies_when": [
+          "审计策略回测、参数搜索、指标解释、成本模型、fill 假设或复现实验包",
+          "把回测结果用于 AI scoring、策略筛选、paper/live 前置评估或研究报告"
+        ],
+        "not_applicable_when": [
+          "需要直接生成买卖点、仓位、杠杆、止损止盈或实盘执行建议",
+          "没有历史数据版本、策略规则版本或 evaluation timestamp",
+          "问题属于 live execution、risk hard gate 或交易所实盘订单规则，应由对应分支处理"
+        ],
+        "assumptions": [
+          "候选用于 CEK-TA 通用支持层知识库，不包含任何外接项目私有策略参数。",
+          "回测结论必须保留数据、成本、执行、样本、参数搜索、验证和复现边界。",
+          "候选通过外部审计前不能进入正式 reviewed 知识库。"
+        ],
+        "limitations": [
+          "论文和专业机构资料支持方法边界，不能证明任何特定策略有效。",
+          "平台文档只可作为实现语义示例，外接项目必须映射自己的 backtest engine、broker、交易所和数据供应商。",
+          "本候选不提供任何投资建议或实盘执行许可。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_title": "Backtesting & Simulation",
+          "source_url": "https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/backtesting-and-simulation",
+          "source_type": "professional_curriculum",
+          "publisher": "CFA Institute",
+          "published_at": "2026-01-01",
+          "reliability": "high",
+          "score": 88,
+          "freshness": "time_sensitive",
+          "evidence_summary": "CFA Institute frames backtesting as approximating the real-life investment process, including rolling-window processes, rules, portfolio formation, rebalancing, performance and risk profiles.",
+          "limitations": [
+            "Professional curriculum source; use for process and boundary, not for a specific trading edge."
+          ],
+          "source_id": "src_001",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "A Reality Check for Data Snooping",
+          "source_url": "https://www.ssc.wisc.edu/~bhansen/718/White2000.pdf",
+          "source_type": "academic_paper",
+          "publisher": "Econometrica",
+          "published_at": "2000-09-01",
+          "reliability": "high",
+          "score": 90,
+          "freshness": "stable",
+          "evidence_summary": "White formalizes data snooping risk when data is reused for inference or model selection, where apparently good results may arise by chance.",
+          "limitations": [
+            "Academic inference source; does not provide a platform implementation."
+          ],
+          "source_id": "src_002",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "The Deflated Sharpe Ratio: Correcting for Selection Bias, Backtest Overfitting and Non-Normality",
+          "source_url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2460551",
+          "source_type": "academic_paper",
+          "publisher": "SSRN / Journal of Portfolio Management",
+          "published_at": "2014-01-01",
+          "reliability": "high",
+          "score": 88,
+          "freshness": "stable",
+          "evidence_summary": "The Deflated Sharpe Ratio corrects for selection bias under multiple testing and non-normal returns, addressing inflated backtest performance.",
+          "limitations": [
+            "Supports overfitting/selection-bias metrics; not a standalone approval rule."
+          ],
+          "source_id": "src_003",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Data-Snooping, Technical Trading Rule Performance, and the Bootstrap",
+          "source_url": "https://www.jstor.org/stable/222451",
+          "source_type": "academic_paper",
+          "publisher": "Journal of Finance",
+          "published_at": "1999-10-01",
+          "reliability": "high",
+          "score": 88,
+          "freshness": "stable",
+          "evidence_summary": "Sullivan, Timmermann and White apply bootstrap methods to technical trading rules and data-snooping bias.",
+          "limitations": [
+            "JSTOR landing page/source metadata; page-level access may require subscription."
+          ],
+          "source_id": "src_004",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "medium_high",
+        "score": 88.5,
+        "score_version": "phase37_backtest_source_scoring_v1",
+        "primary_source_count": 3,
+        "supporting_source_count": 1,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "正式入库前必须由外部审计确认 claim 没有超出来源可证明范围。",
+          "平台文档只能证明平台语义，不能单独证明策略有效或实盘可执行。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none_known_in_visible_context",
+        "checked_against": [
+          "Phase 37 Trading 与 AI 跨分支引用契约",
+          "现有 Backtest formal seed 知识",
+          "Data Engineering / Replay / Live Execution / Risk Management owner 边界"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与可见正式知识的直接冲突；本候选只定义 Backtest 可信度边界，AI Engineering 只能引用。",
+        "approval_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 检索 Backtest 可信度、偏差、成本、验证和复现边界。",
+          "用于审计交易项目方案中是否缺少回测证据、成本模型、样本外、walk-forward 或复现实验包。",
+          "用于辅助外接项目设计 backtest review checklist、reason code 和 evidence gate。"
+        ],
+        "not_allowed": [
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+          "不得把候选知识当作 reviewed、approved、default guidance 或 hard gate。",
+          "不得绕过外接项目事实层、数据契约、执行适配器、风控 hard gate 或人工治理流程。"
+        ]
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "Phase 37 Backtest candidate requires external strict audit before formal reviewed/caveat_only.",
+        "requires_human_escalation": true,
+        "hidden_from_default_queue": true,
+        "visible_in_default_guidance_queue": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "review": {
+        "confidence": "medium_high",
+        "freshness": "mixed",
+        "reviewer": "codex_research_ingestion",
+        "reviewed_at": "2026-06-11",
+        "open_questions": [
+          "外部审计是否认为来源足以支撑该 claim？",
+          "是否需要补充更强的一手论文、平台文档、交易成本/TCA 或 reproducibility 来源？",
+          "是否存在与现有 Backtest formal seed 知识、Replay fill model、Data Engineering versioning 或 Risk Management 的重叠，需要合并或拆分？"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-11",
+            "actor": "codex",
+            "action": "created",
+            "reason": "根据 Phase 37 P37-E Backtest 队列生成 Trading Engineering 候选知识。"
+          },
+          {
+            "at": "2026-06-11",
+            "actor": "codex",
+            "action": "sourced",
+            "reason": "记录专业机构、论文、平台和复现实验框架来源摘要。"
+          }
+        ]
+      },
+      "workflow": {
+        "stage": "pending_external_audit",
+        "queue_group": "pending",
+        "current_task_id": "CEK-TA-412",
+        "next_action": "export_ai_audit",
+        "next_allowed_decisions": [
+          "accepted_for_draft",
+          "needs_more_evidence",
+          "rejected"
+        ],
+        "forbidden_decisions": [
+          "reviewed",
+          "approved",
+          "default_guidance",
+          "hard_gate"
+        ],
+        "formalization_allowed": false,
+        "conversion_target": {
+          "proposed_knowledge_id": "kb_04_backtest.survivorship_selection_bias_check.v1",
+          "target_review_status": "draft",
+          "target_default_guidance": "deny",
+          "reviewed_allowed": false,
+          "approved_allowed": false,
+          "default_guidance_allowed": false,
+          "hard_gate_allowed": false
+        },
+        "ai_audit_result_id": null,
+        "formal_knowledge_id": null,
+        "formal_review_status": null,
+        "default_guidance_allowed": false,
+        "approved_allowed": false,
+        "hard_gate_allowed": false,
+        "hidden_from_default_queue": true,
+        "visible_in_default_guidance_queue": false
+      },
+      "contribution": {
+        "origin": "codex_research_ingestion_phase37",
+        "private_data_removed": true,
+        "contains_account_facts": false,
+        "contains_secret": false,
+        "contains_project_private_strategy": false
+      }
+    },
+    {
+      "schema_version": "1.1.0-candidate",
+      "candidate_id": "cand_20260611_phase37_backtest_walk_forward_validation_required_001",
+      "research_task_id": "P37-E-B05",
+      "status": {
+        "review_status": "candidate_ready",
+        "ingestion_decision": "candidate_ready",
+        "decision_reason": "Phase 37 Backtest 候选知识已生成，等待外部严格审计；不得 reviewed/approved/default/hard gate。",
+        "created_at": "2026-06-11",
+        "updated_at": "2026-06-11"
+      },
+      "classification": {
+        "tree_node_id": "kt.trading_engineering.backtest",
+        "canonical_node_id": "kt.trading_engineering.backtest",
+        "tree_path": "CEK-TA / Trading Engineering / Backtest",
+        "related_nodes": [
+          "kt.trading_engineering",
+          "kt.trading_engineering.data_engineering",
+          "kt.kline_strategy",
+          "kt.market_microstructure",
+          "kt.replay_simulation",
+          "kt.live_execution",
+          "kt.risk_management",
+          "kt.ai_engineering.llm_training"
+        ],
+        "partition_id": "KB_04_BACKTEST",
+        "domain": "backtest",
+        "subdomain": "validation",
+        "rule_type": "backtest_reliability_boundary_rule",
+        "claim_type": "validation_boundary_rule",
+        "used_for": [
+          "backtest_review",
+          "strategy_validation_audit",
+          "ai_trader_project_gap_audit",
+          "external_project_rag_retrieval"
+        ],
+        "classification_notes": "本候选主归属 Trading Engineering / Backtest。AI Engineering 只能引用本规则，不得把回测可信度规则改写为模型训练或 RAG/MCP 本体规则。"
+      },
+      "claim": {
+        "claim_id": "claim_p37_e_b05",
+        "title": "Walk-forward 验证必须声明窗口和重训练规则",
+        "statement": "Walk-forward 或 rolling-window backtest 必须声明训练窗口、验证窗口、步长、重优化频率、参数冻结点和数据可用时间，不能只展示单次全样本最优结果。",
+        "normalized_claim": "backtest.walk_forward_validation_required.v1",
+        "evidence_summary": "CFA Institute frames backtesting as approximating the real-life investment process, including rolling-window processes, rules, portfolio formation, rebalancing, performance and risk profiles.；Bailey et al. propose Probability of Backtest Overfitting and cross-validation methods for strategy selection risk.；White formalizes data snooping risk when data is reused for inference or model selection, where apparently good results may arise by chance.",
+        "interpretation_notes": "本候选只定义回测可信度、偏差、成本、验证和复现边界，不输出买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+        "claim_strength": "medium_high",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general_with_market_specific_mapping",
+        "asset": "general",
+        "timeframe": "historical_evaluation",
+        "data_granularity": "historical_market_data_and_orders",
+        "project_type": "trading_ai_support_layer",
+        "applies_when": [
+          "审计策略回测、参数搜索、指标解释、成本模型、fill 假设或复现实验包",
+          "把回测结果用于 AI scoring、策略筛选、paper/live 前置评估或研究报告"
+        ],
+        "not_applicable_when": [
+          "需要直接生成买卖点、仓位、杠杆、止损止盈或实盘执行建议",
+          "没有历史数据版本、策略规则版本或 evaluation timestamp",
+          "问题属于 live execution、risk hard gate 或交易所实盘订单规则，应由对应分支处理"
+        ],
+        "assumptions": [
+          "候选用于 CEK-TA 通用支持层知识库，不包含任何外接项目私有策略参数。",
+          "回测结论必须保留数据、成本、执行、样本、参数搜索、验证和复现边界。",
+          "候选通过外部审计前不能进入正式 reviewed 知识库。"
+        ],
+        "limitations": [
+          "论文和专业机构资料支持方法边界，不能证明任何特定策略有效。",
+          "平台文档只可作为实现语义示例，外接项目必须映射自己的 backtest engine、broker、交易所和数据供应商。",
+          "本候选不提供任何投资建议或实盘执行许可。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_title": "Backtesting & Simulation",
+          "source_url": "https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/backtesting-and-simulation",
+          "source_type": "professional_curriculum",
+          "publisher": "CFA Institute",
+          "published_at": "2026-01-01",
+          "reliability": "high",
+          "score": 88,
+          "freshness": "time_sensitive",
+          "evidence_summary": "CFA Institute frames backtesting as approximating the real-life investment process, including rolling-window processes, rules, portfolio formation, rebalancing, performance and risk profiles.",
+          "limitations": [
+            "Professional curriculum source; use for process and boundary, not for a specific trading edge."
+          ],
+          "source_id": "src_001",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "The Probability of Backtest Overfitting",
+          "source_url": "https://www.davidhbailey.com/dhbpapers/backtest-overfitting.pdf",
+          "source_type": "academic_paper",
+          "publisher": "SSRN / Journal of Computational Finance",
+          "published_at": "2016-01-01",
+          "reliability": "high",
+          "score": 88,
+          "freshness": "stable",
+          "evidence_summary": "Bailey et al. propose Probability of Backtest Overfitting and cross-validation methods for strategy selection risk.",
+          "limitations": [
+            "Academic metric source; not an execution or production readiness rule."
+          ],
+          "source_id": "src_002",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "A Reality Check for Data Snooping",
+          "source_url": "https://www.ssc.wisc.edu/~bhansen/718/White2000.pdf",
+          "source_type": "academic_paper",
+          "publisher": "Econometrica",
+          "published_at": "2000-09-01",
+          "reliability": "high",
+          "score": 90,
+          "freshness": "stable",
+          "evidence_summary": "White formalizes data snooping risk when data is reused for inference or model selection, where apparently good results may arise by chance.",
+          "limitations": [
+            "Academic inference source; does not provide a platform implementation."
+          ],
+          "source_id": "src_003",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "MLflow Tracking",
+          "source_url": "https://mlflow.org/docs/latest/tracking.html",
+          "source_type": "framework_doc",
+          "publisher": "MLflow",
+          "published_at": null,
+          "reliability": "medium_high",
+          "score": 82,
+          "freshness": "time_sensitive",
+          "evidence_summary": "MLflow Tracking records parameters, metrics, artifacts and source/version metadata for reproducible experiments.",
+          "limitations": [
+            "Framework implementation example; not mandatory for CEK-TA."
+          ],
+          "source_id": "src_004",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "medium_high",
+        "score": 87.0,
+        "score_version": "phase37_backtest_source_scoring_v1",
+        "primary_source_count": 3,
+        "supporting_source_count": 1,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "正式入库前必须由外部审计确认 claim 没有超出来源可证明范围。",
+          "平台文档只能证明平台语义，不能单独证明策略有效或实盘可执行。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none_known_in_visible_context",
+        "checked_against": [
+          "Phase 37 Trading 与 AI 跨分支引用契约",
+          "现有 Backtest formal seed 知识",
+          "Data Engineering / Replay / Live Execution / Risk Management owner 边界"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与可见正式知识的直接冲突；本候选只定义 Backtest 可信度边界，AI Engineering 只能引用。",
+        "approval_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 检索 Backtest 可信度、偏差、成本、验证和复现边界。",
+          "用于审计交易项目方案中是否缺少回测证据、成本模型、样本外、walk-forward 或复现实验包。",
+          "用于辅助外接项目设计 backtest review checklist、reason code 和 evidence gate。"
+        ],
+        "not_allowed": [
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+          "不得把候选知识当作 reviewed、approved、default guidance 或 hard gate。",
+          "不得绕过外接项目事实层、数据契约、执行适配器、风控 hard gate 或人工治理流程。"
+        ]
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "Phase 37 Backtest candidate requires external strict audit before formal reviewed/caveat_only.",
+        "requires_human_escalation": true,
+        "hidden_from_default_queue": true,
+        "visible_in_default_guidance_queue": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "review": {
+        "confidence": "medium_high",
+        "freshness": "mixed",
+        "reviewer": "codex_research_ingestion",
+        "reviewed_at": "2026-06-11",
+        "open_questions": [
+          "外部审计是否认为来源足以支撑该 claim？",
+          "是否需要补充更强的一手论文、平台文档、交易成本/TCA 或 reproducibility 来源？",
+          "是否存在与现有 Backtest formal seed 知识、Replay fill model、Data Engineering versioning 或 Risk Management 的重叠，需要合并或拆分？"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-11",
+            "actor": "codex",
+            "action": "created",
+            "reason": "根据 Phase 37 P37-E Backtest 队列生成 Trading Engineering 候选知识。"
+          },
+          {
+            "at": "2026-06-11",
+            "actor": "codex",
+            "action": "sourced",
+            "reason": "记录专业机构、论文、平台和复现实验框架来源摘要。"
+          }
+        ]
+      },
+      "workflow": {
+        "stage": "pending_external_audit",
+        "queue_group": "pending",
+        "current_task_id": "CEK-TA-412",
+        "next_action": "export_ai_audit",
+        "next_allowed_decisions": [
+          "accepted_for_draft",
+          "needs_more_evidence",
+          "rejected"
+        ],
+        "forbidden_decisions": [
+          "reviewed",
+          "approved",
+          "default_guidance",
+          "hard_gate"
+        ],
+        "formalization_allowed": false,
+        "conversion_target": {
+          "proposed_knowledge_id": "kb_04_backtest.walk_forward_validation_required.v1",
+          "target_review_status": "draft",
+          "target_default_guidance": "deny",
+          "reviewed_allowed": false,
+          "approved_allowed": false,
+          "default_guidance_allowed": false,
+          "hard_gate_allowed": false
+        },
+        "ai_audit_result_id": null,
+        "formal_knowledge_id": null,
+        "formal_review_status": null,
+        "default_guidance_allowed": false,
+        "approved_allowed": false,
+        "hard_gate_allowed": false,
+        "hidden_from_default_queue": true,
+        "visible_in_default_guidance_queue": false
+      },
+      "contribution": {
+        "origin": "codex_research_ingestion_phase37",
+        "private_data_removed": true,
+        "contains_account_facts": false,
+        "contains_secret": false,
+        "contains_project_private_strategy": false
+      }
+    }
+  ]
+}

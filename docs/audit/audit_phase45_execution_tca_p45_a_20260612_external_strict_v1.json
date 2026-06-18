@@ -1,0 +1,122 @@
+{
+  "audit_result_id": "audit_phase45_execution_tca_p45_a_20260612_external_strict_v1",
+  "auditor": "GPT-5.5 Thinking",
+  "audited_at": "2026-06-12",
+  "package_id": "phase45_execution_tca_candidate_audit_package_20260612",
+  "summary": {
+    "total": 6,
+    "accepted_for_draft": 4,
+    "needs_more_evidence": 2,
+    "rejected": 0,
+    "blocked": 0
+  },
+  "candidate_results": [
+    {
+      "research_task_id": "P45-A-TCA01",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "CFA 直接支撑 implementation shortfall、显性/隐性成本、market impact、delay 和 opportunity cost。"
+      ],
+      "required_followups": [
+        "将强制措辞收窄为 CEK-TA draft 默认要求。",
+        "补充 decision_ts、arrival_price、order_submit_ts、first_fill_ts、avg_fill_price、fee、spread、unfilled_qty、benchmark_price 字段建议。",
+        "明确 buy/sell cost 正负号口径。"
+      ]
+    },
+    {
+      "research_task_id": "P45-A-TCA02",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "CFA 支撑 arrival、VWAP、TWAP 等 benchmark 选择边界；FINRA 只作为 best execution context 辅助。"
+      ],
+      "required_followups": [
+        "增加 benchmark registry：arrival / decision / VWAP / TWAP / close / custom。",
+        "每个 benchmark 绑定使用目的、适用订单类型、时间窗口、数据源和不可解释范围。",
+        "不得从单一 benchmark 表现推出执行整体好坏。"
+      ]
+    },
+    {
+      "research_task_id": "P45-A-TCA03",
+      "decision": "needs_more_evidence",
+      "confidence": "medium",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "方向正确，但 FIX ExecutionReport 只能支撑订单/成交事件语义，不能证明 VWAP/TWAP/POV 的算法边界。"
+      ],
+      "required_followups": [
+        "补充 FIXatdl、broker algo spec 或交易所/broker VWAP/TWAP/POV 文档。",
+        "补充 POV / participation algorithm 定义来源。",
+        "把不能绕过订单、风控、流动性和市场状态约束标记为 CEK-TA 内部边界。"
+      ]
+    },
+    {
+      "research_task_id": "P45-A-TCA04",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "CFA 直接支撑 delay、market impact、spread/fee/slippage 和 opportunity cost 拆分。"
+      ],
+      "required_followups": [
+        "明确 unfilled / partial fill / delayed submit 的 opportunity cost 计算边界。",
+        "加入 missing_benchmark、missing_arrival_price、missing_order_ts、missing_unfilled_qty reason code。",
+        "不得把 execution opportunity cost 误归因成 strategy win-rate 问题。"
+      ]
+    },
+    {
+      "research_task_id": "P45-A-TCA05",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "FINRA 5310 和 SEC Rule 606 支撑 best execution routing context，但必须保留司法辖区限制。"
+      ],
+      "required_followups": [
+        "明确 FINRA/SEC 只适用于对应美国 broker-dealer / NMS / listed options 语境。",
+        "routing context 字段分为 market_context、venue_context、order_context、conflict_context、disclosure_context、execution_result。",
+        "显式写明 best execution 不等于单一最优成交价。"
+      ]
+    },
+    {
+      "research_task_id": "P45-A-TCA06",
+      "decision": "needs_more_evidence",
+      "confidence": "medium",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "执行层来源可支撑 execution/fill/slippage 边界，但不足以支撑 strategy alpha / out-of-sample validation 规则。"
+      ],
+      "required_followups": [
+        "补充 strategy research validation、out-of-sample、walk-forward 或 leakage control 来源。",
+        "拆分 claim：execution optimization improves implementation cost；若写成 alpha 必须转入策略研究验证流程。",
+        "增加 Strategy Research / Backtest validation cross-reference。"
+      ]
+    }
+  ],
+  "global_notes": [
+    "审计包边界合格：candidate 审计，禁止 reviewed/approved/default guidance/hard gate。",
+    "TCA03 不得用 FIX ExecutionReport 证明 VWAP/TWAP/POV 算法边界。",
+    "TCA06 不得用执行成本来源证明 strategy alpha / out-of-sample validation 规则。"
+  ]
+}

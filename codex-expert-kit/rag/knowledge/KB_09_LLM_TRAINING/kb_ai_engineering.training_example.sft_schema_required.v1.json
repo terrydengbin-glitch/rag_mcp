@@ -1,0 +1,398 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_ai_engineering.training_example.sft_schema_required.v1",
+  "title": "SFT example 必须使用版本化 schema，至少包含 sft_example_id、messages_or",
+  "metadata": {
+    "partition_id": "KB_09_LLM_TRAINING",
+    "domain": "llm_training",
+    "subdomain": "training_example",
+    "rule_type": "checklist",
+    "content_type": "json",
+    "project_binding": "none",
+    "tree_node_id": "kt.llm_training.training_dataset_schema_engineering",
+    "tree_path": "CEK-TA / AI Engineering",
+    "canonical_node_id": "kt.llm_training.training_dataset_schema_engineering",
+    "canonical_tree_path": "CEK-TA / AI Engineering",
+    "risk_level": "medium",
+    "used_for": [
+      "llm_training",
+      "trading_gating_scoring",
+      "rag_engineering",
+      "mcp",
+      "vue_audit_ui"
+    ],
+    "source_candidate_id": "cand_20260609_ai_engineering_training_example_sft_schema_required_v1_001",
+    "research_task_id": "RIT-P36-B-S16",
+    "claim_type": "ai_governance_rule",
+    "classification_notes": "Phase 36 AI Engineering reviewed knowledge; UI tree and canonical node are inherited from candidate classification. Trading rule bodies must remain in Trading Engineering."
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "general",
+    "data_granularity": "general",
+    "project_type": "trading_llm_assistant",
+    "applies_when": [
+      "外接项目把交易审计、交易质量解释、gating/scoring reason code 或复盘任务构造成 SFT training example。",
+      "样本使用 messages、prompt-completion、assistant target、结构化输出 target 或 schema-constrained target。",
+      "训练集、验证集、测试集或 gold set 需要按 schema_version、split_id 和 source_ids 做审计。"
+    ],
+    "not_applicable_when": [
+      "任务是在定义 DPO/preference pair 的 chosen/rejected 结构；该场景应使用 preference_pair schema。",
+      "任务是在定义具体交易策略、买卖点、仓位、止损止盈或实盘订单执行规则。",
+      "用户只需要运行时 structured output，不涉及 SFT 数据集构造；该场景应路由到 runtime output schema。"
+    ]
+  },
+  "content": {
+    "statement": "SFT example 必须使用版本化 schema，至少包含 sft_example_id、messages_or_prompt、completion_or_assistant_target、output_schema_id、schema_version、split_id、source_ids、field_role_check_id 和 schema_validation_report_id；schema validation 通过不等于可上线，仍需 held-out eval、RAG/prompt baseline、privacy/license check 和 leakage check。",
+    "rationale": "本条定义 SFT example schema、schema validation、split 和 audit 字段；具体交易样本、策略语义、真值标签、订单和账户事实由 Trading Engineering 或 project owner 管理。 审计结论：补证后可以升级为 accepted_for_draft。rewritten statement 已与 normalized_claim 对齐：SFT example 必须使用版本化 schema，至少包含 sft_example_id、messages_or_prompt、completion_or_assistant_target、output_schema_id、schema_version、split_id、source_ids、field_role_check_id 和 schema_validation_report_id；schema validation 通过不等于可上线，仍需 held-out eval、RAG/prompt baseline、privacy/license check 和 leakage check。Hugging Face TRL SFTTrainer 直接支持 SFT dataset formats；OpenAI Structured Outputs / JSON Schema / TFDV 支持 output_schema 和 schema validation；OpenAI model optimization 支持先定义任务与 eval baseline 再选择 fine-tuning。该条可以进入 draft，但必须保持 vendor-neutral，不绑定单一平台。",
+    "procedure": [
+      "确认项目事实匹配 applies_when，且没有命中 not_applicable_when。",
+      "按 source_patch_notes 检查来源是否足够支撑 statement。",
+      "按 content_patch_notes 补齐正式实现、schema、字段和 checklist。",
+      "按 boundary_patch_notes 确认没有把交易规则本体、项目私有参数或实盘执行规则写入 AI Engineering。",
+      "保留 required_followups，后续由来源增强或治理任务继续关闭。"
+    ],
+    "examples": [],
+    "anti_patterns": [
+      "把 reviewed 知识当作 approved 默认指导。",
+      "把 AI Engineering 规则扩写成具体交易阈值、仓位、买卖点或执行参数。",
+      "忽略审计结果中的来源限制、适用范围和后续补强要求。"
+    ],
+    "validation": [
+      "source_evidence 至少 2 条，且没有 low-only 来源。",
+      "conflict_status 为 none 或 resolved。",
+      "review_status 为 reviewed 时 machine_gate 必须是 caveat_only。",
+      "MCP/SearchLab 默认指导不得把本条当作 approved 返回。"
+    ],
+    "risk_notes": [
+      "本条已完成补证二审并进入 formal reviewed；与 sft.output_schema_consistency_required、sft.when_to_use_and_not_use 的父子关系作为后续治理增强项追踪。",
+      "不同 SFT 框架对数据格式有差异，正式知识必须保留 vendor-neutral 字段和框架适配说明。",
+      "AI Engineering 定义 SFT example schema、field-role check、schema validation、split 管理和审计字段。",
+      "Trading Engineering / project owner 管理具体交易样本、策略语义、真值标签、订单、账户事实、交易上下文和执行逻辑。",
+      "不得把具体策略参数、买卖点、仓位、止损止盈、订单动作、K 线条件或账户配置写入 SFT 样本规则。",
+      "与第九批 sft.output_schema_consistency_required、sft.when_to_use_and_not_use 高度相关，应父子化：sft.when_to_use_and_not_use 管方法选择边界；sft.output_schema_consistency_required 管输出 schema conformance；本条管 training-example-level SFT schema。",
+      "与 training_example.input_target_separation 互补：本条定义 SFT 样本最小字段，input_target_separation 定义字段角色和泄漏阻断。",
+      "与 training_objective.task_definition_required 互补：任务定义应给出 output_schema_id，本条要求样本实际绑定该 schema。",
+      "补 sft_training_example_schema.json。",
+      "补 SFT vendor adapter mapping：messages、prompt_completion、text、conversational_prompt_completion。",
+      "补 schema_validation_report_id 与 heldout_eval_id 的绑定规则。",
+      "补 privacy_status / license_status / leakage_check_id 必填或 conditional_required 规则。",
+      "补 eval cases：missing assistant target、invalid messages format、schema-invalid output target、train/test split missing、SFT sample contains private strategy rule、schema-valid but unsafe trading action。"
+    ],
+    "citation_notes": "TRL SFTTrainer 文档支持 standard/conversational language modeling 与 prompt-completion 格式；OpenAI Structured Outputs 支持 JSON Schema 约束和类型安全解析；JSON Schema 提供 validation vocabulary 和 meta-schema；TFDV 文档说明 schema/statistics 可检测异常；OpenAI model optimization 支持先定义任务、评估质量再选择 fine-tuning。以上来源共同支撑 SFT example 需要版本化 schema、字段角色和验证报告。",
+    "audit_patch_notes": {
+      "source_patch_notes": [
+        "保留 Hugging Face TRL SFTTrainer 作为 SFT standard/conversational、language modeling、prompt-completion 格式来源。",
+        "保留 OpenAI Structured Outputs 和 JSON Schema 作为 output_schema_id、required_fields、schema_validation_report 的来源。",
+        "保留 TFDV 作为 schema / anomaly / skew validation supporting source。",
+        "保留 OpenAI model optimization 作为 task definition、eval baseline 和 fine-tuning method selection supporting source，并标注 fine-tuning platform wind-down。",
+        "补 CEK-TA sft_training_example_schema.json 作为内部主契约。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议保留补证方向：SFT examples must use a versioned schema with sft_example_id, messages_or_prompt, completion_or_assistant_target, output_schema_id, schema_version, split_id, source_ids, field_role_check_id and schema_validation_report_id.",
+        "建议字段：sft_example_id、messages_or_prompt、completion_or_assistant_target、output_schema_id、schema_version、split_id、source_ids、field_role_check_id、schema_validation_report_id、privacy_status、license_status、leakage_check_id。",
+        "schema validation pass 不等于可上线；仍需 held-out eval、RAG/prompt baseline、privacy/license check、leakage check 和 release manifest。",
+        "不同框架对 SFT 输入格式有差异，正式 schema 应使用 vendor-neutral field_role_map，并允许 adapter 映射到 messages、prompt/completion、text 等框架字段。",
+        "SFT sample 不得用于写入具体交易策略规则、经常变化的市场事实或实盘执行规则。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 定义 SFT example schema、field-role check、schema validation、split 管理和审计字段。",
+        "Trading Engineering / project owner 管理具体交易样本、策略语义、真值标签、订单、账户事实、交易上下文和执行逻辑。",
+        "不得把具体策略参数、买卖点、仓位、止损止盈、订单动作、K 线条件或账户配置写入 SFT 样本规则。"
+      ],
+      "conflict_patch_notes": [
+        "与第九批 sft.output_schema_consistency_required、sft.when_to_use_and_not_use 高度相关，应父子化：sft.when_to_use_and_not_use 管方法选择边界；sft.output_schema_consistency_required 管输出 schema conformance；本条管 training-example-level SFT schema。",
+        "与 training_example.input_target_separation 互补：本条定义 SFT 样本最小字段，input_target_separation 定义字段角色和泄漏阻断。",
+        "与 training_objective.task_definition_required 互补：任务定义应给出 output_schema_id，本条要求样本实际绑定该 schema。"
+      ],
+      "required_followups": [
+        "补 sft_training_example_schema.json。",
+        "补 SFT vendor adapter mapping：messages、prompt_completion、text、conversational_prompt_completion。",
+        "补 schema_validation_report_id 与 heldout_eval_id 的绑定规则。",
+        "补 privacy_status / license_status / leakage_check_id 必填或 conditional_required 规则。",
+        "补 eval cases：missing assistant target、invalid messages format、schema-invalid output target、train/test split missing、SFT sample contains private strategy rule、schema-valid but unsafe trading action。"
+      ]
+    }
+  },
+  "assumptions": [
+    "外接项目提供项目事实、私有交易数据和策略上下文；CEK-TA 只沉淀可复用专业规则。",
+    "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+  ],
+  "source_evidence": [
+    {
+      "source_id": "src_huggingface_trl_sft_trainer_2026",
+      "source_title": "SFT Trainer | Hugging Face TRL",
+      "source_url": "https://huggingface.co/docs/trl/en/sft_trainer",
+      "source_type": "official_doc",
+      "publisher": "Hugging Face",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "TRL SFTTrainer documents standard and conversational language modeling and prompt-completion dataset formats, including separate prompt and completion fields and completion-only training options.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_openai_structured_outputs_2026",
+      "source_title": "Structured model outputs | OpenAI API",
+      "source_url": "https://platform.openai.com/docs/guides/structured-outputs",
+      "source_type": "official_doc",
+      "publisher": "OpenAI",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "OpenAI Structured Outputs supports JSON Schema constrained outputs, schema design, type-safe parsing, and downstream validation handling.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_json_schema_specification_2026",
+      "source_title": "JSON Schema Specification",
+      "source_url": "https://json-schema.org/specification",
+      "source_type": "standard_or_risk_framework",
+      "publisher": "JSON Schema",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "JSON Schema provides a formal validation vocabulary and meta-schema foundation for validating structured JSON data.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_tensorflow_data_validation_anomalies_2026",
+      "source_title": "TensorFlow Data Validation Anomalies Reference",
+      "source_url": "https://www.tensorflow.org/tfx/data_validation/anomalies",
+      "source_type": "official_doc",
+      "publisher": "TensorFlow",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "medium",
+      "evidence_summary": "TensorFlow Data Validation documents schema and statistics based anomaly checks, including missing type, missing value, dataset-size, drift, and version comparator anomalies.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_openai_model_optimization_2026",
+      "source_title": "Model optimization | OpenAI API",
+      "source_url": "https://platform.openai.com/docs/guides/model-optimization",
+      "source_type": "official_doc",
+      "publisher": "OpenAI",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "medium",
+      "evidence_summary": "OpenAI model optimization guidance supports task definition, choosing prompting/RAG/fine-tuning approaches, and evaluating quality before model changes.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_occ_fed_fdic_revised_model_risk_2026",
+      "source_title": "Model Risk Management: Revised Guidance",
+      "source_url": "https://occ.gov/news-issuances/bulletins/2026/bulletin-2026-13.html",
+      "source_type": "standard_or_risk_framework",
+      "publisher": "OCC / Federal Reserve / FDIC",
+      "published_at": "2026-04-17",
+      "accessed_at": "2026-06-09",
+      "version": "OCC Bulletin 2026-13 / SR 26-2",
+      "reliability": "high",
+      "relevance": "medium",
+      "evidence_summary": "2026 年跨机构模型风险管理修订指南支持模型治理、验证、变更控制和风险分层；同时需注明 generative AI 和 agentic AI 不在其直接范围内，只能作为模型风险治理类比来源。",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 90,
+    "score_version": "1.0.0",
+    "primary_source_count": 2,
+    "supporting_source_count": 4,
+    "low_reliability_source_count": 0,
+    "limitations": [
+      "本条为 reviewed 知识，来源和审计补丁已记录；默认指导仍需后续人工治理升级 approved。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "docs/contracts/ai_engineering_gating_scoring_contract.md",
+      "docs/contracts/ai_engineering_knowledge_item_policy.md",
+      "docs/tasks/phase36_ai_engineering_gating_scoring_knowledge.md"
+    ],
+    "conflicts": [],
+    "resolution_summary": "补证后未发现与当前 CEK-TA formal knowledge 的直接冲突；仍需二次审计确认是否与相邻规则合并或父子化。候选不会进入默认指导。",
+    "default_recommendation": "caveat_only_until_approved"
+  },
+  "review": {
+    "confidence": "medium",
+    "freshness": "time_sensitive",
+    "review_status": "reviewed",
+    "reviewer": "codex",
+    "reviewed_at": "2026-06-09",
+    "created_at": "2026-06-09",
+    "updated_at": "2026-06-09",
+    "open_questions": [
+      "请审计该 schema 是否足够支持 vendor-neutral SFT 样本、结构化输出目标、split 管理和 schema validation 报告。",
+      "二次审计通过后只能进入 accepted_for_draft -> formal reviewed；不得直接进入 approved 或 machine_gate allow。",
+      "补 sft_training_example_schema.json。",
+      "补 SFT vendor adapter mapping：messages、prompt_completion、text、conversational_prompt_completion。",
+      "补 schema_validation_report_id 与 heldout_eval_id 的绑定规则。",
+      "补 privacy_status / license_status / leakage_check_id 必填或 conditional_required 规则。",
+      "补 eval cases：missing assistant target、invalid messages format、schema-invalid output target、train/test split missing、SFT sample contains private strategy rule、schema-valid but unsafe trading action。"
+    ],
+    "decision_log": [
+      {
+        "at": "2026-06-09",
+        "actor": "external_ai",
+        "decision": "accepted_for_draft",
+        "reason": "补证后可以升级为 accepted_for_draft。rewritten statement 已与 normalized_claim 对齐：SFT example 必须使用版本化 schema，至少包含 sft_example_id、messages_or_prompt、completion_or_assistant_target、output_schema_id、schema_version、split_id、source_ids、field_role_check_id 和 schema_validation_report_id；schema validation 通过不等于可上线，仍需 held-out eval、RAG/prompt baseline、privacy/license check 和 leakage check。Hugging Face TRL SFTTrainer 直接支持 SFT dataset formats；OpenAI Structured Outputs / JSON Schema / TFDV 支持 output_schema 和 schema validation；OpenAI model optimization 支持先定义任务与 eval baseline 再选择 fine-tuning。该条可以进入 draft，但必须保持 vendor-neutral，不绑定单一平台。",
+        "audit_result_id": "audit_result_phase36_batch10_strategy_training_example_supplemental_reaudit_20260609_gpt55_pro_strict_sources"
+      },
+      {
+        "at": "2026-06-09",
+        "actor": "codex",
+        "decision": "converted_to_reviewed",
+        "reason": "按 Phase 36 批量审计结果优化候选并转为 formal reviewed；未升级 approved。",
+        "audit_result_id": "audit_result_phase36_batch10_strategy_training_example_supplemental_reaudit_20260609_gpt55_pro_strict_sources"
+      }
+    ],
+    "approval_status": "not_requested",
+    "default_guidance_allowed": false,
+    "source_candidate_id": "cand_20260609_ai_engineering_training_example_sft_schema_required_v1_001",
+    "ai_audit_result_id": "audit_result_phase36_batch10_strategy_training_example_supplemental_reaudit_20260609_gpt55_pro_strict_sources",
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase36_batch10_strategy_training_example_supplemental_reaudit_20260609_gpt55_pro_strict_sources",
+      "source_package_id": "phase36_batch10_strategy_training_example_supplemental_audit_package_20260609",
+      "decision": "accepted_for_draft",
+      "reason": "补证后可以升级为 accepted_for_draft。rewritten statement 已与 normalized_claim 对齐：SFT example 必须使用版本化 schema，至少包含 sft_example_id、messages_or_prompt、completion_or_assistant_target、output_schema_id、schema_version、split_id、source_ids、field_role_check_id 和 schema_validation_report_id；schema validation 通过不等于可上线，仍需 held-out eval、RAG/prompt baseline、privacy/license check 和 leakage check。Hugging Face TRL SFTTrainer 直接支持 SFT dataset formats；OpenAI Structured Outputs / JSON Schema / TFDV 支持 output_schema 和 schema validation；OpenAI model optimization 支持先定义任务与 eval baseline 再选择 fine-tuning。该条可以进入 draft，但必须保持 vendor-neutral，不绑定单一平台。",
+      "source_patch_notes": [
+        "保留 Hugging Face TRL SFTTrainer 作为 SFT standard/conversational、language modeling、prompt-completion 格式来源。",
+        "保留 OpenAI Structured Outputs 和 JSON Schema 作为 output_schema_id、required_fields、schema_validation_report 的来源。",
+        "保留 TFDV 作为 schema / anomaly / skew validation supporting source。",
+        "保留 OpenAI model optimization 作为 task definition、eval baseline 和 fine-tuning method selection supporting source，并标注 fine-tuning platform wind-down。",
+        "补 CEK-TA sft_training_example_schema.json 作为内部主契约。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议保留补证方向：SFT examples must use a versioned schema with sft_example_id, messages_or_prompt, completion_or_assistant_target, output_schema_id, schema_version, split_id, source_ids, field_role_check_id and schema_validation_report_id.",
+        "建议字段：sft_example_id、messages_or_prompt、completion_or_assistant_target、output_schema_id、schema_version、split_id、source_ids、field_role_check_id、schema_validation_report_id、privacy_status、license_status、leakage_check_id。",
+        "schema validation pass 不等于可上线；仍需 held-out eval、RAG/prompt baseline、privacy/license check、leakage check 和 release manifest。",
+        "不同框架对 SFT 输入格式有差异，正式 schema 应使用 vendor-neutral field_role_map，并允许 adapter 映射到 messages、prompt/completion、text 等框架字段。",
+        "SFT sample 不得用于写入具体交易策略规则、经常变化的市场事实或实盘执行规则。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 定义 SFT example schema、field-role check、schema validation、split 管理和审计字段。",
+        "Trading Engineering / project owner 管理具体交易样本、策略语义、真值标签、订单、账户事实、交易上下文和执行逻辑。",
+        "不得把具体策略参数、买卖点、仓位、止损止盈、订单动作、K 线条件或账户配置写入 SFT 样本规则。"
+      ],
+      "conflict_patch_notes": [
+        "与第九批 sft.output_schema_consistency_required、sft.when_to_use_and_not_use 高度相关，应父子化：sft.when_to_use_and_not_use 管方法选择边界；sft.output_schema_consistency_required 管输出 schema conformance；本条管 training-example-level SFT schema。",
+        "与 training_example.input_target_separation 互补：本条定义 SFT 样本最小字段，input_target_separation 定义字段角色和泄漏阻断。",
+        "与 training_objective.task_definition_required 互补：任务定义应给出 output_schema_id，本条要求样本实际绑定该 schema。"
+      ],
+      "required_followups": [
+        "补 sft_training_example_schema.json。",
+        "补 SFT vendor adapter mapping：messages、prompt_completion、text、conversational_prompt_completion。",
+        "补 schema_validation_report_id 与 heldout_eval_id 的绑定规则。",
+        "补 privacy_status / license_status / leakage_check_id 必填或 conditional_required 规则。",
+        "补 eval cases：missing assistant target、invalid messages format、schema-invalid output target、train/test split missing、SFT sample contains private strategy rule、schema-valid but unsafe trading action。"
+      ]
+    },
+    "approved_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "contribution": {
+    "contribution_id": null,
+    "source_project": null,
+    "sanitization_status": "not_applicable",
+    "private_data_removed": true,
+    "generic_mapping_notes": "Phase 36 public-source AI Engineering candidate; no project-private trading facts included."
+  },
+  "copyright": {
+    "stores_full_text": false,
+    "stores_long_quote": false,
+    "summary_only": true,
+    "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+    "reuse_risk": "low"
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于审计 AI Engineering、LLM 训练、RAG/MCP、部署、安全或治理链路。",
+      "用于提醒外接项目补齐来源、适用边界、冲突状态、审计记录和人工审批。",
+      "用于 reviewed/audit 模式下带 caveat 引用。"
+    ],
+    "not_allowed": [
+      "不得生成买卖点、仓位、杠杆、止损止盈或实盘执行指令。",
+      "不得覆盖确定性风控、交易执行系统或人工审批。",
+      "不得作为 approved/default guidance 直接返回。"
+    ],
+    "required_context": [
+      "project_type",
+      "task_type",
+      "mode",
+      "strategy_version",
+      "data_boundary",
+      "review_status"
+    ],
+    "fallback_behavior": "cite_with_caveat"
+  },
+  "machine_gate": {
+    "default_guidance": "caveat_only",
+    "reason": "reviewed only; accepted_for_draft is not approved; default guidance requires later human governance approval.",
+    "requires_human_escalation": true,
+    "blocking_reasons": [
+      "not_approved",
+      "phase36_batch_reviewed_only"
+    ],
+    "checked_at": "2026-06-09",
+    "gate_version": "1.0.0",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "recommended_extra_sources": [
+    {
+      "title": "保留 Hugging Face TRL SFTTrainer 作为 SFT standard/conversational、language modeling、prompt-completion 格式来源。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_1"
+    },
+    {
+      "title": "保留 OpenAI Structured Outputs 和 JSON Schema 作为 output_schema_id、required_fields、schema_validation_report 的来源。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_2"
+    },
+    {
+      "title": "保留 TFDV 作为 schema / anomaly / skew validation supporting source。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_3"
+    },
+    {
+      "title": "保留 OpenAI model optimization 作为 task definition、eval baseline 和 fine-tuning method selection supporting source，并标注 fine-tuning platform wind-down。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_4"
+    },
+    {
+      "title": "补 CEK-TA sft_training_example_schema.json 作为内部主契约。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_5"
+    }
+  ]
+}

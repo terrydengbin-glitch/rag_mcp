@@ -1,0 +1,454 @@
+{
+  "audit_result_id": "audit_result_phase37_replay_simulation_reviewed_preparation_20260612_strict_v1",
+  "package_id": "phase37_replay_simulation_reviewed_preparation_audit_package_20260612",
+  "auditor": "gpt-5.5-thinking-strict-audit",
+  "audited_at": "2026-06-12",
+  "quality_gate": {
+    "pass": false,
+    "reason": "9/12 可进入 reviewed/caveat_only；R02/R10/R12 仍需要 CEK-TA 内部 fill-ordering、simulation-live gap report、execution cost mapping 契约或 schema 支撑。"
+  },
+  "summary": {
+    "total": 12,
+    "accepted_for_reviewed_caveat_only": 9,
+    "needs_more_evidence": 3,
+    "rejected": 0,
+    "blocked": 0
+  },
+  "hard_boundaries": {
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "trade_execution_advice_allowed": false
+  },
+  "candidate_results": [
+    {
+      "candidate_id": "cand_20260611_phase37_replay_simulation_event_clock_required_001",
+      "research_task_id": "P37-F-R01",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "medium_high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "事件时钟、撮合时点、信号生成时点与订单提交时点边界由 Backtrader event timing/cheat modes、HftBacktest latency models 和 QuantConnect fill models 支撑；可作为 reviewed/caveat_only 方法边界。"
+      ],
+      "required_followups": [
+        "正式 materialize reviewed/caveat_only 前仍需完整 CEK-TA formal KB 冲突、重复、owner 边界检查。",
+        "保留 vendor/framework/exchange 文档只能作为语义或实现示例的限制。"
+      ],
+      "patch_notes": {
+        "source": [
+          "框架、平台、交易所、broker 和 FIX 文档只能支撑各自语义，不得泛化为所有市场通用规则。",
+          "需要内部契约支撑的字段本体不得只由外部工具文档替代。"
+        ],
+        "content": [
+          "Replay / Simulation 只表达事件时钟、成交模型、partial/no fill、延迟模型、交易所/经纪商规则映射、订单状态生命周期、simulation-live gap report、OHLC vs tick replay 粒度边界。",
+          "simulation evidence invalidation 只能表示该模拟证据不可作为执行质量或可交易性证据。"
+        ],
+        "boundary": [
+          "reviewed/caveat_only 不等于 approved、default guidance 或 hard gate。",
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+          "不得把 paper/simulation 通过解释成 live execution permission。"
+        ],
+        "conflict": [
+          "R07/R08/R09 与 Live Execution / Exchange Adapter 重叠时，Replay 只模拟规则与状态；真实下单、真实拒单、账户同步、实盘订单状态归 Live Execution owner。",
+          "R12 与 Backtest/Replay/Live Execution 成本版本映射重叠时，需要 owner contract 明确 Backtest 记录、Replay 模拟、Live Execution 真实成交的边界。"
+        ]
+      }
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_replay_simulation_exchange_rule_simulation_required_001",
+      "research_task_id": "P37-F-R07",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "CME matching algorithm、Binance filters、IBKR order types 和 brokerage-model 资料足以支撑交易所/经纪商规则进入 simulation 约束；可 reviewed/caveat_only，但 Replay 只模拟规则，不拥有 live order owner 权限。"
+      ],
+      "required_followups": [
+        "正式 materialize reviewed/caveat_only 前仍需完整 CEK-TA formal KB 冲突、重复、owner 边界检查。",
+        "保留 vendor/framework/exchange 文档只能作为语义或实现示例的限制。"
+      ],
+      "patch_notes": {
+        "source": [
+          "框架、平台、交易所、broker 和 FIX 文档只能支撑各自语义，不得泛化为所有市场通用规则。",
+          "需要内部契约支撑的字段本体不得只由外部工具文档替代。"
+        ],
+        "content": [
+          "Replay / Simulation 只表达事件时钟、成交模型、partial/no fill、延迟模型、交易所/经纪商规则映射、订单状态生命周期、simulation-live gap report、OHLC vs tick replay 粒度边界。",
+          "simulation evidence invalidation 只能表示该模拟证据不可作为执行质量或可交易性证据。"
+        ],
+        "boundary": [
+          "reviewed/caveat_only 不等于 approved、default guidance 或 hard gate。",
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+          "不得把 paper/simulation 通过解释成 live execution permission。"
+        ],
+        "conflict": [
+          "R07/R08/R09 与 Live Execution / Exchange Adapter 重叠时，Replay 只模拟规则与状态；真实下单、真实拒单、账户同步、实盘订单状态归 Live Execution owner。",
+          "R12 与 Backtest/Replay/Live Execution 成本版本映射重叠时，需要 owner contract 明确 Backtest 记录、Replay 模拟、Live Execution 真实成交的边界。"
+        ]
+      }
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_replay_simulation_execution_cost_consistency_required_001",
+      "research_task_id": "P37-F-R12",
+      "decision": "needs_more_evidence",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "QuantConnect fee/slippage/fill 和 FIX 资料能支撑执行成本口径需记录，但 Backtest/Replay/Paper/Live 间的版本化映射属于 CEK-TA 跨 owner contract；当前包未内联 internal contract 或 owner schema，所以不能 reviewed/caveat_only。"
+      ],
+      "required_followups": [
+        "上传或内联 CEK-TA execution_cost_mapping contract，定义 fee/spread/slippage/market_impact/fill_model 在 Backtest、Replay、Paper、Live 之间的版本映射与 owner 边界。"
+      ],
+      "patch_notes": {
+        "source": [
+          "框架、平台、交易所、broker 和 FIX 文档只能支撑各自语义，不得泛化为所有市场通用规则。",
+          "需要内部契约支撑的字段本体不得只由外部工具文档替代。"
+        ],
+        "content": [
+          "Replay / Simulation 只表达事件时钟、成交模型、partial/no fill、延迟模型、交易所/经纪商规则映射、订单状态生命周期、simulation-live gap report、OHLC vs tick replay 粒度边界。",
+          "simulation evidence invalidation 只能表示该模拟证据不可作为执行质量或可交易性证据。"
+        ],
+        "boundary": [
+          "reviewed/caveat_only 不等于 approved、default guidance 或 hard gate。",
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+          "不得把 paper/simulation 通过解释成 live execution permission。"
+        ],
+        "conflict": [
+          "R07/R08/R09 与 Live Execution / Exchange Adapter 重叠时，Replay 只模拟规则与状态；真实下单、真实拒单、账户同步、实盘订单状态归 Live Execution owner。",
+          "R12 与 Backtest/Replay/Live Execution 成本版本映射重叠时，需要 owner contract 明确 Backtest 记录、Replay 模拟、Live Execution 真实成交的边界。"
+        ]
+      }
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_replay_simulation_fill_model_assumption_required_001",
+      "research_task_id": "P37-F-R03",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "Fill model 的成交价格、成交数量、spread、slippage、队列/流动性限制和适用市场边界由 QuantConnect fill/slippage model 与 HftBacktest order fill 资料支撑；可 reviewed/caveat_only。"
+      ],
+      "required_followups": [
+        "正式 materialize reviewed/caveat_only 前仍需完整 CEK-TA formal KB 冲突、重复、owner 边界检查。",
+        "保留 vendor/framework/exchange 文档只能作为语义或实现示例的限制。"
+      ],
+      "patch_notes": {
+        "source": [
+          "框架、平台、交易所、broker 和 FIX 文档只能支撑各自语义，不得泛化为所有市场通用规则。",
+          "需要内部契约支撑的字段本体不得只由外部工具文档替代。"
+        ],
+        "content": [
+          "Replay / Simulation 只表达事件时钟、成交模型、partial/no fill、延迟模型、交易所/经纪商规则映射、订单状态生命周期、simulation-live gap report、OHLC vs tick replay 粒度边界。",
+          "simulation evidence invalidation 只能表示该模拟证据不可作为执行质量或可交易性证据。"
+        ],
+        "boundary": [
+          "reviewed/caveat_only 不等于 approved、default guidance 或 hard gate。",
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+          "不得把 paper/simulation 通过解释成 live execution permission。"
+        ],
+        "conflict": [
+          "R07/R08/R09 与 Live Execution / Exchange Adapter 重叠时，Replay 只模拟规则与状态；真实下单、真实拒单、账户同步、实盘订单状态归 Live Execution owner。",
+          "R12 与 Backtest/Replay/Live Execution 成本版本映射重叠时，需要 owner contract 明确 Backtest 记录、Replay 模拟、Live Execution 真实成交的边界。"
+        ]
+      }
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_replay_simulation_latency_model_required_001",
+      "research_task_id": "P37-F-R05",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "Feed/order latency、queue position 和 broker/API 行为差异资料足以支持延迟模型必须声明；可 reviewed/caveat_only。"
+      ],
+      "required_followups": [
+        "正式 materialize reviewed/caveat_only 前仍需完整 CEK-TA formal KB 冲突、重复、owner 边界检查。",
+        "保留 vendor/framework/exchange 文档只能作为语义或实现示例的限制。"
+      ],
+      "patch_notes": {
+        "source": [
+          "框架、平台、交易所、broker 和 FIX 文档只能支撑各自语义，不得泛化为所有市场通用规则。",
+          "需要内部契约支撑的字段本体不得只由外部工具文档替代。"
+        ],
+        "content": [
+          "Replay / Simulation 只表达事件时钟、成交模型、partial/no fill、延迟模型、交易所/经纪商规则映射、订单状态生命周期、simulation-live gap report、OHLC vs tick replay 粒度边界。",
+          "simulation evidence invalidation 只能表示该模拟证据不可作为执行质量或可交易性证据。"
+        ],
+        "boundary": [
+          "reviewed/caveat_only 不等于 approved、default guidance 或 hard gate。",
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+          "不得把 paper/simulation 通过解释成 live execution permission。"
+        ],
+        "conflict": [
+          "R07/R08/R09 与 Live Execution / Exchange Adapter 重叠时，Replay 只模拟规则与状态；真实下单、真实拒单、账户同步、实盘订单状态归 Live Execution owner。",
+          "R12 与 Backtest/Replay/Live Execution 成本版本映射重叠时，需要 owner contract 明确 Backtest 记录、Replay 模拟、Live Execution 真实成交的边界。"
+        ]
+      }
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_replay_simulation_minimum_order_size_required_001",
+      "research_task_id": "P37-F-R08",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "Binance LOT_SIZE/MIN_NOTIONAL/NOTIONAL、IBKR order type 和 brokerage validation 资料足以支持最小数量、步长、最小名义金额、价格精度和订单类型限制模拟；可 reviewed/caveat_only。"
+      ],
+      "required_followups": [
+        "正式 materialize reviewed/caveat_only 前仍需完整 CEK-TA formal KB 冲突、重复、owner 边界检查。",
+        "保留 vendor/framework/exchange 文档只能作为语义或实现示例的限制。"
+      ],
+      "patch_notes": {
+        "source": [
+          "框架、平台、交易所、broker 和 FIX 文档只能支撑各自语义，不得泛化为所有市场通用规则。",
+          "需要内部契约支撑的字段本体不得只由外部工具文档替代。"
+        ],
+        "content": [
+          "Replay / Simulation 只表达事件时钟、成交模型、partial/no fill、延迟模型、交易所/经纪商规则映射、订单状态生命周期、simulation-live gap report、OHLC vs tick replay 粒度边界。",
+          "simulation evidence invalidation 只能表示该模拟证据不可作为执行质量或可交易性证据。"
+        ],
+        "boundary": [
+          "reviewed/caveat_only 不等于 approved、default guidance 或 hard gate。",
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+          "不得把 paper/simulation 通过解释成 live execution permission。"
+        ],
+        "conflict": [
+          "R07/R08/R09 与 Live Execution / Exchange Adapter 重叠时，Replay 只模拟规则与状态；真实下单、真实拒单、账户同步、实盘订单状态归 Live Execution owner。",
+          "R12 与 Backtest/Replay/Live Execution 成本版本映射重叠时，需要 owner contract 明确 Backtest 记录、Replay 模拟、Live Execution 真实成交的边界。"
+        ]
+      }
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_replay_simulation_ohlc_same_bar_tp_sl_ordering_required_001",
+      "research_task_id": "P37-F-R02",
+      "decision": "needs_more_evidence",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "仅有 OHLC bar 时同根 K 内 TP/SL 先后顺序不能由现有 OHLC 来源证明；当前外部框架文档足以支撑 draft，但 reviewed/caveat_only 还需要 CEK-TA fill-ordering/同根 K 处理契约或 schema 明确 conservative/optimistic/next-bar/tick-replay 的判定规则。"
+      ],
+      "required_followups": [
+        "上传或内联 CEK-TA OHLC same-bar fill-ordering contract/schema，定义 conservative、optimistic、next-bar、tick-replay、unknown-ordering 的字段与应用规则。"
+      ],
+      "patch_notes": {
+        "source": [
+          "框架、平台、交易所、broker 和 FIX 文档只能支撑各自语义，不得泛化为所有市场通用规则。",
+          "需要内部契约支撑的字段本体不得只由外部工具文档替代。"
+        ],
+        "content": [
+          "Replay / Simulation 只表达事件时钟、成交模型、partial/no fill、延迟模型、交易所/经纪商规则映射、订单状态生命周期、simulation-live gap report、OHLC vs tick replay 粒度边界。",
+          "simulation evidence invalidation 只能表示该模拟证据不可作为执行质量或可交易性证据。"
+        ],
+        "boundary": [
+          "reviewed/caveat_only 不等于 approved、default guidance 或 hard gate。",
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+          "不得把 paper/simulation 通过解释成 live execution permission。"
+        ],
+        "conflict": [
+          "R07/R08/R09 与 Live Execution / Exchange Adapter 重叠时，Replay 只模拟规则与状态；真实下单、真实拒单、账户同步、实盘订单状态归 Live Execution owner。",
+          "R12 与 Backtest/Replay/Live Execution 成本版本映射重叠时，需要 owner contract 明确 Backtest 记录、Replay 模拟、Live Execution 真实成交的边界。"
+        ]
+      }
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_replay_simulation_order_reject_and_cancel_policy_required_001",
+      "research_task_id": "P37-F-R09",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "FIX ExecutionReport/OrdStatus、IBKR API 和 brokerage-model 资料支撑拒单、撤单、pending、expired、partial/filled 等状态必须模拟；可 reviewed/caveat_only。"
+      ],
+      "required_followups": [
+        "正式 materialize reviewed/caveat_only 前仍需完整 CEK-TA formal KB 冲突、重复、owner 边界检查。",
+        "保留 vendor/framework/exchange 文档只能作为语义或实现示例的限制。"
+      ],
+      "patch_notes": {
+        "source": [
+          "框架、平台、交易所、broker 和 FIX 文档只能支撑各自语义，不得泛化为所有市场通用规则。",
+          "需要内部契约支撑的字段本体不得只由外部工具文档替代。"
+        ],
+        "content": [
+          "Replay / Simulation 只表达事件时钟、成交模型、partial/no fill、延迟模型、交易所/经纪商规则映射、订单状态生命周期、simulation-live gap report、OHLC vs tick replay 粒度边界。",
+          "simulation evidence invalidation 只能表示该模拟证据不可作为执行质量或可交易性证据。"
+        ],
+        "boundary": [
+          "reviewed/caveat_only 不等于 approved、default guidance 或 hard gate。",
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+          "不得把 paper/simulation 通过解释成 live execution permission。"
+        ],
+        "conflict": [
+          "R07/R08/R09 与 Live Execution / Exchange Adapter 重叠时，Replay 只模拟规则与状态；真实下单、真实拒单、账户同步、实盘订单状态归 Live Execution owner。",
+          "R12 与 Backtest/Replay/Live Execution 成本版本映射重叠时，需要 owner contract 明确 Backtest 记录、Replay 模拟、Live Execution 真实成交的边界。"
+        ]
+      }
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_replay_simulation_paper_trading_not_equal_live_001",
+      "research_task_id": "P37-F-R06",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "medium_high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "Paper trading 与 live 的差异由 IBKR API、QuantConnect brokerage/fill models 和 HftBacktest replay caveat 支撑；可 reviewed/caveat_only，但不得解释为实盘许可。"
+      ],
+      "required_followups": [
+        "正式 materialize reviewed/caveat_only 前仍需完整 CEK-TA formal KB 冲突、重复、owner 边界检查。",
+        "保留 vendor/framework/exchange 文档只能作为语义或实现示例的限制。"
+      ],
+      "patch_notes": {
+        "source": [
+          "框架、平台、交易所、broker 和 FIX 文档只能支撑各自语义，不得泛化为所有市场通用规则。",
+          "需要内部契约支撑的字段本体不得只由外部工具文档替代。"
+        ],
+        "content": [
+          "Replay / Simulation 只表达事件时钟、成交模型、partial/no fill、延迟模型、交易所/经纪商规则映射、订单状态生命周期、simulation-live gap report、OHLC vs tick replay 粒度边界。",
+          "simulation evidence invalidation 只能表示该模拟证据不可作为执行质量或可交易性证据。"
+        ],
+        "boundary": [
+          "reviewed/caveat_only 不等于 approved、default guidance 或 hard gate。",
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+          "不得把 paper/simulation 通过解释成 live execution permission。"
+        ],
+        "conflict": [
+          "R07/R08/R09 与 Live Execution / Exchange Adapter 重叠时，Replay 只模拟规则与状态；真实下单、真实拒单、账户同步、实盘订单状态归 Live Execution owner。",
+          "R12 与 Backtest/Replay/Live Execution 成本版本映射重叠时，需要 owner contract 明确 Backtest 记录、Replay 模拟、Live Execution 真实成交的边界。"
+        ]
+      }
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_replay_simulation_partial_fill_policy_required_001",
+      "research_task_id": "P37-F-R04",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "Partial/no fill、残量、撤单、过期和订单状态边界由 HftBacktest partial-fill caveat 与 FIX ExecutionReport/OrdStatus 支撑；可 reviewed/caveat_only。"
+      ],
+      "required_followups": [
+        "正式 materialize reviewed/caveat_only 前仍需完整 CEK-TA formal KB 冲突、重复、owner 边界检查。",
+        "保留 vendor/framework/exchange 文档只能作为语义或实现示例的限制。"
+      ],
+      "patch_notes": {
+        "source": [
+          "框架、平台、交易所、broker 和 FIX 文档只能支撑各自语义，不得泛化为所有市场通用规则。",
+          "需要内部契约支撑的字段本体不得只由外部工具文档替代。"
+        ],
+        "content": [
+          "Replay / Simulation 只表达事件时钟、成交模型、partial/no fill、延迟模型、交易所/经纪商规则映射、订单状态生命周期、simulation-live gap report、OHLC vs tick replay 粒度边界。",
+          "simulation evidence invalidation 只能表示该模拟证据不可作为执行质量或可交易性证据。"
+        ],
+        "boundary": [
+          "reviewed/caveat_only 不等于 approved、default guidance 或 hard gate。",
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+          "不得把 paper/simulation 通过解释成 live execution permission。"
+        ],
+        "conflict": [
+          "R07/R08/R09 与 Live Execution / Exchange Adapter 重叠时，Replay 只模拟规则与状态；真实下单、真实拒单、账户同步、实盘订单状态归 Live Execution owner。",
+          "R12 与 Backtest/Replay/Live Execution 成本版本映射重叠时，需要 owner contract 明确 Backtest 记录、Replay 模拟、Live Execution 真实成交的边界。"
+        ]
+      }
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_replay_simulation_simulation_live_gap_report_required_001",
+      "research_task_id": "P37-F-R10",
+      "decision": "needs_more_evidence",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "外部 fill/slippage/FIX/IBKR 资料支持 gap report 的组成方向，但 reviewed/caveat_only 需要 CEK-TA simulation_live_gap_report schema，定义字段、owner、生成时点、对齐对象、版本和可接受缺失处理。"
+      ],
+      "required_followups": [
+        "上传或内联 CEK-TA simulation_live_gap_report schema，覆盖 fill_price、fill_qty、latency、reject/cancel、slippage、fee、order_state、risk_trigger、live_reference、simulation_reference 和 owner 字段。"
+      ],
+      "patch_notes": {
+        "source": [
+          "框架、平台、交易所、broker 和 FIX 文档只能支撑各自语义，不得泛化为所有市场通用规则。",
+          "需要内部契约支撑的字段本体不得只由外部工具文档替代。"
+        ],
+        "content": [
+          "Replay / Simulation 只表达事件时钟、成交模型、partial/no fill、延迟模型、交易所/经纪商规则映射、订单状态生命周期、simulation-live gap report、OHLC vs tick replay 粒度边界。",
+          "simulation evidence invalidation 只能表示该模拟证据不可作为执行质量或可交易性证据。"
+        ],
+        "boundary": [
+          "reviewed/caveat_only 不等于 approved、default guidance 或 hard gate。",
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+          "不得把 paper/simulation 通过解释成 live execution permission。"
+        ],
+        "conflict": [
+          "R07/R08/R09 与 Live Execution / Exchange Adapter 重叠时，Replay 只模拟规则与状态；真实下单、真实拒单、账户同步、实盘订单状态归 Live Execution owner。",
+          "R12 与 Backtest/Replay/Live Execution 成本版本映射重叠时，需要 owner contract 明确 Backtest 记录、Replay 模拟、Live Execution 真实成交的边界。"
+        ]
+      }
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_replay_simulation_tick_replay_vs_ohlc_boundary_001",
+      "research_task_id": "P37-F-R11",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "HftBacktest order fill 文档和项目说明支持 tick/order-book replay 与 OHLC replay 的粒度边界，以及 market replay 不可改变历史市场；可 reviewed/caveat_only。"
+      ],
+      "required_followups": [
+        "正式 materialize reviewed/caveat_only 前仍需完整 CEK-TA formal KB 冲突、重复、owner 边界检查。",
+        "保留 vendor/framework/exchange 文档只能作为语义或实现示例的限制。"
+      ],
+      "patch_notes": {
+        "source": [
+          "框架、平台、交易所、broker 和 FIX 文档只能支撑各自语义，不得泛化为所有市场通用规则。",
+          "需要内部契约支撑的字段本体不得只由外部工具文档替代。"
+        ],
+        "content": [
+          "Replay / Simulation 只表达事件时钟、成交模型、partial/no fill、延迟模型、交易所/经纪商规则映射、订单状态生命周期、simulation-live gap report、OHLC vs tick replay 粒度边界。",
+          "simulation evidence invalidation 只能表示该模拟证据不可作为执行质量或可交易性证据。"
+        ],
+        "boundary": [
+          "reviewed/caveat_only 不等于 approved、default guidance 或 hard gate。",
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+          "不得把 paper/simulation 通过解释成 live execution permission。"
+        ],
+        "conflict": [
+          "R07/R08/R09 与 Live Execution / Exchange Adapter 重叠时，Replay 只模拟规则与状态；真实下单、真实拒单、账户同步、实盘订单状态归 Live Execution owner。",
+          "R12 与 Backtest/Replay/Live Execution 成本版本映射重叠时，需要 owner contract 明确 Backtest 记录、Replay 模拟、Live Execution 真实成交的边界。"
+        ]
+      }
+    }
+  ]
+}

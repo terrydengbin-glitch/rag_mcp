@@ -1,0 +1,56 @@
+{
+  "audit_result_id": "audit_result_phase36_batch04_false_allow_supplemental_reaudit_20260609_gpt55_pro_strict_sources",
+  "source_package_id": "phase36_batch04_false_allow_supplemental_audit_package_20260609",
+  "decisions": [
+    {
+      "candidate_id": "cand_20260609_ai_engineering_gating_false_allow_more_dangerous_than_false_block_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "补证后可以升级为 accepted_for_draft。rewritten statement 已经从“false allow 一定比 false block 更危险”的绝对断言，改为 CEK-TA hard-gate 交易 LLM 工作流中的默认风险偏好，并明确该默认只在没有 approved risk ledger、cost matrix 和 Trading Engineering owner override 时适用。source_refs 已补入 cost-sensitive learning、cost matrix、NIST AI RMF risk prioritization、FINRA algorithmic trading controls 和 OpenAI high-stakes human review 来源，足以支撑进入 formal draft。但正式知识必须继续保持限定：这是 CEK-TA 内部 hard-gate policy，不是所有交易场景的外部事实，也不能单独决定具体交易阈值。",
+      "source_patch_notes": [
+        "将 Elkan, The Foundations of Cost-Sensitive Learning 设为主来源之一，用于支持不同误分类错误需要不同成本、cost matrix 必须经济一致、决策应基于最低期望成本。",
+        "将 scikit-learn cost-sensitive threshold 示例设为主来源之一，用于支持决策阈值应根据 misclassification cost matrix / business cost 调整，而不是只使用默认阈值或 accuracy。",
+        "保留 NIST AI RMF Core Manage 作为 risk ledger / severity / likelihood / owner / risk response 的治理来源。",
+        "保留 FINRA Regulatory Notice 15-09 和 FINRA Algorithmic Trading 作为交易自动化监督、测试、控制、风险评估和治理来源。",
+        "保留 OpenAI Usage Policies 作为金融等高风险自动化决策需要 human review 的 supporting source；不得把它作为交易成本矩阵或 false_allow 成本排序的主来源。",
+        "将旧 src_fed_model_risk 更新或补充为 2026 OCC/Fed/FDIC revised model risk guidance，并在正式 draft 明确其 generative AI / agentic AI 不在直接适用范围内，只能作为模型风险治理、验证、监控和治理控制的 supporting source。",
+        "建议补内部来源：risk_ledger.false_allow_cost_record_required、false_allow_false_block_cost_matrix.md、Trading Engineering owner override policy。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：For CEK-TA hard-gate trading LLM workflows, false_allow is treated as higher-severity by default unless an approved risk ledger, cost matrix and Trading Engineering owner define a different cost model.",
+        "中文正式表述建议为：在 CEK-TA hard-gate 交易 LLM 工作流中，false allow 默认按更高严重度处理；但这不是跨所有交易场景的普适事实，只有在 approved risk ledger、cost matrix 和 Trading Engineering owner 未定义覆盖模型时才作为默认风险偏好。",
+        "增加限制语：该规则不能单独决定交易阈值、仓位、订单动作或策略收益权衡；没有 risk ledger 时只能触发 human_review、needs_more_evidence、block_default_guidance 或 review_priority，而不是自动调阈值。",
+        "建议 required fields 保留并扩展为：risk_ledger_id、risk_event_id、gate_context、false_allow_severity、false_block_severity、cost_matrix_ref、cost_model_ref、risk_owner、trading_engineering_owner、override_reason、fallback_action、review_queue_id、reviewed_at、effective_at、expires_at。",
+        "建议增加 gate_context enum：hard_gate、pre_risk_gate、default_trade_guidance、review_priority、research_only、offline_explanation。",
+        "建议增加 severity_source enum：cek_ta_default、project_risk_ledger、trading_engineering_override、compliance_override。",
+        "建议明确 negative examples：offline explanation 不适用；已有 approved cost matrix 且 false_block 成本更高时不适用；只涉及低置信度不能 hard allow 时应引用 gating.low_confidence_cannot_allow。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 只定义 risk event schema、默认 severity、cost matrix 引用、fallback_action、review priority 和审计字段。",
+        "Trading Engineering 或项目 owner 管理具体成本函数、策略收益、机会成本、仓位影响、风控预算、交易阈值、止损止盈和订单执行逻辑。",
+        "AI Engineering 知识库不得写入具体交易参数、账户风控规则、订单动作、买卖点、止损止盈、仓位规则或项目私有策略事实。",
+        "如果 false_allow / false_block 成本排序需要结合特定策略、市场状态、fill model、滑点、费用、账户约束或机会成本计算，应路由到 Trading Engineering。",
+        "本条只能作为默认 hard-gate 安全偏好，不能作为法律意见、投资建议或交易绩效承诺。"
+      ],
+      "conflict_patch_notes": [
+        "与 gating.low_confidence_cannot_allow 重复但不等价：low_confidence_cannot_allow 处理低置信度或未校准 score 不能 hard allow；本条处理 false_allow 与 false_block 的默认成本排序和 risk ledger 覆盖条件。",
+        "与 risk_ledger.false_allow_cost_record_required 后续候选高度相关，建议建立父子关系：本条为默认风险偏好，risk_ledger 条为必须记录成本与 owner 的证据规则。",
+        "与 calibration.threshold_requires_shadow_data、eval.score_calibration_required_before_gating、approval.hard_gate_enable_requires_approval、audit.every_gate_decision_requires_trace 应互链。",
+        "未发现与当前 CEK-TA formal knowledge 的直接冲突；补充包也记录当前 conflict_status 为 none，但 accepted_for_draft 仍不等于 approved。"
+      ],
+      "required_followups": [
+        "补 false_allow_false_block_cost_matrix.md，说明 cost matrix 如何定义 false_allow / false_block、何时允许 override、谁拥有最终解释权。",
+        "补 risk_ledger_schema.json，至少包含 risk_event_id、gate_context、severity、likelihood、impact、owner、cost_matrix_ref、review_status、effective_at、expiry_at。",
+        "补 Trading Engineering owner override policy，明确何时项目 owner 可将 false_block 设置为更高成本，以及 override 需要哪些证据。",
+        "补 fallback_action enum：human_review、needs_more_evidence、block_default_guidance、neutral_score、review_priority_escalation、defer_to_trading_engineering。",
+        "补 eval cases：false allow causes rule violation、false block causes missed profit、approved risk ledger overrides default severity、LLM-only offline explanation not applicable、low confidence no hard allow but no cost matrix.",
+        "在 formal draft 中标注 source limitation：OpenAI policies 只支持高风险自动化 human review，OCC/Fed/FDIC revised model risk guidance 不直接覆盖 generative AI / agentic AI。"
+      ]
+    }
+  ],
+  "raw_external_report_path": "C:\\Users\\dove\\.codex\\attachments\\d0764819-3be6-43d6-ac87-cb479892beb0\\pasted-text.txt",
+  "normalization_notes": [
+    "外部二审报告使用 items；CEK-TA 内部导入契约使用 decisions。",
+    "accepted_for_draft 只允许转 formal reviewed，不能转 approved 或默认指导。",
+    "本次为 Phase 36 第四批 false allow needs_more_evidence 候选的补证后二审回写。"
+  ]
+}

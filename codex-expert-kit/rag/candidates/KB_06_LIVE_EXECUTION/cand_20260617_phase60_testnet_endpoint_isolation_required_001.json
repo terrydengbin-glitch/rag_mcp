@@ -1,0 +1,250 @@
+{
+  "schema_version": "1.1.0-candidate",
+  "candidate_id": "cand_20260617_phase60_testnet_endpoint_isolation_required_001",
+  "research_task_id": "P60-A03",
+  "status": {
+    "review_status": "formalized",
+    "ingestion_decision": "formal_reviewed_created",
+    "decision_reason": "Phase 60 reviewed-preparation strict audit allowed this item to become formal reviewed/caveat_only.",
+    "created_at": "2026-06-17",
+    "updated_at": "2026-06-17"
+  },
+  "classification": {
+    "tree_node_id": "kt.live_execution",
+    "canonical_node_id": "kt.live_execution",
+    "tree_path": "CEK-TA / Trading Engineering / Live Execution",
+    "related_nodes": [
+      "kt.trading_engineering",
+      "kt.replay_simulation",
+      "kt.live_execution",
+      "kt.risk_management",
+      "kt.data_engineering",
+      "kt.market_microstructure",
+      "kt.ai_engineering"
+    ],
+    "partition_id": "KB_06_LIVE_EXECUTION",
+    "domain": "live_execution",
+    "subdomain": "testnet_endpoint_isolation",
+    "rule_type": "execution_environment_boundary_rule",
+    "claim_type": "endpoint_isolation_constraint",
+    "used_for": [
+      "testnet_review",
+      "adapter_review",
+      "credential_scope_audit",
+      "external_project_rag_retrieval"
+    ],
+    "classification_notes": "本候选属于 Trading Engineering 的环境治理知识。AI Engineering 只能引用 manifest、gap report 和 reason code 做审计解释，不得拥有交易执行、阈值或 hard gate。"
+  },
+  "claim": {
+    "claim_id": "claim_p60_a03",
+    "title": "testnet / demo endpoint 必须与生产 endpoint 隔离",
+    "statement": "测试网或 demo trading 必须显式记录 endpoint、API key scope、账户 scope 和数据源；testnet 订单、余额和成交不得写成生产环境事实。",
+    "normalized_claim": "phase60.testnet_endpoint_isolation_required.v1",
+    "evidence_summary": "Binance USD-M Futures documentation provides testnet REST and WebSocket base URLs and states that most endpoints can be used in the testnet platform.；CEK-TA internal contract defining EnvironmentManifest fields, owner boundaries and machine gate restrictions.",
+    "interpretation_notes": "本候选只定义 sandbox / testnet / replay / paper / live canary 环境边界、证据和审计流程，不输出买卖点、仓位、杠杆、止损止盈、风险阈值或实盘执行建议。",
+    "claim_strength": "medium_high",
+    "performance_claim": false
+  },
+  "applicability": {
+    "market": "general_with_platform_or_venue_specific_mapping",
+    "asset": "general",
+    "timeframe": "testing_replay_paper_or_live_canary_environment",
+    "data_granularity": "mocked_response_historical_realtime_order_event_or_fill_event",
+    "project_type": "trading_ai_support_layer",
+    "applies_when": [
+      "外接项目设计 sandbox、testnet、historical replay、realtime simulation、paper trading 或 live canary 流程",
+      "需要审计测试环境、模拟成交、订单生命周期、风控 rehearsal 或 paper/live 差异",
+      "需要把回测、回放、模拟盘和实盘等效链条落实到环境证据"
+    ],
+    "not_applicable_when": [
+      "需要直接生成买卖点、仓位、杠杆、止损止盈、风险阈值或实盘执行建议",
+      "问题属于真实 live order routing、账户同步、真实保证金或 broker truth，应由 Live Execution / Risk owner 处理",
+      "没有平台、交易所、券商、API 版本、数据来源或环境类型证据"
+    ],
+    "assumptions": [
+      "候选用于 CEK-TA 通用支持层知识库，不包含任何外接项目私有策略参数。",
+      "每个环境都需要显式记录环境事实、模拟假设、owner 和审计 trace。",
+      "候选通过外部审计前不能进入正式 reviewed 知识库。"
+    ],
+    "limitations": [
+      "平台、交易所、broker 和框架文档只能作为 implementation pattern 或 supporting source。",
+      "sandbox、testnet、paper trading 和 replay 的结果不能单独证明策略收益或实盘可行性。",
+      "本候选不提供投资建议、订单建议、风险阈值或实盘许可。"
+    ]
+  },
+  "source_refs": [
+    {
+      "source_title": "General Info",
+      "source_url": "https://developers.binance.com/docs/derivatives/usds-margined-futures/general-info",
+      "source_type": "official_doc",
+      "publisher": "Binance Open Platform",
+      "reliability": "high",
+      "score": 84,
+      "freshness": "time_sensitive",
+      "evidence_summary": "Binance USD-M Futures documentation provides testnet REST and WebSocket base URLs and states that most endpoints can be used in the testnet platform.",
+      "limitations": [
+        "Binance USD-M Futures-specific endpoint behavior; not a universal exchange testnet rule."
+      ],
+      "source_id": "src_binance_testnet",
+      "accessed_at": "2026-06-17",
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "Phase 60 Sandbox / Replay / Paper Environment Contract",
+      "source_url": "docs/contracts/phase60_sandbox_replay_paper_environment_contract.md",
+      "source_type": "internal_contract",
+      "publisher": "CEK-TA",
+      "reliability": "high",
+      "score": 88,
+      "freshness": "current",
+      "evidence_summary": "CEK-TA internal contract defining EnvironmentManifest fields, owner boundaries and machine gate restrictions.",
+      "limitations": [
+        "Internal CEK-TA schema; reviewed status requires external audit."
+      ],
+      "source_id": "src_phase60_env_contract",
+      "accessed_at": "2026-06-17",
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "source_count": 2,
+    "primary_source_count": 2,
+    "limitations": [
+      "外部来源具有平台、broker、exchange、asset class 或 API 版本边界。",
+      "内部契约需要外部 AI/人工审计后才能用于 formal reviewed/caveat_only。"
+    ],
+    "needs_more_evidence": false
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "known_conflicts": [],
+    "potential_conflicts": [
+      "可能与 Phase 58 environment equivalence manifest、Phase 37 replay/simulation、Phase 45 order/risk knowledge 重叠，正式转换前必须做重复和 owner 边界检查。"
+    ],
+    "resolution_summary": "External strict audit accepted this candidate for draft only. approval_allowed=false is required to avoid machine misread; formal reviewed/caveat_only requires a separate reviewed-preparation audit.",
+    "approval_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于提醒外接项目区分 sandbox、testnet、replay、paper、live canary 和 live 环境",
+      "用于审计 environment_manifest、promotion_decision 和 gap_report 是否齐全",
+      "用于阻止 AI 把 paper 盈亏、sandbox 响应或 replay 成交泛化为 live-ready 证据"
+    ],
+    "not_allowed": [
+      "不得据此生成买卖点、仓位、杠杆、止损止盈或风险阈值",
+      "不得据此授权实盘、自动拒单、自动停机或 hard gate",
+      "不得把任何平台 sandbox/paper 行为泛化为所有市场"
+    ]
+  },
+  "machine_gate": {
+    "default_guidance": "deny",
+    "reviewed_allowed": false,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "trade_execution_advice_allowed": false,
+    "risk_threshold_advice_allowed": false,
+    "requires_human_escalation": true,
+    "reason": "accepted_for_draft only; reviewed/caveat_only requires a separate reviewed-preparation audit."
+  },
+  "conversion_target": {
+    "proposed_knowledge_id": "kb_phase60_live_execution.testnet_endpoint_isolation_required.v1",
+    "target_partition": "KB_06_LIVE_EXECUTION",
+    "target_review_status": "draft_preparation",
+    "default_guidance_target": "deny",
+    "hard_gate_target": "deny"
+  },
+  "workflow": {
+    "stage": "formalized_reviewed",
+    "queue_group": "formalized",
+    "hidden_from_default_queue": true,
+    "next_action": "runtime_linkage_validation",
+    "formal_knowledge_id": "kb_phase60_live_execution.testnet_endpoint_isolation_required.v1",
+    "formal_review_status": "reviewed",
+    "ai_audit_result_id": "audit_result_phase60_reviewed_preparation_20260617_strict_v1",
+    "reviewed_preparation_audit_package_id": "phase60_reviewed_preparation_audit_package_20260617",
+    "current_task_id": "CEK-TA-579",
+    "visible_in_default_guidance_queue": false,
+    "formalization_allowed": true,
+    "formal_knowledge_path": "codex-expert-kit/rag/knowledge/KB_06_LIVE_EXECUTION/kb_phase60_live_execution.testnet_endpoint_isolation_required.v1.json",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "audit_log": [
+    {
+      "event": "candidate_created",
+      "at": "2026-06-17",
+      "by": "codex",
+      "notes": "Phase 60 P0 候选生成，等待严格审计。"
+    },
+    {
+      "event": "external_ai_audit_imported",
+      "at": "2026-06-17",
+      "by": "codex",
+      "task_id": "CEK-TA-577",
+      "audit_result_id": "audit_result_phase60_sandbox_replay_paper_candidate_20260617_strict_v1",
+      "decision": "accepted_for_draft",
+      "notes": "Strict audit accepted for draft only; conflict_audit.approval_allowed patched to false."
+    },
+    {
+      "event": "reviewed_preparation_audit_package_exported",
+      "at": "2026-06-17",
+      "by": "codex",
+      "task_id": "CEK-TA-578",
+      "package_id": "phase60_reviewed_preparation_audit_package_20260617",
+      "notes": "Exported for strict reviewed/caveat_only preparation audit; no formal reviewed knowledge created."
+    },
+    {
+      "event": "formal_reviewed_caveat_only_created",
+      "at": "2026-06-17",
+      "by": "codex",
+      "task_id": "CEK-TA-579",
+      "audit_result_id": "audit_result_phase60_reviewed_preparation_20260617_strict_v1",
+      "formal_knowledge_id": "kb_phase60_live_execution.testnet_endpoint_isolation_required.v1",
+      "notes": "Formal reviewed/caveat_only created; no approved/default/hard gate."
+    }
+  ],
+  "copyright": {
+    "stores_full_text": false,
+    "stores_long_quote": false,
+    "summary_only": true
+  },
+  "review": {
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase60_reviewed_preparation_20260617_strict_v1",
+      "package_id": "phase60_reviewed_preparation_audit_package_20260617",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "formal_knowledge_id": "kb_phase60_live_execution.testnet_endpoint_isolation_required.v1",
+      "required_followups": [
+        "补 endpoint_scope_policy、credential_scope_policy、account_scope_policy、data_source_scope_policy。"
+      ],
+      "patch_notes": {
+        "source": [
+          "Binance 来源只能作为 Binance USD-M Futures-specific。"
+        ],
+        "content": [
+          "testnet facts 不得写入 production facts。"
+        ],
+        "boundary": [
+          "不得泛化为所有交易所 testnet 行为。"
+        ],
+        "conflict": [
+          "与 Live Execution owner 不冲突。"
+        ]
+      }
+    },
+    "review_status": "formalized",
+    "default_guidance_allowed": false
+  }
+}

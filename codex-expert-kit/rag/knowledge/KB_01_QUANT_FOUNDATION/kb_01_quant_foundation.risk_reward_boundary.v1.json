@@ -1,0 +1,358 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_01_quant_foundation.risk_reward_boundary.v1",
+  "title": "风险收益比只能描述潜在收益相对潜在风险的静态关系；没有胜率、成本、样本外验证和执行可达性时，不得把高 R/R 描述成策略优势。",
+  "metadata": {
+    "partition_id": "KB_01_QUANT_FOUNDATION",
+    "domain": "quant_trading",
+    "subdomain": "risk_reward",
+    "rule_type": "methodological_constraint",
+    "claim_type": "methodological_constraint",
+    "content_type": "json",
+    "project_binding": "none",
+    "tree_node_id": "kt.quant_foundation",
+    "tree_path": "CEK-TA / Trading Engineering / Quant Foundation",
+    "canonical_node_id": "kt.quant_foundation",
+    "canonical_tree_path": "CEK-TA / Trading Engineering / Quant Foundation",
+    "risk_level": "medium",
+    "used_for": [
+      "trading_knowledge_audit",
+      "ai_trader_project_design",
+      "trade_quality_scoring_context",
+      "external_project_rag_retrieval"
+    ],
+    "source_candidate_id": "cand_20260611_phase37_risk_reward_boundary_001",
+    "research_task_id": "P37-A-Q03",
+    "phase": "Phase 37",
+    "classification_notes": "Phase 37 Quant Foundation formal reviewed/caveat_only；这是 Trading Engineering 规则本体，不是 AI Engineering 训练/RAG/MCP 本体规则，也不是 approved/default guidance。"
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "general",
+    "data_granularity": "general",
+    "project_type": "trading_ai_support_layer",
+    "applies_when": [
+      "评审交易计划中的风险收益表达",
+      "训练 AI 避免把高 R/R 当作独立优势"
+    ],
+    "not_applicable_when": [
+      "用户已经给出经审计的完整策略验证报告",
+      "问题只是在解释数学比例，不涉及交易结论",
+      "需要具体交易策略参数、账户事实、交易所配置、密钥或实盘权限时，应由外接项目事实层处理。",
+      "AI Engineering 只能引用本规则，不得把本规则改写为模型训练、MCP 或 RAG 本体规则。"
+    ]
+  },
+  "content": {
+    "statement": "风险收益比只能描述潜在收益相对潜在风险的静态关系；没有胜率、成本、样本外验证和执行可达性时，不得把高 R/R 描述成策略优势。",
+    "rationale": "本候选只定义交易专业知识边界，不输出买卖点、仓位、止损止盈、杠杆或实盘执行建议。",
+    "procedure": [
+      "确认当前问题属于 Quant Foundation / Trading Engineering 规则本体，而不是 AI Engineering 训练、RAG 或 MCP 本体。",
+      "同时检查概率、payoff、成本、样本、执行、风险和验证边界，避免单一指标泛化。",
+      "返回本知识时必须携带 source_evidence、review_status、machine_gate、适用范围和不适用场景。",
+      "必须显式检查手续费、点差、滑点、市场冲击、延迟、未成交和数据偏差。"
+    ],
+    "examples": [],
+    "anti_patterns": [
+      "把单一指标当作交易系统质量证明。",
+      "忽略成本、执行、样本外验证或数据偏差就声明可复用盈利能力。",
+      "把 reviewed/caveat_only 知识说成 approved 默认指导。"
+    ],
+    "validation": [
+      "source_evidence 非空，且来源类型覆盖定义、成本、执行或回测边界中的相关维度。",
+      "conflict_status 只能是 none、resolved 或 none_known_in_visible_context。",
+      "machine_gate.default_guidance 必须为 caveat_only，review.default_guidance_allowed 必须为 false。"
+    ],
+    "risk_notes": [
+      "首批候选以公开专业资料、监管资料、论文和教育资料为来源，仍需要外部 AI/人工严格审计。",
+      "部分来源是教育或供应商文章，只能作为 supporting evidence，不能单独支撑 approved。",
+      "本候选不提供任何投资建议或实盘执行许可。",
+      "补 Bailey/OOS 或回测偏差来源。",
+      "补 CFA trading-costs 来源。",
+      "本条为 formal reviewed/caveat_only，不是 approved；不得作为默认指导或 hard gate。",
+      "不得据此生成买卖点、仓位、杠杆、止损止盈或实盘执行建议。",
+      "AI Engineering 只能引用本 Trading Engineering 规则本体，不得复制改写为模型训练/RAG/MCP 本体规则。"
+    ],
+    "citation_notes": "Risk/reward and profit/loss ratio sources support ratio definition and pitfalls; CFA execution source supports cost and execution-context boundaries.",
+    "audit_patch_notes": {
+      "source": [
+        "补 Bailey/OOS 或回测偏差来源。",
+        "补 CFA trading-costs 来源。"
+      ],
+      "content": [],
+      "boundary": [
+        "补 Bailey/OOS 或回测偏差来源。",
+        "补 CFA trading-costs 来源。"
+      ],
+      "conflict": [
+        "可见上下文内未发现可证冲突；完整 formal KB 冲突检查由 CEK-TA-196/197 继续执行。"
+      ]
+    }
+  },
+  "assumptions": [
+    "候选用于 CEK-TA 通用支持层知识库，而不是某个项目私有策略。",
+    "所有交易结论都必须保留市场、样本、成本、执行和验证边界。",
+    "候选通过外部审计前不能进入正式 reviewed 知识库。"
+  ],
+  "source_evidence": [
+    {
+      "source_id": "src_001",
+      "source_title": "Risk/Reward Ratio",
+      "source_url": "https://www.investopedia.com/terms/r/riskrewardratio.asp",
+      "source_type": "financial_education",
+      "publisher": "Investopedia",
+      "published_at": null,
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "medium",
+      "relevance": "high",
+      "evidence_summary": "Defines risk/reward ratio as potential reward relative to potential risk.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_002",
+      "source_title": "The Myth of Profit/Loss Ratios",
+      "source_url": "https://www.investopedia.com/articles/forex/07/profit_loss.asp",
+      "source_type": "financial_education",
+      "publisher": "Investopedia",
+      "published_at": null,
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "medium",
+      "relevance": "high",
+      "evidence_summary": "Explains why judging a system from a single ratio or win/loss view can be misleading without context.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_003",
+      "source_title": "Trade Strategy and Execution",
+      "source_url": "https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/trade-strategy-execution",
+      "source_type": "professional_body",
+      "publisher": "CFA Institute",
+      "published_at": "2026-01-01",
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "CFA Institute explains that execution strategy must consider urgency, order size, market conditions, expected costs, risk, and trader objectives.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_004",
+      "source_title": "Win Rate vs Expectancy",
+      "source_url": "https://crosstrade.io/learn/performance-metrics/win-rate-vs-expectancy",
+      "source_type": "trading_education",
+      "publisher": "CrossTrade",
+      "published_at": null,
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "medium",
+      "relevance": "high",
+      "evidence_summary": "Contrasts win rate with expectancy, supporting the rule that win rate is insufficient without payoff and cost context.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_audit_cfa_trading_costs",
+      "source_title": "Trading Costs and Electronic Markets",
+      "source_url": "https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/trading-costs-and-electronic-markets",
+      "source_type": "professional_body",
+      "publisher": "CFA Institute",
+      "published_at": "2026-01-01",
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "覆盖 explicit/implicit costs、bid-ask spread、market impact、delay、unfilled trades 等交易成本。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_audit_bailey_backtest_overfitting",
+      "source_title": "The Probability of Backtest Overfitting",
+      "source_url": "https://sdm.lbl.gov/oapapers/ssrn-id2326253.pdf",
+      "source_type": "paper",
+      "publisher": "SSRN / Lawrence Berkeley National Laboratory",
+      "published_at": "2014-01-01",
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "讨论回测过拟合和样本外表现退化风险，支撑 R/R 不能脱离验证被描述为 edge。",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "medium_high",
+    "score": 75,
+    "score_version": "phase37_source_scoring_v1",
+    "primary_source_count": 3,
+    "supporting_source_count": 3,
+    "low_reliability_source_count": 0,
+    "limitations": [
+      "正式入库前必须由外部审计确认 claim 没有超出来源可证明范围。",
+      "监管资料按地区适用，不能自动泛化到所有市场或交易所。",
+      "补 Bailey/OOS 或回测偏差来源。",
+      "补 CFA trading-costs 来源。",
+      "本条为 formal reviewed/caveat_only；不是 approved，不得进入默认指导或 hard gate。",
+      "外部审计未提供完整 CEK-TA formal KB，因此冲突结论限于可见上下文。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "Phase 36/38/40/41 AI Engineering 知识边界",
+      "现有 KB_01_QUANT_FOUNDATION formal 知识"
+    ],
+    "conflicts": [],
+    "resolution_summary": "reviewed/caveat_only preparation audit passed for this item; full formal KB conflict coverage remains a runtime validation concern.",
+    "default_recommendation": "caveat_only_until_human_approval"
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于 AI IDE 或外接项目审计交易工程基础概念和边界。",
+      "用于提示用户补充成本、样本、执行、风险和验证条件。",
+      "用于 RAG/MCP/SearchLab 以 caveat 方式返回来源和边界。"
+    ],
+    "not_allowed": [
+      "不得据此生成买卖点、仓位、杠杆、止损止盈或实盘执行建议。",
+      "不得把 reviewed/caveat_only 当作 approved 默认指导。",
+      "不得绕过外接项目事实层、风控 hard gate 或人工治理流程。"
+    ],
+    "required_context": [
+      "canonical_node_id=kt.quant_foundation",
+      "必须返回 source_evidence、review_status、conflict_status、machine_gate 和不适用场景。"
+    ],
+    "fallback_behavior": "cite_with_caveat"
+  },
+  "machine_gate": {
+    "default_guidance": "caveat_only",
+    "reason": "CEK-TA-380: reviewed-preparation audit allowed formal reviewed/caveat_only only; no approved/default/hard gate.",
+    "requires_human_escalation": true,
+    "blocking_reasons": [
+      "reviewed_not_approved",
+      "default_guidance_allowed_false",
+      "hard_gate_allowed_false"
+    ],
+    "checked_at": "2026-06-11",
+    "gate_version": "1.0.0",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "recommended_extra_sources": [],
+  "review": {
+    "confidence": "medium",
+    "freshness": "mixed",
+    "review_status": "reviewed",
+    "reviewer": "codex",
+    "reviewed_at": "2026-06-11",
+    "created_at": "2026-06-11",
+    "updated_at": "2026-06-11",
+    "default_guidance_allowed": false,
+    "approved_allowed": false,
+    "hard_gate_allowed": false,
+    "approval_status": "not_requested",
+    "source_candidate_id": "cand_20260611_phase37_risk_reward_boundary_001",
+    "ai_audit_result_id": "phase37_quant_foundation_reviewed_preparation_audit_result_20260611_strict_v2",
+    "ai_audit": {
+      "audit_result_id": "phase37_quant_foundation_reviewed_preparation_audit_result_20260611_strict_v2",
+      "source_package_id": "phase37_quant_foundation_reviewed_preparation_audit_package_20260611",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "required_patches": {
+        "source": [
+          "补 Bailey/OOS 或回测偏差来源。",
+          "补 CFA trading-costs 来源。"
+        ],
+        "content": [],
+        "boundary": [
+          "补 Bailey/OOS 或回测偏差来源。",
+          "补 CFA trading-costs 来源。"
+        ],
+        "conflict": [
+          "可见上下文内未发现可证冲突；完整 formal KB 冲突检查由 CEK-TA-196/197 继续执行。"
+        ]
+      },
+      "required_extra_sources": [
+        {
+          "source_id": "src_audit_cfa_trading_costs",
+          "source_title": "Trading Costs and Electronic Markets",
+          "source_url": "https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/trading-costs-and-electronic-markets",
+          "source_type": "professional_body",
+          "publisher": "CFA Institute",
+          "published_at": "2026-01-01",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "reliability": "high",
+          "score": 90,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [
+            "CFA 专业学习资料；用于成本和执行边界，不支持任何具体策略优势。"
+          ],
+          "evidence_summary": "覆盖 explicit/implicit costs、bid-ask spread、market impact、delay、unfilled trades 等交易成本。",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_audit_bailey_backtest_overfitting",
+          "source_title": "The Probability of Backtest Overfitting",
+          "source_url": "https://sdm.lbl.gov/oapapers/ssrn-id2326253.pdf",
+          "source_type": "paper",
+          "publisher": "SSRN / Lawrence Berkeley National Laboratory",
+          "published_at": "2014-01-01",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "reliability": "high",
+          "score": 88,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [
+            "论文支撑过拟合和样本外边界，不直接证明任何交易信号有效。"
+          ],
+          "evidence_summary": "讨论回测过拟合和样本外表现退化风险，支撑 R/R 不能脱离验证被描述为 edge。",
+          "quoted_excerpt_allowed": false
+        }
+      ]
+    },
+    "open_questions": [],
+    "decision_log": [
+      {
+        "at": "2026-06-11",
+        "actor": "external_ai_strict_audit",
+        "decision": "accepted_for_reviewed_caveat_only",
+        "reason": "高 R/R 不得单独描述为策略优势是保守方法论边界。"
+      },
+      {
+        "at": "2026-06-11",
+        "actor": "codex",
+        "decision": "reviewed",
+        "reason": "CEK-TA-380: formal reviewed/caveat_only created; approved/default guidance/hard gate all disabled."
+      }
+    ]
+  },
+  "contribution": {
+    "contribution_id": null,
+    "source_project": null,
+    "sanitization_status": "not_applicable",
+    "private_data_removed": true,
+    "generic_mapping_notes": "Generated from Phase 37 public-source Trading Engineering candidate; no project-private trading facts included."
+  },
+  "copyright": {
+    "stores_full_text": false,
+    "stores_long_quote": false,
+    "summary_only": true,
+    "license_notes": "仅保存来源链接、元数据和摘要，不保存长段原文。",
+    "reuse_risk": "low"
+  },
+  "phase37_conversion": {
+    "source_candidate_status": "accepted",
+    "source_ingestion_decision": "accepted_for_draft",
+    "promoted_by_task": "CEK-TA-380",
+    "reviewed_allowed": true,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  }
+}

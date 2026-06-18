@@ -1,0 +1,130 @@
+{
+  "audit_result_id": "audit_20260609_cek_ta_candidate_ai_audit_001",
+  "auditor": "GPT-5.5 Thinking",
+  "audited_at": "2026-06-09T00:00:00+09:00",
+  "package_id": "cek_ta_candidate_ai_audit_20260608",
+  "summary": {
+    "total": 7,
+    "accepted_for_draft": 7,
+    "needs_more_evidence": 0,
+    "rejected": 0,
+    "blocked": 0
+  },
+  "overall_conclusion": "全部候选可进入 draft，但不得直接进入 approved；正式 draft 需要保留人工复核、来源版本复核、冲突关系和适用边界。",
+  "global_gate": "本批 candidate 仅允许转换为 draft/reviewed，不允许直接升级 approved；所有条目必须经过人工 reviewer 确认来源版本、适用边界、冲突关系和项目私有信息脱敏后，才可进入默认指导链路。",
+  "candidate_results": [
+    {
+      "candidate_id": "cand_20260608_live_execution_order_state_reconciliation_001",
+      "proposed_knowledge_id": "kb_06_live_execution.order_state_machine.event_rest_position_reconciliation.v1",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reasons": [
+        "Binance 官方订单事件、账户/仓位事件和 REST 仓位查询可以支撑订单状态闭环。",
+        "适用边界已经限定 Binance USDⓈ-M Futures。"
+      ],
+      "required_followups": [
+        "迁移其他交易所前必须重新映射状态枚举、断线恢复、成交字段和仓位语义。"
+      ],
+      "patch_notes": [
+        "正式知识必须保留 Binance USDⓈ-M Futures 边界，不能泛化到所有交易所。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260608_mcp_engineering_tool_contract_readonly_errors_observability_001",
+      "proposed_knowledge_id": "kb_11_mcp_engineering.tool_contract.readonly_errors_observability.v1",
+      "decision": "accepted_for_draft",
+      "confidence": "medium-high",
+      "reasons": [
+        "MCP 规范支持 tool schema、JSON-RPC、output schema 和 readOnly hint。",
+        "readOnlyHint 不是可信安全证明。"
+      ],
+      "required_followups": [
+        "将 MCP 来源版本升级为 2025-11-25，或明确锁定 2025-06-18 为实现基线。",
+        "只读必须由服务端权限层强制，不得只依赖 readOnlyHint。"
+      ],
+      "patch_notes": [
+        "更新 MCP specification 来源到 2025-11-25 latest verified 2026-06-09。",
+        "增加 readOnlyHint 只是 annotation/hint，不能作为安全边界的说明。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260608_rag_engineering_metadata_citation_freshness_policy_001",
+      "proposed_knowledge_id": "kb_10_rag_engineering.retrieval_policy.metadata_citation_freshness_conflict_gate.v1",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reasons": [
+        "OpenAI File Search 支持 metadata filtering 和 include search results。",
+        "RAG 质量评估、citation、metadata gate 的组合规则合理。"
+      ],
+      "required_followups": [
+        "明确 conflict_status、review_status、freshness gate 是 CEK-TA 组合治理规则，不是单个外部框架标准。"
+      ],
+      "patch_notes": [
+        "在正式知识中标明该条是 CEK-TA 专业知识库默认策略。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260608_replay_simulation_ohlc_same_bar_fill_001",
+      "proposed_knowledge_id": "kb_05_replay_simulation.fill_model.ohlc_same_bar_tp_sl_ambiguity.v1",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reasons": [
+        "OHLC bar 无法知道 high/low 先后顺序原则成立。",
+        "同 bar TP/SL 必须披露 fill 假设或用更低粒度数据验证。"
+      ],
+      "required_followups": [
+        "正式知识应持续区分 OHLC-only 假设和 tick/path replay 证据。"
+      ],
+      "patch_notes": [
+        "保留 OHLC-only 与更低粒度回放的边界。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260608_risk_management_pre_trade_risk_gates_001",
+      "proposed_knowledge_id": "kb_07_risk_management.risk_gate.pre_trade_order_risk_controls.v1",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reasons": [
+        "SEC Rule 15c3-5、CFTC 自动交易风险控制和 CME pre-trade risk 工具共同支撑订单进市场前必须过风险闸门。"
+      ],
+      "required_followups": [
+        "不能把 pre-trade risk gate 误读为具体仓位建议、杠杆建议或交易参数。"
+      ],
+      "patch_notes": [
+        "在正式知识中补充不适用于具体策略参数建议。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260608_backtest_bias_leakage_overfit_001",
+      "proposed_knowledge_id": "kb_04_backtest.bias.leakage_overfit_audit_gates.v1",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reasons": [
+        "PBO、多信号回测和 scikit-learn data leakage 文档足以支撑数据泄漏、前视、测试集调参、多重试验选择必须作为独立风险门。"
+      ],
+      "required_followups": [
+        "后续可拆分 data leakage 和 test-set tuning / multiple testing checklist。"
+      ],
+      "patch_notes": [
+        "保留拆分为多个知识条目的 open question。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260608_knowledge_governance_lifecycle_evidence_conflict_deprecation_001",
+      "proposed_knowledge_id": "kb_13_knowledge_governance.status_lifecycle.evidence_conflict_deprecation_gate.v1",
+      "decision": "accepted_for_draft",
+      "confidence": "medium-high",
+      "reasons": [
+        "NIST AI RMF 支持 govern/map/measure/manage 的风险治理框架。",
+        "CEK-TA proposed/candidate/draft/approved 状态机是项目内部治理规则。"
+      ],
+      "required_followups": [
+        "正式知识必须说明生命周期状态名来自 CEK-TA 内部规则，不是 NIST AI RMF 直接规定。"
+      ],
+      "patch_notes": [
+        "补充 NIST 支撑风险治理框架但不规定 CEK-TA 状态机。"
+      ]
+    }
+  ]
+}
+

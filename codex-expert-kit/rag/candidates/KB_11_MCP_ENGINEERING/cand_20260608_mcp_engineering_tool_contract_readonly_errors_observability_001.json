@@ -1,0 +1,357 @@
+{
+  "schema_version": "1.0.0",
+  "candidate_id": "cand_20260608_mcp_engineering_tool_contract_readonly_errors_observability_001",
+  "research_task_id": "CEK-TA-RESEARCH-20260608-023-006",
+  "status": {
+    "review_status": "accepted",
+    "ingestion_decision": "convert_to_knowledge_item",
+    "decision_reason": "AI 审计结果为 accepted_for_draft；本状态只表示候选通过审计并可作为 draft/reviewed 来源，不代表 approved 或默认指导。",
+    "created_at": "2026-06-08",
+    "updated_at": "2026-06-09"
+  },
+  "classification": {
+    "tree_node_id": "kt.ai_engineering.mcp_engineering.tool_contract",
+    "tree_path": "CEK-TA / AI Engineering / MCP Engineering / Tool Contract",
+    "related_nodes": [
+      "kt.ai_engineering.mcp_engineering.permission_boundary",
+      "kt.ai_engineering.mcp_engineering.error_schema",
+      "kt.ai_engineering.mcp_engineering.observability",
+      "kt.ai_engineering.mcp_engineering.read_only_policy",
+      "kt.ai_engineering.rag_engineering.retrieval_policy"
+    ],
+    "partition_id": "KB_11_MCP_ENGINEERING",
+    "domain": "mcp_engineering",
+    "subdomain": "tool_contract",
+    "rule_type": "schema",
+    "used_for": [
+      "mcp",
+      "code_review",
+      "project_integration",
+      "vue_audit_ui",
+      "rag_engineering"
+    ]
+  },
+  "claim": {
+    "claim_id": "claim_001",
+    "statement": "Knowledge MCP 工具在对外暴露前必须声明稳定的 name、purpose、input_schema、output_schema、error_schema、permission boundary、rate/size limits、audit fields 和测试用例；CEK-TA 默认 MCP 工具必须只读，不得交易、写知识、审批知识、读取密钥或暴露项目私有事实。",
+    "normalized_claim": "knowledge_mcp_tools_require_contract_input_output_errors_permissions_limits_audit_tests_and_read_only_default",
+    "evidence_summary": "MCP 官方规范将 tools 定义为可由模型调用的函数，并要求工具包含 name、description、inputSchema 等结构；MCP 基础协议基于 JSON-RPC，支持标准错误对象；MCP 安全最佳实践强调显式用户同意、工具权限控制、输入验证、防止 token passthrough 和 confused deputy；CEK-TA MCP server spec 已规定 read_only 权限和 source/conflict/freshness 输出边界。",
+    "interpretation_notes": "本候选把 MCP 官方工具能力和 CEK-TA 知识库安全边界合并为工程规则：任何可被 Codex 调用的 Knowledge MCP tool 都必须是契约优先、权限最小、错误可审计、输出可追踪，而不是临时函数暴露。",
+    "claim_strength": "strong",
+    "performance_claim": false
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "general",
+    "data_granularity": "general",
+    "project_type": "trading_llm_assistant",
+    "applies_when": [
+      "开发、审计或对外接入 CEK-TA Knowledge MCP server",
+      "新增 MCP tool、修改 tool 参数、返回值、权限、错误结构或运行时配置",
+      "其他项目通过 Codex/MCP 调用 CEK-TA 专业知识库"
+    ],
+    "not_applicable_when": [
+      "仅编写离线文档，不暴露任何可调用工具",
+      "内部脚本只在开发者手动运行且不通过 MCP 暴露，但仍建议遵循相同 schema",
+      "需要写入知识、提交贡献或审批知识时，必须另建任务卡和权限设计，本候选不授权写入"
+    ],
+    "assumptions": [
+      "CEK-TA MCP 以专业知识检索为主要目的",
+      "MCP tool 可能被 LLM 自动调用，因此权限边界必须前置定义",
+      "项目私有上下文只能作为过滤条件，不能被提升为通用知识"
+    ],
+    "limitations": [
+      "MCP 规范、SDK 和客户端行为属于 time_sensitive，正式实现前需复核当前版本",
+      "本候选不引入新的 MCP 权限，也不改变 CEK-TA 现有只读策略",
+      "具体 observability 指标和日志字段需结合运行时实现补充测试"
+    ]
+  },
+  "source_refs": [
+    {
+      "source_id": "src_001",
+      "source_title": "Model Context Protocol Specification",
+      "source_url": "https://modelcontextprotocol.io/specification",
+      "source_type": "official_doc",
+      "publisher": "Model Context Protocol",
+      "published_at": null,
+      "accessed_at": "2026-06-08",
+      "version": "2025-06-18 specification",
+      "reliability": "high",
+      "score": 94,
+      "relevance": "high",
+      "freshness": "time_sensitive",
+      "limitations": [
+        "MCP specification 会随版本演进，正式实现前必须复核当前 spec 日期。"
+      ],
+      "evidence_summary": "MCP 官方规范定义协议、客户端/服务器交互、tools/resources/prompts 等基础能力，是 tool contract 和 permission boundary 的主来源。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_002",
+      "source_title": "MCP Tools Concept",
+      "source_url": "https://modelcontextprotocol.io/docs/concepts/tools",
+      "source_type": "official_doc",
+      "publisher": "Model Context Protocol",
+      "published_at": null,
+      "accessed_at": "2026-06-08",
+      "version": "MCP docs 2026",
+      "reliability": "high",
+      "score": 93,
+      "relevance": "high",
+      "freshness": "time_sensitive",
+      "limitations": [
+        "概念文档定义 tool 暴露方式和 schema，但不替代项目自己的权限策略。"
+      ],
+      "evidence_summary": "官方文档说明 tools 是模型可调用函数，并通过 name、description、inputSchema 等结构描述能力，支持将 schema 作为 MCP 工具契约核心。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_003",
+      "source_title": "MCP Basic Protocol",
+      "source_url": "https://modelcontextprotocol.io/specification/2025-06-18/basic",
+      "source_type": "official_doc",
+      "publisher": "Model Context Protocol",
+      "published_at": "2025-06-18",
+      "accessed_at": "2026-06-08",
+      "version": "2025-06-18",
+      "reliability": "high",
+      "score": 90,
+      "relevance": "high",
+      "freshness": "time_sensitive",
+      "limitations": [
+        "基础协议提供 JSON-RPC 结构和错误语义，CEK-TA 仍需定义业务错误码。"
+      ],
+      "evidence_summary": "MCP 基础协议基于 JSON-RPC 请求/响应/通知模型，并支持标准化错误响应，为 CEK-TA error_schema 和 request_id/audit 字段提供协议依据。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_004",
+      "source_title": "MCP Security Best Practices",
+      "source_url": "https://modelcontextprotocol.io/specification/2025-06-18/basic/security_best_practices",
+      "source_type": "official_doc",
+      "publisher": "Model Context Protocol",
+      "published_at": "2025-06-18",
+      "accessed_at": "2026-06-08",
+      "version": "2025-06-18",
+      "reliability": "high",
+      "score": 95,
+      "relevance": "high",
+      "freshness": "time_sensitive",
+      "limitations": [
+        "安全最佳实践是通用 MCP 安全框架，CEK-TA 需要映射到知识库只读边界。"
+      ],
+      "evidence_summary": "官方安全文档强调用户同意、权限控制、输入验证、避免 token passthrough 和 confused deputy 等风险，支持 CEK-TA MCP 工具最小权限和禁止隐藏副作用。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_005",
+      "source_title": "MCP Python SDK",
+      "source_url": "https://github.com/modelcontextprotocol/python-sdk",
+      "source_type": "framework_doc",
+      "publisher": "Model Context Protocol",
+      "published_at": null,
+      "accessed_at": "2026-06-08",
+      "version": "main branch accessed 2026-06-08",
+      "reliability": "medium",
+      "score": 82,
+      "relevance": "medium",
+      "freshness": "time_sensitive",
+      "limitations": [
+        "SDK 实现和示例可能变化，正式代码应以锁定版本和本地测试为准。"
+      ],
+      "evidence_summary": "Python SDK 提供 MCP server/tool 实现方式和示例，有助于将 tool contract 映射到实际实现与测试。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_006",
+      "source_title": "CEK-TA Knowledge MCP Server Spec",
+      "source_url": "codex-expert-kit/mcp/mcp_server_spec.md",
+      "source_type": "internal_report",
+      "publisher": "CEK-TA",
+      "published_at": "2026-06-08",
+      "accessed_at": "2026-06-08",
+      "version": "0.1.0",
+      "reliability": "medium",
+      "score": 88,
+      "relevance": "high",
+      "freshness": "stable",
+      "limitations": [
+        "内部契约来源，只能支撑 CEK-TA 项目行为；正式外部通用规则仍需 MCP 官方文档支撑。"
+      ],
+      "evidence_summary": "CEK-TA MCP spec 明确服务器是 read-only 专业知识访问层，不交易、不读密钥、不写知识、不审批知识，并要求输出 source、citation、confidence、freshness、review 和 conflict metadata。",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 90,
+    "score_version": "1.0.0",
+    "primary_source_count": 5,
+    "supporting_source_count": 1,
+    "low_reliability_source_count": 0,
+    "mandatory_downgrades": [],
+    "limitations": [
+      "MCP 官方规范和 SDK 属于 time_sensitive；候选适合作为 CEK-TA 只读 Knowledge MCP 的工程治理规则，具体实现需持续回归测试。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "resolved",
+    "checked_against": [
+      "cand_20260608_rag_engineering_metadata_citation_freshness_policy_001",
+      "kb_09_rag_engineering.source_quality.unsourced_default_block.v1",
+      "kb_10_project_runbooks.path_resolver.portable_paths.v1"
+    ],
+    "conflicts": [
+      {
+        "knowledge_id": "cand_20260608_rag_engineering_metadata_citation_freshness_policy_001",
+        "conflict_type": "scope_conflict",
+        "severity": "informational",
+        "overlap_scope": {
+          "domain": "rag_engineering",
+          "subdomain": "retrieval_policy",
+          "market": "general",
+          "timeframe": "general",
+          "data_granularity": "general"
+        },
+        "candidate_claim": "Knowledge MCP tools must declare contracts, permissions, errors and audit fields.",
+        "existing_claim": "Professional RAG default retrieval must return metadata, citations, review/conflict/freshness and blocking policy.",
+        "resolution": "RAG 候选定义检索结果契约；本候选定义 MCP tool 暴露和权限契约。MCP tool 应承载 RAG 检索结果契约，两者上下游互补。",
+        "default_recommendation": "treat_as_complementary_candidate",
+        "requires_human_review": true
+      },
+      {
+        "knowledge_id": "kb_09_rag_engineering.source_quality.unsourced_default_block.v1",
+        "conflict_type": "scope_conflict",
+        "severity": "informational",
+        "overlap_scope": {
+          "domain": "rag_engineering",
+          "subdomain": "source_quality",
+          "market": "general",
+          "timeframe": "general",
+          "data_granularity": "general"
+        },
+        "candidate_claim": "CEK-TA MCP default tools are read-only and must not expose unsafe results.",
+        "existing_claim": "Unsourced knowledge cannot become approved or default guidance.",
+        "resolution": "无来源阻断是检索内容 gate；本候选是 MCP tool permission/contract gate。两者互补。",
+        "default_recommendation": "treat_as_complementary_candidate",
+        "requires_human_review": true
+      },
+      {
+        "knowledge_id": "kb_10_project_runbooks.path_resolver.portable_paths.v1",
+        "conflict_type": "scope_conflict",
+        "severity": "informational",
+        "overlap_scope": {
+          "domain": "project_runbooks",
+          "subdomain": "path_resolver",
+          "market": "general",
+          "timeframe": "general",
+          "data_granularity": "general"
+        },
+        "candidate_claim": "MCP tools require stable runtime config and audit fields.",
+        "existing_claim": "CEK-TA code and MCP runtime paths must use resolver rather than hardcoded absolute paths.",
+        "resolution": "Path resolver 是 MCP runtime config 的地基规则；本候选不改变路径规则，只要求 tool contract 写清 runtime config。",
+        "default_recommendation": "treat_as_complementary_candidate",
+        "requires_human_review": true
+      }
+    ],
+    "resolution_summary": "候选与现有 RAG 检索候选、无来源阻断知识、path resolver 知识均为互补关系；正式 draft 应明确层级：runtime config/path resolver -> MCP tool contract -> RAG retrieval result contract -> LLM answer boundary。",
+    "approval_allowed": true
+  },
+  "review": {
+    "confidence": "high",
+    "freshness": "time_sensitive",
+    "reviewer": "external_ai_and_codex_alignment",
+    "reviewed_at": "2026-06-09",
+    "open_questions": [
+      "正式 draft 是否拆成 tool_contract、permission_boundary、error_schema、observability 四条知识资产？",
+      "CEK-TA 是否需要补一个 MCP tool contract JSON schema 模板，供后续工具新增时强制使用？",
+      "是否要把 MCP 官方 spec 版本写入 MCP runtime healthcheck 输出？"
+    ],
+    "audit_log": [
+      {
+        "at": "2026-06-08",
+        "actor": "codex",
+        "action": "created",
+        "reason": "根据 Phase 23 P0 队列启动 KB_11_MCP_ENGINEERING 专业知识采集。"
+      },
+      {
+        "at": "2026-06-08",
+        "actor": "codex",
+        "action": "sourced",
+        "reason": "记录 MCP 官方规范、tools 概念、安全最佳实践、Python SDK 和 CEK-TA MCP server spec 作为来源。"
+      },
+      {
+        "at": "2026-06-08",
+        "actor": "codex",
+        "action": "classified",
+        "reason": "归类到 KB_11_MCP_ENGINEERING / mcp_engineering.tool_contract / schema。"
+      },
+      {
+        "at": "2026-06-08",
+        "actor": "codex",
+        "action": "conflict_checked",
+        "reason": "已与 RAG 检索候选、无来源阻断知识和 path resolver 知识比对，结论为互补。"
+      },
+      {
+        "at": "2026-06-09",
+        "actor": "GPT-5.5 Thinking",
+        "action": "ai_audit_result_received",
+        "reason": "accepted_for_draft / confidence=medium-high",
+        "audit_result_id": "audit_20260609_cek_ta_candidate_ai_audit_001"
+      },
+      {
+        "at": "2026-06-09",
+        "actor": "codex",
+        "action": "candidate_marked_accepted_after_ai_audit",
+        "reason": "根据用户提供的 AI 审计结果和 CEK-TA 边界，将候选设为 accepted_for_draft；不得视为 approved。",
+        "audit_result_id": "audit_20260609_cek_ta_candidate_ai_audit_001"
+      }
+    ],
+    "ai_audit": {
+      "audit_result_id": "audit_20260609_cek_ta_candidate_ai_audit_001",
+      "package_id": "cek_ta_candidate_ai_audit_20260608",
+      "auditor": "GPT-5.5 Thinking",
+      "audited_at": "2026-06-09T00:00:00+09:00",
+      "decision": "accepted_for_draft",
+      "confidence": "medium-high",
+      "reasons": [
+        "MCP 规范支持 tool schema、JSON-RPC、output schema 和 readOnly hint。",
+        "readOnlyHint 不是可信安全证明。"
+      ],
+      "required_followups": [
+        "将 MCP 来源版本升级为 2025-11-25，或明确锁定 2025-06-18 为实现基线。",
+        "只读必须由服务端权限层强制，不得只依赖 readOnlyHint。"
+      ],
+      "patch_notes": [
+        "更新 MCP specification 来源到 2025-11-25 latest verified 2026-06-09。",
+        "增加 readOnlyHint 只是 annotation/hint，不能作为安全边界的说明。"
+      ],
+      "boundary": "accepted_for_draft/reviewed is not approved; approved requires a later human governance task."
+    }
+  },
+  "copyright": {
+    "stores_full_text": false,
+    "stores_long_quote": false,
+    "summary_only": true,
+    "license_notes": "仅保存官方/SDK/内部规范链接和摘要，不保存长段原文。",
+    "reuse_risk": "low"
+  },
+  "conversion_target": {
+    "proposed_knowledge_id": "kb_11_mcp_engineering.tool_contract.readonly_errors_observability.v1",
+    "target_schema": "cek_ta_knowledge_item",
+    "target_review_status": "draft",
+    "skill_candidate": false,
+    "eval_case_candidate": true
+  },
+  "workflow": {
+    "stage": "formalized_reviewed",
+    "queue_group": "formalized",
+    "formal_knowledge_id": "kb_11_mcp_engineering.tool_contract.readonly_errors_observability.v1",
+    "formal_review_status": "reviewed",
+    "ai_audit_result_id": "audit_20260609_cek_ta_candidate_ai_audit_001",
+    "hidden_from_default_queue": true,
+    "next_action": "none",
+    "formal_knowledge_path": "codex-expert-kit/rag/knowledge/KB_11_MCP_ENGINEERING/kb_11_mcp_engineering.tool_contract.readonly_errors_observability.v1.json"
+  }
+}

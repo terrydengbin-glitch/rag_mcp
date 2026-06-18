@@ -1,0 +1,68 @@
+{
+  "audit_result_id": "audit_phase45_layered_risk_supplemental_reaudit_20260612_v1",
+  "auditor": "external_ai_strict_audit",
+  "audited_at": "2026-06-12",
+  "package_id": "phase45_layered_risk_supplemental_reaudit_package_20260612",
+  "summary": {
+    "total": 1,
+    "accepted_for_draft": 1,
+    "needs_more_evidence": 0,
+    "rejected": 0,
+    "blocked": 0
+  },
+  "candidate_results": [
+    {
+      "candidate_id": "cand_20260612_phase45_layered_risk_p45_c_risk05_001",
+      "research_task_id": "P45-C-RISK05",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "reasons": [
+        "CME supports clearing margin/performance bond, IBKR supports broker available funds/excess liquidity/buying power boundaries, and Binance Futures supports crypto venue available balance / margin field boundaries at draft level."
+      ],
+      "required_followups": [
+        "CME 只支撑 CME Clearing / CME Globex / SPAN / performance bond 语境，不得泛化为所有清算或保证金制度。",
+        "IBKR 字段只支撑 IBKR broker/account-type 语境，不得泛化为所有 broker。",
+        "Binance Futures 字段只支撑 Binance USDⓈ-M Futures/API/account-mode 语境，不得泛化为股票、传统期货、外汇或全部 crypto venue。",
+        "不得把任一字段默认为可交易现金应作为 CEK-TA 内部审计边界，而不是 CME/IBKR/Binance 的直接统一结论。",
+        "reviewed 前必须引用内部 schema extract 或 contract hash，定义 point-in-time account/margin/collateral evidence。"
+      ],
+      "patch_notes": {
+        "source": [
+          "CME SPAN / performance bond 来源支撑 clearing margin 层。",
+          "IBKR Available Funds / Excess Liquidity / Buying Power 来源支撑 broker account 字段层。",
+          "Binance Futures account/balance 来源支撑 crypto venue account balance 字段层。"
+        ],
+        "content": [
+          "claim 已正确拆分 margin、performance bond、collateral、available funds、buying power、wallet balance、margin balance、strategy capital budget。",
+          "保留 point-in-time account/margin/collateral evidence 要求。"
+        ],
+        "boundary": [
+          "不得输出保证金比例、信用额度、可用资金判断、下单许可、仓位、杠杆或实盘执行建议。",
+          "不得把 account field check 变成 CEK-TA hard gate。"
+        ],
+        "conflict": [
+          "分区正确：KB_07_RISK_MANAGEMENT / layered_risk_controls。",
+          "未发现与 Phase 37 Risk Management、Phase 45 Execution TCA / Audit Trail 或 runtime contract 的直接冲突。"
+        ]
+      }
+    }
+  ],
+  "hard_boundaries": {
+    "reviewed_allowed": false,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "trade_execution_advice_allowed": false,
+    "risk_threshold_advice_allowed": false
+  },
+  "global_notes": [
+    "P45-C-RISK05 补证后可从 needs_more_evidence 升级为 accepted_for_draft。",
+    "本次复审不允许 reviewed、approved、default guidance 或 hard gate。",
+    "后续 reviewed/caveat_only 准备审计必须包含 point-in-time account/margin/collateral evidence 内部契约。"
+  ]
+}

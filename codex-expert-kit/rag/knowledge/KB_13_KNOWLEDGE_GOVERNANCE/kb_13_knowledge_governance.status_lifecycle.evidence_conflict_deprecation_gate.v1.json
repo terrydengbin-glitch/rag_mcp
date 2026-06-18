@@ -1,0 +1,366 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_13_knowledge_governance.status_lifecycle.evidence_conflict_deprecation_gate.v1",
+  "title": "Knowledge Governance Requires Lifecycle Evidence Scope Conflict Freshness Audit Log And Deprecation Gate Before Default Guidance",
+  "metadata": {
+    "partition_id": "KB_13_KNOWLEDGE_GOVERNANCE",
+    "domain": "knowledge_governance",
+    "subdomain": "status_lifecycle",
+    "rule_type": "audit_rule",
+    "content_type": "json",
+    "project_binding": "none",
+    "tree_node_id": "kt.knowledge_governance.status_lifecycle",
+    "tree_path": "CEK-TA / Knowledge Governance / Status Lifecycle",
+    "canonical_node_id": "kt.knowledge_governance.status_lifecycle",
+    "canonical_tree_path": "CEK-TA / Knowledge Governance / Status Lifecycle",
+    "risk_level": "medium",
+    "used_for": [
+      "rag_engineering",
+      "mcp",
+      "vue_audit_ui",
+      "quality_eval",
+      "project_integration",
+      "knowledge_contribution"
+    ],
+    "source_candidate_id": "cand_20260608_knowledge_governance_lifecycle_evidence_conflict_deprecation_001",
+    "research_task_id": "CEK-TA-RESEARCH-20260608-023-007",
+    "claim_type": "knowledge_governance_rule",
+    "classification_notes": "UI tree node and canonical classification are aligned."
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "general",
+    "data_granularity": "general",
+    "project_type": "general",
+    "applies_when": [
+      "新增、审计、回灌、转换、批准、检索、废弃或迁移 CEK-TA 知识条目",
+      "候选知识准备从 candidate 转为正式 knowledge draft、reviewed 或 approved",
+      "MCP/RAG/Vue3 需要判断某条知识是否可作为默认专业指导"
+    ],
+    "not_applicable_when": [
+      "仅讨论临时研究问题且明确不进入候选知识队列",
+      "只保存原始资料链接，不抽取 claim 或不作为知识条目使用",
+      "外部项目私有事实尚未脱敏、泛化和来源补强，只能留在项目边界内"
+    ]
+  },
+  "content": {
+    "statement": "CEK-TA 知识必须按 proposed/candidate/draft/reviewed/approved/deprecated/rejected 的状态生命周期治理；任何知识进入默认指导前必须满足来源证据、适用边界、冲突状态、freshness、审计日志和可回滚记录，未来源、未消解冲突、过期、rejected 或项目私有未脱敏内容必须阻断默认指导。",
+    "rationale": "本候选把外部 AI 风险治理框架映射到 CEK-TA 专业知识库：知识不是一次写入就永久可信，而是具有来源、版本、冲突、适用边界和废弃状态的受控资产。",
+    "procedure": [
+      "确认当前项目事实匹配 applies_when。",
+      "确认没有命中 not_applicable_when。",
+      "确认来源、冲突状态和 open_questions 已在正式评审中关闭或保留 caveat。"
+    ],
+    "examples": [],
+    "anti_patterns": [
+      "把 draft 知识当作 approved 默认指导。",
+      "在不匹配适用边界时复用该规则。"
+    ],
+    "validation": [
+      "检查 source_evidence 非空且来源可靠性为 medium 或 high。",
+      "检查 conflict_status 为 none 或 resolved。",
+      "检查 applies_when、not_applicable_when 和 assumptions 均非空。"
+    ],
+    "risk_notes": [
+      "NIST 和 OWASP 来源是 AI/安全治理框架，不能直接替代交易专业来源",
+      "CEK-TA 内部 schema 是项目契约，正式治理规则需与实际 MCP/RAG/Vue3 实现持续回归",
+      "本候选不自动批准任何前置候选知识，只定义它们如何被审核",
+      "正式 draft 是否要同步更新 knowledge_item_schema.md，把 candidate/reviewed/accepted 等候选状态和正式状态更清晰分层？",
+      "是否需要把 KB_13 作为所有候选转 draft 的强制评审清单？",
+      "是否要在 MCP/SearchLab 增加治理状态过滤的专门回归用例？",
+      "NIST AI RMF 支撑风险治理框架；CEK-TA proposed/candidate/draft/reviewed/approved/deprecated 状态机是本项目内部治理规则，不是 NIST 直接规定。"
+    ],
+    "citation_notes": "NIST AI RMF Core 强调 Govern/Map/Measure/Manage、全生命周期、文档化、透明度和问责；OWASP AI/LLM 安全验证标准覆盖从数据、模型到部署、监控和退役的安全生命周期；CEK-TA knowledge_item_schema、source_quality_rules 和 conflict_detection_rules 已定义 approved 门槛、来源质量、冲突类型、阻断条件和状态流。",
+    "audit_patch_notes": [
+      "补充 NIST 支撑风险治理框架但不规定 CEK-TA 状态机。"
+    ]
+  },
+  "assumptions": [
+    "知识条目有结构化 schema、状态字段、来源字段、冲突字段和审计日志",
+    "CEK-TA 默认检索只应返回 approved 且安全的专业知识",
+    "人工审计仍是高风险知识批准和冲突消解的必要门槛"
+  ],
+  "source_evidence": [
+    {
+      "source_id": "src_001",
+      "source_title": "NIST AI Risk Management Framework",
+      "source_url": "https://www.nist.gov/itl/ai-risk-management-framework",
+      "source_type": "official_doc",
+      "publisher": "National Institute of Standards and Technology",
+      "published_at": "2023-01-26",
+      "accessed_at": "2026-06-08",
+      "version": "AI RMF 1.0",
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "NIST AI RMF 提供 AI 风险管理框架，强调在设计、开发、使用和评估 AI 系统时纳入可信性、治理和风险管理。支持 CEK-TA 将知识作为需治理的 AI/RAG 资产。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_002",
+      "source_title": "NIST AI RMF Core",
+      "source_url": "https://airc.nist.gov/airmf-resources/airmf/5-sec-core/",
+      "source_type": "official_doc",
+      "publisher": "NIST Trustworthy and Responsible AI Resource Center",
+      "published_at": "2023-01-26",
+      "accessed_at": "2026-06-08",
+      "version": "AI RMF 1.0 Core",
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "NIST AI RMF Core 包含 Govern、Map、Measure、Manage，并强调全生命周期、文档化、透明度和问责，支撑知识状态生命周期、度量、审计和持续治理。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_003",
+      "source_title": "OWASP Artificial Intelligence Security Verification Standard",
+      "source_url": "https://owasp.org/www-project-artificial-intelligence-security-verification-standard-aisvs-docs/",
+      "source_type": "official_doc",
+      "publisher": "OWASP Foundation",
+      "published_at": null,
+      "accessed_at": "2026-06-08",
+      "version": "OWASP AISVS docs 2026",
+      "reliability": "high",
+      "relevance": "medium",
+      "evidence_summary": "OWASP AISVS 覆盖 AI 应用从数据收集、模型训练到部署、监控和退役的安全验证生命周期，支持 CEK-TA 对知识资产设置持续审计和废弃/退役机制。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_004",
+      "source_title": "OWASP Large Language Model Security Verification Standard",
+      "source_url": "https://owasp.org/www-project-llm-verification-standard/",
+      "source_type": "official_doc",
+      "publisher": "OWASP Foundation",
+      "published_at": null,
+      "accessed_at": "2026-06-08",
+      "version": "LLMSVS project docs 2026",
+      "reliability": "high",
+      "relevance": "medium",
+      "evidence_summary": "OWASP LLMSVS 为 LLM 应用提供安全验证标准，覆盖架构、生命周期、训练、运行、集成、存储和监控，支持 CEK-TA 对 RAG/LLM 知识链路进行安全审计。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_005",
+      "source_title": "CEK-TA Knowledge Item Schema",
+      "source_url": "codex-expert-kit/rag/knowledge_item_schema.md",
+      "source_type": "internal_report",
+      "publisher": "CEK-TA",
+      "published_at": "2026-06-08",
+      "accessed_at": "2026-06-08",
+      "version": "1.0.0",
+      "reliability": "medium",
+      "relevance": "high",
+      "evidence_summary": "CEK-TA knowledge_item_schema 定义 draft -> reviewed -> approved -> deprecated / rejected 状态流、approval gate、RAG ingestion rules 和 forbidden cases。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_006",
+      "source_title": "CEK-TA Source Quality Rules",
+      "source_url": "codex-expert-kit/rag/source_quality_rules.md",
+      "source_type": "internal_report",
+      "publisher": "CEK-TA",
+      "published_at": "2026-06-08",
+      "accessed_at": "2026-06-08",
+      "version": "1.0.0",
+      "reliability": "medium",
+      "relevance": "high",
+      "evidence_summary": "CEK-TA source_quality_rules 定义 high/medium/low 来源、评分维度、强制降级和 approved 知识来源要求，支撑来源证据门槛。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_007",
+      "source_title": "CEK-TA Conflict Detection Rules",
+      "source_url": "codex-expert-kit/rag/conflict_detection_rules.md",
+      "source_type": "internal_report",
+      "publisher": "CEK-TA",
+      "published_at": "2026-06-08",
+      "accessed_at": "2026-06-08",
+      "version": "1.0.0",
+      "reliability": "medium",
+      "relevance": "high",
+      "evidence_summary": "CEK-TA conflict_detection_rules 定义 direct/scope/version/market/granularity/assumption conflicts、阻断条件、消解顺序和输出契约，支撑冲突阻断和人审门槛。",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 89,
+    "score_version": "1.0.0",
+    "primary_source_count": 4,
+    "supporting_source_count": 3,
+    "low_reliability_source_count": 0,
+    "mandatory_downgrades": [],
+    "limitations": [
+      "候选为治理规则，外部来源支撑治理原则，内部来源支撑 CEK-TA 具体字段和状态流；交易专业结论仍必须由对应分区的专业来源支撑。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "resolved",
+    "checked_against": [
+      "kb_09_rag_engineering.source_quality.unsourced_default_block.v1",
+      "cand_20260608_rag_engineering_metadata_citation_freshness_policy_001",
+      "cand_20260608_mcp_engineering_tool_contract_readonly_errors_observability_001"
+    ],
+    "conflicts": [
+      {
+        "knowledge_id": "kb_09_rag_engineering.source_quality.unsourced_default_block.v1",
+        "conflict_type": "scope_conflict",
+        "severity": "informational",
+        "resolution": "无来源阻断是本候选治理规则的一项子门槛；两者可并存。",
+        "applicability_boundary": "{\"domain\": \"rag_engineering\", \"subdomain\": \"source_quality\", \"market\": \"general\", \"timeframe\": \"general\", \"data_granularity\": \"general\"}",
+        "default_recommendation": "treat_as_governance_parent"
+      },
+      {
+        "knowledge_id": "cand_20260608_rag_engineering_metadata_citation_freshness_policy_001",
+        "conflict_type": "scope_conflict",
+        "severity": "informational",
+        "resolution": "本候选定义知识生命周期和审批状态，RAG 候选定义检索层如何执行这些状态过滤。",
+        "applicability_boundary": "{\"domain\": \"rag_engineering\", \"subdomain\": \"retrieval_policy\", \"market\": \"general\", \"timeframe\": \"general\", \"data_granularity\": \"general\"}",
+        "default_recommendation": "treat_as_governance_parent"
+      },
+      {
+        "knowledge_id": "cand_20260608_mcp_engineering_tool_contract_readonly_errors_observability_001",
+        "conflict_type": "scope_conflict",
+        "severity": "informational",
+        "resolution": "本候选定义知识状态门，MCP 候选定义工具如何以契约和权限执行这些门。",
+        "applicability_boundary": "{\"domain\": \"mcp_engineering\", \"subdomain\": \"tool_contract\", \"market\": \"general\", \"timeframe\": \"general\", \"data_granularity\": \"general\"}",
+        "default_recommendation": "treat_as_governance_parent"
+      }
+    ],
+    "resolution_summary": "候选是 KB_13 治理父规则，与现有无来源阻断、RAG 检索候选和 MCP 工具候选是上下游关系；正式 draft 应作为状态生命周期和默认指导 gate 的总规则。",
+    "default_recommendation": "no_default_guidance_until_reviewed"
+  },
+  "review": {
+    "confidence": "high",
+    "freshness": "stable",
+    "review_status": "reviewed",
+    "reviewer": "codex",
+    "reviewed_at": "2026-06-09",
+    "created_at": "2026-06-08",
+    "updated_at": "2026-06-09",
+    "open_questions": [
+      "正式 draft 是否要同步更新 knowledge_item_schema.md，把 candidate/reviewed/accepted 等候选状态和正式状态更清晰分层？",
+      "是否需要把 KB_13 作为所有候选转 draft 的强制评审清单？",
+      "是否要在 MCP/SearchLab 增加治理状态过滤的专门回归用例？"
+    ],
+    "decision_log": [
+      {
+        "at": "2026-06-08",
+        "actor": "codex",
+        "decision": "created",
+        "reason": "根据 Phase 23 P0 队列启动 KB_13_KNOWLEDGE_GOVERNANCE 专业知识采集。"
+      },
+      {
+        "at": "2026-06-08",
+        "actor": "codex",
+        "decision": "sourced",
+        "reason": "记录 NIST AI RMF、OWASP AI/LLM 安全标准、CEK-TA knowledge schema、source quality 和 conflict rules 作为来源。"
+      },
+      {
+        "at": "2026-06-08",
+        "actor": "codex",
+        "decision": "classified",
+        "reason": "归类到 KB_13_KNOWLEDGE_GOVERNANCE / knowledge_governance.status_lifecycle / audit_rule。"
+      },
+      {
+        "at": "2026-06-08",
+        "actor": "codex",
+        "decision": "conflict_checked",
+        "reason": "已与无来源阻断、RAG 检索候选和 MCP 工具候选比对，结论为治理父规则。"
+      },
+      {
+        "at": "2026-06-08",
+        "actor": "codex",
+        "decision": "created",
+        "reason": "Converted from ingestion candidate cand_20260608_knowledge_governance_lifecycle_evidence_conflict_deprecation_001 by CEK-TA-102 as draft only."
+      },
+      {
+        "at": "2026-06-09",
+        "actor": "GPT-5.5 Thinking",
+        "decision": "ai_audit_accepted_for_draft",
+        "reason": "外部 AI 审计结论：accepted_for_draft / confidence=medium-high。",
+        "audit_result_id": "audit_20260609_cek_ta_candidate_ai_audit_001"
+      },
+      {
+        "at": "2026-06-09",
+        "actor": "codex",
+        "decision": "review_status_updated_to_reviewed",
+        "reason": "按用户提供的审计结果和 CEK-TA 回写契约修正知识；reviewed 不等于 approved。",
+        "audit_result_id": "audit_20260609_cek_ta_candidate_ai_audit_001"
+      }
+    ],
+    "ai_audit": {
+      "audit_result_id": "audit_20260609_cek_ta_candidate_ai_audit_001",
+      "package_id": "cek_ta_candidate_ai_audit_20260608",
+      "auditor": "GPT-5.5 Thinking",
+      "audited_at": "2026-06-09T00:00:00+09:00",
+      "decision": "accepted_for_draft",
+      "confidence": "medium-high",
+      "reasons": [
+        "NIST AI RMF 支持 govern/map/measure/manage 的风险治理框架。",
+        "CEK-TA proposed/candidate/draft/approved 状态机是项目内部治理规则。"
+      ],
+      "required_followups": [
+        "正式知识必须说明生命周期状态名来自 CEK-TA 内部规则，不是 NIST AI RMF 直接规定。"
+      ],
+      "patch_notes": [
+        "补充 NIST 支撑风险治理框架但不规定 CEK-TA 状态机。"
+      ],
+      "boundary": "accepted_for_draft/reviewed is not approved; approved requires a later human governance task."
+    },
+    "source_candidate_id": "cand_20260608_knowledge_governance_lifecycle_evidence_conflict_deprecation_001",
+    "ai_audit_result_id": "audit_20260609_cek_ta_candidate_ai_audit_001",
+    "approval_status": "not_requested",
+    "default_guidance_allowed": false,
+    "approved_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "contribution": {
+    "contribution_id": null,
+    "source_project": null,
+    "sanitization_status": "not_applicable",
+    "private_data_removed": true,
+    "generic_mapping_notes": "Generated from public-source Phase 23 ingestion candidate; no project-private trading facts included."
+  },
+  "copyright": {
+    "stores_full_text": false,
+    "stores_long_quote": false,
+    "summary_only": true,
+    "license_notes": "仅保存官方/内部文档链接和摘要，不保存长段原文。",
+    "reuse_risk": "low"
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于审计和解释 CEK-TA / Knowledge Governance / Status Lifecycle 范围内的专业边界。",
+      "用于提醒用户补充适用范围、来源、冲突状态和验证条件。",
+      "用于阻止 AI 把未满足边界的知识当成默认交易建议。"
+    ],
+    "not_allowed": [
+      "不得据此生成买卖点、仓位、杠杆或实盘执行指令。",
+      "不得在缺少适用边界、来源或冲突状态时作为默认指导。",
+      "不得把 reviewed 或 caveat_only 知识表述为 approved 结论。"
+    ],
+    "required_context": [
+      "project_type",
+      "market",
+      "asset",
+      "timeframe",
+      "data_granularity",
+      "task_type"
+    ],
+    "fallback_behavior": "cite_with_caveat"
+  },
+  "machine_gate": {
+    "default_guidance": "caveat_only",
+    "reason": "reviewed but not approved; usable for audit/search with explicit caveat only.",
+    "requires_human_escalation": true,
+    "blocking_reasons": [
+      "review_status_not_approved"
+    ],
+    "checked_at": "2026-06-09",
+    "gate_version": "1.0.0",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "recommended_extra_sources": []
+}

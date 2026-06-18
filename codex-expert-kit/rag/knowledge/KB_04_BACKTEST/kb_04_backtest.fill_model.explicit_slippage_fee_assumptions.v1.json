@@ -1,0 +1,202 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_04_backtest.fill_model.explicit_slippage_fee_assumptions.v1",
+  "title": "回测成交模型必须显式声明成交、滑点和费用假设",
+  "metadata": {
+    "partition_id": "KB_04_BACKTEST",
+    "domain": "backtest",
+    "subdomain": "fill_model",
+    "rule_type": "checklist",
+    "content_type": "json",
+    "project_binding": "none",
+    "tree_node_id": "kt.backtest.fill_model",
+    "tree_path": "CEK-TA / Trading Engineering / Backtest / Fill Model",
+    "canonical_node_id": "kt.trading_engineering.backtest.fill_assumption",
+    "canonical_tree_path": "CEK-TA / Trading Engineering / Backtest / Fill Assumption",
+    "risk_level": "high",
+    "used_for": [
+      "code_review",
+      "backtest_review",
+      "replay",
+      "simulation",
+      "trade_analysis",
+      "mcp",
+      "vue_audit_ui"
+    ],
+    "claim_type": "backtest_validity_rule",
+    "classification_notes": "UI tree node is kt.backtest.fill_model; canonical classification is kt.trading_engineering.backtest.fill_assumption."
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "multi",
+    "timeframe": "general",
+    "data_granularity": "kline",
+    "project_type": "general",
+    "applies_when": [
+      "回测结果包含成交价、费用、收益、回撤、胜率、滑点或订单类型",
+      "需要比较回测、模拟盘和实盘表现差异"
+    ],
+    "not_applicable_when": [
+      "只做信号可视化且不计算成交和收益",
+      "成交由实盘日志直接给出而非模拟"
+    ]
+  },
+  "content": {
+    "statement": "任何计算交易收益的回测都必须显式声明 fill model、slippage model、fee model、订单类型、数据粒度和延迟假设。",
+    "rationale": "成交价格和数量由成交模型决定，滑点和费用会显著改变收益和回撤。缺失这些假设会让回测结果不可复现、不可比较、不可审计。",
+    "procedure": [
+      "声明 market、limit、stop、stop-limit 等订单如何撮合。",
+      "声明滑点、手续费、资金费率或交易成本模型。",
+      "声明是否支持部分成交、盘口、成交量约束和延迟。",
+      "在回测报告中输出这些假设。"
+    ],
+    "examples": [
+      "同一个信号在无滑点与有滑点模型下结果不同，报告必须披露。"
+    ],
+    "anti_patterns": [
+      "默认无滑点无费用，却把结果当成实盘预期。",
+      "不同策略使用不同隐藏成交假设进行比较。"
+    ],
+    "validation": [
+      "检查配置中是否存在 fill/slippage/fee 字段。",
+      "用费用和滑点压力测试比较结果。",
+      "检查检索结果是否返回 assumption caveat。"
+    ],
+    "risk_notes": [
+      "该知识不指定唯一成交模型。",
+      "高频或低流动性策略需要更严格的盘口和延迟模型。"
+    ],
+    "citation_notes": "QuantConnect 文档说明 fill models、slippage model、fee model 和 brokerage model 对回测成交模拟的作用；Backtrader 文档展示了不同订单类型的 OHLC 撮合逻辑。"
+  },
+  "assumptions": [
+    "回测会把信号转为订单和收益。",
+    "交易成本和成交假设会影响结果。"
+  ],
+  "source_evidence": [
+    {
+      "source_id": "src_seed_003",
+      "source_title": "QuantConnect Trade Fills - Key Concepts",
+      "source_url": "https://www.quantconnect.com/docs/v2/writing-algorithms/reality-modeling/trade-fills/key-concepts",
+      "source_type": "framework_doc",
+      "publisher": "QuantConnect",
+      "published_at": null,
+      "accessed_at": "2026-06-08",
+      "version": "v2 docs",
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "QuantConnect 说明 fill models 决定成交价格和数量，并可与 slippage model 协作。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_seed_004",
+      "source_title": "QuantConnect Trading and Orders",
+      "source_url": "https://www.quantconnect.com/docs/v1/algorithm-reference/trading-and-orders",
+      "source_type": "framework_doc",
+      "publisher": "QuantConnect",
+      "published_at": null,
+      "accessed_at": "2026-06-08",
+      "version": "v1 docs",
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "QuantConnect 文档讨论 slippage、fee、brokerage model 等回测现实建模组件。",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 90,
+    "score_version": "1.0.0",
+    "primary_source_count": 0,
+    "supporting_source_count": 2,
+    "limitations": [
+      "来源是框架文档；具体项目应按自身交易所和数据供应商补充假设。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "kb_04_backtest.fill_model.ohlc_same_bar_path_ambiguity.v1"
+    ],
+    "conflicts": [],
+    "resolution_summary": "该知识扩展成交模型假设清单，与 OHLC 路径不确定性规则一致。",
+    "default_recommendation": "use_as_guidance"
+  },
+  "review": {
+    "confidence": "high",
+    "freshness": "time_sensitive",
+    "review_status": "approved",
+    "reviewer": "codex",
+    "reviewed_at": "2026-06-08",
+    "created_at": "2026-06-08",
+    "updated_at": "2026-06-08",
+    "open_questions": [
+      "后续可为 Binance futures、股票、期货分别定义费用和滑点字段。"
+    ],
+    "decision_log": [
+      {
+        "at": "2026-06-08",
+        "actor": "codex",
+        "decision": "approved",
+        "reason": "来源清晰，能直接支撑回测审计 checklist。"
+      }
+    ],
+    "approval_status": "approved",
+    "default_guidance_allowed": true,
+    "source_candidate_id": null,
+    "ai_audit_result_id": null
+  },
+  "contribution": {
+    "contribution_id": null,
+    "source_project": null,
+    "sanitization_status": "not_applicable",
+    "private_data_removed": true,
+    "generic_mapping_notes": "通用回测成交模型知识。"
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于审计和解释 CEK-TA / Trading Engineering / Backtest / Fill Assumption 范围内的专业边界。",
+      "用于提醒用户补充适用范围、来源、冲突状态和验证条件。",
+      "用于阻止 AI 把未满足边界的知识当成默认交易建议。"
+    ],
+    "not_allowed": [
+      "不得据此生成买卖点、仓位、杠杆或实盘执行指令。",
+      "不得在缺少适用边界、来源或冲突状态时作为默认指导。",
+      "不得把 reviewed 或 caveat_only 知识表述为 approved 结论。"
+    ],
+    "required_context": [
+      "project_type",
+      "market",
+      "asset",
+      "timeframe",
+      "data_granularity",
+      "task_type"
+    ],
+    "fallback_behavior": "cite_with_caveat"
+  },
+  "machine_gate": {
+    "default_guidance": "allow",
+    "reason": "approved; default_guidance_allowed=true; sources, conflict, freshness, and privacy gates passed.",
+    "requires_human_escalation": false,
+    "blocking_reasons": [],
+    "checked_at": "2026-06-09",
+    "gate_version": "1.0.0"
+  },
+  "recommended_extra_sources": [
+    {
+      "title": "White, 2000, A Reality Check for Data Snooping",
+      "source_url": null,
+      "source_type": "paper",
+      "purpose": "补强 data snooping、多重测试和样本外检验边界。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_1"
+    },
+    {
+      "title": "Bailey et al., The Probability of Backtest Overfitting",
+      "source_url": null,
+      "source_type": "paper",
+      "purpose": "补强回测过拟合概率、参数搜索和模型选择风险。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_2"
+    }
+  ]
+}

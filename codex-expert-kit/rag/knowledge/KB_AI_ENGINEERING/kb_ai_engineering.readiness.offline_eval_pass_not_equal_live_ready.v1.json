@@ -1,0 +1,376 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_ai_engineering.readiness.offline_eval_pass_not_equal_live_ready.v1",
+  "title": "离线评估通过不等于可实盘上线，仍需要 shadow/paper 验证、监控和事故回滚。",
+  "metadata": {
+    "partition_id": "KB_AI_ENGINEERING",
+    "domain": "ai_engineering",
+    "subdomain": "llmops_deployment",
+    "rule_type": "checklist",
+    "content_type": "json",
+    "project_binding": "none",
+    "tree_node_id": "kt.llmops_deployment",
+    "tree_path": "CEK-TA / AI Engineering",
+    "canonical_node_id": "kt.llmops_deployment",
+    "canonical_tree_path": "CEK-TA / AI Engineering",
+    "risk_level": "medium",
+    "used_for": [
+      "llm_training",
+      "trading_gating_scoring",
+      "rag_engineering",
+      "mcp",
+      "vue_audit_ui"
+    ],
+    "source_candidate_id": "cand_20260609_ai_engineering_readiness_offline_eval_pass_not_equal_live_ready_v1_001",
+    "research_task_id": "RIT-P36-D-B24",
+    "claim_type": "ai_governance_rule",
+    "classification_notes": "Phase 36 AI Engineering reviewed knowledge; UI tree and canonical node are inherited from candidate classification. Trading rule bodies must remain in Trading Engineering."
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "general",
+    "data_granularity": "general",
+    "project_type": "trading_llm_assistant",
+    "applies_when": [
+      "外接项目正在构建或审计交易 LLM gating/scoring、训练数据、评估、RAG/MCP、部署或治理链路。",
+      "该规则用于阻断数据泄漏、权限越界、无来源默认指导、训练/评估污染或上线前治理缺口。"
+    ],
+    "not_applicable_when": [
+      "用户需要具体买卖点、仓位、止损止盈、策略参数或实盘订单执行。",
+      "知识点主要描述 K 线结构、市场微观结构、回测模型、fill model 或交易风控本体，应路由到 Trading Engineering。"
+    ]
+  },
+  "content": {
+    "statement": "离线评估通过不等于可实盘上线，仍需要 shadow/paper 验证、监控和事故回滚。",
+    "rationale": "本候选仅沉淀 AI Engineering 中训练、评估、RAG/MCP、安全、部署或治理规则；不定义 K 线信号、具体交易策略、订单执行规则或账户参数。 审计结论：方向成立。offline eval pass 不能等同于 live-ready；进入 live hard gate 前仍需要 shadow/paper、监控、事故回滚和审批。当前 source_refs 支持 eval 与模型治理，但正式 draft 应补 AWS SageMaker shadow testing、FINRA 15-09 或 FCA algorithmic trading controls 作为 shadow/paper/上线前控制的直接来源。",
+    "procedure": [
+      "确认项目事实匹配 applies_when，且没有命中 not_applicable_when。",
+      "按 source_patch_notes 检查来源是否足够支撑 statement。",
+      "按 content_patch_notes 补齐正式实现、schema、字段和 checklist。",
+      "按 boundary_patch_notes 确认没有把交易规则本体、项目私有参数或实盘执行规则写入 AI Engineering。",
+      "保留 required_followups，后续由来源增强或治理任务继续关闭。"
+    ],
+    "examples": [],
+    "anti_patterns": [
+      "把 reviewed 知识当作 approved 默认指导。",
+      "把 AI Engineering 规则扩写成具体交易阈值、仓位、买卖点或执行参数。",
+      "忽略审计结果中的来源限制、适用范围和后续补强要求。"
+    ],
+    "validation": [
+      "source_evidence 至少 2 条，且没有 low-only 来源。",
+      "conflict_status 为 none 或 resolved。",
+      "review_status 为 reviewed 时 machine_gate 必须是 caveat_only。",
+      "MCP/SearchLab 默认指导不得把本条当作 approved 返回。"
+    ],
+    "risk_notes": [
+      "本条仍是 candidate，需要外部 AI/人工审计确认来源充分性、适用边界和是否需要拆分。",
+      "AI Engineering 管理 readiness checklist、shadow evidence、monitoring/rollback metadata。",
+      "实盘订单、风控阈值、策略参数、kill switch 和 execution engine 路由 Trading Engineering。",
+      "不得在本条写入具体交易策略或实盘执行规则。",
+      "与 deployment.shadow_mode_before_live、calibration.threshold_requires_shadow_data、approval.hard_gate_enable_requires_approval 互链。",
+      "与 runtime.final_gate_deterministic_engine_required 区分：本条是上线 readiness，后者是运行时最终权限。",
+      "未发现直接冲突。",
+      "补 live_readiness_checklist.md。",
+      "补 shadow_paper_promotion_schema.json。",
+      "补 OpenAI Evals deprecation note。",
+      "补 eval cases：offline pass but shadow latency fail、offline pass but false_allow high、no rollback plan。"
+    ],
+    "citation_notes": "OpenAI evals documentation supports programmatic evaluation setup and workflow-specific quality checks before relying on model behavior.；Model risk guidance supports independent validation, governance, change control, and risk-based model oversight.",
+    "audit_patch_notes": {
+      "source_patch_notes": [
+        "保留 OpenAI evals / evaluation best practices，但注明 Evals platform 退役时间线。",
+        "将旧 model risk source 更新或补充为 2026 OCC/Fed/FDIC revised model risk guidance，并标注 GenAI/agentic AI 不在其直接范围内。",
+        "补 AWS SageMaker shadow testing，支持 shadow variant 接收复制生产请求但不返回响应。",
+        "补 FINRA 15-09 / algorithmic trading guidance 作为自动化交易上线前测试、控制和监督来源。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：Offline eval pass is not live-ready; LLM gate/scoring changes still require shadow or paper validation, monitoring, rollback plan and owner approval before live hard-gate authority.",
+        "建议字段：offline_eval_report_id、shadow_run_id、paper_run_id、monitoring_plan_id、rollback_plan_id、incident_response_plan_id、promotion_ticket_id、owner_approval_id。",
+        "明确 shadow/paper 输出不得影响实盘订单。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 管理 readiness checklist、shadow evidence、monitoring/rollback metadata。",
+        "实盘订单、风控阈值、策略参数、kill switch 和 execution engine 路由 Trading Engineering。",
+        "不得在本条写入具体交易策略或实盘执行规则。"
+      ],
+      "conflict_patch_notes": [
+        "与 deployment.shadow_mode_before_live、calibration.threshold_requires_shadow_data、approval.hard_gate_enable_requires_approval 互链。",
+        "与 runtime.final_gate_deterministic_engine_required 区分：本条是上线 readiness，后者是运行时最终权限。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 live_readiness_checklist.md。",
+        "补 shadow_paper_promotion_schema.json。",
+        "补 OpenAI Evals deprecation note。",
+        "补 eval cases：offline pass but shadow latency fail、offline pass but false_allow high、no rollback plan。"
+      ]
+    }
+  },
+  "assumptions": [
+    "外接项目提供项目事实、私有交易数据和策略上下文；CEK-TA 只沉淀可复用专业规则。",
+    "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+  ],
+  "source_evidence": [
+    {
+      "source_id": "src_openai_evals",
+      "source_title": "Working with evals | OpenAI API",
+      "source_url": "https://platform.openai.com/docs/guides/evals?api-mode=chat",
+      "source_type": "official_doc",
+      "publisher": "OpenAI",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "OpenAI evals documentation supports programmatic evaluation setup and workflow-specific quality checks before relying on model behavior.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_fed_model_risk",
+      "source_title": "Supervisory Guidance on Model Risk Management",
+      "source_url": "https://www.federalreserve.gov/frrs/guidance/supervisory-guidance-on-model-risk-management.htm",
+      "source_type": "standard_or_risk_framework",
+      "publisher": "Federal Reserve",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "Model risk guidance supports independent validation, governance, change control, and risk-based model oversight.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_rules_ml",
+      "source_title": "Rules of Machine Learning",
+      "source_url": "https://martin.zinkevich.org/rules_of_ml/rules_of_ml.pdf",
+      "source_type": "paper",
+      "publisher": "Google / Martin Zinkevich",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "medium",
+      "relevance": "high",
+      "evidence_summary": "Rules of ML discusses train/serve consistency, baselines, monitoring, and production ML safeguards.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_occ_fed_fdic_revised_model_risk_2026",
+      "source_title": "Model Risk Management: Revised Guidance",
+      "source_url": "https://occ.gov/news-issuances/bulletins/2026/bulletin-2026-13.html",
+      "source_type": "standard_or_risk_framework",
+      "publisher": "OCC / Federal Reserve / FDIC",
+      "published_at": "2026-04-17",
+      "accessed_at": "2026-06-09",
+      "version": "OCC Bulletin 2026-13 / SR 26-2",
+      "reliability": "high",
+      "relevance": "medium",
+      "evidence_summary": "2026 年跨机构模型风险管理修订指南支持模型治理、验证、变更控制和风险分层；同时需注明 generative AI 和 agentic AI 不在其直接范围内，只能作为模型风险治理类比来源。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_finra_regulatory_notice_15_09",
+      "source_title": "FINRA Regulatory Notice 15-09",
+      "source_url": "https://www.finra.org/industry/notices/15-09",
+      "source_type": "standard_or_risk_framework",
+      "publisher": "FINRA",
+      "published_at": "2015-03-01",
+      "accessed_at": "2026-06-09",
+      "version": "Regulatory Notice 15-09",
+      "reliability": "high",
+      "relevance": "medium",
+      "evidence_summary": "FINRA 15-09 支持自动化交易系统的监督、测试、控制、变更和合规治理要求，适合作为交易自动化治理类来源。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_aws_sagemaker_shadow_tests",
+      "source_title": "Shadow tests - Amazon SageMaker AI",
+      "source_url": "https://docs.aws.amazon.com/sagemaker/latest/dg/shadow-tests.html",
+      "source_type": "official_doc",
+      "publisher": "AWS",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "medium",
+      "evidence_summary": "AWS SageMaker shadow testing 支持在不影响生产决策的情况下复制请求并比较候选模型表现，适合作为 shadow/promotion gate 的工程来源。",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 87,
+    "score_version": "1.0.0",
+    "primary_source_count": 2,
+    "supporting_source_count": 4,
+    "low_reliability_source_count": 0,
+    "limitations": [
+      "本条为 reviewed 知识，来源和审计补丁已记录；默认指导仍需后续人工治理升级 approved。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "docs/contracts/ai_engineering_gating_scoring_contract.md",
+      "docs/contracts/ai_engineering_knowledge_item_policy.md",
+      "docs/tasks/phase36_ai_engineering_gating_scoring_knowledge.md"
+    ],
+    "conflicts": [],
+    "resolution_summary": "未发现与当前 CEK-TA formal knowledge 的直接冲突；候选不会进入默认指导。",
+    "default_recommendation": "caveat_only_until_approved"
+  },
+  "review": {
+    "confidence": "medium",
+    "freshness": "time_sensitive",
+    "review_status": "reviewed",
+    "reviewer": "codex",
+    "reviewed_at": "2026-06-09",
+    "created_at": "2026-06-09",
+    "updated_at": "2026-06-09",
+    "open_questions": [
+      "审计时确认该候选是否应与相邻 AI Engineering 规则合并、拆分，或改路由到 Trading Engineering。",
+      "补 live_readiness_checklist.md。",
+      "补 shadow_paper_promotion_schema.json。",
+      "补 OpenAI Evals deprecation note。",
+      "补 eval cases：offline pass but shadow latency fail、offline pass but false_allow high、no rollback plan。"
+    ],
+    "decision_log": [
+      {
+        "at": "2026-06-09",
+        "actor": "external_ai",
+        "decision": "accepted_for_draft",
+        "reason": "方向成立。offline eval pass 不能等同于 live-ready；进入 live hard gate 前仍需要 shadow/paper、监控、事故回滚和审批。当前 source_refs 支持 eval 与模型治理，但正式 draft 应补 AWS SageMaker shadow testing、FINRA 15-09 或 FCA algorithmic trading controls 作为 shadow/paper/上线前控制的直接来源。",
+        "audit_result_id": "audit_result_phase36_ai_engineering_batch_07_of_10_20260609_gpt55_pro_strict_sources"
+      },
+      {
+        "at": "2026-06-09",
+        "actor": "codex",
+        "decision": "converted_to_reviewed",
+        "reason": "按 Phase 36 批量审计结果优化候选并转为 formal reviewed；未升级 approved。",
+        "audit_result_id": "audit_result_phase36_ai_engineering_batch_07_of_10_20260609_gpt55_pro_strict_sources"
+      }
+    ],
+    "approval_status": "not_requested",
+    "default_guidance_allowed": false,
+    "source_candidate_id": "cand_20260609_ai_engineering_readiness_offline_eval_pass_not_equal_live_ready_v1_001",
+    "ai_audit_result_id": "audit_result_phase36_ai_engineering_batch_07_of_10_20260609_gpt55_pro_strict_sources",
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase36_ai_engineering_batch_07_of_10_20260609_gpt55_pro_strict_sources",
+      "source_package_id": "phase36_ai_engineering_candidate_audit_batch_07_of_10_20260609",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立。offline eval pass 不能等同于 live-ready；进入 live hard gate 前仍需要 shadow/paper、监控、事故回滚和审批。当前 source_refs 支持 eval 与模型治理，但正式 draft 应补 AWS SageMaker shadow testing、FINRA 15-09 或 FCA algorithmic trading controls 作为 shadow/paper/上线前控制的直接来源。",
+      "source_patch_notes": [
+        "保留 OpenAI evals / evaluation best practices，但注明 Evals platform 退役时间线。",
+        "将旧 model risk source 更新或补充为 2026 OCC/Fed/FDIC revised model risk guidance，并标注 GenAI/agentic AI 不在其直接范围内。",
+        "补 AWS SageMaker shadow testing，支持 shadow variant 接收复制生产请求但不返回响应。",
+        "补 FINRA 15-09 / algorithmic trading guidance 作为自动化交易上线前测试、控制和监督来源。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：Offline eval pass is not live-ready; LLM gate/scoring changes still require shadow or paper validation, monitoring, rollback plan and owner approval before live hard-gate authority.",
+        "建议字段：offline_eval_report_id、shadow_run_id、paper_run_id、monitoring_plan_id、rollback_plan_id、incident_response_plan_id、promotion_ticket_id、owner_approval_id。",
+        "明确 shadow/paper 输出不得影响实盘订单。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 管理 readiness checklist、shadow evidence、monitoring/rollback metadata。",
+        "实盘订单、风控阈值、策略参数、kill switch 和 execution engine 路由 Trading Engineering。",
+        "不得在本条写入具体交易策略或实盘执行规则。"
+      ],
+      "conflict_patch_notes": [
+        "与 deployment.shadow_mode_before_live、calibration.threshold_requires_shadow_data、approval.hard_gate_enable_requires_approval 互链。",
+        "与 runtime.final_gate_deterministic_engine_required 区分：本条是上线 readiness，后者是运行时最终权限。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 live_readiness_checklist.md。",
+        "补 shadow_paper_promotion_schema.json。",
+        "补 OpenAI Evals deprecation note。",
+        "补 eval cases：offline pass but shadow latency fail、offline pass but false_allow high、no rollback plan。"
+      ]
+    },
+    "approved_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "contribution": {
+    "contribution_id": null,
+    "source_project": null,
+    "sanitization_status": "not_applicable",
+    "private_data_removed": true,
+    "generic_mapping_notes": "Phase 36 public-source AI Engineering candidate; no project-private trading facts included."
+  },
+  "copyright": {
+    "stores_full_text": false,
+    "stores_long_quote": false,
+    "summary_only": true,
+    "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+    "reuse_risk": "low"
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于审计 AI Engineering、LLM 训练、RAG/MCP、部署、安全或治理链路。",
+      "用于提醒外接项目补齐来源、适用边界、冲突状态、审计记录和人工审批。",
+      "用于 reviewed/audit 模式下带 caveat 引用。"
+    ],
+    "not_allowed": [
+      "不得生成买卖点、仓位、杠杆、止损止盈或实盘执行指令。",
+      "不得覆盖确定性风控、交易执行系统或人工审批。",
+      "不得作为 approved/default guidance 直接返回。"
+    ],
+    "required_context": [
+      "project_type",
+      "task_type",
+      "mode",
+      "strategy_version",
+      "data_boundary",
+      "review_status"
+    ],
+    "fallback_behavior": "cite_with_caveat"
+  },
+  "machine_gate": {
+    "default_guidance": "caveat_only",
+    "reason": "reviewed only; accepted_for_draft is not approved; default guidance requires later human governance approval.",
+    "requires_human_escalation": true,
+    "blocking_reasons": [
+      "not_approved",
+      "phase36_batch_reviewed_only"
+    ],
+    "checked_at": "2026-06-09",
+    "gate_version": "1.0.0",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "recommended_extra_sources": [
+    {
+      "title": "保留 OpenAI evals / evaluation best practices，但注明 Evals platform 退役时间线。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_1"
+    },
+    {
+      "title": "将旧 model risk source 更新或补充为 2026 OCC/Fed/FDIC revised model risk guidance，并标注 GenAI/agentic AI 不在其直接范围内。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_2"
+    },
+    {
+      "title": "补 AWS SageMaker shadow testing，支持 shadow variant 接收复制生产请求但不返回响应。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_3"
+    },
+    {
+      "title": "补 FINRA 15-09 / algorithmic trading guidance 作为自动化交易上线前测试、控制和监督来源。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_4"
+    }
+  ]
+}

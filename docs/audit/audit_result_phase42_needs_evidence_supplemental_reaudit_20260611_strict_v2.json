@@ -1,0 +1,769 @@
+{
+  "audit_result_id": "audit_result_phase42_needs_evidence_supplemental_reaudit_20260611_strict_v2",
+  "auditor": "ChatGPT GPT-5.5 Pro",
+  "audited_at": "2026-06-11T00:00:00+09:00",
+  "package_id": "phase42_needs_evidence_supplemental_reaudit_package_20260611",
+  "decision": "conditional_accept_for_formal_draft_queue",
+  "summary": {
+    "total": 14,
+    "accepted_for_draft": 14,
+    "needs_more_evidence": 0,
+    "rejected": 0,
+    "blocked": 0,
+    "reviewed_allowed": 0,
+    "approved_allowed": 0,
+    "default_guidance_allowed": 0,
+    "hard_gate_allowed": 0,
+    "misrouted_to_trading": 0
+  },
+  "global_findings": [
+    "本包 quality_gate 通过：candidate_count=14, expected_count=14, failure_count=0。",
+    "本包只允许判断是否从 needs_more_evidence 升级为 accepted_for_draft；补证本身不自动提升候选。",
+    "14 条均已修复 hidden_from_default_queue/default guidance/hard gate 元数据边界。",
+    "所有通过项仍只能进入 formal draft queue，不得直接 reviewed/approved/default guidance/hard gate。"
+  ],
+  "candidate_results": [
+    {
+      "candidate_id": "cand_20260611_phase42_p42_p0_004_score_result_versioned_append_only_001",
+      "research_task_id": "P42-P0-004",
+      "normalized_claim": "phase42.score_result_versioned_append_only.v1",
+      "decision": "accepted_for_draft",
+      "confidence": "medium",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "补充 ScoreResultRecord/ledger 内部契约与 OWASP A09 后，score_result append-only、raw_score 不覆盖、scorer/calibrator/threshold 版本绑定已经有直接契约与审计日志来源支撑。"
+      ],
+      "source_audit": {
+        "status": "pass",
+        "notes": [
+          "补充来源已覆盖第一轮 source_patch_notes 的核心缺口；内部契约仅作为 CEK-TA 字段/状态机证据，不替代外部专业来源。"
+        ]
+      },
+      "conflict_audit": {
+        "status": "pass",
+        "notes": [
+          "workflow.hidden_from_default_queue=true, visible_in_default_guidance_queue=false, default_guidance_allowed=false, hard_gate_allowed=false；未发现默认指导或 hard gate 越权。"
+        ]
+      },
+      "scope_audit": {
+        "status": "pass",
+        "notes": [
+          "仍在 kt.ai_engineering.database_storage_engineering.* 范围；未发现 K线、fill model、仓位、止损止盈或实盘执行本体污染。"
+        ]
+      },
+      "classification_audit": {
+        "status": "pass",
+        "notes": [
+          "kt.ai_engineering.database_storage_engineering.audit_log_ledger"
+        ]
+      },
+      "required_followups": [
+        "formal draft 必须定义 ScoreResultRecord: score_result_id, audit_trace_id, scorer_version, calibrator_version, threshold_policy_version, raw_score, calibrated_probability, created_at, previous_record_hash/ref。"
+      ],
+      "proposed_handoff_patch": {
+        "source_patch_notes": [],
+        "content_patch_notes": [
+          "formal draft 必须定义 ScoreResultRecord: score_result_id, audit_trace_id, scorer_version, calibrator_version, threshold_policy_version, raw_score, calibrated_probability, created_at, previous_record_hash/ref。"
+        ],
+        "boundary_patch_notes": [
+          "保持 candidate / draft 边界；不得直接 reviewed、approved、default guidance 或 hard gate；不得创建生产数据库或执行 migration。"
+        ],
+        "conflict_patch_notes": [
+          "conversion_target.target_review_status 当前多为 blocked；二审通过后可由导入流程改为 draft，但不得改为 reviewed/approved。"
+        ]
+      }
+    },
+    {
+      "candidate_id": "cand_20260611_phase42_p42_p0_007_feedback_outcome_label_separated_001",
+      "research_task_id": "P42-P0-007",
+      "normalized_claim": "phase42.feedback_outcome_label_separated.v1",
+      "decision": "accepted_for_draft",
+      "confidence": "medium",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "W3C PROV、Data Cards 和 Phase42 Feedback/Outcome/Label 内部契约足以支撑 feedback、outcome、label 三类事件按 provenance、时点、review_status 和训练含义分离。"
+      ],
+      "source_audit": {
+        "status": "pass",
+        "notes": [
+          "补充来源已覆盖第一轮 source_patch_notes 的核心缺口；内部契约仅作为 CEK-TA 字段/状态机证据，不替代外部专业来源。"
+        ]
+      },
+      "conflict_audit": {
+        "status": "pass",
+        "notes": [
+          "workflow.hidden_from_default_queue=true, visible_in_default_guidance_queue=false, default_guidance_allowed=false, hard_gate_allowed=false；未发现默认指导或 hard gate 越权。"
+        ]
+      },
+      "scope_audit": {
+        "status": "pass",
+        "notes": [
+          "仍在 kt.ai_engineering.database_storage_engineering.* 范围；未发现 K线、fill model、仓位、止损止盈或实盘执行本体污染。"
+        ]
+      },
+      "classification_audit": {
+        "status": "pass",
+        "notes": [
+          "kt.ai_engineering.database_storage_engineering.data_contract_lineage"
+        ]
+      },
+      "required_followups": [
+        "formal draft 必须给出 FeedbackEvent / OutcomeEvent / LabelEvent 三个 schema，并声明 outcome/label 不能回流污染 decision-time features。"
+      ],
+      "proposed_handoff_patch": {
+        "source_patch_notes": [],
+        "content_patch_notes": [
+          "formal draft 必须给出 FeedbackEvent / OutcomeEvent / LabelEvent 三个 schema，并声明 outcome/label 不能回流污染 decision-time features。"
+        ],
+        "boundary_patch_notes": [
+          "保持 candidate / draft 边界；不得直接 reviewed、approved、default guidance 或 hard gate；不得创建生产数据库或执行 migration。"
+        ],
+        "conflict_patch_notes": [
+          "conversion_target.target_review_status 当前多为 blocked；二审通过后可由导入流程改为 draft，但不得改为 reviewed/approved。"
+        ]
+      }
+    },
+    {
+      "candidate_id": "cand_20260611_phase42_p42_p0_008_labels_record_policy_version_and_source_001",
+      "research_task_id": "P42-P0-008",
+      "normalized_claim": "phase42.labels_record_policy_version_and_source.v1",
+      "decision": "accepted_for_draft",
+      "confidence": "medium",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "W3C PROV + Data Cards + Phase42 label_event 契约足以支撑 label_policy_version、label_source、责任主体和语义可复现。"
+      ],
+      "source_audit": {
+        "status": "pass",
+        "notes": [
+          "补充来源已覆盖第一轮 source_patch_notes 的核心缺口；内部契约仅作为 CEK-TA 字段/状态机证据，不替代外部专业来源。"
+        ]
+      },
+      "conflict_audit": {
+        "status": "pass",
+        "notes": [
+          "workflow.hidden_from_default_queue=true, visible_in_default_guidance_queue=false, default_guidance_allowed=false, hard_gate_allowed=false；未发现默认指导或 hard gate 越权。"
+        ]
+      },
+      "scope_audit": {
+        "status": "pass",
+        "notes": [
+          "仍在 kt.ai_engineering.database_storage_engineering.* 范围；未发现 K线、fill model、仓位、止损止盈或实盘执行本体污染。"
+        ]
+      },
+      "classification_audit": {
+        "status": "pass",
+        "notes": [
+          "kt.ai_engineering.database_storage_engineering.data_contract_lineage"
+        ]
+      },
+      "required_followups": [
+        "formal draft 必须固定 label_policy_version, label_source, labeler_type, reviewed_at, disagreement_status, human_review_ref。"
+      ],
+      "proposed_handoff_patch": {
+        "source_patch_notes": [],
+        "content_patch_notes": [
+          "formal draft 必须固定 label_policy_version, label_source, labeler_type, reviewed_at, disagreement_status, human_review_ref。"
+        ],
+        "boundary_patch_notes": [
+          "保持 candidate / draft 边界；不得直接 reviewed、approved、default guidance 或 hard gate；不得创建生产数据库或执行 migration。"
+        ],
+        "conflict_patch_notes": [
+          "conversion_target.target_review_status 当前多为 blocked；二审通过后可由导入流程改为 draft，但不得改为 reviewed/approved。"
+        ]
+      }
+    },
+    {
+      "candidate_id": "cand_20260611_phase42_p42_p0_009_model_prompt_rag_versions_recorded_together_001",
+      "research_task_id": "P42-P0-009",
+      "normalized_claim": "phase42.model_prompt_rag_versions_recorded_together.v1",
+      "decision": "accepted_for_draft",
+      "confidence": "medium",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "MLflow/DVC/OpenLineage 支撑通用 artifact/version/lineage，Phase42 release manifest 内部契约补足 model/prompt/RAG index 共同作为 LLM audit release unit 的字段。"
+      ],
+      "source_audit": {
+        "status": "pass",
+        "notes": [
+          "补充来源已覆盖第一轮 source_patch_notes 的核心缺口；内部契约仅作为 CEK-TA 字段/状态机证据，不替代外部专业来源。"
+        ]
+      },
+      "conflict_audit": {
+        "status": "pass",
+        "notes": [
+          "workflow.hidden_from_default_queue=true, visible_in_default_guidance_queue=false, default_guidance_allowed=false, hard_gate_allowed=false；未发现默认指导或 hard gate 越权。"
+        ]
+      },
+      "scope_audit": {
+        "status": "pass",
+        "notes": [
+          "仍在 kt.ai_engineering.database_storage_engineering.* 范围；未发现 K线、fill model、仓位、止损止盈或实盘执行本体污染。"
+        ]
+      },
+      "classification_audit": {
+        "status": "pass",
+        "notes": [
+          "kt.ai_engineering.database_storage_engineering.model_registry_release_storage"
+        ]
+      },
+      "required_followups": [
+        "formal draft 必须定义 LLMAuditReleaseManifest，并禁止只升级 prompt/RAG/model 其中之一而不更新 manifest。"
+      ],
+      "proposed_handoff_patch": {
+        "source_patch_notes": [],
+        "content_patch_notes": [
+          "formal draft 必须定义 LLMAuditReleaseManifest，并禁止只升级 prompt/RAG/model 其中之一而不更新 manifest。"
+        ],
+        "boundary_patch_notes": [
+          "保持 candidate / draft 边界；不得直接 reviewed、approved、default guidance 或 hard gate；不得创建生产数据库或执行 migration。"
+        ],
+        "conflict_patch_notes": [
+          "conversion_target.target_review_status 当前多为 blocked；二审通过后可由导入流程改为 draft，但不得改为 reviewed/approved。"
+        ]
+      }
+    },
+    {
+      "candidate_id": "cand_20260611_phase42_p42_p0_010_llm_audit_binds_citations_source_version_001",
+      "research_task_id": "P42-P0-010",
+      "normalized_claim": "phase42.llm_audit_binds_citations_source_version.v1",
+      "decision": "accepted_for_draft",
+      "confidence": "medium",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "OpenAI File Search annotations、LlamaIndex citation query engine 与 Phase42 citation_result 契约足以支撑 LLM audit 输出绑定 citations、source identifiers、index versions 与 unsupported_claims。"
+      ],
+      "source_audit": {
+        "status": "pass",
+        "notes": [
+          "补充来源已覆盖第一轮 source_patch_notes 的核心缺口；内部契约仅作为 CEK-TA 字段/状态机证据，不替代外部专业来源。"
+        ]
+      },
+      "conflict_audit": {
+        "status": "pass",
+        "notes": [
+          "workflow.hidden_from_default_queue=true, visible_in_default_guidance_queue=false, default_guidance_allowed=false, hard_gate_allowed=false；未发现默认指导或 hard gate 越权。"
+        ]
+      },
+      "scope_audit": {
+        "status": "pass",
+        "notes": [
+          "仍在 kt.ai_engineering.database_storage_engineering.* 范围；未发现 K线、fill model、仓位、止损止盈或实盘执行本体污染。"
+        ]
+      },
+      "classification_audit": {
+        "status": "pass",
+        "notes": [
+          "kt.ai_engineering.database_storage_engineering.vector_store_retrieval_storage"
+        ]
+      },
+      "required_followups": [
+        "formal draft 必须要求 citation_resolution_status 和 unsupported_claims；unsupported_claims 非空不得 default guidance。"
+      ],
+      "proposed_handoff_patch": {
+        "source_patch_notes": [],
+        "content_patch_notes": [
+          "formal draft 必须要求 citation_resolution_status 和 unsupported_claims；unsupported_claims 非空不得 default guidance。"
+        ],
+        "boundary_patch_notes": [
+          "保持 candidate / draft 边界；不得直接 reviewed、approved、default guidance 或 hard gate；不得创建生产数据库或执行 migration。"
+        ],
+        "conflict_patch_notes": [
+          "conversion_target.target_review_status 当前多为 blocked；二审通过后可由导入流程改为 draft，但不得改为 reviewed/approved。"
+        ]
+      }
+    },
+    {
+      "candidate_id": "cand_20260611_phase42_p42_p0_011_vector_search_links_source_and_knowledge_id_001",
+      "research_task_id": "P42-P0-011",
+      "normalized_claim": "phase42.vector_search_links_source_and_knowledge_id.v1",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "Qdrant/pgvector 支撑 vector payload、points/search/filtering；Phase42 RAG/vector 契约补足 source document、chunk、formal knowledge id 回链和 vector hit 非 approved knowledge 的语义。"
+      ],
+      "source_audit": {
+        "status": "pass",
+        "notes": [
+          "补充来源已覆盖第一轮 source_patch_notes 的核心缺口；内部契约仅作为 CEK-TA 字段/状态机证据，不替代外部专业来源。"
+        ]
+      },
+      "conflict_audit": {
+        "status": "pass",
+        "notes": [
+          "workflow.hidden_from_default_queue=true, visible_in_default_guidance_queue=false, default_guidance_allowed=false, hard_gate_allowed=false；未发现默认指导或 hard gate 越权。"
+        ]
+      },
+      "scope_audit": {
+        "status": "pass",
+        "notes": [
+          "仍在 kt.ai_engineering.database_storage_engineering.* 范围；未发现 K线、fill model、仓位、止损止盈或实盘执行本体污染。"
+        ]
+      },
+      "classification_audit": {
+        "status": "pass",
+        "notes": [
+          "kt.ai_engineering.database_storage_engineering.vector_store_retrieval_storage"
+        ]
+      },
+      "required_followups": [
+        "formal draft 必须写清 vector hit != formal knowledge；必须解析到 source_doc_id/chunk_id/formal_knowledge_id/review_status。"
+      ],
+      "proposed_handoff_patch": {
+        "source_patch_notes": [],
+        "content_patch_notes": [
+          "formal draft 必须写清 vector hit != formal knowledge；必须解析到 source_doc_id/chunk_id/formal_knowledge_id/review_status。"
+        ],
+        "boundary_patch_notes": [
+          "保持 candidate / draft 边界；不得直接 reviewed、approved、default guidance 或 hard gate；不得创建生产数据库或执行 migration。"
+        ],
+        "conflict_patch_notes": [
+          "conversion_target.target_review_status 当前多为 blocked；二审通过后可由导入流程改为 draft，但不得改为 reviewed/approved。"
+        ]
+      }
+    },
+    {
+      "candidate_id": "cand_20260611_phase42_p42_p0_012_rag_chunks_store_source_license_hash_version_001",
+      "research_task_id": "P42-P0-012",
+      "normalized_claim": "phase42.rag_chunks_store_source_license_hash_version.v1",
+      "decision": "accepted_for_draft",
+      "confidence": "medium",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "DataCite、FAIR、Creative Commons、DVC 与 Phase42 RAGChunkManifest 契约足以支撑 source_uri、license/copyright policy、content_hash、chunk_version。"
+      ],
+      "source_audit": {
+        "status": "pass",
+        "notes": [
+          "补充来源已覆盖第一轮 source_patch_notes 的核心缺口；内部契约仅作为 CEK-TA 字段/状态机证据，不替代外部专业来源。"
+        ]
+      },
+      "conflict_audit": {
+        "status": "pass",
+        "notes": [
+          "workflow.hidden_from_default_queue=true, visible_in_default_guidance_queue=false, default_guidance_allowed=false, hard_gate_allowed=false；未发现默认指导或 hard gate 越权。"
+        ]
+      },
+      "scope_audit": {
+        "status": "pass",
+        "notes": [
+          "仍在 kt.ai_engineering.database_storage_engineering.* 范围；未发现 K线、fill model、仓位、止损止盈或实盘执行本体污染。"
+        ]
+      },
+      "classification_audit": {
+        "status": "pass",
+        "notes": [
+          "kt.ai_engineering.database_storage_engineering.vector_store_retrieval_storage"
+        ]
+      },
+      "required_followups": [
+        "formal draft 必须避免保存全文或长引用，并记录 license_policy、copyright_status、content_hash、chunk_version。"
+      ],
+      "proposed_handoff_patch": {
+        "source_patch_notes": [],
+        "content_patch_notes": [
+          "formal draft 必须避免保存全文或长引用，并记录 license_policy、copyright_status、content_hash、chunk_version。"
+        ],
+        "boundary_patch_notes": [
+          "保持 candidate / draft 边界；不得直接 reviewed、approved、default guidance 或 hard gate；不得创建生产数据库或执行 migration。"
+        ],
+        "conflict_patch_notes": [
+          "conversion_target.target_review_status 当前多为 blocked；二审通过后可由导入流程改为 draft，但不得改为 reviewed/approved。"
+        ]
+      }
+    },
+    {
+      "candidate_id": "cand_20260611_phase42_p42_p0_013_embedding_model_version_stored_with_vectors_001",
+      "research_task_id": "P42-P0-013",
+      "normalized_claim": "phase42.embedding_model_version_stored_with_vectors.v1",
+      "decision": "accepted_for_draft",
+      "confidence": "medium",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "Qdrant/pgvector 支撑 vector records/payload/index，Phase42 vector_index_manifest 契约补足 embedding_model_name/version 与重建索引治理。"
+      ],
+      "source_audit": {
+        "status": "pass",
+        "notes": [
+          "补充来源已覆盖第一轮 source_patch_notes 的核心缺口；内部契约仅作为 CEK-TA 字段/状态机证据，不替代外部专业来源。"
+        ]
+      },
+      "conflict_audit": {
+        "status": "pass",
+        "notes": [
+          "workflow.hidden_from_default_queue=true, visible_in_default_guidance_queue=false, default_guidance_allowed=false, hard_gate_allowed=false；未发现默认指导或 hard gate 越权。"
+        ]
+      },
+      "scope_audit": {
+        "status": "pass",
+        "notes": [
+          "仍在 kt.ai_engineering.database_storage_engineering.* 范围；未发现 K线、fill model、仓位、止损止盈或实盘执行本体污染。"
+        ]
+      },
+      "classification_audit": {
+        "status": "pass",
+        "notes": [
+          "kt.ai_engineering.database_storage_engineering.vector_store_retrieval_storage"
+        ]
+      },
+      "required_followups": [
+        "formal draft 必须规定 embedding model 变更需要 new vector_index_manifest 或 rebuild plan，旧索引不得静默复用。"
+      ],
+      "proposed_handoff_patch": {
+        "source_patch_notes": [],
+        "content_patch_notes": [
+          "formal draft 必须规定 embedding model 变更需要 new vector_index_manifest 或 rebuild plan，旧索引不得静默复用。"
+        ],
+        "boundary_patch_notes": [
+          "保持 candidate / draft 边界；不得直接 reviewed、approved、default guidance 或 hard gate；不得创建生产数据库或执行 migration。"
+        ],
+        "conflict_patch_notes": [
+          "conversion_target.target_review_status 当前多为 blocked；二审通过后可由导入流程改为 draft，但不得改为 reviewed/approved。"
+        ]
+      }
+    },
+    {
+      "candidate_id": "cand_20260611_phase42_p42_p0_015_unique_constraints_and_idempotency_keys_001",
+      "research_task_id": "P42-P0-015",
+      "normalized_claim": "phase42.unique_constraints_and_idempotency_keys.v1",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "PostgreSQL constraints/MVCC 支撑唯一性与一致性，Stripe/AWS idempotency 来源直接支撑幂等键设计，Phase42 契约补足 high-value write path。"
+      ],
+      "source_audit": {
+        "status": "pass",
+        "notes": [
+          "补充来源已覆盖第一轮 source_patch_notes 的核心缺口；内部契约仅作为 CEK-TA 字段/状态机证据，不替代外部专业来源。"
+        ]
+      },
+      "conflict_audit": {
+        "status": "pass",
+        "notes": [
+          "workflow.hidden_from_default_queue=true, visible_in_default_guidance_queue=false, default_guidance_allowed=false, hard_gate_allowed=false；未发现默认指导或 hard gate 越权。"
+        ]
+      },
+      "scope_audit": {
+        "status": "pass",
+        "notes": [
+          "仍在 kt.ai_engineering.database_storage_engineering.* 范围；未发现 K线、fill model、仓位、止损止盈或实盘执行本体污染。"
+        ]
+      },
+      "classification_audit": {
+        "status": "pass",
+        "notes": [
+          "kt.ai_engineering.database_storage_engineering.relational_core_schema"
+        ]
+      },
+      "required_followups": [
+        "formal draft 必须定义 idempotency_key、unique constraint、retry_policy、duplicate_write_behavior。"
+      ],
+      "proposed_handoff_patch": {
+        "source_patch_notes": [],
+        "content_patch_notes": [
+          "formal draft 必须定义 idempotency_key、unique constraint、retry_policy、duplicate_write_behavior。"
+        ],
+        "boundary_patch_notes": [
+          "保持 candidate / draft 边界；不得直接 reviewed、approved、default guidance 或 hard gate；不得创建生产数据库或执行 migration。"
+        ],
+        "conflict_patch_notes": [
+          "conversion_target.target_review_status 当前多为 blocked；二审通过后可由导入流程改为 draft，但不得改为 reviewed/approved。"
+        ]
+      }
+    },
+    {
+      "candidate_id": "cand_20260611_phase42_p42_p0_018_schema_version_change_compatibility_check_001",
+      "research_task_id": "P42-P0-018",
+      "normalized_claim": "phase42.schema_version_change_compatibility_check.v1",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "Confluent schema evolution、OpenAPI、Alembic/DVC 和 Phase42 consumer compatibility contract 足以支撑 schema_version 变更前兼容性检查。"
+      ],
+      "source_audit": {
+        "status": "pass",
+        "notes": [
+          "补充来源已覆盖第一轮 source_patch_notes 的核心缺口；内部契约仅作为 CEK-TA 字段/状态机证据，不替代外部专业来源。"
+        ]
+      },
+      "conflict_audit": {
+        "status": "pass",
+        "notes": [
+          "workflow.hidden_from_default_queue=true, visible_in_default_guidance_queue=false, default_guidance_allowed=false, hard_gate_allowed=false；未发现默认指导或 hard gate 越权。"
+        ]
+      },
+      "scope_audit": {
+        "status": "pass",
+        "notes": [
+          "仍在 kt.ai_engineering.database_storage_engineering.* 范围；未发现 K线、fill model、仓位、止损止盈或实盘执行本体污染。"
+        ]
+      },
+      "classification_audit": {
+        "status": "pass",
+        "notes": [
+          "kt.ai_engineering.database_storage_engineering.migration_versioning"
+        ]
+      },
+      "required_followups": [
+        "formal draft 必须定义 replay/audit/manifest/MCP/SearchLab consumer compatibility report；不通过不得 default guidance。"
+      ],
+      "proposed_handoff_patch": {
+        "source_patch_notes": [],
+        "content_patch_notes": [
+          "formal draft 必须定义 replay/audit/manifest/MCP/SearchLab consumer compatibility report；不通过不得 default guidance。"
+        ],
+        "boundary_patch_notes": [
+          "保持 candidate / draft 边界；不得直接 reviewed、approved、default guidance 或 hard gate；不得创建生产数据库或执行 migration。"
+        ],
+        "conflict_patch_notes": [
+          "conversion_target.target_review_status 当前多为 blocked；二审通过后可由导入流程改为 draft，但不得改为 reviewed/approved。"
+        ]
+      }
+    },
+    {
+      "candidate_id": "cand_20260611_phase42_p42_p0_021_feature_snapshot_manifest_schema_hash_001",
+      "research_task_id": "P42-P0-021",
+      "normalized_claim": "phase42.feature_snapshot_manifest_schema_hash.v1",
+      "decision": "accepted_for_draft",
+      "confidence": "medium",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "Feast feature retrieval、OpenLineage、DVC/MLflow 和 FeatureSnapshotManifest 契约足以支撑 feature_schema_hash 与 lineage references。"
+      ],
+      "source_audit": {
+        "status": "pass",
+        "notes": [
+          "补充来源已覆盖第一轮 source_patch_notes 的核心缺口；内部契约仅作为 CEK-TA 字段/状态机证据，不替代外部专业来源。"
+        ]
+      },
+      "conflict_audit": {
+        "status": "pass",
+        "notes": [
+          "workflow.hidden_from_default_queue=true, visible_in_default_guidance_queue=false, default_guidance_allowed=false, hard_gate_allowed=false；未发现默认指导或 hard gate 越权。"
+        ]
+      },
+      "scope_audit": {
+        "status": "pass",
+        "notes": [
+          "仍在 kt.ai_engineering.database_storage_engineering.* 范围；未发现 K线、fill model、仓位、止损止盈或实盘执行本体污染。"
+        ]
+      },
+      "classification_audit": {
+        "status": "pass",
+        "notes": [
+          "kt.ai_engineering.database_storage_engineering.feature_store_storage"
+        ]
+      },
+      "required_followups": [
+        "formal draft 必须包含 feature_schema_hash、lineage_ref、source_snapshot_ref、feature_available_time_policy。"
+      ],
+      "proposed_handoff_patch": {
+        "source_patch_notes": [],
+        "content_patch_notes": [
+          "formal draft 必须包含 feature_schema_hash、lineage_ref、source_snapshot_ref、feature_available_time_policy。"
+        ],
+        "boundary_patch_notes": [
+          "保持 candidate / draft 边界；不得直接 reviewed、approved、default guidance 或 hard gate；不得创建生产数据库或执行 migration。"
+        ],
+        "conflict_patch_notes": [
+          "conversion_target.target_review_status 当前多为 blocked；二审通过后可由导入流程改为 draft，但不得改为 reviewed/approved。"
+        ]
+      }
+    },
+    {
+      "candidate_id": "cand_20260611_phase42_p42_p0_022_dataset_snapshot_manifest_dataset_hash_001",
+      "research_task_id": "P42-P0-022",
+      "normalized_claim": "phase42.dataset_snapshot_manifest_dataset_hash.v1",
+      "decision": "accepted_for_draft",
+      "confidence": "medium",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "DataCite、Data Cards、OpenLineage、DVC/MLflow 和 DatasetSnapshotManifest 契约足以支撑 dataset_hash、split manifest、label policy refs。"
+      ],
+      "source_audit": {
+        "status": "pass",
+        "notes": [
+          "补充来源已覆盖第一轮 source_patch_notes 的核心缺口；内部契约仅作为 CEK-TA 字段/状态机证据，不替代外部专业来源。"
+        ]
+      },
+      "conflict_audit": {
+        "status": "pass",
+        "notes": [
+          "workflow.hidden_from_default_queue=true, visible_in_default_guidance_queue=false, default_guidance_allowed=false, hard_gate_allowed=false；未发现默认指导或 hard gate 越权。"
+        ]
+      },
+      "scope_audit": {
+        "status": "pass",
+        "notes": [
+          "仍在 kt.ai_engineering.database_storage_engineering.* 范围；未发现 K线、fill model、仓位、止损止盈或实盘执行本体污染。"
+        ]
+      },
+      "classification_audit": {
+        "status": "pass",
+        "notes": [
+          "kt.ai_engineering.database_storage_engineering.data_contract_lineage"
+        ]
+      },
+      "required_followups": [
+        "formal draft 必须包含 dataset_hash、split_manifest_hash、label_policy_version、source_snapshot_refs、created_at、owner。"
+      ],
+      "proposed_handoff_patch": {
+        "source_patch_notes": [],
+        "content_patch_notes": [
+          "formal draft 必须包含 dataset_hash、split_manifest_hash、label_policy_version、source_snapshot_refs、created_at、owner。"
+        ],
+        "boundary_patch_notes": [
+          "保持 candidate / draft 边界；不得直接 reviewed、approved、default guidance 或 hard gate；不得创建生产数据库或执行 migration。"
+        ],
+        "conflict_patch_notes": [
+          "conversion_target.target_review_status 当前多为 blocked；二审通过后可由导入流程改为 draft，但不得改为 reviewed/approved。"
+        ]
+      }
+    },
+    {
+      "candidate_id": "cand_20260611_phase42_p42_p0_026_secrets_not_stored_in_business_tables_001",
+      "research_task_id": "P42-P0-026",
+      "normalized_claim": "phase42.secrets_not_stored_in_business_tables.v1",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "OWASP Secrets Management 与 Cryptographic Storage 直接支撑 secrets 不进入普通业务表；Phase42 权限契约补足 exchange secrets/private account fields 边界。"
+      ],
+      "source_audit": {
+        "status": "pass",
+        "notes": [
+          "补充来源已覆盖第一轮 source_patch_notes 的核心缺口；内部契约仅作为 CEK-TA 字段/状态机证据，不替代外部专业来源。"
+        ]
+      },
+      "conflict_audit": {
+        "status": "pass",
+        "notes": [
+          "workflow.hidden_from_default_queue=true, visible_in_default_guidance_queue=false, default_guidance_allowed=false, hard_gate_allowed=false；未发现默认指导或 hard gate 越权。"
+        ]
+      },
+      "scope_audit": {
+        "status": "pass",
+        "notes": [
+          "仍在 kt.ai_engineering.database_storage_engineering.* 范围；未发现 K线、fill model、仓位、止损止盈或实盘执行本体污染。"
+        ]
+      },
+      "classification_audit": {
+        "status": "pass",
+        "notes": [
+          "kt.ai_engineering.database_storage_engineering.security_privacy_access_control"
+        ]
+      },
+      "required_followups": [
+        "formal draft 必须声明 secrets 管理使用 secrets manager/KMS/ref-only；业务表只允许 secret_ref，不允许 secret_value。"
+      ],
+      "proposed_handoff_patch": {
+        "source_patch_notes": [],
+        "content_patch_notes": [
+          "formal draft 必须声明 secrets 管理使用 secrets manager/KMS/ref-only；业务表只允许 secret_ref，不允许 secret_value。"
+        ],
+        "boundary_patch_notes": [
+          "保持 candidate / draft 边界；不得直接 reviewed、approved、default guidance 或 hard gate；不得创建生产数据库或执行 migration。"
+        ],
+        "conflict_patch_notes": [
+          "conversion_target.target_review_status 当前多为 blocked；二审通过后可由导入流程改为 draft，但不得改为 reviewed/approved。"
+        ]
+      }
+    },
+    {
+      "candidate_id": "cand_20260611_phase42_p42_p0_028_db_permissions_and_write_actions_auditable_001",
+      "research_task_id": "P42-P0-028",
+      "normalized_claim": "phase42.db_permissions_and_write_actions_auditable.v1",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "NIST AC-6 least privilege、OWASP logging/A09 和 Phase42 MCP/SearchLab 权限契约足以支撑默认只读、最小权限和写动作审计。"
+      ],
+      "source_audit": {
+        "status": "pass",
+        "notes": [
+          "补充来源已覆盖第一轮 source_patch_notes 的核心缺口；内部契约仅作为 CEK-TA 字段/状态机证据，不替代外部专业来源。"
+        ]
+      },
+      "conflict_audit": {
+        "status": "pass",
+        "notes": [
+          "workflow.hidden_from_default_queue=true, visible_in_default_guidance_queue=false, default_guidance_allowed=false, hard_gate_allowed=false；未发现默认指导或 hard gate 越权。"
+        ]
+      },
+      "scope_audit": {
+        "status": "pass",
+        "notes": [
+          "仍在 kt.ai_engineering.database_storage_engineering.* 范围；未发现 K线、fill model、仓位、止损止盈或实盘执行本体污染。"
+        ]
+      },
+      "classification_audit": {
+        "status": "pass",
+        "notes": [
+          "kt.ai_engineering.database_storage_engineering.security_privacy_access_control"
+        ]
+      },
+      "required_followups": [
+        "formal draft 必须要求 read_only_default=true、write_path_approval_ref、actor、before/after、audit_trace_id。"
+      ],
+      "proposed_handoff_patch": {
+        "source_patch_notes": [],
+        "content_patch_notes": [
+          "formal draft 必须要求 read_only_default=true、write_path_approval_ref、actor、before/after、audit_trace_id。"
+        ],
+        "boundary_patch_notes": [
+          "保持 candidate / draft 边界；不得直接 reviewed、approved、default guidance 或 hard gate；不得创建生产数据库或执行 migration。"
+        ],
+        "conflict_patch_notes": [
+          "conversion_target.target_review_status 当前多为 blocked；二审通过后可由导入流程改为 draft，但不得改为 reviewed/approved。"
+        ]
+      }
+    }
+  ]
+}

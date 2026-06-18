@@ -1,0 +1,282 @@
+{
+  "schema_version": "1.0.0",
+  "candidate_id": "cand_20260609_ai_engineering_training_example_input_target_separation_v1_001",
+  "research_task_id": "RIT-P36-B-S17",
+  "status": {
+    "review_status": "accepted",
+    "ingestion_decision": "needs_more_evidence",
+    "decision_reason": "Phase 36 batch AI audit decision: accepted_for_draft. 该状态不是 approved。",
+    "created_at": "2026-06-09",
+    "updated_at": "2026-06-09"
+  },
+  "classification": {
+    "tree_node_id": "kt.llm_training.training_dataset_schema_engineering",
+    "canonical_node_id": "kt.llm_training.training_dataset_schema_engineering",
+    "tree_path": "CEK-TA / AI Engineering",
+    "related_nodes": [],
+    "partition_id": "KB_09_LLM_TRAINING",
+    "domain": "llm_training",
+    "subdomain": "training_example",
+    "rule_type": "checklist",
+    "used_for": [
+      "llm_training",
+      "trading_gating_scoring",
+      "rag_engineering",
+      "mcp",
+      "vue_audit_ui"
+    ]
+  },
+  "claim": {
+    "claim_id": "claim_001",
+    "statement": "训练样本必须把 input、prompt 或 decision-time features 与 target、completion、label、post-trade outcome 和 outcome_context 分离；label、future_return、fill result、exit result、人工复盘结论和事后交易结果不得出现在 input 或 RAG context 中。缺少 input_target_separation_check 时，不得进入 SFT、DPO、preference training 或 eval pool。",
+    "normalized_claim": "training_example.input_target_separation.v1",
+    "evidence_summary": "scikit-learn 明确 data leakage 是使用预测时不可得信息并会导致过度乐观评估；TRL SFTTrainer 文档区分 prompt-completion 数据格式并支持 completion-only training；TFDV 文档说明可基于 schema 和统计检测数据异常；OpenAI Structured Outputs 和 JSON Schema 支持结构化字段约束与验证。这些来源共同支撑训练样本必须显式分离输入与目标字段并做 schema 检查。",
+    "interpretation_notes": "本条只定义 training example 的字段角色和泄漏阻断规则；交易标签语义、PnL/outcome 解释和订单事实由 Trading Engineering 或项目 owner 提供。",
+    "claim_strength": "medium",
+    "performance_claim": false
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "general",
+    "data_granularity": "general",
+    "project_type": "trading_llm_assistant",
+    "applies_when": [
+      "交易记录、候选交易、复盘记录或标注记录被转换为 SFT example、preference pair、eval case 或 scoring/gating 训练样本。",
+      "样本包含 prompt/messages/features、completion/assistant target、label、outcome_context 或 post-trade fields。",
+      "外接项目需要检查 label、未来信息或事后结果是否泄漏到模型输入。"
+    ],
+    "not_applicable_when": [
+      "任务只是保存原始完整交易日志，且该日志不会直接作为模型 input 或 RAG context。",
+      "任务是在解释具体交易结果、K 线规则或订单执行事实；这些属于 Trading Engineering 或项目事实。",
+      "completion 或 label 作为训练目标存在时，不应误判为泄漏；只有回流到 input/RAG context 才阻断。"
+    ],
+    "assumptions": [
+      "外接项目提供项目事实、私有交易数据和策略上下文；CEK-TA 只沉淀可复用专业规则。",
+      "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+    ],
+    "limitations": [
+      "本条仍是 needs_more_evidence 候选，等待二次审计确认字段命名和 eval cases 是否充分。",
+      "不同训练框架对 messages/prompt/completion 字段要求不同，正式知识需保留 vendor-neutral schema。"
+    ]
+  },
+  "source_refs": [
+    {
+      "source_id": "src_sklearn_common_pitfalls_data_leakage_2026",
+      "source_title": "Common pitfalls and recommended practices | scikit-learn",
+      "source_url": "https://scikit-learn.org/stable/common_pitfalls.html",
+      "source_type": "official_doc",
+      "publisher": "scikit-learn",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "score": 88,
+      "relevance": "high",
+      "freshness": "time_sensitive",
+      "limitations": [],
+      "evidence_summary": "scikit-learn defines data leakage as using information unavailable at prediction time and recommends splitting data before preprocessing and fitting transformations only on training data.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_huggingface_trl_sft_trainer_2026",
+      "source_title": "SFT Trainer | Hugging Face TRL",
+      "source_url": "https://huggingface.co/docs/trl/en/sft_trainer",
+      "source_type": "official_doc",
+      "publisher": "Hugging Face",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "score": 86,
+      "relevance": "high",
+      "freshness": "time_sensitive",
+      "limitations": [],
+      "evidence_summary": "TRL SFTTrainer documents standard and conversational language modeling and prompt-completion dataset formats, including separate prompt and completion fields and completion-only training options.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_tensorflow_data_validation_anomalies_2026",
+      "source_title": "TensorFlow Data Validation Anomalies Reference",
+      "source_url": "https://www.tensorflow.org/tfx/data_validation/anomalies",
+      "source_type": "official_doc",
+      "publisher": "TensorFlow",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "score": 84,
+      "relevance": "medium",
+      "freshness": "time_sensitive",
+      "limitations": [],
+      "evidence_summary": "TensorFlow Data Validation documents schema and statistics based anomaly checks, including missing type, missing value, dataset-size, drift, and version comparator anomalies.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_openai_structured_outputs_2026",
+      "source_title": "Structured model outputs | OpenAI API",
+      "source_url": "https://platform.openai.com/docs/guides/structured-outputs",
+      "source_type": "official_doc",
+      "publisher": "OpenAI",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "score": 86,
+      "relevance": "high",
+      "freshness": "time_sensitive",
+      "limitations": [],
+      "evidence_summary": "OpenAI Structured Outputs supports JSON Schema constrained outputs, schema design, type-safe parsing, and downstream validation handling.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_json_schema_specification_2026",
+      "source_title": "JSON Schema Specification",
+      "source_url": "https://json-schema.org/specification",
+      "source_type": "standard_or_risk_framework",
+      "publisher": "JSON Schema",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "score": 86,
+      "relevance": "high",
+      "freshness": "stable",
+      "limitations": [],
+      "evidence_summary": "JSON Schema provides a formal validation vocabulary and meta-schema foundation for validating structured JSON data.",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 88,
+    "score_version": "1.0.0",
+    "primary_source_count": 5,
+    "supporting_source_count": 0,
+    "low_reliability_source_count": 0,
+    "mandatory_downgrades": [],
+    "limitations": [
+      "补证来源支持字段、lineage、schema、leakage 或 SFT 数据格式原则；二次审计前仍不得转 reviewed 或 approved。",
+      "AI Engineering 只保存训练数据 schema、引用和审计规则；交易规则本体必须路由到 Trading Engineering。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "docs/contracts/ai_engineering_gating_scoring_contract.md",
+      "docs/contracts/ai_engineering_knowledge_item_policy.md",
+      "docs/tasks/phase36_ai_engineering_gating_scoring_knowledge.md"
+    ],
+    "conflicts": [],
+    "resolution_summary": "补证后未发现与当前 CEK-TA formal knowledge 的直接冲突；仍需二次审计确认是否与相邻规则合并或父子化。候选不会进入默认指导。",
+    "approval_allowed": false
+  },
+  "review": {
+    "confidence": "medium",
+    "freshness": "time_sensitive",
+    "reviewer": "external_ai_and_codex_alignment",
+    "reviewed_at": "2026-06-09",
+    "open_questions": [
+      "请审计 input/target 字段分离是否覆盖 SFT、DPO、preference pair、eval case，并确认 completion-only 训练目标不会被误判为 input 泄漏。",
+      "二次审计通过后只能进入 accepted_for_draft -> formal reviewed；不得直接进入 approved 或 machine_gate allow。"
+    ],
+    "audit_log": [
+      {
+        "at": "2026-06-09",
+        "actor": "codex",
+        "action": "created",
+        "reason": "Phase 36 bulk AI Engineering candidate expansion."
+      },
+      {
+        "at": "2026-06-09",
+        "actor": "external_ai",
+        "action": "phase36_batch_audit_result_received",
+        "reason": "当前不应直接转 draft。candidate_id / normalized_claim 指向 training_example.input_target_separation，但 statement 是元治理占位句，并没有描述 input、target、label、outcome 或 completion 的分离规则。source_refs 只有 OpenAI model optimization 和 NIST AI RMF，不能直接支撑 input/target separation。",
+        "audit_result_id": "audit_result_phase36_ai_engineering_batch_10_of_10_20260609_gpt55_pro_strict_sources"
+      },
+      {
+        "at": "2026-06-09",
+        "actor": "codex",
+        "action": "phase36_batch10_supplemental_evidence_added",
+        "reason": "按第十批审计意见补直接来源、重写 statement、明确 AI Engineering 与 Trading Engineering 边界，导出二审包。",
+        "audit_package": "phase36_batch10_strategy_training_example_supplemental_audit_package_20260609"
+      },
+      {
+        "at": "2026-06-09",
+        "actor": "external_ai",
+        "action": "phase36_batch_audit_result_received",
+        "reason": "补证后可以升级为 accepted_for_draft。rewritten statement 已与 normalized_claim 对齐：训练样本必须把 input、prompt 或 decision-time features 与 target、completion、label、post-trade outcome 和 outcome_context 分离；label、future_return、fill result、exit result、人工复盘结论和事后交易结果不得出现在 input 或 RAG context 中。scikit-learn data leakage、Hugging Face TRL SFTTrainer、TFDV、OpenAI Structured Outputs 和 JSON Schema 来源能直接支撑 input/target/schema separation。需要在正式 draft 中特别说明 completion-only 或 assistant-only 训练目标不是 input 泄漏，只要它们仅作为 target side 参与训练。",
+        "audit_result_id": "audit_result_phase36_batch10_strategy_training_example_supplemental_reaudit_20260609_gpt55_pro_strict_sources"
+      }
+    ],
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase36_batch10_strategy_training_example_supplemental_reaudit_20260609_gpt55_pro_strict_sources",
+      "source_package_id": "phase36_batch10_strategy_training_example_supplemental_audit_package_20260609",
+      "decision": "accepted_for_draft",
+      "reason": "补证后可以升级为 accepted_for_draft。rewritten statement 已与 normalized_claim 对齐：训练样本必须把 input、prompt 或 decision-time features 与 target、completion、label、post-trade outcome 和 outcome_context 分离；label、future_return、fill result、exit result、人工复盘结论和事后交易结果不得出现在 input 或 RAG context 中。scikit-learn data leakage、Hugging Face TRL SFTTrainer、TFDV、OpenAI Structured Outputs 和 JSON Schema 来源能直接支撑 input/target/schema separation。需要在正式 draft 中特别说明 completion-only 或 assistant-only 训练目标不是 input 泄漏，只要它们仅作为 target side 参与训练。",
+      "source_patch_notes": [
+        "保留 scikit-learn common pitfalls / data leakage 作为 target、future information、test data 和 post-trade 字段不得进入 input side 的主来源。",
+        "保留 Hugging Face TRL SFTTrainer 作为 prompt-completion、standard/conversational dataset format、completion-only / assistant-only loss 的直接来源。",
+        "保留 TFDV 作为 schema validation、missing/anomaly、train-serving skew supporting source。",
+        "保留 OpenAI Structured Outputs 与 JSON Schema 作为 structured field validation / required fields supporting source。",
+        "OpenAI fine-tuning / model optimization 如被补入正式 source_refs，应标注 fine-tuning platform wind-down 和 vendor-neutral 迁移要求。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议保留补证方向：Training examples must separate input prompt/features from target/completion/label/outcome fields; labels, post-trade outcomes and future information must not appear in the input side or RAG context.",
+        "建议字段：example_id、input_fields、prompt_fields、decision_time_feature_fields、target_fields、completion_field、label_field、outcome_context_field、field_role_map、input_target_separation_check_id。",
+        "明确 completion 或 assistant response 可以作为 target / completion side；在 completion-only / assistant-only loss 设置下，不应误判为 input leakage。",
+        "禁止字段包括：label、future_return、realized_pnl、fill_result、exit_result、later_human_review_label、post_trade_outcome、outcome_context_as_input。",
+        "缺少 input_target_separation_check 时，不得进入 SFT、DPO、preference training、eval pool 或 gold set。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 定义 training example schema、field_role_map、input/target separation check、leakage blocking 和审计字段。",
+        "Trading Engineering / project owner 管理交易标签语义、PnL/outcome 解释、订单/成交事实、策略上下文和回测假设。",
+        "不得写入具体交易样本、策略参数、账户、订单细节、买卖点、仓位、止损止盈或 K 线规则。"
+      ],
+      "conflict_patch_notes": [
+        "与 leakage.label_in_input_forbidden 高度相关，建议父子化：leakage.label_in_input_forbidden 是通用字段泄漏父规则，本条是 training example schema 子规则。",
+        "与 feature_schema.post_trade_fields_forbidden_in_input、outcome_schema.post_trade_fields_separated、training_data.trade_sample_schema_required 强互补。",
+        "与 training_example.sft_schema_required 互补：本条定义 input/target 分离，SFT schema 条定义 SFT example 最小字段。"
+      ],
+      "required_followups": [
+        "补 input_target_separation_schema.json。",
+        "补 field_role enum：input_prompt、decision_time_feature、target_completion、label、outcome_context、audit_metadata、external_ref。",
+        "补 completion_only / assistant_only target 说明，避免误判为 input 泄漏。",
+        "补 leakage_action enum：block_training、exclude_from_eval、needs_review、quarantine_sample。",
+        "补 eval cases：target label in prompt、future_return in input、completion copied into input、outcome_context used as input feature、assistant-only target correctly separated。"
+      ],
+      "boundary": "accepted_for_draft 不是 approved；reviewed 不会进入默认指导。"
+    },
+    "supplemental_research": {
+      "package_id": "phase36_batch10_strategy_training_example_supplemental_audit_package_20260609",
+      "research_doc": "docs/research/phase36_batch10_strategy_training_example_supplemental_research.md",
+      "summary": "已补 MLflow、DVC、Datasheets、scikit-learn data leakage、Hugging Face TRL SFTTrainer、OpenAI Structured Outputs、JSON Schema 与 TFDV 等直接来源，并重写元治理占位 statement。",
+      "source_count": 5,
+      "status_after_supplement": "needs_more_evidence"
+    }
+  },
+  "copyright": {
+    "stores_full_text": false,
+    "stores_long_quote": false,
+    "summary_only": true,
+    "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+    "reuse_risk": "low"
+  },
+  "conversion_target": {
+    "proposed_knowledge_id": "kb_ai_engineering.training_example.input_target_separation.v1",
+    "target_schema": "cek_ta_knowledge_item",
+    "target_review_status": "draft",
+    "skill_candidate": false,
+    "eval_case_candidate": false
+  },
+  "workflow": {
+    "stage": "formalized_reviewed",
+    "queue_group": "formalized",
+    "formal_knowledge_id": "kb_ai_engineering.training_example.input_target_separation.v1",
+    "formal_review_status": "reviewed",
+    "ai_audit_result_id": "audit_result_phase36_batch10_strategy_training_example_supplemental_reaudit_20260609_gpt55_pro_strict_sources",
+    "hidden_from_default_queue": true,
+    "next_action": "none",
+    "formal_knowledge_path": "codex-expert-kit/rag/knowledge/KB_09_LLM_TRAINING/kb_ai_engineering.training_example.input_target_separation.v1.json"
+  }
+}

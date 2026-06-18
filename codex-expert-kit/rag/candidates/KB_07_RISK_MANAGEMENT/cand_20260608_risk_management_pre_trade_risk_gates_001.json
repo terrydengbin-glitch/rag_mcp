@@ -1,0 +1,316 @@
+{
+  "schema_version": "1.0.0",
+  "candidate_id": "cand_20260608_risk_management_pre_trade_risk_gates_001",
+  "research_task_id": "CEK-TA-RESEARCH-20260608-023-004",
+  "status": {
+    "review_status": "accepted",
+    "ingestion_decision": "convert_to_knowledge_item",
+    "decision_reason": "AI 审计结果为 accepted_for_draft；本状态只表示候选通过审计并可作为 draft/reviewed 来源，不代表 approved 或默认指导。",
+    "created_at": "2026-06-08",
+    "updated_at": "2026-06-09"
+  },
+  "classification": {
+    "tree_node_id": "kt.trading_engineering.risk_management.risk_gate",
+    "tree_path": "CEK-TA / Trading Engineering / Risk Management / Risk Gate",
+    "related_nodes": [
+      "kt.trading_engineering.risk_management.position_sizing",
+      "kt.trading_engineering.risk_management.exposure_control",
+      "kt.trading_engineering.risk_management.daily_loss_limit",
+      "kt.trading_engineering.risk_management.drawdown_control",
+      "kt.trading_engineering.live_execution.kill_switch"
+    ],
+    "partition_id": "KB_07_RISK_MANAGEMENT",
+    "domain": "risk_management",
+    "subdomain": "risk_gate",
+    "rule_type": "procedure",
+    "used_for": [
+      "risk_review",
+      "live_trading",
+      "strategy_design",
+      "code_review",
+      "simulation"
+    ]
+  },
+  "claim": {
+    "claim_id": "claim_001",
+    "statement": "自动化交易系统必须在订单进入执行适配器或交易所前执行风险闸门检查，至少覆盖账户/策略/订单级风险限额、财务暴露、订单大小、权限、异常订单、连接状态和触发后保护动作；信号强度不得绕过这些闸门。",
+    "normalized_claim": "automated_trading_requires_pre_trade_risk_gates_before_order_entry_covering_exposure_limits_order_size_permissions_erroneous_orders_connectivity_and_protective_actions",
+    "evidence_summary": "SEC Rule 15c3-5 要求市场接入风险控制用于限制财务暴露、防止超过预设信用/资本阈值或疑似错误订单进入市场；CFTC 自动交易风险控制概念发布讨论预交易风控、交易后报告、系统保障和自动化交易安全；CME 风控工具说明风险限额、订单管理、权限、Cancel on Disconnect、实时监控、审计轨迹和 Kill Switch。",
+    "interpretation_notes": "本候选将监管和交易所级风险控制抽象为 CEK-TA 工程规则：策略信号只是订单候选，只有通过风险闸门后才能提交执行；风险闸门失败应产生拒单、减仓/撤单/急停候选动作和审计日志，而不是静默放行。",
+    "claim_strength": "strong",
+    "performance_claim": false
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "multi",
+    "timeframe": "general",
+    "data_granularity": "account_event",
+    "project_type": "general",
+    "applies_when": [
+      "策略信号会转化为真实订单、模拟盘订单或实盘前验证订单",
+      "系统需要限制账户、策略、资产、订单或连接级风险暴露",
+      "订单提交前需要检查最大订单量、名义价值、保证金、权限、日内亏损、持仓暴露、重复订单或连接健康"
+    ],
+    "not_applicable_when": [
+      "任务只处理离线文档、UI 展示或不产生订单的分析流程",
+      "系统处于纯研究阶段且订单不会进入模拟盘或实盘执行层，但仍建议在回测报告中声明缺失风控",
+      "交易所、经纪商或监管规则要求更严格控制时，以更严格规则为准"
+    ],
+    "assumptions": [
+      "系统存在从信号到订单的执行适配器或交易接入层",
+      "风险限额可以工程化为订单前检查、状态机和审计日志",
+      "本候选不规定具体阈值，只规定必须存在可审计的风险闸门"
+    ],
+    "limitations": [
+      "SEC、CFTC、CME 来源主要来自美国证券/衍生品/交易所风险管理语境，迁移到 crypto 或其他司法辖区需重新映射",
+      "本候选不推荐具体仓位比例、杠杆、日亏损金额或交易策略",
+      "风险闸门不能替代订单状态机、仓位同步、kill switch 和人工恢复流程"
+    ]
+  },
+  "source_refs": [
+    {
+      "source_id": "src_001",
+      "source_title": "Risk Management Controls for Brokers or Dealers With Market Access",
+      "source_url": "https://www.sec.gov/rules-regulations/2011/06/risk-management-controls-brokers-or-dealers-market-access",
+      "source_type": "official_doc",
+      "publisher": "U.S. Securities and Exchange Commission",
+      "published_at": "2010-11-03",
+      "accessed_at": "2026-06-08",
+      "version": "Rule 15c3-5 overview",
+      "reliability": "high",
+      "score": 94,
+      "relevance": "high",
+      "freshness": "stable",
+      "limitations": [
+        "证券市场接入规则，不直接定义 crypto 交易所 API 行为。"
+      ],
+      "evidence_summary": "SEC 规则要求风险管理控制系统性限制市场接入产生的财务暴露，并防止超过预设信用/资本阈值或疑似错误订单进入市场。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_002",
+      "source_title": "CFTC Risk Controls and System Safeguards for Automated Trading Environments",
+      "source_url": "https://www.cftc.gov/PressRoom/PressReleases/6683-13",
+      "source_type": "official_doc",
+      "publisher": "U.S. Commodity Futures Trading Commission",
+      "published_at": "2013-09-09",
+      "accessed_at": "2026-06-08",
+      "version": "Release 6683-13",
+      "reliability": "high",
+      "score": 92,
+      "relevance": "high",
+      "freshness": "stable",
+      "limitations": [
+        "概念发布讨论自动交易环境风险控制，具体实现需结合交易系统架构。"
+      ],
+      "evidence_summary": "CFTC 讨论预交易风险控制、交易后报告、系统保障、自动化交易测试监督和有序市场保护，支持将风险闸门作为自动化交易系统默认工程约束。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_003",
+      "source_title": "CME Group Pre-Trade Risk Management",
+      "source_url": "https://www.cmegroup.com/solutions/market-access/globex/trade-on-globex/pre-trade-risk-management.html",
+      "source_type": "official_doc",
+      "publisher": "CME Group",
+      "published_at": null,
+      "accessed_at": "2026-06-08",
+      "version": "CME Group web documentation",
+      "reliability": "high",
+      "score": 90,
+      "relevance": "high",
+      "freshness": "time_sensitive",
+      "limitations": [
+        "交易所工具说明，具体可用控制项会随市场、权限和产品变化。"
+      ],
+      "evidence_summary": "CME 文档说明预交易风控覆盖限额、订单和权限管理、dashboard、报告、审计轨迹，以及风险管理员在交易日或交易时段控制风险使用。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_004",
+      "source_title": "CME Group Risk Management Tools User Manual",
+      "source_url": "https://www.cmegroup.com/tools-information/webhelp/globex-credit-controls/Content/Risk_Mgmt_Tools.pdf",
+      "source_type": "official_doc",
+      "publisher": "CME Group",
+      "published_at": null,
+      "accessed_at": "2026-06-08",
+      "version": "Risk Management Tools PDF",
+      "reliability": "high",
+      "score": 88,
+      "relevance": "medium",
+      "freshness": "time_sensitive",
+      "limitations": [
+        "PDF 具体描述 CME 工具和权限层级，不应直接泛化为所有交易所行为。"
+      ],
+      "evidence_summary": "CME 手册说明 Kill Switch 可按层级阻断新订单并取消工作订单，也说明权限撤销、风险管理工具和审计视图，支持风险闸门和保护动作应有权限边界与审计。",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 91,
+    "score_version": "1.0.0",
+    "primary_source_count": 4,
+    "supporting_source_count": 0,
+    "low_reliability_source_count": 0,
+    "mandatory_downgrades": [],
+    "limitations": [
+      "来源权威但偏监管/交易所控制语境；正式知识 draft 需要明确本条是工程审计门，不是具体投资或仓位建议。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "resolved",
+    "checked_against": [
+      "kb_01_quant_foundation.risk_return.position_risk_budget_before_signal.v1",
+      "kb_06_live_execution.risk_control.kill_switch_no_new_orders.v1",
+      "cand_20260608_live_execution_order_state_reconciliation_001"
+    ],
+    "conflicts": [
+      {
+        "knowledge_id": "kb_01_quant_foundation.risk_return.position_risk_budget_before_signal.v1",
+        "conflict_type": "scope_conflict",
+        "severity": "informational",
+        "overlap_scope": {
+          "domain": "risk_management",
+          "subdomain": "position_sizing",
+          "market": "general",
+          "timeframe": "general",
+          "data_granularity": "general"
+        },
+        "candidate_claim": "订单进入执行适配器或交易所前必须执行风险闸门检查。",
+        "existing_claim": "交易系统必须先定义账户级、策略级和单笔交易的风险预算，再允许策略信号生成仓位。",
+        "resolution": "现有知识是信号到仓位前的风险预算原则；本候选是订单提交前的风险闸门程序。两者上下游互补。",
+        "default_recommendation": "treat_as_complementary_candidate",
+        "requires_human_review": true
+      },
+      {
+        "knowledge_id": "kb_06_live_execution.risk_control.kill_switch_no_new_orders.v1",
+        "conflict_type": "scope_conflict",
+        "severity": "informational",
+        "overlap_scope": {
+          "domain": "risk_management",
+          "subdomain": "risk_gate",
+          "market": "general",
+          "timeframe": "general",
+          "data_granularity": "account_event"
+        },
+        "candidate_claim": "风险闸门失败应产生拒单、保护动作和审计日志。",
+        "existing_claim": "kill switch 触发后默认禁止新开仓并进入保护状态。",
+        "resolution": "本候选定义风险闸门如何在订单前阻断风险；既有知识定义急停后的默认动作。两者可以关联。",
+        "default_recommendation": "treat_as_complementary_candidate",
+        "requires_human_review": true
+      },
+      {
+        "knowledge_id": "cand_20260608_live_execution_order_state_reconciliation_001",
+        "conflict_type": "scope_conflict",
+        "severity": "informational",
+        "overlap_scope": {
+          "domain": "live_trading",
+          "subdomain": "order_state_machine",
+          "market": "general",
+          "timeframe": "general",
+          "data_granularity": "account_event"
+        },
+        "candidate_claim": "风险闸门先于订单提交，订单状态机负责提交后的状态和仓位闭环。",
+        "existing_claim": "订单状态机必须用事件流、REST 复核、累计成交字段、仓位同步和撤单/急停机制形成闭环。",
+        "resolution": "风险闸门和订单状态机是执行链路的相邻阶段：前者负责 pre-trade，后者负责 order lifecycle 与 post-trade reconciliation。",
+        "default_recommendation": "treat_as_complementary_candidate",
+        "requires_human_review": true
+      }
+    ],
+    "resolution_summary": "候选与现有仓位预算、kill switch 和订单状态机候选均为互补关系；正式 draft 应明确顺序：risk budget -> pre-trade risk gate -> order state machine -> kill switch / incident response。",
+    "approval_allowed": true
+  },
+  "review": {
+    "confidence": "high",
+    "freshness": "stable",
+    "reviewer": "external_ai_and_codex_alignment",
+    "reviewed_at": "2026-06-09",
+    "open_questions": [
+      "正式 draft 是否拆成 risk_gate、exposure_control、daily_loss_limit 三个知识资产？",
+      "是否需要补充 crypto 交易所自身的 pre-trade risk 或账户限额文档？",
+      "CEK-TA 是否要规定统一的风险链路顺序：risk budget -> risk gate -> order state machine -> kill switch？"
+    ],
+    "audit_log": [
+      {
+        "at": "2026-06-08",
+        "actor": "codex",
+        "action": "created",
+        "reason": "根据 Phase 23 P0 队列启动 KB_07_RISK_MANAGEMENT 专业知识采集。"
+      },
+      {
+        "at": "2026-06-08",
+        "actor": "codex",
+        "action": "sourced",
+        "reason": "记录 SEC、CFTC、CME 官方风险控制和交易所风控工具文档作为来源。"
+      },
+      {
+        "at": "2026-06-08",
+        "actor": "codex",
+        "action": "classified",
+        "reason": "归类到 KB_07_RISK_MANAGEMENT / risk_management.risk_gate / procedure。"
+      },
+      {
+        "at": "2026-06-08",
+        "actor": "codex",
+        "action": "conflict_checked",
+        "reason": "已与现有仓位预算、kill switch 和订单状态机候选比对，结论为执行链路互补。"
+      },
+      {
+        "at": "2026-06-09",
+        "actor": "GPT-5.5 Thinking",
+        "action": "ai_audit_result_received",
+        "reason": "accepted_for_draft / confidence=high",
+        "audit_result_id": "audit_20260609_cek_ta_candidate_ai_audit_001"
+      },
+      {
+        "at": "2026-06-09",
+        "actor": "codex",
+        "action": "candidate_marked_accepted_after_ai_audit",
+        "reason": "根据用户提供的 AI 审计结果和 CEK-TA 边界，将候选设为 accepted_for_draft；不得视为 approved。",
+        "audit_result_id": "audit_20260609_cek_ta_candidate_ai_audit_001"
+      }
+    ],
+    "ai_audit": {
+      "audit_result_id": "audit_20260609_cek_ta_candidate_ai_audit_001",
+      "package_id": "cek_ta_candidate_ai_audit_20260608",
+      "auditor": "GPT-5.5 Thinking",
+      "audited_at": "2026-06-09T00:00:00+09:00",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reasons": [
+        "SEC Rule 15c3-5、CFTC 自动交易风险控制和 CME pre-trade risk 工具共同支撑订单进市场前必须过风险闸门。"
+      ],
+      "required_followups": [
+        "不能把 pre-trade risk gate 误读为具体仓位建议、杠杆建议或交易参数。"
+      ],
+      "patch_notes": [
+        "在正式知识中补充不适用于具体策略参数建议。"
+      ],
+      "boundary": "accepted_for_draft/reviewed is not approved; approved requires a later human governance task."
+    }
+  },
+  "copyright": {
+    "stores_full_text": false,
+    "stores_long_quote": false,
+    "summary_only": true,
+    "license_notes": "仅保存官方来源链接和摘要，不保存长段原文。",
+    "reuse_risk": "low"
+  },
+  "conversion_target": {
+    "proposed_knowledge_id": "kb_07_risk_management.risk_gate.pre_trade_order_risk_controls.v1",
+    "target_schema": "cek_ta_knowledge_item",
+    "target_review_status": "draft",
+    "skill_candidate": false,
+    "eval_case_candidate": true
+  },
+  "workflow": {
+    "stage": "formalized_reviewed",
+    "queue_group": "formalized",
+    "formal_knowledge_id": "kb_07_risk_management.risk_gate.pre_trade_order_risk_controls.v1",
+    "formal_review_status": "reviewed",
+    "ai_audit_result_id": "audit_20260609_cek_ta_candidate_ai_audit_001",
+    "hidden_from_default_queue": true,
+    "next_action": "none",
+    "formal_knowledge_path": "codex-expert-kit/rag/knowledge/KB_07_RISK_MANAGEMENT/kb_07_risk_management.risk_gate.pre_trade_order_risk_controls.v1.json"
+  }
+}

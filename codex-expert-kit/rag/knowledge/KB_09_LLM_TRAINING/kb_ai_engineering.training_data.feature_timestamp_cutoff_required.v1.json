@@ -1,0 +1,346 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_ai_engineering.training_data.feature_timestamp_cutoff_required.v1",
+  "title": "交易训练样本必须声明策略版本、决策时间、特征截止时间和输入/目标分离。",
+  "metadata": {
+    "partition_id": "KB_09_LLM_TRAINING",
+    "domain": "llm_training",
+    "subdomain": "trading_scoring_gating_training",
+    "rule_type": "checklist",
+    "content_type": "json",
+    "project_binding": "none",
+    "tree_node_id": "kt.llm_training.trading_scoring_gating_training",
+    "tree_path": "CEK-TA / AI Engineering",
+    "canonical_node_id": "kt.llm_training.trading_scoring_gating_training",
+    "canonical_tree_path": "CEK-TA / AI Engineering",
+    "risk_level": "medium",
+    "used_for": [
+      "llm_training",
+      "trading_gating_scoring",
+      "rag_engineering",
+      "mcp",
+      "vue_audit_ui"
+    ],
+    "source_candidate_id": "cand_20260609_ai_engineering_training_data_feature_timestamp_cutoff_required_v1_001",
+    "research_task_id": "RIT-P36-C-07",
+    "claim_type": "ai_governance_rule",
+    "classification_notes": "Phase 36 AI Engineering reviewed knowledge; UI tree and canonical node are inherited from candidate classification. Trading rule bodies must remain in Trading Engineering."
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "general",
+    "data_granularity": "general",
+    "project_type": "trading_llm_assistant",
+    "applies_when": [
+      "外接项目正在构建或审计交易 LLM gating/scoring、训练数据、评估、RAG/MCP、部署或治理链路。",
+      "该规则用于阻断数据泄漏、权限越界、无来源默认指导、训练/评估污染或上线前治理缺口。"
+    ],
+    "not_applicable_when": [
+      "用户需要具体买卖点、仓位、止损止盈、策略参数或实盘订单执行。",
+      "知识点主要描述 K 线结构、市场微观结构、回测模型、fill model 或交易风控本体，应路由到 Trading Engineering。"
+    ]
+  },
+  "content": {
+    "statement": "交易训练样本必须声明策略版本、决策时间、特征截止时间和输入/目标分离。",
+    "rationale": "本候选仅沉淀 AI Engineering 中训练、评估、RAG/MCP、安全、部署或治理规则；不定义 K 线信号、具体交易策略、订单执行规则或账户参数。 审计结论：方向成立。statement 明确包含“特征截止时间”，source_refs 中 scikit-learn 支持 data leakage 防护，Feast 支持 point-in-time correctness 与避免 future feature leakage，Datasheets 支持数据集字段和用途文档化。可进入 draft，但应与 feature_schema.feature_timestamp_cutoff_required 父规则互链。",
+    "procedure": [
+      "确认项目事实匹配 applies_when，且没有命中 not_applicable_when。",
+      "按 source_patch_notes 检查来源是否足够支撑 statement。",
+      "按 content_patch_notes 补齐正式实现、schema、字段和 checklist。",
+      "按 boundary_patch_notes 确认没有把交易规则本体、项目私有参数或实盘执行规则写入 AI Engineering。",
+      "保留 required_followups，后续由来源增强或治理任务继续关闭。"
+    ],
+    "examples": [],
+    "anti_patterns": [
+      "把 reviewed 知识当作 approved 默认指导。",
+      "把 AI Engineering 规则扩写成具体交易阈值、仓位、买卖点或执行参数。",
+      "忽略审计结果中的来源限制、适用范围和后续补强要求。"
+    ],
+    "validation": [
+      "source_evidence 至少 2 条，且没有 low-only 来源。",
+      "conflict_status 为 none 或 resolved。",
+      "review_status 为 reviewed 时 machine_gate 必须是 caveat_only。",
+      "MCP/SearchLab 默认指导不得把本条当作 approved 返回。"
+    ],
+    "risk_notes": [
+      "本条仍是 candidate，需要外部 AI/人工审计确认来源充分性、适用边界和是否需要拆分。",
+      "AI Engineering 只定义 cutoff 字段、availability check、schema 和 audit。",
+      "具体交易特征公式、K 线计算、市场数据延迟、session 定义由 Trading Engineering 或 project owner 提供。",
+      "不得保存真实交易样本、订单、账户或策略逻辑。",
+      "与第四批 feature_schema.feature_timestamp_cutoff_required 高度重叠；建议本条作为 training sample schema 子规则，第四批作为通用 feature schema 父规则。",
+      "与 labeling.no_future_information、leakage.label_in_input_forbidden、serving_consistency.train_like_serve_required 互补。",
+      "未发现直接冲突。",
+      "补 feature_timestamp_cutoff_schema.json。",
+      "补 field-level validation：feature_timestamp <= feature_timestamp_cutoff <= decision_timestamp。",
+      "补 eval cases：feature timestamp after cutoff、delayed data available after decision、timezone mismatch、future field alias。"
+    ],
+    "citation_notes": "The paper supports documenting dataset motivation, composition, collection, intended use, maintenance, and limitations.；scikit-learn documents inconsistent preprocessing and data leakage pitfalls, including fitting transformations only on training data.",
+    "audit_patch_notes": {
+      "source_patch_notes": [
+        "保留 Datasheets、scikit-learn common pitfalls、Feast。",
+        "补 TFDV 或 schema validation 来源，支持 feature_timestamp_cutoff 字段验证。",
+        "互链 feature_schema.feature_timestamp_cutoff_required、feature_schema.decision_time_only、serving_consistency.training_serving_parity_test_required。",
+        "建议补 CEK-TA feature_timestamp_cutoff_contract.json。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：Training samples must declare feature_timestamp_cutoff, and all input features must be available at or before that cutoff and at or before decision_timestamp.",
+        "建议字段：feature_timestamp_cutoff、feature_name、feature_timestamp、available_at_decision_time、availability_proof_ref、validation_rule_id。",
+        "如果 feature_timestamp 晚于 cutoff 或无法证明 decision-time availability，应 block_training 或 needs_more_evidence。",
+        "post-trade outcome、future_return、fill result、later human label 不得作为 input feature。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 只定义 cutoff 字段、availability check、schema 和 audit。",
+        "具体交易特征公式、K 线计算、市场数据延迟、session 定义由 Trading Engineering 或 project owner 提供。",
+        "不得保存真实交易样本、订单、账户或策略逻辑。"
+      ],
+      "conflict_patch_notes": [
+        "与第四批 feature_schema.feature_timestamp_cutoff_required 高度重叠；建议本条作为 training sample schema 子规则，第四批作为通用 feature schema 父规则。",
+        "与 labeling.no_future_information、leakage.label_in_input_forbidden、serving_consistency.train_like_serve_required 互补。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 feature_timestamp_cutoff_schema.json。",
+        "补 field-level validation：feature_timestamp <= feature_timestamp_cutoff <= decision_timestamp。",
+        "补 eval cases：feature timestamp after cutoff、delayed data available after decision、timezone mismatch、future field alias。"
+      ]
+    }
+  },
+  "assumptions": [
+    "外接项目提供项目事实、私有交易数据和策略上下文；CEK-TA 只沉淀可复用专业规则。",
+    "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+  ],
+  "source_evidence": [
+    {
+      "source_id": "src_datasheets",
+      "source_title": "Datasheets for Datasets",
+      "source_url": "https://arxiv.org/abs/1803.09010",
+      "source_type": "paper",
+      "publisher": "arXiv",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "The paper supports documenting dataset motivation, composition, collection, intended use, maintenance, and limitations.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_sklearn_pitfalls",
+      "source_title": "Common pitfalls and recommended practices | scikit-learn",
+      "source_url": "https://scikit-learn.org/stable/common_pitfalls.html",
+      "source_type": "official_doc",
+      "publisher": "scikit-learn",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "scikit-learn documents inconsistent preprocessing and data leakage pitfalls, including fitting transformations only on training data.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_feast",
+      "source_title": "Feast: the Open Source Feature Store",
+      "source_url": "https://docs.feast.dev/getting-started",
+      "source_type": "official_doc",
+      "publisher": "Feast",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "Feast documents feature definitions, offline/online stores, retrieval, and a registry for reusable feature metadata.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_occ_fed_fdic_revised_model_risk_2026",
+      "source_title": "Model Risk Management: Revised Guidance",
+      "source_url": "https://occ.gov/news-issuances/bulletins/2026/bulletin-2026-13.html",
+      "source_type": "standard_or_risk_framework",
+      "publisher": "OCC / Federal Reserve / FDIC",
+      "published_at": "2026-04-17",
+      "accessed_at": "2026-06-09",
+      "version": "OCC Bulletin 2026-13 / SR 26-2",
+      "reliability": "high",
+      "relevance": "medium",
+      "evidence_summary": "2026 年跨机构模型风险管理修订指南支持模型治理、验证、变更控制和风险分层；同时需注明 generative AI 和 agentic AI 不在其直接范围内，只能作为模型风险治理类比来源。",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 90,
+    "score_version": "1.0.0",
+    "primary_source_count": 2,
+    "supporting_source_count": 2,
+    "low_reliability_source_count": 0,
+    "limitations": [
+      "本条为 reviewed 知识，来源和审计补丁已记录；默认指导仍需后续人工治理升级 approved。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "docs/contracts/ai_engineering_gating_scoring_contract.md",
+      "docs/contracts/ai_engineering_knowledge_item_policy.md",
+      "docs/tasks/phase36_ai_engineering_gating_scoring_knowledge.md"
+    ],
+    "conflicts": [],
+    "resolution_summary": "未发现与当前 CEK-TA formal knowledge 的直接冲突；候选不会进入默认指导。",
+    "default_recommendation": "caveat_only_until_approved"
+  },
+  "review": {
+    "confidence": "medium",
+    "freshness": "time_sensitive",
+    "review_status": "reviewed",
+    "reviewer": "codex",
+    "reviewed_at": "2026-06-09",
+    "created_at": "2026-06-09",
+    "updated_at": "2026-06-09",
+    "open_questions": [
+      "审计时确认该候选是否应与相邻 AI Engineering 规则合并、拆分，或改路由到 Trading Engineering。",
+      "补 feature_timestamp_cutoff_schema.json。",
+      "补 field-level validation：feature_timestamp <= feature_timestamp_cutoff <= decision_timestamp。",
+      "补 eval cases：feature timestamp after cutoff、delayed data available after decision、timezone mismatch、future field alias。"
+    ],
+    "decision_log": [
+      {
+        "at": "2026-06-09",
+        "actor": "external_ai",
+        "decision": "accepted_for_draft",
+        "reason": "方向成立。statement 明确包含“特征截止时间”，source_refs 中 scikit-learn 支持 data leakage 防护，Feast 支持 point-in-time correctness 与避免 future feature leakage，Datasheets 支持数据集字段和用途文档化。可进入 draft，但应与 feature_schema.feature_timestamp_cutoff_required 父规则互链。",
+        "audit_result_id": "audit_result_phase36_ai_engineering_batch_10_of_10_20260609_gpt55_pro_strict_sources"
+      },
+      {
+        "at": "2026-06-09",
+        "actor": "codex",
+        "decision": "converted_to_reviewed",
+        "reason": "按 Phase 36 批量审计结果优化候选并转为 formal reviewed；未升级 approved。",
+        "audit_result_id": "audit_result_phase36_ai_engineering_batch_10_of_10_20260609_gpt55_pro_strict_sources"
+      }
+    ],
+    "approval_status": "not_requested",
+    "default_guidance_allowed": false,
+    "source_candidate_id": "cand_20260609_ai_engineering_training_data_feature_timestamp_cutoff_required_v1_001",
+    "ai_audit_result_id": "audit_result_phase36_ai_engineering_batch_10_of_10_20260609_gpt55_pro_strict_sources",
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase36_ai_engineering_batch_10_of_10_20260609_gpt55_pro_strict_sources",
+      "source_package_id": "phase36_ai_engineering_candidate_audit_batch_10_of_10_20260609",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立。statement 明确包含“特征截止时间”，source_refs 中 scikit-learn 支持 data leakage 防护，Feast 支持 point-in-time correctness 与避免 future feature leakage，Datasheets 支持数据集字段和用途文档化。可进入 draft，但应与 feature_schema.feature_timestamp_cutoff_required 父规则互链。",
+      "source_patch_notes": [
+        "保留 Datasheets、scikit-learn common pitfalls、Feast。",
+        "补 TFDV 或 schema validation 来源，支持 feature_timestamp_cutoff 字段验证。",
+        "互链 feature_schema.feature_timestamp_cutoff_required、feature_schema.decision_time_only、serving_consistency.training_serving_parity_test_required。",
+        "建议补 CEK-TA feature_timestamp_cutoff_contract.json。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：Training samples must declare feature_timestamp_cutoff, and all input features must be available at or before that cutoff and at or before decision_timestamp.",
+        "建议字段：feature_timestamp_cutoff、feature_name、feature_timestamp、available_at_decision_time、availability_proof_ref、validation_rule_id。",
+        "如果 feature_timestamp 晚于 cutoff 或无法证明 decision-time availability，应 block_training 或 needs_more_evidence。",
+        "post-trade outcome、future_return、fill result、later human label 不得作为 input feature。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 只定义 cutoff 字段、availability check、schema 和 audit。",
+        "具体交易特征公式、K 线计算、市场数据延迟、session 定义由 Trading Engineering 或 project owner 提供。",
+        "不得保存真实交易样本、订单、账户或策略逻辑。"
+      ],
+      "conflict_patch_notes": [
+        "与第四批 feature_schema.feature_timestamp_cutoff_required 高度重叠；建议本条作为 training sample schema 子规则，第四批作为通用 feature schema 父规则。",
+        "与 labeling.no_future_information、leakage.label_in_input_forbidden、serving_consistency.train_like_serve_required 互补。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 feature_timestamp_cutoff_schema.json。",
+        "补 field-level validation：feature_timestamp <= feature_timestamp_cutoff <= decision_timestamp。",
+        "补 eval cases：feature timestamp after cutoff、delayed data available after decision、timezone mismatch、future field alias。"
+      ]
+    },
+    "approved_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "contribution": {
+    "contribution_id": null,
+    "source_project": null,
+    "sanitization_status": "not_applicable",
+    "private_data_removed": true,
+    "generic_mapping_notes": "Phase 36 public-source AI Engineering candidate; no project-private trading facts included."
+  },
+  "copyright": {
+    "stores_full_text": false,
+    "stores_long_quote": false,
+    "summary_only": true,
+    "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+    "reuse_risk": "low"
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于审计 AI Engineering、LLM 训练、RAG/MCP、部署、安全或治理链路。",
+      "用于提醒外接项目补齐来源、适用边界、冲突状态、审计记录和人工审批。",
+      "用于 reviewed/audit 模式下带 caveat 引用。"
+    ],
+    "not_allowed": [
+      "不得生成买卖点、仓位、杠杆、止损止盈或实盘执行指令。",
+      "不得覆盖确定性风控、交易执行系统或人工审批。",
+      "不得作为 approved/default guidance 直接返回。"
+    ],
+    "required_context": [
+      "project_type",
+      "task_type",
+      "mode",
+      "strategy_version",
+      "data_boundary",
+      "review_status"
+    ],
+    "fallback_behavior": "cite_with_caveat"
+  },
+  "machine_gate": {
+    "default_guidance": "caveat_only",
+    "reason": "reviewed only; accepted_for_draft is not approved; default guidance requires later human governance approval.",
+    "requires_human_escalation": true,
+    "blocking_reasons": [
+      "not_approved",
+      "phase36_batch_reviewed_only"
+    ],
+    "checked_at": "2026-06-09",
+    "gate_version": "1.0.0",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "recommended_extra_sources": [
+    {
+      "title": "保留 Datasheets、scikit-learn common pitfalls、Feast。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_1"
+    },
+    {
+      "title": "补 TFDV 或 schema validation 来源，支持 feature_timestamp_cutoff 字段验证。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_2"
+    },
+    {
+      "title": "互链 feature_schema.feature_timestamp_cutoff_required、feature_schema.decision_time_only、serving_consistency.training_serving_parity_test_required。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_3"
+    },
+    {
+      "title": "建议补 CEK-TA feature_timestamp_cutoff_contract.json。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_4"
+    }
+  ]
+}

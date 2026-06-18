@@ -1,0 +1,366 @@
+{
+  "audit_result_id": "audit_result_phase37_kline_strategy_candidate_audit_20260611_strict_v1",
+  "auditor": "external_ai_strict_audit",
+  "audited_at": "2026-06-11",
+  "package_id": "phase37_kline_strategy_candidate_audit_package_20260611",
+  "summary": {
+    "total": 12,
+    "accepted_for_draft": 8,
+    "needs_more_evidence": 4,
+    "rejected": 0,
+    "blocked": 0
+  },
+  "quality_gate": {
+    "pass": false,
+    "reason": "Strict audit found source gaps in stop-loss invalidation logic, take-profit reachability, strategy-rule versioning, and volume semantic boundary; draft conversion should proceed only for accepted items.",
+    "candidate_count": 12,
+    "notes": [
+      "本轮只允许 accepted_for_draft / needs_more_evidence / rejected；不得创建 reviewed、approved、default guidance 或 hard gate。",
+      "所有 accepted_for_draft 条目仍需保留 candidate-only、非交易建议、外接项目事实层和平台/框架来源不可泛化边界。",
+      "未提供完整 CEK-TA formal KB；冲突审计仅限当前可见上下文。"
+    ]
+  },
+  "results": [
+    {
+      "candidate_id": "cand_20260611_phase37_kline_strategy_atr_volatility_context_required_001",
+      "research_task_id": "P37-C-K08",
+      "decision": "accepted_for_draft",
+      "confidence": "medium_high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "patch_notes": {
+        "source": [
+          "Add a direct ATR definition source such as Wilder/official broker education/technical-analysis textbook that states ATR measures volatility rather than direction.",
+          "Do not count TA-Lib catalog pages as evidence of trading edge or default thresholds."
+        ],
+        "content": [
+          "Keep wording as candidate context only; ATR may support volatility filtering/normalization but cannot by itself claim direction, win rate, or edge.",
+          "Make window, timeframe, market, and input OHLC semantics explicit."
+        ],
+        "boundary": [
+          "No trade instruction, stop distance, position sizing, or leverage output.",
+          "AI Engineering may reference this boundary but must not rewrite it as LLM/RAG training-rule ownership."
+        ],
+        "conflict": [
+          "No visible conflict in uploaded context; full formal KB conflict check still required."
+        ]
+      },
+      "reason": "ATR/volatility indicator as historical-volatility context is conservative and supported enough for draft by indicator library and professional TA overview sources, but direct ATR definition/performance-boundary sources should be added."
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_kline_strategy_entry_signal_not_equal_trade_decision_001",
+      "research_task_id": "P37-C-K03",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "patch_notes": {
+        "source": [
+          "Add CFA/market-microstructure or TCA execution-cost sources if the formal draft keeps cost, slippage, fill and execution language.",
+          "Backtrader bracket orders are framework-specific examples only."
+        ],
+        "content": [
+          "Phrase as signal-to-decision separation, not as a universal execution workflow.",
+          "Split risk/position/OOS/execution hard gates into references to Quant Foundation/Execution/Risk modules."
+        ],
+        "boundary": [
+          "No buy/sell trigger or execution permission can be inferred from a signal.",
+          "Keep candidate-only status."
+        ],
+        "conflict": [
+          "May overlap with Quant Foundation signal/decision/execution separation; formal draft should cross-reference rather than duplicate."
+        ]
+      },
+      "reason": "Data-snooping/Reality Check papers and professional TA/execution context support that K-line signals are candidate inputs only; full trade decisions require validation and execution/risk boundaries."
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_kline_strategy_indicator_lag_boundary_001",
+      "research_task_id": "P37-C-K07",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "patch_notes": {
+        "source": [
+          "Add QuantConnect or vendor bar-availability source to support calculation time and confirmation semantics beyond TradingView.",
+          "TA-Lib and wrapper docs should be treated as implementation/catalog evidence only."
+        ],
+        "content": [
+          "State that lag/repainting semantics depend on platform, bar status, lookahead settings, input window and data feed.",
+          "Do not imply all indicators repaint in the same way or are unusable."
+        ],
+        "boundary": [
+          "No real-time signal may be presented as confirmed until the relevant bar/data availability rule is met."
+        ],
+        "conflict": [
+          "Potential overlap with Data Engineering timestamp/bar availability rules; reference them instead of duplicating implementation details."
+        ]
+      },
+      "reason": "TradingView repainting and historical-versus-realtime behavior directly support confirmation/lag boundaries; TA-Lib supports indicator implementation presence but not edge."
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_kline_strategy_market_structure_requires_timeframe_001",
+      "research_task_id": "P37-C-K02",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "patch_notes": {
+        "source": [
+          "Add an exchange/vendor OHLCV bar timestamp source to avoid over-reliance on QuantConnect/TradingView.",
+          "CFA TA source is only broad TA context."
+        ],
+        "content": [
+          "Explicitly define bar_start, bar_end, confirmation_time, and available_time in CEK-TA schema.",
+          "Do not treat unconfirmed higher-timeframe candles as known facts."
+        ],
+        "boundary": [
+          "No market-structure label may be converted into a trade decision without separate validation and execution checks."
+        ],
+        "conflict": [
+          "May overlap with Data Engineering timestamp alignment; formal item should reference that owner."
+        ]
+      },
+      "reason": "QuantConnect bar start/end availability and TradingView HTF/repainting behavior directly support timeframe, bar confirmation and data-availability constraints."
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_kline_strategy_multi_timeframe_context_required_001",
+      "research_task_id": "P37-C-K06",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "patch_notes": {
+        "source": [
+          "Add a platform-neutral data-leakage/point-in-time feature source if AI scoring/training remains in scope.",
+          "QuantConnect/TradingView sources are platform-specific and must not be universalized."
+        ],
+        "content": [
+          "Require explicit responsibilities for each timeframe, e.g. regime filter, trigger, confirmation, veto, or feature source.",
+          "Define how HTF values are aligned to LTF decision timestamps."
+        ],
+        "boundary": [
+          "No multi-timeframe confluence may be claimed as edge without sample/OOS/cost evidence."
+        ],
+        "conflict": [
+          "Potential overlap with Data Engineering feature timestamp and Kline market-structure items; deduplicate in formal KB."
+        ]
+      },
+      "reason": "TradingView other-timeframe/lookahead documentation and QuantConnect consolidator/period documentation support multi-timeframe synchronization, confirmation and lookahead/repainting boundaries at draft level."
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_kline_strategy_rsi_threshold_not_universal_001",
+      "research_task_id": "P37-C-K09",
+      "decision": "accepted_for_draft",
+      "confidence": "medium_high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "patch_notes": {
+        "source": [
+          "Add an RSI-specific source that documents 70/30 as conventional overbought/oversold reference, not guaranteed trade instruction.",
+          "TA-Lib proves function availability, not threshold validity."
+        ],
+        "content": [
+          "Keep threshold language as candidate interpretation requiring market, timeframe, lookback window, trend state and validation.",
+          "Do not output universal RSI entry/exit rules."
+        ],
+        "boundary": [
+          "No buy/sell signal should be generated from RSI thresholds alone."
+        ],
+        "conflict": [
+          "Potential overlap with K08/K07 indicator boundary; formal draft may merge RSI threshold caveat under indicator-boundary parent."
+        ]
+      },
+      "reason": "RSI/indicator catalog and technical-analysis validation sources support draft-level boundary that fixed thresholds such as 70/30 must not be universal buy/sell rules."
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_kline_strategy_signal_generalization_forbidden_without_market_scope_001",
+      "research_task_id": "P37-C-K11",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "patch_notes": {
+        "source": [
+          "Add cost/execution/TCA source if cost boundary remains part of the formal text.",
+          "CFA TA can support professional context but not universal edge."
+        ],
+        "content": [
+          "Retain “no cross-market/cross-timeframe/cross-sample universal law” wording.",
+          "Require scope, sample, OOS and conflict boundaries before any stronger claim."
+        ],
+        "boundary": [
+          "Do not convert signal generalization caveat into trading advice or a hard gate in this package."
+        ],
+        "conflict": [
+          "Likely parent/umbrella rule for several indicator-specific candidates; formal KB should avoid duplication."
+        ]
+      },
+      "reason": "Lo/Mamaysky/Wang, Sullivan/Timmermann/White and White directly support empirical/statistical validation boundaries and data-snooping risk for technical-analysis signals."
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_kline_strategy_stop_loss_requires_invalidation_logic_001",
+      "research_task_id": "P37-C-K04",
+      "decision": "needs_more_evidence",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "patch_notes": {
+        "source": [
+          "Add professional/academic sources on stop placement, invalidation logic, volatility-based stops, and execution risk.",
+          "Add broker/exchange/order-type documentation for stop/stop-limit/slippage/gap behavior.",
+          "Backtrader examples are framework-specific and insufficient as primary evidence."
+        ],
+        "content": [
+          "Narrow claim to “stop rules should document rationale and execution assumptions” until stronger sources support structural invalidation language.",
+          "Separate Kline entry/exit methodology from Risk Management/Execution ownership."
+        ],
+        "boundary": [
+          "No stop-loss price, percentage or parameter may be generated.",
+          "Do not imply a fixed stop method is invalid in every context; require documented rationale."
+        ],
+        "conflict": [
+          "Likely overlaps with Risk Management and Live Execution; formal draft should cross-reference those modules rather than import their hard gates."
+        ]
+      },
+      "reason": "Current sources show stop-order implementation and general TA context, but do not directly support the full claim that stop loss must be tied to entry hypothesis, structural invalidation, volatility range, granularity and execution model."
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_kline_strategy_strategy_rule_version_required_001",
+      "research_task_id": "P37-C-K12",
+      "decision": "needs_more_evidence",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "patch_notes": {
+        "source": [
+          "Add MLflow/DVC/Git/experiment-tracking or internal CEK-TA strategy_rule_contract schema sources.",
+          "Add backtesting framework/project documentation that records parameters, code version, data version and run metadata."
+        ],
+        "content": [
+          "Split into CEK-TA internal reproducibility/experiment-governance contract and external technical-analysis validation evidence.",
+          "Define required fields as CEK-TA schema, not universal trading-platform law."
+        ],
+        "boundary": [
+          "Do not let versioned rule records imply default guidance, approved status, or live eligibility."
+        ],
+        "conflict": [
+          "Overlaps with Data Engineering versioning and AI training dataset lineage; assign owner or cross-reference."
+        ]
+      },
+      "reason": "Data-snooping papers support validation discipline but do not directly support strategy_rule_version, parameter/version/change-reason logging as a strategy-rule contract."
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_kline_strategy_take_profit_requires_reachability_check_001",
+      "research_task_id": "P37-C-K05",
+      "decision": "needs_more_evidence",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "patch_notes": {
+        "source": [
+          "Add execution cost/TCA, slippage/fill model, liquidity/market-impact and backtest fill-assumption sources.",
+          "Backtrader bracket docs can only show stop/limit dependency examples."
+        ],
+        "content": [
+          "Rewrite as “take-profit targets must document reachability assumptions” until stronger sources support all listed dimensions.",
+          "Keep R-multiple/graphical target as hypothesis, not achieved-profit evidence."
+        ],
+        "boundary": [
+          "No take-profit level, R multiple target, or live order advice may be emitted."
+        ],
+        "conflict": [
+          "Overlaps with Quant Foundation cost-adjusted expectancy and Execution Engineering; formal draft should reference those owners."
+        ]
+      },
+      "reason": "Backtrader bracket/order examples and QuantConnect bar timing support order/bar mechanics, but the claim about target reachability under sample, volatility, liquidity, fill model, slippage and costs needs execution/TCA and liquidity evidence."
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_kline_strategy_trend_structure_boundary_001",
+      "research_task_id": "P37-C-K01",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "patch_notes": {
+        "source": [
+          "Add a CMT/technical-analysis textbook source for HH/HL, LL/LH, support/resistance and breakout definitions before reviewed conversion.",
+          "Fidelity is supporting education only."
+        ],
+        "content": [
+          "Require objective, machine-testable recognition rules and market/timeframe/sample boundaries.",
+          "Do not assert trend labels from subjective chart reading alone."
+        ],
+        "boundary": [
+          "No trade entry, exit, or trend-following recommendation may be generated."
+        ],
+        "conflict": [
+          "May serve as market-structure parent rule; avoid duplicate wording with K02/K06."
+        ]
+      },
+      "reason": "Lo/Mamaysky/Wang directly addresses formalized technical pattern recognition and subjectivity; CFA and White support systematic testing and validation boundaries."
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_kline_strategy_volume_confirmation_boundary_001",
+      "research_task_id": "P37-C-K10",
+      "decision": "needs_more_evidence",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "patch_notes": {
+        "source": [
+          "Add exchange/vendor market-data schema sources defining volume, trade count, tick volume, quote volume, contract size, aggregated volume and missing/forward-fill behavior.",
+          "Add crypto spot/perpetual/futures examples or official vendor docs if the claim remains cross-asset."
+        ],
+        "content": [
+          "Narrow to “volume confirmation requires documented source and definition” until source coverage supports all venue/product distinctions.",
+          "Separate market-data semantics from Kline indicator interpretation."
+        ],
+        "boundary": [
+          "No volume-based confirmation may be treated as standalone buy/sell permission."
+        ],
+        "conflict": [
+          "Overlaps with Data Engineering OHLCV/schema/market-data-source rules; formal draft should reference those rather than duplicate."
+        ]
+      },
+      "reason": "General TA and data-snooping sources support caution around volume indicators, but they do not directly support the specific claim that exchange, spot/contract, aggregator and missing-data mechanics change volume meaning."
+    }
+  ],
+  "global_findings": {
+    "no_trade_instruction_found": true,
+    "no_private_keys_or_account_facts_found": true,
+    "no_mock_test_pollution_found": true,
+    "complete_formal_kb_conflict_check_available": false,
+    "machine_gate_required": {
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "hidden_from_default_guidance_queue": true
+    }
+  }
+}

@@ -1,0 +1,386 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_phase59_database_storage.hybrid_training_dataset_snapshot_manifest_required.v1",
+  "title": "Hybrid training dataset 必须通过 snapshot manifest 逻辑组合 K 线与 micro features",
+  "metadata": {
+    "partition_id": "KB_AI_26_DATABASE_STORAGE",
+    "domain": "ai_engineering",
+    "subdomain": "database_storage_engineering",
+    "rule_type": "training_dataset_manifest_rule",
+    "claim_type": "data_contract_constraint",
+    "content_type": "json",
+    "project_binding": "none",
+    "classification_notes": "本条主归属 AI Engineering / Database Storage，因为它约束 training dataset snapshot manifest 和 feature store 引用关系；K 线和 microstructure 本体仍归 Trading Engineering。",
+    "tree_node_id": "kt.ai_engineering.database_storage_engineering.feature_store_storage",
+    "tree_path": "CEK-TA / AI Engineering / Database Data Contract And Storage Engineering / Feature Store Storage",
+    "canonical_node_id": "kt.ai_engineering.database_storage_engineering.feature_store_storage",
+    "canonical_tree_path": "CEK-TA / AI Engineering / Database Data Contract And Storage Engineering / Feature Store Storage",
+    "risk_level": "medium_high",
+    "used_for": [
+      "training_dataset_design_audit",
+      "feature_store_contract_review",
+      "point_in_time_leakage_review",
+      "external_project_rag_retrieval"
+    ],
+    "related_nodes": [
+      "kt.market_microstructure.order_flow",
+      "kt.trading_engineering.data_engineering",
+      "kt.ai_engineering.database_storage_engineering.data_contract_lineage",
+      "kt.ai_engineering.database_storage_engineering.audit_log_ledger"
+    ],
+    "source_candidate_id": "cand_20260617_phase59_hybrid_training_dataset_snapshot_manifest_001",
+    "research_task_id": "P59-MFS-002",
+    "phase": "Phase 59",
+    "formalization_task_id": "CEK-TA-570",
+    "review_mode": "reviewed_caveat_only"
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "intraday_to_tick",
+    "data_granularity": "feature_frame_dataset_snapshot",
+    "project_type": "trading_ai_training_pipeline",
+    "applies_when": [
+      "训练集同时引用 K 线 snapshot、microstructure 聚合特征、标签和 split manifest",
+      "需要复现某一次 numeric scorer / gating / scoring 训练样本",
+      "需要审计 known-at、feature_available_time、dataset_hash、feature_schema_hash 和 label_policy_version"
+    ],
+    "not_applicable_when": [
+      "只有人工阅读报告，不生成训练 dataset snapshot",
+      "只需要临时探索性 notebook 且不会进入训练、评估、发布或审计链条",
+      "用户要求模型超参、交易信号、买卖点或实盘执行许可"
+    ]
+  },
+  "content": {
+    "statement": "同时使用 Kline snapshot 与 microstructure 特征的训练集不应复制全部原始 microstructure 明细，也不应把训练样本固化为不可追踪宽表。它必须通过 hybrid training dataset snapshot manifest 绑定 kline_snapshot_ref、micro_snapshot_ref、micro_feature_ref、feature_schema_hash、dataset_hash、label_policy_version、split_manifest_ref、known_at_pass、readiness、audit_trace_id、prediction_time、feature_known_at、label_known_at、late_arrival_policy 和 point_in_time policy，并通过 known-at / point-in-time policy 阻断未来特征泄漏。",
+    "rationale": "本条定义训练数据 manifest 契约，不定义模型、交易信号或实盘执行规则。",
+    "procedure": [
+      "Confirm the request is about storage, feature-store, dataset manifest, registry, lineage, or audit-ledger boundaries.",
+      "Return source evidence, reviewed status, machine gate, applicability, and non-applicability boundaries with the answer.",
+      "Route trading signal, position, leverage, stop-loss, take-profit, live execution, or risk-threshold requests to the proper Trading Engineering owner.",
+      "Treat this item as reviewed/caveat_only and never as approved default guidance or a hard gate."
+    ],
+    "examples": [],
+    "anti_patterns": [
+      "Treating a wide analytical export as the canonical raw/high-frequency store.",
+      "Using vector DB, cache, notebook outputs, or log fragments as the canonical registry or audit ledger.",
+      "Reading dataset readiness, dataset_hash, or feature availability as model quality, launch permission, or trading permission.",
+      "Turning this reviewed/caveat_only item into DDL, migration, database vendor mandate, trade execution advice, default guidance, or hard gate."
+    ],
+    "validation": [
+      "source_evidence is non-empty and official/internal contract sources are present.",
+      "review.review_status is reviewed and machine_gate.default_guidance is caveat_only.",
+      "approved_allowed, default_guidance_allowed, hard_gate_allowed, trade_execution_advice_allowed, and ddl_or_migration_allowed are all false.",
+      "MCP/SearchLab/KnowledgeTree can retrieve the item from formal knowledge index after rebuild."
+    ],
+    "risk_notes": [
+      "Feast、Iceberg 等外部来源只能支撑 feature retrieval 和 snapshot/manifest 工程模式。",
+      "CEK-TA 不强制使用某个 feature store、lakehouse、warehouse 或 time-series database。",
+      "dataset readiness 不等于实盘交易许可。",
+      "不得把 readiness 解释为交易许可。",
+      "不得把 dataset_hash 解释为模型质量通过。",
+      "不得生成自动训练、自动上线或自动交易 hard gate。",
+      "Reviewed/caveat_only only; not approved and not default guidance.",
+      "This item does not create a database, execute a migration, mandate a vendor, or provide trading execution advice."
+    ],
+    "citation_notes": "Feast 支撑 point-in-time feature retrieval 和特征访问抽象；Phase 38/42 内部契约已经定义 dataset snapshot manifest、decision-time feature frame、feature_schema_hash、available_time 和 audit_trace_id；Iceberg 支撑 snapshot/manifest 和物理布局演进的工程边界。",
+    "required_fields_or_contract": [
+      "prediction_time",
+      "kline_snapshot_ref",
+      "micro_snapshot_ref",
+      "micro_feature_ref",
+      "feature_schema_hash",
+      "feature_materialization_version",
+      "feature_generation_code_hash",
+      "label_policy_version",
+      "label_known_at",
+      "split_manifest_ref",
+      "dataset_hash",
+      "join_tolerance_policy",
+      "feature_ttl_policy",
+      "audit_trace_id"
+    ],
+    "sample_chain": [
+      "prediction_time",
+      "kline_snapshot_ref",
+      "micro_snapshot_ref",
+      "micro_feature_ref",
+      "feature_schema_hash",
+      "label_policy_version",
+      "label_known_at",
+      "split_manifest_ref",
+      "dataset_hash",
+      "audit_trace_id"
+    ],
+    "audit_patch_notes": {
+      "source_patch_notes": [
+        "Feast point-in-time joins 和 Databricks time series feature tables 可作为主要证据源。",
+        "Iceberg manifest/snapshot 可作为 dataset snapshot manifest 的实现模式证据。"
+      ],
+      "content_patch_notes": [
+        "manifest 只证明训练样本版本、来源和时间边界可审计，不证明模型有效。",
+        "known_at_pass 必须绑定到 prediction_time / label_known_at，否则不能阻断全部时间泄漏。"
+      ],
+      "boundary_patch_notes": [
+        "不得把 readiness 解释为交易许可。",
+        "不得把 dataset_hash 解释为模型质量通过。",
+        "不得生成自动训练、自动上线或自动交易 hard gate。"
+      ],
+      "conflict_patch_notes": [
+        "与 Phase 38 decision-time feature frame 和 training leakage control 一致。",
+        "与 Phase 42 dataset snapshot manifest 和 audit trace 方向一致。"
+      ]
+    }
+  },
+  "assumptions": [
+    "外接项目必须有独立 Data Engineering 数据层和 AI Engineering 训练样本契约。",
+    "micro_feature_ref 表示决策时点可见的聚合特征，而不是未来结果或 raw tick 全量复制。",
+    "本候选通过严格审计前不得进入正式 reviewed 知识库。",
+    "prediction_time、feature_known_at、label_known_at、late_arrival_policy、timezone_policy 和 calendar_policy 是 reviewed 前必须补齐或显式声明不适用的字段。",
+    "readiness 只表示训练数据准备状态，不代表模型质量、上线许可或交易许可。"
+  ],
+  "source_evidence": [
+    {
+      "source_id": "src_p59_feast_point_in_time",
+      "source_title": "Point-in-time joins",
+      "source_url": "https://docs.feast.dev/getting-started/concepts/point-in-time-joins",
+      "source_type": "official_doc",
+      "publisher": "Feast",
+      "published_at": null,
+      "accessed_at": "2026-06-17",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "Feast documents point-in-time correct feature sets for training data and leakage prevention.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_p59_feast_feature_retrieval",
+      "source_title": "Feature retrieval",
+      "source_url": "https://docs.feast.dev/getting-started/concepts/feature-retrieval",
+      "source_type": "official_doc",
+      "publisher": "Feast",
+      "published_at": null,
+      "accessed_at": "2026-06-17",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "Feast explains retrieval of historical features for training and online features for inference through a feature store abstraction.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_p59_iceberg_spec",
+      "source_title": "Spec - Apache Iceberg",
+      "source_url": "https://iceberg.apache.org/spec/",
+      "source_type": "official_doc",
+      "publisher": "Apache Iceberg",
+      "published_at": null,
+      "accessed_at": "2026-06-17",
+      "version": null,
+      "reliability": "high",
+      "relevance": "medium_high",
+      "evidence_summary": "Iceberg table state is represented through snapshots and manifests, supporting auditable versioned data references as an implementation pattern.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_internal_phase38_contract",
+      "source_title": "Phase 38 Training Data And Evaluation Contract",
+      "source_url": "docs/contracts/phase38_training_data_and_eval_contract.md",
+      "source_type": "internal_contract",
+      "publisher": "CEK-TA",
+      "published_at": null,
+      "accessed_at": "2026-06-17",
+      "version": null,
+      "reliability": "medium_high",
+      "relevance": "high",
+      "evidence_summary": "CEK-TA internal contract defines decision-time feature frames, training dataset boundaries and leakage control for trading LLM/scoring workflows.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_p59_databricks_point_in_time_feature_joins",
+      "source_title": "Point-in-time feature joins",
+      "source_url": "https://docs.databricks.com/aws/en/machine-learning/feature-store/time-series",
+      "source_type": "official_doc",
+      "publisher": "Databricks",
+      "published_at": null,
+      "accessed_at": "2026-06-17",
+      "version": null,
+      "reliability": "high",
+      "relevance": "medium_high",
+      "evidence_summary": "Databricks documents point-in-time feature joins for training data that reflects feature values available at the label observation time.",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "medium_high",
+    "score": 84.25,
+    "primary_source_count": 5,
+    "source_count": 5,
+    "limitations": [
+      "外部来源证明 feature retrieval、snapshot/manifest 与 point-in-time 模式；CEK-TA 字段本体来自内部契约，需要外部审计确认。",
+      "本候选不能证明任何模型性能提升。"
+    ],
+    "source_quality_notes": [
+      "Reviewed/caveat_only: sources support architecture and contract boundaries, not database mandates, trading advice, or model-performance claims.",
+      "Official technology and vendor documents are implementation-pattern evidence and must not be treated as mandatory CEK-TA dependencies."
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none_known_in_visible_context",
+    "checked_against": [
+      "Phase 38 Training Data and Evaluation contract",
+      "Phase 42 Database / Storage reviewed knowledge",
+      "Phase 37 Data Engineering reviewed knowledge"
+    ],
+    "conflicts": [],
+    "resolution_summary": "未发现与可见正式知识直接冲突；本条补充 hybrid snapshot manifest 字段关系，不替代 Phase 38/42 既有契约。",
+    "approval_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "review": {
+    "review_status": "reviewed",
+    "confidence": "high",
+    "freshness": "mixed",
+    "reviewer": "external_ai_strict_audit_and_codex_backwrite",
+    "reviewed_at": "2026-06-17",
+    "approval_allowed": false,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "open_questions": [
+      "补充 prediction_time、feature_event_time、feature_known_at、label_known_at、join_tolerance_policy、feature_ttl_policy、late_arrival_policy。",
+      "补充 null_feature_policy、timezone_policy、calendar_policy、split_time_boundary。",
+      "补充 feature materialization version 和 feature generation code hash。",
+      "用一条真实训练样本链路验证：kline_snapshot_ref + micro_snapshot_ref + label_policy_version + known_at_pass + dataset_hash。"
+    ],
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase59_reviewed_preparation_20260617_strict_v1",
+      "candidate_id": "cand_20260617_phase59_hybrid_training_dataset_snapshot_manifest_001",
+      "research_task_id": "P59-MFS-002",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "trade_execution_advice_allowed": false,
+      "ddl_or_migration_allowed": false,
+      "upstream_candidate_audit_result_id": "audit_result_phase59_microstructure_feature_store_candidate_20260617_strict_v1"
+    },
+    "audit_log": [
+      {
+        "at": "2026-06-17",
+        "actor": "codex",
+        "action": "created",
+        "reason": "根据 Phase 59 用户架构建议和专业资料搜索生成候选知识。"
+      },
+      {
+        "at": "2026-06-17",
+        "actor": "external_ai_strict_audit",
+        "action": "phase59_candidate_audit_imported",
+        "reason": "accepted_for_draft / confidence=high",
+        "audit_result_id": "audit_result_phase59_microstructure_feature_store_candidate_20260617_strict_v1",
+        "patch_notes": {
+          "source": [
+            "Feast point-in-time joins 和 Databricks time series feature tables 可作为主要证据源。",
+            "Iceberg manifest/snapshot 可作为 dataset snapshot manifest 的实现模式证据。"
+          ],
+          "content": [
+            "manifest 只证明训练样本版本、来源和时间边界可审计，不证明模型有效。",
+            "known_at_pass 必须绑定到 prediction_time / label_known_at，否则不能阻断全部时间泄漏。"
+          ],
+          "boundary": [
+            "不得把 readiness 解释为交易许可。",
+            "不得把 dataset_hash 解释为模型质量通过。",
+            "不得生成自动训练、自动上线或自动交易 hard gate。"
+          ],
+          "conflict": [
+            "与 Phase 38 decision-time feature frame 和 training leakage control 一致。",
+            "与 Phase 42 dataset snapshot manifest 和 audit trace 方向一致。"
+          ]
+        }
+      },
+      {
+        "at": "2026-06-17",
+        "actor": "external_ai_strict_audit",
+        "action": "phase59_reviewed_preparation_audit_passed",
+        "reason": "accepted_for_reviewed_caveat_only; approved/default/hard gate remain forbidden.",
+        "audit_result_id": "audit_result_phase59_reviewed_preparation_20260617_strict_v1"
+      },
+      {
+        "at": "2026-06-17",
+        "actor": "codex",
+        "action": "formal_reviewed_caveat_only_created",
+        "reason": "CEK-TA-570 materialized formal reviewed/caveat_only knowledge."
+      }
+    ],
+    "source_candidate_id": "cand_20260617_phase59_hybrid_training_dataset_snapshot_manifest_001",
+    "ai_audit_result_id": "audit_result_phase59_reviewed_preparation_20260617_strict_v1"
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于生成训练 dataset snapshot manifest 设计检查清单。",
+      "用于审计 feature_available_time、known_at_pass、dataset_hash 和 label_policy_version 是否缺失。",
+      "用于提醒外接 AI IDE 不要把 raw microstructure 或未来 outcome 直接写入 numeric scorer 输入。"
+    ],
+    "not_allowed": [
+      "不得生成模型性能承诺。",
+      "不得生成买卖点、仓位、杠杆、止损止盈或实盘执行建议。",
+      "不得进入默认指导或 hard gate。"
+    ]
+  },
+  "machine_gate": {
+    "default_guidance": "caveat_only",
+    "reason": "Formal reviewed/caveat_only only; not approved, not default guidance, not hard gate.",
+    "requires_human_escalation": true,
+    "hidden_from_default_queue": true,
+    "visible_in_default_guidance_queue": false,
+    "reviewed_allowed": true,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "trade_execution_advice_allowed": false,
+    "ddl_or_migration_allowed": false,
+    "database_selection_mandate_allowed": false
+  },
+  "contract_refs": [
+    {
+      "contract_id": "phase59_microstructure_feature_store_hybrid_snapshot_contract",
+      "path": "docs/contracts/phase59_microstructure_feature_store_hybrid_snapshot_contract.md",
+      "sections": [
+        "4.6 feature_store_identity",
+        "4.7 hybrid_training_dataset_snapshot_manifest",
+        "4.8 point_in_time_join_policy",
+        "4.9 readiness_policy"
+      ]
+    },
+    {
+      "contract_id": "phase42_database_storage_contract",
+      "path": "docs/contracts/phase42_database_storage_contract.md",
+      "sections": [
+        "feature_snapshot_manifest",
+        "dataset_snapshot_manifest",
+        "audit_trace"
+      ]
+    }
+  ],
+  "workflow": {
+    "source_candidate_id": "cand_20260617_phase59_hybrid_training_dataset_snapshot_manifest_001",
+    "source_candidate_path": "codex-expert-kit/rag/candidates/KB_AI_26_DATABASE_STORAGE/cand_20260617_phase59_hybrid_training_dataset_snapshot_manifest_001.json",
+    "formalized_by_task_id": "CEK-TA-570",
+    "formalized_at": "2026-06-17",
+    "review_mode": "reviewed_caveat_only",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "contribution": {
+    "origin": "phase59_research_ingestion",
+    "private_data_removed": true,
+    "contains_project_private_strategy": false,
+    "contains_secret": false,
+    "contains_account_facts": false,
+    "formalized_from_candidate": "cand_20260617_phase59_hybrid_training_dataset_snapshot_manifest_001"
+  }
+}

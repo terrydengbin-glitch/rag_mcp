@@ -1,0 +1,360 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_ai_engineering.llm_role_boundary.cannot_override_hard_risk_gate.v1",
+  "title": "交易 LLM 只能做解释、评分、风险提示和门控建议，不能执行订单或覆盖硬风控。",
+  "metadata": {
+    "partition_id": "KB_09_LLM_TRAINING",
+    "domain": "llm_training",
+    "subdomain": "trading_llm_role_boundary",
+    "rule_type": "decision_rule",
+    "content_type": "json",
+    "project_binding": "none",
+    "tree_node_id": "kt.llm_training.trading_scoring_gating_training",
+    "tree_path": "CEK-TA / AI Engineering",
+    "canonical_node_id": "kt.llm_training.trading_scoring_gating_training",
+    "canonical_tree_path": "CEK-TA / AI Engineering",
+    "risk_level": "medium",
+    "used_for": [
+      "llm_training",
+      "trading_gating_scoring",
+      "rag_engineering",
+      "mcp",
+      "vue_audit_ui"
+    ],
+    "source_candidate_id": "cand_20260609_ai_engineering_llm_role_boundary_cannot_override_hard_risk_gate_v1_001",
+    "research_task_id": "RIT-P36-C-03",
+    "claim_type": "risk_boundary_rule",
+    "classification_notes": "Phase 36 AI Engineering reviewed knowledge; UI tree and canonical node are inherited from candidate classification. Trading rule bodies must remain in Trading Engineering."
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "general",
+    "data_granularity": "general",
+    "project_type": "trading_llm_assistant",
+    "applies_when": [
+      "外接项目正在构建或审计交易 LLM gating/scoring、训练数据、评估、RAG/MCP、部署或治理链路。",
+      "该规则用于阻断数据泄漏、权限越界、无来源默认指导、训练/评估污染或上线前治理缺口。"
+    ],
+    "not_applicable_when": [
+      "用户需要具体买卖点、仓位、止损止盈、策略参数或实盘订单执行。",
+      "知识点主要描述 K 线结构、市场微观结构、回测模型、fill model 或交易风控本体，应路由到 Trading Engineering。"
+    ]
+  },
+  "content": {
+    "statement": "交易 LLM 只能做解释、评分、风险提示和门控建议，不能执行订单或覆盖硬风控。",
+    "rationale": "本候选仅沉淀 AI Engineering 中训练、评估、RAG/MCP、安全、部署或治理规则；不定义 K 线信号、具体交易策略、订单执行规则或账户参数。 审计结论：方向成立。交易 LLM 不应覆盖 hard risk gate，这可以作为 CEK-TA 内部高风险 workflow 边界进入 draft。FINRA algorithmic trading guidance 支持自动化交易系统的监督、测试、控制和风险治理；NIST AI RMF 支持 AI 风险治理；OWASP 支持 tool access 最小权限和权限校验。正式 draft 应把本条聚焦为 hard risk gate override prohibition，而不是同时覆盖所有 role boundary。",
+    "procedure": [
+      "确认项目事实匹配 applies_when，且没有命中 not_applicable_when。",
+      "按 source_patch_notes 检查来源是否足够支撑 statement。",
+      "按 content_patch_notes 补齐正式实现、schema、字段和 checklist。",
+      "按 boundary_patch_notes 确认没有把交易规则本体、项目私有参数或实盘执行规则写入 AI Engineering。",
+      "保留 required_followups，后续由来源增强或治理任务继续关闭。"
+    ],
+    "examples": [],
+    "anti_patterns": [
+      "把 reviewed 知识当作 approved 默认指导。",
+      "把 AI Engineering 规则扩写成具体交易阈值、仓位、买卖点或执行参数。",
+      "忽略审计结果中的来源限制、适用范围和后续补强要求。"
+    ],
+    "validation": [
+      "source_evidence 至少 2 条，且没有 low-only 来源。",
+      "conflict_status 为 none 或 resolved。",
+      "review_status 为 reviewed 时 machine_gate 必须是 caveat_only。",
+      "MCP/SearchLab 默认指导不得把本条当作 approved 返回。"
+    ],
+    "risk_notes": [
+      "本条仍是 candidate，需要外部 AI/人工审计确认来源充分性、适用边界和是否需要拆分。",
+      "AI Engineering 管理 LLM role boundary、override detection、fallback 和 audit trace。",
+      "Trading Engineering 管理 hard risk gate 本体、风控阈值、执行系统、订单逻辑和策略参数。",
+      "不得把具体 hard risk rule、阈值、仓位或订单动作写入 AI Engineering 知识库。",
+      "与 no_direct_order_execution、scorer_not_executor 高度重叠，建议形成 role_boundary family。",
+      "与 runtime_final_gate_deterministic_engine_required、safety_no_tool_permission_escalation、gating.low_confidence_cannot_allow 互链。",
+      "未发现需要 rejected 的冲突。",
+      "补 llm_role_boundary_contract.md。",
+      "补 override_attempt eval case。",
+      "补 deterministic_gate_result 与 fallback_action enum。"
+    ],
+    "citation_notes": "FINRA algorithmic trading guidance supports supervision, controls, risk assessment, testing, and governance for automated trading systems.；NIST AI RMF supports governance, mapping, measurement, and management of AI risks across design, deployment, and monitoring.",
+    "audit_patch_notes": {
+      "source_patch_notes": [
+        "保留 FINRA 15-09 / Algorithmic Trading 作为交易自动化监督、测试和控制来源。",
+        "保留 NIST AI RMF 作为 AI 风险治理来源。",
+        "保留 OWASP Prompt Injection Prevention Cheat Sheet 作为 LLM tool access、least privilege、permission validation 来源。",
+        "建议互链第一批已二审通过的 capability_boundary / role split family。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：LLM outputs may provide explanation, scoring signals, reason codes and review suggestions, but must not override a deterministic hard risk gate or approved Trading Engineering risk control.",
+        "建议字段：llm_role、risk_gate_id、deterministic_gate_result、llm_suggestion、override_attempt_detected、fallback_action、audit_event_id。",
+        "明确 LLM 建议与 hard gate 冲突时，默认以 hard gate / deterministic risk control 为准。",
+        "不要在本条定义具体风控阈值或交易规则。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 管理 LLM role boundary、override detection、fallback 和 audit trace。",
+        "Trading Engineering 管理 hard risk gate 本体、风控阈值、执行系统、订单逻辑和策略参数。",
+        "不得把具体 hard risk rule、阈值、仓位或订单动作写入 AI Engineering 知识库。"
+      ],
+      "conflict_patch_notes": [
+        "与 no_direct_order_execution、scorer_not_executor 高度重叠，建议形成 role_boundary family。",
+        "与 runtime_final_gate_deterministic_engine_required、safety_no_tool_permission_escalation、gating.low_confidence_cannot_allow 互链。",
+        "未发现需要 rejected 的冲突。"
+      ],
+      "required_followups": [
+        "补 llm_role_boundary_contract.md。",
+        "补 override_attempt eval case。",
+        "补 deterministic_gate_result 与 fallback_action enum。"
+      ]
+    }
+  },
+  "assumptions": [
+    "外接项目提供项目事实、私有交易数据和策略上下文；CEK-TA 只沉淀可复用专业规则。",
+    "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+  ],
+  "source_evidence": [
+    {
+      "source_id": "src_finra_algo",
+      "source_title": "Algorithmic Trading | FINRA",
+      "source_url": "https://www.finra.org/rules-guidance/key-topics/algorithmic-trading",
+      "source_type": "standard_or_risk_framework",
+      "publisher": "FINRA",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "FINRA algorithmic trading guidance supports supervision, controls, risk assessment, testing, and governance for automated trading systems.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_nist",
+      "source_title": "AI Risk Management Framework | NIST",
+      "source_url": "https://www.nist.gov/itl/ai-risk-management-framework",
+      "source_type": "standard_or_risk_framework",
+      "publisher": "NIST",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "NIST AI RMF supports governance, mapping, measurement, and management of AI risks across design, deployment, and monitoring.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_owasp_prompt",
+      "source_title": "LLM Prompt Injection Prevention Cheat Sheet",
+      "source_url": "https://cheatsheetseries.owasp.org/cheatsheets/LLM_Prompt_Injection_Prevention_Cheat_Sheet.html",
+      "source_type": "standard_or_risk_framework",
+      "publisher": "OWASP",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "OWASP documents prompt injection risks and mitigations for user input, retrieved content, tool output, and agent workflows.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_occ_fed_fdic_revised_model_risk_2026",
+      "source_title": "Model Risk Management: Revised Guidance",
+      "source_url": "https://occ.gov/news-issuances/bulletins/2026/bulletin-2026-13.html",
+      "source_type": "standard_or_risk_framework",
+      "publisher": "OCC / Federal Reserve / FDIC",
+      "published_at": "2026-04-17",
+      "accessed_at": "2026-06-09",
+      "version": "OCC Bulletin 2026-13 / SR 26-2",
+      "reliability": "high",
+      "relevance": "medium",
+      "evidence_summary": "2026 年跨机构模型风险管理修订指南支持模型治理、验证、变更控制和风险分层；同时需注明 generative AI 和 agentic AI 不在其直接范围内，只能作为模型风险治理类比来源。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_finra_regulatory_notice_15_09",
+      "source_title": "FINRA Regulatory Notice 15-09",
+      "source_url": "https://www.finra.org/industry/notices/15-09",
+      "source_type": "standard_or_risk_framework",
+      "publisher": "FINRA",
+      "published_at": "2015-03-01",
+      "accessed_at": "2026-06-09",
+      "version": "Regulatory Notice 15-09",
+      "reliability": "high",
+      "relevance": "medium",
+      "evidence_summary": "FINRA 15-09 支持自动化交易系统的监督、测试、控制、变更和合规治理要求，适合作为交易自动化治理类来源。",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 90,
+    "score_version": "1.0.0",
+    "primary_source_count": 2,
+    "supporting_source_count": 3,
+    "low_reliability_source_count": 0,
+    "limitations": [
+      "本条为 reviewed 知识，来源和审计补丁已记录；默认指导仍需后续人工治理升级 approved。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "docs/contracts/ai_engineering_gating_scoring_contract.md",
+      "docs/contracts/ai_engineering_knowledge_item_policy.md",
+      "docs/tasks/phase36_ai_engineering_gating_scoring_knowledge.md"
+    ],
+    "conflicts": [],
+    "resolution_summary": "未发现与当前 CEK-TA formal knowledge 的直接冲突；候选不会进入默认指导。",
+    "default_recommendation": "caveat_only_until_approved"
+  },
+  "review": {
+    "confidence": "medium",
+    "freshness": "time_sensitive",
+    "review_status": "reviewed",
+    "reviewer": "codex",
+    "reviewed_at": "2026-06-09",
+    "created_at": "2026-06-09",
+    "updated_at": "2026-06-09",
+    "open_questions": [
+      "审计时确认该候选是否应与相邻 AI Engineering 规则合并、拆分，或改路由到 Trading Engineering。",
+      "补 llm_role_boundary_contract.md。",
+      "补 override_attempt eval case。",
+      "补 deterministic_gate_result 与 fallback_action enum。"
+    ],
+    "decision_log": [
+      {
+        "at": "2026-06-09",
+        "actor": "external_ai",
+        "decision": "accepted_for_draft",
+        "reason": "方向成立。交易 LLM 不应覆盖 hard risk gate，这可以作为 CEK-TA 内部高风险 workflow 边界进入 draft。FINRA algorithmic trading guidance 支持自动化交易系统的监督、测试、控制和风险治理；NIST AI RMF 支持 AI 风险治理；OWASP 支持 tool access 最小权限和权限校验。正式 draft 应把本条聚焦为 hard risk gate override prohibition，而不是同时覆盖所有 role boundary。",
+        "audit_result_id": "audit_result_phase36_ai_engineering_batch_06_of_10_20260609_gpt55_pro_strict_sources"
+      },
+      {
+        "at": "2026-06-09",
+        "actor": "codex",
+        "decision": "converted_to_reviewed",
+        "reason": "按 Phase 36 批量审计结果优化候选并转为 formal reviewed；未升级 approved。",
+        "audit_result_id": "audit_result_phase36_ai_engineering_batch_06_of_10_20260609_gpt55_pro_strict_sources"
+      }
+    ],
+    "approval_status": "not_requested",
+    "default_guidance_allowed": false,
+    "source_candidate_id": "cand_20260609_ai_engineering_llm_role_boundary_cannot_override_hard_risk_gate_v1_001",
+    "ai_audit_result_id": "audit_result_phase36_ai_engineering_batch_06_of_10_20260609_gpt55_pro_strict_sources",
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase36_ai_engineering_batch_06_of_10_20260609_gpt55_pro_strict_sources",
+      "source_package_id": "phase36_ai_engineering_candidate_audit_batch_06_of_10_20260609",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立。交易 LLM 不应覆盖 hard risk gate，这可以作为 CEK-TA 内部高风险 workflow 边界进入 draft。FINRA algorithmic trading guidance 支持自动化交易系统的监督、测试、控制和风险治理；NIST AI RMF 支持 AI 风险治理；OWASP 支持 tool access 最小权限和权限校验。正式 draft 应把本条聚焦为 hard risk gate override prohibition，而不是同时覆盖所有 role boundary。",
+      "source_patch_notes": [
+        "保留 FINRA 15-09 / Algorithmic Trading 作为交易自动化监督、测试和控制来源。",
+        "保留 NIST AI RMF 作为 AI 风险治理来源。",
+        "保留 OWASP Prompt Injection Prevention Cheat Sheet 作为 LLM tool access、least privilege、permission validation 来源。",
+        "建议互链第一批已二审通过的 capability_boundary / role split family。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：LLM outputs may provide explanation, scoring signals, reason codes and review suggestions, but must not override a deterministic hard risk gate or approved Trading Engineering risk control.",
+        "建议字段：llm_role、risk_gate_id、deterministic_gate_result、llm_suggestion、override_attempt_detected、fallback_action、audit_event_id。",
+        "明确 LLM 建议与 hard gate 冲突时，默认以 hard gate / deterministic risk control 为准。",
+        "不要在本条定义具体风控阈值或交易规则。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 管理 LLM role boundary、override detection、fallback 和 audit trace。",
+        "Trading Engineering 管理 hard risk gate 本体、风控阈值、执行系统、订单逻辑和策略参数。",
+        "不得把具体 hard risk rule、阈值、仓位或订单动作写入 AI Engineering 知识库。"
+      ],
+      "conflict_patch_notes": [
+        "与 no_direct_order_execution、scorer_not_executor 高度重叠，建议形成 role_boundary family。",
+        "与 runtime_final_gate_deterministic_engine_required、safety_no_tool_permission_escalation、gating.low_confidence_cannot_allow 互链。",
+        "未发现需要 rejected 的冲突。"
+      ],
+      "required_followups": [
+        "补 llm_role_boundary_contract.md。",
+        "补 override_attempt eval case。",
+        "补 deterministic_gate_result 与 fallback_action enum。"
+      ]
+    },
+    "approved_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "contribution": {
+    "contribution_id": null,
+    "source_project": null,
+    "sanitization_status": "not_applicable",
+    "private_data_removed": true,
+    "generic_mapping_notes": "Phase 36 public-source AI Engineering candidate; no project-private trading facts included."
+  },
+  "copyright": {
+    "stores_full_text": false,
+    "stores_long_quote": false,
+    "summary_only": true,
+    "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+    "reuse_risk": "low"
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于审计 AI Engineering、LLM 训练、RAG/MCP、部署、安全或治理链路。",
+      "用于提醒外接项目补齐来源、适用边界、冲突状态、审计记录和人工审批。",
+      "用于 reviewed/audit 模式下带 caveat 引用。"
+    ],
+    "not_allowed": [
+      "不得生成买卖点、仓位、杠杆、止损止盈或实盘执行指令。",
+      "不得覆盖确定性风控、交易执行系统或人工审批。",
+      "不得作为 approved/default guidance 直接返回。"
+    ],
+    "required_context": [
+      "project_type",
+      "task_type",
+      "mode",
+      "strategy_version",
+      "data_boundary",
+      "review_status"
+    ],
+    "fallback_behavior": "cite_with_caveat"
+  },
+  "machine_gate": {
+    "default_guidance": "caveat_only",
+    "reason": "reviewed only; accepted_for_draft is not approved; default guidance requires later human governance approval.",
+    "requires_human_escalation": true,
+    "blocking_reasons": [
+      "not_approved",
+      "phase36_batch_reviewed_only"
+    ],
+    "checked_at": "2026-06-09",
+    "gate_version": "1.0.0",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "recommended_extra_sources": [
+    {
+      "title": "保留 FINRA 15-09 / Algorithmic Trading 作为交易自动化监督、测试和控制来源。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_1"
+    },
+    {
+      "title": "保留 NIST AI RMF 作为 AI 风险治理来源。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_2"
+    },
+    {
+      "title": "保留 OWASP Prompt Injection Prevention Cheat Sheet 作为 LLM tool access、least privilege、permission validation 来源。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_3"
+    },
+    {
+      "title": "建议互链第一批已二审通过的 capability_boundary / role split family。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_4"
+    }
+  ]
+}

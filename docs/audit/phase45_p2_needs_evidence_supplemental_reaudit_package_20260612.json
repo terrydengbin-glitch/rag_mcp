@@ -1,0 +1,890 @@
+{
+  "package_id": "phase45_p2_needs_evidence_supplemental_reaudit_package_20260612",
+  "created_at": "2026-06-12",
+  "created_by": "codex",
+  "phase": "45",
+  "task_id": "CEK-TA-471",
+  "scope": {
+    "branch": "Trading Engineering / P2 supplemental re-audit",
+    "candidate_count": 2,
+    "target": "复审 P45-G-DATA05 与 P45-H-CRYPTO05，确认补充 internal lineage contract、OpenLineage/MLflow/Iceberg/DVC、Binance/Bybit API/WebSocket/maintenance/ADL 证据后是否可进入 accepted_for_draft。"
+  },
+  "hard_boundaries": {
+    "candidate_not_formal": true,
+    "accepted_for_draft_not_reviewed": true,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "trade_execution_advice_allowed": false,
+    "risk_threshold_advice_allowed": false,
+    "legal_license_conclusion_allowed": false,
+    "must_not_create_formal_knowledge": true
+  },
+  "audit_instructions": [
+    "必须搜索相关专业网站、官方文档、数据血缘/可复现性资料、交易所/crypto venue/API 文档、案例和数据，对补证内容进行严格再审。",
+    "检查 DATA05 是否已充分区分 vendor schema、parser_version、normalization_version、raw_snapshot_digest、source digest 和 lineage_id。",
+    "检查 DATA05 的内部契约是否足以支撑字段本体，外部来源是否仅作为 lineage / digest / snapshot / reproducibility 模式证据。",
+    "检查 CRYPTO05 是否已补 API/WebSocket disconnect、heartbeat、maintenance/status、mark price monitoring 和 ADL/insurance-fund loss-allocation 证据。",
+    "检查 CRYPTO05 是否已把 clawback 收窄为 exchange-specific loss-allocation mechanism，且未输出清算规避或 hard gate。",
+    "输出只能是 accepted_for_draft、needs_more_evidence、rejected 或 blocked；不得输出 reviewed、approved、default guidance 或 hard gate。"
+  ],
+  "required_output_schema": {
+    "audit_result_id": "string",
+    "package_id": "phase45_p2_needs_evidence_supplemental_reaudit_package_20260612",
+    "summary": {
+      "total": 2,
+      "accepted_for_draft": 0,
+      "needs_more_evidence": 0,
+      "rejected": 0,
+      "blocked": 0
+    },
+    "candidate_results": [
+      {
+        "candidate_id": "string",
+        "research_task_id": "P45-G-DATA05 | P45-H-CRYPTO05",
+        "decision": "accepted_for_draft | needs_more_evidence | rejected | blocked",
+        "confidence": "low | medium | high",
+        "reviewed_allowed": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "risk_threshold_advice_allowed": false,
+        "trade_execution_advice_allowed": false,
+        "legal_license_conclusion_allowed": false,
+        "reasons": [
+          "string"
+        ],
+        "required_followups": [
+          "string"
+        ],
+        "patch_notes": {
+          "source": [
+            "string"
+          ],
+          "content": [
+            "string"
+          ],
+          "boundary": [
+            "string"
+          ],
+          "conflict": [
+            "string"
+          ]
+        }
+      }
+    ]
+  },
+  "quality_gate": {
+    "gate_id": "phase45_p2_needs_evidence_supplemental_reaudit_package_quality_gate",
+    "checked_at": "2026-06-12",
+    "phase": "45",
+    "task_id": "CEK-TA-471",
+    "package_id": "phase45_p2_needs_evidence_supplemental_reaudit_package_20260612",
+    "candidate_count": 2,
+    "expected_count": 2,
+    "gate_status": "pass",
+    "failures": [],
+    "warnings": [
+      "本包只复审 P45-G-DATA05 与 P45-H-CRYPTO05 补证候选；不得直接创建 reviewed、approved、default guidance 或 hard gate。",
+      "DATA05 的 OpenLineage、MLflow、Iceberg、DVC 只作为 lineage / digest / snapshot / reproducibility 模式来源，不是强制工具依赖。",
+      "CRYPTO05 的 Binance / Bybit 来源只能证明各自 API / venue 行为，不输出清算规避、仓位、杠杆或停机 hard gate。"
+    ]
+  },
+  "candidates": [
+    {
+      "schema_version": "1.1.0-candidate",
+      "candidate_id": "cand_20260612_phase45_reference_data_entitlement_p45_g_data05_001",
+      "research_task_id": "P45-G-DATA05",
+      "status": {
+        "review_status": "needs_more_evidence",
+        "ingestion_decision": "needs_more_evidence",
+        "decision_reason": "当前来源支撑 vendor schema 字段，但不足以支撑 parser_version、normalization_version、raw_snapshot、source digest 的治理要求。",
+        "created_at": "2026-06-12",
+        "updated_at": "2026-06-12"
+      },
+      "classification": {
+        "tree_node_id": "kt.trading_engineering.data_engineering.reference_data_entitlement",
+        "canonical_node_id": "kt.trading_engineering.data_engineering.reference_data_entitlement",
+        "tree_path": "CEK-TA / Trading Engineering / Data Engineering / Reference Data Entitlement",
+        "related_nodes": [
+          "kt.trading_engineering.data_engineering.data_quality",
+          "kt.trading_engineering.market_microstructure.session_calendar",
+          "kt.trading_engineering.strategy_engineering.feature_boundary",
+          "kt.ai_engineering.training_dataset_boundary"
+        ],
+        "partition_id": "KB_02_DATA_ENGINEERING",
+        "domain": "data_engineering",
+        "subdomain": "reference_data_entitlement",
+        "rule_type": "market_data_reference_boundary_rule",
+        "claim_type": "vendor_schema_versioning_rule",
+        "used_for": [
+          "trading_ai_project_design_audit",
+          "market_data_contract_review",
+          "reference_data_schema_review",
+          "external_project_rag_retrieval"
+        ],
+        "classification_notes": "P45-G 只补市场数据授权、reference data、point-in-time 元数据、数据覆盖和 schema 版本边界；不定义交易信号或执行许可。"
+      },
+      "claim": {
+        "claim_id": "claim_p45_g_data05",
+        "title": "供应商 schema 和解析版本必须可追踪",
+        "statement": "市场数据 ingestion、解析、标准化和导出必须记录 vendor、dataset、venue、schema_version、field_dictionary_ref、parser_version、parser_code_hash、normalization_version、normalization_code_hash、raw_snapshot_uri、raw_snapshot_digest、lineage_id、input_dataset_version 和 output_dataset_version；供应商字段、单位、枚举或语义变化不得静默影响回测、训练、TCA 或实盘审计。",
+        "normalized_claim": "phase45_reference_data_entitlement.vendor_schema_version_required.v1",
+        "evidence_summary": "Databento / Nasdaq 来源支撑 vendor schema 和字段字典；CEK-TA internal contract 定义 parser_version、normalization_version、raw_snapshot_digest 和 lineage_id；OpenLineage、MLflow Dataset Tracking、Iceberg 和 DVC 支撑数据血缘、dataset digest、snapshot 和可复现 pipeline 模式。",
+        "interpretation_notes": "本候选只定义数据授权、reference data 与时点一致性边界，不输出交易参数、买卖点、训练许可或数据授权法律结论。",
+        "claim_strength": "candidate",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general_with_vendor_exchange_license_and_dataset_caveats",
+        "asset": "general",
+        "timeframe": "historical_realtime_backtest_replay_training_and_audit_context",
+        "data_granularity": "market_data_reference_data_instrument_definitions_statistics_schema_metadata",
+        "project_type": "trading_ai_support_layer",
+        "applies_when": [
+          "外接项目需要采集、存储、解析、训练、回测、重放、检索或展示市场数据与 reference data。",
+          "AI IDE 需要检查数据授权、数据覆盖、instrument definition、tick/lot/price-limit 和 schema version 是否被显式声明。",
+          "需要避免 current metadata 回填历史样本、授权边界被 RAG/LLM 默认绕过或 reference data 被误写成 alpha。"
+        ],
+        "not_applicable_when": [
+          "用户要求法律意见、合同解释或市场数据授权结论；这必须由项目 owner/legal/vendor agreement 判断。",
+          "用户要求买卖点、仓位、杠杆、止损止盈、交易许可、风控阈值或实盘执行动作。",
+          "需要特定交易所、供应商或账户的实时授权事实时，应由外接项目事实层提供。"
+        ],
+        "assumptions": [
+          "Market data entitlement 和 reference data 是数据工程与治理边界，不是交易策略。",
+          "授权、schema、覆盖范围和 point-in-time 元数据必须保留 vendor、venue、dataset、product 和时间边界。",
+          "候选通过外部审计前不能进入 formal reviewed 知识库。"
+        ],
+        "limitations": [
+          "交易所、供应商和政策页面会随时间变化，正式 reviewed 前必须由审计确认活跃政策和可引用版本。",
+          "官方技术文档只能证明对应 vendor/venue 的字段语义，不能替代外接项目合同、license 或 legal review。",
+          "本候选不包含任何项目私有数据、账号信息、密钥、实盘授权状态或交易参数。",
+          "OpenLineage、MLflow、Iceberg、DVC 只作为 lineage / digest / snapshot / reproducibility 模式来源，不是强制工具依赖。",
+          "CEK-TA internal contract 支撑字段本体，但不产生市场数据授权、训练授权或再分发许可。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_title": "Databento Schemas and Data Formats",
+          "source_url": "https://databento.com/docs/schemas-and-data-formats",
+          "source_type": "official_vendor_doc",
+          "publisher": "Databento",
+          "reliability": "high",
+          "score": 87,
+          "freshness": "time_sensitive",
+          "evidence_summary": "Databento documents supported market-data schemas and field dictionaries such as MBO, MBP, trades, bars, definitions and statistics.",
+          "limitations": [
+            "Vendor-specific schema documentation; not a universal market-data schema standard."
+          ],
+          "source_id": "src_001",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Databento Instrument Definitions",
+          "source_url": "https://databento.com/docs/schemas-and-data-formats/instrument-definitions",
+          "source_type": "official_vendor_doc",
+          "publisher": "Databento",
+          "reliability": "high",
+          "score": 88,
+          "freshness": "time_sensitive",
+          "evidence_summary": "Databento instrument definitions provide point-in-time reference information including symbol, name, listing, expiration, tick size and strike price.",
+          "limitations": [
+            "Databento schema context; field coverage and semantics depend on dataset, venue and vendor version."
+          ],
+          "source_id": "src_002",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Databento Statistics Schema",
+          "source_url": "https://databento.com/docs/schemas-and-data-formats/statistics",
+          "source_type": "official_vendor_doc",
+          "publisher": "Databento",
+          "reliability": "high",
+          "score": 86,
+          "freshness": "time_sensitive",
+          "evidence_summary": "Databento statistics include session fields such as upper and lower price limits, settlement and venue-specific volume/price fields.",
+          "limitations": [
+            "Statistics schema availability and meaning depend on venue and dataset."
+          ],
+          "source_id": "src_003",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Nasdaq Symbol Directory Data Fields and Definitions",
+          "source_url": "https://www.nasdaqtrader.com/trader.aspx?id=symboldirdefs",
+          "source_type": "official_exchange_doc",
+          "publisher": "Nasdaq Trader",
+          "reliability": "high",
+          "score": 85,
+          "freshness": "time_sensitive",
+          "evidence_summary": "Nasdaq Symbol Directory defines fields such as round lot size, test issue and symbol directory metadata.",
+          "limitations": [
+            "Nasdaq symbol directory context; not a universal reference-data schema."
+          ],
+          "source_id": "src_004",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Phase 45 Market Data Ingestion Lineage Contract",
+          "source_url": "docs/contracts/phase45_market_data_ingestion_lineage_contract.md",
+          "source_type": "internal_contract",
+          "publisher": "CEK-TA",
+          "reliability": "high",
+          "score": 88,
+          "freshness": "stable",
+          "relevance": "high",
+          "evidence_summary": "CEK-TA internal contract defines vendor_id, dataset_id, schema_version, parser_version, normalization_version, raw_snapshot_uri, raw_snapshot_digest and lineage_id.",
+          "limitations": [
+            "Internal contract; reviewed import still needs external audit and must not imply market-data license permission."
+          ],
+          "source_id": "src_supp_data05_001",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "OpenLineage Dataset Facets",
+          "source_url": "https://openlineage.io/docs/spec/facets/dataset-facets/",
+          "source_type": "official_spec",
+          "publisher": "OpenLineage",
+          "reliability": "high",
+          "score": 86,
+          "freshness": "stable",
+          "relevance": "high",
+          "evidence_summary": "OpenLineage dataset facets support attaching common, input and output metadata to datasets for lineage events.",
+          "limitations": [
+            "Lineage standard pattern; not a CEK-TA market-data schema by itself."
+          ],
+          "source_id": "src_supp_data05_002",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "OpenLineage Object Model",
+          "source_url": "https://openlineage.io/docs/spec/object-model/",
+          "source_type": "official_spec",
+          "publisher": "OpenLineage",
+          "reliability": "high",
+          "score": 86,
+          "freshness": "stable",
+          "relevance": "high",
+          "evidence_summary": "OpenLineage object model links jobs, runs and input/output datasets to create lineage graphs across platforms.",
+          "limitations": [
+            "General lineage model; field names must be mapped to CEK-TA contract."
+          ],
+          "source_id": "src_supp_data05_003",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "MLflow Dataset Tracking",
+          "source_url": "https://mlflow.org/docs/latest/ml/dataset/",
+          "source_type": "official_framework_doc",
+          "publisher": "MLflow",
+          "reliability": "high",
+          "score": 86,
+          "freshness": "time_sensitive",
+          "relevance": "high",
+          "evidence_summary": "MLflow Dataset Tracking supports tracking, versioning and managing datasets for training, validation and evaluation with lineage from raw data to predictions.",
+          "limitations": [
+            "MLflow implementation pattern; not required as CEK-TA's only storage tool."
+          ],
+          "source_id": "src_supp_data05_004",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "MLflow Dataset API",
+          "source_url": "https://mlflow.org/docs/latest/python_api/mlflow.data.html",
+          "source_type": "official_framework_doc",
+          "publisher": "MLflow",
+          "reliability": "high",
+          "score": 86,
+          "freshness": "time_sensitive",
+          "relevance": "high",
+          "evidence_summary": "MLflow Dataset includes name, digest, schema, profile and source information for a dataset.",
+          "limitations": [
+            "MLflow data model; CEK-TA still requires parser and normalizer version fields."
+          ],
+          "source_id": "src_supp_data05_005",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Apache Iceberg Specification",
+          "source_url": "https://iceberg.apache.org/spec/",
+          "source_type": "official_spec",
+          "publisher": "Apache Iceberg",
+          "reliability": "high",
+          "score": 86,
+          "freshness": "stable",
+          "relevance": "medium_high",
+          "evidence_summary": "Iceberg snapshots and manifest lists record table state and metadata about manifests and data files.",
+          "limitations": [
+            "Table format pattern; not a requirement to use Iceberg in CEK-TA."
+          ],
+          "source_id": "src_supp_data05_006",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "DVC Data Pipelines",
+          "source_url": "https://doc.dvc.org/start/data-pipelines/data-pipelines",
+          "source_type": "official_framework_doc",
+          "publisher": "DVC",
+          "reliability": "high",
+          "score": 84,
+          "freshness": "stable",
+          "relevance": "medium_high",
+          "evidence_summary": "DVC pipelines capture, organize, version and reproduce data science and machine learning workflows.",
+          "limitations": [
+            "Workflow versioning pattern; not a market-data entitlement or vendor schema source."
+          ],
+          "source_id": "src_supp_data05_007",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "high",
+        "score": 86.18,
+        "score_version": "phase45_source_scoring_v1",
+        "primary_source_count": 11,
+        "supporting_source_count": 0,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "正式 reviewed 前必须由外部审计确认 claim 没有超出来源可证明范围。",
+          "交易所/供应商市场数据政策和 schema 文档必须保留 active agreement、product、venue、dataset、jurisdiction 和版本 caveat。",
+          "若后续使用内部 entitlement 或 reference_data schema，需要提供 contract extract 或 hash。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "checked_against": [
+          "Phase 37 Data Engineering formal reviewed knowledge",
+          "Phase 37 Market Microstructure formal reviewed knowledge",
+          "Phase 38/41 AI Engineering training-data boundary knowledge",
+          "Phase 45 Audit Trail / Clock Sync formal reviewed knowledge"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与现有 formal reviewed 知识的直接冲突；P45-G 补数据授权、reference data、point-in-time 元数据和 vendor schema 边界。",
+        "approval_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "trade_execution_advice_allowed": false,
+        "risk_threshold_advice_allowed": false
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 检查市场数据授权、非展示、衍生、训练、再分发和 retention 边界。",
+          "用于生成 reference data、instrument definition、schema version、coverage universe 和 point-in-time 元数据 checklist。",
+          "用于检查外接项目是否把 reference data 误写成交易信号、实盘许可或默认训练授权。"
+        ],
+        "not_allowed": [
+          "不得输出法律授权结论、合同解释、买卖点、仓位、杠杆、止损止盈、交易许可或实盘执行建议。",
+          "不得把候选知识当作 approved 或默认指导。",
+          "不得替外接项目启用 hard gate、拒单、停机、撤单、数据再分发或训练授权。"
+        ]
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "candidate only; pending external strict audit; no reviewed/approved/default/hard gate.",
+        "requires_human_escalation": false,
+        "hidden_from_default_queue": true,
+        "visible_in_default_guidance_queue": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "trade_execution_advice_allowed": false,
+        "risk_threshold_advice_allowed": false
+      },
+      "review": {
+        "review_status": "candidate_ready",
+        "review_mode": "external_strict_audit_required",
+        "confidence": "medium_high",
+        "freshness": "mixed",
+        "reviewer": null,
+        "reviewed_at": null,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "trade_execution_advice_allowed": false,
+        "risk_threshold_advice_allowed": false,
+        "audit_log": [
+          {
+            "at": "2026-06-12",
+            "actor": "codex",
+            "action": "phase45_reference_data_entitlement_candidate_generated",
+            "reason": "Generated from Phase 45 P45-G task queue with official exchange, market-data policy and vendor schema sources."
+          },
+          {
+            "at": "2026-06-12",
+            "actor": "external_ai_strict_audit",
+            "action": "phase45_p2_first_audit_imported",
+            "reason": "needs_more_evidence / confidence=medium",
+            "audit_result_id": "audit_phase45_p2_candidate_20260612_external_strict"
+          },
+          {
+            "at": "2026-06-12",
+            "actor": "codex",
+            "action": "phase45_p2_candidate_supplemented",
+            "reason": "按首轮审计要求补证并导出二审包。"
+          }
+        ],
+        "ai_audit": {
+          "audit_result_id": "audit_phase45_p2_candidate_20260612_external_strict",
+          "decision": "needs_more_evidence",
+          "confidence": "medium",
+          "reviewed_allowed": false,
+          "approved_allowed": false,
+          "default_guidance_allowed": false,
+          "hard_gate_allowed": false,
+          "risk_threshold_advice_allowed": false,
+          "trade_execution_advice_allowed": false,
+          "legal_license_conclusion_allowed": false,
+          "required_followups": [
+            "补 internal ingestion lineage contract。",
+            "补 parser_version、normalization_version、raw_snapshot_uri、source_digest、schema_version 字段表。",
+            "补数据血缘 / reproducibility / audit trail 来源。"
+          ]
+        }
+      },
+      "workflow": {
+        "stage": "needs_more_evidence",
+        "queue_group": "needs_more_evidence",
+        "source_phase": "45",
+        "source_task_id": "CEK-TA-469",
+        "batch": "P45-G Market Data Entitlement / Reference Data",
+        "formal_knowledge_id": null,
+        "formal_knowledge_path": null,
+        "allowed_next_decisions": [
+          "accepted_for_draft",
+          "needs_more_evidence",
+          "rejected",
+          "blocked"
+        ],
+        "forbidden_next_decisions": [
+          "reviewed",
+          "approved",
+          "default_guidance",
+          "hard_gate"
+        ]
+      },
+      "contribution": {
+        "source": "phase45_professional_research",
+        "private_data_removed": true,
+        "project_specific_details_removed": true,
+        "notes": "Generated for external strict audit; no project account, license agreement text, key, position, threshold, or private strategy data included."
+      }
+    },
+    {
+      "schema_version": "1.1.0-candidate",
+      "candidate_id": "cand_20260612_phase45_crypto_perp_p45_h_crypto05_001",
+      "research_task_id": "P45-H-CRYPTO05",
+      "status": {
+        "review_status": "needs_more_evidence",
+        "ingestion_decision": "needs_more_evidence",
+        "decision_reason": "当前来源不足以完整支撑 exchange outage、API/WebSocket disconnect、mark price anomaly、clawback/loss-socialization 全部 claim。",
+        "created_at": "2026-06-12",
+        "updated_at": "2026-06-12"
+      },
+      "classification": {
+        "tree_node_id": "kt.trading_engineering.risk_management.crypto_perpetual_risk",
+        "canonical_node_id": "kt.trading_engineering.risk_management.crypto_perpetual_risk",
+        "tree_path": "CEK-TA / Trading Engineering / Crypto Perpetual",
+        "related_nodes": [
+          "kt.trading_engineering.market_microstructure.liquidity_regime",
+          "kt.trading_engineering.risk_management.layered_risk_controls",
+          "kt.trading_engineering.live_execution.order_semantics",
+          "kt.trading_engineering.data_engineering.reference_data_entitlement"
+        ],
+        "partition_id": "KB_07_RISK_MANAGEMENT",
+        "domain": "risk_management",
+        "subdomain": "crypto_perpetual_outage_clawback",
+        "rule_type": "crypto_perpetual_boundary_rule",
+        "claim_type": "crypto_perp_outage_clawback_boundary_rule",
+        "used_for": [
+          "trading_ai_project_design_audit",
+          "crypto_perpetual_risk_review",
+          "market_microstructure_schema_review",
+          "external_project_rag_retrieval"
+        ],
+        "classification_notes": "P45-H 只补 crypto perpetual 特有价格、funding、清算、ADL/insurance fund、outage/clawback 风险边界；不输出仓位、杠杆、止损止盈或实盘操作。"
+      },
+      "claim": {
+        "claim_id": "claim_p45_h_crypto05",
+        "title": "crypto venue outage、pre-market 和 clawback 风险必须单独审计",
+        "statement": "Crypto perpetual 项目必须单独审计交易所维护/服务中断、API/WebSocket 断连、heartbeat/ping-pong 失败、stream 限流、mark price / index price 异常监控、预上市 perpetual、ADL/insurance-fund 事件和交易所特定 loss-allocation 机制；不得把 24/7 连续交易假设等同于无停机、无断连、无数据缺口或无交易所机制风险。",
+        "normalized_claim": "phase45_crypto_perp.exchange_outage_and_clawback_risk.v1",
+        "evidence_summary": "Databento status schema 支撑市场状态字段；Binance / Bybit WebSocket 文档支撑断连、heartbeat、限流和连接有效期风险；Binance maintenance updates 支撑维护窗口来源；Binance Mark Price API 支撑 mark/index 监控字段；Binance ADL 与 insurance fund 来源支撑交易所特定 loss-allocation 机制。",
+        "interpretation_notes": "本候选只定义 crypto perpetual 风险和数据边界，不输出交易参数、仓位、杠杆、清算规避建议或实盘执行许可。",
+        "claim_strength": "candidate",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "crypto_perpetual_with_exchange_product_and_account_mode_caveats",
+        "asset": "crypto_perpetual_swaps_and_futures",
+        "timeframe": "historical_realtime_risk_backtest_replay_and_audit_context",
+        "data_granularity": "mark_price_index_price_funding_liquidation_adl_outage_status",
+        "project_type": "trading_ai_support_layer",
+        "applies_when": [
+          "外接项目涉及 crypto perpetual、永续合约、USDT/coin margined futures、funding、liquidation、ADL 或 crypto venue outage 风险。",
+          "AI IDE 需要区分 mark/index/last price、funding fee、price PnL、手续费、清算和 ADL/insurance fund 机制。",
+          "需要检查 crypto perpetual 知识是否被错误泛化到传统期货、股票、现货或普通回测规则。"
+        ],
+        "not_applicable_when": [
+          "用户要求具体仓位、杠杆、止损止盈、清算规避、交易许可或实盘操作。",
+          "需要某个账户、交易所或产品的实时保证金、清算线、费率、funding 或 ADL 状态时，应由外接项目事实层提供。",
+          "需要合规、法律、税务、托管或资金安全结论时，应由对应 owner 判断。"
+        ],
+        "assumptions": [
+          "Crypto perpetual 是 venue-specific 高风险产品，所有机制必须绑定交易所、产品、保证金模式、抵押资产和规则版本。",
+          "官方交易所/平台来源只能证明自身规则，不得泛化为全市场标准。",
+          "候选通过外部审计前不能进入 formal reviewed 知识库。"
+        ],
+        "limitations": [
+          "Crypto 交易所规则、API 字段、funding 间隔、清算和 ADL 机制变化快，正式 reviewed 前必须由审计确认活跃版本。",
+          "候选不包含任何项目私有账户、密钥、风险阈值、交易参数或实盘状态。",
+          "本候选不能替代外接项目的实时风控、交易所连接、账户同步和人工风险审批。",
+          "本候选将 clawback 收窄为 exchange-specific loss-allocation mechanism；若外接项目使用特定 clawback 术语，必须补对应 venue rulebook。",
+          "Binance / Bybit / OKX / Databento 来源只能证明各自平台、API 或 schema 语境，不能泛化为所有 crypto venue。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_title": "Databento Status Schema",
+          "source_url": "https://databento.com/docs/schemas-and-data-formats/status",
+          "source_type": "official_vendor_doc",
+          "publisher": "Databento",
+          "reliability": "high",
+          "score": 84,
+          "freshness": "time_sensitive",
+          "evidence_summary": "Databento status schema covers trading status, halt, pause, auction, matching-engine status and instrument expiration events.",
+          "limitations": [
+            "General market-status schema support; not a crypto venue outage or clawback policy source."
+          ],
+          "source_id": "src_001",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "OKX Pre-market Product Rule",
+          "source_url": "https://www.okx.com/help/pre-market-product-rule",
+          "source_type": "official_platform_doc",
+          "publisher": "OKX",
+          "reliability": "high",
+          "score": 82,
+          "freshness": "time_sensitive",
+          "evidence_summary": "OKX describes pre-market perpetuals, no expiration/delivery and early trading before official listing or spot launch.",
+          "limitations": [
+            "Pre-market product-specific; not all perpetuals share the same listing, index or settlement risks."
+          ],
+          "source_id": "src_002",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Binance Auto-Deleveraging (ADL)",
+          "source_url": "https://www.binance.com/en/support/faq/detail/360033525471",
+          "source_type": "official_platform_doc",
+          "publisher": "Binance",
+          "reliability": "high",
+          "score": 84,
+          "freshness": "time_sensitive",
+          "evidence_summary": "Binance states ADL is the final step in liquidation and occurs if futures insurance funds cannot accept a bankrupt position.",
+          "limitations": [
+            "Binance ADL process; not a universal loss-socialization model."
+          ],
+          "source_id": "src_003",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Binance Futures Insurance Funds",
+          "source_url": "https://www.binance.com/en/support/faq/detail/360033525371",
+          "source_type": "official_platform_doc",
+          "publisher": "Binance",
+          "reliability": "high",
+          "score": 84,
+          "freshness": "time_sensitive",
+          "evidence_summary": "Binance describes futures insurance funds as safety nets that limit the impact of liquidations and bankrupt positions.",
+          "limitations": [
+            "Binance insurance-fund design; not a universal guarantee or solvency proof."
+          ],
+          "source_id": "src_004",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Binance Futures Aggregate Trade Streams",
+          "source_url": "https://developers.binance.com/docs/derivatives/usds-margined-futures/websocket-market-streams/Aggregate-Trade-Streams",
+          "source_type": "official_api_doc",
+          "publisher": "Binance Developers",
+          "reliability": "high",
+          "score": 83,
+          "freshness": "time_sensitive",
+          "evidence_summary": "Binance states aggregate trade streams include only market trades and exclude insurance fund and ADL trades.",
+          "limitations": [
+            "API stream detail; outage/incident truth still needs exchange status and project logs."
+          ],
+          "source_id": "src_005",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Binance USDⓈ-M Futures WebSocket Market Streams",
+          "source_url": "https://developers.binance.com/docs/derivatives/usds-margined-futures/websocket-market-streams",
+          "source_type": "official_api_doc",
+          "publisher": "Binance Developers",
+          "reliability": "high",
+          "score": 86,
+          "freshness": "time_sensitive",
+          "relevance": "high",
+          "evidence_summary": "Binance WebSocket market streams document ping/pong, disconnect behavior, message limits and stream limits.",
+          "limitations": [
+            "Binance-specific API behavior; not universal to all crypto venues."
+          ],
+          "source_id": "src_supp_crypto05_001",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Binance Futures WebSocket API General Info",
+          "source_url": "https://developers.binance.com/docs/derivatives/usds-margined-futures/websocket-api-general-info",
+          "source_type": "official_api_doc",
+          "publisher": "Binance Developers",
+          "reliability": "high",
+          "score": 86,
+          "freshness": "time_sensitive",
+          "relevance": "high",
+          "evidence_summary": "Binance WebSocket API notes that a single connection is valid for 24 hours and ping/pong failure leads to disconnection.",
+          "limitations": [
+            "Binance WebSocket API context; not a full outage incident source."
+          ],
+          "source_id": "src_supp_crypto05_002",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Binance Maintenance Updates",
+          "source_url": "https://www.binance.com/en/support/announcement/list/157",
+          "source_type": "official_platform_doc",
+          "publisher": "Binance",
+          "reliability": "medium_high",
+          "score": 82,
+          "freshness": "time_sensitive",
+          "relevance": "medium_high",
+          "evidence_summary": "Binance publishes scheduled maintenance and upgrade notices that can affect services.",
+          "limitations": [
+            "Announcement list; incident-specific evidence still depends on the exact event notice."
+          ],
+          "source_id": "src_supp_crypto05_003",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Bybit WebSocket Connect",
+          "source_url": "https://bybit-exchange.github.io/docs/v5/ws/connect",
+          "source_type": "official_api_doc",
+          "publisher": "Bybit",
+          "reliability": "high",
+          "score": 85,
+          "freshness": "time_sensitive",
+          "relevance": "high",
+          "evidence_summary": "Bybit recommends sending ping heartbeat packets every 20 seconds to maintain WebSocket connections.",
+          "limitations": [
+            "Bybit-specific connectivity guidance; not a universal outage policy."
+          ],
+          "source_id": "src_supp_crypto05_004",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Binance Mark Price API",
+          "source_url": "https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Mark-Price",
+          "source_type": "official_api_doc",
+          "publisher": "Binance Developers",
+          "reliability": "high",
+          "score": 86,
+          "freshness": "time_sensitive",
+          "relevance": "high",
+          "evidence_summary": "Binance Mark Price API exposes markPrice, indexPrice, lastFundingRate, nextFundingTime and time, supporting mark-price monitoring fields.",
+          "limitations": [
+            "Does not by itself define all mark-price anomaly handling rules."
+          ],
+          "source_id": "src_supp_crypto05_005",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "high",
+        "score": 84.2,
+        "score_version": "phase45_source_scoring_v1",
+        "primary_source_count": 10,
+        "supporting_source_count": 0,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "正式 reviewed 前必须由外部审计确认 claim 没有超出来源可证明范围。",
+          "Binance、Bybit、OKX 等来源只能作为各自 venue/product/account mode 证据，不得泛化。",
+          "若后续使用内部 crypto_perp_risk schema，需要提供 contract extract 或 hash。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "checked_against": [
+          "Phase 37 Market Microstructure formal reviewed knowledge",
+          "Phase 37 Risk Management formal reviewed knowledge",
+          "Phase 45 Layered Risk formal reviewed knowledge",
+          "Phase 45 Stress Scenario formal reviewed knowledge"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与现有 formal reviewed 知识的直接冲突；P45-H 补 crypto perpetual 特有风险和 venue-specific 边界。",
+        "approval_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "trade_execution_advice_allowed": false,
+        "risk_threshold_advice_allowed": false
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 区分 mark/index/last price、funding fee、price PnL、liquidation、ADL 和 insurance fund。",
+          "用于生成 crypto perpetual 风险审计、schema review、RAG 检索上下文和人工复核 checklist。",
+          "用于检查外接项目是否把 venue-specific crypto 规则误写成通用交易规则。"
+        ],
+        "not_allowed": [
+          "不得生成仓位、杠杆、止损止盈、清算规避、交易许可、资金划转或实盘执行建议。",
+          "不得把候选知识当作 approved 或默认指导。",
+          "不得替外接项目启用 hard gate、拒单、停机、撤单、强平处理或自动解锁。"
+        ]
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "candidate only; pending external strict audit; no reviewed/approved/default/hard gate.",
+        "requires_human_escalation": false,
+        "hidden_from_default_queue": true,
+        "visible_in_default_guidance_queue": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "trade_execution_advice_allowed": false,
+        "risk_threshold_advice_allowed": false
+      },
+      "review": {
+        "review_status": "candidate_ready",
+        "review_mode": "external_strict_audit_required",
+        "confidence": "medium_high",
+        "freshness": "time_sensitive",
+        "reviewer": null,
+        "reviewed_at": null,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "trade_execution_advice_allowed": false,
+        "risk_threshold_advice_allowed": false,
+        "audit_log": [
+          {
+            "at": "2026-06-12",
+            "actor": "codex",
+            "action": "phase45_crypto_perp_candidate_generated",
+            "reason": "Generated from Phase 45 P45-H task queue with official crypto venue, API and data-status sources."
+          },
+          {
+            "at": "2026-06-12",
+            "actor": "external_ai_strict_audit",
+            "action": "phase45_p2_first_audit_imported",
+            "reason": "needs_more_evidence / confidence=medium",
+            "audit_result_id": "audit_phase45_p2_candidate_20260612_external_strict"
+          },
+          {
+            "at": "2026-06-12",
+            "actor": "codex",
+            "action": "phase45_p2_candidate_supplemented",
+            "reason": "按首轮审计要求补证并导出二审包。"
+          }
+        ],
+        "ai_audit": {
+          "audit_result_id": "audit_phase45_p2_candidate_20260612_external_strict",
+          "decision": "needs_more_evidence",
+          "confidence": "medium",
+          "reviewed_allowed": false,
+          "approved_allowed": false,
+          "default_guidance_allowed": false,
+          "hard_gate_allowed": false,
+          "risk_threshold_advice_allowed": false,
+          "trade_execution_advice_allowed": false,
+          "legal_license_conclusion_allowed": false,
+          "required_followups": [
+            "补 exchange outage / maintenance 官方来源。",
+            "补 API/WebSocket disconnect、reconnect、heartbeat、data-gap 文档。",
+            "补 mark price anomaly / index component abnormal handling 来源。",
+            "补 clawback / loss socialization 官方规则，或删除 clawback 字段。"
+          ]
+        }
+      },
+      "workflow": {
+        "stage": "needs_more_evidence",
+        "queue_group": "needs_more_evidence",
+        "source_phase": "45",
+        "source_task_id": "CEK-TA-470",
+        "batch": "P45-H Crypto Perpetual",
+        "formal_knowledge_id": null,
+        "formal_knowledge_path": null,
+        "allowed_next_decisions": [
+          "accepted_for_draft",
+          "needs_more_evidence",
+          "rejected",
+          "blocked"
+        ],
+        "forbidden_next_decisions": [
+          "reviewed",
+          "approved",
+          "default_guidance",
+          "hard_gate"
+        ]
+      },
+      "contribution": {
+        "source": "phase45_professional_research",
+        "private_data_removed": true,
+        "project_specific_details_removed": true,
+        "notes": "Generated for external strict audit; no project account, key, position, threshold, liquidation line, leverage, or private strategy data included."
+      }
+    }
+  ]
+}

@@ -1,0 +1,360 @@
+{
+  "audit_result_id": "audit_result_phase36_ai_engineering_batch_07_of_10_20260609_gpt55_pro_strict_sources",
+  "source_package_id": "phase36_ai_engineering_candidate_audit_batch_07_of_10_20260609",
+  "decisions": [
+    {
+      "candidate_id": "cand_20260609_ai_engineering_preference_training_preference_pair_schema_required_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立。statement 与 normalized_claim 基本对齐：偏好训练样本应基于同一 prompt 下的 chosen/rejected 或 preferred/non-preferred pair，并记录偏好理由和质量边界。Hugging Face TRL DPOTrainer 与 OpenAI DPO 文档都能直接支撑 pair schema，但当前 source_refs 只有泛 TRL 与 OpenAI model optimization，正式 draft 应补更直接的 DPO / DPOTrainer 来源。",
+      "source_patch_notes": [
+        "保留 Hugging Face TRL，但 source title 建议改为 DPOTrainer 或 dataset formats 具体页。",
+        "补 OpenAI Direct Preference Optimization 文档，支持 prompt、preferred_output、non_preferred_output 的结构。",
+        "保留 OpenAI model optimization 作为 method selection / eval baseline supporting source，不作为 pair schema 主来源。",
+        "标注 OpenAI fine-tuning / DPO platform 正在 wind down；正式规则采用 vendor-neutral preference_pair_schema。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：Preference training examples must compare chosen/rejected responses for the same prompt and record preference_reason_codes, evidence_refs, quality boundary, review_status and split_id.",
+        "建议字段：preference_pair_id、prompt_id、same_prompt_check、chosen_response_id、rejected_response_id、preference_reason_codes、quality_boundary、evidence_refs、review_status、label_guideline_version、split_id。",
+        "明确 chosen/rejected 是相对偏好，不等于绝对 good/bad label；若转 gold/truth label，应另走 label factory / adjudication 流程。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 负责 preference pair schema、same_prompt_check、reason code、review status 和训练回灌边界。",
+        "交易收益、风险合规、策略上下文和 PnL 解释由 Trading Engineering / domain owner 提供。",
+        "不得写入具体交易样本、账户、订单、仓位、止损止盈、策略参数或 broker action。"
+      ],
+      "conflict_patch_notes": [
+        "与第六批 preference_training.chosen_rejected_reason_required 高度重叠，建议父子化：本条为 pair schema 父项，第六批条目为 reason required 子项。",
+        "与 preference_pair.not_based_on_pnl_only 互补：本条管 schema，后者管 no-PnL-only 标签边界。",
+        "未发现需要 rejected 的直接冲突。"
+      ],
+      "required_followups": [
+        "补 preference_pair_schema.json。",
+        "补 same_prompt_check 字段和失败动作。",
+        "补 OpenAI DPO 与 Hugging Face DPOTrainer 直接来源。",
+        "补 eval cases：different prompt pair、missing reason code、same prompt chosen/rejected、chosen/rejected both unsafe。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_rag_approved_machine_gate_allow_only_default_guidance_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立。交易评分前主动检索 CEK-TA，并且只有有来源、无冲突、machine_gate 合格的知识才能进入默认指导，是合理的 RAG governance / safe default 规则。外部来源支持 file search / RAG、untrusted retrieved content 和 AI risk governance；machine_gate 本身应作为 CEK-TA 内部 contract 来源补充。",
+      "source_patch_notes": [
+        "保留 OpenAI File Search 作为 RAG / retrieval supporting source。",
+        "保留 OWASP Prompt Injection Prevention Cheat Sheet，支持 retrieved content 和 tool output 需要不可信输入处理。",
+        "保留 NIST AI RMF 作为治理来源。",
+        "补 CEK-TA machine_gate_contract.md 或 knowledge_item_policy 作为 machine_gate 的内部主来源。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：Only sourced, non-conflicting and machine_gate-passing CEK-TA knowledge may enter default guidance for trade LLM scoring/gating.",
+        "建议字段：retrieval_run_id、query_task_type、source_ids、machine_gate_status、conflict_status、freshness_status、default_guidance_allowed、fallback_action。",
+        "明确 machine_gate 合格不等于 approved；它只是默认指导准入前置条件之一。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 负责 RAG source gating、conflict handling、machine_gate status 和 audit UI。",
+        "不得把具体交易策略、K 线信号、账户事实、订单执行规则写入 RAG default guidance。",
+        "如 RAG 命中内容涉及具体策略或交易风控本体，应路由 Trading Engineering。"
+      ],
+      "conflict_patch_notes": [
+        "与 rag.retrieval_required_before_trade_scoring、rag.no_source_or_conflict_blocks_default_guidance、rag.no_hit_requires_neutral_or_review 是同一 RAG governance family。",
+        "建议本条作为 default_guidance admission 父规则。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 machine_gate_contract.md。",
+        "补 default_guidance_admission_schema.json。",
+        "补 conflict_status 和 source_quality_status 枚举。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_rag_no_hit_requires_neutral_or_review_v1_001",
+      "decision": "needs_more_evidence",
+      "reason": "方向合理，但当前不应直接转 draft。candidate_id / normalized_claim 指向 RAG no-hit 时必须 neutral 或 review；但 statement 只写了“只允许有来源、无冲突、machine_gate 合格的知识进入默认指导”，没有明确 no-hit 的 fallback action。OpenAI File Search、OWASP 和 NIST 能支持 retrieval governance 与 untrusted context，但不能直接支撑 no-hit 必须 neutral/review 的具体动作。",
+      "source_patch_notes": [
+        "保留 OpenAI File Search、OWASP Prompt Injection 和 NIST AI RMF 作为 supporting sources。",
+        "补 CEK-TA RAG no-hit fallback policy 或 runtime failure fallback family。",
+        "可互链第二批二审通过的 deployment.llm_timeout_or_mcp_failure_fallback_required，尤其 RAG no-hit / source conflict fallback_action。",
+        "补 no_source_or_conflict_blocks_default_guidance 作为相邻父规则。"
+      ],
+      "content_patch_notes": [
+        "将 statement 改为：If task-required CEK-TA retrieval has no hit, insufficient source coverage or no eligible machine_gate-passing item, the system must return neutral_score, abstain, needs_review or block_default_guidance; it must not fabricate default guidance.",
+        "建议字段：retrieval_required、retrieval_hit_count、eligible_hit_count、source_coverage_status、no_hit_reason、fallback_action、review_queue_id、audit_event_id。",
+        "明确 no-hit 不等于 reject 交易；它只表示 AI guidance 不足，需中立、阻断默认指导或人工复核。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 定义 RAG no-hit 的 safe default 和审计字段。",
+        "交易是否继续评估、是否实盘允许，由 Trading Engineering / deterministic gate / human review 决定。",
+        "不得根据 no-hit 自动生成买卖建议或交易参数。"
+      ],
+      "conflict_patch_notes": [
+        "与 rag.no_source_or_conflict_blocks_default_guidance 重叠但不等价：后者处理无来源/冲突时禁止默认指导，本条处理 no-hit fallback action。",
+        "与 deployment.llm_timeout_or_mcp_failure_fallback_required、rag.no_source_or_conflict_blocks_default_guidance 互链。",
+        "当前版本直接 accepted 会造成 normalized_claim 与 statement 不完全对齐。"
+      ],
+      "required_followups": [
+        "重写 statement，使其明确 no-hit neutral/review。",
+        "补 rag_no_hit_fallback_policy.md。",
+        "补 fallback_action enum：neutral_score、abstain、needs_review、block_default_guidance。",
+        "补 eval cases：no CEK-TA hit、only low-quality hit、conflicting sources、retrieval timeout。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_rag_no_source_or_conflict_blocks_default_guidance_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立。无来源、来源冲突或 machine_gate 不合格时，不能进入默认指导。当前 statement 与 normalized_claim 基本对齐，来源支持 RAG、prompt injection / untrusted content 和 AI risk governance；正式 draft 需要把 conflict_status、source_ids 和 fallback_action schema 化。",
+      "source_patch_notes": [
+        "保留 OpenAI File Search 作为 retrieval source。",
+        "保留 OWASP Prompt Injection Prevention Cheat Sheet，支持 retrieved content / tool output 需要视为不可信并进行控制。",
+        "保留 NIST AI RMF 作为治理来源。",
+        "补 CEK-TA source_conflict_resolution_policy.md。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：No-source, insufficient-source, conflicted-source or machine_gate-failed RAG results must block default guidance and route to neutral/review/fallback.",
+        "建议字段：source_ids、source_count、source_quality_status、conflict_status、machine_gate_status、default_guidance_allowed、fallback_action、review_status。",
+        "明确 default guidance 被 block 不等于交易被 block；只是 LLM 不得生成默认交易指导。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 管理 source/conflict/default guidance gate。",
+        "具体交易判断、策略优劣、订单动作和风控阈值由 Trading Engineering 管理。",
+        "不得将私有交易规则或账户事实写入默认指导。"
+      ],
+      "conflict_patch_notes": [
+        "与 rag.approved_machine_gate_allow_only_default_guidance 是父子关系。",
+        "与 rag.no_hit_requires_neutral_or_review 互补。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 source_conflict_status enum。",
+        "补 no_source_or_conflict_fallback_schema.json。",
+        "补 UI 展示：source_ids、conflict_status、machine_gate_status、fallback_action。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_rag_retrieval_required_before_trade_scoring_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立。交易 LLM scoring/gating 在使用 CEK-TA 知识前应主动检索任务相关来源，避免无来源默认回答或使用过期/冲突知识。OpenAI File Search 支持检索工作流，OWASP 支持对 retrieved content 做安全边界处理，NIST 支持 AI 风险治理。",
+      "source_patch_notes": [
+        "保留 OpenAI File Search 作为 retrieval source。",
+        "保留 OWASP Prompt Injection / Agent Security 作为 retrieved content 安全边界来源。",
+        "保留 NIST AI RMF 作为治理来源。",
+        "补 CEK-TA retrieval_required_contract.md，定义哪些 task_type 必须检索。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：Task-required CEK-TA retrieval must run before trade LLM scoring/gating uses knowledge-grounded guidance.",
+        "建议字段：retrieval_required、task_type、retrieval_query、retrieval_run_id、rag_index_version、source_ids、source_coverage_status、retrieval_freshness。",
+        "明确 retrieval pass 不等于默认指导可用；仍需 source quality、conflict 和 machine_gate。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 定义 retrieval gate 和 source audit schema。",
+        "Trading Engineering 管理具体交易事实、策略逻辑、风控阈值和执行规则。",
+        "RAG 检索不得绕过数据 license、隐私、权限和 machine_gate。"
+      ],
+      "conflict_patch_notes": [
+        "与 approved_machine_gate_allow_only_default_guidance、no_source_or_conflict_blocks_default_guidance 形成 RAG governance family。",
+        "与 method_selection.rag_first_baseline_required 互补：method selection 是项目方法选择，本条是 runtime/eval retrieval gate。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 retrieval_required_task_type enum。",
+        "补 retrieval_audit_schema.json。",
+        "补 RAG index version、source_ids、freshness_status 字段。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_readiness_offline_eval_pass_not_equal_live_ready_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立。offline eval pass 不能等同于 live-ready；进入 live hard gate 前仍需要 shadow/paper、监控、事故回滚和审批。当前 source_refs 支持 eval 与模型治理，但正式 draft 应补 AWS SageMaker shadow testing、FINRA 15-09 或 FCA algorithmic trading controls 作为 shadow/paper/上线前控制的直接来源。",
+      "source_patch_notes": [
+        "保留 OpenAI evals / evaluation best practices，但注明 Evals platform 退役时间线。",
+        "将旧 model risk source 更新或补充为 2026 OCC/Fed/FDIC revised model risk guidance，并标注 GenAI/agentic AI 不在其直接范围内。",
+        "补 AWS SageMaker shadow testing，支持 shadow variant 接收复制生产请求但不返回响应。",
+        "补 FINRA 15-09 / algorithmic trading guidance 作为自动化交易上线前测试、控制和监督来源。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：Offline eval pass is not live-ready; LLM gate/scoring changes still require shadow or paper validation, monitoring, rollback plan and owner approval before live hard-gate authority.",
+        "建议字段：offline_eval_report_id、shadow_run_id、paper_run_id、monitoring_plan_id、rollback_plan_id、incident_response_plan_id、promotion_ticket_id、owner_approval_id。",
+        "明确 shadow/paper 输出不得影响实盘订单。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 管理 readiness checklist、shadow evidence、monitoring/rollback metadata。",
+        "实盘订单、风控阈值、策略参数、kill switch 和 execution engine 路由 Trading Engineering。",
+        "不得在本条写入具体交易策略或实盘执行规则。"
+      ],
+      "conflict_patch_notes": [
+        "与 deployment.shadow_mode_before_live、calibration.threshold_requires_shadow_data、approval.hard_gate_enable_requires_approval 互链。",
+        "与 runtime.final_gate_deterministic_engine_required 区分：本条是上线 readiness，后者是运行时最终权限。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 live_readiness_checklist.md。",
+        "补 shadow_paper_promotion_schema.json。",
+        "补 OpenAI Evals deprecation note。",
+        "补 eval cases：offline pass but shadow latency fail、offline pass but false_allow high、no rollback plan。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_redteam_hard_gate_override_attempt_test_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立。上线前测试 LLM 是否尝试覆盖硬风控、绕过审批或把建议伪装为最终交易许可，是合理的 red-team / safety eval case。OWASP Prompt Injection、LLM security verification 和 MCP security 来源可以支撑 prompt injection、tool misuse、权限边界和不可信输出检查。",
+      "source_patch_notes": [
+        "保留 OWASP Prompt Injection Prevention Cheat Sheet。",
+        "保留 OWASP LLMSVS / LLM verification source。",
+        "保留 MCP Security Best Practices。",
+        "建议补 OWASP GenAI Red Teaming Guide 或内部 redteam_case_catalog，作为 hard gate override attempt 的直接 eval case 来源。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：Before live or hard-gate promotion, red-team tests must check whether the LLM attempts to override deterministic risk gates, bypass approval, escalate tool permissions or present suggestions as final trade permission.",
+        "建议字段：redteam_case_id、attack_type、expected_safe_behavior、observed_behavior、override_attempt_detected、permission_escalation_detected、hard_gate_result、fallback_action、reviewer。",
+        "明确单次通过不等于 live-ready；需纳入回归测试和版本变更测试。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 定义 red-team eval cases、tool permission checks 和 audit fields。",
+        "Trading Engineering 管理 hard risk gate 本体、订单执行和交易风控阈值。",
+        "不得在 red-team case 中写入真实账户、密钥、私有订单或策略规则。"
+      ],
+      "conflict_patch_notes": [
+        "与 llm_role_boundary.cannot_override_hard_risk_gate、runtime.final_gate_deterministic_engine_required、safety_no_tool_permission_escalation 互链。",
+        "与 security.prompt_injection_test_required_for_trade_context 后续候选可能重叠；建议本条聚焦 hard gate override attempt。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 hard_gate_override_redteam_cases.yaml。",
+        "补 attack_type enum：override_hard_gate、bypass_approval、self_grant_permission、pretend_final_authority、unsafe_tool_call。",
+        "补 regression trigger：model_version、prompt_version、tool_permission、risk_gate_contract 变更时重跑。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_research_feedback_llm_suggestion_is_hypothesis_only_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立。LLM 的策略或参数建议只能作为研究假设，不能直接成为交易策略、参数更新或实盘指导。OpenAI evals、scikit-learn CV 和 FINRA algorithmic trading guidance 可支持评估、样本外验证和交易自动化监督；但正式 draft 必须把 backtest、paper、参数裁决路由到 Trading Engineering。",
+      "source_patch_notes": [
+        "保留 OpenAI evals，但注明平台退役时间线。",
+        "保留 scikit-learn CV 作为 held-out / out-of-sample evaluation supporting source。",
+        "保留 FINRA algorithmic trading / 15-09 作为交易自动化监督和测试来源。",
+        "建议补 Trading Engineering research-to-production workflow 或 hypothesis_review_policy。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：LLM strategy or parameter suggestions are research hypotheses only and must not be treated as reviewed strategy guidance without Trading Engineering validation, out-of-sample evidence, paper/shadow evidence and human review.",
+        "建议字段：suggestion_id、hypothesis_status、validation_required、backtest_ref、out_of_sample_eval_ref、paper_or_shadow_ref、human_review_id、trading_engineering_owner。",
+        "明确 LLM suggestion 只能进入 hypothesis backlog 或 research ticket，不得进入默认交易指导。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 只定义 LLM feedback / hypothesis status、审计和回灌边界。",
+        "回测、样本外验证、模拟盘、策略参数、风控阈值和实盘裁决属于 Trading Engineering。",
+        "不得在知识库写入具体交易策略、买卖点、仓位或订单动作。"
+      ],
+      "conflict_patch_notes": [
+        "与 research_feedback.no_auto_strategy_parameter_update 重叠；本条可作为 hypothesis-only 父规则。",
+        "与 feedback.model_output_cannot_label_itself、runtime.final_gate_deterministic_engine_required 互链。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 research_hypothesis_status_schema.json。",
+        "补 Trading Engineering validation handoff 字段。",
+        "补 eval cases：LLM suggests new stop-loss、LLM suggests parameter change、LLM suggests strategy as if approved。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_research_feedback_no_auto_strategy_parameter_update_v1_001",
+      "decision": "needs_more_evidence",
+      "reason": "当前候选不应直接转 draft。candidate_id / normalized_claim 指向 no_auto_strategy_parameter_update，但 statement 与上一条 llm_suggestion_is_hypothesis_only 完全相同，只说“LLM 建议是研究假设”，没有明确“不得自动更新策略参数”。现有 source_refs 只有 evals、CV 和 FINRA，缺少 tool permission、write restriction、change approval 或 strategy parameter mutation guard 的直接来源。",
+      "source_patch_notes": [
+        "保留 OpenAI evals、scikit-learn CV、FINRA algorithmic trading 作为 supporting sources。",
+        "补 OWASP Prompt Injection / Agent Security 关于 tool permission、least privilege、unauthorized action 的来源。",
+        "补 MCP server-side permission enforcement / read-only tool contract 来源。",
+        "补 CEK-TA strategy_parameter_update_approval_policy 或 Trading Engineering change-control contract。"
+      ],
+      "content_patch_notes": [
+        "将 statement 改为：LLM outputs must not automatically create, modify or deploy strategy parameters; any parameter change suggestion must become a research ticket requiring Trading Engineering owner review, validation evidence and approval.",
+        "建议字段：suggestion_id、parameter_change_requested、auto_update_blocked、strategy_version_ref、change_ticket_id、owner_review_id、approval_status、audit_event_id。",
+        "明确 no-auto-update 是工具权限和变更控制规则，不只是 research hypothesis 规则。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 定义 no-auto-mutation、tool permission、audit event 和 handoff fields。",
+        "具体策略参数、阈值、仓位、止损止盈和实盘更新由 Trading Engineering 管理。",
+        "不得把策略参数值或项目私有策略事实写入 AI Engineering KB。"
+      ],
+      "conflict_patch_notes": [
+        "与 research_feedback.llm_suggestion_is_hypothesis_only 重复，应作为其子规则或重写后保留。",
+        "与 mcp.server_side_permission_enforcement_required、approval.hard_gate_enable_requires_approval、safety_no_tool_permission_escalation 互链。",
+        "当前 statement 与 normalized_claim 不够对齐。"
+      ],
+      "required_followups": [
+        "重写 statement，明确 no automatic strategy parameter update。",
+        "补 no_auto_strategy_parameter_update_policy.md。",
+        "补 tool/write permission 直接来源。",
+        "补 eval cases：LLM tries to update stop-loss、LLM changes threshold config、LLM writes strategy version、LLM creates approved-looking config。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_risk_ledger_false_allow_cost_record_required_v1_001",
+      "decision": "needs_more_evidence",
+      "reason": "方向合理，但当前 source_refs 不足以直接支撑。statement 要求 false allow、false block、机会成本和后续结果进入风险账本；现有 FINRA / model risk / NIST 来源支持交易自动化治理、风险管理和控制，但不能直接支撑 cost-sensitive false allow / false block ledger、机会成本记录或 cost matrix。应补第四批 false_allow 二审后的 cost-sensitive learning / cost matrix family 和内部 risk ledger schema。",
+      "source_patch_notes": [
+        "保留 FINRA 15-09 / Algorithmic Trading 作为交易自动化风险治理来源。",
+        "保留 NIST AI RMF Core Manage 作为 risk ledger / impact / likelihood / owner supporting source。",
+        "将旧 Federal Reserve model risk 来源更新或补充为 2026 OCC/Fed/FDIC revised model risk guidance，并标注 GenAI/agentic AI 不在直接范围内。",
+        "补 cost-sensitive learning、scikit-learn cost-sensitive threshold / misclassification cost matrix。",
+        "补第四批二审通过的 gating.false_allow_more_dangerous_than_false_block family 与内部 risk_ledger_schema。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议改为：False_allow, false_block, opportunity-cost context, observed downstream outcome and reviewer decision must be recorded in a risk ledger before changing hard-gate cost assumptions or thresholds.",
+        "建议字段：risk_ledger_id、risk_event_id、gate_context、false_allow_count、false_block_count、opportunity_cost_context_ref、cost_matrix_ref、downstream_outcome_ref、review_owner、trading_engineering_owner、decision。",
+        "明确 opportunity cost 只能作为 context 或 Trading Engineering 提供的外部引用，不在 AI Engineering 中计算具体策略收益。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 管理 risk ledger schema、severity、evidence_refs 和 audit UI。",
+        "成本函数、机会成本、策略收益、仓位影响、阈值修改和交易参数由 Trading Engineering 或项目 owner 管理。",
+        "不得在本条写入具体收益目标、买卖点、仓位、止损止盈或订单执行规则。"
+      ],
+      "conflict_patch_notes": [
+        "与第四批 gating.false_allow_more_dangerous_than_false_block 是父子关系：第四批定义默认风险偏好，本条定义必须记录的风险账本证据。",
+        "与 approval.hard_gate_enable_requires_approval、calibration.threshold_requires_shadow_data、audit.every_gate_decision_requires_trace 互链。",
+        "当前 source_refs 过于泛化，直接 accepted 会缺少 cost matrix 证据。"
+      ],
+      "required_followups": [
+        "补 risk_ledger_schema.json。",
+        "补 false_allow_false_block_cost_matrix.md。",
+        "补 cost-sensitive learning / threshold tuning 直接来源。",
+        "补 Trading Engineering owner override policy。",
+        "补 eval cases：false allow rule violation、false block missed opportunity、ledger incomplete、approved cost matrix override。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_runtime_final_gate_deterministic_engine_required_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立。LLM gate 输出只能是建议，最终 allow / block / escalate 必须由确定性风控和人工治理链路决定。这与前几批 capability boundary、role boundary、no direct order execution 和 hard risk gate rules 一致。FINRA、OWASP 和 NIST 来源足以支撑作为 CEK-TA 内部 runtime safety rule 进入 draft。",
+      "source_patch_notes": [
+        "保留 FINRA algorithmic trading / 15-09 作为交易自动化监督、控制和系统验证来源。",
+        "保留 OWASP Prompt Injection Prevention Cheat Sheet 作为 LLM output / tool action 不可信和权限边界来源。",
+        "保留 NIST AI RMF 作为 AI risk governance 来源。",
+        "建议补 CEK-TA deterministic_final_gate_contract.md 或 role_split_matrix.yaml。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：LLM gate output is a recommendation only; final allow, block or escalation must be made by deterministic risk controls and approved human governance workflow.",
+        "建议字段：llm_gate_output、deterministic_gate_result、human_review_required、final_decision、decision_owner、override_attempt_detected、audit_event_id。",
+        "明确 LLM score、reason code、RAG explanation 或 judge score 均不得成为最终交易许可。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 管理 LLM suggestion boundary、deterministic final gate interface、audit trace。",
+        "Trading Engineering 管理 deterministic risk engine、策略参数、实盘执行和订单系统。",
+        "不得写入具体风控阈值、订单动作、仓位、止损止盈或策略逻辑。"
+      ],
+      "conflict_patch_notes": [
+        "与 llm_role_boundary.cannot_override_hard_risk_gate、no_direct_order_execution、scorer_not_executor、runtime.llm_gate_is_suggestion_not_final_authority 互链。",
+        "与 readiness.offline_eval_pass_not_equal_live_ready 区分：本条是 runtime final authority，readiness 是上线前准入。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 deterministic_final_gate_contract.md。",
+        "补 final_decision_schema.json。",
+        "补 eval cases：LLM says allow but deterministic gate blocks、LLM says final approval、LLM bypasses human review、conflicting RAG source with allow suggestion。"
+      ]
+    }
+  ],
+  "raw_external_report_path": "C:\\Users\\dove\\.codex\\attachments\\d97b28ce-79bf-4e65-a790-a15aaf3a3b5e\\pasted-text.txt",
+  "normalization_notes": [
+    "外部第七批审计报告已使用 CEK-TA decisions[] 契约。",
+    "accepted_for_draft 只允许转 formal reviewed，不能转 approved 或默认指导。",
+    "needs_more_evidence 候选必须保留在候选队列，等待补证二审。"
+  ]
+}

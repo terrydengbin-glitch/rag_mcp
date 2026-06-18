@@ -1,0 +1,323 @@
+{
+  "schema_version": "1.0.0",
+  "candidate_id": "cand_20260609_ai_engineering_trade_data_source_mode_required_v1_001",
+  "research_task_id": "RIT-P36-B-S03",
+  "status": {
+    "review_status": "accepted",
+    "ingestion_decision": "needs_more_evidence",
+    "decision_reason": "Phase 36 batch AI audit decision: accepted_for_draft. 该状态不是 approved。",
+    "created_at": "2026-06-09",
+    "updated_at": "2026-06-09"
+  },
+  "classification": {
+    "tree_node_id": "kt.llm_training.training_dataset_schema_engineering",
+    "canonical_node_id": "kt.llm_training.training_dataset_schema_engineering",
+    "tree_path": "CEK-TA / AI Engineering",
+    "related_nodes": [],
+    "partition_id": "KB_09_LLM_TRAINING",
+    "domain": "llm_training",
+    "subdomain": "trade_data",
+    "rule_type": "checklist",
+    "used_for": [
+      "llm_training",
+      "trading_gating_scoring",
+      "rag_engineering",
+      "mcp",
+      "vue_audit_ui"
+    ]
+  },
+  "claim": {
+    "claim_id": "claim_001",
+    "statement": "每个进入 LLM training/eval/RAG/preference/review 的 trade data sample 必须声明 `source_mode`，例如 `backtest`、`paper`、`shadow`、`live`、`synthetic` 或 `incident_replay`，并记录 `allowed_use`、`prohibited_use`、`pool_type` 和 `promotion_ticket_id`；缺少 source_mode 或混用未经审计的 source_mode 必须阻断训练或降级审计。",
+    "normalized_claim": "trade_data.source_mode_required.v1",
+    "evidence_summary": "QuantConnect paper/live/backtest 文档区分 backtesting、paper trading 和 live trading 环境；Datasheets 支持数据来源、推荐用途和限制说明；TFDV 支持 schema validation；scikit-learn leakage 支持训练/测试和不可见信息隔离。",
+    "interpretation_notes": "本条只定义 source_mode 枚举、allowed_use/prohibited_use、pool_type 和审计字段；backtest/paper/live 的交易语义、fill 假设和实盘执行由 Trading Engineering 管理。",
+    "claim_strength": "medium",
+    "performance_claim": false
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "general",
+    "data_granularity": "general",
+    "project_type": "trading_llm_assistant",
+    "applies_when": [
+      "外接项目把 backtest、paper、shadow、live、synthetic 或 incident_replay 样本混合进入训练、评估、RAG 或复盘池。",
+      "样本的来源模式会影响标签含义、成本模型、执行假设、隐私/license 或上线风险。",
+      "项目需要区分 research_pool、training_pool、eval_pool、gold_pool、shadow_pool 和 incident_pool。"
+    ],
+    "not_applicable_when": [
+      "数据不进入训练、评估、RAG、MCP、review 或任何自动化决策辅助链路。",
+      "需要定义具体 backtest engine、paper broker、live brokerage 或 fill model 本体，应路由到 Trading Engineering。",
+      "用户需要具体买卖点、仓位、止损止盈、策略参数或实盘订单执行。"
+    ],
+    "assumptions": [
+      "外接项目提供项目事实、私有交易数据和策略上下文；CEK-TA 只沉淀可复用专业规则。",
+      "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+    ],
+    "limitations": [
+      "补证后仍需外部 AI/人工二次审计确认 source_mode 枚举是否足够通用。",
+      "source_mode 不能替代数据 lineage、license、privacy 和 leakage 审计。"
+    ]
+  },
+  "source_refs": [
+    {
+      "source_id": "src_openai_model",
+      "source_title": "Model optimization | OpenAI API",
+      "source_url": "https://platform.openai.com/docs/guides/model-optimization",
+      "source_type": "official_doc",
+      "publisher": "OpenAI",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "score": 88,
+      "relevance": "high",
+      "freshness": "time_sensitive",
+      "limitations": [],
+      "evidence_summary": "OpenAI model optimization guidance supports defining task objectives, choosing between prompting, RAG, fine-tuning, and evaluating quality before model changes.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_nist",
+      "source_title": "AI Risk Management Framework | NIST",
+      "source_url": "https://www.nist.gov/itl/ai-risk-management-framework",
+      "source_type": "standard_or_risk_framework",
+      "publisher": "NIST",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "score": 88,
+      "relevance": "high",
+      "freshness": "time_sensitive",
+      "limitations": [],
+      "evidence_summary": "NIST AI RMF supports governance, mapping, measurement, and management of AI risks across design, deployment, and monitoring.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_quantconnect_paper_trading",
+      "source_title": "Paper Trading | QuantConnect",
+      "source_url": "https://www.quantconnect.com/docs/live-trading/paper-trading",
+      "source_type": "official_doc",
+      "publisher": "QuantConnect",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "score": 84,
+      "relevance": "medium",
+      "freshness": "time_sensitive",
+      "limitations": [],
+      "evidence_summary": "QuantConnect Paper Trading 文档说明 paper trading 使用实时数据运行算法但以 fictional capital 执行，适合支撑 source_mode 中 backtest/paper/live/shadow 不得混用的环境边界。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_quantconnect_live_overview",
+      "source_title": "Live Trading Overview | QuantConnect",
+      "source_url": "https://www.quantconnect.com/docs/v1/live-trading/overview",
+      "source_type": "official_doc",
+      "publisher": "QuantConnect",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "score": 82,
+      "relevance": "medium",
+      "freshness": "time_sensitive",
+      "limitations": [],
+      "evidence_summary": "QuantConnect live overview 强调 backtesting 和 live trading 的环境差异以及 LiveMode 区分，可支撑 source_mode 和 environment 字段。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_datasheets_for_datasets",
+      "source_title": "Datasheets for Datasets",
+      "source_url": "https://arxiv.org/abs/1803.09010",
+      "source_type": "paper",
+      "publisher": "arXiv",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "score": 88,
+      "relevance": "high",
+      "freshness": "stable",
+      "limitations": [],
+      "evidence_summary": "Datasheets for Datasets 要求记录 dataset motivation、composition、collection process、recommended uses、limitations 和 maintenance，适合支撑 trade data source、composition、allowed_use/prohibited_use 文档化。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_tfdv_get_started",
+      "source_title": "TensorFlow Data Validation | TFX",
+      "source_url": "https://www.tensorflow.org/tfx/data_validation/get_started",
+      "source_type": "official_doc",
+      "publisher": "TensorFlow",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "score": 88,
+      "relevance": "high",
+      "freshness": "time_sensitive",
+      "limitations": [],
+      "evidence_summary": "TFDV 支持 schema validation、training/serving environments、missing feature anomaly、training-serving skew 和 drift 检测，可支撑训练/服务字段一致性、必填字段和 label 不进入 serving 的验证。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_quantconnect_trading_and_orders",
+      "source_title": "Trading and Orders | QuantConnect",
+      "source_url": "https://www.quantconnect.com/docs/v2/writing-algorithms/live-trading/trading-and-orders",
+      "source_type": "official_doc",
+      "publisher": "QuantConnect",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "score": 86,
+      "relevance": "high",
+      "freshness": "time_sensitive",
+      "limitations": [],
+      "evidence_summary": "QuantConnect 说明 live/backtest 订单、order events、brokerage messages，以及 fill、fee、slippage、margin models 等交易执行建模要素，可支撑 order_ref、fill_ref 和 execution_context_ref。",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 88,
+    "score_version": "1.0.0",
+    "primary_source_count": 2,
+    "supporting_source_count": 0,
+    "low_reliability_source_count": 0,
+    "mandatory_downgrades": [],
+    "limitations": [
+      "来源支持通用 AI/ML/RAG/MCP/治理工程原则；正式知识转换时需补 CEK-TA 具体上下游引用和冲突链接。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "docs/contracts/ai_engineering_gating_scoring_contract.md",
+      "docs/contracts/ai_engineering_knowledge_item_policy.md",
+      "docs/tasks/phase36_ai_engineering_gating_scoring_knowledge.md"
+    ],
+    "conflicts": [],
+    "resolution_summary": "未发现与当前 CEK-TA formal knowledge 的直接冲突；候选不会进入默认指导。",
+    "approval_allowed": true
+  },
+  "review": {
+    "confidence": "medium",
+    "freshness": "time_sensitive",
+    "reviewer": "external_ai_and_codex_alignment",
+    "reviewed_at": "2026-06-09",
+    "open_questions": [
+      "审计时确认该候选是否应与相邻 AI Engineering 规则合并、拆分，或改路由到 Trading Engineering。"
+    ],
+    "audit_log": [
+      {
+        "at": "2026-06-09",
+        "actor": "codex",
+        "action": "created",
+        "reason": "Phase 36 bulk AI Engineering candidate expansion."
+      },
+      {
+        "at": "2026-06-09",
+        "actor": "external_ai",
+        "action": "phase36_batch_audit_result_received",
+        "reason": "当前不应直接转 draft。candidate_id / normalized_claim 指向 source_mode_required，但 statement 是元治理占位句，没有定义 backtest、paper、shadow、live、synthetic、incident_replay 等 source_mode，也没有说明不同 source_mode 不得无审计混用。source_refs 只有 OpenAI model optimization 和 NIST，不能直接支撑 source_mode 数据治理规则。",
+        "audit_result_id": "audit_result_phase36_ai_engineering_batch_09_of_10_20260609_gpt55_pro_strict_sources"
+      },
+      {
+        "at": "2026-06-09",
+        "actor": "codex",
+        "action": "phase36_batch09_supplemental_evidence_added",
+        "reason": "按第九批审计意见补充直接来源、重写 statement，并导出二审包。",
+        "audit_package": "phase36_batch09_sft_trade_data_supplemental_audit_package_20260609"
+      },
+      {
+        "at": "2026-06-09",
+        "actor": "external_ai",
+        "action": "phase36_batch_audit_result_received",
+        "reason": "补证后可以升级为 accepted_for_draft。rewritten statement 已与 normalized_claim 对齐：每个进入 LLM training/eval/RAG/preference/review 的 trade data sample 必须声明 source_mode，例如 backtest、paper、shadow、live、synthetic 或 incident_replay，并记录 allowed_use、prohibited_use、pool_type 和 promotion_ticket_id；缺少 source_mode 或未经审计混用 source_mode 必须阻断训练或降级审计。QuantConnect paper trading / live trading / reality modeling 支持 source_mode 的交易工程语义；Datasheets 支持数据来源、用途和限制；TFDV / scikit-learn 支持 schema validation 与 leakage 防护。正式 draft 建议补 backtesting 官方来源和 CEK-TA source_mode_policy。",
+        "audit_result_id": "audit_result_phase36_batch09_sft_trade_data_supplemental_reaudit_20260609_gpt55_pro_strict_sources"
+      }
+    ],
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase36_batch09_sft_trade_data_supplemental_reaudit_20260609_gpt55_pro_strict_sources",
+      "source_package_id": "phase36_batch09_sft_trade_data_supplemental_audit_package_20260609",
+      "decision": "accepted_for_draft",
+      "reason": "补证后可以升级为 accepted_for_draft。rewritten statement 已与 normalized_claim 对齐：每个进入 LLM training/eval/RAG/preference/review 的 trade data sample 必须声明 source_mode，例如 backtest、paper、shadow、live、synthetic 或 incident_replay，并记录 allowed_use、prohibited_use、pool_type 和 promotion_ticket_id；缺少 source_mode 或未经审计混用 source_mode 必须阻断训练或降级审计。QuantConnect paper trading / live trading / reality modeling 支持 source_mode 的交易工程语义；Datasheets 支持数据来源、用途和限制；TFDV / scikit-learn 支持 schema validation 与 leakage 防护。正式 draft 建议补 backtesting 官方来源和 CEK-TA source_mode_policy。",
+      "source_patch_notes": [
+        "保留 QuantConnect Paper Trading 作为 paper source_mode 直接来源。",
+        "保留 QuantConnect Live Trading / Reality Modeling 作为 live 与 execution assumptions supporting sources。",
+        "建议补 QuantConnect Backtesting 或 backtest report 官方来源，增强 backtest source_mode 直接证据。",
+        "保留 Datasheets for Datasets 作为 source、allowed_use/prohibited_use、limitations supporting source。",
+        "保留 TFDV / scikit-learn data leakage 作为 source_mode schema validation 与 train/eval 防污染 supporting source。",
+        "补 CEK-TA source_mode_policy.md 和 source_mode_schema.json 作为内部主契约。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议保留补证写法：Every trade data sample entering LLM training/eval/RAG/preference/review must declare source_mode and allowed/prohibited use before promotion.",
+        "建议 source_mode enum：backtest、paper、shadow、live、synthetic、incident_replay。",
+        "建议字段：source_mode、environment、capture_time、decision_timestamp、allowed_use、prohibited_use、pool_type、promotion_ticket_id、review_owner、source_mode_mixing_status。",
+        "明确不同 source_mode 不得无审计混用；live_to_train 需要脱敏、license/privacy check、leakage check 和 owner approval。",
+        "source_mode 缺失时应 block_training、exclude_from_eval、needs_more_evidence 或 human_review。",
+        "source_mode 不能替代 lineage、license、privacy、dedup、leakage 和 schema validation。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 定义 source_mode 枚举、allowed_use/prohibited_use、pool_type、混用状态和审计字段。",
+        "backtest/paper/live 的交易语义、fill model、回测假设、paper broker、live brokerage 和实盘执行由 Trading Engineering 管理。",
+        "不得写入具体交易策略、订单、账户、仓位、止损止盈、K 线条件、fill model 或实盘执行规则。",
+        "如果 source_mode 影响标签语义、成本模型或执行假设，AI Engineering 只记录 owner_ref / context_ref，解释权归 Trading Engineering。"
+      ],
+      "conflict_patch_notes": [
+        "与 data_quality.backtest_paper_live_separation 高度重叠，建议统一 canonical family：trade_data.source_mode_required 作为字段规则，data_quality.backtest_paper_live_separation 作为混用防护规则。",
+        "与 dataset.source_lineage_required、dataset.version_and_hash_required、data_asset.eval_pool_must_not_train、dataset.deduplication_required 互补。",
+        "与 trade_candidate.market_risk_execution_context_required 互链：context refs 应包含 source_mode 语义。",
+        "未发现需要 rejected 的直接冲突；accepted_for_draft 仍不等于 approved。"
+      ],
+      "required_followups": [
+        "补 source_mode_schema.json。",
+        "补 source_mode_policy.md。",
+        "补 source_mode_mixing_status enum：clean、mixed_reviewed、mixed_unreviewed、missing、conflict、not_applicable。",
+        "补 backtesting 官方来源到正式 source_refs。",
+        "补 eval cases：source_mode missing、backtest/live mixed、paper sample used as live label、incident replay entered train pool without review、live_to_train without privacy/license check。"
+      ],
+      "boundary": "accepted_for_draft 不是 approved；reviewed 不会进入默认指导。"
+    },
+    "review_status": "needs_more_evidence",
+    "supplemental_research": {
+      "supplemental_research_id": "phase36_batch09_sft_trade_data_supplemental_research",
+      "source_audit_result_id": "audit_result_phase36_ai_engineering_batch_09_of_10_20260609_gpt55_pro_strict_sources",
+      "package_id": "phase36_batch09_sft_trade_data_supplemental_audit_package_20260609",
+      "supplement_notes": [
+        "已把占位 statement 改写为 source_mode 字段、allowed_use/prohibited_use 和混用阻断规则。",
+        "新增 QuantConnect paper/live/backtest、Datasheets 和 TFDV 来源。",
+        "明确 source_mode 缺失或未经审计混用时不得训练或默认指导。"
+      ],
+      "boundary": "补证后仍为 candidate；只能二次审计 accepted_for_draft，不得直接 approved。"
+    }
+  },
+  "copyright": {
+    "stores_full_text": false,
+    "stores_long_quote": false,
+    "summary_only": true,
+    "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+    "reuse_risk": "low"
+  },
+  "conversion_target": {
+    "proposed_knowledge_id": "kb_ai_engineering.trade_data.source_mode_required.v1",
+    "target_schema": "cek_ta_knowledge_item",
+    "target_review_status": "draft",
+    "skill_candidate": false,
+    "eval_case_candidate": false
+  },
+  "workflow": {
+    "stage": "formalized_reviewed",
+    "queue_group": "formalized",
+    "formal_knowledge_id": "kb_ai_engineering.trade_data.source_mode_required.v1",
+    "formal_review_status": "reviewed",
+    "ai_audit_result_id": "audit_result_phase36_batch09_sft_trade_data_supplemental_reaudit_20260609_gpt55_pro_strict_sources",
+    "hidden_from_default_queue": true,
+    "next_action": "none",
+    "formal_knowledge_path": "codex-expert-kit/rag/knowledge/KB_09_LLM_TRAINING/kb_ai_engineering.trade_data.source_mode_required.v1.json"
+  }
+}

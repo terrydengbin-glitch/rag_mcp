@@ -1,0 +1,641 @@
+{
+  "audit_result_id": "audit_result_phase40_ai_passed_reviewed_preparation_20260610_strict_v1",
+  "source_package_id": "phase40_ai_passed_reviewed_preparation_audit_package_20260610",
+  "audit_date": "2026-06-10",
+  "decision": "conditional_accept_for_formal_reviewed_preparation",
+  "scope": "23 Phase 40 ai_passed candidates previously accepted_for_draft with reviewed_allowed=false",
+  "global_decision_notes": [
+    "reviewed_allowed=true only permits Codex to generate formal reviewed + caveat_only; it is not approved.",
+    "approved_allowed, default_guidance_allowed, and hard_gate_allowed remain false for every candidate.",
+    "Trading Engineering body knowledge remains out of scope; AI Engineering entries may reference Phase37 fields only.",
+    "No candidate may enter default guidance or hard gate from this audit result."
+  ],
+  "decisions": [
+    {
+      "candidate_id": "cand_20260610_phase40_p40_c01_allow_block_skip_human_review_001",
+      "research_task_id": "P40-C01",
+      "decision": "needs_more_evidence",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "whylogs/WhyLabs 支撑数据日志和模型健康监控，但当前 source_refs 没有 logged bandit / OPE 或 Phase40 feedback-dataset 契约来源，尚不足以支撑“allow/block/skip/human_review 全候选必须记录”这一反事实/选择偏差 claim。",
+      "source_patch_notes": [
+        "补 logged bandit / OPE source，或将 Phase40 Feedback Dataset Contract 加入 source_refs，直接支撑 block/skip/human_review 也必须记录。"
+      ],
+      "content_patch_notes": [
+        "保留 log_every_candidate != execute_every_candidate；补 candidate_id、decision_time、action_taken、final_gate_decision、policy_version、outcome_ref、counterfactual_status。"
+      ],
+      "boundary_patch_notes": [
+        "不得把记录 blocked/skipped 候选解释为扩大实盘执行；blocked/skipped outcome 仍是反事实。"
+      ],
+      "conflict_patch_notes": [
+        "当前 workflow 已隐藏 default queue，并设置 visible_in_default_guidance_queue=false；formal reviewed 生成时必须保留。",
+        "source candidate 的 approval_allowed 不得覆盖本审计的 approved_allowed=false。"
+      ],
+      "required_followups": [
+        "add_logged_bandit_or_ope_source",
+        "add_feedback_dataset_contract_ref",
+        "then_reaudit_reviewed_preparation"
+      ],
+      "formal_review_mode": null,
+      "formal_knowledge_id": "kb_ai_feedback_governance.phase40.allow_block_skip_human_review.v1",
+      "current_formal_index_has_target": false
+    },
+    {
+      "candidate_id": "cand_20260610_phase40_p40_c02_feedback_record_scorer_llm_final_gate_001",
+      "research_task_id": "P40-C02",
+      "decision": "needs_more_evidence",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "whylogs 和 MLflow 可支撑日志与模型版本，但当前 source_refs 没有 point-in-time / decision-time feature contract，尚不足以支撑“决策时特征、scorer、LLM audit、final gate、后验结果引用”的完整可回放契约。",
+      "source_patch_notes": [
+        "补 point-in-time / decision-time feature availability 来源或 Phase40 FeedbackRecord schema contract。"
+      ],
+      "content_patch_notes": [
+        "明确 post-trade outcome 只能是 outcome_ref 和 observation window，不得混入 scorer 输入。"
+      ],
+      "boundary_patch_notes": [
+        "LLM audit output 只能作为审计辅助，final_gate_decision 必须来自 deterministic final gate。"
+      ],
+      "conflict_patch_notes": [
+        "当前 workflow 已隐藏 default queue，并设置 visible_in_default_guidance_queue=false；formal reviewed 生成时必须保留。",
+        "source candidate 的 approval_allowed 不得覆盖本审计的 approved_allowed=false。"
+      ],
+      "required_followups": [
+        "add_decision_time_feature_contract_source",
+        "add_feedback_record_schema_contract",
+        "then_reaudit_reviewed_preparation"
+      ],
+      "formal_review_mode": null,
+      "formal_knowledge_id": "kb_ai_feedback_governance.phase40.feedback_record_scorer_llm_final_gate.v1",
+      "current_formal_index_has_target": false
+    },
+    {
+      "candidate_id": "cand_20260610_phase40_p40_c03_opportunity_cost_001",
+      "research_task_id": "P40-C03",
+      "decision": "accepted_for_draft",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "来源、边界和冲突处理已足以进入 formal reviewed preparation；允许后续生成 formal reviewed + caveat_only，但不得 approved/default guidance/hard gate。Claim: 被阻断候选也必须保留 opportunity-cost 评估入口，避免只学习已成交样本",
+      "source_patch_notes": [],
+      "content_patch_notes": [
+        "Draft 必须写明 opportunity-cost 是估计入口，不是真实成交结果；需要 behavior_policy_id、target_policy_id、propensity、paper/replay 或 human_review 证据。"
+      ],
+      "boundary_patch_notes": [
+        "fill/slippage/fee/latency 假设必须引用 Phase 37 / Trading Engineering，不得在 AI Engineering 中沉淀交易执行规则。"
+      ],
+      "conflict_patch_notes": [
+        "当前 workflow 已隐藏 default queue，并设置 visible_in_default_guidance_queue=false；formal reviewed 生成时必须保留。",
+        "source candidate 的 approval_allowed 不得覆盖本审计的 approved_allowed=false。"
+      ],
+      "required_followups": [
+        "增加 counterfactual_method、fill_cost_assumption_ref、replay_engine_version 字段。"
+      ],
+      "formal_review_mode": "caveat_only",
+      "formal_knowledge_id": "kb_ai_feedback_governance.phase40.opportunity_cost.v1",
+      "current_formal_index_has_target": false
+    },
+    {
+      "candidate_id": "cand_20260610_phase40_p40_c06_false_allow_cost_false_block_cost_001",
+      "research_task_id": "P40-C06",
+      "decision": "accepted_for_draft",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "来源、边界和冲突处理已足以进入 formal reviewed preparation；允许后续生成 formal reviewed + caveat_only，但不得 approved/default guidance/hard gate。Claim: false allow cost 与 false block cost 必须进入评估和阈值决策",
+      "source_patch_notes": [],
+      "content_patch_notes": [
+        "明确 threshold 不得固定 0.5；threshold_policy_version 必须记录 cost matrix、review budget、calibration set 和 owner approval。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 只定义评估/阈值治理；具体交易成本、滑点、手续费假设归 Trading Engineering。"
+      ],
+      "conflict_patch_notes": [
+        "当前 workflow 已隐藏 default queue，并设置 visible_in_default_guidance_queue=false；formal reviewed 生成时必须保留。",
+        "source candidate 的 approval_allowed 不得覆盖本审计的 approved_allowed=false。"
+      ],
+      "required_followups": [
+        "新增 false_allow_cost_ref、false_block_cost_ref、review_budget_version。"
+      ],
+      "formal_review_mode": "caveat_only",
+      "formal_knowledge_id": "kb_ai_feedback_governance.phase40.false_allow_cost_false_block_cost.v1",
+      "current_formal_index_has_target": false
+    },
+    {
+      "candidate_id": "cand_20260610_phase40_p40_c07_feature_drift_label_drift_score_distribution_drift_calibration_drift_001",
+      "research_task_id": "P40-C07",
+      "decision": "needs_more_evidence",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "Evidently/TFDV 支撑 feature/target/prediction distribution drift，但当前 source_refs 缺少 calibration curve / reliability diagram 或 probability calibration 来源，不足以把 calibration drift 一并升级为 formal reviewed。",
+      "source_patch_notes": [
+        "补 scikit-learn calibration curve / CalibrationDisplay / reliability diagram source。"
+      ],
+      "content_patch_notes": [
+        "分别定义 feature_drift、label_or_target_drift、score_distribution_drift、calibration_drift，并记录 reference/current windows 与 minimum_slice_n。"
+      ],
+      "boundary_patch_notes": [
+        "drift alert 只能触发 investigation/review/retraining_review，不得自动 hard gate。"
+      ],
+      "conflict_patch_notes": [
+        "当前 workflow 已隐藏 default queue，并设置 visible_in_default_guidance_queue=false；formal reviewed 生成时必须保留。",
+        "source candidate 的 approval_allowed 不得覆盖本审计的 approved_allowed=false。"
+      ],
+      "required_followups": [
+        "add_calibration_curve_or_reliability_diagram_source",
+        "define_calibration_drift_metric",
+        "then_reaudit_reviewed_preparation"
+      ],
+      "formal_review_mode": null,
+      "formal_knowledge_id": "kb_ai_feedback_governance.phase40.feature_drift_label_drift_score_distribution_drift_calibration_drift.v1",
+      "current_formal_index_has_target": false
+    },
+    {
+      "candidate_id": "cand_20260610_phase40_p40_c09_candidate_model_champion_model_001",
+      "research_task_id": "P40-C09",
+      "decision": "accepted_for_draft",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "来源、边界和冲突处理已足以进入 formal reviewed preparation；允许后续生成 formal reviewed + caveat_only，但不得 approved/default guidance/hard gate。Claim: 再训练只能生成 candidate model，不得自动替换 champion model",
+      "source_patch_notes": [],
+      "content_patch_notes": [
+        "candidate_model 只能进入 offline/shadow/paper/canary 评估，不得直接替换 champion_model。"
+      ],
+      "boundary_patch_notes": [
+        "不得因单次指标提升自动进入 hard gate；必须有 owner approval、release manifest、rollback target。"
+      ],
+      "conflict_patch_notes": [
+        "当前 workflow 已隐藏 default queue，并设置 visible_in_default_guidance_queue=false；formal reviewed 生成时必须保留。",
+        "source candidate 的 approval_allowed 不得覆盖本审计的 approved_allowed=false。"
+      ],
+      "required_followups": [
+        "新增 champion_model_id、candidate_model_id、promotion_decision、approval_record。"
+      ],
+      "formal_review_mode": "caveat_only",
+      "formal_knowledge_id": "kb_ai_feedback_governance.phase40.candidate_model_champion_model.v1",
+      "current_formal_index_has_target": false
+    },
+    {
+      "candidate_id": "cand_20260610_phase40_p40_c12_threshold_policy_001",
+      "research_task_id": "P40-C12",
+      "decision": "needs_more_evidence",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "scikit-learn cost-sensitive threshold 支撑成本敏感阈值，但当前 source_refs 缺少 human review budget / queue capacity policy；“threshold policy 必须与人工复核预算联动”尚缺直接项目契约。",
+      "source_patch_notes": [
+        "补 review_budget / queue_capacity / human_review_load policy contract。"
+      ],
+      "content_patch_notes": [
+        "将 threshold_policy_version 绑定 cost_matrix_version、review_budget_version、calibrator_version、owner_approval。"
+      ],
+      "boundary_patch_notes": [
+        "不得把 review budget 写成自动 allow/block；超预算应路由降级策略或人工审批。"
+      ],
+      "conflict_patch_notes": [
+        "当前 workflow 已隐藏 default queue，并设置 visible_in_default_guidance_queue=false；formal reviewed 生成时必须保留。",
+        "source candidate 的 approval_allowed 不得覆盖本审计的 approved_allowed=false。"
+      ],
+      "required_followups": [
+        "add_review_budget_policy_source",
+        "define_review_capacity_limit_and_overflow_policy",
+        "then_reaudit_reviewed_preparation"
+      ],
+      "formal_review_mode": null,
+      "formal_knowledge_id": "kb_ai_feedback_governance.phase40.threshold_policy.v1",
+      "current_formal_index_has_target": false
+    },
+    {
+      "candidate_id": "cand_20260610_phase40_p40_c14_hard_gate_canary_001",
+      "research_task_id": "P40-C14",
+      "decision": "accepted_for_draft",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "来源、边界和冲突处理已足以进入 formal reviewed preparation；允许后续生成 formal reviewed + caveat_only，但不得 approved/default guidance/hard gate。Claim: hard gate 启用前必须经过受控 canary 和停止条件检查",
+      "source_patch_notes": [],
+      "content_patch_notes": [
+        "hard gate canary 必须包含 exposure limit、stop condition、rollback target、owner approval、kill switch。"
+      ],
+      "boundary_patch_notes": [
+        "canary 只是发布证据，不是自动上线许可。"
+      ],
+      "conflict_patch_notes": [
+        "当前 workflow 已隐藏 default queue，并设置 visible_in_default_guidance_queue=false；formal reviewed 生成时必须保留。",
+        "source candidate 的 approval_allowed 不得覆盖本审计的 approved_allowed=false。"
+      ],
+      "required_followups": [
+        "新增 canary_stage、stop_condition、rollback_target、manual_approval_required。"
+      ],
+      "formal_review_mode": "caveat_only",
+      "formal_knowledge_id": "kb_ai_feedback_governance.phase40.hard_gate_canary.v1",
+      "current_formal_index_has_target": false
+    },
+    {
+      "candidate_id": "cand_20260610_phase40_p40_c15_release_manifest_rollback_target_kill_switch_001",
+      "research_task_id": "P40-C15",
+      "decision": "needs_more_evidence",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "MLflow/Argo/NIST 能支撑版本与发布治理，但当前 source_refs 对 kill switch、rollback drill、secret scan 的直接支撑不足；“每次发布必须有 release manifest、rollback target、kill switch 和审批记录”还需要 incident / trading-control / SRE 来源或内部 release manifest contract。",
+      "source_patch_notes": [
+        "补 Google SRE rollback/canary、SEC Knight/FCA algorithmic trading controls，或 Phase40 release-manifest/kill-switch contract。"
+      ],
+      "content_patch_notes": [
+        "release_manifest 必须覆盖 data/model/prompt/RAG/threshold/calibrator/final_gate/owner/rollback/secret_scan/kill_switch_tested_at。"
+      ],
+      "boundary_patch_notes": [
+        "release manifest 不得包含私有策略正文、账号密钥或交易执行规则本体；Phase37 管理交易执行细节。"
+      ],
+      "conflict_patch_notes": [
+        "当前 workflow 已隐藏 default queue，并设置 visible_in_default_guidance_queue=false；formal reviewed 生成时必须保留。",
+        "source candidate 的 approval_allowed 不得覆盖本审计的 approved_allowed=false。"
+      ],
+      "required_followups": [
+        "add_release_manifest_kill_switch_source_or_contract",
+        "define_secret_scan_rollback_drill_kill_switch_fields",
+        "then_reaudit_reviewed_preparation"
+      ],
+      "formal_review_mode": null,
+      "formal_knowledge_id": "kb_ai_feedback_governance.phase40.release_manifest_rollback_target_kill_switch.v1",
+      "current_formal_index_has_target": false
+    },
+    {
+      "candidate_id": "cand_20260610_phase40_p40_c16_llm_rag_prompt_sft_lora_001",
+      "research_task_id": "P40-C16",
+      "decision": "accepted_for_draft",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "来源、边界和冲突处理已足以进入 formal reviewed preparation；允许后续生成 formal reviewed + caveat_only，但不得 approved/default guidance/hard gate。Claim: LLM 持续改进优先 RAG 更新，其次 prompt 更新，最后才考虑 SFT/LoRA",
+      "source_patch_notes": [],
+      "content_patch_notes": [
+        "正式 draft 写成：先更新知识与检索，再 prompt，再在 eval 证明长期失败时 SFT/LoRA；不是通用行业硬律。"
+      ],
+      "boundary_patch_notes": [
+        "LLM 改进不得改变 final gate 权限；RAG/prompt/SFT 只能影响 audit assistant 行为。"
+      ],
+      "conflict_patch_notes": [
+        "当前 workflow 已隐藏 default queue，并设置 visible_in_default_guidance_queue=false；formal reviewed 生成时必须保留。",
+        "source candidate 的 approval_allowed 不得覆盖本审计的 approved_allowed=false。"
+      ],
+      "required_followups": [
+        "新增 rag_index_version、prompt_version、eval_failure_threshold、sft_trigger_approval。"
+      ],
+      "formal_review_mode": "caveat_only",
+      "formal_knowledge_id": "kb_ai_feedback_governance.phase40.llm_rag_prompt_sft_lora.v1",
+      "current_formal_index_has_target": false
+    },
+    {
+      "candidate_id": "cand_20260610_phase40_p40_e01_replayable_audit_trail_001",
+      "research_task_id": "P40-E01",
+      "decision": "accepted_for_draft",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "来源、边界和冲突处理已足以进入 formal reviewed preparation；允许后续生成 formal reviewed + caveat_only，但不得 approved/default guidance/hard gate。Claim: feedback log 必须支持 replayable audit trail",
+      "source_patch_notes": [],
+      "content_patch_notes": [
+        "Define replay fields: event_time, decision_time, feature_snapshot_hash, scorer_output_ref, llm_audit_output_ref, final_gate_decision_ref, model_version, prompt_version, rag_index_version, threshold_policy_version, outcome_ref."
+      ],
+      "boundary_patch_notes": [
+        "Replayable audit trail is for post-hoc audit and debugging; it must not recreate private account data, secrets, raw strategy bodies, or final trading authority."
+      ],
+      "conflict_patch_notes": [
+        "当前 workflow 已隐藏 default queue，并设置 visible_in_default_guidance_queue=false；formal reviewed 生成时必须保留。",
+        "source candidate 的 approval_allowed 不得覆盖本审计的 approved_allowed=false。"
+      ],
+      "required_followups": [],
+      "formal_review_mode": "caveat_only",
+      "formal_knowledge_id": "kb_ai_feedback_governance.phase40.replayable_audit_trail.v1",
+      "current_formal_index_has_target": false
+    },
+    {
+      "candidate_id": "cand_20260610_phase40_p40_e02_label_policy_version_compatibility_001",
+      "research_task_id": "P40-E02",
+      "decision": "accepted_for_draft",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "来源、边界和冲突处理已足以进入 formal reviewed preparation；允许后续生成 formal reviewed + caveat_only，但不得 approved/default guidance/hard gate。Claim: 标签策略版本变更必须触发历史样本兼容性说明",
+      "source_patch_notes": [],
+      "content_patch_notes": [
+        "Add LabelPolicyMigrationNote with old_label_policy_version, new_label_policy_version, affected_dataset_versions, compatibility_mode, relabel_required, historical_metric_comparability."
+      ],
+      "boundary_patch_notes": [
+        "Do not use label policy migration to silently rewrite old labels or improve historical metrics without provenance."
+      ],
+      "conflict_patch_notes": [
+        "当前 workflow 已隐藏 default queue，并设置 visible_in_default_guidance_queue=false；formal reviewed 生成时必须保留。",
+        "source candidate 的 approval_allowed 不得覆盖本审计的 approved_allowed=false。"
+      ],
+      "required_followups": [],
+      "formal_review_mode": "caveat_only",
+      "formal_knowledge_id": "kb_ai_feedback_governance.phase40.label_policy_version_compatibility.v1",
+      "current_formal_index_has_target": false
+    },
+    {
+      "candidate_id": "cand_20260610_phase40_p40_e03_drift_root_cause_classification_001",
+      "research_task_id": "P40-E03",
+      "decision": "accepted_for_draft",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "来源、边界和冲突处理已足以进入 formal reviewed preparation；允许后续生成 formal reviewed + caveat_only，但不得 approved/default guidance/hard gate。Claim: 漂移报警必须区分数据质量问题、市场变化和策略版本变化",
+      "source_patch_notes": [],
+      "content_patch_notes": [
+        "Define root_cause_category enum: data_quality, feature_distribution, score_distribution, label_or_concept_drift, market_regime_ref, strategy_version_ref, execution_context_ref, unknown."
+      ],
+      "boundary_patch_notes": [
+        "market_regime_ref and strategy_version_ref are monitoring slices only; AI Engineering must not define trading regime rules or strategy logic."
+      ],
+      "conflict_patch_notes": [
+        "当前 workflow 已隐藏 default queue，并设置 visible_in_default_guidance_queue=false；formal reviewed 生成时必须保留。",
+        "source candidate 的 approval_allowed 不得覆盖本审计的 approved_allowed=false。"
+      ],
+      "required_followups": [],
+      "formal_review_mode": "caveat_only",
+      "formal_knowledge_id": "kb_ai_feedback_governance.phase40.drift_root_cause_classification.v1",
+      "current_formal_index_has_target": false
+    },
+    {
+      "candidate_id": "cand_20260610_phase40_p40_e04_incident_retraining_requires_approval_001",
+      "research_task_id": "P40-E04",
+      "decision": "accepted_for_draft",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "来源、边界和冲突处理已足以进入 formal reviewed preparation；允许后续生成 formal reviewed + caveat_only，但不得 approved/default guidance/hard gate。Claim: 事故驱动再训练不能绕过常规评估和审批",
+      "source_patch_notes": [],
+      "content_patch_notes": [
+        "Add incident_retraining_approval_record with incident_id, trigger_reason, affected_artifacts, evaluation_required, owner_approval_ref, rollback_target_ref."
+      ],
+      "boundary_patch_notes": [
+        "Incident-driven retraining may generate a candidate model only; it must not auto-promote or bypass champion/challenger gates."
+      ],
+      "conflict_patch_notes": [
+        "当前 workflow 已隐藏 default queue，并设置 visible_in_default_guidance_queue=false；formal reviewed 生成时必须保留。",
+        "source candidate 的 approval_allowed 不得覆盖本审计的 approved_allowed=false。"
+      ],
+      "required_followups": [],
+      "formal_review_mode": "caveat_only",
+      "formal_knowledge_id": "kb_ai_feedback_governance.phase40.incident_retraining_requires_approval.v1",
+      "current_formal_index_has_target": false
+    },
+    {
+      "candidate_id": "cand_20260610_phase40_p40_e05_calibration_bins_coverage_001",
+      "research_task_id": "P40-E05",
+      "decision": "accepted_for_draft",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "来源、边界和冲突处理已足以进入 formal reviewed preparation；允许后续生成 formal reviewed + caveat_only，但不得 approved/default guidance/hard gate。Claim: 再校准报告必须包含分桶可靠性和样本覆盖边界",
+      "source_patch_notes": [],
+      "content_patch_notes": [
+        "Add n_per_bin, min_bin_support, empty_bin_policy, sparse_slice_policy, calibration_set_hash, calibration_independence_check, reliability_diagram_artifact."
+      ],
+      "boundary_patch_notes": [
+        "Bins with insufficient support may produce warnings only; they must not create hard thresholds."
+      ],
+      "conflict_patch_notes": [
+        "当前 workflow 已隐藏 default queue，并设置 visible_in_default_guidance_queue=false；formal reviewed 生成时必须保留。",
+        "source candidate 的 approval_allowed 不得覆盖本审计的 approved_allowed=false。"
+      ],
+      "required_followups": [],
+      "formal_review_mode": "caveat_only",
+      "formal_knowledge_id": "kb_ai_feedback_governance.phase40.calibration_bins_coverage.v1",
+      "current_formal_index_has_target": false
+    },
+    {
+      "candidate_id": "cand_20260610_phase40_p40_e08_rollback_freezes_artifacts_001",
+      "research_task_id": "P40-E08",
+      "decision": "accepted_for_draft",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "来源、边界和冲突处理已足以进入 formal reviewed preparation；允许后续生成 formal reviewed + caveat_only，但不得 approved/default guidance/hard gate。Claim: rollback 后必须冻结相关模型、prompt、RAG 包和阈值策略",
+      "source_patch_notes": [],
+      "content_patch_notes": [
+        "Add rollback_freeze_manifest with model_version, prompt_version, rag_index_version, threshold_policy_version, dataset_hash, incident_id, unfreeze_approval_ref."
+      ],
+      "boundary_patch_notes": [
+        "Freeze is an audit/control action; it must not automatically retrain, re-enable, or approve a successor artifact."
+      ],
+      "conflict_patch_notes": [
+        "当前 workflow 已隐藏 default queue，并设置 visible_in_default_guidance_queue=false；formal reviewed 生成时必须保留。",
+        "source candidate 的 approval_allowed 不得覆盖本审计的 approved_allowed=false。"
+      ],
+      "required_followups": [],
+      "formal_review_mode": "caveat_only",
+      "formal_knowledge_id": "kb_ai_feedback_governance.phase40.rollback_freezes_artifacts.v1",
+      "current_formal_index_has_target": false
+    },
+    {
+      "candidate_id": "cand_20260610_phase40_p40_e09_rag_update_retrieval_regression_001",
+      "research_task_id": "P40-E09",
+      "decision": "accepted_for_draft",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "来源、边界和冲突处理已足以进入 formal reviewed preparation；允许后续生成 formal reviewed + caveat_only，但不得 approved/default guidance/hard gate。Claim: RAG 知识更新必须回写检索评测集，不能只修改文档",
+      "source_patch_notes": [],
+      "content_patch_notes": [
+        "Add retrieval_regression_set_id, query_set_version, expected_source_refs, recall_at_k, precision_at_k, faithfulness_metric, no_hit_cases, regression_failure_policy."
+      ],
+      "boundary_patch_notes": [
+        "RAG regression is a knowledge/retrieval quality gate, not a trading allow/block gate."
+      ],
+      "conflict_patch_notes": [
+        "当前 workflow 已隐藏 default queue，并设置 visible_in_default_guidance_queue=false；formal reviewed 生成时必须保留。",
+        "source candidate 的 approval_allowed 不得覆盖本审计的 approved_allowed=false。"
+      ],
+      "required_followups": [],
+      "formal_review_mode": "caveat_only",
+      "formal_knowledge_id": "kb_ai_feedback_governance.phase40.rag_update_retrieval_regression.v1",
+      "current_formal_index_has_target": false
+    },
+    {
+      "candidate_id": "cand_20260610_phase40_p40_e10_human_review_audit_trace_001",
+      "research_task_id": "P40-E10",
+      "decision": "accepted_for_draft",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "来源、边界和冲突处理已足以进入 formal reviewed preparation；允许后续生成 formal reviewed + caveat_only，但不得 approved/default guidance/hard gate。Claim: 人工复核样本不能直接作为默认真值，必须带 reviewer、reason 和冲突状态",
+      "source_patch_notes": [],
+      "content_patch_notes": [
+        "Add HumanReviewAuditTrace with reviewer_id, review_reason, evidence_refs, conflict_status, adjudication_status, label_provenance."
+      ],
+      "boundary_patch_notes": [
+        "Human review is not automatically ground truth until adjudication/provenance checks pass."
+      ],
+      "conflict_patch_notes": [
+        "当前 workflow 已隐藏 default queue，并设置 visible_in_default_guidance_queue=false；formal reviewed 生成时必须保留。",
+        "source candidate 的 approval_allowed 不得覆盖本审计的 approved_allowed=false。"
+      ],
+      "required_followups": [],
+      "formal_review_mode": "caveat_only",
+      "formal_knowledge_id": "kb_ai_feedback_governance.phase40.human_review_audit_trace.v1",
+      "current_formal_index_has_target": false
+    },
+    {
+      "candidate_id": "cand_20260610_phase40_p40_p01_long_tail_feedback_sampling_001",
+      "research_task_id": "P40-P01",
+      "decision": "accepted_for_draft",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "来源、边界和冲突处理已足以进入 formal reviewed preparation；允许后续生成 formal reviewed + caveat_only，但不得 approved/default guidance/hard gate。Claim: feedback 采样策略必须说明长尾市场和低频策略覆盖",
+      "source_patch_notes": [],
+      "content_patch_notes": [
+        "Add sampling_policy_version, head/tail strata, low_frequency_strategy_coverage, market_slice_coverage, random_control_sample, bias_report."
+      ],
+      "boundary_patch_notes": [
+        "Tail sampling must not replace representative evaluation; preserve random/stratified control samples."
+      ],
+      "conflict_patch_notes": [
+        "当前 workflow 已隐藏 default queue，并设置 visible_in_default_guidance_queue=false；formal reviewed 生成时必须保留。",
+        "source candidate 的 approval_allowed 不得覆盖本审计的 approved_allowed=false。"
+      ],
+      "required_followups": [],
+      "formal_review_mode": "caveat_only",
+      "formal_knowledge_id": "kb_ai_feedback_governance.phase40.long_tail_feedback_sampling.v1",
+      "current_formal_index_has_target": false
+    },
+    {
+      "candidate_id": "cand_20260610_phase40_p40_p02_label_conflict_gold_set_001",
+      "research_task_id": "P40-P02",
+      "decision": "accepted_for_draft",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "来源、边界和冲突处理已足以进入 formal reviewed preparation；允许后续生成 formal reviewed + caveat_only，但不得 approved/default guidance/hard gate。Claim: 标签冲突需要仲裁策略和 gold set 回归测试",
+      "source_patch_notes": [],
+      "content_patch_notes": [
+        "Add adjudication_policy_version, gold_set_id, conflict_type, adjudicator_role, regression_eval_set_hash, relabel_policy."
+      ],
+      "boundary_patch_notes": [
+        "Gold set updates require provenance and regression checks; they must not silently rewrite past evaluation results."
+      ],
+      "conflict_patch_notes": [
+        "当前 workflow 已隐藏 default queue，并设置 visible_in_default_guidance_queue=false；formal reviewed 生成时必须保留。",
+        "source candidate 的 approval_allowed 不得覆盖本审计的 approved_allowed=false。"
+      ],
+      "required_followups": [],
+      "formal_review_mode": "caveat_only",
+      "formal_knowledge_id": "kb_ai_feedback_governance.phase40.label_conflict_gold_set.v1",
+      "current_formal_index_has_target": false
+    },
+    {
+      "candidate_id": "cand_20260610_phase40_p40_p03_scheduled_event_retraining_001",
+      "research_task_id": "P40-P03",
+      "decision": "accepted_for_draft",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "来源、边界和冲突处理已足以进入 formal reviewed preparation；允许后续生成 formal reviewed + caveat_only，但不得 approved/default guidance/hard gate。Claim: 再训练计划应支持固定节奏与事件触发混合",
+      "source_patch_notes": [],
+      "content_patch_notes": [
+        "Add retraining_schedule, event_trigger_types, trigger_evidence_refs, cooldown_policy, owner_approval_ref, candidate_model_only flag."
+      ],
+      "boundary_patch_notes": [
+        "Retraining schedule/event trigger creates a candidate only; it must not auto-promote or alter final-gate thresholds."
+      ],
+      "conflict_patch_notes": [
+        "当前 workflow 已隐藏 default queue，并设置 visible_in_default_guidance_queue=false；formal reviewed 生成时必须保留。",
+        "source candidate 的 approval_allowed 不得覆盖本审计的 approved_allowed=false。"
+      ],
+      "required_followups": [],
+      "formal_review_mode": "caveat_only",
+      "formal_knowledge_id": "kb_ai_feedback_governance.phase40.scheduled_event_retraining.v1",
+      "current_formal_index_has_target": false
+    },
+    {
+      "candidate_id": "cand_20260610_phase40_p40_p04_rejected_challenger_reason_tracking_001",
+      "research_task_id": "P40-P04",
+      "decision": "accepted_for_draft",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "来源、边界和冲突处理已足以进入 formal reviewed preparation；允许后续生成 formal reviewed + caveat_only，但不得 approved/default guidance/hard gate。Claim: challenger 拒绝也要记录原因，进入后续实验知识库",
+      "source_patch_notes": [],
+      "content_patch_notes": [
+        "Add rejected_challenger_record with candidate_model_version, rejection_reason_codes, failed_metrics, evaluator, date, followup_experiment_refs."
+      ],
+      "boundary_patch_notes": [
+        "Rejected challenger knowledge is an experiment-learning artifact, not a default policy or future approval shortcut."
+      ],
+      "conflict_patch_notes": [
+        "当前 workflow 已隐藏 default queue，并设置 visible_in_default_guidance_queue=false；formal reviewed 生成时必须保留。",
+        "source candidate 的 approval_allowed 不得覆盖本审计的 approved_allowed=false。"
+      ],
+      "required_followups": [],
+      "formal_review_mode": "caveat_only",
+      "formal_knowledge_id": "kb_ai_feedback_governance.phase40.rejected_challenger_reason_tracking.v1",
+      "current_formal_index_has_target": false
+    },
+    {
+      "candidate_id": "cand_20260610_phase40_p40_p06_prompt_rag_model_eval_separation_001",
+      "research_task_id": "P40-P06",
+      "decision": "accepted_for_draft",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "来源、边界和冲突处理已足以进入 formal reviewed preparation；允许后续生成 formal reviewed + caveat_only，但不得 approved/default guidance/hard gate。Claim: LLM 改动必须分离 prompt regression、RAG retrieval regression 和 model eval",
+      "source_patch_notes": [],
+      "content_patch_notes": [
+        "Add eval lanes: prompt_regression, retrieval_regression, generation_eval, model_eval, threshold_policy_eval; require fixed eval_set_hash per lane."
+      ],
+      "boundary_patch_notes": [
+        "LLM/RAG/model evaluation separation does not authorize LLM audit assistant or scorer to make final gate decisions."
+      ],
+      "conflict_patch_notes": [
+        "当前 workflow 已隐藏 default queue，并设置 visible_in_default_guidance_queue=false；formal reviewed 生成时必须保留。",
+        "source candidate 的 approval_allowed 不得覆盖本审计的 approved_allowed=false。"
+      ],
+      "required_followups": [],
+      "formal_review_mode": "caveat_only",
+      "formal_knowledge_id": "kb_ai_feedback_governance.phase40.prompt_rag_model_eval_separation.v1",
+      "current_formal_index_has_target": false
+    }
+  ],
+  "batch_summary": {
+    "accepted_count": 18,
+    "needs_more_evidence_count": 5,
+    "rejected_count": 0,
+    "reviewed_allowed_count": 18,
+    "approved_allowed_count": 0,
+    "default_guidance_allowed_count": 0,
+    "hard_gate_allowed_count": 0,
+    "misrouted_to_trading_count": 0,
+    "candidate_count": 23
+  }
+}

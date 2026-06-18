@@ -1,0 +1,2106 @@
+{
+  "package_id": "phase40_reviewed_preparation_supplemental_reaudit_package_20260610",
+  "package_type": "candidate_ai_reaudit_package",
+  "generated_at": "2026-06-10",
+  "phase": "40",
+  "task_id": "CEK-TA-317",
+  "source_audit_result_id": "audit_result_phase40_ai_passed_reviewed_preparation_20260610_strict_v1",
+  "source_package_id": "phase40_ai_passed_reviewed_preparation_audit_package_20260610",
+  "title": "Phase 40 reviewed preparation needs_more_evidence 补证后三审包",
+  "purpose": "只审计 5 条已补证候选，判断是否可进入 accepted_for_draft，供后续 Codex 生成 formal reviewed draft。",
+  "hard_boundaries": [
+    "candidate 不是正式知识，不能作为默认指导。",
+    "三审可以给出 accepted_for_draft，但不得直接给 approved。",
+    "reviewed_allowed=true 只表示可由 Codex 后续生成 formal reviewed draft，不等于 approved。",
+    "approved_allowed、default_guidance_allowed、hard_gate_allowed 必须保持 false。",
+    "Trading Engineering 的 K 线、fill model、订单状态机、实盘风控和交易执行本体不得混入 AI Engineering。"
+  ],
+  "auditor_instruction": {
+    "goal": "确认补证是否充分、字段契约是否足够、边界是否正确、是否仍需补来源或应拒绝。",
+    "focus_checks": [
+      "新增来源是否直接支撑该 claim，而不是只支撑通用 ML 概念。",
+      "内部 CEK-TA 契约是否只作为字段和工作流证据，不替代外部专业来源。",
+      "是否误把交易规则、成本模型、market regime、fill/slippage 本体写入 AI Engineering。",
+      "是否保持 candidate/reviewed/approved 状态边界。",
+      "是否保持 default_guidance_allowed=false 和 hard_gate_allowed=false。",
+      "若 accepted_for_draft，请给出 required_patch_notes 以便 Codex 后续转 formal reviewed draft。"
+    ],
+    "required_output_schema": {
+      "audit_result_id": "audit_result_phase40_reviewed_preparation_supplemental_reaudit_20260610_v1",
+      "source_package_id": "phase40_reviewed_preparation_supplemental_reaudit_package_20260610",
+      "decisions": [
+        {
+          "candidate_id": "string",
+          "research_task_id": "string",
+          "decision": "accepted_for_draft | needs_more_evidence | rejected",
+          "reviewed_allowed": "boolean",
+          "approved_allowed": false,
+          "default_guidance_allowed": false,
+          "hard_gate_allowed": false,
+          "reason": "string",
+          "source_patch_notes": [
+            "string"
+          ],
+          "content_patch_notes": [
+            "string"
+          ],
+          "boundary_patch_notes": [
+            "string"
+          ],
+          "conflict_patch_notes": [
+            "string"
+          ],
+          "required_followups": [
+            "string"
+          ]
+        }
+      ],
+      "batch_summary": {
+        "accepted_count": 0,
+        "needs_more_evidence_count": 0,
+        "rejected_count": 0,
+        "misrouted_to_trading_count": 0,
+        "reviewed_allowed_count": 0,
+        "approved_allowed_count": 0,
+        "default_guidance_allowed_count": 0,
+        "hard_gate_allowed_count": 0
+      }
+    }
+  },
+  "quality_gate": {
+    "gate_id": "phase40_reviewed_preparation_supplemental_reaudit_quality_gate",
+    "generated_at": "2026-06-10",
+    "candidate_count": 5,
+    "expected_count": 5,
+    "failure_count": 0,
+    "failures": [],
+    "gate_status": "pass"
+  },
+  "candidate_count": 5,
+  "candidates": [
+    {
+      "schema_version": "1.0.0",
+      "candidate_id": "cand_20260610_phase40_p40_c01_allow_block_skip_human_review_001",
+      "research_task_id": "P40-C01",
+      "status": {
+        "review_status": "needs_more_evidence",
+        "ingestion_decision": "ready_for_reaudit",
+        "decision_reason": "已按 reviewed preparation 二审意见补充来源、契约字段和边界说明；等待外部三审。",
+        "created_at": "2026-06-10",
+        "updated_at": "2026-06-10"
+      },
+      "classification": {
+        "tree_node_id": "kt.ai_feedback_governance.feedback_logging",
+        "canonical_node_id": "kt.ai_feedback_governance.feedback_logging",
+        "tree_path": "CEK-TA / AI Engineering / Continuous Learning And Feedback Governance",
+        "related_nodes": [],
+        "partition_id": "KB_AI_18_FEEDBACK_GOVERNANCE",
+        "domain": "ai_governance",
+        "subdomain": "feedback_logging",
+        "rule_type": "governance_rule",
+        "used_for": [
+          "llm_training",
+          "trading_gating_scoring",
+          "continuous_learning",
+          "rag_engineering",
+          "mcp",
+          "vue_audit_ui"
+        ]
+      },
+      "claim": {
+        "claim_id": "claim_001",
+        "statement": "交易 AI gating/scoring 的 FeedbackRecord 必须记录 allow、block、skip、human_review 和 error 全候选，并保留 candidate_id、decision_time、action_taken、final_gate_decision、policy_version、outcome_ref 与 counterfactual_status；blocked/skipped 候选的结果只能标记为未执行或反事实，不得解释为扩大实盘执行。",
+        "normalized_claim": "phase40.allow_block_skip_human_review.v1",
+        "claim_type": "ai_governance_rule",
+        "evidence_summary": "NIST describes a framework for managing risks to individuals, organizations, and society associated with AI.；Vowpal Wabbit contextual bandit examples use logged action, cost, probability and feature columns, supporting the need to retain chosen-action and logging-policy evidence.；Open Bandit Pipeline documents logged bandit feedback and off-policy evaluation for realistic and reproducible evaluation.；The paper frames contextual-bandit policy evaluation around historic data with contexts, actions, observed rewards, and a past policy.；Defines FeedbackRecord fields and requires allow, block, skip, human_review and error candidates to be logged.",
+        "interpretation_notes": "本候选只沉淀 AI Engineering 的持续学习、反馈治理、再训练、再校准、发布回滚或 LLM 改进方法；交易规则本体必须路由到 Phase 37。",
+        "claim_strength": "medium",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general",
+        "asset": "general",
+        "timeframe": "general",
+        "data_granularity": "general",
+        "project_type": "trading_llm_gating_scoring",
+        "applies_when": [
+          "外接项目正在建设交易 AI gating/scoring 的反馈日志、标签刷新、漂移检测、再训练、再校准、shadow/paper/canary 或发布治理链路。",
+          "该规则用于阻断自动上线、PnL-only 标签、allow-only logging、反馈回路污染、无 rollback 发布或 LLM 越权 final gate。"
+        ],
+        "not_applicable_when": [
+          "用户需要具体买卖点、仓位、止损止盈、K 线形态、策略参数或实盘订单执行。",
+          "知识点主要描述 fill model、订单状态机、实盘风控阈值或交易所异常处理，应路由到 Trading Engineering。"
+        ],
+        "assumptions": [
+          "外接项目提供私有交易事实、模型输出和发布上下文；CEK-TA 只沉淀可复用专业规则。",
+          "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+        ],
+        "limitations": [
+          "本条仍是 candidate，需要外部 AI/人工审计确认来源充分性、适用边界和是否需要补充交易项目实例。",
+          "log_every_candidate 不等于 execute_every_candidate；blocked/skipped outcome 仍是未执行或反事实状态。"
+        ]
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 在外接项目中实现持续学习治理字段、审计追踪和发布门禁。",
+          "用于阻断自动上线、无来源默认指导和 LLM 越权 final gate。",
+          "用于生成任务卡、契约、测试计划和审计 checklist。"
+        ],
+        "not_allowed": [
+          "不得据此生成买卖点、仓位、杠杆、止损止盈或实盘下单建议。",
+          "不得据此跳过人工审批或 release/rollback 门禁。",
+          "不得把 candidate 当作 approved 默认指导。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_id": "src_whylogs_github",
+          "source_title": "whylogs GitHub repository",
+          "source_url": "https://github.com/whylabs/whylogs",
+          "source_type": "official_repo",
+          "publisher": "WhyLabs",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 80,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "whylogs is an open-source data logging library for ML models and data pipelines, providing visibility into data quality and model performance over time.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_whylogs_overview",
+          "source_title": "whylogs Overview - WhyLabs documentation",
+          "source_url": "https://docs.whylabs.ai/docs/whylogs-overview/",
+          "source_type": "official_doc",
+          "publisher": "WhyLabs",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 82,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "WhyLabs documentation describes whylogs profiles for monitoring data quality and data change issues such as drift.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_nist_ai_rmf",
+          "source_title": "NIST AI Risk Management Framework",
+          "source_url": "https://www.nist.gov/itl/ai-risk-management-framework",
+          "source_type": "governance_framework",
+          "publisher": "NIST",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 88,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "NIST describes a framework for managing risks to individuals, organizations, and society associated with AI.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_vowpal_wabbit_contextual_bandit",
+          "source_title": "Contextual Bandits - Vowpal Wabbit documentation",
+          "source_url": "https://vowpalwabbit.org/docs/vowpal_wabbit/python/latest/examples/contextual_bandit.html",
+          "source_type": "official_doc",
+          "publisher": "Vowpal Wabbit",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 86,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [
+            "支撑 logged bandit 字段结构，不直接定义交易执行或收益。"
+          ],
+          "evidence_summary": "Vowpal Wabbit contextual bandit examples use logged action, cost, probability and feature columns, supporting the need to retain chosen-action and logging-policy evidence.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_open_bandit_pipeline_docs",
+          "source_title": "Open Bandit Pipeline documentation",
+          "source_url": "https://zr-obp.readthedocs.io/en/latest/",
+          "source_type": "official_doc",
+          "publisher": "Open Bandit Pipeline",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 84,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [
+            "OPE 来源来自推荐/广告场景，交易执行质量仍需 Trading Engineering 引用。"
+          ],
+          "evidence_summary": "Open Bandit Pipeline documents logged bandit feedback and off-policy evaluation for realistic and reproducible evaluation.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_doubly_robust_policy_evaluation",
+          "source_title": "Doubly Robust Policy Evaluation and Learning",
+          "source_url": "https://arxiv.org/abs/1103.4601",
+          "source_type": "paper",
+          "publisher": "arXiv",
+          "published_at": "2011-03-23",
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 86,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [
+            "支撑反事实/OPE 数据需求，不证明任何交易模型可盈利。"
+          ],
+          "evidence_summary": "The paper frames contextual-bandit policy evaluation around historic data with contexts, actions, observed rewards, and a past policy.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_cek_ta_phase40_feedback_dataset_contract",
+          "source_title": "CEK-TA Phase 40 Feedback Dataset Contract",
+          "source_url": "docs/contracts/phase40_feedback_dataset_contract.md",
+          "source_type": "internal_contract",
+          "publisher": "CEK-TA",
+          "published_at": "2026-06-10",
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 90,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [
+            "内部契约定义 CEK-TA 字段，需要外部专业来源共同支撑。"
+          ],
+          "evidence_summary": "Defines FeedbackRecord fields and requires allow, block, skip, human_review and error candidates to be logged.",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "high",
+        "score": 88,
+        "score_version": "1.1.0",
+        "primary_source_count": 6,
+        "supporting_source_count": 1,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "来源支持通用 AI/ML/MLOps/LLMOps/治理工程原则；正式知识转换时需保留 CEK-TA 具体上下游引用和冲突链接。",
+          "补证后仍需外部 AI/人工三审确认 claim-specific 充分性，不能直接转 reviewed 或 approved。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "checked_against": [
+          "docs/contracts/phase40_feedback_dataset_contract.md",
+          "docs/contracts/phase40_drift_retraining_recalibration_contract.md",
+          "docs/contracts/phase40_champion_challenger_release_contract.md",
+          "docs/research/phase40_ai_continuous_learning_scope.md",
+          "docs/contracts/phase40_review_budget_threshold_policy_contract.md",
+          "docs/contracts/phase40_release_manifest_kill_switch_contract.md"
+        ],
+        "conflicts": [],
+        "resolution_summary": "补证后未发现直接理论冲突；仍需三审确认来源充分性和 AI/Trading 分支边界。",
+        "approval_allowed": false
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "supplemented candidate awaiting third review; not reviewed, approved, default guidance, or hard gate.",
+        "requires_human_escalation": true
+      },
+      "review": {
+        "confidence": "medium",
+        "freshness": "time_sensitive",
+        "reviewer": "codex_supplemental_evidence",
+        "reviewed_at": "2026-06-10",
+        "open_questions": [
+          "请三审确认补证后是否 accepted_for_draft；如果仍不足，请返回 needs_more_evidence 或 rejected。",
+          "即使三审通过，本条仍只能进入 formal reviewed draft，不得直接 approved、default guidance 或 hard gate。"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "created",
+            "reason": "Phase 40 P0-Core continuous learning candidate expansion."
+          },
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "phase40_strict_audit_accepted_for_draft",
+            "reason": "候选进入 formal draft 准备队列；直接 reviewed/approved 被审计结果禁止。"
+          },
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "phase40_strict_audit_accepted_for_draft",
+            "reason": "候选进入 formal draft 准备队列；直接 reviewed/approved 被审计结果禁止。"
+          },
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "phase40_reviewed_preparation_needs_more_evidence",
+            "reason": "CEK-TA-316: 二审仍需补证，保持 candidate，不生成 formal reviewed。"
+          },
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "phase40_reviewed_preparation_supplemental_evidence_ready",
+            "reason": "按 CEK-TA-317 补充来源和契约，并准备三审。"
+          },
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "phase40_reviewed_preparation_supplemental_evidence_ready",
+            "reason": "按 CEK-TA-317 补充来源和契约，并准备三审。"
+          },
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "phase40_reviewed_preparation_supplemental_evidence_ready",
+            "reason": "按 CEK-TA-317 补充来源和契约，并准备三审。"
+          }
+        ],
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "ai_audit": {
+          "audit_result_id": "audit_result_phase40_ai_passed_reviewed_preparation_20260610_strict_v1",
+          "source_package_id": "phase40_ai_passed_reviewed_preparation_audit_package_20260610",
+          "candidate_id": "cand_20260610_phase40_p40_c01_allow_block_skip_human_review_001",
+          "research_task_id": "P40-C01",
+          "decision": "needs_more_evidence",
+          "reason": "whylogs/WhyLabs 支撑数据日志和模型健康监控，但当前 source_refs 没有 logged bandit / OPE 或 Phase40 feedback-dataset 契约来源，尚不足以支撑“allow/block/skip/human_review 全候选必须记录”这一反事实/选择偏差 claim。",
+          "source_patch_notes": [
+            "补 logged bandit / OPE source，或将 Phase40 Feedback Dataset Contract 加入 source_refs，直接支撑 block/skip/human_review 也必须记录。"
+          ],
+          "content_patch_notes": [
+            "保留 log_every_candidate != execute_every_candidate；补 candidate_id、decision_time、action_taken、final_gate_decision、policy_version、outcome_ref、counterfactual_status。"
+          ],
+          "boundary_patch_notes": [
+            "不得把记录 blocked/skipped 候选解释为扩大实盘执行；blocked/skipped outcome 仍是反事实。"
+          ],
+          "conflict_patch_notes": [
+            "当前 workflow 已隐藏 default queue，并设置 visible_in_default_guidance_queue=false；formal reviewed 生成时必须保留。",
+            "source candidate 的 approval_allowed 不得覆盖本审计的 approved_allowed=false。"
+          ],
+          "required_followups": [
+            "add_logged_bandit_or_ope_source",
+            "add_feedback_dataset_contract_ref",
+            "then_reaudit_reviewed_preparation"
+          ],
+          "reviewed_allowed": false,
+          "approved_allowed": false,
+          "default_guidance_allowed": false,
+          "hard_gate_allowed": false,
+          "supplemental_evidence": {
+            "status": "ready_for_reaudit",
+            "added_at": "2026-06-10",
+            "task_id": "CEK-TA-317",
+            "previous_statement": "交易 AI gating/scoring 的 FeedbackRecord 必须记录 allow、block、skip、human_review 和 error 全候选，并保留 candidate_id、decision_time、action_taken、final_gate_decision、policy_version、outcome_ref 与 counterfactual_status；blocked/skipped 候选的结果只能标记为未执行或反事实，不得解释为扩大实盘执行。",
+            "patched_statement": "交易 AI gating/scoring 的 FeedbackRecord 必须记录 allow、block、skip、human_review 和 error 全候选，并保留 candidate_id、decision_time、action_taken、final_gate_decision、policy_version、outcome_ref 与 counterfactual_status；blocked/skipped 候选的结果只能标记为未执行或反事实，不得解释为扩大实盘执行。",
+            "added_source_ids": [],
+            "all_supplemental_source_ids": [
+              "src_vowpal_wabbit_contextual_bandit",
+              "src_open_bandit_pipeline_docs",
+              "src_doubly_robust_policy_evaluation",
+              "src_cek_ta_phase40_feedback_dataset_contract"
+            ],
+            "supplemental_notes": [
+              "Vowpal Wabbit 和 Open Bandit Pipeline 支撑 logged action / probability / cost / feedback 的 OPE 数据需求。",
+              "Doubly Robust Policy Evaluation 论文支撑用历史 context、action、reward 和 past policy 评估新策略。",
+              "CEK-TA Feedback Dataset Contract 明确所有候选决策类型都要记录。"
+            ],
+            "remaining_boundary": "log_every_candidate 不等于 execute_every_candidate；blocked/skipped outcome 仍是未执行或反事实状态。",
+            "reaudit_request": "请判断补证后是否 accepted_for_draft；不得直接 reviewed/approved/default/hard gate。"
+          }
+        },
+        "reviewed_allowed": false,
+        "approved_allowed": false
+      },
+      "copyright": {
+        "stores_full_text": false,
+        "stores_long_quote": false,
+        "summary_only": true,
+        "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+        "reuse_risk": "low"
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_ai_feedback_governance.phase40.allow_block_skip_human_review.v1",
+        "target_schema": "cek_ta_knowledge_item",
+        "target_review_status": "draft",
+        "skill_candidate": false,
+        "eval_case_candidate": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "workflow": {
+        "stage": "needs_more_evidence",
+        "queue_group": "needs_more_evidence",
+        "formal_knowledge_id": null,
+        "formal_review_status": null,
+        "ai_audit_result_id": "audit_result_phase40_ai_passed_reviewed_preparation_20260610_strict_v1",
+        "hidden_from_default_queue": true,
+        "next_action": "export_ai_audit",
+        "default_guidance_allowed": false,
+        "visible_in_default_guidance_queue": false
+      },
+      "phase40_trace": {
+        "acceptance_gate": "明确 all predictions / rejected decisions 也要记录",
+        "search_direction": "model monitoring log all predictions decision logs blocked decisions",
+        "related_contracts": [
+          "docs/contracts/phase40_feedback_dataset_contract.md",
+          "docs/contracts/phase40_drift_retraining_recalibration_contract.md",
+          "docs/contracts/phase40_champion_challenger_release_contract.md",
+          "docs/research/phase40_ai_continuous_learning_scope.md",
+          "docs/contracts/phase40_review_budget_threshold_policy_contract.md",
+          "docs/contracts/phase40_release_manifest_kill_switch_contract.md"
+        ],
+        "supplemental_evidence_ready": true,
+        "supplemental_evidence_added_at": "2026-06-10",
+        "supplemental_task_id": "CEK-TA-317",
+        "audit_patch_notes": {
+          "source_ids_added_or_confirmed": [
+            "src_vowpal_wabbit_contextual_bandit",
+            "src_open_bandit_pipeline_docs",
+            "src_doubly_robust_policy_evaluation",
+            "src_cek_ta_phase40_feedback_dataset_contract"
+          ],
+          "remaining_boundary": "log_every_candidate 不等于 execute_every_candidate；blocked/skipped outcome 仍是未执行或反事实状态。"
+        }
+      }
+    },
+    {
+      "schema_version": "1.0.0",
+      "candidate_id": "cand_20260610_phase40_p40_c02_feedback_record_scorer_llm_final_gate_001",
+      "research_task_id": "P40-C02",
+      "status": {
+        "review_status": "needs_more_evidence",
+        "ingestion_decision": "ready_for_reaudit",
+        "decision_reason": "已按 reviewed preparation 二审意见补充来源、契约字段和边界说明；等待外部三审。",
+        "created_at": "2026-06-10",
+        "updated_at": "2026-06-10"
+      },
+      "classification": {
+        "tree_node_id": "kt.ai_feedback_governance.feedback_logging",
+        "canonical_node_id": "kt.ai_feedback_governance.feedback_logging",
+        "tree_path": "CEK-TA / AI Engineering / Continuous Learning And Feedback Governance",
+        "related_nodes": [],
+        "partition_id": "KB_AI_18_FEEDBACK_GOVERNANCE",
+        "domain": "ai_governance",
+        "subdomain": "feedback_logging",
+        "rule_type": "governance_rule",
+        "used_for": [
+          "llm_training",
+          "trading_gating_scoring",
+          "continuous_learning",
+          "rag_engineering",
+          "mcp",
+          "vue_audit_ui"
+        ]
+      },
+      "claim": {
+        "claim_id": "claim_001",
+        "statement": "FeedbackRecord 必须保存决策时可用的 feature frame、numeric scorer 输出、LLM audit 输出、deterministic final gate 决策、版本号和后验 outcome_ref；post-trade outcome 只能作为观察窗口后的结果引用，不得混入 scorer 或 final gate 的决策时输入。",
+        "normalized_claim": "phase40.feedback_record_scorer_llm_final_gate.v1",
+        "claim_type": "ai_governance_rule",
+        "evidence_summary": "NIST describes a framework for managing risks to individuals, organizations, and society associated with AI.；Feast documents point-in-time joins that reproduce feature state at a specific time in the past and help avoid future feature leakage.；Tecton training-data construction uses training events with keys and timestamps before requesting feature data.；Databricks documents point-in-time correctness to create training data that reflects feature values available when a label was observed.；Defines FeedbackRecord fields and requires allow, block, skip, human_review and error candidates to be logged.",
+        "interpretation_notes": "本候选只沉淀 AI Engineering 的持续学习、反馈治理、再训练、再校准、发布回滚或 LLM 改进方法；交易规则本体必须路由到 Phase 37。",
+        "claim_strength": "medium",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general",
+        "asset": "general",
+        "timeframe": "general",
+        "data_granularity": "general",
+        "project_type": "trading_llm_gating_scoring",
+        "applies_when": [
+          "外接项目正在建设交易 AI gating/scoring 的反馈日志、标签刷新、漂移检测、再训练、再校准、shadow/paper/canary 或发布治理链路。",
+          "该规则用于阻断自动上线、PnL-only 标签、allow-only logging、反馈回路污染、无 rollback 发布或 LLM 越权 final gate。"
+        ],
+        "not_applicable_when": [
+          "用户需要具体买卖点、仓位、止损止盈、K 线形态、策略参数或实盘订单执行。",
+          "知识点主要描述 fill model、订单状态机、实盘风控阈值或交易所异常处理，应路由到 Trading Engineering。"
+        ],
+        "assumptions": [
+          "外接项目提供私有交易事实、模型输出和发布上下文；CEK-TA 只沉淀可复用专业规则。",
+          "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+        ],
+        "limitations": [
+          "本条仍是 candidate，需要外部 AI/人工审计确认来源充分性、适用边界和是否需要补充交易项目实例。",
+          "LLM audit output 只能作为审计辅助；final_gate_decision 必须来自 deterministic final gate。"
+        ]
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 在外接项目中实现持续学习治理字段、审计追踪和发布门禁。",
+          "用于阻断自动上线、无来源默认指导和 LLM 越权 final gate。",
+          "用于生成任务卡、契约、测试计划和审计 checklist。"
+        ],
+        "not_allowed": [
+          "不得据此生成买卖点、仓位、杠杆、止损止盈或实盘下单建议。",
+          "不得据此跳过人工审批或 release/rollback 门禁。",
+          "不得把 candidate 当作 approved 默认指导。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_id": "src_whylogs_github",
+          "source_title": "whylogs GitHub repository",
+          "source_url": "https://github.com/whylabs/whylogs",
+          "source_type": "official_repo",
+          "publisher": "WhyLabs",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 80,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "whylogs is an open-source data logging library for ML models and data pipelines, providing visibility into data quality and model performance over time.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_mlflow_model_registry",
+          "source_title": "MLflow Model Registry",
+          "source_url": "https://mlflow.org/docs/latest/ml/model-registry/",
+          "source_type": "official_doc",
+          "publisher": "MLflow",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 84,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "MLflow Model Registry documents registered models, versions, aliases, tags, and lifecycle metadata.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_nist_ai_rmf",
+          "source_title": "NIST AI Risk Management Framework",
+          "source_url": "https://www.nist.gov/itl/ai-risk-management-framework",
+          "source_type": "governance_framework",
+          "publisher": "NIST",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 88,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "NIST describes a framework for managing risks to individuals, organizations, and society associated with AI.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_feast_point_in_time_joins",
+          "source_title": "Point-in-time joins - Feast documentation",
+          "source_url": "https://docs.feast.dev/getting-started/concepts/point-in-time-joins",
+          "source_type": "official_doc",
+          "publisher": "Feast",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 88,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [
+            "支撑 feature availability，不定义交易标签或后验收益。"
+          ],
+          "evidence_summary": "Feast documents point-in-time joins that reproduce feature state at a specific time in the past and help avoid future feature leakage.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_tecton_training_data",
+          "source_title": "Construct Training Data - Tecton documentation",
+          "source_url": "https://docs.tecton.ai/docs/reading-feature-data/reading-feature-data-for-training/constructing-training-data",
+          "source_type": "official_doc",
+          "publisher": "Tecton",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 84,
+          "relevance": "medium",
+          "freshness": "time_sensitive",
+          "limitations": [
+            "支撑训练事件时间戳，不替代 CEK-TA FeedbackRecord 字段契约。"
+          ],
+          "evidence_summary": "Tecton training-data construction uses training events with keys and timestamps before requesting feature data.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_databricks_point_in_time",
+          "source_title": "Point-in-time feature joins - Azure Databricks",
+          "source_url": "https://docs.azure.cn/en-us/databricks/machine-learning/feature-store/time-series",
+          "source_type": "official_doc",
+          "publisher": "Databricks",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 84,
+          "relevance": "medium",
+          "freshness": "time_sensitive",
+          "limitations": [
+            "支撑防 leakage 原则，不定义交易项目私有 schema。"
+          ],
+          "evidence_summary": "Databricks documents point-in-time correctness to create training data that reflects feature values available when a label was observed.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_cek_ta_phase40_feedback_dataset_contract",
+          "source_title": "CEK-TA Phase 40 Feedback Dataset Contract",
+          "source_url": "docs/contracts/phase40_feedback_dataset_contract.md",
+          "source_type": "internal_contract",
+          "publisher": "CEK-TA",
+          "published_at": "2026-06-10",
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 90,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [
+            "内部契约定义 CEK-TA 字段，需要外部专业来源共同支撑。"
+          ],
+          "evidence_summary": "Defines FeedbackRecord fields and requires allow, block, skip, human_review and error candidates to be logged.",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "high",
+        "score": 88,
+        "score_version": "1.1.0",
+        "primary_source_count": 6,
+        "supporting_source_count": 1,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "来源支持通用 AI/ML/MLOps/LLMOps/治理工程原则；正式知识转换时需保留 CEK-TA 具体上下游引用和冲突链接。",
+          "补证后仍需外部 AI/人工三审确认 claim-specific 充分性，不能直接转 reviewed 或 approved。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "checked_against": [
+          "docs/contracts/phase40_feedback_dataset_contract.md",
+          "docs/contracts/phase40_drift_retraining_recalibration_contract.md",
+          "docs/contracts/phase40_champion_challenger_release_contract.md",
+          "docs/research/phase40_ai_continuous_learning_scope.md",
+          "docs/contracts/phase40_review_budget_threshold_policy_contract.md",
+          "docs/contracts/phase40_release_manifest_kill_switch_contract.md"
+        ],
+        "conflicts": [],
+        "resolution_summary": "补证后未发现直接理论冲突；仍需三审确认来源充分性和 AI/Trading 分支边界。",
+        "approval_allowed": false
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "supplemented candidate awaiting third review; not reviewed, approved, default guidance, or hard gate.",
+        "requires_human_escalation": true
+      },
+      "review": {
+        "confidence": "medium",
+        "freshness": "time_sensitive",
+        "reviewer": "codex_supplemental_evidence",
+        "reviewed_at": "2026-06-10",
+        "open_questions": [
+          "请三审确认补证后是否 accepted_for_draft；如果仍不足，请返回 needs_more_evidence 或 rejected。",
+          "即使三审通过，本条仍只能进入 formal reviewed draft，不得直接 approved、default guidance 或 hard gate。"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "created",
+            "reason": "Phase 40 P0-Core continuous learning candidate expansion."
+          },
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "phase40_strict_audit_accepted_for_draft",
+            "reason": "候选进入 formal draft 准备队列；直接 reviewed/approved 被审计结果禁止。"
+          },
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "phase40_strict_audit_accepted_for_draft",
+            "reason": "候选进入 formal draft 准备队列；直接 reviewed/approved 被审计结果禁止。"
+          },
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "phase40_reviewed_preparation_needs_more_evidence",
+            "reason": "CEK-TA-316: 二审仍需补证，保持 candidate，不生成 formal reviewed。"
+          },
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "phase40_reviewed_preparation_supplemental_evidence_ready",
+            "reason": "按 CEK-TA-317 补充来源和契约，并准备三审。"
+          },
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "phase40_reviewed_preparation_supplemental_evidence_ready",
+            "reason": "按 CEK-TA-317 补充来源和契约，并准备三审。"
+          },
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "phase40_reviewed_preparation_supplemental_evidence_ready",
+            "reason": "按 CEK-TA-317 补充来源和契约，并准备三审。"
+          }
+        ],
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "ai_audit": {
+          "audit_result_id": "audit_result_phase40_ai_passed_reviewed_preparation_20260610_strict_v1",
+          "source_package_id": "phase40_ai_passed_reviewed_preparation_audit_package_20260610",
+          "candidate_id": "cand_20260610_phase40_p40_c02_feedback_record_scorer_llm_final_gate_001",
+          "research_task_id": "P40-C02",
+          "decision": "needs_more_evidence",
+          "reason": "whylogs 和 MLflow 可支撑日志与模型版本，但当前 source_refs 没有 point-in-time / decision-time feature contract，尚不足以支撑“决策时特征、scorer、LLM audit、final gate、后验结果引用”的完整可回放契约。",
+          "source_patch_notes": [
+            "补 point-in-time / decision-time feature availability 来源或 Phase40 FeedbackRecord schema contract。"
+          ],
+          "content_patch_notes": [
+            "明确 post-trade outcome 只能是 outcome_ref 和 observation window，不得混入 scorer 输入。"
+          ],
+          "boundary_patch_notes": [
+            "LLM audit output 只能作为审计辅助，final_gate_decision 必须来自 deterministic final gate。"
+          ],
+          "conflict_patch_notes": [
+            "当前 workflow 已隐藏 default queue，并设置 visible_in_default_guidance_queue=false；formal reviewed 生成时必须保留。",
+            "source candidate 的 approval_allowed 不得覆盖本审计的 approved_allowed=false。"
+          ],
+          "required_followups": [
+            "add_decision_time_feature_contract_source",
+            "add_feedback_record_schema_contract",
+            "then_reaudit_reviewed_preparation"
+          ],
+          "reviewed_allowed": false,
+          "approved_allowed": false,
+          "default_guidance_allowed": false,
+          "hard_gate_allowed": false,
+          "supplemental_evidence": {
+            "status": "ready_for_reaudit",
+            "added_at": "2026-06-10",
+            "task_id": "CEK-TA-317",
+            "previous_statement": "FeedbackRecord 必须保存决策时可用的 feature frame、numeric scorer 输出、LLM audit 输出、deterministic final gate 决策、版本号和后验 outcome_ref；post-trade outcome 只能作为观察窗口后的结果引用，不得混入 scorer 或 final gate 的决策时输入。",
+            "patched_statement": "FeedbackRecord 必须保存决策时可用的 feature frame、numeric scorer 输出、LLM audit 输出、deterministic final gate 决策、版本号和后验 outcome_ref；post-trade outcome 只能作为观察窗口后的结果引用，不得混入 scorer 或 final gate 的决策时输入。",
+            "added_source_ids": [],
+            "all_supplemental_source_ids": [
+              "src_feast_point_in_time_joins",
+              "src_tecton_training_data",
+              "src_databricks_point_in_time",
+              "src_cek_ta_phase40_feedback_dataset_contract"
+            ],
+            "supplemental_notes": [
+              "Feast point-in-time joins 支撑按历史时间点复现 feature state，避免未来信息泄漏。",
+              "Tecton 和 Databricks 来源支撑以 training events / timestamps 构造 point-in-time correct 数据。",
+              "CEK-TA Feedback Dataset Contract 定义 scorer、LLM audit、final gate、outcome 和版本回链字段。"
+            ],
+            "remaining_boundary": "LLM audit output 只能作为审计辅助；final_gate_decision 必须来自 deterministic final gate。",
+            "reaudit_request": "请判断补证后是否 accepted_for_draft；不得直接 reviewed/approved/default/hard gate。"
+          }
+        },
+        "reviewed_allowed": false,
+        "approved_allowed": false
+      },
+      "copyright": {
+        "stores_full_text": false,
+        "stores_long_quote": false,
+        "summary_only": true,
+        "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+        "reuse_risk": "low"
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_ai_feedback_governance.phase40.feedback_record_scorer_llm_final_gate.v1",
+        "target_schema": "cek_ta_knowledge_item",
+        "target_review_status": "draft",
+        "skill_candidate": false,
+        "eval_case_candidate": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "workflow": {
+        "stage": "needs_more_evidence",
+        "queue_group": "needs_more_evidence",
+        "formal_knowledge_id": null,
+        "formal_review_status": null,
+        "ai_audit_result_id": "audit_result_phase40_ai_passed_reviewed_preparation_20260610_strict_v1",
+        "hidden_from_default_queue": true,
+        "next_action": "export_ai_audit",
+        "default_guidance_allowed": false,
+        "visible_in_default_guidance_queue": false
+      },
+      "phase40_trace": {
+        "acceptance_gate": "能支持可回放 audit trail",
+        "search_direction": "prediction logging feature snapshot model output decision audit trail",
+        "related_contracts": [
+          "docs/contracts/phase40_feedback_dataset_contract.md",
+          "docs/contracts/phase40_drift_retraining_recalibration_contract.md",
+          "docs/contracts/phase40_champion_challenger_release_contract.md",
+          "docs/research/phase40_ai_continuous_learning_scope.md",
+          "docs/contracts/phase40_review_budget_threshold_policy_contract.md",
+          "docs/contracts/phase40_release_manifest_kill_switch_contract.md"
+        ],
+        "supplemental_evidence_ready": true,
+        "supplemental_evidence_added_at": "2026-06-10",
+        "supplemental_task_id": "CEK-TA-317",
+        "audit_patch_notes": {
+          "source_ids_added_or_confirmed": [
+            "src_feast_point_in_time_joins",
+            "src_tecton_training_data",
+            "src_databricks_point_in_time",
+            "src_cek_ta_phase40_feedback_dataset_contract"
+          ],
+          "remaining_boundary": "LLM audit output 只能作为审计辅助；final_gate_decision 必须来自 deterministic final gate。"
+        }
+      }
+    },
+    {
+      "schema_version": "1.0.0",
+      "candidate_id": "cand_20260610_phase40_p40_c07_feature_drift_label_drift_score_distribution_drift_calibration_drift_001",
+      "research_task_id": "P40-C07",
+      "status": {
+        "review_status": "needs_more_evidence",
+        "ingestion_decision": "ready_for_reaudit",
+        "decision_reason": "已按 reviewed preparation 二审意见补充来源、契约字段和边界说明；等待外部三审。",
+        "created_at": "2026-06-10",
+        "updated_at": "2026-06-10"
+      },
+      "classification": {
+        "tree_node_id": "kt.ai_feedback_governance.drift_monitoring",
+        "canonical_node_id": "kt.ai_feedback_governance.drift_monitoring",
+        "tree_path": "CEK-TA / AI Engineering / Continuous Learning And Feedback Governance",
+        "related_nodes": [],
+        "partition_id": "KB_AI_18_FEEDBACK_GOVERNANCE",
+        "domain": "ai_governance",
+        "subdomain": "drift_monitoring",
+        "rule_type": "governance_rule",
+        "used_for": [
+          "llm_training",
+          "trading_gating_scoring",
+          "continuous_learning",
+          "rag_engineering",
+          "mcp",
+          "vue_audit_ui"
+        ]
+      },
+      "claim": {
+        "claim_id": "claim_001",
+        "statement": "feature drift、label_or_target drift、score_distribution drift 和 calibration drift 必须分开监控；calibration drift 至少记录 reference_window、current_window、minimum_slice_n、Brier/ECE 或 calibration curve/reliability diagram 证据，并且 drift alert 只能触发 investigation、review 或 retraining_review。",
+        "normalized_claim": "phase40.feature_drift_label_drift_score_distribution_drift_calibration_drift.v1",
+        "claim_type": "ai_governance_rule",
+        "evidence_summary": "TensorFlow Data Validation documents data statistics, slicing, schema checks, skew, and drift for production ML data.；scikit-learn documents probability calibration for classifier probabilities and the need to improve poorly calibrated probability estimates.；scikit-learn describes calibration curves, also known as reliability diagrams, for visualizing probability calibration.；CalibrationDisplay plots average predicted probability per bin against the fraction of positive classes.；Defines DriftReport, RecalibrationReport and ThresholdStabilityReport, including calibration drift and threshold pressure.",
+        "interpretation_notes": "本候选只沉淀 AI Engineering 的持续学习、反馈治理、再训练、再校准、发布回滚或 LLM 改进方法；交易规则本体必须路由到 Phase 37。",
+        "claim_strength": "medium",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general",
+        "asset": "general",
+        "timeframe": "general",
+        "data_granularity": "general",
+        "project_type": "trading_llm_gating_scoring",
+        "applies_when": [
+          "外接项目正在建设交易 AI gating/scoring 的反馈日志、标签刷新、漂移检测、再训练、再校准、shadow/paper/canary 或发布治理链路。",
+          "该规则用于阻断自动上线、PnL-only 标签、allow-only logging、反馈回路污染、无 rollback 发布或 LLM 越权 final gate。"
+        ],
+        "not_applicable_when": [
+          "用户需要具体买卖点、仓位、止损止盈、K 线形态、策略参数或实盘订单执行。",
+          "知识点主要描述 fill model、订单状态机、实盘风控阈值或交易所异常处理，应路由到 Trading Engineering。"
+        ],
+        "assumptions": [
+          "外接项目提供私有交易事实、模型输出和发布上下文；CEK-TA 只沉淀可复用专业规则。",
+          "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+        ],
+        "limitations": [
+          "本条仍是 candidate，需要外部 AI/人工审计确认来源充分性、适用边界和是否需要补充交易项目实例。",
+          "drift alert 不是 hard gate、再训练命令或实盘交易动作。"
+        ]
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 在外接项目中实现持续学习治理字段、审计追踪和发布门禁。",
+          "用于阻断自动上线、无来源默认指导和 LLM 越权 final gate。",
+          "用于生成任务卡、契约、测试计划和审计 checklist。"
+        ],
+        "not_allowed": [
+          "不得据此生成买卖点、仓位、杠杆、止损止盈或实盘下单建议。",
+          "不得据此跳过人工审批或 release/rollback 门禁。",
+          "不得把 candidate 当作 approved 默认指导。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_id": "src_evidently_data_drift",
+          "source_title": "Data Drift - Evidently documentation",
+          "source_url": "https://docs.evidentlyai.com/metrics/preset_data_drift",
+          "source_type": "official_doc",
+          "publisher": "Evidently AI",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 84,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "Evidently documents data drift presets for comparing distribution shifts between reference and current datasets.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_evidently_drift_explainer",
+          "source_title": "Data drift explainer - Evidently documentation",
+          "source_url": "https://docs.evidentlyai.com/metrics/explainer_drift",
+          "source_type": "official_doc",
+          "publisher": "Evidently AI",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 84,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "Evidently explains distribution drift checks for individual columns, including features, predictions, and targets.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_tfdv_get_started",
+          "source_title": "Get started with TensorFlow Data Validation",
+          "source_url": "https://www.tensorflow.org/tfx/data_validation/get_started",
+          "source_type": "official_doc",
+          "publisher": "TensorFlow",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 84,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "TensorFlow Data Validation documents data statistics, slicing, schema checks, skew, and drift for production ML data.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_sklearn_calibration",
+          "source_title": "Probability calibration - scikit-learn documentation",
+          "source_url": "https://scikit-learn.org/stable/modules/calibration.html",
+          "source_type": "official_doc",
+          "publisher": "scikit-learn",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 88,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [
+            "支撑概率校准，不证明交易阈值或收益。"
+          ],
+          "evidence_summary": "scikit-learn documents probability calibration for classifier probabilities and the need to improve poorly calibrated probability estimates.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_sklearn_calibration_curve_example",
+          "source_title": "Probability Calibration curves - scikit-learn",
+          "source_url": "https://scikit-learn.org/stable/auto_examples/calibration/plot_calibration_curve.html",
+          "source_type": "official_doc",
+          "publisher": "scikit-learn",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 88,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [
+            "支撑 calibration drift 度量，不定义漂移后的自动交易动作。"
+          ],
+          "evidence_summary": "scikit-learn describes calibration curves, also known as reliability diagrams, for visualizing probability calibration.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_sklearn_calibration_display",
+          "source_title": "CalibrationDisplay - scikit-learn API reference",
+          "source_url": "https://scikit-learn.org/stable/modules/generated/sklearn.calibration.CalibrationDisplay.html",
+          "source_type": "official_doc",
+          "publisher": "scikit-learn",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 86,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [
+            "API 文档来源，需结合 CEK-TA drift contract 解释交易 AI 动作边界。"
+          ],
+          "evidence_summary": "CalibrationDisplay plots average predicted probability per bin against the fraction of positive classes.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_cek_ta_phase40_drift_retraining_contract",
+          "source_title": "CEK-TA Phase 40 Drift Retraining Recalibration Contract",
+          "source_url": "docs/contracts/phase40_drift_retraining_recalibration_contract.md",
+          "source_type": "internal_contract",
+          "publisher": "CEK-TA",
+          "published_at": "2026-06-10",
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 90,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [
+            "内部契约约束 CEK-TA 工作流，不替代外部 calibration 来源。"
+          ],
+          "evidence_summary": "Defines DriftReport, RecalibrationReport and ThresholdStabilityReport, including calibration drift and threshold pressure.",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "high",
+        "score": 88,
+        "score_version": "1.1.0",
+        "primary_source_count": 7,
+        "supporting_source_count": 0,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "来源支持通用 AI/ML/MLOps/LLMOps/治理工程原则；正式知识转换时需保留 CEK-TA 具体上下游引用和冲突链接。",
+          "补证后仍需外部 AI/人工三审确认 claim-specific 充分性，不能直接转 reviewed 或 approved。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "checked_against": [
+          "docs/contracts/phase40_feedback_dataset_contract.md",
+          "docs/contracts/phase40_drift_retraining_recalibration_contract.md",
+          "docs/contracts/phase40_champion_challenger_release_contract.md",
+          "docs/research/phase40_ai_continuous_learning_scope.md",
+          "docs/contracts/phase40_review_budget_threshold_policy_contract.md",
+          "docs/contracts/phase40_release_manifest_kill_switch_contract.md"
+        ],
+        "conflicts": [],
+        "resolution_summary": "补证后未发现直接理论冲突；仍需三审确认来源充分性和 AI/Trading 分支边界。",
+        "approval_allowed": false
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "supplemented candidate awaiting third review; not reviewed, approved, default guidance, or hard gate.",
+        "requires_human_escalation": true
+      },
+      "review": {
+        "confidence": "medium",
+        "freshness": "time_sensitive",
+        "reviewer": "codex_supplemental_evidence",
+        "reviewed_at": "2026-06-10",
+        "open_questions": [
+          "请三审确认补证后是否 accepted_for_draft；如果仍不足，请返回 needs_more_evidence 或 rejected。",
+          "即使三审通过，本条仍只能进入 formal reviewed draft，不得直接 approved、default guidance 或 hard gate。"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "created",
+            "reason": "Phase 40 P0-Core continuous learning candidate expansion."
+          },
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "phase40_strict_audit_accepted_for_draft",
+            "reason": "候选进入 formal draft 准备队列；直接 reviewed/approved 被审计结果禁止。"
+          },
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "phase40_strict_audit_accepted_for_draft",
+            "reason": "候选进入 formal draft 准备队列；直接 reviewed/approved 被审计结果禁止。"
+          },
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "phase40_reviewed_preparation_needs_more_evidence",
+            "reason": "CEK-TA-316: 二审仍需补证，保持 candidate，不生成 formal reviewed。"
+          },
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "phase40_reviewed_preparation_supplemental_evidence_ready",
+            "reason": "按 CEK-TA-317 补充来源和契约，并准备三审。"
+          },
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "phase40_reviewed_preparation_supplemental_evidence_ready",
+            "reason": "按 CEK-TA-317 补充来源和契约，并准备三审。"
+          },
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "phase40_reviewed_preparation_supplemental_evidence_ready",
+            "reason": "按 CEK-TA-317 补充来源和契约，并准备三审。"
+          }
+        ],
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "ai_audit": {
+          "audit_result_id": "audit_result_phase40_ai_passed_reviewed_preparation_20260610_strict_v1",
+          "source_package_id": "phase40_ai_passed_reviewed_preparation_audit_package_20260610",
+          "candidate_id": "cand_20260610_phase40_p40_c07_feature_drift_label_drift_score_distribution_drift_calibration_drift_001",
+          "research_task_id": "P40-C07",
+          "decision": "needs_more_evidence",
+          "reason": "Evidently/TFDV 支撑 feature/target/prediction distribution drift，但当前 source_refs 缺少 calibration curve / reliability diagram 或 probability calibration 来源，不足以把 calibration drift 一并升级为 formal reviewed。",
+          "source_patch_notes": [
+            "补 scikit-learn calibration curve / CalibrationDisplay / reliability diagram source。"
+          ],
+          "content_patch_notes": [
+            "分别定义 feature_drift、label_or_target_drift、score_distribution_drift、calibration_drift，并记录 reference/current windows 与 minimum_slice_n。"
+          ],
+          "boundary_patch_notes": [
+            "drift alert 只能触发 investigation/review/retraining_review，不得自动 hard gate。"
+          ],
+          "conflict_patch_notes": [
+            "当前 workflow 已隐藏 default queue，并设置 visible_in_default_guidance_queue=false；formal reviewed 生成时必须保留。",
+            "source candidate 的 approval_allowed 不得覆盖本审计的 approved_allowed=false。"
+          ],
+          "required_followups": [
+            "add_calibration_curve_or_reliability_diagram_source",
+            "define_calibration_drift_metric",
+            "then_reaudit_reviewed_preparation"
+          ],
+          "reviewed_allowed": false,
+          "approved_allowed": false,
+          "default_guidance_allowed": false,
+          "hard_gate_allowed": false,
+          "supplemental_evidence": {
+            "status": "ready_for_reaudit",
+            "added_at": "2026-06-10",
+            "task_id": "CEK-TA-317",
+            "previous_statement": "feature drift、label_or_target drift、score_distribution drift 和 calibration drift 必须分开监控；calibration drift 至少记录 reference_window、current_window、minimum_slice_n、Brier/ECE 或 calibration curve/reliability diagram 证据，并且 drift alert 只能触发 investigation、review 或 retraining_review。",
+            "patched_statement": "feature drift、label_or_target drift、score_distribution drift 和 calibration drift 必须分开监控；calibration drift 至少记录 reference_window、current_window、minimum_slice_n、Brier/ECE 或 calibration curve/reliability diagram 证据，并且 drift alert 只能触发 investigation、review 或 retraining_review。",
+            "added_source_ids": [],
+            "all_supplemental_source_ids": [
+              "src_sklearn_calibration",
+              "src_sklearn_calibration_curve_example",
+              "src_sklearn_calibration_display",
+              "src_cek_ta_phase40_drift_retraining_contract"
+            ],
+            "supplemental_notes": [
+              "scikit-learn probability calibration 和 calibration curves 支撑概率校准与 reliability diagram。",
+              "CalibrationDisplay 支撑按 bin 比较平均预测概率与正类比例。",
+              "CEK-TA drift contract 定义 calibration_drift 与再训练/再校准触发边界。"
+            ],
+            "remaining_boundary": "drift alert 不是 hard gate、再训练命令或实盘交易动作。",
+            "reaudit_request": "请判断补证后是否 accepted_for_draft；不得直接 reviewed/approved/default/hard gate。"
+          }
+        },
+        "reviewed_allowed": false,
+        "approved_allowed": false
+      },
+      "copyright": {
+        "stores_full_text": false,
+        "stores_long_quote": false,
+        "summary_only": true,
+        "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+        "reuse_risk": "low"
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_ai_feedback_governance.phase40.feature_drift_label_drift_score_distribution_drift_calibration_drift.v1",
+        "target_schema": "cek_ta_knowledge_item",
+        "target_review_status": "draft",
+        "skill_candidate": false,
+        "eval_case_candidate": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "workflow": {
+        "stage": "needs_more_evidence",
+        "queue_group": "needs_more_evidence",
+        "formal_knowledge_id": null,
+        "formal_review_status": null,
+        "ai_audit_result_id": "audit_result_phase40_ai_passed_reviewed_preparation_20260610_strict_v1",
+        "hidden_from_default_queue": true,
+        "next_action": "export_ai_audit",
+        "default_guidance_allowed": false,
+        "visible_in_default_guidance_queue": false
+      },
+      "phase40_trace": {
+        "acceptance_gate": "不允许只用一个 drift 总分",
+        "search_direction": "feature drift label drift prediction drift calibration drift",
+        "related_contracts": [
+          "docs/contracts/phase40_feedback_dataset_contract.md",
+          "docs/contracts/phase40_drift_retraining_recalibration_contract.md",
+          "docs/contracts/phase40_champion_challenger_release_contract.md",
+          "docs/research/phase40_ai_continuous_learning_scope.md",
+          "docs/contracts/phase40_review_budget_threshold_policy_contract.md",
+          "docs/contracts/phase40_release_manifest_kill_switch_contract.md"
+        ],
+        "supplemental_evidence_ready": true,
+        "supplemental_evidence_added_at": "2026-06-10",
+        "supplemental_task_id": "CEK-TA-317",
+        "audit_patch_notes": {
+          "source_ids_added_or_confirmed": [
+            "src_sklearn_calibration",
+            "src_sklearn_calibration_curve_example",
+            "src_sklearn_calibration_display",
+            "src_cek_ta_phase40_drift_retraining_contract"
+          ],
+          "remaining_boundary": "drift alert 不是 hard gate、再训练命令或实盘交易动作。"
+        }
+      }
+    },
+    {
+      "schema_version": "1.0.0",
+      "candidate_id": "cand_20260610_phase40_p40_c12_threshold_policy_001",
+      "research_task_id": "P40-C12",
+      "status": {
+        "review_status": "needs_more_evidence",
+        "ingestion_decision": "ready_for_reaudit",
+        "decision_reason": "已按 reviewed preparation 二审意见补充来源、契约字段和边界说明；等待外部三审。",
+        "created_at": "2026-06-10",
+        "updated_at": "2026-06-10"
+      },
+      "classification": {
+        "tree_node_id": "kt.ai_feedback_governance.recalibration_loop",
+        "canonical_node_id": "kt.ai_feedback_governance.recalibration_loop",
+        "tree_path": "CEK-TA / AI Engineering / Continuous Learning And Feedback Governance",
+        "related_nodes": [],
+        "partition_id": "KB_AI_18_FEEDBACK_GOVERNANCE",
+        "domain": "ai_governance",
+        "subdomain": "recalibration_loop",
+        "rule_type": "governance_rule",
+        "used_for": [
+          "llm_training",
+          "trading_gating_scoring",
+          "continuous_learning",
+          "rag_engineering",
+          "mcp",
+          "vue_audit_ui"
+        ]
+      },
+      "claim": {
+        "claim_id": "claim_001",
+        "statement": "threshold policy 必须绑定 cost_matrix_version、calibrator_version、review_budget_policy_ref、review_queue_capacity_snapshot_ref 和 owner_approval_ref；review budget 或 queue capacity 超限时只能进入 freeze_threshold_change、safe_mode、owner_review 或 collect_more_evidence，不能自动 allow 或自动 block。",
+        "normalized_claim": "phase40.threshold_policy.v1",
+        "claim_type": "ai_governance_rule",
+        "evidence_summary": "NIST describes a framework for managing risks to individuals, organizations, and society associated with AI.；Amazon A2I documents human review loops for ML applications, including low-confidence outputs and tabular data review.；Amazon A2I documents creating a human review workflow and configuring a private work team.；Defines ReviewBudgetPolicy, ReviewQueueCapacitySnapshot, ThresholdPolicyReviewBudgetBinding and overflow boundaries.；Defines DriftReport, RecalibrationReport and ThresholdStabilityReport, including calibration drift and threshold pressure.",
+        "interpretation_notes": "本候选只沉淀 AI Engineering 的持续学习、反馈治理、再训练、再校准、发布回滚或 LLM 改进方法；交易规则本体必须路由到 Phase 37。",
+        "claim_strength": "medium",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general",
+        "asset": "general",
+        "timeframe": "general",
+        "data_granularity": "general",
+        "project_type": "trading_llm_gating_scoring",
+        "applies_when": [
+          "外接项目正在建设交易 AI gating/scoring 的反馈日志、标签刷新、漂移检测、再训练、再校准、shadow/paper/canary 或发布治理链路。",
+          "该规则用于阻断自动上线、PnL-only 标签、allow-only logging、反馈回路污染、无 rollback 发布或 LLM 越权 final gate。"
+        ],
+        "not_applicable_when": [
+          "用户需要具体买卖点、仓位、止损止盈、K 线形态、策略参数或实盘订单执行。",
+          "知识点主要描述 fill model、订单状态机、实盘风控阈值或交易所异常处理，应路由到 Trading Engineering。"
+        ],
+        "assumptions": [
+          "外接项目提供私有交易事实、模型输出和发布上下文；CEK-TA 只沉淀可复用专业规则。",
+          "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+        ],
+        "limitations": [
+          "本条仍是 candidate，需要外部 AI/人工审计确认来源充分性、适用边界和是否需要补充交易项目实例。",
+          "人审预算是治理约束，不是交易收益、买卖点、实盘风控阈值或自动放宽阈值的许可。"
+        ]
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 在外接项目中实现持续学习治理字段、审计追踪和发布门禁。",
+          "用于阻断自动上线、无来源默认指导和 LLM 越权 final gate。",
+          "用于生成任务卡、契约、测试计划和审计 checklist。"
+        ],
+        "not_allowed": [
+          "不得据此生成买卖点、仓位、杠杆、止损止盈或实盘下单建议。",
+          "不得据此跳过人工审批或 release/rollback 门禁。",
+          "不得把 candidate 当作 approved 默认指导。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_id": "src_sklearn_cost_threshold",
+          "source_title": "Post-tuning the decision threshold for cost-sensitive learning",
+          "source_url": "https://scikit-learn.org/stable/auto_examples/model_selection/plot_cost_sensitive_learning.html",
+          "source_type": "official_doc",
+          "publisher": "scikit-learn",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 86,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "scikit-learn demonstrates decision threshold tuning based on a business cost function rather than a fixed probability cutoff.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_sklearn_calibration",
+          "source_title": "Probability calibration - scikit-learn documentation",
+          "source_url": "https://scikit-learn.org/stable/modules/calibration.html",
+          "source_type": "official_doc",
+          "publisher": "scikit-learn",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 88,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "scikit-learn documents calibration curves and probability calibration workflows for classifier probabilities.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_nist_ai_rmf",
+          "source_title": "NIST AI Risk Management Framework",
+          "source_url": "https://www.nist.gov/itl/ai-risk-management-framework",
+          "source_type": "governance_framework",
+          "publisher": "NIST",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 88,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "NIST describes a framework for managing risks to individuals, organizations, and society associated with AI.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_aws_augmented_ai_human_review",
+          "source_title": "Using Amazon Augmented AI for Human Review",
+          "source_url": "https://docs.aws.amazon.com/sagemaker/latest/dg/a2i-use-augmented-ai-a2i-human-review-loops.html",
+          "source_type": "official_doc",
+          "publisher": "AWS",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 84,
+          "relevance": "medium",
+          "freshness": "time_sensitive",
+          "limitations": [
+            "支撑 human review loop，不定义交易阈值成本矩阵。"
+          ],
+          "evidence_summary": "Amazon A2I documents human review loops for ML applications, including low-confidence outputs and tabular data review.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_aws_augmented_ai_create_workflow",
+          "source_title": "Create a Human Review Workflow - Amazon SageMaker AI",
+          "source_url": "https://docs.aws.amazon.com/sagemaker/latest/dg/a2i-create-flow-definition.html",
+          "source_type": "official_doc",
+          "publisher": "AWS",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 84,
+          "relevance": "medium",
+          "freshness": "time_sensitive",
+          "limitations": [
+            "支撑工作流与 workforce 配置，不替代 CEK-TA review budget contract。"
+          ],
+          "evidence_summary": "Amazon A2I documents creating a human review workflow and configuring a private work team.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_cek_ta_phase40_review_budget_threshold_policy_contract",
+          "source_title": "CEK-TA Phase 40 Review Budget Threshold Policy Contract",
+          "source_url": "docs/contracts/phase40_review_budget_threshold_policy_contract.md",
+          "source_type": "internal_contract",
+          "publisher": "CEK-TA",
+          "published_at": "2026-06-10",
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 90,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [
+            "内部契约支撑预算/队列字段，不替代外部 human-review workflow 来源。"
+          ],
+          "evidence_summary": "Defines ReviewBudgetPolicy, ReviewQueueCapacitySnapshot, ThresholdPolicyReviewBudgetBinding and overflow boundaries.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_cek_ta_phase40_drift_retraining_contract",
+          "source_title": "CEK-TA Phase 40 Drift Retraining Recalibration Contract",
+          "source_url": "docs/contracts/phase40_drift_retraining_recalibration_contract.md",
+          "source_type": "internal_contract",
+          "publisher": "CEK-TA",
+          "published_at": "2026-06-10",
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 90,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [
+            "内部契约约束 CEK-TA 工作流，不替代外部 calibration 来源。"
+          ],
+          "evidence_summary": "Defines DriftReport, RecalibrationReport and ThresholdStabilityReport, including calibration drift and threshold pressure.",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "high",
+        "score": 88,
+        "score_version": "1.1.0",
+        "primary_source_count": 7,
+        "supporting_source_count": 0,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "来源支持通用 AI/ML/MLOps/LLMOps/治理工程原则；正式知识转换时需保留 CEK-TA 具体上下游引用和冲突链接。",
+          "补证后仍需外部 AI/人工三审确认 claim-specific 充分性，不能直接转 reviewed 或 approved。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "checked_against": [
+          "docs/contracts/phase40_feedback_dataset_contract.md",
+          "docs/contracts/phase40_drift_retraining_recalibration_contract.md",
+          "docs/contracts/phase40_champion_challenger_release_contract.md",
+          "docs/research/phase40_ai_continuous_learning_scope.md",
+          "docs/contracts/phase40_review_budget_threshold_policy_contract.md",
+          "docs/contracts/phase40_release_manifest_kill_switch_contract.md"
+        ],
+        "conflicts": [],
+        "resolution_summary": "补证后未发现直接理论冲突；仍需三审确认来源充分性和 AI/Trading 分支边界。",
+        "approval_allowed": false
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "supplemented candidate awaiting third review; not reviewed, approved, default guidance, or hard gate.",
+        "requires_human_escalation": true
+      },
+      "review": {
+        "confidence": "medium",
+        "freshness": "time_sensitive",
+        "reviewer": "codex_supplemental_evidence",
+        "reviewed_at": "2026-06-10",
+        "open_questions": [
+          "请三审确认补证后是否 accepted_for_draft；如果仍不足，请返回 needs_more_evidence 或 rejected。",
+          "即使三审通过，本条仍只能进入 formal reviewed draft，不得直接 approved、default guidance 或 hard gate。"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "created",
+            "reason": "Phase 40 P0-Core continuous learning candidate expansion."
+          },
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "phase40_strict_audit_accepted_for_draft",
+            "reason": "候选进入 formal draft 准备队列；直接 reviewed/approved 被审计结果禁止。"
+          },
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "phase40_strict_audit_accepted_for_draft",
+            "reason": "候选进入 formal draft 准备队列；直接 reviewed/approved 被审计结果禁止。"
+          },
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "phase40_reviewed_preparation_needs_more_evidence",
+            "reason": "CEK-TA-316: 二审仍需补证，保持 candidate，不生成 formal reviewed。"
+          },
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "phase40_reviewed_preparation_supplemental_evidence_ready",
+            "reason": "按 CEK-TA-317 补充来源和契约，并准备三审。"
+          },
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "phase40_reviewed_preparation_supplemental_evidence_ready",
+            "reason": "按 CEK-TA-317 补充来源和契约，并准备三审。"
+          },
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "phase40_reviewed_preparation_supplemental_evidence_ready",
+            "reason": "按 CEK-TA-317 补充来源和契约，并准备三审。"
+          }
+        ],
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "ai_audit": {
+          "audit_result_id": "audit_result_phase40_ai_passed_reviewed_preparation_20260610_strict_v1",
+          "source_package_id": "phase40_ai_passed_reviewed_preparation_audit_package_20260610",
+          "candidate_id": "cand_20260610_phase40_p40_c12_threshold_policy_001",
+          "research_task_id": "P40-C12",
+          "decision": "needs_more_evidence",
+          "reason": "scikit-learn cost-sensitive threshold 支撑成本敏感阈值，但当前 source_refs 缺少 human review budget / queue capacity policy；“threshold policy 必须与人工复核预算联动”尚缺直接项目契约。",
+          "source_patch_notes": [
+            "补 review_budget / queue_capacity / human_review_load policy contract。"
+          ],
+          "content_patch_notes": [
+            "将 threshold_policy_version 绑定 cost_matrix_version、review_budget_version、calibrator_version、owner_approval。"
+          ],
+          "boundary_patch_notes": [
+            "不得把 review budget 写成自动 allow/block；超预算应路由降级策略或人工审批。"
+          ],
+          "conflict_patch_notes": [
+            "当前 workflow 已隐藏 default queue，并设置 visible_in_default_guidance_queue=false；formal reviewed 生成时必须保留。",
+            "source candidate 的 approval_allowed 不得覆盖本审计的 approved_allowed=false。"
+          ],
+          "required_followups": [
+            "add_review_budget_policy_source",
+            "define_review_capacity_limit_and_overflow_policy",
+            "then_reaudit_reviewed_preparation"
+          ],
+          "reviewed_allowed": false,
+          "approved_allowed": false,
+          "default_guidance_allowed": false,
+          "hard_gate_allowed": false,
+          "supplemental_evidence": {
+            "status": "ready_for_reaudit",
+            "added_at": "2026-06-10",
+            "task_id": "CEK-TA-317",
+            "previous_statement": "threshold policy 必须绑定 cost_matrix_version、calibrator_version、review_budget_policy_ref、review_queue_capacity_snapshot_ref 和 owner_approval_ref；review budget 或 queue capacity 超限时只能进入 freeze_threshold_change、safe_mode、owner_review 或 collect_more_evidence，不能自动 allow 或自动 block。",
+            "patched_statement": "threshold policy 必须绑定 cost_matrix_version、calibrator_version、review_budget_policy_ref、review_queue_capacity_snapshot_ref 和 owner_approval_ref；review budget 或 queue capacity 超限时只能进入 freeze_threshold_change、safe_mode、owner_review 或 collect_more_evidence，不能自动 allow 或自动 block。",
+            "added_source_ids": [],
+            "all_supplemental_source_ids": [
+              "src_aws_augmented_ai_human_review",
+              "src_aws_augmented_ai_create_workflow",
+              "src_cek_ta_phase40_review_budget_threshold_policy_contract",
+              "src_cek_ta_phase40_drift_retraining_contract"
+            ],
+            "supplemental_notes": [
+              "Amazon A2I 来源支撑 ML 应用中的 human review workflow 和 work team 配置。",
+              "CEK-TA Review Budget Threshold Policy Contract 定义预算、队列容量和 overflow policy。",
+              "CEK-TA drift/retraining contract 已定义 ThresholdStabilityReport 和 review_queue_pressure。"
+            ],
+            "remaining_boundary": "人审预算是治理约束，不是交易收益、买卖点、实盘风控阈值或自动放宽阈值的许可。",
+            "reaudit_request": "请判断补证后是否 accepted_for_draft；不得直接 reviewed/approved/default/hard gate。"
+          }
+        },
+        "reviewed_allowed": false,
+        "approved_allowed": false
+      },
+      "copyright": {
+        "stores_full_text": false,
+        "stores_long_quote": false,
+        "summary_only": true,
+        "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+        "reuse_risk": "low"
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_ai_feedback_governance.phase40.threshold_policy.v1",
+        "target_schema": "cek_ta_knowledge_item",
+        "target_review_status": "draft",
+        "skill_candidate": false,
+        "eval_case_candidate": true,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "workflow": {
+        "stage": "needs_more_evidence",
+        "queue_group": "needs_more_evidence",
+        "formal_knowledge_id": null,
+        "formal_review_status": null,
+        "ai_audit_result_id": "audit_result_phase40_ai_passed_reviewed_preparation_20260610_strict_v1",
+        "hidden_from_default_queue": true,
+        "next_action": "export_ai_audit",
+        "default_guidance_allowed": false,
+        "visible_in_default_guidance_queue": false
+      },
+      "phase40_trace": {
+        "acceptance_gate": "阈值不是固定 0.5",
+        "search_direction": "decision threshold cost matrix review capacity",
+        "related_contracts": [
+          "docs/contracts/phase40_feedback_dataset_contract.md",
+          "docs/contracts/phase40_drift_retraining_recalibration_contract.md",
+          "docs/contracts/phase40_champion_challenger_release_contract.md",
+          "docs/research/phase40_ai_continuous_learning_scope.md",
+          "docs/contracts/phase40_review_budget_threshold_policy_contract.md",
+          "docs/contracts/phase40_release_manifest_kill_switch_contract.md"
+        ],
+        "supplemental_evidence_ready": true,
+        "supplemental_evidence_added_at": "2026-06-10",
+        "supplemental_task_id": "CEK-TA-317",
+        "audit_patch_notes": {
+          "source_ids_added_or_confirmed": [
+            "src_aws_augmented_ai_human_review",
+            "src_aws_augmented_ai_create_workflow",
+            "src_cek_ta_phase40_review_budget_threshold_policy_contract",
+            "src_cek_ta_phase40_drift_retraining_contract"
+          ],
+          "remaining_boundary": "人审预算是治理约束，不是交易收益、买卖点、实盘风控阈值或自动放宽阈值的许可。"
+        }
+      }
+    },
+    {
+      "schema_version": "1.0.0",
+      "candidate_id": "cand_20260610_phase40_p40_c15_release_manifest_rollback_target_kill_switch_001",
+      "research_task_id": "P40-C15",
+      "status": {
+        "review_status": "needs_more_evidence",
+        "ingestion_decision": "ready_for_reaudit",
+        "decision_reason": "已按 reviewed preparation 二审意见补充来源、契约字段和边界说明；等待外部三审。",
+        "created_at": "2026-06-10",
+        "updated_at": "2026-06-10"
+      },
+      "classification": {
+        "tree_node_id": "kt.ai_feedback_governance.rollback_governance",
+        "canonical_node_id": "kt.ai_feedback_governance.rollback_governance",
+        "tree_path": "CEK-TA / AI Engineering / Continuous Learning And Feedback Governance",
+        "related_nodes": [],
+        "partition_id": "KB_AI_18_FEEDBACK_GOVERNANCE",
+        "domain": "ai_governance",
+        "subdomain": "rollback_governance",
+        "rule_type": "governance_rule",
+        "used_for": [
+          "llm_training",
+          "trading_gating_scoring",
+          "continuous_learning",
+          "rag_engineering",
+          "mcp",
+          "vue_audit_ui"
+        ]
+      },
+      "claim": {
+        "claim_id": "claim_001",
+        "statement": "每次影响交易 AI gating/scoring 决策链路的发布都必须有 release manifest、rollback target、kill_switch_policy_ref、secret_scan_status、rollback_drill_status、kill_switch_tested_at 和 human_approval_record_ref；缺任一关键控制必须 block_release。",
+        "normalized_claim": "phase40.release_manifest_rollback_target_kill_switch.v1",
+        "claim_type": "ai_governance_rule",
+        "evidence_summary": "GitHub secret scanning detects hardcoded credentials such as API keys, passwords and tokens in repository history and branches.；NIST AI RMF Manage covers post-deployment monitoring, override, decommissioning, incident response, recovery and change management.；FCA algorithmic trading review discusses risk controls including kill functionality, control inventories, testing and governance.；Defines ReleaseManifest, RollbackPlan, HumanApprovalRecord and release blockers for rollback and kill switch.；Defines ReleaseSafetyChecklist, KillSwitchPolicy, RollbackDrillRecord and SecretScanResult fields.",
+        "interpretation_notes": "本候选只沉淀 AI Engineering 的持续学习、反馈治理、再训练、再校准、发布回滚或 LLM 改进方法；交易规则本体必须路由到 Phase 37。",
+        "claim_strength": "medium",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general",
+        "asset": "general",
+        "timeframe": "general",
+        "data_granularity": "general",
+        "project_type": "trading_llm_gating_scoring",
+        "applies_when": [
+          "外接项目正在建设交易 AI gating/scoring 的反馈日志、标签刷新、漂移检测、再训练、再校准、shadow/paper/canary 或发布治理链路。",
+          "该规则用于阻断自动上线、PnL-only 标签、allow-only logging、反馈回路污染、无 rollback 发布或 LLM 越权 final gate。"
+        ],
+        "not_applicable_when": [
+          "用户需要具体买卖点、仓位、止损止盈、K 线形态、策略参数或实盘订单执行。",
+          "知识点主要描述 fill model、订单状态机、实盘风控阈值或交易所异常处理，应路由到 Trading Engineering。"
+        ],
+        "assumptions": [
+          "外接项目提供私有交易事实、模型输出和发布上下文；CEK-TA 只沉淀可复用专业规则。",
+          "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+        ],
+        "limitations": [
+          "本条仍是 candidate，需要外部 AI/人工审计确认来源充分性、适用边界和是否需要补充交易项目实例。",
+          "release manifest 不得包含私有策略正文、账号密钥或交易执行规则本体；订单撤单和实盘控制由 Trading Engineering 或外接项目实现。"
+        ]
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 在外接项目中实现持续学习治理字段、审计追踪和发布门禁。",
+          "用于阻断自动上线、无来源默认指导和 LLM 越权 final gate。",
+          "用于生成任务卡、契约、测试计划和审计 checklist。"
+        ],
+        "not_allowed": [
+          "不得据此生成买卖点、仓位、杠杆、止损止盈或实盘下单建议。",
+          "不得据此跳过人工审批或 release/rollback 门禁。",
+          "不得把 candidate 当作 approved 默认指导。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_id": "src_mlflow_model_registry",
+          "source_title": "MLflow Model Registry",
+          "source_url": "https://mlflow.org/docs/latest/ml/model-registry/",
+          "source_type": "official_doc",
+          "publisher": "MLflow",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 84,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "MLflow Model Registry documents registered models, versions, aliases, tags, and lifecycle metadata.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_argo_rollouts",
+          "source_title": "Argo Rollouts documentation",
+          "source_url": "https://argoproj.github.io/rollouts/",
+          "source_type": "official_doc",
+          "publisher": "Argo Project",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 84,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "Argo Rollouts documents progressive delivery capabilities such as blue-green, canary, canary analysis, and experimentation.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_nist_ai_rmf_core",
+          "source_title": "AI RMF - NIST AI Resource Center",
+          "source_url": "https://airc.nist.gov/airmf-resources/airmf/",
+          "source_type": "governance_framework",
+          "publisher": "NIST",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 88,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "NIST AI RMF Core provides outcomes and actions for governing, mapping, measuring, and managing AI risks.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_google_sre_canarying",
+          "source_title": "Canary Release: Deployment Safety and Efficiency",
+          "source_url": "https://sre.google/workbook/canarying-releases/",
+          "source_type": "official_doc",
+          "publisher": "Google SRE",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 88,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [
+            "软件发布来源，不定义交易 capital limit 或订单控制本体。"
+          ],
+          "evidence_summary": "Google SRE describes canarying as exposing changes to a small portion of traffic to reduce deployment risk before broader rollout.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_github_secret_scanning",
+          "source_title": "Secret scanning - GitHub Docs",
+          "source_url": "https://docs.github.com/code-security/secret-scanning/about-secret-scanning",
+          "source_type": "official_doc",
+          "publisher": "GitHub",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 86,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [
+            "支撑发布前 secret scan，不允许在知识库保存密钥正文。"
+          ],
+          "evidence_summary": "GitHub secret scanning detects hardcoded credentials such as API keys, passwords and tokens in repository history and branches.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_nist_ai_rmf_manage",
+          "source_title": "Manage - NIST AI RMF Playbook",
+          "source_url": "https://airc.nist.gov/airmf-resources/playbook/manage/",
+          "source_type": "governance_framework",
+          "publisher": "NIST",
+          "published_at": null,
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 88,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [
+            "治理框架来源，不替代项目级 release manifest。"
+          ],
+          "evidence_summary": "NIST AI RMF Manage covers post-deployment monitoring, override, decommissioning, incident response, recovery and change management.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_fca_algo_trading_controls",
+          "source_title": "Algorithmic Trading Compliance in Wholesale Markets",
+          "source_url": "https://www.fca.org.uk/publication/multi-firm-reviews/algorithmic-trading-compliance-wholesale-markets.pdf",
+          "source_type": "governance_framework",
+          "publisher": "FCA",
+          "published_at": "2018-02-12",
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 86,
+          "relevance": "medium",
+          "freshness": "time_sensitive",
+          "limitations": [
+            "监管来源用于 kill functionality 边界，不定义本项目交易执行实现。"
+          ],
+          "evidence_summary": "FCA algorithmic trading review discusses risk controls including kill functionality, control inventories, testing and governance.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_cek_ta_phase40_champion_release_contract",
+          "source_title": "CEK-TA Phase 40 Champion Challenger Release Contract",
+          "source_url": "docs/contracts/phase40_champion_challenger_release_contract.md",
+          "source_type": "internal_contract",
+          "publisher": "CEK-TA",
+          "published_at": "2026-06-10",
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 90,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [
+            "内部发布契约不替代真实部署验证。"
+          ],
+          "evidence_summary": "Defines ReleaseManifest, RollbackPlan, HumanApprovalRecord and release blockers for rollback and kill switch.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_cek_ta_phase40_release_manifest_kill_switch_contract",
+          "source_title": "CEK-TA Phase 40 Release Manifest Kill Switch Contract",
+          "source_url": "docs/contracts/phase40_release_manifest_kill_switch_contract.md",
+          "source_type": "internal_contract",
+          "publisher": "CEK-TA",
+          "published_at": "2026-06-10",
+          "accessed_at": "2026-06-10",
+          "version": null,
+          "reliability": "high",
+          "score": 90,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [
+            "内部契约只定义安全发布字段和阻断规则。"
+          ],
+          "evidence_summary": "Defines ReleaseSafetyChecklist, KillSwitchPolicy, RollbackDrillRecord and SecretScanResult fields.",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "high",
+        "score": 88,
+        "score_version": "1.1.0",
+        "primary_source_count": 9,
+        "supporting_source_count": 0,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "来源支持通用 AI/ML/MLOps/LLMOps/治理工程原则；正式知识转换时需保留 CEK-TA 具体上下游引用和冲突链接。",
+          "补证后仍需外部 AI/人工三审确认 claim-specific 充分性，不能直接转 reviewed 或 approved。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "checked_against": [
+          "docs/contracts/phase40_feedback_dataset_contract.md",
+          "docs/contracts/phase40_drift_retraining_recalibration_contract.md",
+          "docs/contracts/phase40_champion_challenger_release_contract.md",
+          "docs/research/phase40_ai_continuous_learning_scope.md",
+          "docs/contracts/phase40_review_budget_threshold_policy_contract.md",
+          "docs/contracts/phase40_release_manifest_kill_switch_contract.md"
+        ],
+        "conflicts": [],
+        "resolution_summary": "补证后未发现直接理论冲突；仍需三审确认来源充分性和 AI/Trading 分支边界。",
+        "approval_allowed": false
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "supplemented candidate awaiting third review; not reviewed, approved, default guidance, or hard gate.",
+        "requires_human_escalation": true
+      },
+      "review": {
+        "confidence": "medium",
+        "freshness": "time_sensitive",
+        "reviewer": "codex_supplemental_evidence",
+        "reviewed_at": "2026-06-10",
+        "open_questions": [
+          "请三审确认补证后是否 accepted_for_draft；如果仍不足，请返回 needs_more_evidence 或 rejected。",
+          "即使三审通过，本条仍只能进入 formal reviewed draft，不得直接 approved、default guidance 或 hard gate。"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "created",
+            "reason": "Phase 40 P0-Core continuous learning candidate expansion."
+          },
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "phase40_strict_audit_accepted_for_draft",
+            "reason": "候选进入 formal draft 准备队列；直接 reviewed/approved 被审计结果禁止。"
+          },
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "phase40_strict_audit_accepted_for_draft",
+            "reason": "候选进入 formal draft 准备队列；直接 reviewed/approved 被审计结果禁止。"
+          },
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "phase40_reviewed_preparation_needs_more_evidence",
+            "reason": "CEK-TA-316: 二审仍需补证，保持 candidate，不生成 formal reviewed。"
+          },
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "phase40_reviewed_preparation_supplemental_evidence_ready",
+            "reason": "按 CEK-TA-317 补充来源和契约，并准备三审。"
+          },
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "phase40_reviewed_preparation_supplemental_evidence_ready",
+            "reason": "按 CEK-TA-317 补充来源和契约，并准备三审。"
+          },
+          {
+            "at": "2026-06-10",
+            "actor": "codex",
+            "action": "phase40_reviewed_preparation_supplemental_evidence_ready",
+            "reason": "按 CEK-TA-317 补充来源和契约，并准备三审。"
+          }
+        ],
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "ai_audit": {
+          "audit_result_id": "audit_result_phase40_ai_passed_reviewed_preparation_20260610_strict_v1",
+          "source_package_id": "phase40_ai_passed_reviewed_preparation_audit_package_20260610",
+          "candidate_id": "cand_20260610_phase40_p40_c15_release_manifest_rollback_target_kill_switch_001",
+          "research_task_id": "P40-C15",
+          "decision": "needs_more_evidence",
+          "reason": "MLflow/Argo/NIST 能支撑版本与发布治理，但当前 source_refs 对 kill switch、rollback drill、secret scan 的直接支撑不足；“每次发布必须有 release manifest、rollback target、kill switch 和审批记录”还需要 incident / trading-control / SRE 来源或内部 release manifest contract。",
+          "source_patch_notes": [
+            "补 Google SRE rollback/canary、SEC Knight/FCA algorithmic trading controls，或 Phase40 release-manifest/kill-switch contract。"
+          ],
+          "content_patch_notes": [
+            "release_manifest 必须覆盖 data/model/prompt/RAG/threshold/calibrator/final_gate/owner/rollback/secret_scan/kill_switch_tested_at。"
+          ],
+          "boundary_patch_notes": [
+            "release manifest 不得包含私有策略正文、账号密钥或交易执行规则本体；Phase37 管理交易执行细节。"
+          ],
+          "conflict_patch_notes": [
+            "当前 workflow 已隐藏 default queue，并设置 visible_in_default_guidance_queue=false；formal reviewed 生成时必须保留。",
+            "source candidate 的 approval_allowed 不得覆盖本审计的 approved_allowed=false。"
+          ],
+          "required_followups": [
+            "add_release_manifest_kill_switch_source_or_contract",
+            "define_secret_scan_rollback_drill_kill_switch_fields",
+            "then_reaudit_reviewed_preparation"
+          ],
+          "reviewed_allowed": false,
+          "approved_allowed": false,
+          "default_guidance_allowed": false,
+          "hard_gate_allowed": false,
+          "supplemental_evidence": {
+            "status": "ready_for_reaudit",
+            "added_at": "2026-06-10",
+            "task_id": "CEK-TA-317",
+            "previous_statement": "每次影响交易 AI gating/scoring 决策链路的发布都必须有 release manifest、rollback target、kill_switch_policy_ref、secret_scan_status、rollback_drill_status、kill_switch_tested_at 和 human_approval_record_ref；缺任一关键控制必须 block_release。",
+            "patched_statement": "每次影响交易 AI gating/scoring 决策链路的发布都必须有 release manifest、rollback target、kill_switch_policy_ref、secret_scan_status、rollback_drill_status、kill_switch_tested_at 和 human_approval_record_ref；缺任一关键控制必须 block_release。",
+            "added_source_ids": [],
+            "all_supplemental_source_ids": [
+              "src_google_sre_canarying",
+              "src_github_secret_scanning",
+              "src_nist_ai_rmf_manage",
+              "src_fca_algo_trading_controls",
+              "src_cek_ta_phase40_champion_release_contract",
+              "src_cek_ta_phase40_release_manifest_kill_switch_contract"
+            ],
+            "supplemental_notes": [
+              "Google SRE canarying 支撑小范围发布以降低部署风险。",
+              "GitHub secret scanning 支撑发布前检查硬编码凭证和 token。",
+              "NIST AI RMF Manage 支撑部署后监控、响应、恢复和变更管理。",
+              "FCA 算法交易来源支撑 kill functionality 和风险控制清单。",
+              "CEK-TA release/kill-switch contract 定义发布安全字段和阻断规则。"
+            ],
+            "remaining_boundary": "release manifest 不得包含私有策略正文、账号密钥或交易执行规则本体；订单撤单和实盘控制由 Trading Engineering 或外接项目实现。",
+            "reaudit_request": "请判断补证后是否 accepted_for_draft；不得直接 reviewed/approved/default/hard gate。"
+          }
+        },
+        "reviewed_allowed": false,
+        "approved_allowed": false
+      },
+      "copyright": {
+        "stores_full_text": false,
+        "stores_long_quote": false,
+        "summary_only": true,
+        "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+        "reuse_risk": "low"
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_ai_feedback_governance.phase40.release_manifest_rollback_target_kill_switch.v1",
+        "target_schema": "cek_ta_knowledge_item",
+        "target_review_status": "draft",
+        "skill_candidate": false,
+        "eval_case_candidate": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "workflow": {
+        "stage": "needs_more_evidence",
+        "queue_group": "needs_more_evidence",
+        "formal_knowledge_id": null,
+        "formal_review_status": null,
+        "ai_audit_result_id": "audit_result_phase40_ai_passed_reviewed_preparation_20260610_strict_v1",
+        "hidden_from_default_queue": true,
+        "next_action": "export_ai_audit",
+        "default_guidance_allowed": false,
+        "visible_in_default_guidance_queue": false
+      },
+      "phase40_trace": {
+        "acceptance_gate": "缺 rollback 直接阻断",
+        "search_direction": "release manifest rollback kill switch model deployment approval",
+        "related_contracts": [
+          "docs/contracts/phase40_feedback_dataset_contract.md",
+          "docs/contracts/phase40_drift_retraining_recalibration_contract.md",
+          "docs/contracts/phase40_champion_challenger_release_contract.md",
+          "docs/research/phase40_ai_continuous_learning_scope.md",
+          "docs/contracts/phase40_review_budget_threshold_policy_contract.md",
+          "docs/contracts/phase40_release_manifest_kill_switch_contract.md"
+        ],
+        "supplemental_evidence_ready": true,
+        "supplemental_evidence_added_at": "2026-06-10",
+        "supplemental_task_id": "CEK-TA-317",
+        "audit_patch_notes": {
+          "source_ids_added_or_confirmed": [
+            "src_google_sre_canarying",
+            "src_github_secret_scanning",
+            "src_nist_ai_rmf_manage",
+            "src_fca_algo_trading_controls",
+            "src_cek_ta_phase40_champion_release_contract",
+            "src_cek_ta_phase40_release_manifest_kill_switch_contract"
+          ],
+          "remaining_boundary": "release manifest 不得包含私有策略正文、账号密钥或交易执行规则本体；订单撤单和实盘控制由 Trading Engineering 或外接项目实现。"
+        }
+      }
+    }
+  ]
+}

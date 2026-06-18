@@ -1,0 +1,149 @@
+{
+  "audit_result_id": "audit_result_phase60_p1_needs_evidence_supplemental_reaudit_20260618_strict_v1",
+  "package_id": "phase60_p1_needs_evidence_supplemental_reaudit_package_20260618",
+  "audited_at": "2026-06-18",
+  "auditor": "external_ai_strict_audit_and_codex_structured_backwrite",
+  "phase": "Phase 60",
+  "task_id": "CEK-TA-588",
+  "summary": {
+    "total": 3,
+    "accepted_for_reviewed_caveat_only": 3,
+    "needs_more_evidence": 0,
+    "rejected": 0,
+    "blocked": 0
+  },
+  "hard_boundaries": {
+    "reviewed_caveat_only_maximum": true,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "live_permission_allowed": false,
+    "trade_execution_advice_allowed": false,
+    "risk_threshold_advice_allowed": false
+  },
+  "candidate_results": [
+    {
+      "candidate_id": "cand_20260617_phase60_p1_replay_scenario_library_versioned_001",
+      "research_task_id": "P60-P1-02",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "medium_high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "live_permission_allowed": false,
+      "trade_execution_advice_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "formal_knowledge_id": "kb_phase60_replay_simulation.scenario_library.versioned_required.v1",
+      "required_followups": [
+        "正式写入 reviewed/caveat_only 时保留 scenario_result_not_profit_evidence=true。",
+        "保留 scenario_library_not_live_permission=true。",
+        "标注 DVC / MLflow / pytest 为通用工程来源，ABIDES 为研究模拟器来源。",
+        "与 Phase 37 replay/simulation 做 alias 或测试治理子项映射。"
+      ],
+      "patch_notes": {
+        "source": [
+          "DVC 支撑数据版本和可复现 pipeline。",
+          "MLflow 支撑 dataset tracking、versioning 和 lineage。",
+          "pytest 支撑参数化场景测试。",
+          "ABIDES 支撑高保真市场模拟、可配置 latency 和 scenario-style experiment。"
+        ],
+        "content": [
+          "scenario library 是测试覆盖和复现证据，不是策略有效证据。",
+          "scenario schema 可以包含 scenario_id、dataset_version、event_clock、seed、assumption_hash、expected_observation。"
+        ],
+        "boundary": [
+          "不得收益证明。",
+          "不得 live-ready。",
+          "不得 hard gate。",
+          "不得交易许可。"
+        ],
+        "conflict": [
+          "与 Phase 37 replay/simulation 不冲突，应作为 replay 测试治理补充。"
+        ]
+      }
+    },
+    {
+      "candidate_id": "cand_20260617_phase60_p1_live_canary_rollback_owner_required_001",
+      "research_task_id": "P60-P1-05",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "medium_high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "live_permission_allowed": false,
+      "trade_execution_advice_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "formal_knowledge_id": "kb_phase60_risk_management.live_canary.rollback_owner_required.v1",
+      "required_followups": [
+        "正式写入 reviewed/caveat_only 时保留 canary_not_full_live_permission=true。",
+        "保留 manual_review_required=true。",
+        "标注 Google SRE / LaunchDarkly 为软件部署来源，FIA / CFTC 为行业/监管治理来源。",
+        "项目落地时必须补 venue-specific broker/exchange risk owner mapping。"
+      ],
+      "patch_notes": {
+        "source": [
+          "Google SRE / LaunchDarkly 支撑 canary 小范围发布、监控和回滚模式。",
+          "FIA / CFTC 支撑自动化交易风险控制、系统保护和治理责任。"
+        ],
+        "content": [
+          "live canary 是小范围真实环境观察阶段，不是 full live。",
+          "必须记录 scope、stop_condition_ref、rollback_plan_ref、risk_owner、live_execution_owner、manual_review_required 和 residual_gap。"
+        ],
+        "boundary": [
+          "不得自动扩大为 full live。",
+          "不得上线许可。",
+          "不得交易许可。",
+          "不得 hard gate。",
+          "不得风险阈值建议。"
+        ],
+        "conflict": [
+          "与 Phase 60 PromotionDecision / Risk owner 边界一致。",
+          "与 Live Execution owner 不冲突，真实执行事实仍归 Live Execution owner。"
+        ]
+      }
+    },
+    {
+      "candidate_id": "cand_20260617_phase60_p1_environment_drift_monitor_required_001",
+      "research_task_id": "P60-P1-06",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "live_permission_allowed": false,
+      "trade_execution_advice_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "formal_knowledge_id": "kb_phase60_replay_simulation.environment_drift.monitor_required.v1",
+      "required_followups": [
+        "正式写入 reviewed/caveat_only 时保留 drift_report_not_live_permission=true。",
+        "保留 human_review_required。",
+        "与 Phase 58 / Phase 60 P0 gap report 建立 drift 子报告关系。",
+        "标注 QuantConnect / NautilusTrader 为平台或框架来源，不得泛化为所有 broker。"
+      ],
+      "patch_notes": {
+        "source": [
+          "QuantConnect live reconciliation 支撑 model prediction 与 live brokerage execution 偏差。",
+          "NautilusTrader live reconciliation 支撑 venue state 与 internal state 对齐。",
+          "Google SRE 可作为 drift monitor 的通用监控来源。"
+        ],
+        "content": [
+          "environment drift report 应覆盖 fill、fee、latency、reject、cancel、order_state、data_staleness、risk_event 等差异趋势。",
+          "drift report 是治理和人工复核材料。"
+        ],
+        "boundary": [
+          "不得收益证明。",
+          "不得交易许可。",
+          "不得 hard gate。",
+          "不得 live permission。"
+        ],
+        "conflict": [
+          "与 Phase 58 / Phase 60 P0 gap report 一致，应作为 drift 子报告。",
+          "与 Live Execution owner 不冲突，真实订单和仓位 reconciliation 仍归 Live Execution owner。"
+        ]
+      }
+    }
+  ]
+}

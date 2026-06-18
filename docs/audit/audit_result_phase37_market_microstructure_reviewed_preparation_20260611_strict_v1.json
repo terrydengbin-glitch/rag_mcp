@@ -1,0 +1,324 @@
+{
+  "audit_result_id": "audit_result_phase37_market_microstructure_reviewed_preparation_20260611_strict_v1",
+  "auditor": "external_ai_strict_audit",
+  "audited_at": "2026-06-11",
+  "package_id": "phase37_market_microstructure_reviewed_preparation_audit_package_20260611",
+  "quality_gate": {
+    "pass": false,
+    "reason": "M07 liquidity regime 仍缺交易所 session/calendar/auction/halt/rollover 直接来源，不能进入 reviewed/caveat_only；其他 11 条可 caveat-only。"
+  },
+  "summary": {
+    "total": 12,
+    "accepted_for_reviewed_caveat_only": 11,
+    "needs_more_evidence": 1,
+    "rejected": 0,
+    "blocked": 0
+  },
+  "results": [
+    {
+      "candidate_id": "cand_20260611_phase37_market_microstructure_cvd_interpretation_caveat_001",
+      "research_task_id": "P37-D-M05",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "medium_high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "patch_notes": {
+        "source": [
+          "Overcharts 只能作为平台指标语义来源；formal source_refs 应补 signed volume / CVD / volume delta 的更强行业或学术来源。"
+        ],
+        "content": [
+          "保留“订单流代理”表述；声明数据源、aggressor 归属规则、采样窗口、重采样方法和 none/missing side 处理。"
+        ],
+        "boundary": [
+          "不得把 CVD 背离、上升或下降写成趋势确认、反转确认、交易优势或交易许可。"
+        ],
+        "conflict": [
+          "与 Kline Strategy、AI scoring、Feature Engineering 只 cross-reference；不得复制到 AI Engineering 本体。"
+        ]
+      },
+      "reason": "CVD/Volume Delta 的数据语义和 aggressor side 边界有成交方向、MBO/L3 与执行成本来源支撑；但只能作为指定数据源与采样规则下的订单流代理，不能证明趋势、反转或 edge。"
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_market_microstructure_funding_open_interest_context_required_001",
+      "research_task_id": "P37-D-M06",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "patch_notes": {
+        "source": [
+          "Binance API 只能证明 Binance USDⓈ-M/COIN-M futures 语义；formal source_refs 建议补 CME/Deribit/OKX 或交易所合约规格/结算机制来源。"
+        ],
+        "content": [
+          "明确 funding/OI 仅在交易所、合约、symbol、timestamp、settlement window 与样本范围内解释。"
+        ],
+        "boundary": [
+          "不得把单所 funding 或 OI 当成全市场方向事实、拥挤度事实或交易许可。"
+        ],
+        "conflict": [
+          "与 Data Engineering reference data/contract metadata、Risk Management leverage exposure 只 cross-reference。"
+        ]
+      },
+      "reason": "Binance funding/OI API 明确是交易所、symbol、timestamp 与合约语义；流动性文献支持 funding/liquidity stress caveat，足以 caveat-only。"
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_market_microstructure_high_frequency_signal_latency_boundary_001",
+      "research_task_id": "P37-D-M09",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "patch_notes": {
+        "source": [
+          "RTS/ESMA 是 EU 监管语境；Nasdaq ITCH/Databento MBO 是具体 feed 语境，不得泛化为所有市场。"
+        ],
+        "content": [
+          "显式拆分 exchange_event_time、receive_time、process_time、decision_time、order_send_time、ack_time、fill_time。"
+        ],
+        "boundary": [
+          "无法证明时间一致性时，只能作为研究或延迟敏感风险提示，不能声称实时交易优势。"
+        ],
+        "conflict": [
+          "与 Data Engineering timestamp/available_time、Replay/Live Execution latency model 只 cross-reference。"
+        ]
+      },
+      "reason": "ESMA/RTS 时钟同步、CFA 电子交易成本、Databento/Nasdaq 事件级 order book 来源足以支撑延迟、时钟同步、事件顺序和可执行窗口边界。"
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_market_microstructure_liquidity_regime_required_001",
+      "research_task_id": "P37-D-M07",
+      "decision": "needs_more_evidence",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "patch_notes": {
+        "source": [
+          "补交易所交易日历、session hours、auction/halts、holiday schedule、contract rollover/expiry 规则或数据供应商 session/market status 文档。"
+        ],
+        "content": [
+          "把 normal/thin/stressed/event-driven/rollover/session-specific 明确写成 CEK-TA 内部 liquidity regime taxonomy，并提供 taxonomy contract 或字段定义。"
+        ],
+        "boundary": [
+          "在补证前不得进入 reviewed/caveat_only；不得把内部 regime 标签表述为外部通用标准。"
+        ],
+        "conflict": [
+          "与 M11 thin market execution risk、Execution/Risk 风控复核边界可能重叠，formal 前需合并去重。"
+        ]
+      },
+      "reason": "ECB/NBER/CFA 足以支持 market/funding liquidity 与 stress caveat，但不足以支撑 statement 中 rollover、session-specific、休市前后、halts/auction 等完整 regime 边界；首轮 patch 要求的交易所日历、session、halt、rollover 直接来源未在本包补齐。"
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_market_microstructure_market_impact_cost_required_001",
+      "research_task_id": "P37-D-M08",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "patch_notes": {
+        "source": [
+          "Almgren-Chriss 是模型来源，CFA 是执行/TCA 来源；不得把模型假设写成默认执行算法。"
+        ],
+        "content": [
+          "保留订单规模、执行速度、流动性、临时/永久影响、机会成本、未成交风险等字段。"
+        ],
+        "boundary": [
+          "不得从盘口或短周期信号直接推导可成交收益或交易许可。"
+        ],
+        "conflict": [
+          "与 Execution Engineering/TCA、Backtest fill model、Risk Management exposure 只 cross-reference。"
+        ]
+      },
+      "reason": "Almgren-Chriss、CFA execution/TCA 与 ECB liquidity 来源直接支持订单规模、执行速度、市场影响、机会成本和执行边界。"
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_market_microstructure_microstructure_feature_not_universal_001",
+      "research_task_id": "P37-D-M12",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "patch_notes": {
+        "source": [
+          "字段级文档只证明各自 schema/API；formal 前可补更多 venue/vendor 反例作为迁移边界证据。"
+        ],
+        "content": [
+          "每个 microstructure feature 必须声明 market、venue、instrument、data contract、timestamp、regime 和 validation scope。"
+        ],
+        "boundary": [
+          "不得把 crypto perpetual funding/OI、Nasdaq order book、Databento side 字段无条件迁移到其他资产类别。"
+        ],
+        "conflict": [
+          "作为跨市场迁移总规则，应与 M01-M11 做 cross-reference，避免重复。"
+        ]
+      },
+      "reason": "不同数据源、交易所 API、order-book schema、funding/OI 与时钟同步规则的差异足以支持微观结构特征不得跨市场无条件泛化。"
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_market_microstructure_order_book_depth_boundary_001",
+      "research_task_id": "P37-D-M02",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "patch_notes": {
+        "source": [
+          "Nasdaq TotalView 只覆盖 displayed orders/特定产品；Databento MBO/MBP 是 vendor schema。"
+        ],
+        "content": [
+          "区分 top-of-book、L2 aggregate depth、L3 MBO、full displayed depth、hidden/off-book liquidity。"
+        ],
+        "boundary": [
+          "可见深度不等于全部市场流动性，不得推断暗池、隐藏订单或跨 venue 总流动性。"
+        ],
+        "conflict": [
+          "与 Data Engineering order-book schema、Replay queue reconstruction 只 cross-reference。"
+        ]
+      },
+      "reason": "Databento MBO/MBP-10 与 Nasdaq TotalView/ITCH 资料足以支撑 L2/L3/top-of-book/full displayed depth/visible-depth 边界。"
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_market_microstructure_order_flow_proxy_boundary_001",
+      "research_task_id": "P37-D-M04",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "medium_high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "patch_notes": {
+        "source": [
+          "formal source_refs 必须补 Cont/Kukanov/Stoikov OFI、Multi-level OFI 或 LOB imbalance 论文；Databento/CFA alone 不应作为 OFI reviewed 主来源。"
+        ],
+        "content": [
+          "proxy 必须声明 input data、sampling window、side inference、normalization、aggregation 和 loss of information。"
+        ],
+        "boundary": [
+          "OFI/imbalance/signed volume 不能替代真实 add/cancel/modify/trade/fill 事件事实，也不能单独证明 edge。"
+        ],
+        "conflict": [
+          "与 Feature Engineering/AI scoring 特征规则只引用，不改写。"
+        ]
+      },
+      "reason": "Databento MBO/MBP/trades 字段支持 proxy 与真实 order events 不是同一层；外部 OFI/LOB 论文进一步支撑 OFI/imbalance 是 order-flow proxy，可 caveat-only。"
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_market_microstructure_slippage_regime_caveat_001",
+      "research_task_id": "P37-D-M10",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "patch_notes": {
+        "source": [
+          "reviewed/caveat_only 可通过；formal 前建议补 broker/exchange fill model 或 simulator slippage 来源。"
+        ],
+        "content": [
+          "滑点模型至少声明 liquidity、spread、depth、order size、volatility、latency、order type、execution style。"
+        ],
+        "boundary": [
+          "不得用单一固定常数覆盖所有品种、时段、order type 和 regime。"
+        ],
+        "conflict": [
+          "与 Backtest/Replay/Live Execution 的 fill model 和 TCA 边界拆分。"
+        ]
+      },
+      "reason": "CFA trading-costs/execution、Almgren-Chriss 与 liquidity 来源足以支持滑点不能用固定常数跨品种、时段和订单类型泛化。"
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_market_microstructure_spread_liquidity_context_required_001",
+      "research_task_id": "P37-D-M01",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "patch_notes": {
+        "source": [
+          "Nasdaq TotalView 是具体产品来源；CFA/ECB 支撑 spread/liquidity/cost 边界。"
+        ],
+        "content": [
+          "spread 信号必须同时声明市场、品种、时段、数据源、成交量、深度、流动性 regime。"
+        ],
+        "boundary": [
+          "价差收窄/扩大不能单独解释为交易方向、突破或反转。"
+        ],
+        "conflict": [
+          "与 M10 slippage、M07 liquidity regime、Execution cost cross-reference。"
+        ]
+      },
+      "reason": "CFA/ECB/Nasdaq 来源支持 spread 是交易成本和流动性上下文，不是独立方向信号。"
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_market_microstructure_thin_market_execution_risk_001",
+      "research_task_id": "P37-D-M11",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "medium_high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "patch_notes": {
+        "source": [
+          "SEC Rule 15c3-5 是 broker-dealer market access 风控语境，不能直接作为 CEK-TA 自动 hard gate 来源。"
+        ],
+        "content": [
+          "正文只允许 risk prompt、manual/risk review、降级或复核语义，不写自动阻断规则。"
+        ],
+        "boundary": [
+          "薄市场信号只能降级为风险提示或要求外接项目风控层复核；不得在本候选中创建 hard gate。"
+        ],
+        "conflict": [
+          "Risk Management/Live Execution 是真正阻断 owner；本条只给 microstructure caveat。"
+        ]
+      },
+      "reason": "本包已将标题从“阻断/降级”修正为“降级或要求复核”，并保持 hard_gate_allowed=false；ECB/NBER/CFA/SEC 来源支撑薄市场和压力流动性风险 caveat。"
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_market_microstructure_trade_prints_aggressor_caveat_001",
+      "research_task_id": "P37-D-M03",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "patch_notes": {
+        "source": [
+          "Databento side 是 vendor semantics；Nasdaq ITCH 是 venue-specific message semantics。"
+        ],
+        "content": [
+          "记录 side 字段来源、bid/ask hit 规则、推断算法、none/missing 处理、venue mapping。"
+        ],
+        "boundary": [
+          "缺失、推断或规则不一致时不得把 trade side 当成确定订单流事实。"
+        ],
+        "conflict": [
+          "与 CVD/M05 和 order-flow proxy/M04 合并引用，避免重复定义。"
+        ]
+      },
+      "reason": "Databento trades side 字段和 Nasdaq/Databento order-book 事件来源支持 aggressor side 必须按数据源语义解释；缺失/推断时不得当作确定事实。"
+    }
+  ],
+  "global_notes": [
+    "本审计不创建 approved/default_guidance/hard_gate。",
+    "所有 accepted_for_reviewed_caveat_only 仅为 caveat-only Trading Engineering 方法边界，不是交易信号、策略优势、实盘许可或默认指导。",
+    "上传包未提供完整 CEK-TA formal KB，因此冲突审计仅限可见上下文。"
+  ]
+}

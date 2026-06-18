@@ -1,0 +1,101 @@
+{
+  "audit_result_id": "audit_result_phase37_data_engineering_d11_contract_inline_third_audit_20260611_strict_v1",
+  "package_id": "phase37_data_engineering_d11_contract_inline_third_audit_package_20260611",
+  "auditor": "external_ai_strict_audit",
+  "audited_at": "2026-06-11",
+  "quality_gate": {
+    "pass": true,
+    "candidate_count": 1,
+    "notes": [
+      "P37-B-D11 的前轮阻断点——缺少可审计的 CEK-TA dataset layers contract 正文——已通过 contract_inline.full_text 与 schema_extract 补齐。",
+      "本轮仅允许 accepted_for_reviewed_caveat_only；不创建 approved、default guidance 或 hard gate。",
+      "外部 Databricks/Feast/OpenLineage/ML Metadata/MLflow/Iceberg/Delta/DVC 来源只支撑通用 layered architecture、point-in-time feature、lineage、snapshot/versioning 模式；CEK-TA exact layer names 与 write boundaries 仅由内联内部 contract 支撑。",
+      "未提供完整 CEK-TA formal KB；冲突审计仅限当前可见上下文。"
+    ]
+  },
+  "summary": {
+    "total": 1,
+    "accepted_for_reviewed_caveat_only": 1,
+    "needs_more_evidence": 0,
+    "rejected": 0,
+    "blocked": 0
+  },
+  "decisions": [
+    {
+      "candidate_id": "cand_20260611_phase37_data_engineering_raw_vs_adjusted_data_boundary_001",
+      "research_task_id": "P37-B-D11",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "内联 CEK-TA contract 已明确 raw、cleaned、adjusted、feature_ready、label_ready 五层的语义、写入边界和典型字段，足以支撑 CEK-TA exact layer names。",
+        "内联 contract 已明确 transformation manifest 必填字段，包括 input_layer、output_layer、source_dataset_version、source_table_snapshot、code_version、parameter_hash、produced_at、actor、quality_report_id、lineage_id、rollback_pointer。",
+        "内联 contract 已明确 downstream layer 不得回写污染 raw；raw 修正必须用 correction record 或新 dataset version 表达；feature_ready 必须有 available_time 且不得含未来标签；label_ready 必须声明 horizon 与 label policy 且不得作为特征源回写。",
+        "Databricks medallion architecture 支撑 raw/validated/enriched 式多层数据质量模式，但其 bronze/silver/gold 命名不得被等同于 CEK-TA exact layer names。",
+        "Databricks 与 Feast 的 point-in-time feature 文档支撑 feature_ready 的 available_time / point-in-time correctness / leakage 边界。",
+        "OpenLineage、ML Metadata 与 MLflow Dataset Tracking 支撑 Run/Job/Dataset、facets、Artifact/Execution/Context、dataset source/digest/schema 等 lineage 与 metadata 模式，可支撑 transformation manifest 的 lineage 字段方向。",
+        "Iceberg/Delta/DVC 类来源支撑 snapshot、manifest、time-travel、versioning 或 reproducibility pattern，但不得被指定为唯一实现。",
+        "候选分类保持在 KB_02_DATA_ENGINEERING / Trading Engineering / Data Engineering；AI Engineering 只能引用，不得复制或改写为模型训练、MCP、RAG 或交易执行规则本体。",
+        "未发现买卖点、仓位、杠杆、止损止盈、实盘执行建议、密钥、账户事实或项目私有策略参数。"
+      ],
+      "required_patches": {
+        "source": [
+          "将 src_011 internal_contract 明确标记为 CEK-TA exact layer names 和 write boundaries 的唯一主来源；外部工具/框架/标准文档不得作为 CEK-TA 层名来源。",
+          "将 Databricks/Feast/MLflow/Delta/Iceberg/DVC 保持为 implementation-pattern 或 tool-specific evidence，不得写成所有平台强制实现。",
+          "OpenLineage 和 ML Metadata 只能支撑 lineage/metadata object model 与 manifest 字段方向，不得支撑 trading-specific raw/adjusted 语义。",
+          "Feast OpenLineage blog 类来源只能 supporting，不能计入 normative source。",
+          "source_quality.primary_source_count=5 可以保留为 caveat-only，但正式条目应列明 primary source 的角色分工：internal contract for CEK-TA contract semantics; Databricks/Feast/OpenLineage/MLMD for external patterns."
+        ],
+        "content": [
+          "formal statement 建议保持为：外部平台可采用 raw/validated/enriched 或等价分层；CEK-TA 内部契约使用 raw、cleaned、adjusted、feature_ready、label_ready，并禁止 downstream artifacts 回写污染 raw。",
+          "必须在 formal item 中保留 transformation manifest 字段：input_layer, output_layer, source_dataset_version, source_table_snapshot, code_version, parameter_hash, produced_at, actor, quality_report_id, lineage_id, rollback_pointer。",
+          "建议把 feature_ready 与 label_ready 的泄漏边界显式化：feature_ready 需要 available_time 与 source_dataset_version；label_ready 需要 horizon、label_policy_id、label_generated_at，且不得作为特征源回写。",
+          "raw 修正必须用 correction record、append-only delta、新 dataset version 或 provenance-preserving manifest 表达，不得静默覆盖。",
+          "adjusted 层必须保留 adjustment_policy_id、adjustment_factor、roll_rule_id 或等价字段，且不能替代 raw 层作为原始事实。"
+        ],
+        "boundary": [
+          "accepted_for_reviewed_caveat_only 不等于 approved，不得进入 default guidance，不得成为 hard gate。",
+          "不得声明所有外接项目必须使用相同物理表名；只允许声明外部等价分层可映射到 CEK-TA 层名。",
+          "不得把 Databricks medallion、Feast、MLflow、Delta、Iceberg、DVC 或 OpenLineage 指定为唯一实现。",
+          "不得把 feature_ready/label_ready 解释为可直接用于实盘交易决策。",
+          "具体交易所、数据供应商、market calendar、vendor correction、contract rollover、corporate action 和 quality thresholds 仍由外接项目事实层定义。"
+        ],
+        "conflict": [
+          "当前可见上下文未发现与 Data Engineering 或 AI Engineering formal knowledge 的可证冲突。",
+          "因未提供完整 CEK-TA formal KB，正式导入前仍需执行完整 KB 冲突/重复/合并检查。",
+          "若 KB 中已有 raw/bronze/silver/gold 或 feature-store lineage formal item，应合并引用，避免重复定义层级本体。"
+        ]
+      },
+      "required_extra_sources": [],
+      "formal_conversion_notes": [
+        "转换目标可设为 kb_02_data_engineering.raw_vs_adjusted_data_boundary.v1，review_status=reviewed，review_mode=caveat_only。",
+        "machine gate 必须保持 default_guidance=deny、approved_allowed=false、hard_gate_allowed=false、requires_human_escalation=true。",
+        "formal item 应把 internal_contract_text_hash 或 contract_version 写入 source metadata，以避免后续 contract 变更造成不可追溯。",
+        "建议增加 implementation_mapping 字段，允许外部项目把 bronze/silver/gold、raw/validated/enriched、landing/staging/curated 等物理层映射到 CEK-TA logical layers。"
+      ],
+      "source_assessment": {
+        "source_quality_conservative": true,
+        "internal_contract_full_text_present": true,
+        "contract_schema_extract_present": true,
+        "lineage_sources_present": true,
+        "source_quality_not_overstated": true,
+        "workflow_hidden_from_default_queue_true": true,
+        "weaknesses": [
+          "完整 CEK-TA formal KB 未随包提供，冲突审计仍是 visible-context only。",
+          "external sources are implementation or standard specific and must not be generalized as universal platform mandates."
+        ]
+      }
+    }
+  ],
+  "global_findings": {
+    "no_trade_execution_advice_detected": true,
+    "no_project_private_facts_detected": true,
+    "no_api_keys_or_secrets_detected": true,
+    "mock_or_test_pollution_detected": false,
+    "encoding_or_garbled_text_detected": false,
+    "formal_kb_conflict_scope": "visible_context_only"
+  }
+}

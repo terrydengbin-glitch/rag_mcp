@@ -1,0 +1,293 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_phase45_p2.point_in_time_instrument_definition_required.v1",
+  "title": "instrument definition 必须按 point-in-time 保存",
+  "metadata": {
+    "partition_id": "KB_02_DATA_ENGINEERING",
+    "domain": "data_engineering",
+    "subdomain": "reference_data_entitlement",
+    "rule_type": "market_data_reference_boundary_rule",
+    "claim_type": "data_quality_rule",
+    "content_type": "json",
+    "project_binding": "none",
+    "tree_node_id": "kt.trading_engineering.data_engineering.reference_data_entitlement",
+    "tree_path": "CEK-TA / Trading Engineering / Data Engineering / Reference Data Entitlement",
+    "canonical_node_id": "kt.trading_engineering.data_engineering.reference_data_entitlement",
+    "canonical_tree_path": "CEK-TA / Trading Engineering / Data Engineering / Reference Data Entitlement",
+    "risk_level": "medium_high",
+    "used_for": [
+      "trading_ai_project_design_audit",
+      "market_data_contract_review",
+      "reference_data_schema_review",
+      "external_project_rag_retrieval"
+    ],
+    "source_candidate_id": "cand_20260612_phase45_reference_data_entitlement_p45_g_data02_001",
+    "research_task_id": "P45-G-DATA02",
+    "phase": "Phase 45",
+    "classification_notes": "Phase 45 P2 formal reviewed/caveat_only；只用于数据授权、reference data、crypto perpetual 风险审计上下文，不是 approved/default guidance/hard gate，不生成交易动作或法律授权结论。",
+    "related_nodes": [
+      "kt.trading_engineering.data_engineering.data_quality",
+      "kt.trading_engineering.market_microstructure.session_calendar",
+      "kt.trading_engineering.strategy_engineering.feature_boundary",
+      "kt.ai_engineering.training_dataset_boundary"
+    ]
+  },
+  "applicability": {
+    "market": "general_with_vendor_exchange_license_and_dataset_caveats",
+    "asset": "general",
+    "timeframe": "historical_realtime_backtest_replay_training_and_audit_context",
+    "data_granularity": "market_data_reference_data_instrument_definitions_statistics_schema_metadata",
+    "project_type": "trading_ai_support_layer",
+    "applies_when": [
+      "外接项目需要采集、存储、解析、训练、回测、重放、检索或展示市场数据与 reference data。",
+      "AI IDE 需要检查数据授权、数据覆盖、instrument definition、tick/lot/price-limit 和 schema version 是否被显式声明。",
+      "需要避免 current metadata 回填历史样本、授权边界被 RAG/LLM 默认绕过或 reference data 被误写成 alpha。"
+    ],
+    "not_applicable_when": [
+      "用户要求法律意见、合同解释或市场数据授权结论；这必须由项目 owner/legal/vendor agreement 判断。",
+      "用户要求买卖点、仓位、杠杆、止损止盈、交易许可、风控阈值或实盘执行动作。",
+      "需要特定交易所、供应商或账户的实时授权事实时，应由外接项目事实层提供。"
+    ]
+  },
+  "content": {
+    "statement": "symbol、instrument_id、listing、expiration、corporate action、contract specification、tick size、lot size 等 reference data 必须按 point-in-time 版本保存和查询；不得用当前 instrument metadata 回填历史训练、回测、复盘或标签生成。",
+    "rationale": "本候选只定义数据授权、reference data 与时点一致性边界，不输出交易参数、买卖点、训练许可或数据授权法律结论。",
+    "normalized_claim": "phase45_reference_data_entitlement.point_in_time_instrument_definition_required.v1",
+    "claim_strength": "reviewed_caveat_only",
+    "performance_claim": false,
+    "procedure": [
+      "确认问题属于 Phase 45 P2 数据授权、reference data 或 crypto perpetual 风险边界。",
+      "检查 source_evidence 是否绑定 vendor、venue、dataset、product、account mode、schema/API/rulebook/version 和 accessed_at。",
+      "返回知识时必须携带 reviewed/caveat_only、source_evidence、适用范围、不适用场景、owner 边界和 machine gate。",
+      "不得把本条解释成法律授权结论、训练授权结论、交易许可、清算规避、仓位、杠杆、止损止盈、默认指导或 hard gate。"
+    ],
+    "anti_patterns": [
+      "不得把 reference data 写成交易信号。",
+      "不得生成训练授权结论。"
+    ],
+    "validation": [
+      "review.review_status 必须为 reviewed；review_mode 必须为 caveat_only。",
+      "approved_allowed、default_guidance_allowed、hard_gate_allowed、risk_threshold_advice_allowed、trade_execution_advice_allowed、legal_license_conclusion_allowed 必须为 false。",
+      "source_evidence 至少包含 3 条可审计来源，并保留 venue/vendor/product/API/rulebook 限制。",
+      "不得出现买卖点、仓位、杠杆、止损止盈、清算规避、法律授权结论、训练授权结论或实盘执行建议。"
+    ],
+    "risk_notes": [
+      "本条只可作为 reviewed/caveat_only 审计上下文。",
+      "供应商、交易所、crypto venue 和 API 文档具有时间敏感性，外接项目必须复核当前有效版本。",
+      "本条不创建 approved，不进入默认指导，不启用 hard gate。"
+    ],
+    "citation_notes": "Databento instrument definitions provide point-in-time reference information including symbol, name, listing, expiration, tick size and strike price.；Databento explains why point-in-time instrument definitions matter for historical and real-time reference data and backtesting.；Databento documents supported market-data schemas and field dictionaries such as MBO, MBP, trades, bars, definitions and statistics.；CME product slate links searchable product contract specifications and previous-day volume/open-interest data.",
+    "audit_patch_notes": {
+      "source": [
+        "保留 Databento Instrument Definitions、Databento PIT article、Databento Schemas、CME Product Slate。"
+      ],
+      "content": [
+        "明确 current metadata 不得静默回填历史样本。"
+      ],
+      "boundary": [
+        "不得把 reference data 写成交易信号。",
+        "不得生成训练授权结论。"
+      ],
+      "conflict": []
+    }
+  },
+  "assumptions": [
+    "Market data entitlement 和 reference data 是数据工程与治理边界，不是交易策略。",
+    "授权、schema、覆盖范围和 point-in-time 元数据必须保留 vendor、venue、dataset、product 和时间边界。",
+    "候选通过外部审计前不能进入 formal reviewed 知识库。"
+  ],
+  "source_evidence": [
+    {
+      "source_title": "Databento Instrument Definitions",
+      "source_url": "https://databento.com/docs/schemas-and-data-formats/instrument-definitions",
+      "source_type": "official_vendor_doc",
+      "publisher": "Databento",
+      "reliability": "high",
+      "score": 88,
+      "freshness": "time_sensitive",
+      "evidence_summary": "Databento instrument definitions provide point-in-time reference information including symbol, name, listing, expiration, tick size and strike price.",
+      "limitations": [
+        "Databento schema context; field coverage and semantics depend on dataset, venue and vendor version."
+      ],
+      "source_id": "src_001",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "Databento: Evaluating Market Data APIs - Point-in-Time Definitions",
+      "source_url": "https://databento.com/blog/instrument-definitions",
+      "source_type": "vendor_technical_article",
+      "publisher": "Databento",
+      "reliability": "medium_high",
+      "score": 80,
+      "freshness": "stable",
+      "evidence_summary": "Databento explains why point-in-time instrument definitions matter for historical and real-time reference data and backtesting.",
+      "limitations": [
+        "Vendor article; useful rationale, but reviewed field contracts should use official schema docs."
+      ],
+      "source_id": "src_002",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "Databento Schemas and Data Formats",
+      "source_url": "https://databento.com/docs/schemas-and-data-formats",
+      "source_type": "official_vendor_doc",
+      "publisher": "Databento",
+      "reliability": "high",
+      "score": 87,
+      "freshness": "time_sensitive",
+      "evidence_summary": "Databento documents supported market-data schemas and field dictionaries such as MBO, MBP, trades, bars, definitions and statistics.",
+      "limitations": [
+        "Vendor-specific schema documentation; not a universal market-data schema standard."
+      ],
+      "source_id": "src_003",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "CME Group Product Slate",
+      "source_url": "https://www.cmegroup.com/markets/products",
+      "source_type": "official_exchange_doc",
+      "publisher": "CME Group",
+      "reliability": "high",
+      "score": 85,
+      "freshness": "time_sensitive",
+      "evidence_summary": "CME product slate links searchable product contract specifications and previous-day volume/open-interest data.",
+      "limitations": [
+        "CME product universe; contract specifications and reference metadata can change by product and date."
+      ],
+      "source_id": "src_004",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 85.0,
+    "score_version": "phase45_source_scoring_v1",
+    "primary_source_count": 3,
+    "supporting_source_count": 1,
+    "low_reliability_source_count": 0,
+    "mandatory_downgrades": [],
+    "limitations": [
+      "正式 reviewed 前必须由外部审计确认 claim 没有超出来源可证明范围。",
+      "交易所/供应商市场数据政策和 schema 文档必须保留 active agreement、product、venue、dataset、jurisdiction 和版本 caveat。",
+      "若后续使用内部 entitlement 或 reference_data schema，需要提供 contract extract 或 hash。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "Phase 37 Data Engineering formal reviewed knowledge",
+      "Phase 37 Market Microstructure formal reviewed knowledge",
+      "Phase 38/41 AI Engineering training-data boundary knowledge",
+      "Phase 45 Audit Trail / Clock Sync formal reviewed knowledge"
+    ],
+    "conflicts": [],
+    "resolution_summary": "Phase 45 P2 reviewed/caveat_only preparation audit passed for this item; approved/default guidance/hard gate/legal or trading conclusions remain disabled.",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "risk_threshold_advice_allowed": false,
+    "trade_execution_advice_allowed": false,
+    "legal_license_conclusion_allowed": false
+  },
+  "review": {
+    "review_status": "reviewed",
+    "review_mode": "caveat_only",
+    "confidence": "high",
+    "freshness": "mixed",
+    "reviewer": "external_ai_strict_audit_and_codex",
+    "reviewed_at": "2026-06-12",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "risk_threshold_advice_allowed": false,
+    "trade_execution_advice_allowed": false,
+    "legal_license_conclusion_allowed": false,
+    "ai_audit": {
+      "audit_result_id": "audit_phase45_p2_reviewed_preparation_20260612",
+      "package_id": "phase45_p2_reviewed_preparation_audit_package_20260612",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "trade_execution_advice_allowed": false,
+      "legal_license_conclusion_allowed": false,
+      "reasons": [
+        "Databento PIT instrument definitions 足以支撑 reference data 必须按 point-in-time 查询。",
+        "claim 防止 current metadata 回填历史训练、回测、复盘或标签生成，边界正确。"
+      ],
+      "required_followups": [
+        "正式文本建议补 Databento Corporate Actions / Reference API source_ref。",
+        "所有 PIT metadata 必须绑定 vendor、dataset、venue、schema version、effective time。"
+      ],
+      "patch_notes": {
+        "source": [
+          "保留 Databento Instrument Definitions、Databento PIT article、Databento Schemas、CME Product Slate。"
+        ],
+        "content": [
+          "明确 current metadata 不得静默回填历史样本。"
+        ],
+        "boundary": [
+          "不得把 reference data 写成交易信号。",
+          "不得生成训练授权结论。"
+        ],
+        "conflict": []
+      }
+    },
+    "source_candidate_id": "cand_20260612_phase45_reference_data_entitlement_p45_g_data02_001",
+    "ai_audit_result_id": "audit_phase45_p2_reviewed_preparation_20260612"
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于 AI IDE 检查数据授权、reference data、point-in-time metadata、crypto perpetual 特有风险的设计边界。",
+      "用于 RAG 检索、schema review、adapter contract review、数据 lineage 审计和风险上下文说明。"
+    ],
+    "not_allowed": [
+      "不得生成法律授权结论、训练授权结论、再分发许可、买卖点、仓位、杠杆、止损止盈、清算规避或实盘执行建议。",
+      "不得把 reviewed/caveat_only 当作 approved 或默认指导。",
+      "不得替外接项目启用 hard gate、自动停机、自动解锁、自动撤单、自动强平处理或风控阈值。"
+    ],
+    "required_context": [
+      "必须同时返回 source_evidence、applicability、not_applicable_when、review_status、conflict_status 和 machine_gate。",
+      "若外接项目问题涉及实盘、法律、授权、资金或风控动作，必须要求项目事实层或人工 owner 复核。"
+    ],
+    "fallback_behavior": "cite_with_caveat"
+  },
+  "machine_gate": {
+    "default_guidance": "caveat_only",
+    "review_visibility": "reviewed_caveat_only",
+    "reason": "Phase 45 P2 reviewed/caveat_only audit passed; approved/default guidance/hard gate/legal and trading conclusions remain disabled.",
+    "requires_human_escalation": false,
+    "hidden_from_default_queue": true,
+    "visible_in_default_guidance_queue": false,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "risk_threshold_advice_allowed": false,
+    "trade_execution_advice_allowed": false,
+    "legal_license_conclusion_allowed": false,
+    "blocking_reasons": [],
+    "checked_at": "2026-06-13T10:29:14+00:00",
+    "gate_version": "1.0.0"
+  },
+  "contribution": {
+    "source": "phase45_professional_research",
+    "private_data_removed": true,
+    "project_specific_details_removed": true,
+    "notes": "Generated for external strict audit; no project account, license agreement text, key, position, threshold, or private strategy data included."
+  },
+  "recommended_extra_sources": []
+}

@@ -1,0 +1,263 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_ai_database_storage.phase42.pgvector_vs_qdrant_selection_boundary.v1",
+  "title": "pgvector and Qdrant selection must be a storage-boundary decision: pgvector is suitable when vector retrieval ",
+  "metadata": {
+    "partition_id": "KB_AI_26_DATABASE_STORAGE",
+    "domain": "storage_engineering",
+    "subdomain": "vector_store_retrieval_storage",
+    "rule_type": "governance_rule",
+    "claim_type": "rag_governance_rule",
+    "content_type": "json",
+    "project_binding": "none",
+    "classification_notes": "Phase 42 formal reviewed/caveat_only knowledge；accepted_for_draft 已转 reviewed，但不是 approved。 数据库/存储规则只指导 AI Engineering 和 Project Integration，不创建真实数据库，不混入 Trading Engineering 本体。",
+    "tree_node_id": "kt.ai_engineering.database_storage_engineering.vector_store_retrieval_storage",
+    "tree_path": "CEK-TA / AI Engineering / Database Data Contract And Storage Engineering",
+    "canonical_node_id": "kt.ai_engineering.database_storage_engineering.vector_store_retrieval_storage",
+    "canonical_tree_path": "CEK-TA / AI Engineering / Database Data Contract And Storage Engineering",
+    "risk_level": "high",
+    "used_for": [
+      "trading_ai_storage",
+      "llm_training",
+      "trading_gating_scoring",
+      "rag_engineering",
+      "mcp",
+      "vue_audit_ui",
+      "external_ai_ide"
+    ],
+    "source_candidate_id": "cand_20260611_phase42_p42_p1_001_pgvector_vs_qdrant_selection_boundary_001",
+    "research_task_id": "P42-P1-001",
+    "phase": "Phase 42",
+    "storage_role": "vector_index"
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "general",
+    "data_granularity": "general",
+    "project_type": "trading_ai_gating_scoring_storage",
+    "applies_when": [
+      "外接项目正在设计交易 AI gating/scoring 的数据库、数据契约、RAG 存储、审计日志、迁移、备份或生命周期治理。",
+      "该规则用于判断是否引入更复杂的向量库、feature store、model registry、RLS 或 pgAudit 等增强组件。"
+    ],
+    "not_applicable_when": [
+      "用户需要具体买卖点、仓位、止损止盈、K 线形态、策略参数或实盘下单建议。",
+      "知识点主要描述 fill model、订单状态机、交易所异常处理、实盘风控阈值或交易收益本体，应路由到 Trading Engineering。",
+      "用户正在请求直接创建生产数据库、启用 RLS/pgAudit、执行迁移或引入外部服务；这必须另起实现 Phase 并由开发者确认。"
+    ]
+  },
+  "content": {
+    "statement": "pgvector and Qdrant selection must be a storage-boundary decision: pgvector is suitable when vector retrieval should stay close to PostgreSQL metadata and transactional governance, while Qdrant is suitable when a dedicated vector service with payload filtering and operational scaling is justified; neither may replace the canonical source of truth.",
+    "rationale": "本候选只沉淀 AI Engineering 的数据库、数据契约、存储、审计日志、向量检索和生命周期治理规则；K 线、fill model、仓位、止损止盈和实盘执行本体必须路由到 Trading Engineering。",
+    "procedure": [
+      "确认当前任务属于交易 AI 数据库、数据契约、存储、审计日志、RAG/vector storage、备份恢复或生命周期治理范围。",
+      "确认没有请求创建生产数据库、执行不可逆迁移、写入外部项目真实数据或改变 MCP/API 写权限。",
+      "读取知识项时必须同时返回 source_evidence、review_status、machine_gate、适用边界和不适用场景。",
+      "如果问题转向 K 线、fill model、仓位、止损止盈、订单状态机或实盘执行，应路由到 Trading Engineering。"
+    ],
+    "examples": [],
+    "anti_patterns": [
+      "把 vector DB 当作事实主库或唯一 canonical store。",
+      "让 LLM audit assistant 写 final_gate 决策表或绕过 deterministic final gate。",
+      "把 reviewed/caveat_only 知识当作 approved 默认指导。",
+      "在 CEK-TA 通用知识中写入外部项目私有表名、账户字段、策略参数或生产密钥。"
+    ],
+    "validation": [
+      "source_evidence 非空，且 conflict_status 为 none 或 resolved。",
+      "review_status 为 reviewed 时 machine_gate.default_guidance 必须为 caveat_only。",
+      "MCP/SearchLab default_guidance_only 不得返回本条作为 allow。",
+      "Vue3 知识树能按 canonical_node_id 展示本条，候选页能回链 formal_knowledge_id。"
+    ],
+    "risk_notes": [
+      "本条仍是 candidate，需要外部 AI/人工审计确认来源充分性、适用边界和是否需要补充实测 benchmark 或部署实例。",
+      "本条不创建真实数据库，不执行迁移，不改变 MCP 写权限，不引入外部服务依赖。",
+      "审计时确认该候选是否需要补充更贴近交易 AI storage 的 benchmark、部署实例、成本边界或回滚策略。",
+      "本条为 formal reviewed/caveat_only，不是 approved；不得进入默认指导或 hard gate。",
+      "本条不创建真实数据库、不执行迁移、不改变外部服务依赖。"
+    ],
+    "citation_notes": "pgvector documents vector storage and HNSW/IVFFlat indexes inside PostgreSQL, preserving SQL adjacency with relational metadata.；Qdrant documents vector indexes and payload indexes, emphasizing combined vector and traditional indexing for filtered search.；Qdrant describes itself as a vector similarity search engine and vector database with payload management and filtering support.",
+    "audit_patch_notes": {
+      "source_patch_notes": [],
+      "content_patch_notes": [],
+      "boundary_patch_notes": [],
+      "conflict_patch_notes": []
+    }
+  },
+  "assumptions": [
+    "外接项目提供私有交易事实、真实表名、吞吐量、延迟和部署环境；CEK-TA 只沉淀可复用专业规则。",
+    "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+  ],
+  "source_evidence": [
+    {
+      "source_id": "src_pgvector",
+      "source_title": "pgvector: Open-source vector similarity search for Postgres",
+      "source_url": "https://github.com/pgvector/pgvector",
+      "source_type": "official_doc",
+      "publisher": "pgvector",
+      "published_at": null,
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "pgvector documents vector storage and HNSW/IVFFlat indexes inside PostgreSQL, preserving SQL adjacency with relational metadata.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_qdrant_indexing",
+      "source_title": "Qdrant Documentation: Indexing",
+      "source_url": "https://qdrant.tech/documentation/manage-data/indexing/",
+      "source_type": "official_doc",
+      "publisher": "Qdrant",
+      "published_at": null,
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "Qdrant documents vector indexes and payload indexes, emphasizing combined vector and traditional indexing for filtered search.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_qdrant_github",
+      "source_title": "Qdrant GitHub Repository",
+      "source_url": "https://github.com/qdrant/qdrant",
+      "source_type": "official_doc",
+      "publisher": "Qdrant",
+      "published_at": null,
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "Qdrant describes itself as a vector similarity search engine and vector database with payload management and filtering support.",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 84,
+    "score_version": "1.1.0",
+    "primary_source_count": 3,
+    "supporting_source_count": 0,
+    "low_reliability_source_count": 0,
+    "limitations": [
+      "来源支持工具边界和工程能力，但正式知识转换时必须保留 CEK-TA 不创建真实数据库、不执行迁移、不默认引入外部依赖的边界。",
+      "Phase 42 formal reviewed 知识仅可作为数据库/数据契约/存储工程审计与检索依据；默认指导仍需后续人工 approved。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "docs/research/phase42_database_storage_scope.md",
+      "docs/contracts/phase42_database_storage_contract.md",
+      "docs/contracts/phase42_rag_vector_storage_contract.md",
+      "docs/tasks/phase42_database_data_contract_storage_engineering.md"
+    ],
+    "conflicts": [],
+    "resolution_summary": "Phase 42 reviewed/caveat_only conversion passed; formal reviewed knowledge is searchable and citable, but not approved, not default guidance, and not hard gate.",
+    "default_recommendation": "caveat_only_until_human_approval"
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于外接交易 AI 项目的数据库 schema、数据契约、迁移、索引、审计日志、RAG/vector storage、备份恢复和生命周期治理审计。",
+      "用于生成任务卡、接口契约、存储设计 checklist、测试计划和风险提示。",
+      "用于 MCP/SearchLab/KnowledgeTree 以 caveat 方式返回 reviewed 知识和来源引用。"
+    ],
+    "not_allowed": [
+      "不得据此生成买卖点、仓位、杠杆、止损止盈、实盘下单或交易执行建议。",
+      "不得据此直接创建生产数据库、执行迁移或修改外部项目真实数据库。",
+      "不得把 reviewed/caveat_only 当作 approved 默认指导或 hard gate。"
+    ],
+    "required_context": [
+      "canonical_node_id=kt.ai_engineering.database_storage_engineering.vector_store_retrieval_storage",
+      "外接项目必须提供 project_adapter_id、requested_decision、schema_version、dataset_hash、model_version、prompt_version、rag_index_version 和 audit_trace_id。",
+      "必须同时返回 source_evidence、conflict_status、review_status 和 machine_gate。"
+    ],
+    "fallback_behavior": "cite_with_caveat"
+  },
+  "machine_gate": {
+    "default_guidance": "caveat_only",
+    "reason": "CEK-TA-355 按 Phase 42 P1 reviewed-preparation 审计结果沉淀为 formal reviewed/caveat_only；不可作为 approved 默认指导或 hard gate。",
+    "requires_human_escalation": true,
+    "blocking_reasons": [
+      "reviewed_not_approved",
+      "default_guidance_disabled_until_human_approval",
+      "hard_gate_disabled",
+      "production_database_changes_require_separate_task"
+    ],
+    "checked_at": "2026-06-11",
+    "gate_version": "1.0.0",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "recommended_extra_sources": [],
+  "review": {
+    "confidence": "medium",
+    "freshness": "time_sensitive",
+    "review_status": "reviewed",
+    "reviewer": "codex",
+    "reviewed_at": "2026-06-11",
+    "created_at": "2026-06-11",
+    "updated_at": "2026-06-11",
+    "default_guidance_allowed": false,
+    "approval_status": "not_requested",
+    "source_candidate_id": "cand_20260611_phase42_p42_p1_001_pgvector_vs_qdrant_selection_boundary_001",
+    "ai_audit_result_id": "audit_result_phase42_p1_reviewed_preparation_20260611_strict_v1",
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase42_p1_reviewed_preparation_20260611_strict_v1",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "allowed_next_stage": "formal_reviewed_knowledge",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false
+    },
+    "open_questions": [
+      "审计时确认该候选是否需要补充更贴近交易 AI storage 的 benchmark、部署实例、成本边界或回滚策略。"
+    ],
+    "decision_log": [
+      {
+        "at": "2026-06-11",
+        "actor": "codex",
+        "decision": "created",
+        "reason": "Phase 42 P1 database/storage engineering candidate expansion."
+      },
+      {
+        "at": "2026-06-11",
+        "actor": "codex",
+        "decision": "phase42_p1_audit_result_imported",
+        "reason": "external audit decision=accepted_for_draft"
+      },
+      {
+        "at": "2026-06-11",
+        "actor": "codex",
+        "decision": "reviewed",
+        "reason": "CEK-TA-355: accepted_for_draft candidate promoted to formal reviewed/caveat_only knowledge; no approved/default guidance."
+      }
+    ],
+    "approved_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "contribution": {
+    "contribution_id": null,
+    "source_project": null,
+    "sanitization_status": "not_applicable",
+    "private_data_removed": true,
+    "generic_mapping_notes": "Generated from Phase 42 public-source candidate; no project-private trading facts included."
+  },
+  "copyright": {
+    "stores_full_text": false,
+    "stores_long_quote": false,
+    "summary_only": true,
+    "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+    "reuse_risk": "low"
+  },
+  "phase42_conversion": {
+    "source_candidate_status": "accepted",
+    "source_ingestion_decision": "accepted_for_draft",
+    "promoted_by_task": "CEK-TA-355",
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "production_database_changes_allowed": false,
+    "reviewed_preparation_audit_result_id": "audit_result_phase42_p1_reviewed_preparation_20260611_strict_v1"
+  }
+}

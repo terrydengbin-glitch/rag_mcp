@@ -1,0 +1,389 @@
+{
+  "schema_version": "1.0.0",
+  "candidate_id": "cand_20260611_phase42_p42_p0_007_feedback_outcome_label_separated_001",
+  "research_task_id": "P42-P0-007",
+  "status": {
+    "review_status": "accepted",
+    "ingestion_decision": "accepted_for_draft",
+    "decision_reason": "Phase 42 二审结论为 accepted_for_draft；只允许进入 formal draft queue，不得视为 reviewed/approved/default guidance/hard gate。",
+    "created_at": "2026-06-11",
+    "updated_at": "2026-06-11"
+  },
+  "classification": {
+    "tree_node_id": "kt.ai_engineering.database_storage_engineering.data_contract_lineage",
+    "canonical_node_id": "kt.ai_engineering.database_storage_engineering.data_contract_lineage",
+    "tree_path": "CEK-TA / AI Engineering / Database Data Contract And Storage Engineering",
+    "related_nodes": [
+      "kt.rag_engineering",
+      "kt.project_integration",
+      "kt.ai_engineering.model_release_governance"
+    ],
+    "partition_id": "KB_AI_26_DATABASE_STORAGE",
+    "domain": "storage_engineering",
+    "subdomain": "data_contract_lineage",
+    "rule_type": "governance_rule",
+    "used_for": [
+      "trading_ai_storage",
+      "llm_training",
+      "trading_gating_scoring",
+      "rag_engineering",
+      "mcp",
+      "vue_audit_ui",
+      "external_ai_ide"
+    ]
+  },
+  "claim": {
+    "claim_id": "claim_001",
+    "statement": "Feedback, outcome and label events must be separated because they have different provenance, timing, review status and downstream training meaning.",
+    "normalized_claim": "phase42.feedback_outcome_label_separated.v1",
+    "claim_type": "data_contract_rule",
+    "storage_role": "manifest_store",
+    "evidence_summary": "DVC describes Git-like data version control for data, AI/ML and data infrastructure workflows.；MLflow registry documents registered models, model versions, aliases, tags and model metadata.；NIST SP 800-92 provides guidance for developing, implementing and maintaining enterprise log management practices.；W3C PROV-DM 用 entity、activity、agent 描述数据生产、使用和责任主体，支撑 feedback/outcome/label 的 provenance 分离。；Data Cards 是用于透明记录数据集事实、用途、生命周期和责任信息的结构化文档，支撑 label policy/source 和 dataset manifest 说明。；CEK-TA Phase 42 内部契约定义 trade_candidate、score_result、llm_audit_result、final_gate_ledger、feedback/outcome/label、manifest、权限、迁移和生命周期边界。",
+    "interpretation_notes": "本候选只沉淀 AI Engineering 的数据库、数据契约、存储、审计日志、向量检索和生命周期治理规则；K 线、fill model、仓位、止损止盈和实盘执行本体必须路由到 Trading Engineering。 补证说明：补充 W3C PROV、Data Cards 和 feedback/outcome/label_event 内部契约，支撑三类事件按 provenance、时点和训练含义分离。",
+    "claim_strength": "medium",
+    "performance_claim": false
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "general",
+    "data_granularity": "general",
+    "project_type": "trading_ai_gating_scoring_storage",
+    "applies_when": [
+      "外接项目正在设计交易 AI gating/scoring 的数据库、数据契约、RAG 存储、审计日志、迁移、备份或生命周期治理。",
+      "该规则用于阻断无 trace、无来源、无版本、无迁移、向量库事实化、LLM 越权 final gate 或训练/评估泄漏。"
+    ],
+    "not_applicable_when": [
+      "用户需要具体买卖点、仓位、止损止盈、K 线形态、策略参数或实盘下单建议。",
+      "知识点主要描述 fill model、订单状态机、交易所异常处理、实盘风控阈值或交易收益本体，应路由到 Trading Engineering。",
+      "用户正在请求直接创建生产数据库或执行不可逆迁移；这必须另起实现 Phase 并由开发者确认。"
+    ],
+    "assumptions": [
+      "外接项目提供私有交易事实、真实表名和部署环境；CEK-TA 只沉淀可复用专业规则。",
+      "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+    ],
+    "limitations": [
+      "本条仍是 candidate，需要外部 AI/人工审计确认来源充分性、适用边界和是否需要补充交易 AI 实例。",
+      "本条不创建真实数据库，不执行迁移，不改变 MCP 写权限。"
+    ]
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于提醒 AI IDE 在外接交易 AI 项目中设计数据库、schema、migration、audit ledger、RAG/vector storage 和生命周期治理契约。",
+      "用于生成任务卡、接口契约、测试计划、审计 checklist 和候选知识补证问题。",
+      "用于阻断 Vector DB 成为事实主库、LLM audit 写 final_gate、无 audit_trace_id 决策或无来源默认指导。"
+    ],
+    "not_allowed": [
+      "不得据此生成买卖点、仓位、杠杆、止损止盈或实盘下单建议。",
+      "不得据此直接创建生产数据库、执行迁移或修改外部项目真实数据库。",
+      "不得把 candidate 当作 reviewed/approved 默认指导。"
+    ]
+  },
+  "source_refs": [
+    {
+      "source_id": "src_dvc_home",
+      "source_title": "DVC: Data Version Control",
+      "source_url": "https://dvc.org/",
+      "source_type": "official_doc",
+      "publisher": "DVC",
+      "published_at": null,
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "high",
+      "score": 82,
+      "relevance": "high",
+      "freshness": "time_sensitive",
+      "limitations": [],
+      "evidence_summary": "DVC describes Git-like data version control for data, AI/ML and data infrastructure workflows.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_mlflow_registry",
+      "source_title": "MLflow Model Registry",
+      "source_url": "https://mlflow.org/docs/latest/ml/model-registry/",
+      "source_type": "official_doc",
+      "publisher": "MLflow",
+      "published_at": null,
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "high",
+      "score": 86,
+      "relevance": "high",
+      "freshness": "time_sensitive",
+      "limitations": [],
+      "evidence_summary": "MLflow registry documents registered models, model versions, aliases, tags and model metadata.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_nist_log_management",
+      "source_title": "NIST SP 800-92: Guide to Computer Security Log Management",
+      "source_url": "https://csrc.nist.gov/pubs/sp/800/92/final",
+      "source_type": "security_standard",
+      "publisher": "NIST",
+      "published_at": null,
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "high",
+      "score": 88,
+      "relevance": "high",
+      "freshness": "time_sensitive",
+      "limitations": [],
+      "evidence_summary": "NIST SP 800-92 provides guidance for developing, implementing and maintaining enterprise log management practices.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_w3c_prov_dm",
+      "source_title": "W3C PROV-DM: The PROV Data Model",
+      "source_url": "https://www.w3.org/TR/prov-dm/",
+      "source_type": "standard_doc",
+      "publisher": "W3C",
+      "published_at": null,
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "high",
+      "score": 86,
+      "relevance": "high",
+      "freshness": "time_sensitive",
+      "limitations": [],
+      "evidence_summary": "W3C PROV-DM 用 entity、activity、agent 描述数据生产、使用和责任主体，支撑 feedback/outcome/label 的 provenance 分离。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_google_data_cards_playbook",
+      "source_title": "The Data Cards Playbook",
+      "source_url": "https://sites.research.google/datacardsplaybook/",
+      "source_type": "governance_framework",
+      "publisher": "Google Research",
+      "published_at": null,
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "high",
+      "score": 86,
+      "relevance": "high",
+      "freshness": "time_sensitive",
+      "limitations": [],
+      "evidence_summary": "Data Cards 是用于透明记录数据集事实、用途、生命周期和责任信息的结构化文档，支撑 label policy/source 和 dataset manifest 说明。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_phase42_database_storage_contract",
+      "source_title": "Phase 42 交易 AI 数据库与数据契约",
+      "source_url": "docs/contracts/phase42_database_storage_contract.md",
+      "source_type": "internal_contract",
+      "publisher": "CEK-TA",
+      "published_at": null,
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "high",
+      "score": 82,
+      "relevance": "high",
+      "freshness": "time_sensitive",
+      "limitations": [],
+      "evidence_summary": "CEK-TA Phase 42 内部契约定义 trade_candidate、score_result、llm_audit_result、final_gate_ledger、feedback/outcome/label、manifest、权限、迁移和生命周期边界。",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 85,
+    "score_version": "1.1.0",
+    "primary_source_count": 5,
+    "supporting_source_count": 1,
+    "low_reliability_source_count": 0,
+    "mandatory_downgrades": [],
+    "limitations": [
+      "来源支持通用数据库、RAG/vector、日志、安全、MLOps 和 feature store 工程原则；正式知识转换时需保留 CEK-TA 具体上下游引用和冲突链接。",
+      "已补充 claim-specific 外部来源和 Phase 42 内部契约证据；二审仍需确认是否足以进入 accepted_for_draft。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "docs/research/phase42_database_storage_scope.md",
+      "docs/contracts/phase42_database_storage_contract.md",
+      "docs/contracts/phase42_rag_vector_storage_contract.md",
+      "docs/tasks/phase42_database_data_contract_storage_engineering.md"
+    ],
+    "conflicts": [],
+    "resolution_summary": "未发现与 Phase 42 契约的直接冲突；候选不会进入默认指导，也不会创建真实数据库。",
+    "approval_allowed": false
+  },
+  "machine_gate": {
+    "default_guidance": "deny",
+    "reason": "Accepted for draft queue only; reviewed/approved/default guidance requires later governance.",
+    "requires_human_escalation": true
+  },
+  "review": {
+    "confidence": "medium",
+    "freshness": "time_sensitive",
+    "reviewer": "external_ai_and_codex_alignment",
+    "reviewed_at": "2026-06-11",
+    "open_questions": [
+      "审计时确认该候选是否需要补充更贴近交易 AI storage 的实例、反例或与 Phase 41/Trading Engineering 增加交叉引用。"
+    ],
+    "audit_log": [
+      {
+        "at": "2026-06-11",
+        "actor": "codex",
+        "action": "created",
+        "reason": "Phase 42 P0 database, data contract and storage engineering candidate expansion."
+      },
+      {
+        "at": "2026-06-11",
+        "actor": "ChatGPT GPT-5.5 Pro",
+        "action": "phase42_ai_audit_result_imported",
+        "reason": "needs_more_evidence / confidence=medium",
+        "audit_result_id": "audit_result_phase42_candidate_audit_package_20260611_strict_v1"
+      },
+      {
+        "at": "2026-06-11",
+        "actor": "codex",
+        "action": "phase42_default_queue_boundary_patched",
+        "reason": "按审计报告设置 hidden_from_default_queue=true，并禁止 default guidance/hard gate。",
+        "audit_result_id": "audit_result_phase42_candidate_audit_package_20260611_strict_v1"
+      },
+      {
+        "at": "2026-06-11",
+        "actor": "codex",
+        "action": "phase42_needs_more_evidence_supplemented",
+        "reason": "补充 W3C PROV、Data Cards 和 feedback/outcome/label_event 内部契约，支撑三类事件按 provenance、时点和训练含义分离。",
+        "audit_package": "phase42_needs_evidence_supplement_20260611"
+      },
+      {
+        "at": "2026-06-11",
+        "actor": "codex",
+        "action": "phase42_needs_more_evidence_supplemented",
+        "reason": "补充 W3C PROV、Data Cards 和 feedback/outcome/label_event 内部契约，支撑三类事件按 provenance、时点和训练含义分离。",
+        "audit_package": "phase42_needs_evidence_supplement_20260611"
+      },
+      {
+        "at": "2026-06-11",
+        "actor": "codex",
+        "action": "phase42_needs_more_evidence_supplemented",
+        "reason": "补充 W3C PROV、Data Cards 和 feedback/outcome/label_event 内部契约，支撑三类事件按 provenance、时点和训练含义分离。",
+        "audit_package": "phase42_needs_evidence_supplement_20260611"
+      },
+      {
+        "at": "2026-06-11",
+        "actor": "ChatGPT GPT-5.5 Pro",
+        "action": "phase42_supplemental_reaudit_result_imported",
+        "reason": "accepted_for_draft / confidence=medium",
+        "audit_result_id": "audit_result_phase42_needs_evidence_supplemental_reaudit_20260611_strict_v2"
+      },
+      {
+        "at": "2026-06-11",
+        "actor": "codex",
+        "action": "formal_reviewed_created",
+        "reason": "CEK-TA-350: formal reviewed/caveat_only knowledge written to codex-expert-kit/rag/knowledge/KB_AI_26_DATABASE_STORAGE/kb_ai_database_storage.phase42.feedback_outcome_label_separated.v1.json."
+      }
+    ],
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase42_needs_evidence_supplemental_reaudit_20260611_strict_v2",
+      "package_id": "phase42_needs_evidence_supplemental_reaudit_package_20260611",
+      "auditor": "ChatGPT GPT-5.5 Pro",
+      "audited_at": "2026-06-11T00:00:00+09:00",
+      "decision": "accepted_for_draft",
+      "confidence": "medium",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "W3C PROV、Data Cards 和 Phase42 Feedback/Outcome/Label 内部契约足以支撑 feedback、outcome、label 三类事件按 provenance、时点、review_status 和训练含义分离。"
+      ],
+      "required_followups": [
+        "formal draft 必须给出 FeedbackEvent / OutcomeEvent / LabelEvent 三个 schema，并声明 outcome/label 不能回流污染 decision-time features。"
+      ],
+      "source_audit": {
+        "status": "pass",
+        "notes": [
+          "补充来源已覆盖第一轮 source_patch_notes 的核心缺口；内部契约仅作为 CEK-TA 字段/状态机证据，不替代外部专业来源。"
+        ]
+      },
+      "conflict_audit": {
+        "status": "pass",
+        "notes": [
+          "workflow.hidden_from_default_queue=true, visible_in_default_guidance_queue=false, default_guidance_allowed=false, hard_gate_allowed=false；未发现默认指导或 hard gate 越权。"
+        ]
+      },
+      "scope_audit": {
+        "status": "pass",
+        "notes": [
+          "仍在 kt.ai_engineering.database_storage_engineering.* 范围；未发现 K线、fill model、仓位、止损止盈或实盘执行本体污染。"
+        ]
+      },
+      "classification_audit": {
+        "status": "pass",
+        "notes": [
+          "kt.ai_engineering.database_storage_engineering.data_contract_lineage"
+        ]
+      },
+      "source_patch_notes": [],
+      "content_patch_notes": [
+        "formal draft 必须给出 FeedbackEvent / OutcomeEvent / LabelEvent 三个 schema，并声明 outcome/label 不能回流污染 decision-time features。"
+      ],
+      "boundary_patch_notes": [
+        "保持 candidate / draft 边界；不得直接 reviewed、approved、default guidance 或 hard gate；不得创建生产数据库或执行 migration。"
+      ],
+      "conflict_patch_notes": [
+        "conversion_target.target_review_status 当前多为 blocked；二审通过后可由导入流程改为 draft，但不得改为 reviewed/approved。"
+      ],
+      "boundary": "Accepted for formal draft queue only; not reviewed, approved, default guidance or hard gate.",
+      "allowed_next_stage": "formal_reviewed_knowledge"
+    },
+    "supplemented_at": "2026-06-11",
+    "supplement_status": "accepted_for_draft_after_reaudit",
+    "supplemental_evidence": {
+      "supplement_id": "phase42_needs_evidence_supplement_20260611",
+      "added_source_ids": [],
+      "verified_source_ids": [
+        "src_w3c_prov_dm",
+        "src_google_data_cards_playbook",
+        "src_phase42_database_storage_contract"
+      ],
+      "supplement_notes": "补充 W3C PROV、Data Cards 和 feedback/outcome/label_event 内部契约，支撑三类事件按 provenance、时点和训练含义分离。",
+      "source_count_after": 6,
+      "reaudit_package": "docs/audit/phase42_needs_evidence_supplemental_reaudit_package_20260611.json"
+    }
+  },
+  "copyright": {
+    "stores_full_text": false,
+    "stores_long_quote": false,
+    "summary_only": true,
+    "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+    "reuse_risk": "low"
+  },
+  "conversion_target": {
+    "proposed_knowledge_id": "kb_ai_database_storage.phase42.feedback_outcome_label_separated.v1",
+    "target_schema": "cek_ta_knowledge_item",
+    "target_review_status": "reviewed",
+    "skill_candidate": false,
+    "eval_case_candidate": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "workflow": {
+    "stage": "formalized_reviewed",
+    "queue_group": "formalized",
+    "formal_knowledge_id": "kb_ai_database_storage.phase42.feedback_outcome_label_separated.v1",
+    "formal_review_status": "reviewed",
+    "ai_audit_result_id": "audit_result_phase42_needs_evidence_supplemental_reaudit_20260611_strict_v2",
+    "hidden_from_default_queue": true,
+    "next_action": "none",
+    "default_guidance_allowed": false,
+    "visible_in_default_guidance_queue": false,
+    "hard_gate_allowed": false,
+    "knowledge_path": "codex-expert-kit/rag/knowledge/KB_AI_26_DATABASE_STORAGE/kb_ai_database_storage.phase42.feedback_outcome_label_separated.v1.json",
+    "formal_knowledge_path": "codex-expert-kit/rag/knowledge/KB_AI_26_DATABASE_STORAGE/kb_ai_database_storage.phase42.feedback_outcome_label_separated.v1.json"
+  },
+  "phase42_trace": {
+    "priority": "P0",
+    "related_contracts": [
+      "docs/research/phase42_database_storage_scope.md",
+      "docs/contracts/phase42_database_storage_contract.md",
+      "docs/contracts/phase42_rag_vector_storage_contract.md",
+      "docs/tasks/phase42_database_data_contract_storage_engineering.md"
+    ],
+    "scope_boundary": "AI Engineering database/storage only; Trading Engineering body is reference-only."
+  }
+}

@@ -1,0 +1,353 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_ai_engineering.dpo.preference_data_quality_required.v1",
+  "title": "DPO 和偏好训练必须有高质量偏好样本",
+  "metadata": {
+    "partition_id": "KB_09_LLM_TRAINING",
+    "domain": "llm_training",
+    "subdomain": "preference_training",
+    "rule_type": "checklist",
+    "content_type": "json",
+    "project_binding": "none",
+    "tree_node_id": "kt.llm_training.model_training_engineering",
+    "tree_path": "CEK-TA / AI Engineering",
+    "canonical_node_id": "kt.llm_training.model_training_engineering",
+    "canonical_tree_path": "CEK-TA / AI Engineering",
+    "risk_level": "medium",
+    "used_for": [
+      "llm_training",
+      "trading_gating_scoring",
+      "rag_engineering",
+      "mcp",
+      "vue_audit_ui"
+    ],
+    "source_candidate_id": "cand_20260609_ai_engineering_dpo_preference_data_quality_required_v1_001",
+    "research_task_id": "RIT-P36-A-T15",
+    "claim_type": "ai_governance_rule",
+    "classification_notes": "Phase 36 AI Engineering reviewed knowledge；本条只沉淀 AI/LLM/RAG/MCP/训练数据、评估、部署或治理规则，交易规则本体必须路由到 Trading Engineering。"
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "general",
+    "data_granularity": "general",
+    "project_type": "trading_llm_assistant",
+    "applies_when": [
+      "外接项目准备使用 DPO、偏好优化、pairwise ranking 或 LLM judge 生成训练数据。",
+      "chosen/rejected 样本来自交易复盘、人工审计、规则评分或模型比较。",
+      "偏好样本会影响交易 gating/scoring、审计输出或模型上线。"
+    ],
+    "not_applicable_when": [
+      "只是在定义普通 SFT 样本，应路由到 training_example.sft_schema_required。",
+      "只是在评估单条交易结果，不用于偏好训练。",
+      "需要定义交易规则本体、买卖点或仓位。"
+    ]
+  },
+  "content": {
+    "statement": "DPO 或 preference optimization 数据必须包含同一 prompt 下的 chosen、rejected、reason codes 和偏好来源；不得只按 PnL 或事后收益简单决定 chosen/rejected。",
+    "rationale": "偏好训练会放大标注偏差。若偏好样本只按 PnL 排序，会把市场噪声、未来信息和偶然结果误当作过程质量，损害交易 LLM 的可解释性和泛化能力。",
+    "procedure": [
+      "确认当前项目事实命中适用范围，且没有命中不适用场景。",
+      "按本知识项 required_fields 或字段清单补齐数据、训练、评估或部署契约。",
+      "执行 schema、来源、冲突、隐私和边界检查；失败时进入 block、quarantine 或 needs_review。",
+      "保留 source_evidence、audit_trace_id、review_status 和 machine_gate 结果，供 MCP、SearchLab、Vue3 审计界面和外接项目引用。"
+    ],
+    "examples": [],
+    "anti_patterns": [
+      "把 reviewed 知识当作 approved 默认指导。",
+      "把 AI Engineering 规则扩写成具体买卖点、仓位、止损止盈、策略参数或实盘执行动作。",
+      "缺少来源、schema、适用范围、冲突检查或审计记录仍进入训练、评估、RAG promotion 或默认指导。"
+    ],
+    "validation": [
+      "source_evidence 至少存在 2 条，且没有 unresolved conflict。",
+      "review_status 为 reviewed 时 machine_gate.default_guidance 必须是 caveat_only。",
+      "外接项目调用时必须返回 knowledge_id、source_refs、review_status、machine_gate 和适用边界。",
+      "前端候选页和知识树不得显示乱码、问号占位或英文 demo 文案。"
+    ],
+    "risk_notes": [
+      "本条为 formal reviewed 知识，不等于 approved；默认指导需要后续人工治理。",
+      "本知识项只处理 AI Engineering 边界，不沉淀项目私有交易数据和交易规则本体。",
+      "若项目事实涉及具体策略、实盘订单、风控阈值或市场结构，应路由到 Trading Engineering 对应分支。"
+    ],
+    "citation_notes": "偏好训练需要明确 chosen/rejected、prompt 对齐和偏好理由；交易训练数据还必须避免只用 PnL 作为标签，以减少未来信息和市场噪声污染。",
+    "audit_patch_notes": {
+      "source_patch_notes": [
+        "保留 Hugging Face TRL / DPOTrainer 作为 prompt、chosen、rejected preference training 数据结构来源。",
+        "补 OpenAI DPO 官方文档，支持 prompt、preferred output、non-preferred output 的结构化 pair 要求，并注明相关 fine-tuning platform 正在 wind down 的 freshness limitation。",
+        "保留 OpenAI model optimization 作为任务目标、评估、prompt/RAG/fine-tuning 方法选择来源。",
+        "补 train/eval leakage、deduplication、benchmark contamination 来源。",
+        "补 label guideline、inter-annotator agreement 或 preference data quality 来源。"
+      ],
+      "content_patch_notes": [
+        "将 statement 改为：DPO/preference optimization data must contain audited prompt、chosen、rejected、reason codes and leakage checks; it must not be based on noisy labels, PnL-only outcomes, future information, or self-labeling without review。",
+        "建议字段：preference_pair_id、prompt_id、chosen_response_id、rejected_response_id、preference_reason_code、annotator_id_hash、review_status、source_mode、split_id、no_future_info_check_id、dedupe_group_id、label_guideline_version。",
+        "明确 PnL 可以作为外部 outcome context，但不能成为唯一 preference label。",
+        "要求 chosen/rejected 均保留 reason code，方便后续审计和冲突 resolution。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 定义 preference pair schema、质量 gate、leakage/dedup 检查和评估要求。",
+        "交易 outcome 解释、策略收益口径、回测/实盘绩效由 Trading Engineering 提供或审核。",
+        "不得把项目私有交易事实、账户数据或策略参数写入通用 preference 数据规则。"
+      ],
+      "conflict_patch_notes": [
+        "与 preference_pair_not_based_on_pnl_only、preference_training_chosen_rejected_reason_required、label_schema_no_pnl_only_label 后续候选强相关。",
+        "与 dataset_deduplication_required 修订版和 train_validation_test_split_required 互补。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 preference_pair_schema.json。",
+        "补 noisy_label、pnl_only、future_information、self_labeling 四类质量失败用例。",
+        "补 DPO data audit checklist 和 human review queue。"
+      ]
+    },
+    "required_fields": [
+      "prompt_id",
+      "chosen_output",
+      "rejected_output",
+      "preference_reason_codes",
+      "labeler_type",
+      "label_confidence",
+      "pnl_context_separated",
+      "audit_trace_id"
+    ]
+  },
+  "assumptions": [
+    "外接项目提供项目事实、私有交易数据和策略上下文；CEK-TA 只沉淀可复用专业规则。",
+    "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+  ],
+  "source_evidence": [
+    {
+      "source_id": "src_hf_trl",
+      "source_title": "TRL documentation | Hugging Face",
+      "source_url": "https://huggingface.co/docs/trl",
+      "source_type": "official_doc",
+      "publisher": "Hugging Face",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "Hugging Face TRL documents supervised and preference training workflows that require structured data and evaluation discipline.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_openai_model",
+      "source_title": "Model optimization | OpenAI API",
+      "source_url": "https://platform.openai.com/docs/guides/model-optimization",
+      "source_type": "official_doc",
+      "publisher": "OpenAI",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "OpenAI model optimization guidance supports defining task objectives, choosing between prompting, RAG, fine-tuning, and evaluating quality before model changes.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_occ_fed_fdic_revised_model_risk_2026",
+      "source_title": "Model Risk Management: Revised Guidance",
+      "source_url": "https://occ.gov/news-issuances/bulletins/2026/bulletin-2026-13.html",
+      "source_type": "standard_or_risk_framework",
+      "publisher": "OCC / Federal Reserve / FDIC",
+      "published_at": "2026-04-17",
+      "accessed_at": "2026-06-09",
+      "version": "OCC Bulletin 2026-13 / SR 26-2",
+      "reliability": "high",
+      "relevance": "medium",
+      "evidence_summary": "2026 年跨机构模型风险管理修订指南支持模型治理、验证、变更控制和风险分层；同时需注明 generative AI 和 agentic AI 不在其直接范围内，只能作为模型风险治理类比来源。",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 90,
+    "score_version": "1.0.0",
+    "primary_source_count": 2,
+    "supporting_source_count": 1,
+    "low_reliability_source_count": 0,
+    "limitations": [
+      "本条为 reviewed 知识，来源和审计补丁已记录；默认指导仍需后续人工治理升级 approved。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "docs/contracts/ai_engineering_gating_scoring_contract.md",
+      "docs/contracts/ai_engineering_knowledge_item_policy.md",
+      "docs/tasks/phase36_ai_engineering_gating_scoring_knowledge.md"
+    ],
+    "conflicts": [],
+    "resolution_summary": "未发现与当前 CEK-TA formal knowledge 的直接冲突；候选不会进入默认指导。",
+    "default_recommendation": "caveat_only_until_approved"
+  },
+  "review": {
+    "confidence": "medium",
+    "freshness": "time_sensitive",
+    "review_status": "reviewed",
+    "reviewer": "codex",
+    "reviewed_at": "2026-06-09",
+    "created_at": "2026-06-09",
+    "updated_at": "2026-06-09",
+    "open_questions": [
+      "审计时确认该候选是否应与相邻 AI Engineering 规则合并、拆分，或改路由到 Trading Engineering。",
+      "补 preference_pair_schema.json。",
+      "补 noisy_label、pnl_only、future_information、self_labeling 四类质量失败用例。",
+      "补 DPO data audit checklist 和 human review queue。"
+    ],
+    "decision_log": [
+      {
+        "at": "2026-06-09",
+        "actor": "external_ai",
+        "decision": "accepted_for_draft",
+        "reason": "方向成立。DPO 或偏好优化依赖高质量 preference pairs，不能用噪声标签、单一 PnL 结果、泄漏样本或自我生成无审计标签训练。现有 Hugging Face TRL 和 OpenAI model optimization 来源支持偏好训练与评估流程，但正式 draft 应补 OpenAI DPO 结构化数据来源和 contamination/dedup 来源。",
+        "audit_result_id": "audit_result_phase36_ai_engineering_batch_02_of_10_20260609_gpt55_pro_strict_sources"
+      },
+      {
+        "at": "2026-06-09",
+        "actor": "codex",
+        "decision": "converted_to_reviewed",
+        "reason": "按 Phase 36 批量审计结果优化候选并转为 formal reviewed；未升级 approved。",
+        "audit_result_id": "audit_result_phase36_ai_engineering_batch_02_of_10_20260609_gpt55_pro_strict_sources"
+      },
+      {
+        "at": "2026-06-09",
+        "actor": "codex",
+        "decision": "content_patch_applied",
+        "reason": "DPO 或 preference optimization 数据必须包含同一 prompt 下的 chosen、rejected、reason codes 和偏好来源；不得只按 PnL 或事后收益简单决定 chosen/rejected。",
+        "audit_result_id": "audit_result_phase36_ai_engineering_batch_02_of_10_20260609_gpt55_pro_strict_sources"
+      }
+    ],
+    "approval_status": "not_requested",
+    "default_guidance_allowed": false,
+    "source_candidate_id": "cand_20260609_ai_engineering_dpo_preference_data_quality_required_v1_001",
+    "ai_audit_result_id": "audit_result_phase36_ai_engineering_batch_02_of_10_20260609_gpt55_pro_strict_sources",
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase36_ai_engineering_batch_02_of_10_20260609_gpt55_pro_strict_sources",
+      "source_package_id": "phase36_ai_engineering_candidate_audit_batch_02_of_10_20260609",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立。DPO 或偏好优化依赖高质量 preference pairs，不能用噪声标签、单一 PnL 结果、泄漏样本或自我生成无审计标签训练。现有 Hugging Face TRL 和 OpenAI model optimization 来源支持偏好训练与评估流程，但正式 draft 应补 OpenAI DPO 结构化数据来源和 contamination/dedup 来源。",
+      "source_patch_notes": [
+        "保留 Hugging Face TRL / DPOTrainer 作为 prompt、chosen、rejected preference training 数据结构来源。",
+        "补 OpenAI DPO 官方文档，支持 prompt、preferred output、non-preferred output 的结构化 pair 要求，并注明相关 fine-tuning platform 正在 wind down 的 freshness limitation。",
+        "保留 OpenAI model optimization 作为任务目标、评估、prompt/RAG/fine-tuning 方法选择来源。",
+        "补 train/eval leakage、deduplication、benchmark contamination 来源。",
+        "补 label guideline、inter-annotator agreement 或 preference data quality 来源。"
+      ],
+      "content_patch_notes": [
+        "将 statement 改为：DPO/preference optimization data must contain audited prompt、chosen、rejected、reason codes and leakage checks; it must not be based on noisy labels, PnL-only outcomes, future information, or self-labeling without review。",
+        "建议字段：preference_pair_id、prompt_id、chosen_response_id、rejected_response_id、preference_reason_code、annotator_id_hash、review_status、source_mode、split_id、no_future_info_check_id、dedupe_group_id、label_guideline_version。",
+        "明确 PnL 可以作为外部 outcome context，但不能成为唯一 preference label。",
+        "要求 chosen/rejected 均保留 reason code，方便后续审计和冲突 resolution。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 定义 preference pair schema、质量 gate、leakage/dedup 检查和评估要求。",
+        "交易 outcome 解释、策略收益口径、回测/实盘绩效由 Trading Engineering 提供或审核。",
+        "不得把项目私有交易事实、账户数据或策略参数写入通用 preference 数据规则。"
+      ],
+      "conflict_patch_notes": [
+        "与 preference_pair_not_based_on_pnl_only、preference_training_chosen_rejected_reason_required、label_schema_no_pnl_only_label 后续候选强相关。",
+        "与 dataset_deduplication_required 修订版和 train_validation_test_split_required 互补。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 preference_pair_schema.json。",
+        "补 noisy_label、pnl_only、future_information、self_labeling 四类质量失败用例。",
+        "补 DPO data audit checklist 和 human review queue。"
+      ]
+    },
+    "approved_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "contribution": {
+    "contribution_id": null,
+    "source_project": null,
+    "sanitization_status": "not_applicable",
+    "private_data_removed": true,
+    "generic_mapping_notes": "Phase 36 public-source AI Engineering candidate; no project-private trading facts included."
+  },
+  "copyright": {
+    "stores_full_text": false,
+    "stores_long_quote": false,
+    "summary_only": true,
+    "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+    "reuse_risk": "low"
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于外接项目进行 AI Engineering、LLM 训练、RAG/MCP、数据治理、评估或部署审计。",
+      "用于 reviewed/audit 模式下带来源和 caveat 引用。",
+      "用于提示外接项目补齐 schema、来源、边界、冲突检查和审计记录。"
+    ],
+    "not_allowed": [
+      "不得生成买卖点、仓位、杠杆、止损止盈或实盘执行指令。",
+      "不得覆盖确定性风控、交易执行系统或人工审批。",
+      "不得作为 approved/default guidance 直接返回。"
+    ],
+    "required_context": [
+      "project_type",
+      "task_type",
+      "mode",
+      "strategy_version",
+      "data_boundary",
+      "review_status"
+    ],
+    "fallback_behavior": "cite_with_caveat"
+  },
+  "machine_gate": {
+    "default_guidance": "caveat_only",
+    "reason": "reviewed only; not approved; default guidance requires later human governance approval.",
+    "requires_human_escalation": true,
+    "blocking_reasons": [
+      "not_approved",
+      "phase36_reviewed_only"
+    ],
+    "checked_at": "2026-06-09",
+    "gate_version": "1.0.0",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "recommended_extra_sources": [
+    {
+      "title": "保留 Hugging Face TRL / DPOTrainer 作为 prompt、chosen、rejected preference training 数据结构来源。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_1"
+    },
+    {
+      "title": "补 OpenAI DPO 官方文档，支持 prompt、preferred output、non-preferred output 的结构化 pair 要求，并注明相关 fine-tuning platform 正在 wind down 的 freshness limitation。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_2"
+    },
+    {
+      "title": "保留 OpenAI model optimization 作为任务目标、评估、prompt/RAG/fine-tuning 方法选择来源。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_3"
+    },
+    {
+      "title": "补 train/eval leakage、deduplication、benchmark contamination 来源。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_4"
+    },
+    {
+      "title": "补 label guideline、inter-annotator agreement 或 preference data quality 来源。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_5"
+    }
+  ]
+}

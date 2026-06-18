@@ -1,0 +1,362 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_ai_feedback_governance.phase40.confidence_not_evidence.v1",
+  "title": "高置信模型输出只能作为风险信号，不能替代来源证据；RAG/LLM 审计输出必须记录 source_evidence_refs、citation_resolver_version、unsuppo",
+  "metadata": {
+    "partition_id": "KB_AI_18_FEEDBACK_GOVERNANCE",
+    "domain": "ai_governance",
+    "subdomain": "feedback_loop_risk",
+    "rule_type": "governance_rule",
+    "claim_type": "ai_governance_rule",
+    "content_type": "json",
+    "project_binding": "none",
+    "classification_notes": "Phase 40 formal reviewed knowledge；二审允许 reviewed，但不是 approved/default guidance。",
+    "tree_node_id": "kt.ai_feedback_governance.feedback_loop_risk",
+    "tree_path": "CEK-TA / AI Engineering / Continuous Learning And Feedback Governance",
+    "canonical_node_id": "kt.ai_feedback_governance.feedback_loop_risk",
+    "canonical_tree_path": "CEK-TA / AI Engineering / Continuous Learning And Feedback Governance",
+    "risk_level": "medium",
+    "used_for": [
+      "llm_training",
+      "trading_gating_scoring",
+      "continuous_learning",
+      "rag_engineering",
+      "mcp",
+      "vue_audit_ui"
+    ],
+    "source_candidate_id": "cand_20260610_phase40_p40_e11_confidence_not_evidence_001",
+    "research_task_id": "P40-E11",
+    "phase": "Phase 40"
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "general",
+    "data_granularity": "general",
+    "project_type": "trading_llm_gating_scoring",
+    "applies_when": [
+      "外接项目正在建设交易 AI gating/scoring 的反馈日志、标签刷新、漂移检测、再训练、再校准、shadow/paper/canary 或发布治理链路。",
+      "该规则用于补强 Phase 40 P0-Core 治理闭环，并为 AI IDE 生成任务卡、契约、测试和审计 checklist 提供候选知识。"
+    ],
+    "not_applicable_when": [
+      "用户需要具体买卖点、仓位、止损止盈、K 线形态、策略参数或实盘订单执行。",
+      "知识点主要描述 fill model、订单状态机、实盘风控阈值或交易所异常处理，应路由到 Trading Engineering。"
+    ]
+  },
+  "content": {
+    "statement": "高置信模型输出只能作为风险信号，不能替代来源证据；RAG/LLM 审计输出必须记录 source_evidence_refs、citation_resolver_version、unsupported_claims、grounding_status 和 no_source_abstain_policy，否则不得进入默认指导或发布证据。",
+    "rationale": "本候选只沉淀 AI Engineering 的持续学习、反馈治理、再训练、再校准、发布回滚或 LLM 改进方法；交易规则本体必须路由到 Phase 37。",
+    "procedure": [
+      "确认当前任务属于 Phase 40 AI Continuous Learning / Feedback Governance 范围。",
+      "只把本知识作为持续学习、反馈、标签、漂移、再训练、校准、发布或 LLM 改进治理规则使用。",
+      "读取本知识项时必须同时带出 source_evidence、review_status、machine_gate 和适用边界。",
+      "如果用户要求具体交易规则、K 线、fill/cost、订单状态机、风控阈值或执行参数，必须路由 Trading Engineering。",
+      "必须记录 source_evidence_refs、citation_resolver_version、citation_resolution_status 和 unsupported_claims。",
+      "grounding_status 必须区分 grounded、partially_grounded、unsupported、no_source。",
+      "no_source_abstain_policy 必须降级为 neutral、abstain 或 human_review。",
+      "model_confidence 只能作为风险信号，不能替代来源证据或默认指导。"
+    ],
+    "examples": [],
+    "anti_patterns": [
+      "把 reviewed/caveat_only 知识当作 approved/default guidance。",
+      "把持续学习解释成线上自动学习。",
+      "让再训练结果自动替换 champion model 或自动上线。",
+      "把 LLM audit assistant 作为最终交易 gate。",
+      "把 Trading Engineering 的交易规则本体写进 AI Engineering。"
+    ],
+    "validation": [
+      "source_evidence 非空，且 conflict_status 为 none 或 resolved。",
+      "review_status 为 reviewed 时 machine_gate.default_guidance 必须为 caveat_only。",
+      "MCP/SearchLab 返回该知识时必须显示 caveat、来源和不适用场景。",
+      "Vue3 知识树能按 canonical_node_id 检索并展示本条知识。"
+    ],
+    "risk_notes": [
+      "本条仍是 candidate，需要外部 AI/人工审计确认来源充分性、适用边界和是否需要补充交易项目实例。",
+      "AI Engineering 只定义学习治理、证据链、评估、发布和回滚边界，不定义交易策略本体。",
+      "High confidence must not become default guidance, final gate, or unsupported factual evidence.",
+      "confidence、probability 或 LLM 自评不得替代 citation、source evidence、人工审计或 formal knowledge 状态。",
+      "Ragas、Arize Phoenix 和 Promptfoo faithfulness 来源直接支撑回答/claim 必须被检索上下文支持。",
+      "Google grounding check 来源支撑 support score 与 claim citation。",
+      "Promptfoo RAG evaluation 来源支撑同时评估 retrieval 和 generation。",
+      "必须记录 source_evidence_refs、citation_resolver_version、citation_resolution_status 和 unsupported_claims。",
+      "grounding_status 必须区分 grounded、partially_grounded、unsupported、no_source。",
+      "no_source_abstain_policy 必须降级为 neutral、abstain 或 human_review。",
+      "model_confidence 只能作为风险信号，不能替代来源证据或默认指导。",
+      "本条为 formal reviewed 知识，不是 approved；不得进入默认指导或 hard gate。",
+      "不得保存或推广项目私有交易数据、账户信息、策略参数或实盘订单字段。"
+    ],
+    "citation_notes": "Phoenix Faithfulness evaluator 检查 LLM response 是否被上下文支持、是否出现不支持或矛盾内容。；Google Cloud grounding check 返回 support score，并包含支持回答 claim 的 citations。；Promptfoo context faithfulness 检查模型回答是否只包含检索上下文支持的 claims。；Promptfoo 文档要求同时评估 document retrieval 和 LLM output generation。"
+  },
+  "assumptions": [
+    "外接项目提供私有交易事实、模型输出和发布上下文；CEK-TA 只沉淀可复用专业规则。",
+    "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+  ],
+  "source_evidence": [
+    {
+      "source_id": "src_nist_ai_rmf",
+      "source_title": "NIST AI Risk Management Framework",
+      "source_url": "https://www.nist.gov/itl/ai-risk-management-framework",
+      "source_type": "governance_framework",
+      "publisher": "NIST",
+      "published_at": null,
+      "accessed_at": "2026-06-10",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "NIST AI RMF provides a risk-management framework for governing, mapping, measuring, and managing AI risks.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_sklearn_calibration",
+      "source_title": "Probability calibration - scikit-learn documentation",
+      "source_url": "https://scikit-learn.org/stable/modules/calibration.html",
+      "source_type": "official_doc",
+      "publisher": "scikit-learn",
+      "published_at": null,
+      "accessed_at": "2026-06-10",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "scikit-learn documents probability calibration workflows and calibration curves for classifier probability estimates.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_ibm_model_risk",
+      "source_title": "What is model risk management?",
+      "source_url": "https://www.ibm.com/think/topics/model-risk-management",
+      "source_type": "framework_doc",
+      "publisher": "IBM",
+      "published_at": null,
+      "accessed_at": "2026-06-10",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "IBM describes model risk management as identifying, measuring, and controlling risks from inadequate model performance and governance.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_ragas_faithfulness",
+      "source_title": "Faithfulness - Ragas",
+      "source_url": "https://docs.ragas.io/en/stable/concepts/metrics/available_metrics/faithfulness/",
+      "source_type": "official_doc",
+      "publisher": "Ragas",
+      "published_at": null,
+      "accessed_at": "2026-06-10",
+      "version": null,
+      "reliability": "medium",
+      "relevance": "high",
+      "evidence_summary": "Ragas Faithfulness 衡量 response 是否与 retrieved context 事实一致。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_arize_phoenix_faithfulness",
+      "source_title": "Faithfulness - Phoenix Arize AI",
+      "source_url": "https://arize.com/docs/phoenix/evaluation/pre-built-metrics/faithfulness",
+      "source_type": "official_doc",
+      "publisher": "Arize AI",
+      "published_at": null,
+      "accessed_at": "2026-06-10",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "Phoenix Faithfulness evaluator 检查 LLM response 是否被上下文支持、是否出现不支持或矛盾内容。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_google_grounding_check",
+      "source_title": "Check grounding with RAG - Google Cloud",
+      "source_url": "https://docs.cloud.google.com/generative-ai-app-builder/docs/check-grounding",
+      "source_type": "official_doc",
+      "publisher": "Google Cloud",
+      "published_at": null,
+      "accessed_at": "2026-06-10",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "Google Cloud grounding check 返回 support score，并包含支持回答 claim 的 citations。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_promptfoo_context_faithfulness",
+      "source_title": "Context faithfulness - Promptfoo",
+      "source_url": "https://www.promptfoo.dev/docs/configuration/expected-outputs/model-graded/context-faithfulness/",
+      "source_type": "official_doc",
+      "publisher": "Promptfoo",
+      "published_at": null,
+      "accessed_at": "2026-06-10",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "Promptfoo context faithfulness 检查模型回答是否只包含检索上下文支持的 claims。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_promptfoo_rag_eval",
+      "source_title": "Evaluating RAG pipelines - Promptfoo",
+      "source_url": "https://www.promptfoo.dev/docs/guides/evaluate-rag/",
+      "source_type": "official_doc",
+      "publisher": "Promptfoo",
+      "published_at": null,
+      "accessed_at": "2026-06-10",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "Promptfoo 文档要求同时评估 document retrieval 和 LLM output generation。",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 88,
+    "score_version": "1.1.0",
+    "primary_source_count": 7,
+    "supporting_source_count": 1,
+    "low_reliability_source_count": 0,
+    "limitations": [
+      "来源支持通用 AI/ML/MLOps/LLMOps/治理工程原则；正式知识转换时需保留 CEK-TA 具体上下游引用和冲突链接。",
+      "补证后仍需外部 AI/人工二审确认 claim-specific 充分性，不能直接转 reviewed 或 approved。",
+      "Phase 40 formal reviewed 知识可用于审计和检索；尚未 approved，不能作为默认指导或 hard gate。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "docs/contracts/phase40_feedback_dataset_contract.md",
+      "docs/contracts/phase40_drift_retraining_recalibration_contract.md",
+      "docs/contracts/phase40_champion_challenger_release_contract.md",
+      "docs/research/phase40_ai_continuous_learning_scope.md",
+      "docs/contracts/phase40_decision_cost_dashboard_metric_contract.md",
+      "docs/contracts/phase40_composite_release_artifact_contract.md"
+    ],
+    "conflicts": [],
+    "resolution_summary": "补证后未发现直接理论冲突；仍需二审确认来源充分性和 AI/Trading 分支边界。",
+    "default_recommendation": "caveat_only_until_human_approval"
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于外接交易 LLM gating/scoring 项目的持续学习、标签、漂移、再训练、校准和发布治理审计。",
+      "用于提醒 AI IDE 明确模型、数据、评估、发布或检索边界，并引用来源。",
+      "用于在 SearchLab、KnowledgeTree 和 MCP 中以 caveat 方式返回 reviewed 知识。"
+    ],
+    "not_allowed": [
+      "不得据此生成具体买卖点、仓位、止损止盈、杠杆、策略参数或实盘订单动作。",
+      "不得把 reviewed 知识当作 approved 默认指导或 hard gate。",
+      "不得替代 Trading Engineering 对 K 线、回测、fill model、风控和执行规则本体的判断。"
+    ],
+    "required_context": [
+      "canonical_node_id=kt.ai_feedback_governance.feedback_loop_risk",
+      "外接项目必须提供 project_adapter_id、task_type、mode、requested_decision 和相关版本号。",
+      "必须同时返回 source_evidence、conflict_status、review_status 和 machine_gate。"
+    ],
+    "fallback_behavior": "cite_with_caveat"
+  },
+  "machine_gate": {
+    "default_guidance": "caveat_only",
+    "reason": "Phase 40 二审允许转 formal reviewed；可审计检索，但尚未人工 approved，不能默认指导或 hard gate。",
+    "requires_human_escalation": true,
+    "blocking_reasons": [
+      "reviewed_not_approved",
+      "default_guidance_disabled_until_human_approval",
+      "hard_gate_disabled"
+    ],
+    "checked_at": "2026-06-10",
+    "gate_version": "1.0.0",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "recommended_extra_sources": [],
+  "review": {
+    "confidence": "medium",
+    "freshness": "time_sensitive",
+    "review_status": "reviewed",
+    "reviewer": "codex",
+    "reviewed_at": "2026-06-10",
+    "created_at": "2026-06-10",
+    "updated_at": "2026-06-10",
+    "default_guidance_allowed": false,
+    "approval_status": "not_requested",
+    "source_candidate_id": "cand_20260610_phase40_p40_e11_confidence_not_evidence_001",
+    "ai_audit_result_id": "audit_result_phase40_extended_p1_supplemental_reaudit_20260610_strict_v2",
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase40_extended_p1_supplemental_reaudit_20260610_strict_v2",
+      "source_package_id": "phase40_extended_p1_supplemental_reaudit_package_20260610",
+      "decision": "accepted_for_draft",
+      "reviewed_allowed": true,
+      "allowed_next_stage": "formal_reviewed_knowledge",
+      "reason": "faithfulness、grounding 和 citation 来源足够支撑 confidence 不能替代 evidence；二审允许进入 formal reviewed preparation。",
+      "source_patch_notes": [],
+      "content_patch_notes": [
+        "必须记录 source_evidence_refs、citation_resolver_version、citation_resolution_status 和 unsupported_claims。",
+        "grounding_status 必须区分 grounded、partially_grounded、unsupported、no_source。",
+        "no_source_abstain_policy 必须降级为 neutral、abstain 或 human_review。",
+        "model_confidence 只能作为风险信号，不能替代来源证据或默认指导。"
+      ],
+      "boundary_patch_notes": [
+        "reviewed 不等于 approved。",
+        "default_guidance_allowed=false。",
+        "hard_gate_allowed=false。"
+      ],
+      "default_guidance_allowed": false,
+      "approved_allowed": false,
+      "hard_gate_allowed": false
+    },
+    "open_questions": [
+      "必须记录 source_evidence_refs、citation_resolver_version、citation_resolution_status 和 unsupported_claims。",
+      "grounding_status 必须区分 grounded、partially_grounded、unsupported、no_source。",
+      "no_source_abstain_policy 必须降级为 neutral、abstain 或 human_review。",
+      "model_confidence 只能作为风险信号，不能替代来源证据或默认指导。"
+    ],
+    "decision_log": [
+      {
+        "at": "2026-06-10",
+        "actor": "codex",
+        "decision": "created",
+        "reason": "Phase 40 Batch D/E continuous learning candidate expansion."
+      },
+      {
+        "at": "2026-06-10",
+        "actor": "codex",
+        "decision": "phase40_extended_p1_audit_needs_more_evidence",
+        "reason": "需补证后重新审计。"
+      },
+      {
+        "at": "2026-06-10",
+        "actor": "codex",
+        "decision": "phase40_extended_p1_supplemental_evidence_ready",
+        "reason": "按 Batch D/E 严格审计意见补证并准备二审。"
+      },
+      {
+        "at": "2026-06-10",
+        "actor": "external_ai_audit_plus_codex",
+        "decision": "reviewed",
+        "reason": "CEK-TA-314: 二审 accepted_for_draft 且 reviewed_allowed=true；写入 formal reviewed，仍非 approved。"
+      }
+    ],
+    "approved_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "contribution": {
+    "contribution_id": null,
+    "source_project": null,
+    "sanitization_status": "not_applicable",
+    "private_data_removed": true,
+    "generic_mapping_notes": "Generated from Phase 40 public-source candidate; no project-private trading facts included."
+  },
+  "copyright": {
+    "stores_full_text": false,
+    "stores_long_quote": false,
+    "summary_only": true,
+    "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+    "reuse_risk": "low"
+  },
+  "phase40_conversion": {
+    "source_candidate_status": "needs_more_evidence",
+    "source_ingestion_decision": "ready_for_reaudit",
+    "promoted_by_task": "CEK-TA-314",
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "reviewed_allowed": true,
+    "approved_allowed": false
+  }
+}

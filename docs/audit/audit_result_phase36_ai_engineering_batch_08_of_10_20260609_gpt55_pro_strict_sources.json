@@ -1,0 +1,374 @@
+{
+  "audit_result_id": "audit_result_phase36_ai_engineering_batch_08_of_10_20260609_gpt55_pro_strict_sources",
+  "source_package_id": "phase36_ai_engineering_candidate_audit_batch_08_of_10_20260609",
+  "decisions": [
+    {
+      "candidate_id": "cand_20260609_ai_engineering_runtime_llm_gate_is_suggestion_not_final_authority_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立，statement 与 normalized_claim 对齐。LLM gate 输出只能作为建议，最终 allow / block / escalate 应由确定性风控和人工治理链路决定。FINRA 算法交易监督控制、NIST AI RMF 风险治理和 OWASP agent/tool 安全资料可共同支撑该 CEK-TA 内部 runtime safety rule。",
+      "source_patch_notes": [
+        "保留 FINRA Algorithmic Trading / FINRA 15-09 作为交易自动化监督、测试、控制和治理来源。",
+        "保留 NIST AI RMF 作为 AI 风险治理来源。",
+        "保留 OWASP Prompt Injection Prevention Cheat Sheet 作为 LLM tool/action 不可信、权限校验和 least privilege 的 supporting source。",
+        "建议补内部 deterministic_final_gate_contract.md，作为 CEK-TA 最终门控权限边界的主契约。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 可写为：LLM gate output is a recommendation only; final allow, block or escalation must be made by deterministic risk controls and approved human governance workflow.",
+        "建议字段：llm_gate_output、deterministic_gate_result、human_review_required、final_decision、decision_owner、override_attempt_detected、audit_event_id。",
+        "明确 LLM score、RAG explanation、reason code 或 judge score 均不得成为最终交易许可。",
+        "该规则不定义具体 allow/block 阈值。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 只管理 LLM suggestion boundary、final gate interface、audit trace 和 UI 展示。",
+        "Trading Engineering 管理 deterministic risk engine、交易风控阈值、策略参数、实盘执行和订单系统。",
+        "不得在本知识项写入具体买卖点、仓位、止损止盈、订单动作或策略规则。"
+      ],
+      "conflict_patch_notes": [
+        "与第七批 runtime_final_gate_deterministic_engine_required 高度重叠，建议父子化或合并为 runtime.final_authority family。",
+        "与 llm_role_boundary.cannot_override_hard_risk_gate、no_direct_order_execution、scorer_not_executor 强互链。",
+        "未发现需要 rejected 的直接冲突。"
+      ],
+      "required_followups": [
+        "补 deterministic_final_gate_contract.md。",
+        "补 final_decision_schema.json。",
+        "补 override_attempt_detected eval case。",
+        "补 Vue audit UI 字段：llm_output、deterministic_gate_result、final_decision、review_status。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_safety_no_tool_permission_escalation_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立，statement 与 normalized_claim 对齐。LLM 不得通过 prompt、tool 或 MCP 调用自我提升权限；权限边界必须由宿主系统和服务端强制执行。OWASP 与 MCP 官方 security / authorization 来源足以支持进入 draft。",
+      "source_patch_notes": [
+        "保留 OWASP Prompt Injection Prevention Cheat Sheet，支持 tool call 权限校验、参数校验、least privilege 和高风险动作的人类审批。",
+        "保留 MCP Security Best Practices，支持 MCP-specific security risks、authorization boundary 和安全控制。",
+        "补 MCP Authorization specification，支持 scope selection 和 least privilege。",
+        "建议互链 mcp.server_side_permission_enforcement_required 和 mcp.read_only_knowledge_access。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：LLM must not self-grant, escalate, request or simulate tool/MCP permissions through prompt text; host systems and MCP servers must enforce permission scopes server-side.",
+        "建议字段：tool_name、requested_scope、granted_scope、user_context、permission_check_result、escalation_attempt_detected、fallback_action、audit_event_id。",
+        "权限失败时默认 fail closed，不生成默认交易指导。",
+        "区分 read-only knowledge access 与 write / broker / strategy parameter action。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 管理 tool permission boundary、server-side enforcement schema 和审计字段。",
+        "Trading Engineering / Live Execution 管理 broker action、订单修改、策略参数写入、实盘执行权限。",
+        "不得保存 API key、broker token、账号标识或完整交易上下文。"
+      ],
+      "conflict_patch_notes": [
+        "与 mcp.server_side_permission_enforcement_required、mcp.read_only_knowledge_access、research_feedback.no_auto_strategy_parameter_update 强互补。",
+        "与 no_direct_order_execution 互链：本条管权限升级，no_direct_order_execution 管交易执行动作禁止。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 tool_permission_scope_schema.json。",
+        "补 permission_escalation_eval_cases.yaml。",
+        "补 fallback_action enum：permission_denied、fail_closed、needs_review、block_default_guidance。",
+        "补 UI 字段：requested_scope、granted_scope、escalation_attempt_detected、server_side_check。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_scoring_rubric_market_regime_fit_v1_001",
+      "decision": "needs_more_evidence",
+      "reason": "当前不应直接转 draft。candidate_id / normalized_claim 指向 market_regime_fit，但 statement 实际只说 scoring rubric 必须输出 reason codes，source_refs 也主要支持通用 eval、model documentation 和 AI risk governance，不能直接支撑市场状态匹配这一具体 rubric 维度。该维度还涉及市场 regime 定义，必须由 Trading Engineering 或项目 owner 提供语义边界。",
+      "source_patch_notes": [
+        "保留 OpenAI evals / evaluation best practices 作为通用 eval workflow 来源，但注明 Evals platform 退役时间线。",
+        "保留 Model Cards 作为 intended use、limitations、evaluation context 的 supporting source。",
+        "保留 NIST AI RMF 作为治理来源。",
+        "补 time-series / regime split / group evaluation 来源，例如 TimeSeriesSplit、GroupKFold 或内部 regime taxonomy。",
+        "补 Trading Engineering regime_label_policy 或 market_regime_ref contract。"
+      ],
+      "content_patch_notes": [
+        "将 statement 改为：Scoring rubric may include market_regime_fit only as a structured, owner-defined dimension with regime_label_ref, evidence_refs and reason_codes; missing or undefined regime context must downgrade to needs_review.",
+        "建议字段：market_regime_ref、regime_label_source、regime_fit_status、evidence_refs、reason_codes、review_owner。",
+        "不得让 LLM 自行定义或推断可交易市场 regime。",
+        "market_regime_fit 应是 reason-code / review dimension，不是最终交易许可。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 只定义 rubric 字段、reason_code、缺失状态和审计要求。",
+        "市场 regime 分类、市场状态判断、K 线条件和策略适配解释由 Trading Engineering 或项目 owner 提供。",
+        "不得沉淀具体市场状态判定公式、K 线结构、策略参数或买卖条件。"
+      ],
+      "conflict_patch_notes": [
+        "与 eval_case.time_strategy_regime_split_required、eval.time_split_walk_forward_required 互补。",
+        "与 scoring_rubric.reason_code_required 重复但不等价：reason_code 是父字段，本条是 market_regime_fit 子维度。",
+        "当前 statement 与 normalized_claim 不一致，直接 accepted 会造成知识项名称和内容错配。"
+      ],
+      "required_followups": [
+        "重写 statement，使其明确 market_regime_fit。",
+        "补 market_regime_ref schema。",
+        "补 Trading Engineering owner / domain owner 提供 regime taxonomy 的流程。",
+        "补 eval cases：missing regime、conflicting regime labels、LLM invents regime、regime context out of scope。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_scoring_rubric_reason_code_required_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立，statement 与 normalized_claim 对齐。评分 rubric 不能只返回不可解释的单一分数，应输出结构化 reason codes，以便审计、回归评估、人工复核和冲突处理。OpenAI evals、Model Cards 和 NIST AI RMF 足以作为通用评估与文档化支撑来源，但正式 draft 应补 CEK-TA reason_code taxonomy。",
+      "source_patch_notes": [
+        "保留 OpenAI evals / evaluation best practices 作为模型行为评估和结果分析来源，但注明 Evals platform 退役时间线。",
+        "保留 Model Cards 作为 intended use、evaluation procedures、limitations 和 performance context 来源。",
+        "保留 NIST AI RMF 作为治理、测量和风险管理来源。",
+        "补 CEK-TA reason_code_taxonomy.yaml 作为正式主契约。",
+        "建议互链 label_schema.label_reason_codes_required 和 audit.every_gate_decision_requires_trace。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 可写为：Every scoring rubric output used for gate/scoring evidence must include structured reason_codes, evidence_refs and review_status; a single opaque score is insufficient.",
+        "建议字段：rubric_score、reason_codes、reason_code_version、evidence_refs、missing_fields、review_status、audit_event_id。",
+        "reason_codes 应使用受控枚举，不允许自由文本无限扩散。",
+        "reason code 不等于交易建议，也不等于最终 allow/block 决策。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 管理 reason_code schema、枚举、审计和 UI 展示。",
+        "具体交易业务原因、策略违规解释、风险裁决由 Trading Engineering 或项目 owner 提供。",
+        "不得把具体策略规则、订单、账户、仓位或止损止盈写入通用 reason_code。"
+      ],
+      "conflict_patch_notes": [
+        "本条应作为 scoring_rubric family 的父规则。",
+        "与第 5 批 label_schema.label_reason_codes_required 互补：label reason codes 解释标签，scoring rubric reason codes 解释评分。",
+        "与 audit.every_gate_decision_requires_trace 强互链。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 scoring_reason_code_taxonomy.yaml。",
+        "补 scoring_rubric_output_schema.json。",
+        "补 reason_code_version 字段。",
+        "补 eval cases：opaque score only、missing evidence_refs、uncontrolled free-text reason、reason code conflicts with source. "
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_scoring_rubric_risk_reward_quality_v1_001",
+      "decision": "needs_more_evidence",
+      "reason": "当前不应直接转 draft。normalized_claim 指向 risk_reward_quality，但 statement 只支持 reason_code_required；source_refs 也没有直接支撑 risk/reward quality 或 cost/risk tradeoff 的专业来源。该维度可能触及策略收益、风险预算、仓位和交易机会成本，必须明确 Trading Engineering 边界。",
+      "source_patch_notes": [
+        "保留 OpenAI evals、Model Cards 和 NIST 作为 supporting sources。",
+        "补 FINRA 15-09 作为交易自动化风险控制与监督来源。",
+        "补 cost-sensitive learning / cost matrix / risk ledger 来源，支持风险收益维度必须由成本和风险语义定义。",
+        "补 CEK-TA risk_ledger.false_allow_cost_record_required 和 gating.false_allow_more_dangerous_than_false_block family 作为内部互链。",
+        "补 Trading Engineering risk_reward_quality rubric contract。"
+      ],
+      "content_patch_notes": [
+        "将 statement 改为：Risk/reward quality may be used only as a structured rubric dimension with explicit risk_context_ref, cost_matrix_ref, evidence_refs and owner review; it must not compute or imply strategy profitability inside AI Engineering.",
+        "建议字段：risk_context_ref、reward_context_ref、cost_matrix_ref、risk_reward_quality_status、evidence_refs、review_owner、reason_codes。",
+        "PnL、收益目标、风险预算、仓位影响和机会成本不得由 AI Engineering 直接定义。",
+        "缺少 Trading Engineering 提供的 risk/reward context 时，应降级为 needs_more_evidence。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 只定义 rubric 字段、审计状态和引用关系。",
+        "具体风险收益解释、成本函数、仓位、阈值、滑点、fill model 和策略收益归 Trading Engineering。",
+        "不得写入具体收益目标、交易阈值、仓位、止损止盈或订单逻辑。"
+      ],
+      "conflict_patch_notes": [
+        "与 risk_ledger.false_allow_cost_record_required、gating.false_allow_more_dangerous_than_false_block、business_objective.success_metric_not_only_pnl 互补。",
+        "与 scoring_rubric.reason_code_required 是父子关系。",
+        "当前 statement 与 normalized_claim 不一致，需补证后再转 draft。"
+      ],
+      "required_followups": [
+        "重写 statement，使其明确 risk_reward_quality。",
+        "补 risk_reward_quality_schema.json。",
+        "补 cost_matrix_ref / risk_context_ref owner 规则。",
+        "补 eval cases：risk context missing、LLM invents risk/reward、PnL-only reward claim、Trading Engineering override required。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_scoring_rubric_rule_compliance_v1_001",
+      "decision": "needs_more_evidence",
+      "reason": "方向合理，但当前不应直接转 draft。normalized_claim 指向 rule_compliance，而 statement 只说 rubric 要输出 reason codes，source_refs 也缺少交易规则合规、policy check 或 rule registry 的直接来源。正式知识应把 rule_compliance 写成引用外部规则/策略 owner 的审计维度，而不是让 AI Engineering 维护具体交易规则。",
+      "source_patch_notes": [
+        "保留 OpenAI evals、Model Cards、NIST 作为 supporting sources。",
+        "补 FINRA 15-09 或 algorithmic trading controls，支持交易系统规则、监督、测试和合规。",
+        "补 CEK-TA rule_registry_ref / policy_check_contract，定义 rule_compliance 的来源和 owner。",
+        "补 audit.every_gate_decision_requires_trace 作为 rule_compliance reason code 的审计互链。"
+      ],
+      "content_patch_notes": [
+        "将 statement 改为：Scoring rubric must record rule_compliance only against explicit rule_refs or policy_refs, with pass/fail/unknown status, evidence_refs and owner review; LLM must not invent rules.",
+        "建议字段：rule_refs、rule_compliance_status、policy_version、evidence_refs、unknown_rule_status、review_owner、reason_codes。",
+        "无 rule_refs 或规则冲突时，不能生成默认 allow，应进入 needs_review 或 block_default_guidance。",
+        "rule_compliance 不等于交易执行许可。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 管理 rule_compliance schema、source_refs、reason_codes 和审计展示。",
+        "具体交易规则、策略约束、合规规则解释由 Trading Engineering / Compliance / project owner 提供。",
+        "不得把具体交易策略规则、账户规则、订单规则沉淀到通用 AI Engineering KB。"
+      ],
+      "conflict_patch_notes": [
+        "与 scoring_rubric.reason_code_required、rag.no_source_or_conflict_blocks_default_guidance、audit.every_gate_decision_requires_trace 互补。",
+        "与 Trading Engineering 边界存在高风险，应强制 rule_ref 而非规则全文。",
+        "当前 statement 与 normalized_claim 不一致。"
+      ],
+      "required_followups": [
+        "重写 statement，使其明确 rule_compliance。",
+        "补 rule_compliance_schema.json。",
+        "补 rule_ref / policy_ref owner 规则。",
+        "补 eval cases：missing rule_ref、LLM invents rule、conflicting rules、rule failed but score high。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_scoring_rubric_setup_quality_v1_001",
+      "decision": "needs_more_evidence",
+      "reason": "当前不应直接转 draft。normalized_claim 指向 setup_quality，但 statement 只支持 reason_code_required。setup quality 极易变成具体交易 setup、K 线结构、入场条件或策略有效性判断，当前 sources 不能支撑该 trading-specific rubric 维度。应先重写为“只记录由 Trading Engineering 定义的 setup_quality_ref / review_category”，再补内部 rubric contract。",
+      "source_patch_notes": [
+        "保留 OpenAI evals、Model Cards、NIST 作为 supporting sources。",
+        "补 Trading Engineering setup_quality taxonomy 或 strategy_setup_quality_ref contract。",
+        "补 label_schema.multi_dimensional_trade_quality / good_loss_bad_win reason-code family 作为多维标签支撑。",
+        "如要用于 live gate，应补 FINRA / risk governance sources。"
+      ],
+      "content_patch_notes": [
+        "将 statement 改为：Setup_quality may be recorded only as an owner-defined review dimension or reason-code category; it must reference a Trading Engineering setup_quality_ref and must not define trading setups inside AI Engineering.",
+        "建议字段：setup_quality_ref、setup_quality_status、strategy_version_ref、evidence_refs、review_owner、reason_codes。",
+        "不得让 LLM 自行判断某个 K 线 setup 是否有效。",
+        "缺少 owner-defined setup taxonomy 时，应标记 needs_more_evidence。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 只定义字段、状态、引用和审计。",
+        "setup 定义、K 线结构、入场/出场条件、策略参数由 Trading Engineering 或项目 owner 提供。",
+        "不得写入具体买卖点、仓位、止损止盈、K 线条件或订单逻辑。"
+      ],
+      "conflict_patch_notes": [
+        "与 scoring_rubric.reason_code_required 是父子关系。",
+        "与 label_schema.multi_dimensional_trade_quality、lineage.model_prompt_rag_data_strategy_bound_together 互链。",
+        "当前版本直接 accepted 会把 Trading Engineering 的交易 setup 判断误放入 AI Engineering。"
+      ],
+      "required_followups": [
+        "重写 statement，使其明确 setup_quality_ref 与 owner review。",
+        "补 setup_quality_schema.json。",
+        "补 Trading Engineering setup taxonomy / strategy_version_ref contract。",
+        "补 eval cases：LLM invents setup、missing setup_ref、setup conflicts with strategy version、setup_quality used as final allow。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_scoring_rubric_uncertainty_penalty_v1_001",
+      "decision": "needs_more_evidence",
+      "reason": "方向合理，但当前不应直接转 draft。normalized_claim 指向 uncertainty_penalty，而 statement 只说 rubric 必须输出 reason codes；source_refs 缺少 LLM confidence calibration、probability calibration、uncertainty / abstention / low-confidence fallback 的直接来源。应补第三批/第一批 calibration family 后再转 draft。",
+      "source_patch_notes": [
+        "保留 OpenAI evals、Model Cards、NIST 作为 supporting sources。",
+        "补 scikit-learn probability calibration / reliability diagram / Brier score 来源。",
+        "补 LLM confidence estimation and calibration survey。",
+        "互链 eval.score_calibration_required_before_gating、calibration.llm_score_not_probability、gating.low_confidence_cannot_allow。",
+        "补 CEK-TA uncertainty_penalty_rubric_contract。"
+      ],
+      "content_patch_notes": [
+        "将 statement 改为：Scoring rubric must penalize or downgrade uncalibrated, low-confidence, conflicted-source or insufficient-evidence outputs before they are used as gate/scoring evidence.",
+        "建议字段：confidence_status、calibration_report_id、source_conflict_status、uncertainty_reason_code、fallback_action、review_required。",
+        "未校准 score 不得 hard allow；只能 advisory / neutral / needs_review。",
+        "不得在本条写具体交易阈值。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 管理 uncertainty semantics、calibration report 引用、fallback action 和审计字段。",
+        "具体阈值、风险预算、交易收益影响和策略参数由 Trading Engineering 或项目配置管理。",
+        "不得把 uncertainty penalty 直接转成订单动作。"
+      ],
+      "conflict_patch_notes": [
+        "与 eval.score_calibration_required_before_gating、calibration.threshold_requires_shadow_data、gating.low_confidence_cannot_allow 高度相关，应作为 calibration/gating family 子规则。",
+        "与 scoring_rubric.reason_code_required 是父子关系。",
+        "当前 statement 与 normalized_claim 不一致。"
+      ],
+      "required_followups": [
+        "重写 statement，使其明确 uncertainty_penalty。",
+        "补 calibration / confidence 直接来源。",
+        "补 uncertainty_penalty_schema.json。",
+        "补 eval cases：uncalibrated high score、source conflict but high score、low confidence allow attempt、missing calibration report。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_security_prompt_injection_test_required_for_trade_context_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立。交易 LLM scoring/gating 系统必须覆盖 trade notes、retrieved documents、tool outputs、free-text project context 等 prompt injection / indirect prompt injection 测试。OWASP Prompt Injection、OWASP RAG Security 和 NIST AI RMF 来源足以支撑进入 draft。",
+      "source_patch_notes": [
+        "保留 OWASP Prompt Injection Prevention Cheat Sheet 作为主来源。",
+        "保留 OWASP RAG Security Cheat Sheet，支持 RAG pipeline 的 document poisoning、context window attack、query injection、tool invocation 和 fail-closed controls。",
+        "保留 NIST AI RMF 作为治理和风险管理来源。",
+        "建议补 OWASP GenAI Red Teaming Guide 或内部 redteam_case_catalog 作为测试用例来源。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 可写为：LLM trade quality scoring/gating systems must include prompt-injection and indirect-injection tests for user notes, retrieved documents, tool outputs, free-text project context and RAG chunks.",
+        "建议字段：redteam_case_id、attack_surface、injection_type、expected_safe_behavior、observed_behavior、guardrail_result、fallback_action、reviewer。",
+        "测试应覆盖 direct injection、indirect RAG injection、tool-output injection、encoding/obfuscation、system-prompt leakage、unsafe tool call。",
+        "单次通过不等于 approved，应纳入 regression suite。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 负责 prompt-injection test catalog、guardrail behavior、fallback action 和审计字段。",
+        "不得把真实账户、密钥、订单、策略参数或私有交易样本写入 red-team 用例。",
+        "涉及实盘执行或 broker action 的测试只用 synthetic / mock tool。"
+      ],
+      "conflict_patch_notes": [
+        "与 redteam.hard_gate_override_attempt_test、safety.no_tool_permission_escalation、security.rag_context_is_untrusted_input 互链。",
+        "与 MCP permission enforcement 互补。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 trade_context_prompt_injection_redteam_cases.yaml。",
+        "补 attack_surface enum：trade_note、rag_document、tool_output、free_text_project_context、email_or_chat_log、mcp_result。",
+        "补 regression trigger：model_version、prompt_version、RAG index、tool permission 或 parser schema 变更时重跑。",
+        "补 Vue audit UI 字段：attack_type、observed_behavior、fallback_action、review_status。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_security_rag_context_is_untrusted_input_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "方向充分成立。retrieved RAG context 和 tool output 应被视为不可信数据，而不是指令。OWASP Prompt Injection 和 RAG Security 来源都直接支持这一点，NIST AI RMF 可作为治理来源。",
+      "source_patch_notes": [
+        "保留 OWASP Prompt Injection Prevention Cheat Sheet，支持 retrieved/fetched context 与 tool output 需要筛查。",
+        "保留 OWASP RAG Security Cheat Sheet，尤其 context window attacks、delimiters、source attribution、access control、output validation、fail-closed controls。",
+        "保留 NIST AI RMF 作为 governance supporting source。",
+        "建议补 CEK-TA RAG context handling contract。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 可写为：Retrieved RAG context, tool output and external project text must be treated as untrusted data, not executable instructions, in LLM trade quality scoring/gating systems.",
+        "建议字段：retrieved_context_id、source_id、trust_boundary_applied、delimiter_applied、source_attribution_present、injection_scan_result、fallback_action。",
+        "要求 prompt 明确区分 system instruction、user request、retrieved data、tool output。",
+        "来源缺失、冲突或 injection risk 时不得生成默认交易指导。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 管理 RAG trust boundary、source attribution、injection scan 和 fallback schema。",
+        "不得让 RAG 内容覆盖系统安全指令、工具权限或 Trading Engineering hard gate。",
+        "不得把外部检索内容当作可执行交易规则。"
+      ],
+      "conflict_patch_notes": [
+        "与 rag.no_source_or_conflict_blocks_default_guidance、rag.no_hit_requires_neutral_or_review、security.prompt_injection_test_required_for_trade_context 互链。",
+        "与 safety.no_tool_permission_escalation 强互补。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 rag_untrusted_context_contract.md。",
+        "补 trust_boundary_applied 字段。",
+        "补 source_attribution / delimiter / injection_scan eval cases。",
+        "补 fail-closed behavior：source_conflict、context_injection_detected、tool_output_unsafe。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_serving_consistency_train_like_serve_required_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立，statement 与 normalized_claim 对齐。训练侧和服务侧必须验证特征、schema、预处理和可见信息的一致性，避免 train-serving skew。TFDV 对 schema validation、training-serving skew、drift detection 和 label-as-feature 问题有直接支撑；Rules of ML 可作生产 ML consistency 的 supporting source。",
+      "source_patch_notes": [
+        "保留 TFDV 作为 schema validation、training-serving skew detection、drift detection、label-as-feature leakage 的主来源。",
+        "保留 Rules of ML 作为 production ML consistency、monitoring 和 baseline 的 supporting source。",
+        "建议补 TFX Transform / tf.Transform 或内部 preprocessing_parity_contract，支持训练/服务预处理一致性。",
+        "互链 feature_store.feature_schema_registry_required、feature_schema.decision_time_only、outcome_schema.post_trade_fields_separated。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 可写为：Training and serving pipelines must validate feature schema, preprocessing, feature availability and visible information parity before serving LLM gate/scoring outputs.",
+        "建议字段：schema_version、preprocessing_version、feature_registry_version、train_schema_hash、serve_schema_hash、train_serve_skew_check_id、visible_information_check_id、validation_report_id。",
+        "label、post-trade outcome、future fields 必须在 serving 环境中不可见。",
+        "发现 train-serving skew 时应 block_promotion 或 needs_more_evidence。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 负责 schema、preprocessing、visible information parity 和 validation report。",
+        "具体交易特征公式、K 线特征、市场数据清洗、策略信号由 Trading Engineering 维护。",
+        "不得把原始交易样本、账户、订单或策略规则写入本知识项。"
+      ],
+      "conflict_patch_notes": [
+        "与 feature_store.feature_schema_registry_required、feature_schema.feature_timestamp_cutoff_required、leakage.label_in_input_forbidden 互补。",
+        "与第九批 serving_consistency.training_serving_parity_test_required 可能重叠，建议本条作为父规则，后续条目作为测试子规则。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 train_like_serve_validation_schema.json。",
+        "补 train_serve_skew_check_report 字段。",
+        "补 preprocessing_version / feature_registry_version / visible_information_check_id。",
+        "补 eval cases：training-only label in serving input、preprocessing mismatch、feature timestamp after decision、RAG source available in training but not serving。"
+      ]
+    }
+  ]
+}

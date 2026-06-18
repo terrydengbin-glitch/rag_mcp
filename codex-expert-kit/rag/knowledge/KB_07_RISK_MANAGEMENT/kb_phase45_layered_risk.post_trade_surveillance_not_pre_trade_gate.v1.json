@@ -1,0 +1,280 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_phase45_layered_risk.post_trade_surveillance_not_pre_trade_gate.v1",
+  "title": "post-trade surveillance 不能替代 pre-trade gate",
+  "metadata": {
+    "partition_id": "KB_07_RISK_MANAGEMENT",
+    "domain": "risk_management",
+    "subdomain": "layered_risk_controls",
+    "rule_type": "layered_risk_boundary_rule",
+    "claim_type": "risk_boundary_rule",
+    "content_type": "json",
+    "project_binding": "none",
+    "tree_node_id": "kt.risk_management.layered_risk_controls",
+    "tree_path": "CEK-TA / Trading Engineering / Risk Management / Layered Risk Controls",
+    "canonical_node_id": "kt.risk_management.layered_risk_controls",
+    "canonical_tree_path": "CEK-TA / Trading Engineering / Risk Management / Layered Risk Controls",
+    "risk_level": "high",
+    "used_for": [
+      "trading_ai_project_design_audit",
+      "pre_trade_risk_checklist",
+      "external_project_rag_retrieval",
+      "risk_owner_boundary_review"
+    ],
+    "source_candidate_id": "cand_20260612_phase45_layered_risk_p45_c_risk06_001",
+    "research_task_id": "P45-C-RISK06",
+    "phase": "Phase 45",
+    "classification_notes": "Phase 45 Layered Risk formal reviewed/caveat_only；只用于风控设计、owner 边界、证据字段和审计提醒，不是 approved/default guidance/hard gate，不生成交易许可、资金充足性结论、风控阈值、信用额度或保证金比例。",
+    "related_nodes": [
+      "kt.live_execution.audit_trail",
+      "kt.trading_engineering.live_execution.execution_tca",
+      "kt.ai_engineering.database_storage_engineering.runtime_observability_trace"
+    ]
+  },
+  "applicability": {
+    "market": "general_with_jurisdiction_venue_and_broker_caveats",
+    "asset": "general",
+    "timeframe": "pre_trade_and_intraday_risk_context",
+    "data_granularity": "order_account_strategy_product_venue_margin_risk_events",
+    "project_type": "trading_ai_support_layer",
+    "applies_when": [
+      "外接项目需要设计 pre-trade controls、信用/资本限额、订单量/价格控制、消息节流、保证金/抵押品边界或 post-trade surveillance 分工。",
+      "AI IDE 需要判断风险字段、owner、证据和 gate 位置是否被混淆。",
+      "需要把策略信号、资金/信用约束、交易所控制和风险复核分开建模。"
+    ],
+    "not_applicable_when": [
+      "用户要求具体风险阈值、信用额度、保证金比例、仓位、杠杆、止损止盈或实盘交易动作。",
+      "需要外接 broker、clearing firm、exchange 或账户的实时事实时，应由外接项目事实层提供。",
+      "需要法律合规结论时，应由对应辖区合规/法律 owner 判断。"
+    ]
+  },
+  "content": {
+    "statement": "post-trade surveillance、execution report review、异常复盘和合规监控只能发现或解释已发生风险，不能替代订单进入市场前的 pre-trade controls；若外接项目需要阻断订单，必须由 Risk Management / Live Execution owner 定义 deterministic gate。",
+    "rationale": "本候选只定义分层风控、信用、保证金和 pre-trade/post-trade owner 边界，不输出风险阈值、交易参数或实盘执行建议。",
+    "normalized_claim": "phase45_layered_risk.post_trade_surveillance_not_pre_trade_gate.v1",
+    "claim_strength": "reviewed_caveat_only",
+    "performance_claim": false,
+    "procedure": [
+      "确认问题属于 Layered Risk / Credit / Margin、pre-trade controls、credit/capital exposure、order admission、message pressure、account/margin/collateral evidence 或 post-trade surveillance。",
+      "检查每个风控字段是否声明 owner、evidence_source_id、policy_version、decision_time、result、action_semantics 和 audit_trace_id。",
+      "若涉及 broker/venue/account 字段，必须保留 product_scope、account_mode、field_name、source timestamp、snapshot_id、staleness_status、semantic_boundary 和 owner。",
+      "若出现 unavailable、stale、unknown，不得静默视为 pass、资金充足或可下单。",
+      "若外接项目需要拒单、停机、撤单、解锁或下单许可，必须由外接项目 Risk Management / Live Execution owner 的 deterministic policy 定义。",
+      "返回知识时必须携带 source_evidence、review_status、machine_gate、适用范围、不适用场景和 owner 边界。"
+    ],
+    "examples": [],
+    "anti_patterns": [
+      "把 SEC、CME、IBKR、Binance 或 FIA 来源泛化为所有市场或所有 broker。",
+      "把 available funds、buying power、excess liquidity、wallet balance、available balance、margin balance、collateral、performance bond 互相等同。",
+      "把任一账户字段默认解释为可交易现金。",
+      "输出风险阈值、信用额度、保证金比例、资金充足性结论、下单许可、买卖点、仓位、杠杆、止损止盈或实盘执行建议。",
+      "把 reviewed/caveat_only 当作 approved、default guidance 或 hard gate。",
+      "把 post-trade surveillance 当作 pre-trade controls 的替代品。"
+    ],
+    "validation": [
+      "source_evidence 至少包含监管/交易所/券商/清算/平台来源，并明确来源适用边界。",
+      "若涉及 RISK05，必须包含 point-in-time account/margin/collateral evidence 契约或等价字段说明。",
+      "review.review_status 必须为 reviewed；approved/default guidance/hard gate/risk_threshold_advice 必须为 false。",
+      "machine_gate.default_guidance 必须为 caveat_only，且 visible_in_default_guidance_queue=false。",
+      "不得出现资金充足性结论、信用额度、保证金比例、可用资金判断或下单许可。"
+    ],
+    "risk_notes": [
+      "Layered Risk reviewed/caveat_only 只能作为风控设计、owner 边界和证据审计上下文。",
+      "监管来源具有辖区边界；broker/venue/platform 来源具有账户类型、产品和 API 语义边界。",
+      "AI Engineering 只能引用 reason code 和 evidence，不拥有阈值或执行动作。",
+      "本条不是 approved，不进入默认指导，不启用 hard gate。"
+    ],
+    "citation_notes": "SEC FAQ explains that controls should systematically limit financial exposure, prevent orders beyond credit/capital thresholds, reject orders beyond price/size parameters, and keep financial controls under broker-dealer control.；FIA best-practice paper covers pre-trade risk management, exchange volatility controls, post-trade analysis, testing, conformance, and system safeguards for automated trading.；CME describes pre-trade risk tools including order blocking, cancel open orders, cancel-on-disconnect, self-match prevention, duplicate order checks, and real-time activity monitoring.",
+    "audit_patch_notes": {
+      "source": [
+        "SEC/FIA/CME 来源支撑 pre-trade controls 与 post-trade analysis 的职责区分，但不直接定义 CEK-TA deterministic gate。"
+      ],
+      "content": [
+        "post-trade surveillance 只能发现、解释和复盘已发生事件。"
+      ],
+      "boundary": [
+        "本候选不得启用拒单、停机、撤单、解锁或任何 hard gate。"
+      ],
+      "conflict": [
+        "deterministic gate 只能由外接项目 Risk Management / Live Execution owner 另行定义。"
+      ]
+    }
+  },
+  "assumptions": [
+    "Layered Risk Controls 是交易工程设计和审计上下文，不是策略 alpha。",
+    "所有 credit、margin、price band、message-rate 和 surveillance 来源必须声明 venue、broker、clearing、jurisdiction 或 platform caveat。",
+    "候选通过 reviewed 审计前不能进入正式 reviewed 知识库。"
+  ],
+  "source_evidence": [
+    {
+      "source_title": "SEC Market Access Rule FAQ",
+      "source_url": "https://www.sec.gov/rules-regulations/staff-guidance/trading-markets-frequently-asked-questions/divisionsmarketregfaq-0",
+      "source_type": "regulatory_guidance",
+      "publisher": "U.S. SEC",
+      "reliability": "high",
+      "score": 92,
+      "freshness": "time_sensitive",
+      "evidence_summary": "SEC FAQ explains that controls should systematically limit financial exposure, prevent orders beyond credit/capital thresholds, reject orders beyond price/size parameters, and keep financial controls under broker-dealer control.",
+      "limitations": [
+        "FAQ guidance for SEC Rule 15c3-5; not a source for CEK-TA-specific field names."
+      ],
+      "source_id": "src_001",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "Best Practices for Automated Trading Risk Controls and System Safeguards",
+      "source_url": "https://www.fia.org/sites/default/files/2024-07/FIA_WP_AUTOMATED%20TRADING%20RISK%20CONTROLS_FINAL_0.pdf",
+      "source_type": "professional_body",
+      "publisher": "FIA",
+      "reliability": "high",
+      "score": 90,
+      "freshness": "time_sensitive",
+      "evidence_summary": "FIA best-practice paper covers pre-trade risk management, exchange volatility controls, post-trade analysis, testing, conformance, and system safeguards for automated trading.",
+      "limitations": [
+        "Industry best practices; not a binding rule and not a CEK-TA threshold source."
+      ],
+      "source_id": "src_002",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "CME Globex Pre-Trade Risk Management",
+      "source_url": "https://www.cmegroup.com/solutions/market-access/globex/trade-on-globex/pre-trade-risk-management.html",
+      "source_type": "official_exchange_doc",
+      "publisher": "CME Group",
+      "reliability": "high",
+      "score": 88,
+      "freshness": "time_sensitive",
+      "evidence_summary": "CME describes pre-trade risk tools including order blocking, cancel open orders, cancel-on-disconnect, self-match prevention, duplicate order checks, and real-time activity monitoring.",
+      "limitations": [
+        "CME Globex-specific toolset; not applicable to all venues."
+      ],
+      "source_id": "src_003",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 90.0,
+    "score_version": "phase45_source_scoring_v1",
+    "primary_source_count": 3,
+    "supporting_source_count": 0,
+    "low_reliability_source_count": 0,
+    "mandatory_downgrades": [],
+    "limitations": [
+      "正式 reviewed 前必须由外部审计确认 claim 没有超出来源可证明范围。",
+      "监管、交易所、broker 和清算来源必须保留辖区、venue 和产品边界。",
+      "内部字段契约若后续用于 reviewed，需要提供 schema extract 或 contract hash。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "Phase 37 Risk Management formal reviewed knowledge",
+      "Phase 37 Live Execution formal reviewed knowledge",
+      "Phase 45 Execution TCA / Audit Trail formal reviewed knowledge",
+      "Phase 45 runtime contract"
+    ],
+    "conflicts": [],
+    "resolution_summary": "reviewed/caveat_only 准备审计通过；formal creation 保持 caveat_only，不创建 approved、default guidance、hard gate、风险阈值建议或资金充足性结论。",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "risk_threshold_advice_allowed": false,
+    "funding_sufficiency_conclusion_allowed": false,
+    "trade_execution_advice_allowed": false
+  },
+  "review": {
+    "review_status": "reviewed",
+    "review_mode": "caveat_only",
+    "confidence": "high",
+    "freshness": "mixed",
+    "reviewer": "external_ai_strict_audit_and_codex",
+    "reviewed_at": "2026-06-12",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "risk_threshold_advice_allowed": false,
+    "funding_sufficiency_conclusion_allowed": false,
+    "trade_execution_advice_allowed": false,
+    "approved_at": null,
+    "ai_audit": {
+      "audit_result_id": "audit_phase45_layered_risk_reviewed_caveat_only_preparation_20260612_v1",
+      "package_id": "phase45_layered_risk_reviewed_preparation_audit_package_20260612",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "reasons": [
+        "SEC 15c3-5、FIA 和 CME pre-trade risk tools 足以支撑 post-trade surveillance 不能替代 pre-trade controls 的边界。"
+      ],
+      "patch_notes": {
+        "source": [
+          "SEC/FIA/CME 来源支撑 pre-trade controls 与 post-trade analysis 的职责区分，但不直接定义 CEK-TA deterministic gate。"
+        ],
+        "content": [
+          "post-trade surveillance 只能发现、解释和复盘已发生事件。"
+        ],
+        "boundary": [
+          "本候选不得启用拒单、停机、撤单、解锁或任何 hard gate。"
+        ],
+        "conflict": [
+          "deterministic gate 只能由外接项目 Risk Management / Live Execution owner 另行定义。"
+        ]
+      }
+    },
+    "source_candidate_id": "cand_20260612_phase45_layered_risk_p45_c_risk06_001",
+    "ai_audit_result_id": "audit_phase45_layered_risk_reviewed_caveat_only_preparation_20260612_v1"
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于提醒 AI IDE 设计分层风控、owner 边界、证据字段和审计 checklist。",
+      "用于检查外接项目是否区分 credit limit、strategy risk limit、order admission、message pressure、account/margin/collateral evidence 和 post-trade surveillance。",
+      "用于生成 reason code、schema review、RAG 检索上下文和风险设计审计问题。"
+    ],
+    "not_allowed": [
+      "不得生成买卖点、仓位、杠杆、止损止盈、实盘执行建议、风险阈值、信用额度、保证金比例、资金充足性结论或下单许可。",
+      "不得把 reviewed/caveat_only 当作 approved 或默认指导。",
+      "不得把 account field check、message pressure 或 post-trade surveillance 写成 CEK-TA hard gate。"
+    ],
+    "required_context": [
+      "必须同时返回 source_evidence、applicability、not_applicable_when、review_status、conflict_status 和 machine_gate。",
+      "若外接项目问题涉及实盘、法律、授权、资金或风控动作，必须要求项目事实层或人工 owner 复核。"
+    ],
+    "fallback_behavior": "cite_with_caveat"
+  },
+  "machine_gate": {
+    "default_guidance": "caveat_only",
+    "review_visibility": "reviewed_caveat_only",
+    "reason": "reviewed/caveat_only audit passed; approved/default guidance/hard gate/risk threshold advice remain disabled.",
+    "requires_human_escalation": false,
+    "hidden_from_default_queue": true,
+    "visible_in_default_guidance_queue": false,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "risk_threshold_advice_allowed": false,
+    "funding_sufficiency_conclusion_allowed": false,
+    "trade_execution_advice_allowed": false,
+    "blocking_reasons": [],
+    "checked_at": "2026-06-13T10:29:14+00:00",
+    "gate_version": "1.0.0"
+  },
+  "contribution": {
+    "source": "phase45_professional_research",
+    "private_data_removed": true,
+    "project_specific_details_removed": true,
+    "notes": "Generated for external strict audit; no project account, key, position, threshold, or private strategy data included."
+  },
+  "recommended_extra_sources": []
+}

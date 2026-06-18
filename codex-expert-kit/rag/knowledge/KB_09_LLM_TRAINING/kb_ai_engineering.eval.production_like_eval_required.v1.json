@@ -1,0 +1,361 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_ai_engineering.eval.production_like_eval_required.v1",
+  "title": "LLM Gate/Scoring 评估必须贴近生产任务",
+  "metadata": {
+    "partition_id": "KB_09_LLM_TRAINING",
+    "domain": "llm_training",
+    "subdomain": "evaluation_governance",
+    "rule_type": "decision_rule",
+    "content_type": "json",
+    "project_binding": "none",
+    "tree_node_id": "kt.llm_training.model_training_engineering",
+    "tree_path": "CEK-TA / AI Engineering",
+    "canonical_node_id": "kt.llm_training.model_training_engineering",
+    "canonical_tree_path": "CEK-TA / AI Engineering",
+    "risk_level": "medium",
+    "used_for": [
+      "llm_training",
+      "trading_gating_scoring",
+      "rag_engineering",
+      "mcp",
+      "vue_audit_ui"
+    ],
+    "source_candidate_id": "cand_20260609_ai_engineering_eval_production_like_eval_required_v1_001",
+    "research_task_id": "RIT-P36-A-T17",
+    "claim_type": "llm_eval_rule",
+    "classification_notes": "Phase 36 AI Engineering reviewed knowledge；本条只沉淀 AI/LLM/RAG/MCP/训练数据、评估、部署或治理规则。交易规则本体、K 线、策略、实盘执行和风控阈值必须路由到 Trading Engineering。"
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "general",
+    "data_granularity": "general",
+    "project_type": "trading_llm_assistant",
+    "applies_when": [
+      "外接项目要评估 LLM gate/scoring、RAG、prompt、model、MCP/tool 或阈值变更。",
+      "评估结论会影响模型 promotion、SearchLab 回归、shadow/paper 准入或人工审批。",
+      "生产环境存在缺字段、检索失败、来源冲突、工具错误、低置信度或延迟/成本限制。"
+    ],
+    "not_applicable_when": [
+      "只是在定义单个 holdout、overlap、time split 或 calibration 子规则。",
+      "已经进入实盘执行、订单状态机、仓位或风控阈值处理，应路由到 Trading Engineering。",
+      "离线 production-like eval 通过后直接视为 live-ready。"
+    ]
+  },
+  "content": {
+    "statement": "LLM gate/scoring 评估必须使用隔离、可复现、贴近生产任务的 eval sets，覆盖真实输入格式、RAG 检索行为、MCP/tool 故障、缺失字段、来源冲突、延迟和成本约束。",
+    "rationale": "只在理想样本上评估，会漏掉真实生产中的 RAG no-hit、source conflict、tool error、低置信度、字段缺失和反事实 outcome 缺失等关键失败模式。",
+    "procedure": [
+      "绑定 eval_dataset_id、eval_dataset_hash 和 production_context_profile。",
+      "记录 prompt_version、rag_index_version、tool_config_version、metric_set_id 和 threshold_ref。",
+      "覆盖 normal case、missing required field、RAG no-hit、source conflict、tool error、low confidence、blocked trade 和 counterfactual missing。",
+      "记录 latency_budget、cost_budget、failure_case_ids 和 owner。",
+      "明确 production-like eval pass 仍需 shadow/paper、审批、回滚和监控。"
+    ],
+    "examples": [],
+    "anti_patterns": [
+      "把 reviewed 知识当作 approved 默认指导。",
+      "把 AI Engineering 规则扩写成具体交易阈值、仓位、买卖点、止损止盈或执行参数。",
+      "缺少来源、schema、适用范围、冲突检查或审计记录仍进入训练、评估、RAG promotion 或默认指导。"
+    ],
+    "validation": [
+      "source_evidence 至少存在 2 条，且没有 unresolved conflict。",
+      "review_status 为 reviewed 时 machine_gate.default_guidance 必须是 caveat_only。",
+      "外接项目调用时必须返回 knowledge_id、source_refs、review_status、machine_gate 和适用边界。",
+      "前端候选页、知识树和 SearchLab 不得显示乱码或未解释的英文 demo 文案。"
+    ],
+    "risk_notes": [
+      "accepted_for_draft 不是 approved；本条只能作为 formal reviewed 知识进入审计和检索。",
+      "本知识项只处理 AI Engineering 边界，不沉淀项目私有交易数据和交易规则本体。",
+      "若项目事实涉及具体策略、实盘订单、风控阈值或市场结构，应路由到 Trading Engineering 对应分支。"
+    ],
+    "citation_notes": "OpenAI evals/model optimization 支持用代表性真实输入建立和迭代评估；scikit-learn 支持 held-out evaluation；Rules of ML 支持生产一致性、baseline 和监控。",
+    "audit_patch_notes": {
+      "source_patch_notes": [
+        "保留 OpenAI evals 作为 LLM workflow evaluation source，但注明 Evals platform 退役风险，新项目转 Datasets / 新 eval workflow。",
+        "补 OpenAI model optimization 作为建立 baseline、用真实输入评估改动的当前官方来源。",
+        "保留 scikit-learn cross-validation 作为 held-out evaluation 来源。",
+        "保留 Rules of ML 作为 production ML consistency、baseline、monitoring 的 supporting source。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：LLM gate/scoring evaluation must use isolated, reproducible and production-like eval sets that reflect real input format, RAG retrieval behavior, tool/MCP failure modes, missing fields, source conflicts and latency/cost constraints.",
+        "建议字段：eval_dataset_id、eval_dataset_hash、production_context_profile、prompt_version、rag_index_version、tool_config_version、metric_set_id、threshold_ref、failure_case_ids、latency_budget、cost_budget、owner。",
+        "增加 production-like 覆盖项：normal case、missing required field、RAG no-hit、source conflict、tool error、low confidence、blocked trade、counterfactual missing。",
+        "明确 production-like eval pass 不等于 live-ready，还需 shadow/paper、审批、回滚和监控。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 定义评估环境、输入格式、RAG/MCP 场景、失败样本和质量指标。",
+        "实盘订单、交易风控、仓位、策略参数和具体 market signal 不进入本知识项。",
+        "交易执行上下文只用脱敏引用或由 Trading Engineering 提供的抽象字段。"
+      ],
+      "conflict_patch_notes": [
+        "本条可作为第三批多个 eval 规则的父项：holdout、no overlap、ablation、baseline、time split、calibration 都可作为子规则。",
+        "与 deployment_shadow_mode_before_live 互补：本条是 offline production-like eval，shadow_mode 是上线前旁路阶段。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 production_like_eval_profile_schema.json。",
+        "补 failure_case_catalog。",
+        "补与 shadow/paper promotion checklist 的互链。"
+      ]
+    },
+    "required_fields": [
+      "eval_dataset_id",
+      "eval_dataset_hash",
+      "production_context_profile",
+      "prompt_version",
+      "rag_index_version",
+      "tool_config_version",
+      "metric_set_id",
+      "threshold_ref",
+      "failure_case_ids",
+      "latency_budget",
+      "cost_budget",
+      "owner"
+    ],
+    "linked_rules": [
+      "eval.holdout_test_set_required.v1",
+      "eval_case.no_training_overlap_required.v1",
+      "deployment.shadow_mode_before_live.v1",
+      "deployment.llm_timeout_or_mcp_failure_fallback_required.v1"
+    ]
+  },
+  "assumptions": [
+    "外接项目提供项目事实、私有交易数据和策略上下文；CEK-TA 只沉淀可复用专业规则。",
+    "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+  ],
+  "source_evidence": [
+    {
+      "source_id": "src_openai_evals",
+      "source_title": "Working with evals | OpenAI API",
+      "source_url": "https://platform.openai.com/docs/guides/evals?api-mode=chat",
+      "source_type": "official_doc",
+      "publisher": "OpenAI",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "OpenAI evals documentation supports programmatic evaluation setup and workflow-specific quality checks before relying on model behavior.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_sklearn_cv",
+      "source_title": "Cross-validation: evaluating estimator performance | scikit-learn",
+      "source_url": "https://scikit-learn.org/stable/modules/cross_validation.html",
+      "source_type": "official_doc",
+      "publisher": "scikit-learn",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "scikit-learn cross-validation guidance supports held-out evaluation, splitting discipline, and avoiding evaluation on training data.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_rules_ml",
+      "source_title": "Rules of Machine Learning",
+      "source_url": "https://martin.zinkevich.org/rules_of_ml/rules_of_ml.pdf",
+      "source_type": "paper",
+      "publisher": "Google / Martin Zinkevich",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "medium",
+      "relevance": "high",
+      "evidence_summary": "Rules of ML discusses train/serve consistency, baselines, monitoring, and production ML safeguards.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_occ_fed_fdic_revised_model_risk_2026",
+      "source_title": "Model Risk Management: Revised Guidance",
+      "source_url": "https://occ.gov/news-issuances/bulletins/2026/bulletin-2026-13.html",
+      "source_type": "standard_or_risk_framework",
+      "publisher": "OCC / Federal Reserve / FDIC",
+      "published_at": "2026-04-17",
+      "accessed_at": "2026-06-09",
+      "version": "OCC Bulletin 2026-13 / SR 26-2",
+      "reliability": "high",
+      "relevance": "medium",
+      "evidence_summary": "2026 年跨机构模型风险管理修订指南支持模型治理、验证、变更控制和风险分层；同时需注明 generative AI 和 agentic AI 不在其直接范围内，只能作为模型风险治理类比来源。",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 85,
+    "score_version": "1.0.0",
+    "primary_source_count": 2,
+    "supporting_source_count": 2,
+    "low_reliability_source_count": 0,
+    "limitations": [
+      "本条为 reviewed 知识，来源和审计补丁已记录；默认指导仍需后续人工治理升级 approved。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "docs/contracts/ai_engineering_gating_scoring_contract.md",
+      "docs/contracts/ai_engineering_knowledge_item_policy.md",
+      "docs/tasks/phase36_ai_engineering_gating_scoring_knowledge.md"
+    ],
+    "conflicts": [],
+    "resolution_summary": "未发现与当前 CEK-TA formal knowledge 的直接冲突；候选不会进入默认指导。",
+    "default_recommendation": "caveat_only_until_approved"
+  },
+  "review": {
+    "confidence": "medium",
+    "freshness": "time_sensitive",
+    "review_status": "reviewed",
+    "reviewer": "codex",
+    "reviewed_at": "2026-06-09",
+    "created_at": "2026-06-09",
+    "updated_at": "2026-06-09",
+    "open_questions": [
+      "审计时确认该候选是否应与相邻 AI Engineering 规则合并、拆分，或改路由到 Trading Engineering。",
+      "补 production_like_eval_profile_schema.json。",
+      "补 failure_case_catalog。",
+      "补与 shadow/paper promotion checklist 的互链。"
+    ],
+    "decision_log": [
+      {
+        "at": "2026-06-09",
+        "actor": "external_ai",
+        "decision": "accepted_for_draft",
+        "reason": "方向成立。LLM gate/scoring 的评估应使用隔离、可复现、贴近生产任务的评测集，并记录指标、阈值、失败样本和运行约束。OpenAI evals / model optimization 支持用代表性真实输入建立和迭代评估，scikit-learn 支持 held-out evaluation，Rules of ML 支持生产一致性和 baseline 观念。",
+        "audit_result_id": "audit_result_phase36_ai_engineering_batch_03_of_10_20260609_gpt55_pro_strict_sources"
+      },
+      {
+        "at": "2026-06-09",
+        "actor": "codex",
+        "decision": "converted_to_reviewed",
+        "reason": "按 Phase 36 批量审计结果优化候选并转为 formal reviewed；未升级 approved。",
+        "audit_result_id": "audit_result_phase36_ai_engineering_batch_03_of_10_20260609_gpt55_pro_strict_sources"
+      }
+    ],
+    "approval_status": "not_requested",
+    "default_guidance_allowed": false,
+    "source_candidate_id": "cand_20260609_ai_engineering_eval_production_like_eval_required_v1_001",
+    "ai_audit_result_id": "audit_result_phase36_ai_engineering_batch_03_of_10_20260609_gpt55_pro_strict_sources",
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase36_ai_engineering_batch_03_of_10_20260609_gpt55_pro_strict_sources",
+      "source_package_id": "phase36_ai_engineering_candidate_audit_batch_03_of_10_20260609",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立。LLM gate/scoring 的评估应使用隔离、可复现、贴近生产任务的评测集，并记录指标、阈值、失败样本和运行约束。OpenAI evals / model optimization 支持用代表性真实输入建立和迭代评估，scikit-learn 支持 held-out evaluation，Rules of ML 支持生产一致性和 baseline 观念。",
+      "source_patch_notes": [
+        "保留 OpenAI evals 作为 LLM workflow evaluation source，但注明 Evals platform 退役风险，新项目转 Datasets / 新 eval workflow。",
+        "补 OpenAI model optimization 作为建立 baseline、用真实输入评估改动的当前官方来源。",
+        "保留 scikit-learn cross-validation 作为 held-out evaluation 来源。",
+        "保留 Rules of ML 作为 production ML consistency、baseline、monitoring 的 supporting source。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：LLM gate/scoring evaluation must use isolated, reproducible and production-like eval sets that reflect real input format, RAG retrieval behavior, tool/MCP failure modes, missing fields, source conflicts and latency/cost constraints.",
+        "建议字段：eval_dataset_id、eval_dataset_hash、production_context_profile、prompt_version、rag_index_version、tool_config_version、metric_set_id、threshold_ref、failure_case_ids、latency_budget、cost_budget、owner。",
+        "增加 production-like 覆盖项：normal case、missing required field、RAG no-hit、source conflict、tool error、low confidence、blocked trade、counterfactual missing。",
+        "明确 production-like eval pass 不等于 live-ready，还需 shadow/paper、审批、回滚和监控。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 定义评估环境、输入格式、RAG/MCP 场景、失败样本和质量指标。",
+        "实盘订单、交易风控、仓位、策略参数和具体 market signal 不进入本知识项。",
+        "交易执行上下文只用脱敏引用或由 Trading Engineering 提供的抽象字段。"
+      ],
+      "conflict_patch_notes": [
+        "本条可作为第三批多个 eval 规则的父项：holdout、no overlap、ablation、baseline、time split、calibration 都可作为子规则。",
+        "与 deployment_shadow_mode_before_live 互补：本条是 offline production-like eval，shadow_mode 是上线前旁路阶段。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 production_like_eval_profile_schema.json。",
+        "补 failure_case_catalog。",
+        "补与 shadow/paper promotion checklist 的互链。"
+      ]
+    },
+    "approved_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "contribution": {
+    "contribution_id": null,
+    "source_project": null,
+    "sanitization_status": "not_applicable",
+    "private_data_removed": true,
+    "generic_mapping_notes": "Phase 36 public-source AI Engineering candidate; no project-private trading facts included."
+  },
+  "copyright": {
+    "stores_full_text": false,
+    "stores_long_quote": false,
+    "summary_only": true,
+    "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+    "reuse_risk": "low"
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于审计 AI Engineering、LLM 训练、RAG/MCP、部署、安全或治理链路。",
+      "用于提醒外接项目补齐来源、适用边界、冲突状态、审计记录和人工审批。",
+      "用于 reviewed/audit 模式下带 caveat 引用。"
+    ],
+    "not_allowed": [
+      "不得生成买卖点、仓位、杠杆、止损止盈或实盘执行指令。",
+      "不得覆盖确定性风控、交易执行系统或人工审批。",
+      "不得作为 approved/default guidance 直接返回。"
+    ],
+    "required_context": [
+      "project_type",
+      "task_type",
+      "mode",
+      "strategy_version",
+      "data_boundary",
+      "review_status"
+    ],
+    "fallback_behavior": "cite_with_caveat"
+  },
+  "machine_gate": {
+    "default_guidance": "caveat_only",
+    "reason": "reviewed only; accepted_for_draft is not approved; default guidance requires later human governance approval.",
+    "requires_human_escalation": true,
+    "blocking_reasons": [
+      "not_approved",
+      "phase36_batch03_reviewed_only"
+    ],
+    "checked_at": "2026-06-09",
+    "gate_version": "1.0.0",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "recommended_extra_sources": [
+    {
+      "title": "保留 OpenAI evals 作为 LLM workflow evaluation source，但注明 Evals platform 退役风险，新项目转 Datasets / 新 eval workflow。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_1"
+    },
+    {
+      "title": "补 OpenAI model optimization 作为建立 baseline、用真实输入评估改动的当前官方来源。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_2"
+    },
+    {
+      "title": "保留 scikit-learn cross-validation 作为 held-out evaluation 来源。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_3"
+    },
+    {
+      "title": "保留 Rules of ML 作为 production ML consistency、baseline、monitoring 的 supporting source。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_4"
+    }
+  ]
+}

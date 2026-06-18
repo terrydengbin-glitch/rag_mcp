@@ -1,0 +1,348 @@
+{
+  "schema_version": "1.0.0",
+  "candidate_id": "cand_20260609_ai_engineering_deployment_llm_timeout_or_mcp_failure_fallback_required_v1_001",
+  "research_task_id": "RIT-P36-C-30",
+  "status": {
+    "review_status": "accepted",
+    "ingestion_decision": "convert_to_knowledge_item",
+    "decision_reason": "Phase 36 batch AI audit decision: accepted_for_draft. 该状态不是 approved。",
+    "created_at": "2026-06-09",
+    "updated_at": "2026-06-09"
+  },
+  "classification": {
+    "tree_node_id": "kt.llmops_deployment",
+    "canonical_node_id": "kt.llmops_deployment",
+    "tree_path": "CEK-TA / AI Engineering",
+    "related_nodes": [],
+    "partition_id": "KB_AI_ENGINEERING",
+    "domain": "ai_engineering",
+    "subdomain": "llmops_deployment",
+    "rule_type": "decision_rule",
+    "used_for": [
+      "llm_training",
+      "trading_gating_scoring",
+      "rag_engineering",
+      "mcp",
+      "vue_audit_ui"
+    ]
+  },
+  "claim": {
+    "claim_id": "claim_001",
+    "statement": "LLM/MCP 出现 timeout、rate limit、tool execution error、protocol error、permission failure、RAG no-hit、source conflict、schema validation failure 或 invalid output schema 时，必须降级为 abstain、neutral_score、needs_review、block_default_guidance、degraded_read_only_response、retry_with_backoff、open_circuit 或 fail_closed_for_hard_gate；在确定性风控门禁之前不得 hard allow。",
+    "normalized_claim": "deployment.llm_timeout_or_mcp_failure_fallback_required.v1",
+    "evidence_summary": "OpenAI rate limit 文档支持 transient failure 的 exponential backoff；AWS retry/backoff、circuit breaker 和 graceful degradation 文档支持有限重试、fail fast、断路器和降级响应；MCP tools spec 支持 protocol errors 与 tool execution errors 的区分、isError、input validation、access controls、rate limiting、output sanitization、timeout 和 audit；MCP runtime fault taxonomy 是较新的补充研究来源，不作为唯一主来源。",
+    "interpretation_notes": "本候选已通过二次审计，正式知识卡聚焦 LLM/MCP 运行时故障分类、有限重试、安全降级和审计追踪；不定义交易执行动作。",
+    "claim_strength": "high",
+    "performance_claim": false
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "general",
+    "data_granularity": "general",
+    "project_type": "trading_llm_assistant",
+    "applies_when": [
+      "外接项目在 LLM scoring/gating、RAG 检索、MCP tool 调用或知识审计中遇到 timeout、rate limit、provider error、tool execution error、permission failure、schema validation failure、RAG no-hit 或 source conflict。",
+      "LLM/MCP 输出会影响交易评分、门禁建议、默认知识指导或人工审计队列。",
+      "系统需要记录 retry_policy、fallback_action、safe_default、review_queue_id 和 audit_event_id。"
+    ],
+    "not_applicable_when": [
+      "任务讨论的是上线前 offline eval、shadow mode 或 paper readiness，应路由到 deployment.shadow_mode_before_live。",
+      "任务需要定义实盘订单取消、broker action、仓位调整、kill switch、止损止盈或风控阈值，应路由到 Trading Engineering / Live Execution / Risk Management。",
+      "任务只是普通 UI 展示错误，且不会影响交易评分、门禁、默认指导或审计结论。"
+    ],
+    "assumptions": [
+      "外接项目提供项目事实、私有交易数据和策略上下文；CEK-TA 只沉淀可复用专业规则。",
+      "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+    ],
+    "limitations": [
+      "accepted_for_draft 不是 approved；本条只能作为 formal reviewed 知识进入审计和检索，默认指导仍需后续人工治理。",
+      "OpenAI、AWS 和 MCP 来源支持 retry/backoff、circuit breaker、graceful degradation、MCP 错误结构和工具安全，但 safe default 是 CEK-TA 针对高风险交易 gating 的内部治理规则。",
+      "AI Engineering 负责 failure taxonomy、retry policy、safe default、fallback_action、审计 trace 和 Vue audit UI 展示。",
+      "Trading Engineering / Live Execution / Risk Management 负责实盘订单状态、kill switch、broker action、仓位调整、止损止盈、风控阈值和执行引擎处理。"
+    ]
+  },
+  "source_refs": [
+    {
+      "source_id": "src_fed_model_risk",
+      "source_title": "Supervisory Guidance on Model Risk Management",
+      "source_url": "https://www.federalreserve.gov/frrs/guidance/supervisory-guidance-on-model-risk-management.htm",
+      "source_type": "standard_or_risk_framework",
+      "publisher": "Federal Reserve",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "score": 84,
+      "relevance": "high",
+      "freshness": "time_sensitive",
+      "limitations": [],
+      "evidence_summary": "Model risk guidance supports independent validation, governance, change control, and risk-based model oversight.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_rules_ml",
+      "source_title": "Rules of Machine Learning",
+      "source_url": "https://martin.zinkevich.org/rules_of_ml/rules_of_ml.pdf",
+      "source_type": "paper",
+      "publisher": "Google / Martin Zinkevich",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "medium",
+      "score": 78,
+      "relevance": "high",
+      "freshness": "stable",
+      "limitations": [],
+      "evidence_summary": "Rules of ML discusses train/serve consistency, baselines, monitoring, and production ML safeguards.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_openai_evals",
+      "source_title": "Working with evals | OpenAI API",
+      "source_url": "https://platform.openai.com/docs/guides/evals?api-mode=chat",
+      "source_type": "official_doc",
+      "publisher": "OpenAI",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "score": 86,
+      "relevance": "high",
+      "freshness": "time_sensitive",
+      "limitations": [],
+      "evidence_summary": "OpenAI evals documentation supports programmatic evaluation setup and workflow-specific quality checks before relying on model behavior.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_openai_rate_limits_exponential_backoff",
+      "source_title": "Rate limits | OpenAI API",
+      "source_url": "https://developers.openai.com/api/docs/guides/rate-limits",
+      "source_type": "official_doc",
+      "publisher": "OpenAI",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "score": 88,
+      "relevance": "high",
+      "freshness": "time_sensitive",
+      "limitations": [
+        "该来源支持 LLM API transient failure 处理，但 CEK-TA 的 fail-closed/hard-gate 规则属于本项目风险治理边界。"
+      ],
+      "evidence_summary": "OpenAI rate limit 文档支持对 429/rate limit 等瞬时失败使用 exponential backoff，同时提示需要 retry budget 和安全降级。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_aws_retry_with_backoff_pattern",
+      "source_title": "Retry with backoff pattern - AWS Prescriptive Guidance",
+      "source_url": "https://docs.aws.amazon.com/prescriptive-guidance/latest/cloud-design-patterns/retry-backoff.html",
+      "source_type": "official_doc",
+      "publisher": "AWS",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "score": 86,
+      "relevance": "high",
+      "freshness": "time_sensitive",
+      "limitations": [
+        "该来源是通用云可靠性模式，需要结合 LLM/MCP 调用链路映射到具体 fallback_action。"
+      ],
+      "evidence_summary": "AWS Retry with Backoff Pattern 支持对 transient error、429、timeout 做有限重试，并指出非 transient error 应 fail fast 或使用其他保护模式。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_aws_circuit_breaker_pattern",
+      "source_title": "Circuit breaker pattern - AWS Prescriptive Guidance",
+      "source_url": "https://docs.aws.amazon.com/prescriptive-guidance/latest/cloud-design-patterns/circuit-breaker.html",
+      "source_type": "official_doc",
+      "publisher": "AWS",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "score": 86,
+      "relevance": "high",
+      "freshness": "time_sensitive",
+      "limitations": [
+        "该来源支持故障保护模式，但不定义交易系统的 kill switch 或订单处理动作。"
+      ],
+      "evidence_summary": "AWS circuit breaker pattern 支持在重复 timeout/failure 时打开断路器，避免继续调用不健康依赖，可支撑 LLM/MCP open_circuit 处理。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_mcp_tools_error_handling",
+      "source_title": "Tools - Model Context Protocol",
+      "source_url": "https://modelcontextprotocol.io/specification/draft/server/tools",
+      "source_type": "official_doc",
+      "publisher": "Model Context Protocol",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": "draft server/tools",
+      "reliability": "high",
+      "score": 88,
+      "relevance": "high",
+      "freshness": "time_sensitive",
+      "limitations": [
+        "该来源来自 MCP draft，需要跟随 MCP 规范版本变化持续复核。"
+      ],
+      "evidence_summary": "MCP tools spec 区分 protocol errors 与 tool execution errors，并要求工具执行错误通过 isError 或等价结构返回可操作反馈。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_arxiv_2026_mcp_runtime_fault_taxonomy",
+      "source_title": "A Taxonomy of Runtime Faults in Model Context Protocol Servers",
+      "source_url": "https://arxiv.org/abs/2606.05339",
+      "source_type": "paper",
+      "publisher": "arXiv",
+      "published_at": "2026-06-03",
+      "accessed_at": "2026-06-09",
+      "version": "v1",
+      "reliability": "medium",
+      "score": 78,
+      "relevance": "high",
+      "freshness": "time_sensitive",
+      "limitations": [
+        "该来源是较新的 arXiv/preprint 研究，不应作为唯一主来源。"
+      ],
+      "evidence_summary": "MCP runtime fault taxonomy 覆盖 tool invocation、schema enforcement、security validation、timeouts/cancellations 等故障类型，可作为补充证据。",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 86,
+    "score_version": "1.0.0",
+    "primary_source_count": 3,
+    "supporting_source_count": 5,
+    "low_reliability_source_count": 0,
+    "mandatory_downgrades": [],
+    "limitations": [
+      "该候选已完成补证并进入 accepted_for_draft；正式知识仍只能作为 reviewed 使用。",
+      "safe default 和 fail-closed 策略属于 CEK-TA 针对高风险交易 gating 的内部治理规则。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "docs/contracts/ai_engineering_gating_scoring_contract.md",
+      "docs/contracts/ai_engineering_knowledge_item_policy.md",
+      "docs/tasks/phase36_ai_engineering_gating_scoring_knowledge.md"
+    ],
+    "conflicts": [],
+    "resolution_summary": "未发现与当前 CEK-TA formal knowledge 的直接冲突；候选不会进入默认指导。",
+    "approval_allowed": true
+  },
+  "review": {
+    "confidence": "medium",
+    "freshness": "time_sensitive",
+    "reviewer": "external_ai_and_codex_alignment",
+    "reviewed_at": "2026-06-09",
+    "open_questions": [
+      "是否需要新增 llm_mcp_failure_taxonomy.yaml？",
+      "是否需要新增 fallback_action_enum.yaml 和 retry_policy_schema.json？",
+      "failure injection、chaos test 和 red-team eval case 是否需要单独形成后续任务？"
+    ],
+    "audit_log": [
+      {
+        "at": "2026-06-09",
+        "actor": "codex",
+        "action": "created",
+        "reason": "Phase 36 bulk AI Engineering candidate expansion."
+      },
+      {
+        "at": "2026-06-09",
+        "actor": "external_ai",
+        "action": "phase36_batch_audit_result_received",
+        "reason": "当前候选不应直接转 draft。normalized_claim 指向 LLM timeout 或 MCP failure fallback，但 statement 实际是“上线前必须经过离线评估、shadow/paper 阶段和失败降级策略，不能直接进入实盘硬门”。原始 sources 支持通用模型风险、评估和生产 ML safeguard，但不足以直接支持 timeout、MCP failure、tool failure、permission failure 的具体 fallback 规则。",
+        "audit_result_id": "audit_result_phase36_ai_engineering_batch_02_of_10_20260609_gpt55_pro_strict_sources"
+      },
+      {
+        "at": "2026-06-09",
+        "actor": "codex",
+        "action": "supplemental_research_added",
+        "reason": "Phase 36 补证二次审计确认该候选已经从上线前 readiness 规则收敛为 LLM/MCP runtime failure fallback 专项规则，可转入 formal reviewed；该状态不是 approved。",
+        "audit_result_id": "audit_result_phase36_ai_engineering_batch_02_of_10_20260609_gpt55_pro_strict_sources",
+        "research_doc": "docs/research/phase36_batch02_supplemental_research.md",
+        "audit_package": "docs/audit/phase36_batch02_supplemental_audit_package_20260609.json"
+      },
+      {
+        "at": "2026-06-09",
+        "actor": "external_ai",
+        "action": "phase36_batch_audit_result_received",
+        "reason": "补充后的 candidate_id、normalized_claim、statement 和 source_refs 已对齐。该候选已经从原来的 offline eval / shadow / paper deployment readiness 规则，改写为 LLM/MCP timeout、tool error、permission failure、RAG no-hit、source conflict、schema validation failure 的 runtime failure fallback 规则。补充来源覆盖 OpenAI rate limit/backoff、AWS retry/backoff、AWS circuit breaker、AWS graceful degradation、MCP tool error handling 和 MCP runtime fault taxonomy，足够支撑进入 draft。但正式 draft 必须声明 safe default 是 CEK-TA 内部高风险 gating 安全规则，不是外部文档逐字要求。",
+        "audit_result_id": "audit_result_phase36_batch02_supplemental_reaudit_20260609_gpt55_pro_strict_sources"
+      }
+    ],
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase36_batch02_supplemental_reaudit_20260609_gpt55_pro_strict_sources",
+      "source_package_id": "phase36_batch02_supplemental_audit_package_20260609",
+      "decision": "accepted_for_draft",
+      "reason": "补充后的 candidate_id、normalized_claim、statement 和 source_refs 已对齐。该候选已经从原来的 offline eval / shadow / paper deployment readiness 规则，改写为 LLM/MCP timeout、tool error、permission failure、RAG no-hit、source conflict、schema validation failure 的 runtime failure fallback 规则。补充来源覆盖 OpenAI rate limit/backoff、AWS retry/backoff、AWS circuit breaker、AWS graceful degradation、MCP tool error handling 和 MCP runtime fault taxonomy，足够支撑进入 draft。但正式 draft 必须声明 safe default 是 CEK-TA 内部高风险 gating 安全规则，不是外部文档逐字要求。",
+      "source_patch_notes": [
+        "将 OpenAI rate limit / exponential backoff 官方帮助文档作为 LLM API transient failure 与 retry budget 的主来源之一。",
+        "将 AWS Retry with Backoff Pattern 作为 transient error、429、timeout、limited retries 的可靠性来源。",
+        "将 AWS Circuit Breaker Pattern 和 AWS Well-Architected graceful degradation 作为 repeated timeout/failure、fail fast、degraded response 的可靠性来源。",
+        "将 MCP official tools spec 作为 protocol errors、tool execution errors、isError=true、tool input validation、access controls、rate limiting、sanitize outputs、timeout 和 audit 的主来源。",
+        "将 arXiv 2026 MCP runtime fault taxonomy 作为补充证据；正式 draft 应标注其为新研究 / preprint，不作为唯一主来源。",
+        "保留 model risk guidance、Rules of ML、OpenAI evals 作为支持 deployment governance 的辅助来源，不再让它们承担 timeout/MCP failure 的主证据角色。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：LLM/MCP timeout、rate limit、tool execution error、protocol error、permission failure、RAG no-hit、source conflict、schema validation failure or invalid output schema must fallback to abstain、neutral_score、needs_review、block_default_guidance or degraded_read_only_response; it must never hard allow before deterministic risk gate。",
+        "建议字段：failure_event_id、failure_type、provider、model_id、mcp_server_id、tool_name、tool_call_id、error_code、http_status、isError、timeout_ms、retry_policy_id、retry_count、circuit_state、fallback_action、safe_default、deterministic_gate_result、review_queue_id、audit_event_id。",
+        "增加 failure_type enum：llm_timeout、rate_limit、provider_error、mcp_protocol_error、mcp_tool_execution_error、permission_denied、rag_no_hit、source_conflict、schema_validation_error、output_parse_error、policy_violation、unknown_error。",
+        "增加 fallback_action enum：abstain、neutral_score、needs_human_review、block_default_guidance、degraded_read_only_response、retry_with_backoff、open_circuit、fail_closed_for_hard_gate。",
+        "明确 retry 与 fallback 的关系：transient error 可有限重试；non-transient error、permission failure、schema violation、source conflict 不应无限重试，应 fail closed 或进入 review。",
+        "明确 hard gate 场景默认 fail closed；非 hard gate 的解释型 UI 可以 degraded_read_only_response，但不得生成默认交易指导。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 负责 LLM/MCP failure taxonomy、retry policy、safe default、fallback_action、审计 trace 和 Vue audit UI 展示。",
+        "Trading Engineering / Live Execution / Risk Management 负责实盘订单状态、kill switch、broker action、仓位调整、止损止盈、风控阈值和执行引擎处理。",
+        "本知识项不得定义具体交易执行动作、仓位、订单取消逻辑、止损止盈或策略阈值。",
+        "如果 LLM/MCP failure 影响 live order、risk gate 或 execution engine，只能记录引用和审计事件，具体处理路由到 Trading Engineering。",
+        "不得记录 API key、账号标识、broker token、私有订单详情或完整交易上下文。"
+      ],
+      "conflict_patch_notes": [
+        "与 deployment_shadow_mode_before_live 不再是重复关系：本条处理 runtime failure fallback；deployment_shadow_mode_before_live 处理上线前 offline/shadow/paper readiness。",
+        "应与 rag_no_hit_requires_neutral_or_review、rag_no_source_or_conflict_blocks_default_guidance、mcp_server_side_permission_enforcement_required、safety_no_tool_permission_escalation、runtime_final_gate_deterministic_engine_required 互链。",
+        "与 audit_every_gate_decision_requires_trace 正向依赖：每次 fallback 都必须记录 failure_event_id、fallback_action 和 audit_event_id。",
+        "与 approval_hard_gate_enable_requires_approval 互补：fallback policy 变更或 fail-closed 行为变更应走审批。",
+        "未发现需要 rejected 的直接冲突。"
+      ],
+      "required_followups": [
+        "补 llm_mcp_failure_taxonomy.yaml。",
+        "补 fallback_action_enum.yaml。",
+        "补 retry_policy_schema.json，至少包含 max_retries、backoff_strategy、jitter、timeout_ms、retryable_error_types、non_retryable_error_types。",
+        "补 circuit_breaker_state 字段：closed、open、half_open、disabled。",
+        "补 failure injection / chaos test / red-team eval case：LLM timeout、429、MCP isError=true、permission denied、RAG no-hit、source conflict、invalid schema、tool returns unsafe action。",
+        "补 Vue audit UI 展示：failure_type、source_refs、fallback_action、deterministic_gate_result、review_status。"
+      ],
+      "boundary": "accepted_for_draft 不是 approved；reviewed 不会进入默认指导。"
+    }
+  },
+  "copyright": {
+    "stores_full_text": false,
+    "stores_long_quote": false,
+    "summary_only": true,
+    "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+    "reuse_risk": "low"
+  },
+  "conversion_target": {
+    "proposed_knowledge_id": "kb_ai_engineering.deployment.llm_timeout_or_mcp_failure_fallback_required.v1",
+    "target_schema": "cek_ta_knowledge_item",
+    "target_review_status": "draft",
+    "skill_candidate": false,
+    "eval_case_candidate": false
+  },
+  "workflow": {
+    "stage": "formalized_reviewed",
+    "queue_group": "formalized",
+    "formal_knowledge_id": "kb_ai_engineering.deployment.llm_timeout_or_mcp_failure_fallback_required.v1",
+    "formal_review_status": "reviewed",
+    "ai_audit_result_id": "audit_result_phase36_batch02_supplemental_reaudit_20260609_gpt55_pro_strict_sources",
+    "hidden_from_default_queue": true,
+    "next_action": "none",
+    "formal_knowledge_path": "codex-expert-kit/rag/knowledge/KB_AI_ENGINEERING/kb_ai_engineering.deployment.llm_timeout_or_mcp_failure_fallback_required.v1.json"
+  }
+}

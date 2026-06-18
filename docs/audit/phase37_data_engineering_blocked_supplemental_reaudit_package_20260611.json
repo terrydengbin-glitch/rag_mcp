@@ -1,0 +1,973 @@
+{
+  "package_id": "phase37_data_engineering_blocked_supplemental_reaudit_package_20260611",
+  "package_type": "candidate_supplemental_reaudit_package",
+  "schema_version": "1.0.0",
+  "generated_at": "2026-06-11",
+  "task_id": "CEK-TA-390",
+  "language": "zh-CN",
+  "phase": "37",
+  "title": "Phase 37 Data Engineering D10/D11 reviewed 阻断项补证二审包",
+  "purpose": "严格复审 P37-B-D10/D11 补证后是否可以进入 formal reviewed/caveat_only，或仍需补证/拒绝/阻断。",
+  "strict_boundaries": [
+    "candidate 不是正式知识。",
+    "本次审计最多只能允许 accepted_for_reviewed_caveat_only。",
+    "不得创建 approved。",
+    "不得启用 default guidance。",
+    "不得启用 hard gate。",
+    "不得生成买卖点、仓位、杠杆、止损止盈或实盘执行建议。"
+  ],
+  "audit_instructions": [
+    "必须搜索相关的专业网站、资料、案例和数据，对审计报告进行严格审计。",
+    "重点检查 P37-B-D10 是否已经有足够 market-data anomaly、trade correction、flags、cancel/re-entry 和异常处理边界证据。",
+    "重点检查 P37-B-D11 是否已经通过外部数据分层/feature-store/dataset-lineage 来源和 CEK-TA 内部契约，支撑 raw/cleaned/adjusted/feature-ready/label-ready 边界。",
+    "若来源只支撑供应商或框架自身实现，必须要求保留适用边界，不得泛化为所有平台强制实现。",
+    "输出只能是 accepted_for_reviewed_caveat_only、needs_more_evidence、rejected 或 blocked。"
+  ],
+  "required_output_schema": {
+    "audit_result_id": "string",
+    "package_id": "phase37_data_engineering_blocked_supplemental_reaudit_package_20260611",
+    "auditor": "string",
+    "audited_at": "YYYY-MM-DD",
+    "quality_gate": {
+      "pass": "boolean",
+      "candidate_count": 2,
+      "notes": [
+        "string"
+      ]
+    },
+    "decisions": [
+      {
+        "candidate_id": "string",
+        "research_task_id": "P37-B-D10 | P37-B-D11",
+        "decision": "accepted_for_reviewed_caveat_only | needs_more_evidence | rejected | blocked",
+        "confidence": "low | medium | high",
+        "reviewed_allowed": "boolean",
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "reasons": [
+          "string"
+        ],
+        "required_patches": {
+          "source": [
+            "string"
+          ],
+          "content": [
+            "string"
+          ],
+          "boundary": [
+            "string"
+          ],
+          "conflict": [
+            "string"
+          ]
+        },
+        "required_extra_sources": [
+          "object"
+        ],
+        "formal_conversion_notes": [
+          "string"
+        ]
+      }
+    ]
+  },
+  "quality_gate": {
+    "gate_id": "phase37_data_engineering_blocked_supplemental_reaudit_quality_gate",
+    "generated_at": "2026-06-11",
+    "task_id": "CEK-TA-390",
+    "candidate_count": 2,
+    "failure_count": 0,
+    "failures": [],
+    "gate_status": "pass",
+    "formal_reviewed_created": 0,
+    "approved_created": 0,
+    "default_guidance_created": 0,
+    "hard_gate_created": 0,
+    "boundary": "supplemental candidate package only; no formal reviewed knowledge is created."
+  },
+  "contract": {
+    "path": "docs/contracts/phase37_data_engineering_dataset_layers_contract.md",
+    "purpose": "Support CEK-TA-specific dataset-layer names and write boundaries for P37-B-D11."
+  },
+  "candidates": [
+    {
+      "schema_version": "1.1.0-candidate",
+      "candidate_id": "cand_20260611_phase37_data_engineering_outlier_detection_required_001",
+      "research_task_id": "P37-B-D10",
+      "status": {
+        "review_status": "needs_more_evidence",
+        "ingestion_decision": "needs_more_evidence",
+        "decision_reason": "CEK-TA-390 已补充 reviewed 阻断证据并导出再审包；仍不是 formal reviewed/approved/default guidance。",
+        "created_at": "2026-06-11",
+        "updated_at": "2026-06-11"
+      },
+      "classification": {
+        "tree_node_id": "kt.trading_engineering.data_engineering",
+        "canonical_node_id": "kt.trading_engineering.data_engineering",
+        "tree_path": "CEK-TA / Trading Engineering / Data Engineering",
+        "related_nodes": [
+          "kt.trading_engineering",
+          "kt.ai_engineering.decision_time_feature_contract",
+          "kt.ai_engineering.external_project_memory.memory_schema_lifecycle"
+        ],
+        "partition_id": "KB_02_DATA_ENGINEERING",
+        "domain": "trading_engineering",
+        "subdomain": "data_quality",
+        "rule_type": "data_quality_gate",
+        "claim_type": "data_quality_gate",
+        "used_for": [
+          "trading_data_contract",
+          "backtest_data_audit",
+          "ai_training_dataset_boundary",
+          "external_project_rag_retrieval"
+        ],
+        "classification_notes": "本候选主归属 Trading Engineering / Data Engineering；AI Engineering 只能通过 knowledge_refs 引用，不得复制市场数据工程规则本体。"
+      },
+      "claim": {
+        "claim_id": "claim_p37_b_d10",
+        "statement": "行情、成交、bar、spread 或特征数据进入回测和训练前，必须定义异常检测、标记、隔离、解释、保留或修复策略；异常不等于错误，不能默认删除，也不能静默改变策略或模型评估结论。",
+        "normalized_claim": "data_engineering.outlier_detection_required.v1",
+        "evidence_summary": "Databento market-data cleaning 资料支持异常不应被默认静默清洗；Databento trades/MBO schema、CME trade correction 和 Nasdaq FIX trade reporting 资料共同补强 market-data flags、order-book events、trade correction/cancel/re-entry 和时间戳字段边界。",
+        "interpretation_notes": "CEK-TA-390 已按 reviewed-preparation 审计意见补强来源和边界；本候选仍只等待外部二审，不得直接进入 formal reviewed、approved、default guidance 或 hard gate。",
+        "claim_strength": "medium_high",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general",
+        "asset": "general",
+        "timeframe": "general",
+        "data_granularity": "event_or_bar",
+        "project_type": "trading_ai_support_layer",
+        "applies_when": [
+          "行情、成交、盘口、bar、spread 或特征数据存在极端值、缺口、trade correction、cancel/re-entry、flags 或 vendor 修正时",
+          "异常事件可能影响回测成交、指标计算、标签、训练样本或模型评估结论时"
+        ],
+        "not_applicable_when": [
+          "异常值仅用于原始审计日志保留且不进入计算",
+          "人工复盘故意查看异常事件而非训练或回测",
+          "需要具体交易策略参数、账户事实、交易所私有配置、密钥或实盘权限时，应由外接项目事实层处理。",
+          "AI Engineering 只能引用本规则，不得把本规则改写为模型训练、MCP 或 RAG 本体规则。",
+          "异常事件只作为只读原始审计日志保留，且不进入任何计算或训练时",
+          "外接项目已有更强的一手交易所 correction/bust/cancel 契约并以其为准时"
+        ],
+        "assumptions": [
+          "候选用于 CEK-TA 通用支持层知识库，而不是某个项目私有数据源配置。",
+          "所有数据工程结论必须保留来源、时间戳、版本、schema、修复和验证边界。",
+          "候选通过外部审计前不能进入正式 reviewed 知识库。"
+        ],
+        "limitations": [
+          "本批来源包含数据供应商、数据库、数据质量框架、特征存储和交易所/指数/参考数据资料，仍需要外部 AI/人工严格审计。",
+          "供应商和框架文档只能支撑通用工程边界，不能替代具体外接项目的数据契约。",
+          "本候选不提供任何投资建议或实盘执行许可。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_title": "Try Great Expectations",
+          "source_url": "https://docs.greatexpectations.io/docs/core/introduction/try_gx/",
+          "source_type": "data_quality_framework_doc",
+          "publisher": "Great Expectations",
+          "published_at": null,
+          "reliability": "high",
+          "score": 84,
+          "freshness": "time_sensitive",
+          "evidence_summary": "Great Expectations documents expectations, validation results, failed counts and percentages, and generated Data Docs.",
+          "limitations": [
+            "Framework-specific quality checks; project-specific thresholds and market calendars must be defined separately."
+          ],
+          "source_id": "src_001",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Great Expectations",
+          "source_url": "https://greatexpectations.io/",
+          "source_type": "data_quality_framework_doc",
+          "publisher": "Great Expectations",
+          "published_at": null,
+          "reliability": "medium_high",
+          "score": 78,
+          "freshness": "time_sensitive",
+          "evidence_summary": "Great Expectations positions GX as a framework to validate, test, and document data quality.",
+          "limitations": [
+            "Product site; use as supporting evidence only."
+          ],
+          "source_id": "src_002",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "OHLCV schema",
+          "source_url": "https://databento.com/docs/schemas-and-data-formats/ohlcv",
+          "source_type": "market_data_vendor_official_doc",
+          "publisher": "Databento",
+          "published_at": null,
+          "reliability": "high",
+          "score": 86,
+          "freshness": "time_sensitive",
+          "evidence_summary": "Databento documents OHLCV aggregate bars with O/H/L/C/V fields, interval suffixes, start timestamps, and no-record semantics for empty intervals.",
+          "limitations": [
+            "Vendor-specific schema; use as strong schema evidence but not as a universal exchange rule."
+          ],
+          "source_id": "src_003",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Trades schema",
+          "source_url": "https://databento.com/docs/schemas-and-data-formats/trades",
+          "source_type": "market_data_vendor_official_doc",
+          "publisher": "Databento",
+          "published_at": null,
+          "reliability": "high",
+          "score": 85,
+          "freshness": "time_sensitive",
+          "evidence_summary": "Databento trade records distinguish matching-engine event timestamps from capture/receive timestamps.",
+          "limitations": [
+            "Vendor-specific field names; use to support timestamp-role separation, not a universal schema."
+          ],
+          "source_id": "src_004",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_005",
+          "source_title": "High-frequency market data: Data integrity and cleaning",
+          "source_url": "https://databento.com/blog/data-cleaning",
+          "source_type": "official_doc",
+          "publisher": "Databento",
+          "published_at": null,
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "reliability": "high",
+          "score": 86,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [
+            "Vendor perspective; use to support audit boundary, not a universal deletion rule."
+          ],
+          "evidence_summary": "Databento explains market-data integrity checks, cleaning exceptions, QA strategies, and why indiscriminate cleaning can degrade market data.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_007",
+          "source_title": "MBO schema",
+          "source_url": "https://databento.com/docs/schemas-and-data-formats/mbo",
+          "source_type": "official_doc",
+          "publisher": "Databento",
+          "published_at": null,
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "reliability": "high",
+          "score": 85,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [
+            "Vendor-specific schema; supports event taxonomy, not a universal exchange protocol."
+          ],
+          "evidence_summary": "Databento MBO schema covers order-book events such as trades, fills, adds, cancels, modifies and book clear events.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_008",
+          "source_title": "iLink - Trade Correction",
+          "source_url": "https://cmegroupclientsite.atlassian.net/wiki/spaces/EPICSANDBOX/pages/457574586/iLink%2B-%2BTrade%2BCorrection",
+          "source_type": "exchange_rule",
+          "publisher": "CME Group",
+          "published_at": null,
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "reliability": "high",
+          "score": 84,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [
+            "CME-specific workflow; use as evidence that exchange corrections must be modeled explicitly."
+          ],
+          "evidence_summary": "CME documents in-session trade corrections, common trade ID linkage, and real-time price adjustment messaging.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_009",
+          "source_title": "Nasdaq FIX Trade Reporting Programming Specification",
+          "source_url": "https://nasdaqtrader.com/content/technicalsupport/specifications/TradingProducts/fixactspec.pdf",
+          "source_type": "exchange_rule",
+          "publisher": "Nasdaq",
+          "published_at": null,
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "reliability": "medium_high",
+          "score": 82,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [
+            "Venue/protocol-specific; use as supporting evidence for explicit correction records."
+          ],
+          "evidence_summary": "Nasdaq FIX trade reporting specification documents trade reporting, corrections via cancel/re-entry, and timestamp precision support.",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "high",
+        "score": 83.8,
+        "score_version": "phase37_data_engineering_blocked_supplemental_source_scoring_v1",
+        "primary_source_count": 4,
+        "supporting_source_count": 4,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "正式入库前必须由外部审计确认 claim 没有超出来源可证明范围。",
+          "vendor/framework 文档按其自身产品适用，不能自动泛化为所有交易所或所有数据平台实现。",
+          "将 outlier 明确限定为需要标记、隔离、解释、保留或修复的审计对象，不能等同于自动删除。",
+          "补充 market-data cleaning、trade correction、trade reporting、market data flags 和 order book event 来源。",
+          "保留 candidate-only 边界；外部二审前不得 formal reviewed、approved、default guidance 或 hard gate。",
+          "本补证只用于再审；正式 reviewed/caveat_only 仍需外部 AI/人工严格审计返回 reviewed_allowed=true。",
+          "来源中存在供应商和框架文档，正式转换时必须保留适用边界，不得泛化为所有平台强制实现。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none_known_in_visible_context",
+        "checked_against": [
+          "Phase 36/38/40/41 AI Engineering 知识边界",
+          "现有 KB_01_QUANT_FOUNDATION formal 知识",
+          "Phase 37 Trading 与 AI 跨分支引用契约"
+        ],
+        "conflicts": [],
+        "resolution_summary": "CEK-TA-390 补证后未发现与可见 formal knowledge 的直接冲突；本候选仍为 Trading Engineering 数据工程规则本体，AI Engineering 只能通过 knowledge_refs 引用。",
+        "approval_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 检索 Trading Engineering 数据工程规则本体。",
+          "用于审计交易项目方案中是否缺少时间戳、schema、版本、数据质量和调整边界。",
+          "用于辅助外接项目设计数据契约、质量报告、训练集和回测数据审计清单。"
+        ],
+        "not_allowed": [
+          "不得生成买卖点、仓位、杠杆、止损止盈或实盘执行建议。",
+          "不得把候选知识当作 approved、default guidance 或 hard gate。",
+          "不得绕过外接项目事实、数据供应商契约、风控 hard gate 或人工治理流程。"
+        ]
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "补证后仍需外部二审；不得作为默认指导。",
+        "requires_human_escalation": true,
+        "hidden_from_default_queue": true
+      },
+      "review": {
+        "confidence": "high",
+        "freshness": "mixed",
+        "reviewer": "external_ai_and_codex_alignment",
+        "reviewed_at": "2026-06-11",
+        "open_questions": [
+          "外部审计是否认为来源足以支撑该 claim？",
+          "是否需要补充更强的一手交易所、数据供应商、数据库或数据质量资料？",
+          "是否存在与现有 Data Engineering 或 AI Engineering formal 知识的重叠，需要合并或拆分？",
+          "补交易所或数据供应商的 trade correction/bust/cancel、market-data flags、sequence gap、bad tick handling 官方文档。",
+          "Databento high-frequency market data cleaning",
+          "Exchange trade correction/bust/cancel and market data flags docs",
+          "二审是否认为本轮补证足以进入 formal reviewed/caveat_only？",
+          "是否仍需要交易所更明确的 bust/cancel/correction 或数据平台 lineage 证据？",
+          "正式转换时是否需要拆分为更细的 L3 专题知识？"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-11",
+            "actor": "codex",
+            "action": "created",
+            "reason": "根据 Phase 37 P37-B Data Engineering 队列生成 Trading Engineering 候选知识。"
+          },
+          {
+            "at": "2026-06-11",
+            "actor": "codex",
+            "action": "sourced",
+            "reason": "记录公开专业资料、官方文档、交易所/指数/参考数据资料和数据质量框架来源摘要。"
+          },
+          {
+            "at": "2026-06-11",
+            "actor": "codex",
+            "action": "classified",
+            "reason": "归类到 KB_02_DATA_ENGINEERING / kt.trading_engineering.data_engineering / data_quality。"
+          },
+          {
+            "at": "2026-06-11",
+            "actor": "external_ai_strict_audit",
+            "action": "phase37_data_engineering_first_audit_imported",
+            "reason": "accepted_for_draft / confidence=medium_high",
+            "audit_result_id": "audit_result_phase37_data_engineering_candidate_audit_20260611_strict_v1",
+            "patch_notes": [
+              "强制加入“异常值不等于错误数据；可以标记、隔离、解释或保留，不得默认删除”的限定。",
+              "补市场数据专门来源：bad tick/trade break/venue correction/sequence gap/flags 文档；当前 source_refs 偏通用数据质量。"
+            ]
+          },
+          {
+            "at": "2026-06-11",
+            "actor": "external_ai_strict_audit",
+            "action": "phase37_data_engineering_first_audit_imported",
+            "reason": "accepted_for_draft / confidence=medium",
+            "audit_result_id": "audit_result_phase37_data_engineering_candidate_audit_20260611_strict_v1_schema_patched",
+            "patch_notes": [
+              "强制加入“异常值不等于错误数据；可以标记、隔离、解释或保留，不得默认删除”的限定。",
+              "补市场数据专门来源：bad tick/trade break/venue correction/sequence gap/flags 文档；当前 source_refs 偏通用数据质量。"
+            ]
+          },
+          {
+            "at": "2026-06-11",
+            "actor": "codex",
+            "action": "phase37_data_engineering_reviewed_preparation_needs_more_evidence",
+            "reason": "CEK-TA-389: 不能进入 reviewed/caveat_only。包内 source_refs 仍以 GX、OHLCV、Trades 为主，对交易行情异常、bad tick、trade bust/cancel、venue correction、sequence gap/flags 的直接支持不足。; Databento market-data cleaning 文章能支持 draft 级“异常不等于错误/不应静默清洗”，但不足以让当前 statement 进入 formal reviewed。"
+          },
+          {
+            "at": "2026-06-11",
+            "actor": "codex",
+            "action": "phase37_data_engineering_blocked_evidence_supplemented",
+            "reason": "CEK-TA-390: 根据 reviewed-preparation 审计阻断点补充专业来源、CEK-TA 内部数据层契约和边界说明，并导出再审包。"
+          },
+          {
+            "at": "2026-06-11",
+            "actor": "codex",
+            "action": "phase37_data_engineering_blocked_evidence_supplemented",
+            "reason": "CEK-TA-390: 根据 reviewed-preparation 审计阻断点补充专业来源、CEK-TA 内部数据层契约和边界说明，并导出再审包。",
+            "audit_result_id": "pending_phase37_data_engineering_blocked_supplemental_reaudit"
+          }
+        ],
+        "ai_audit": {
+          "audit_result_id": "pending_phase37_data_engineering_blocked_supplemental_reaudit",
+          "source_package_id": "phase37_data_engineering_blocked_supplemental_reaudit_package_20260611",
+          "decision": "pending_reaudit",
+          "reviewed_allowed": false,
+          "approved_allowed": false,
+          "default_guidance_allowed": false,
+          "hard_gate_allowed": false,
+          "patch_notes": [
+            "将 outlier 明确限定为需要标记、隔离、解释、保留或修复的审计对象，不能等同于自动删除。",
+            "补充 market-data cleaning、trade correction、trade reporting、market data flags 和 order book event 来源。",
+            "保留 candidate-only 边界；外部二审前不得 formal reviewed、approved、default guidance 或 hard gate。"
+          ],
+          "boundary": "This package can only allow accepted_for_reviewed_caveat_only, needs_more_evidence, rejected, or blocked."
+        }
+      },
+      "workflow": {
+        "stage": "supplemented_for_reaudit",
+        "allowed_next_decisions": [
+          "accepted_for_draft",
+          "needs_more_evidence",
+          "rejected",
+          "blocked"
+        ],
+        "forbidden_decisions": [
+          "reviewed",
+          "approved",
+          "default_guidance",
+          "hard_gate"
+        ],
+        "formal_knowledge_id": null,
+        "formalization_allowed": false,
+        "formalization_notes": "只有外部 AI/人工严格审计通过后，才能按 Phase 32 流程转 formal reviewed/caveat_only。",
+        "ai_audit_result_id": "pending_phase37_data_engineering_blocked_supplemental_reaudit",
+        "formal_review_status": null,
+        "default_guidance_allowed": false,
+        "approved_allowed": false,
+        "hard_gate_allowed": false,
+        "hidden_from_default_queue": false,
+        "visible_in_default_guidance_queue": false,
+        "queue_group": "needs_more_evidence",
+        "next_action": "external_ai_or_human_reaudit_for_reviewed_caveat_only"
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_02_data_engineering.outlier_detection_required.v1",
+        "target_partition_id": "KB_02_DATA_ENGINEERING",
+        "target_tree_node_id": "kt.trading_engineering.data_engineering",
+        "target_review_status": "blocked_until_supplemental_reaudit",
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "reviewed_allowed": false
+      },
+      "contribution": {
+        "source": "codex_research_ingestion",
+        "private_data_removed": true,
+        "contains_project_private_facts": false,
+        "contains_trade_secrets": false
+      }
+    },
+    {
+      "schema_version": "1.1.0-candidate",
+      "candidate_id": "cand_20260611_phase37_data_engineering_raw_vs_adjusted_data_boundary_001",
+      "research_task_id": "P37-B-D11",
+      "status": {
+        "review_status": "needs_more_evidence",
+        "ingestion_decision": "needs_more_evidence",
+        "decision_reason": "CEK-TA-390 已补充 reviewed 阻断证据并导出再审包；仍不是 formal reviewed/approved/default guidance。",
+        "created_at": "2026-06-11",
+        "updated_at": "2026-06-11"
+      },
+      "classification": {
+        "tree_node_id": "kt.trading_engineering.data_engineering",
+        "canonical_node_id": "kt.trading_engineering.data_engineering",
+        "tree_path": "CEK-TA / Trading Engineering / Data Engineering",
+        "related_nodes": [
+          "kt.trading_engineering",
+          "kt.ai_engineering.decision_time_feature_contract",
+          "kt.ai_engineering.external_project_memory.memory_schema_lifecycle"
+        ],
+        "partition_id": "KB_02_DATA_ENGINEERING",
+        "domain": "trading_engineering",
+        "subdomain": "raw_adjusted_boundary",
+        "rule_type": "data_boundary_rule",
+        "claim_type": "data_boundary_rule",
+        "used_for": [
+          "trading_data_contract",
+          "backtest_data_audit",
+          "ai_training_dataset_boundary",
+          "external_project_rag_retrieval"
+        ],
+        "classification_notes": "本候选主归属 Trading Engineering / Data Engineering；AI Engineering 只能通过 knowledge_refs 引用，不得复制市场数据工程规则本体。"
+      },
+      "claim": {
+        "claim_id": "claim_p37_b_d11",
+        "statement": "CEK-TA 交易数据契约必须区分 raw、cleaned、adjusted、feature-ready 和 label-ready 层；这些是 CEK-TA 规范层名，不是所有平台强制层名。调整后价格、清洗后 bar、训练特征或标签不得回写污染 raw 层。",
+        "normalized_claim": "data_engineering.raw_vs_adjusted_data_boundary.v1",
+        "evidence_summary": "Databricks medallion 架构支撑 raw/validated/enriched 的渐进数据质量分层；Feast 支撑 point-in-time feature retrieval 和 feature view schema；MLflow Dataset Tracking 与 Delta Lake time travel 支撑数据集血缘、版本和可追踪性；CEK-TA 内部 dataset layers contract 定义 feature-ready/label-ready 与 raw write-protection 的项目契约。",
+        "interpretation_notes": "CEK-TA-390 已按 reviewed-preparation 审计意见补强来源和边界；本候选仍只等待外部二审，不得直接进入 formal reviewed、approved、default guidance 或 hard gate。",
+        "claim_strength": "medium_high",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general",
+        "asset": "general",
+        "timeframe": "general",
+        "data_granularity": "event_or_bar",
+        "project_type": "trading_ai_support_layer",
+        "applies_when": [
+          "外接项目建立行情湖、研究数据集、回测缓存、特征表、训练集或标签表时",
+          "需要区分原始事实、质量修复、复权/换月、点时正确特征和标签血缘时"
+        ],
+        "not_applicable_when": [
+          "只保存单次人工下载文件且不做下游训练或回测",
+          "外部事实层已经以只读方式提供不可变 raw layer",
+          "需要具体交易策略参数、账户事实、交易所私有配置、密钥或实盘权限时，应由外接项目事实层处理。",
+          "AI Engineering 只能引用本规则，不得把本规则改写为模型训练、MCP 或 RAG 本体规则。",
+          "外接项目只是人工查看单次文件，且不形成可复用回测、训练或审计数据集时",
+          "外部数据库已有等价分层契约时，可映射到 CEK-TA 层名而不是强制复制物理表名"
+        ],
+        "assumptions": [
+          "候选用于 CEK-TA 通用支持层知识库，而不是某个项目私有数据源配置。",
+          "所有数据工程结论必须保留来源、时间戳、版本、schema、修复和验证边界。",
+          "候选通过外部审计前不能进入正式 reviewed 知识库。"
+        ],
+        "limitations": [
+          "本批来源包含数据供应商、数据库、数据质量框架、特征存储和交易所/指数/参考数据资料，仍需要外部 AI/人工严格审计。",
+          "供应商和框架文档只能支撑通用工程边界，不能替代具体外接项目的数据契约。",
+          "本候选不提供任何投资建议或实盘执行许可。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_title": "Apache Iceberg Table Spec",
+          "source_url": "https://iceberg.apache.org/spec/",
+          "source_type": "storage_table_format_spec",
+          "publisher": "Apache Iceberg",
+          "published_at": null,
+          "reliability": "high",
+          "score": 86,
+          "freshness": "time_sensitive",
+          "evidence_summary": "Apache Iceberg specifies snapshots, manifests, data files, and file-level metrics used to track table versions.",
+          "limitations": [
+            "Storage-table format spec; not mandatory for all CEK-TA projects."
+          ],
+          "source_id": "src_001",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Versioning data and models",
+          "source_url": "https://doc.dvc.org/example-scenarios/versioning-data-and-models",
+          "source_type": "data_versioning_tool_doc",
+          "publisher": "DVC",
+          "published_at": null,
+          "reliability": "medium_high",
+          "score": 80,
+          "freshness": "time_sensitive",
+          "evidence_summary": "DVC explains capturing data/model versions in Git commits while storing larger contents outside Git.",
+          "limitations": [
+            "Tool-specific workflow; large lakehouse projects may prefer table-format versioning."
+          ],
+          "source_id": "src_002",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Try Great Expectations",
+          "source_url": "https://docs.greatexpectations.io/docs/core/introduction/try_gx/",
+          "source_type": "data_quality_framework_doc",
+          "publisher": "Great Expectations",
+          "published_at": null,
+          "reliability": "high",
+          "score": 84,
+          "freshness": "time_sensitive",
+          "evidence_summary": "Great Expectations documents expectations, validation results, failed counts and percentages, and generated Data Docs.",
+          "limitations": [
+            "Framework-specific quality checks; project-specific thresholds and market calendars must be defined separately."
+          ],
+          "source_id": "src_003",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Corporate Actions and Events Manual Equities",
+          "source_url": "https://indexes.nasdaqomx.com/docs/Corporate_Actions_and_Events_Manual_Equities.pdf",
+          "source_type": "index_provider_manual",
+          "publisher": "Nasdaq",
+          "published_at": null,
+          "reliability": "high",
+          "score": 84,
+          "freshness": "time_sensitive",
+          "evidence_summary": "Nasdaq manual documents equity corporate action and event treatment in index data contexts.",
+          "limitations": [
+            "Index-provider methodology; not a universal adjustment rule for every trading dataset."
+          ],
+          "source_id": "src_004",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_005",
+          "source_title": "Medallion lakehouse architecture",
+          "source_url": "https://docs.databricks.com/aws/en/lakehouse/medallion",
+          "source_type": "framework_doc",
+          "publisher": "Databricks",
+          "published_at": null,
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "reliability": "high",
+          "score": 88,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [
+            "Databricks naming is a pattern, not mandatory CEK-TA physical schema."
+          ],
+          "evidence_summary": "Databricks documents bronze raw, silver validated, and gold enriched layers as progressively higher-quality data layers.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_006",
+          "source_title": "What is Medallion Architecture?",
+          "source_url": "https://www.databricks.com/blog/what-is-medallion-architecture",
+          "source_type": "framework_doc",
+          "publisher": "Databricks",
+          "published_at": null,
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "reliability": "medium_high",
+          "score": 82,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [
+            "Product blog; supporting evidence for layered-data pattern."
+          ],
+          "evidence_summary": "Databricks blog explains bronze as raw, silver as clean/standardized, and gold as aggregates/features ready for analytics and ML.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_007",
+          "source_title": "Point-in-time joins",
+          "source_url": "https://docs.feast.dev/getting-started/concepts/point-in-time-joins",
+          "source_type": "framework_doc",
+          "publisher": "Feast",
+          "published_at": null,
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "reliability": "high",
+          "score": 86,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [
+            "Feature-store specific; supports feature-ready boundary and leakage control."
+          ],
+          "evidence_summary": "Feast documents point-in-time correct joins that reproduce feature state for a specific past point.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_008",
+          "source_title": "Feature View",
+          "source_url": "https://docs.feast.dev/getting-started/concepts/feature-view",
+          "source_type": "framework_doc",
+          "publisher": "Feast",
+          "published_at": null,
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "reliability": "medium_high",
+          "score": 82,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [
+            "Tool-specific; external projects may implement equivalent contracts without Feast."
+          ],
+          "evidence_summary": "Feast feature views define feature data and optional schema validation for consistent online/offline usage.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_009",
+          "source_title": "Dataset Tracking",
+          "source_url": "https://mlflow.org/docs/latest/ml/dataset/",
+          "source_type": "framework_doc",
+          "publisher": "MLflow",
+          "published_at": null,
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "reliability": "high",
+          "score": 84,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [
+            "MLflow-specific; supports lineage requirement rather than a mandatory platform choice."
+          ],
+          "evidence_summary": "MLflow documents tracking, versioning, and managing datasets for training, validation and evaluation lineage.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_010",
+          "source_title": "Delta Lake Time Travel",
+          "source_url": "https://delta.io/blog/2023-02-01-delta-lake-time-travel/",
+          "source_type": "framework_doc",
+          "publisher": "Delta Lake",
+          "published_at": null,
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "reliability": "medium_high",
+          "score": 80,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [
+            "Storage-format specific; supports versioned data access boundary."
+          ],
+          "evidence_summary": "Delta Lake explains time travel by table version or timestamp and transaction-log based historical access.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_011",
+          "source_title": "Phase 37 Data Engineering Dataset Layers Contract",
+          "source_url": "docs/contracts/phase37_data_engineering_dataset_layers_contract.md",
+          "source_type": "internal_contract",
+          "publisher": "CEK-TA",
+          "published_at": null,
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "reliability": "high",
+          "score": 90,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [
+            "Internal CEK-TA contract; must be paired with external architecture/feature-lineage sources."
+          ],
+          "evidence_summary": "CEK-TA internal contract defines raw, cleaned, adjusted, feature-ready and label-ready layer semantics, write boundaries, lineage and transformation manifest fields.",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "high",
+        "score": 84.2,
+        "score_version": "phase37_data_engineering_blocked_supplemental_source_scoring_v1",
+        "primary_source_count": 8,
+        "supporting_source_count": 3,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "正式入库前必须由外部审计确认 claim 没有超出来源可证明范围。",
+          "vendor/framework 文档按其自身产品适用，不能自动泛化为所有交易所或所有数据平台实现。",
+          "明确 raw、cleaned、adjusted、feature-ready、label-ready 是 CEK-TA 数据契约层名。",
+          "补充 medallion architecture、feature store point-in-time join、MLflow dataset lineage、Delta Lake time travel 和内部层级契约。",
+          "强调 downstream layer 不能回写 raw；raw 修正必须以 correction record 或新 dataset version 表达。",
+          "本补证只用于再审；正式 reviewed/caveat_only 仍需外部 AI/人工严格审计返回 reviewed_allowed=true。",
+          "来源中存在供应商和框架文档，正式转换时必须保留适用边界，不得泛化为所有平台强制实现。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none_known_in_visible_context",
+        "checked_against": [
+          "Phase 36/38/40/41 AI Engineering 知识边界",
+          "现有 KB_01_QUANT_FOUNDATION formal 知识",
+          "Phase 37 Trading 与 AI 跨分支引用契约"
+        ],
+        "conflicts": [],
+        "resolution_summary": "CEK-TA-390 补证后未发现与可见 formal knowledge 的直接冲突；本候选仍为 Trading Engineering 数据工程规则本体，AI Engineering 只能通过 knowledge_refs 引用。",
+        "approval_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 检索 Trading Engineering 数据工程规则本体。",
+          "用于审计交易项目方案中是否缺少时间戳、schema、版本、数据质量和调整边界。",
+          "用于辅助外接项目设计数据契约、质量报告、训练集和回测数据审计清单。"
+        ],
+        "not_allowed": [
+          "不得生成买卖点、仓位、杠杆、止损止盈或实盘执行建议。",
+          "不得把候选知识当作 approved、default guidance 或 hard gate。",
+          "不得绕过外接项目事实、数据供应商契约、风控 hard gate 或人工治理流程。"
+        ]
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "补证后仍需外部二审；不得作为默认指导。",
+        "requires_human_escalation": true,
+        "hidden_from_default_queue": true
+      },
+      "review": {
+        "confidence": "high",
+        "freshness": "mixed",
+        "reviewer": "external_ai_and_codex_alignment",
+        "reviewed_at": "2026-06-11",
+        "open_questions": [
+          "外部审计是否认为来源足以支撑该 claim？",
+          "是否需要补充更强的一手交易所、数据供应商、数据库或数据质量资料？",
+          "是否存在与现有 Data Engineering 或 AI Engineering formal 知识的重叠，需要合并或拆分？",
+          "补 Databricks medallion architecture、feature store lineage、label store/ML metadata lineage 或内部 CEK-TA dataset layer schema。",
+          "Databricks medallion architecture",
+          "Feature-store lineage/label-store or internal CEK-TA dataset layer schema",
+          "二审是否认为本轮补证足以进入 formal reviewed/caveat_only？",
+          "是否仍需要交易所更明确的 bust/cancel/correction 或数据平台 lineage 证据？",
+          "正式转换时是否需要拆分为更细的 L3 专题知识？"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-11",
+            "actor": "codex",
+            "action": "created",
+            "reason": "根据 Phase 37 P37-B Data Engineering 队列生成 Trading Engineering 候选知识。"
+          },
+          {
+            "at": "2026-06-11",
+            "actor": "codex",
+            "action": "sourced",
+            "reason": "记录公开专业资料、官方文档、交易所/指数/参考数据资料和数据质量框架来源摘要。"
+          },
+          {
+            "at": "2026-06-11",
+            "actor": "codex",
+            "action": "classified",
+            "reason": "归类到 KB_02_DATA_ENGINEERING / kt.trading_engineering.data_engineering / raw_adjusted_boundary。"
+          },
+          {
+            "at": "2026-06-11",
+            "actor": "external_ai_strict_audit",
+            "action": "phase37_data_engineering_first_audit_imported",
+            "reason": "accepted_for_draft / confidence=medium_high",
+            "audit_result_id": "audit_result_phase37_data_engineering_candidate_audit_20260611_strict_v1",
+            "patch_notes": [
+              "将 raw、cleaned、adjusted、feature-ready、label-ready 定义为 CEK-TA 数据契约层级；不要声称所有平台必须采用这些确切层名。",
+              "补 medallion architecture、feature store lineage、label store 或 internal dataset layer schema 作为主来源；Nasdaq corporate action 只能支持 adjusted 数据的一部分。"
+            ]
+          },
+          {
+            "at": "2026-06-11",
+            "actor": "external_ai_strict_audit",
+            "action": "phase37_data_engineering_first_audit_imported",
+            "reason": "accepted_for_draft / confidence=medium",
+            "audit_result_id": "audit_result_phase37_data_engineering_candidate_audit_20260611_strict_v1_schema_patched",
+            "patch_notes": [
+              "将 raw、cleaned、adjusted、feature-ready、label-ready 定义为 CEK-TA 数据契约层级；不要声称所有平台必须采用这些确切层名。",
+              "补 medallion architecture、feature store lineage、label store 或 internal dataset layer schema 作为主来源；Nasdaq corporate action 只能支持 adjusted 数据的一部分。"
+            ]
+          },
+          {
+            "at": "2026-06-11",
+            "actor": "codex",
+            "action": "phase37_data_engineering_reviewed_preparation_needs_more_evidence",
+            "reason": "CEK-TA-389: 不能进入 reviewed/caveat_only。当前 source_refs 主要支撑版本/快照、GX 验证和部分 corporate action；对 raw/cleaned/adjusted/feature-ready/label-ready 层级本体和“不得回写污染 raw”的直接证据不足。; 外部 Databricks medallion 来源可补 raw/validated/enriched 分层，但不能单独证明 CEK-TA 的 feature-ready/label-ready 层名和回写禁止规则。"
+          },
+          {
+            "at": "2026-06-11",
+            "actor": "codex",
+            "action": "phase37_data_engineering_blocked_evidence_supplemented",
+            "reason": "CEK-TA-390: 根据 reviewed-preparation 审计阻断点补充专业来源、CEK-TA 内部数据层契约和边界说明，并导出再审包。"
+          },
+          {
+            "at": "2026-06-11",
+            "actor": "codex",
+            "action": "phase37_data_engineering_blocked_evidence_supplemented",
+            "reason": "CEK-TA-390: 根据 reviewed-preparation 审计阻断点补充专业来源、CEK-TA 内部数据层契约和边界说明，并导出再审包。",
+            "audit_result_id": "pending_phase37_data_engineering_blocked_supplemental_reaudit"
+          }
+        ],
+        "ai_audit": {
+          "audit_result_id": "pending_phase37_data_engineering_blocked_supplemental_reaudit",
+          "source_package_id": "phase37_data_engineering_blocked_supplemental_reaudit_package_20260611",
+          "decision": "pending_reaudit",
+          "reviewed_allowed": false,
+          "approved_allowed": false,
+          "default_guidance_allowed": false,
+          "hard_gate_allowed": false,
+          "patch_notes": [
+            "明确 raw、cleaned、adjusted、feature-ready、label-ready 是 CEK-TA 数据契约层名。",
+            "补充 medallion architecture、feature store point-in-time join、MLflow dataset lineage、Delta Lake time travel 和内部层级契约。",
+            "强调 downstream layer 不能回写 raw；raw 修正必须以 correction record 或新 dataset version 表达。"
+          ],
+          "boundary": "This package can only allow accepted_for_reviewed_caveat_only, needs_more_evidence, rejected, or blocked."
+        }
+      },
+      "workflow": {
+        "stage": "supplemented_for_reaudit",
+        "allowed_next_decisions": [
+          "accepted_for_draft",
+          "needs_more_evidence",
+          "rejected",
+          "blocked"
+        ],
+        "forbidden_decisions": [
+          "reviewed",
+          "approved",
+          "default_guidance",
+          "hard_gate"
+        ],
+        "formal_knowledge_id": null,
+        "formalization_allowed": false,
+        "formalization_notes": "只有外部 AI/人工严格审计通过后，才能按 Phase 32 流程转 formal reviewed/caveat_only。",
+        "ai_audit_result_id": "pending_phase37_data_engineering_blocked_supplemental_reaudit",
+        "formal_review_status": null,
+        "default_guidance_allowed": false,
+        "approved_allowed": false,
+        "hard_gate_allowed": false,
+        "hidden_from_default_queue": false,
+        "visible_in_default_guidance_queue": false,
+        "queue_group": "needs_more_evidence",
+        "next_action": "external_ai_or_human_reaudit_for_reviewed_caveat_only"
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_02_data_engineering.raw_vs_adjusted_data_boundary.v1",
+        "target_partition_id": "KB_02_DATA_ENGINEERING",
+        "target_tree_node_id": "kt.trading_engineering.data_engineering",
+        "target_review_status": "blocked_until_supplemental_reaudit",
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "reviewed_allowed": false
+      },
+      "contribution": {
+        "source": "codex_research_ingestion",
+        "private_data_removed": true,
+        "contains_project_private_facts": false,
+        "contains_trade_secrets": false
+      }
+    }
+  ]
+}

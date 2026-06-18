@@ -1,0 +1,729 @@
+{
+  "audit_package_id": "phase41_hybrid_scoring_qwen3_scope_for_audit_20260610",
+  "schema_version": "cek_ta_scope_audit_v1",
+  "phase": "Phase 41",
+  "title": "Hybrid Scoring 与 Qwen3 审计助手知识范围审计包",
+  "created_at": "2026-06-10",
+  "audit_goal": "请审计 Phase 41 的 Hybrid Scoring Stack 子专题、41 条知识点范围、跨分支边界、来源策略和优先级是否适合支持外接交易 LLM gating/scoring 项目。重点检查表格/统计模型、Qwen3 审计助手和 deterministic final gate 的职责是否清晰，是否误把交易规则本体塞进 AI Engineering。",
+  "upstream_context": {
+    "confirmed_mainline": "LightGBM / XGBoost / Logistic Regression 等表格/统计模型负责数值 scoring，Qwen3 负责审计解释、reason code、RAG 引用和缺字段检查，最终交易放行由 deterministic final gate 决定。",
+    "upstream_documents": [
+      "docs/research/phase41_hybrid_scoring_qwen3_scope.md",
+      "docs/contracts/phase41_hybrid_scoring_runtime_contract.md",
+      "docs/contracts/phase41_tabular_llm_training_data_contract.md",
+      "docs/tasks/phase41_hybrid_scoring_qwen3_audit_stack.md"
+    ],
+    "related_phases": [
+      "Phase 36 AI Engineering gating/scoring 知识",
+      "Phase 38 AI 模型平台与交易 Gating/Scoring POC",
+      "Phase 40 Continuous Learning 与再训练闭环",
+      "Phase 37 Trading Engineering 知识扩展"
+    ]
+  },
+  "scope_boundary": {
+    "in_scope": [
+      "表格/统计模型作为 numeric scorer、risk ranking、review priority",
+      "Logistic Regression、LightGBM、XGBoost、CatBoost 的模型家族选择和比较边界",
+      "类别不平衡、sample weight、HPO 防泄漏、时间切分和 entity group split",
+      "校准集、Platt/isotonic、Brier/ECE、uncertainty bucket、abstain band 和 threshold policy",
+      "point-in-time feature join、feature_available_time、offline/online parity、feature lineage",
+      "Qwen3 Audit Assistant 的 strict JSON、reason code、RAG citation、no-hit abstain、unsupported claim",
+      "Qwen3 SFT/DPO/LoRA/RAG-first 的训练边界",
+      "Hybrid runtime trace、release manifest、model registry、rollback target、kill switch",
+      "MLflow、Ray、Kubeflow、Feast、vLLM 的条件引入和治理边界"
+    ],
+    "out_of_scope": [
+      "K 线形态、技术指标、交易信号有效性本体",
+      "回测偏差、fill model、滑点、订单状态机、仓位、风控规则本体",
+      "真实模型训练、真实 Qwen3 部署、真实交易账户或密钥",
+      "把 Qwen3 作为 numeric scorer 或 final gate",
+      "把 LightGBM、XGBoost、Logistic Regression、CatBoost 直接作为交易放行权限",
+      "把 candidate/reviewed 自动升级为 approved",
+      "新增数据库或外部平台运行时依赖"
+    ],
+    "routing_rule": "AI Engineering 只保存训练、评分、校准、审计、检索、发布和治理方法；K 线、fill model、执行、仓位、风控等交易规则本体必须路由到 Phase 37 / Trading Engineering。Phase 41 只能通过 related_trading_refs 引用这些交易规则。"
+  },
+  "expected_count": {
+    "total": 41,
+    "p0_core": 22,
+    "p0_extended": 12,
+    "p1": 7
+  },
+  "subbranches": [
+    {
+      "canonical_node_id": "kt.ai_engineering.numeric_scoring.model_family_selection",
+      "parent_node_id": "kt.ai_engineering.numeric_scoring",
+      "partition_id": "KB_AI_20_NUMERIC_SCORING",
+      "expected_items": 6,
+      "purpose": "Rule baseline、Logistic Regression、LightGBM、XGBoost、CatBoost 的模型选择、比较、延迟、治理和条件引入边界。"
+    },
+    {
+      "canonical_node_id": "kt.ai_engineering.numeric_scoring.tabular_scorer_training",
+      "parent_node_id": "kt.ai_engineering.numeric_scoring",
+      "partition_id": "KB_AI_20_NUMERIC_SCORING",
+      "expected_items": 6,
+      "purpose": "class imbalance、sample weight、HPO 防泄漏、时间切分、entity group split、dataset lineage。"
+    },
+    {
+      "canonical_node_id": "kt.ai_engineering.numeric_scoring.scorer_explainability",
+      "parent_node_id": "kt.ai_engineering.numeric_scoring",
+      "partition_id": "KB_AI_20_NUMERIC_SCORING",
+      "expected_items": 1,
+      "purpose": "feature attribution、top_features、SHAP 等解释输出只能辅助调试和审计，不作为因果解释、交易规则证据或 final gate 决策依据。"
+    },
+    {
+      "canonical_node_id": "kt.ai_engineering.calibration_threshold.uncertainty",
+      "parent_node_id": "kt.ai_engineering.calibration_threshold",
+      "partition_id": "KB_AI_21_CALIBRATION_THRESHOLD",
+      "expected_items": 6,
+      "purpose": "raw score 与校准概率边界、独立校准集、阈值成本矩阵、Platt/isotonic、regime calibration、conformal/abstain。"
+    },
+    {
+      "canonical_node_id": "kt.ai_engineering.decision_time_feature_contract.feature_store",
+      "parent_node_id": "kt.ai_engineering.decision_time_feature_contract",
+      "partition_id": "KB_AI_22_DECISION_TIME_FEATURES",
+      "expected_items": 5,
+      "purpose": "point-in-time feature、online/offline parity、feature lineage、label window、feature store 引入边界。"
+    },
+    {
+      "canonical_node_id": "kt.ai_engineering.llm_audit_assistant.qwen3_audit_assistant",
+      "parent_node_id": "kt.ai_engineering.llm_audit_assistant",
+      "partition_id": "KB_AI_23_LLM_AUDIT_ASSISTANT",
+      "expected_items": 5,
+      "purpose": "Qwen3 审计助手权限、strict JSON 输出、citation/no-hit、thinking mode 边界、prompt injection 与不可信上下文防护。"
+    },
+    {
+      "canonical_node_id": "kt.ai_engineering.llm_audit_assistant.qwen3_training_recipe",
+      "parent_node_id": "kt.ai_engineering.llm_audit_assistant",
+      "partition_id": "KB_AI_23_LLM_AUDIT_ASSISTANT",
+      "expected_items": 4,
+      "purpose": "Qwen3 SFT、DPO、RAG-first、serving 引入条件和训练边界。"
+    },
+    {
+      "canonical_node_id": "kt.ai_engineering.model_release_governance.hybrid_runtime_contract",
+      "parent_node_id": "kt.ai_engineering.model_release_governance",
+      "partition_id": "KB_AI_25_MODEL_RELEASE_GOVERNANCE",
+      "expected_items": 5,
+      "purpose": "final gate 权限、composite release manifest、audit trace、promotion gate、latency/timeout/fallback。"
+    },
+    {
+      "canonical_node_id": "kt.ai_engineering.model_release_governance.training_platform_governance",
+      "parent_node_id": "kt.ai_engineering.model_release_governance",
+      "partition_id": "KB_AI_25_MODEL_RELEASE_GOVERNANCE",
+      "expected_items": 3,
+      "purpose": "MLflow/Ray/Kubeflow/Feast 等平台引入边界、路径 resolver、只读检索和可移植配置。"
+    }
+  ],
+  "source_seed_catalog": [
+    {
+      "source_id": "src_sklearn_logistic_regression",
+      "url": "https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression",
+      "source_type": "official_doc",
+      "used_for": [
+        "logistic_regression",
+        "transparent_baseline"
+      ]
+    },
+    {
+      "source_id": "src_sklearn_calibration",
+      "url": "https://scikit-learn.org/stable/modules/calibration.html",
+      "source_type": "official_doc",
+      "used_for": [
+        "calibration",
+        "reliability_curve",
+        "platt",
+        "isotonic"
+      ]
+    },
+    {
+      "source_id": "src_sklearn_common_pitfalls",
+      "url": "https://scikit-learn.org/stable/common_pitfalls.html",
+      "source_type": "official_doc",
+      "used_for": [
+        "data_leakage",
+        "model_selection"
+      ]
+    },
+    {
+      "source_id": "src_lightgbm_docs",
+      "url": "https://lightgbm.readthedocs.io/",
+      "source_type": "official_doc",
+      "used_for": [
+        "lightgbm",
+        "gbdt"
+      ]
+    },
+    {
+      "source_id": "src_xgboost_docs",
+      "url": "https://xgboost.readthedocs.io/",
+      "source_type": "official_doc",
+      "used_for": [
+        "xgboost",
+        "gbdt"
+      ]
+    },
+    {
+      "source_id": "src_catboost_docs",
+      "url": "https://catboost.ai/docs/",
+      "source_type": "official_doc",
+      "used_for": [
+        "catboost",
+        "categorical_features"
+      ]
+    },
+    {
+      "source_id": "src_catboost_paper",
+      "url": "https://arxiv.org/abs/1810.11363",
+      "source_type": "research_paper",
+      "used_for": [
+        "catboost",
+        "ordered_boosting"
+      ]
+    },
+    {
+      "source_id": "src_xgboost_paper",
+      "url": "https://arxiv.org/abs/1603.02754",
+      "source_type": "research_paper",
+      "used_for": [
+        "xgboost",
+        "tree_boosting"
+      ]
+    },
+    {
+      "source_id": "src_lightgbm_paper",
+      "url": "https://papers.nips.cc/paper_files/paper/2017/hash/6449f44a102fde848669bdd9eb6b76fa-Abstract.html",
+      "source_type": "research_paper",
+      "used_for": [
+        "lightgbm",
+        "histogram_gbdt"
+      ]
+    },
+    {
+      "source_id": "src_shap_paper",
+      "url": "https://arxiv.org/abs/1705.07874",
+      "source_type": "research_paper",
+      "used_for": [
+        "shap",
+        "explainability"
+      ]
+    },
+    {
+      "source_id": "src_nist_ai_rmf",
+      "url": "https://www.nist.gov/itl/ai-risk-management-framework",
+      "source_type": "governance_framework",
+      "used_for": [
+        "ai_risk_governance"
+      ]
+    },
+    {
+      "source_id": "src_mlflow_registry",
+      "url": "https://mlflow.org/docs/latest/ml/model-registry/",
+      "source_type": "official_doc",
+      "used_for": [
+        "model_registry",
+        "model_versioning"
+      ]
+    },
+    {
+      "source_id": "src_dvc_docs",
+      "url": "https://dvc.org/doc",
+      "source_type": "official_doc",
+      "used_for": [
+        "data_versioning",
+        "dataset_hash",
+        "pipeline"
+      ]
+    },
+    {
+      "source_id": "src_feast_docs",
+      "url": "https://docs.feast.dev/",
+      "source_type": "official_doc",
+      "used_for": [
+        "feature_store",
+        "offline_online_parity"
+      ]
+    },
+    {
+      "source_id": "src_kubeflow_pipelines",
+      "url": "https://www.kubeflow.org/docs/components/pipelines/",
+      "source_type": "official_doc",
+      "used_for": [
+        "pipeline_governance"
+      ]
+    },
+    {
+      "source_id": "src_ray_docs",
+      "url": "https://docs.ray.io/",
+      "source_type": "official_doc",
+      "used_for": [
+        "distributed_training"
+      ]
+    },
+    {
+      "source_id": "src_vllm_docs",
+      "url": "https://docs.vllm.ai/",
+      "source_type": "official_doc",
+      "used_for": [
+        "llm_serving"
+      ]
+    },
+    {
+      "source_id": "src_hf_trl_docs",
+      "url": "https://huggingface.co/docs/trl/",
+      "source_type": "official_doc",
+      "used_for": [
+        "sft",
+        "dpo",
+        "preference_training"
+      ]
+    },
+    {
+      "source_id": "src_qwen_docs",
+      "url": "https://qwen.readthedocs.io/",
+      "source_type": "official_doc",
+      "used_for": [
+        "qwen",
+        "thinking_mode",
+        "serving_boundary"
+      ]
+    },
+    {
+      "source_id": "src_json_schema",
+      "url": "https://json-schema.org/",
+      "source_type": "standard_doc",
+      "used_for": [
+        "strict_json",
+        "schema_validation"
+      ]
+    },
+    {
+      "source_id": "src_sklearn_time_series_split",
+      "url": "https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.TimeSeriesSplit.html",
+      "source_type": "official_doc",
+      "used_for": [
+        "time_series_split",
+        "leakage_control"
+      ]
+    },
+    {
+      "source_id": "src_sklearn_compute_class_weight",
+      "url": "https://scikit-learn.org/stable/modules/generated/sklearn.utils.class_weight.compute_class_weight.html",
+      "source_type": "official_doc",
+      "used_for": [
+        "class_imbalance",
+        "class_weight"
+      ]
+    },
+    {
+      "source_id": "src_owasp_llm01_prompt_injection",
+      "url": "https://genai.owasp.org/llmrisk/llm01-prompt-injection/",
+      "source_type": "security_standard",
+      "used_for": [
+        "prompt_injection",
+        "untrusted_context",
+        "rag_security"
+      ]
+    },
+    {
+      "source_id": "src_sec_knight_capital_release_2013_222",
+      "url": "https://www.sec.gov/newsroom/press-releases/2013-222",
+      "source_type": "regulator_release",
+      "used_for": [
+        "runtime_control",
+        "fallback",
+        "algorithmic_trading_failure"
+      ]
+    },
+    {
+      "source_id": "src_fca_algorithmic_trading_controls",
+      "url": "https://www.fca.org.uk/publications/multi-firm-reviews/algorithmic-trading-controls-high-level-observations",
+      "source_type": "regulator_review",
+      "used_for": [
+        "algorithmic_trading_controls",
+        "runtime_governance",
+        "fallback"
+      ]
+    }
+  ],
+  "knowledge_topics": [
+    {
+      "topic_id": "P41-A01",
+      "priority": "P0-Core",
+      "canonical_node_id": "kt.ai_engineering.numeric_scoring.model_family_selection",
+      "claim": "Rule baseline、Logistic Regression、LightGBM、XGBoost 必须作为默认同场比较集；CatBoost 仅在类别变量丰富或类别处理成本较高时作为条件候选，不能预设胜出。",
+      "claim_type": "model_selection_rule",
+      "model_role": "tabular_scorer"
+    },
+    {
+      "topic_id": "P41-A02",
+      "priority": "P0-Core",
+      "canonical_node_id": "kt.ai_engineering.numeric_scoring.model_family_selection",
+      "claim": "Logistic Regression 必须作为透明 baseline，用于暴露线性可解释边界和校准难度。",
+      "claim_type": "model_selection_rule",
+      "model_role": "tabular_scorer"
+    },
+    {
+      "topic_id": "P41-A03",
+      "priority": "P0-Core",
+      "canonical_node_id": "kt.ai_engineering.numeric_scoring.model_family_selection",
+      "claim": "LightGBM 与 XGBoost 可作为强 GBDT 候选，但必须使用相同时间切分和指标评估。",
+      "claim_type": "model_selection_rule",
+      "model_role": "tabular_scorer"
+    },
+    {
+      "topic_id": "P41-A04",
+      "priority": "P0-Extended",
+      "canonical_node_id": "kt.ai_engineering.numeric_scoring.model_family_selection",
+      "claim": "CatBoost 只在类别变量丰富或类别处理成本较高时作为条件候选。",
+      "claim_type": "conditional_model_rule",
+      "model_role": "tabular_scorer"
+    },
+    {
+      "topic_id": "P41-A05",
+      "priority": "P0-Core",
+      "canonical_node_id": "kt.ai_engineering.numeric_scoring.model_family_selection",
+      "claim": "模型选择必须同时比较业务成本、延迟、可解释性、校准质量和治理复杂度。",
+      "claim_type": "governance_rule",
+      "model_role": "tabular_scorer"
+    },
+    {
+      "topic_id": "P41-A06",
+      "priority": "P0-Extended",
+      "canonical_node_id": "kt.ai_engineering.numeric_scoring.model_family_selection",
+      "claim": "模型集成只能作为增强项，必须先证明单模型 baseline 不足且不破坏可审计性。",
+      "claim_type": "extension_rule",
+      "model_role": "tabular_scorer"
+    },
+    {
+      "topic_id": "P41-A07",
+      "priority": "P0-Extended",
+      "canonical_node_id": "kt.ai_engineering.numeric_scoring.scorer_explainability",
+      "claim": "feature attribution / top_features 只能辅助调试和审计，不等于因果解释、交易规则证据或 final gate 决策依据。",
+      "claim_type": "explainability_boundary_rule",
+      "model_role": "tabular_scorer"
+    },
+    {
+      "topic_id": "P41-B01",
+      "priority": "P0-Core",
+      "canonical_node_id": "kt.ai_engineering.numeric_scoring.tabular_scorer_training",
+      "claim": "bad_trade / false_allow 少数类必须声明 class weight、sample weight 或采样策略，并在加权或采样后重新检查校准质量。",
+      "claim_type": "training_policy_rule",
+      "model_role": "tabular_scorer"
+    },
+    {
+      "topic_id": "P41-B02",
+      "priority": "P0-Core",
+      "canonical_node_id": "kt.ai_engineering.numeric_scoring.tabular_scorer_training",
+      "claim": "HPO 只能读取 train/validation，不得读取 holdout、calibration、shadow、paper 或 incident pool。",
+      "claim_type": "leakage_boundary_rule",
+      "model_role": "tabular_scorer"
+    },
+    {
+      "topic_id": "P41-B03",
+      "priority": "P0-Core",
+      "canonical_node_id": "kt.ai_engineering.numeric_scoring.tabular_scorer_training",
+      "claim": "时间序列交易样本必须使用时间感知切分，不能随机打散导致未来信息泄漏。",
+      "claim_type": "leakage_boundary_rule",
+      "model_role": "tabular_scorer"
+    },
+    {
+      "topic_id": "P41-B04",
+      "priority": "P0-Extended",
+      "canonical_node_id": "kt.ai_engineering.numeric_scoring.tabular_scorer_training",
+      "claim": "entity group split 必须避免同一策略/品种/周期族跨 split 泄漏。",
+      "claim_type": "leakage_boundary_rule",
+      "model_role": "tabular_scorer"
+    },
+    {
+      "topic_id": "P41-B05",
+      "priority": "P0-Core",
+      "canonical_node_id": "kt.ai_engineering.numeric_scoring.tabular_scorer_training",
+      "claim": "训练样本必须记录 dataset_hash、split_manifest_hash、feature_schema_version 和 label_policy_version。",
+      "claim_type": "lineage_rule",
+      "model_role": "tabular_scorer"
+    },
+    {
+      "topic_id": "P41-B06",
+      "priority": "P1",
+      "canonical_node_id": "kt.ai_engineering.numeric_scoring.tabular_scorer_training",
+      "claim": "active learning 或 hard-example mining 只能作为复核采样增强，不能绕过 gold/eval 隔离。",
+      "claim_type": "extension_rule",
+      "model_role": "tabular_scorer"
+    },
+    {
+      "topic_id": "P41-C01",
+      "priority": "P0-Core",
+      "canonical_node_id": "kt.ai_engineering.calibration_threshold.uncertainty",
+      "claim": "raw score 不得直接作为交易概率或 final gate 输入，必须经过校准或声明只用于排序。",
+      "claim_type": "calibration_rule",
+      "model_role": "calibrator"
+    },
+    {
+      "topic_id": "P41-C02",
+      "priority": "P0-Core",
+      "canonical_node_id": "kt.ai_engineering.calibration_threshold.uncertainty",
+      "claim": "校准器必须使用独立 calibration set，不得使用 scorer 训练集直接拟合。",
+      "claim_type": "leakage_boundary_rule",
+      "model_role": "calibrator"
+    },
+    {
+      "topic_id": "P41-C03",
+      "priority": "P0-Core",
+      "canonical_node_id": "kt.ai_engineering.calibration_threshold.uncertainty",
+      "claim": "threshold policy 必须绑定业务成本矩阵、false allow、false block 和 review capacity。",
+      "claim_type": "threshold_policy_rule",
+      "model_role": "final_gate"
+    },
+    {
+      "topic_id": "P41-C04",
+      "priority": "P0-Extended",
+      "canonical_node_id": "kt.ai_engineering.calibration_threshold.uncertainty",
+      "claim": "Platt 与 isotonic 的选择必须声明样本量、单调性假设和过拟合风险。",
+      "claim_type": "calibration_method_rule",
+      "model_role": "calibrator"
+    },
+    {
+      "topic_id": "P41-C05",
+      "priority": "P0-Extended",
+      "canonical_node_id": "kt.ai_engineering.calibration_threshold.uncertainty",
+      "claim": "校准应按 regime、strategy family、timeframe 切片检查，发现漂移时触发再校准审计；regime、strategy、timeframe 只能作为引用或 slice label，不在 AI Engineering 定义交易规则本体。",
+      "claim_type": "monitoring_rule",
+      "model_role": "calibrator"
+    },
+    {
+      "topic_id": "P41-C06",
+      "priority": "P1",
+      "canonical_node_id": "kt.ai_engineering.calibration_threshold.uncertainty",
+      "claim": "conformal 或 abstain band 只能作为不确定性增强层，不能替代 deterministic final gate。",
+      "claim_type": "extension_rule",
+      "model_role": "calibrator"
+    },
+    {
+      "topic_id": "P41-D01",
+      "priority": "P0-Core",
+      "canonical_node_id": "kt.ai_engineering.decision_time_feature_contract.feature_store",
+      "claim": "每个训练样本必须做 point-in-time feature join，feature_available_time 晚于 decision_time 必须阻断。",
+      "claim_type": "leakage_boundary_rule",
+      "model_role": "tabular_scorer"
+    },
+    {
+      "topic_id": "P41-D02",
+      "priority": "P0-Core",
+      "canonical_node_id": "kt.ai_engineering.decision_time_feature_contract.feature_store",
+      "claim": "线上线下特征生成必须一致；不一致时必须记录差异并阻断默认指导。",
+      "claim_type": "serving_consistency_rule",
+      "model_role": "tabular_scorer"
+    },
+    {
+      "topic_id": "P41-D03",
+      "priority": "P0-Core",
+      "canonical_node_id": "kt.ai_engineering.decision_time_feature_contract.feature_store",
+      "claim": "feature lineage 必须记录 source_object_ref、lineage_ref、schema_version 和缺失值策略。",
+      "claim_type": "lineage_rule",
+      "model_role": "tabular_scorer"
+    },
+    {
+      "topic_id": "P41-D04",
+      "priority": "P0-Core",
+      "canonical_node_id": "kt.ai_engineering.decision_time_feature_contract.feature_store",
+      "claim": "label_observation_window 必须晚于 decision_time 且不能反向进入 scorer features；outcome 口径不得在 AI Engineering 定义交易收益本体。",
+      "claim_type": "label_boundary_rule",
+      "model_role": "tabular_scorer"
+    },
+    {
+      "topic_id": "P41-D05",
+      "priority": "P1",
+      "canonical_node_id": "kt.ai_engineering.decision_time_feature_contract.feature_store",
+      "claim": "Feast 或正式 feature store 只在离线/在线一致性压力出现后引入，POC 阶段可用文件化 manifest。",
+      "claim_type": "platform_boundary_rule",
+      "model_role": "platform_governance"
+    },
+    {
+      "topic_id": "P41-E01",
+      "priority": "P0-Core",
+      "canonical_node_id": "kt.ai_engineering.llm_audit_assistant.qwen3_audit_assistant",
+      "claim": "Qwen3 只能做审计助手，不做 numeric scorer、final gate 或事实来源。",
+      "claim_type": "runtime_boundary_rule",
+      "model_role": "llm_audit_assistant"
+    },
+    {
+      "topic_id": "P41-E02",
+      "priority": "P0-Core",
+      "canonical_node_id": "kt.ai_engineering.llm_audit_assistant.qwen3_audit_assistant",
+      "claim": "Qwen3 审计输出必须是 strict JSON，包含 recommendation、reason_codes、missing_fields、unsupported_claims 和 knowledge_refs。",
+      "claim_type": "output_contract_rule",
+      "model_role": "llm_audit_assistant"
+    },
+    {
+      "topic_id": "P41-E03",
+      "priority": "P0-Core",
+      "canonical_node_id": "kt.ai_engineering.llm_audit_assistant.qwen3_audit_assistant",
+      "claim": "Qwen3 无 RAG 命中、无来源或引用冲突未消解时必须 abstain 或 needs_human_review。",
+      "claim_type": "citation_rule",
+      "model_role": "llm_audit_assistant"
+    },
+    {
+      "topic_id": "P41-E04",
+      "priority": "P0-Extended",
+      "canonical_node_id": "kt.ai_engineering.llm_audit_assistant.qwen3_audit_assistant",
+      "claim": "thinking mode 只用于复杂审计，低延迟结构化检查可使用 non-thinking mode；不得保存私有 chain-of-thought，最终只保存 strict JSON、reason code、citation 和 audit summary。",
+      "claim_type": "usage_policy_rule",
+      "model_role": "llm_audit_assistant"
+    },
+    {
+      "topic_id": "P41-E05",
+      "priority": "P0-Core",
+      "canonical_node_id": "kt.ai_engineering.llm_audit_assistant.qwen3_training_recipe",
+      "claim": "Qwen3 SFT 只训练格式、reason code、引用习惯和审计流程，不训练交易概率。",
+      "claim_type": "training_boundary_rule",
+      "model_role": "llm_audit_assistant"
+    },
+    {
+      "topic_id": "P41-E06",
+      "priority": "P0-Extended",
+      "canonical_node_id": "kt.ai_engineering.llm_audit_assistant.qwen3_training_recipe",
+      "claim": "DPO/preference pair 只能优化审计质量，不得以 PnL 高低直接构造偏好。",
+      "claim_type": "preference_training_rule",
+      "model_role": "llm_audit_assistant"
+    },
+    {
+      "topic_id": "P41-E07",
+      "priority": "P0-Extended",
+      "canonical_node_id": "kt.ai_engineering.llm_audit_assistant.qwen3_training_recipe",
+      "claim": "RAG-first 和 prompt 修正必须先于 SFT/LoRA，只有格式或流程稳定性不足才训练权重。",
+      "claim_type": "method_selection_rule",
+      "model_role": "llm_audit_assistant"
+    },
+    {
+      "topic_id": "P41-E08",
+      "priority": "P1",
+      "canonical_node_id": "kt.ai_engineering.llm_audit_assistant.qwen3_training_recipe",
+      "claim": "vLLM 或本地 Qwen serving 只在延迟、吞吐或离线批量审计需求明确后引入。",
+      "claim_type": "serving_boundary_rule",
+      "model_role": "platform_governance"
+    },
+    {
+      "topic_id": "P41-E09",
+      "priority": "P0-Core",
+      "canonical_node_id": "kt.ai_engineering.llm_audit_assistant.qwen3_audit_assistant",
+      "claim": "RAG context、用户交易摘要和检索文档必须视为不可信输入；Qwen3 输出进入审计链路前必须经过 prompt-injection guard、citation resolver、unsupported_claim detector 和 schema validation。",
+      "claim_type": "untrusted_context_guard_rule",
+      "model_role": "llm_audit_assistant"
+    },
+    {
+      "topic_id": "P41-F01",
+      "priority": "P0-Core",
+      "canonical_node_id": "kt.ai_engineering.model_release_governance.hybrid_runtime_contract",
+      "claim": "final gate 可以读取校准后的 scorer 风险信号、risk_bucket 和 threshold policy，但最终 allow/block/reduce_size 必须由 deterministic final gate 执行，不得直接服从 Qwen3 recommendation 或 raw model score。",
+      "claim_type": "runtime_boundary_rule",
+      "model_role": "final_gate"
+    },
+    {
+      "topic_id": "P41-F02",
+      "priority": "P0-Core",
+      "canonical_node_id": "kt.ai_engineering.model_release_governance.hybrid_runtime_contract",
+      "claim": "composite release manifest 必须绑定 scorer、calibrator、threshold、Qwen3 prompt、RAG index、reason taxonomy 和 rollback target。",
+      "claim_type": "release_governance_rule",
+      "model_role": "final_gate"
+    },
+    {
+      "topic_id": "P41-F03",
+      "priority": "P0-Extended",
+      "canonical_node_id": "kt.ai_engineering.model_release_governance.hybrid_runtime_contract",
+      "claim": "每次 hybrid scoring 必须记录 audit trace，串联输入、scorer、calibrator、RAG、Qwen3 和 final gate 输出。",
+      "claim_type": "observability_rule",
+      "model_role": "final_gate"
+    },
+    {
+      "topic_id": "P41-F04",
+      "priority": "P0-Extended",
+      "canonical_node_id": "kt.ai_engineering.model_release_governance.hybrid_runtime_contract",
+      "claim": "champion/challenger 晋级必须经过 offline、shadow、paper/soft gate 和人工批准，不得自动替换 champion；paper/replay/fill/cost/execution 假设必须引用 Phase 37，不在 AI Engineering 定义。",
+      "claim_type": "promotion_gate_rule",
+      "model_role": "final_gate"
+    },
+    {
+      "topic_id": "P41-F05",
+      "priority": "P1",
+      "canonical_node_id": "kt.ai_engineering.model_release_governance.training_platform_governance",
+      "claim": "MLflow registry 只有在模型版本和 release manifest 复杂度上升时引入，POC 可先用文件化 registry。",
+      "claim_type": "platform_boundary_rule",
+      "model_role": "platform_governance"
+    },
+    {
+      "topic_id": "P41-F06",
+      "priority": "P1",
+      "canonical_node_id": "kt.ai_engineering.model_release_governance.training_platform_governance",
+      "claim": "Ray/Kubeflow 只在分布式训练或流水线编排需求明确后引入，不作为 Phase 41 默认依赖。",
+      "claim_type": "platform_boundary_rule",
+      "model_role": "platform_governance"
+    },
+    {
+      "topic_id": "P41-F07",
+      "priority": "P1",
+      "canonical_node_id": "kt.ai_engineering.model_release_governance.training_platform_governance",
+      "claim": "任何平台接入都必须保留 CEK-TA 知识检索只读、路径 resolver 和可移植配置边界。",
+      "claim_type": "integration_boundary_rule",
+      "model_role": "platform_governance"
+    },
+    {
+      "topic_id": "P41-F08",
+      "priority": "P0-Extended",
+      "canonical_node_id": "kt.ai_engineering.model_release_governance.hybrid_runtime_contract",
+      "claim": "hybrid scoring runtime 必须定义 scorer、calibrator、RAG、Qwen3 和 final gate 的 latency budget、timeout、fallback、fail-to-review / fail-closed 策略。",
+      "claim_type": "runtime_fallback_rule",
+      "model_role": "final_gate"
+    }
+  ],
+  "research_task_summary": {
+    "queue_file": "docs/research/phase41_research_task_queue.md",
+    "task_count": 41,
+    "p0_core_range": "P41-RT-001 至 P41-RT-017，加 P41-RT-019、P41-RT-021、P41-RT-024、P41-RT-025、P41-RT-040",
+    "p0_extended_range": "P41-RT-018、P41-RT-020、P41-RT-022、P41-RT-023、P41-RT-026 至 P41-RT-031、P41-RT-039、P41-RT-041",
+    "p1_range": "P41-RT-032 至 P41-RT-038",
+    "source_gate": {
+      "p0_core": "至少 3 个来源，其中至少 1 个 official_doc 或 research_paper。",
+      "p0_extended": "至少 2 个来源，其中至少 1 个 official_doc、standard_doc、governance_framework 或 research_paper。",
+      "p1": "至少 2 个来源，可以包含 engineering_article，但不能只有博客或厂商营销页。"
+    }
+  },
+  "audit_questions": [
+    "是否同意 Phase 41 不新增顶级主枝，只在 AI Engineering 下挂 L3 专题？",
+    "是否同意本轮 41 条知识点数量和 P0-Core/P0-Extended/P1 优先级划分？",
+    "是否存在应移回 Phase 37 / Trading Engineering 的交易规则本体？",
+    "是否存在重复、矛盾、粒度过细或粒度过粗的知识点？",
+    "是否需要继续把某些 P0-Extended 上调为 P0-Core，或把某些 P1 提前？",
+    "是否同意 Qwen3 只做 audit assistant，不做 numeric scorer、final gate 或事实来源？",
+    "是否同意表格/统计模型只做 scorer/risk ranking/review priority，不直接决定交易放行？",
+    "是否同意 deterministic final gate 是唯一最终交易权限来源，但可以读取校准后的 scorer 风险信号、risk_bucket 和 threshold_policy？",
+    "是否同意新增 Scorer Explainability 知识点，用于阻断 attribution/top_features 被误当作因果解释或交易规则证据？",
+    "是否同意新增 RAG/Qwen3 prompt-injection 与不可信上下文防护知识点？",
+    "是否同意新增 hybrid runtime latency、timeout、fallback、fail-to-review / fail-closed 知识点？",
+    "是否同意本轮只做知识范围、契约、候选和审计，不训练真实模型、不部署真实服务？"
+  ],
+  "expected_audit_output_schema": {
+    "audit_result": "accept | accept_with_patch | needs_more_evidence | reject",
+    "patch_notes": [
+      "string"
+    ],
+    "misrouted_topics": [
+      "string"
+    ],
+    "missing_topics": [
+      "string"
+    ],
+    "duplicate_or_overlapping_topics": [
+      "string"
+    ],
+    "priority_changes": [
+      "string"
+    ],
+    "source_requirements": [
+      "string"
+    ],
+    "boundary_risks": [
+      "string"
+    ],
+    "final_recommendation": "string"
+  }
+}

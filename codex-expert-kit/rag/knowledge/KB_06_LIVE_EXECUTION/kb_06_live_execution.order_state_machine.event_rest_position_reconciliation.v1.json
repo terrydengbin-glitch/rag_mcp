@@ -1,0 +1,334 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_06_live_execution.order_state_machine.event_rest_position_reconciliation.v1",
+  "title": "Live Order State Machine Requires Event Stream Rest Recheck Cumulative Fill Position Reconciliation And Cancel Safety",
+  "metadata": {
+    "partition_id": "KB_06_LIVE_EXECUTION",
+    "domain": "live_trading",
+    "subdomain": "order_state_machine",
+    "rule_type": "procedure",
+    "content_type": "json",
+    "project_binding": "none",
+    "tree_node_id": "kt.trading_engineering.live_execution.order_state_machine",
+    "tree_path": "CEK-TA / Trading Engineering / Live Execution / Order State Machine",
+    "canonical_node_id": "kt.trading_engineering.live_execution.order_state_machine",
+    "canonical_tree_path": "CEK-TA / Trading Engineering / Live Execution / Order State Machine",
+    "risk_level": "medium",
+    "used_for": [
+      "live_trading",
+      "exchange_adapter_review",
+      "risk_review",
+      "code_review"
+    ],
+    "source_candidate_id": "cand_20260608_live_execution_order_state_reconciliation_001",
+    "research_task_id": "CEK-TA-RESEARCH-20260608-023-003",
+    "claim_type": "execution_safety_rule",
+    "classification_notes": "UI tree node and canonical classification are aligned."
+  },
+  "applicability": {
+    "market": "crypto",
+    "asset": "multi",
+    "timeframe": "general",
+    "data_granularity": "account_event",
+    "project_type": "live_binance_futures",
+    "applies_when": [
+      "开发或审计自动化、半自动化实盘交易系统",
+      "交易系统通过交易所 API 下单、撤单、查询订单、监听订单事件或同步仓位",
+      "需要处理部分成交、撤单、过期、断线、未知订单状态、仓位不一致或急停恢复"
+    ],
+    "not_applicable_when": [
+      "离线回测或模拟盘没有真实交易所账户状态",
+      "人工交易系统没有自动下单权限，但仍可参考审计门",
+      "使用其他交易所或经纪商接口时，必须先映射该平台自己的订单状态、账户事件和撤单语义",
+      "直接迁移到非 Binance USDⓈ-M Futures 交易所且未重新映射订单事件、REST 查询、仓位字段和断线恢复语义"
+    ]
+  },
+  "content": {
+    "statement": "实盘交易系统不能只依赖下单响应判断订单和仓位状态；必须用交易所订单事件流、REST 查询、成交累计字段、账户/仓位更新和撤单/急停机制共同构成可审计的订单状态机与仓位同步闭环。",
+    "rationale": "本候选将交易所接口事实转为通用实盘工程规则：订单状态机需要处理 NEW、PARTIALLY_FILLED、FILLED、CANCELED、EXPIRED 等状态，使用累计成交量/均价更新本地状态，并在事件流断开、状态缺口、未知订单、仓位不一致时进入保护流程。",
+    "procedure": [
+      "确认当前项目事实匹配 applies_when。",
+      "确认没有命中 not_applicable_when。",
+      "确认来源、冲突状态和 open_questions 已在正式评审中关闭或保留 caveat。"
+    ],
+    "examples": [],
+    "anti_patterns": [
+      "把 draft 知识当作 approved 默认指导。",
+      "在不匹配适用边界时复用该规则。"
+    ],
+    "validation": [
+      "检查 source_evidence 非空且来源可靠性为 medium 或 high。",
+      "检查 conflict_status 为 none 或 resolved。",
+      "检查 applies_when、not_applicable_when 和 assumptions 均非空。"
+    ],
+    "risk_notes": [
+      "来源以 Binance USDⓈ-M Futures 为主，其他市场需要重新映射状态枚举和接口语义",
+      "该候选不定义具体交易策略、仓位规模或投资建议",
+      "自动撤单和急停属于安全工具，不能替代完整的账户权限、风控和人工恢复流程",
+      "正式 draft 是否将 Binance 作为具体适用边界，另建 general adapter 抽象？",
+      "是否需要补充 Coinbase、OKX 或 Interactive Brokers 文档来形成跨交易所通用版本？",
+      "未知订单状态时 CEK-TA 默认是否应触发 kill switch，还是只标记为 incident_response 候选？",
+      "本知识只覆盖 Binance USDⓈ-M Futures 边界；其他交易所的状态枚举、断线恢复、成交字段和仓位语义必须重新映射和审计。"
+    ],
+    "citation_notes": "Binance USDⓈ-M Futures 官方文档提供订单查询、订单事件流、订单状态/执行类型、批量撤单、自动倒计时撤单、账户/仓位更新和仓位查询接口。文档显示订单状态变化通过 ORDER_TRADE_UPDATE 推送，账户/仓位变化通过 ACCOUNT_UPDATE 推送，仓位信息接口也提示应结合用户数据流满足时效和准确性。",
+    "audit_patch_notes": [
+      "正式知识必须保留 Binance USDⓈ-M Futures 边界，不能泛化到所有交易所。"
+    ]
+  },
+  "assumptions": [
+    "系统可以访问交易所用户数据流和 REST 查询接口",
+    "系统保存本地订单 ID、client order ID、累计成交数量、平均成交价、订单状态和仓位快照",
+    "系统具备在状态不确定时阻断新开仓或触发保护流程的能力"
+  ],
+  "source_evidence": [
+    {
+      "source_id": "src_001",
+      "source_title": "Binance USDⓈ-M Futures Query Order",
+      "source_url": "https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Query-Order",
+      "source_type": "official_doc",
+      "publisher": "Binance Developers",
+      "published_at": null,
+      "accessed_at": "2026-06-08",
+      "version": "Binance Open Platform 2026 docs",
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "官方文档说明 Query Order 用于检查订单状态，并返回 status、executedQty、avgPrice、updateTime、reduceOnly、positionSide 等字段。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_002",
+      "source_title": "Binance USDⓈ-M Futures Event: Order Update",
+      "source_url": "https://developers.binance.com/docs/derivatives/usds-margined-futures/user-data-streams/Event-Order-Update",
+      "source_type": "official_doc",
+      "publisher": "Binance Developers",
+      "published_at": null,
+      "accessed_at": "2026-06-08",
+      "version": "Binance Open Platform 2026 docs",
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "官方文档说明新订单创建和订单状态变化会推送 ORDER_TRADE_UPDATE，列出 execution type、order status、last fill quantity、accumulated fill quantity、last fill price 等字段。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_003",
+      "source_title": "Binance USDⓈ-M Futures Event: Balance and Position Update",
+      "source_url": "https://developers.binance.com/docs/derivatives/usds-margined-futures/user-data-streams/Event-Balance-and-Position-Update",
+      "source_type": "official_doc",
+      "publisher": "Binance Developers",
+      "published_at": null,
+      "accessed_at": "2026-06-08",
+      "version": "Binance Open Platform 2026 docs",
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "官方文档说明余额或仓位更新时推送 ACCOUNT_UPDATE，且未成交或撤单不会触发仓位更新，因为没有仓位变化。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_004",
+      "source_title": "Binance USDⓈ-M Futures Position Information V3",
+      "source_url": "https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Position-Information-V3",
+      "source_type": "official_doc",
+      "publisher": "Binance Developers",
+      "published_at": null,
+      "accessed_at": "2026-06-08",
+      "version": "Binance Open Platform 2026 docs",
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "官方文档说明 Position Information V3 返回当前持仓信息，并提示结合用户数据流满足时效和准确性需求。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_005",
+      "source_title": "Binance USDⓈ-M Futures Cancel All Open Orders",
+      "source_url": "https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Cancel-All-Open-Orders",
+      "source_type": "official_doc",
+      "publisher": "Binance Developers",
+      "published_at": null,
+      "accessed_at": "2026-06-08",
+      "version": "Binance Open Platform 2026 docs",
+      "reliability": "high",
+      "relevance": "medium",
+      "evidence_summary": "官方文档提供按 symbol 取消全部 open orders 的接口和成功响应格式，可作为保护流程中的撤单动作来源。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_006",
+      "source_title": "Binance USDⓈ-M Futures Auto-Cancel All Open Orders",
+      "source_url": "https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Auto-Cancel-All-Open-Orders",
+      "source_type": "official_doc",
+      "publisher": "Binance Developers",
+      "published_at": null,
+      "accessed_at": "2026-06-08",
+      "version": "Binance Open Platform 2026 docs",
+      "reliability": "high",
+      "relevance": "medium",
+      "evidence_summary": "官方文档说明倒计时撤单端点应作为 heartbeat 重复调用；若未在倒计时内续期，指定 symbol 的 open orders 会自动取消。",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 91,
+    "score_version": "1.0.0",
+    "primary_source_count": 6,
+    "supporting_source_count": 0,
+    "low_reliability_source_count": 0,
+    "mandatory_downgrades": [],
+    "limitations": [
+      "来源集中于 Binance USDⓈ-M Futures，正式知识必须标注交易所和产品适用边界；迁移到其他交易所需要重新审计。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "resolved",
+    "checked_against": [
+      "kb_06_live_execution.risk_control.kill_switch_no_new_orders.v1"
+    ],
+    "conflicts": [
+      {
+        "knowledge_id": "kb_06_live_execution.risk_control.kill_switch_no_new_orders.v1",
+        "conflict_type": "scope_conflict",
+        "severity": "informational",
+        "resolution": "现有知识定义急停后禁止新开仓的保护默认；本候选定义订单状态和仓位同步如何发现异常并触发保护流程。两者上下游互补，不构成直接冲突。",
+        "applicability_boundary": "{\"domain\": \"live_trading\", \"subdomain\": \"risk_control\", \"market\": \"crypto\", \"timeframe\": \"general\", \"data_granularity\": \"account_event\"}",
+        "default_recommendation": "treat_as_complementary_candidate"
+      }
+    ],
+    "resolution_summary": "候选与现有 kill switch 知识存在相关范围重叠，但本候选是订单状态机/仓位同步程序规则，现有知识是保护状态动作规则；可并存，正式 draft 应建立 related relationship。",
+    "default_recommendation": "no_default_guidance_until_reviewed"
+  },
+  "review": {
+    "confidence": "high",
+    "freshness": "time_sensitive",
+    "review_status": "reviewed",
+    "reviewer": "codex",
+    "reviewed_at": "2026-06-09",
+    "created_at": "2026-06-08",
+    "updated_at": "2026-06-09",
+    "open_questions": [
+      "正式 draft 是否将 Binance 作为具体适用边界，另建 general adapter 抽象？",
+      "是否需要补充 Coinbase、OKX 或 Interactive Brokers 文档来形成跨交易所通用版本？",
+      "未知订单状态时 CEK-TA 默认是否应触发 kill switch，还是只标记为 incident_response 候选？"
+    ],
+    "decision_log": [
+      {
+        "at": "2026-06-08",
+        "actor": "codex",
+        "decision": "created",
+        "reason": "根据 Phase 23 P0 队列启动 KB_06_LIVE_EXECUTION 专业知识采集。"
+      },
+      {
+        "at": "2026-06-08",
+        "actor": "codex",
+        "decision": "sourced",
+        "reason": "记录 Binance 官方订单查询、订单事件、账户/仓位事件、仓位查询、批量撤单和自动撤单文档作为来源。"
+      },
+      {
+        "at": "2026-06-08",
+        "actor": "codex",
+        "decision": "classified",
+        "reason": "归类到 KB_06_LIVE_EXECUTION / live_trading.order_state_machine / procedure。"
+      },
+      {
+        "at": "2026-06-08",
+        "actor": "codex",
+        "decision": "conflict_checked",
+        "reason": "已与现有 kill switch approved 知识比对，结论为互补且需要建立上下游关系。"
+      },
+      {
+        "at": "2026-06-08",
+        "actor": "codex",
+        "decision": "created",
+        "reason": "Converted from ingestion candidate cand_20260608_live_execution_order_state_reconciliation_001 by CEK-TA-102 as draft only."
+      },
+      {
+        "at": "2026-06-09",
+        "actor": "GPT-5.5 Thinking",
+        "decision": "ai_audit_accepted_for_draft",
+        "reason": "外部 AI 审计结论：accepted_for_draft / confidence=high。",
+        "audit_result_id": "audit_20260609_cek_ta_candidate_ai_audit_001"
+      },
+      {
+        "at": "2026-06-09",
+        "actor": "codex",
+        "decision": "review_status_updated_to_reviewed",
+        "reason": "按用户提供的审计结果和 CEK-TA 回写契约修正知识；reviewed 不等于 approved。",
+        "audit_result_id": "audit_20260609_cek_ta_candidate_ai_audit_001"
+      }
+    ],
+    "ai_audit": {
+      "audit_result_id": "audit_20260609_cek_ta_candidate_ai_audit_001",
+      "package_id": "cek_ta_candidate_ai_audit_20260608",
+      "auditor": "GPT-5.5 Thinking",
+      "audited_at": "2026-06-09T00:00:00+09:00",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reasons": [
+        "Binance 官方订单事件、账户/仓位事件和 REST 仓位查询可以支撑订单状态闭环。",
+        "适用边界已经限定 Binance USDⓈ-M Futures。"
+      ],
+      "required_followups": [
+        "迁移其他交易所前必须重新映射状态枚举、断线恢复、成交字段和仓位语义。"
+      ],
+      "patch_notes": [
+        "正式知识必须保留 Binance USDⓈ-M Futures 边界，不能泛化到所有交易所。"
+      ],
+      "boundary": "accepted_for_draft/reviewed is not approved; approved requires a later human governance task."
+    },
+    "source_candidate_id": "cand_20260608_live_execution_order_state_reconciliation_001",
+    "ai_audit_result_id": "audit_20260609_cek_ta_candidate_ai_audit_001",
+    "approval_status": "not_requested",
+    "default_guidance_allowed": false,
+    "approved_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "contribution": {
+    "contribution_id": null,
+    "source_project": null,
+    "sanitization_status": "not_applicable",
+    "private_data_removed": true,
+    "generic_mapping_notes": "Generated from public-source Phase 23 ingestion candidate; no project-private trading facts included."
+  },
+  "copyright": {
+    "stores_full_text": false,
+    "stores_long_quote": false,
+    "summary_only": true,
+    "license_notes": "仅保存官方文档链接和摘要，不保存长段原文。",
+    "reuse_risk": "low"
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于审计和解释 CEK-TA / Trading Engineering / Live Execution / Order State Machine 范围内的专业边界。",
+      "用于提醒用户补充适用范围、来源、冲突状态和验证条件。",
+      "用于阻止 AI 把未满足边界的知识当成默认交易建议。"
+    ],
+    "not_allowed": [
+      "不得据此生成买卖点、仓位、杠杆或实盘执行指令。",
+      "不得在缺少适用边界、来源或冲突状态时作为默认指导。",
+      "不得把 reviewed 或 caveat_only 知识表述为 approved 结论。",
+      "不得绕过人工风险确认或项目事实核验。"
+    ],
+    "required_context": [
+      "project_type",
+      "market",
+      "asset",
+      "timeframe",
+      "data_granularity",
+      "task_type"
+    ],
+    "fallback_behavior": "cite_with_caveat"
+  },
+  "machine_gate": {
+    "default_guidance": "caveat_only",
+    "reason": "reviewed but not approved; usable for audit/search with explicit caveat only.",
+    "requires_human_escalation": true,
+    "blocking_reasons": [
+      "review_status_not_approved"
+    ],
+    "checked_at": "2026-06-09",
+    "gate_version": "1.0.0",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "recommended_extra_sources": []
+}

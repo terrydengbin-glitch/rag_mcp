@@ -1,0 +1,370 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_ai_engineering.feedback.model_output_cannot_label_itself.v1",
+  "title": "模型输出不能未经独立审核成为训练真值标签",
+  "metadata": {
+    "partition_id": "KB_AI_ENGINEERING",
+    "domain": "ai_engineering",
+    "subdomain": "feedback_governance",
+    "rule_type": "decision_rule",
+    "content_type": "json",
+    "project_binding": "none",
+    "tree_node_id": "kt.ai_feedback_governance",
+    "tree_path": "CEK-TA / AI Engineering",
+    "canonical_node_id": "kt.ai_feedback_governance",
+    "canonical_tree_path": "CEK-TA / AI Engineering",
+    "risk_level": "medium",
+    "used_for": [
+      "llm_training",
+      "trading_gating_scoring",
+      "rag_engineering",
+      "mcp",
+      "vue_audit_ui"
+    ],
+    "source_candidate_id": "cand_20260609_ai_engineering_feedback_model_output_cannot_label_itself_v1_001",
+    "research_task_id": "RIT-P36-D-B25",
+    "claim_type": "ai_governance_rule",
+    "classification_notes": "Phase 36 AI Engineering reviewed knowledge；本条只沉淀 AI/LLM/RAG/MCP/训练数据、评估、部署或治理规则。交易规则本体、K 线、策略、实盘执行和风控阈值必须路由到 Trading Engineering。"
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "general",
+    "data_granularity": "general",
+    "project_type": "trading_llm_assistant",
+    "applies_when": [
+      "外接项目准备把 LLM 输出、自评、用户反馈、线上 thumbs-up/down 或自动反馈写回训练集。",
+      "模型反馈会进入 SFT、preference training、DPO、gold set 或 eval set。",
+      "需要区分 proposed、weak_label、synthetic_label、human_reviewed、rule_verified、adjudicated_gold 和 rejected。"
+    ],
+    "not_applicable_when": [
+      "模型输出只作为 research hypothesis 或人工审核输入，不进入训练真值。",
+      "训练标签来自独立专家、规则验证或 adjudicated gold set 且审计链路完整。",
+      "需要判断交易结果、收益解释、策略归因或订单执行事实。"
+    ]
+  },
+  "content": {
+    "statement": "模型生成输出、自评和线上反馈不得在缺少独立规则校验、人工审核或 adjudicated gold-set evidence 的情况下升级为 training truth labels。",
+    "rationale": "模型输出直接回流为训练真值会形成自我强化和数据污染风险。模型可以提出 label suggestion，但不能成为自身训练真值的唯一来源。",
+    "procedure": [
+      "为反馈生成 feedback_event_id，并绑定 model_output_id。",
+      "记录 self_label_flag、label_source、label_status 和 training_pool_target。",
+      "若 label_source 来自模型自身，必须经过 rule_check、human review 或 adjudication。",
+      "只有 human_reviewed、rule_verified 或 adjudicated_gold 才可进入训练真值。",
+      "保存 review_method、reviewer_id_hash、rule_check_id、adjudication_id 和 approved_for_training。"
+    ],
+    "examples": [],
+    "anti_patterns": [
+      "把 reviewed 知识当作 approved 默认指导。",
+      "把 AI Engineering 规则扩写成具体交易阈值、仓位、买卖点、止损止盈或执行参数。",
+      "缺少来源、schema、适用范围、冲突检查或审计记录仍进入训练、评估、RAG promotion 或默认指导。"
+    ],
+    "validation": [
+      "source_evidence 至少存在 2 条，且没有 unresolved conflict。",
+      "review_status 为 reviewed 时 machine_gate.default_guidance 必须是 caveat_only。",
+      "外接项目调用时必须返回 knowledge_id、source_refs、review_status、machine_gate 和适用边界。",
+      "前端候选页、知识树和 SearchLab 不得显示乱码或未解释的英文 demo 文案。"
+    ],
+    "risk_notes": [
+      "accepted_for_draft 不是 approved；本条只能作为 formal reviewed 知识进入审计和检索。",
+      "本知识项只处理 AI Engineering 边界，不沉淀项目私有交易数据和交易规则本体。",
+      "若项目事实涉及具体策略、实盘订单、风控阈值或市场结构，应路由到 Trading Engineering 对应分支。"
+    ],
+    "citation_notes": "Nature 2024 model collapse 研究支持模型生成数据污染下一代训练集的风险；NIST AI RMF 支持治理和风险测量；Datasheets 支持记录数据来源和生成过程。",
+    "audit_patch_notes": {
+      "source_patch_notes": [
+        "保留 NIST AI RMF 作为治理、风险测量和持续改进来源。",
+        "保留 Datasheets for Datasets，支持记录数据来源、生成过程、用途和限制。",
+        "补 Nature 2024 model collapse 作为模型生成数据污染训练集的直接风险来源。",
+        "补 weak supervision / Snorkel 或 Label Studio / IBM ground-truth 流程，支持 weak labels 与 ground truth 的区别。",
+        "scikit-learn data leakage 可作为 supporting source，但不是本条主证据。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：Model-generated outputs, self-critiques and online feedback must not be promoted to training truth labels without independent rule-based verification, human review or adjudicated gold-set evidence.",
+        "建议字段：feedback_event_id、model_output_id、self_label_flag、label_source、label_status、review_method、reviewer_id_hash、rule_check_id、adjudication_id、approved_for_training、training_pool_target。",
+        "label_status 建议枚举：proposed、weak_label、synthetic_label、human_reviewed、rule_verified、adjudicated_gold、rejected。",
+        "明确 LLM 可以提出 label suggestion，但不能成为自身训练真值的唯一来源。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 管理 feedback-to-training 的质量 gate、label status 和审计字段。",
+        "交易结果、收益解释、策略归因、订单执行事实由 Trading Engineering 或项目 owner 提供。",
+        "不得把模型输出中的私有交易上下文、账户、订单或策略规则直接写入通用训练标签。"
+      ],
+      "conflict_patch_notes": [
+        "与 label_factory.gold_set_required、label_factory.label_guideline_required、dpo.preference_data_quality_required 应互链。",
+        "与 research_feedback.llm_suggestion_is_hypothesis_only 后续候选可能重叠；建议一个偏训练数据，一个偏研究反馈。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 feedback_label_status_enum.yaml。",
+        "补 self_label_blocking_rule.md。",
+        "补 eval cases：LLM grades its own answer、online thumbs-up used as truth、LLM-generated preference pair without review。"
+      ]
+    },
+    "required_fields": [
+      "feedback_event_id",
+      "model_output_id",
+      "self_label_flag",
+      "label_source",
+      "label_status",
+      "review_method",
+      "reviewer_id_hash",
+      "rule_check_id",
+      "adjudication_id",
+      "approved_for_training",
+      "training_pool_target"
+    ],
+    "linked_rules": [
+      "label_factory.gold_set_required.v1",
+      "label_factory.label_guideline_required.v1",
+      "dpo.preference_data_quality_required.v1",
+      "research_feedback.llm_suggestion_is_hypothesis_only.v1"
+    ]
+  },
+  "assumptions": [
+    "外接项目提供项目事实、私有交易数据和策略上下文；CEK-TA 只沉淀可复用专业规则。",
+    "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+  ],
+  "source_evidence": [
+    {
+      "source_id": "src_sklearn_pitfalls",
+      "source_title": "Common pitfalls and recommended practices | scikit-learn",
+      "source_url": "https://scikit-learn.org/stable/common_pitfalls.html",
+      "source_type": "official_doc",
+      "publisher": "scikit-learn",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "scikit-learn documents inconsistent preprocessing and data leakage pitfalls, including fitting transformations only on training data.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_nist",
+      "source_title": "AI Risk Management Framework | NIST",
+      "source_url": "https://www.nist.gov/itl/ai-risk-management-framework",
+      "source_type": "standard_or_risk_framework",
+      "publisher": "NIST",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "NIST AI RMF supports governance, mapping, measurement, and management of AI risks across design, deployment, and monitoring.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_datasheets",
+      "source_title": "Datasheets for Datasets",
+      "source_url": "https://arxiv.org/abs/1803.09010",
+      "source_type": "paper",
+      "publisher": "arXiv",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "The paper supports documenting dataset motivation, composition, collection, intended use, maintenance, and limitations.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_occ_fed_fdic_revised_model_risk_2026",
+      "source_title": "Model Risk Management: Revised Guidance",
+      "source_url": "https://occ.gov/news-issuances/bulletins/2026/bulletin-2026-13.html",
+      "source_type": "standard_or_risk_framework",
+      "publisher": "OCC / Federal Reserve / FDIC",
+      "published_at": "2026-04-17",
+      "accessed_at": "2026-06-09",
+      "version": "OCC Bulletin 2026-13 / SR 26-2",
+      "reliability": "high",
+      "relevance": "medium",
+      "evidence_summary": "2026 年跨机构模型风险管理修订指南支持模型治理、验证、变更控制和风险分层；同时需注明 generative AI 和 agentic AI 不在其直接范围内，只能作为模型风险治理类比来源。",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 90,
+    "score_version": "1.0.0",
+    "primary_source_count": 2,
+    "supporting_source_count": 2,
+    "low_reliability_source_count": 0,
+    "limitations": [
+      "本条为 reviewed 知识，来源和审计补丁已记录；默认指导仍需后续人工治理升级 approved。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "docs/contracts/ai_engineering_gating_scoring_contract.md",
+      "docs/contracts/ai_engineering_knowledge_item_policy.md",
+      "docs/tasks/phase36_ai_engineering_gating_scoring_knowledge.md"
+    ],
+    "conflicts": [],
+    "resolution_summary": "未发现与当前 CEK-TA formal knowledge 的直接冲突；候选不会进入默认指导。",
+    "default_recommendation": "caveat_only_until_approved"
+  },
+  "review": {
+    "confidence": "medium",
+    "freshness": "time_sensitive",
+    "review_status": "reviewed",
+    "reviewer": "codex",
+    "reviewed_at": "2026-06-09",
+    "created_at": "2026-06-09",
+    "updated_at": "2026-06-09",
+    "open_questions": [
+      "审计时确认该候选是否应与相邻 AI Engineering 规则合并、拆分，或改路由到 Trading Engineering。",
+      "补 feedback_label_status_enum.yaml。",
+      "补 self_label_blocking_rule.md。",
+      "补 eval cases：LLM grades its own answer、online thumbs-up used as truth、LLM-generated preference pair without review。"
+    ],
+    "decision_log": [
+      {
+        "at": "2026-06-09",
+        "actor": "external_ai",
+        "decision": "accepted_for_draft",
+        "reason": "方向成立，但正式 draft 必须精确改写。模型输出、LLM 自评、线上 response 或自动反馈不能直接变成 ground-truth label；它们最多是 weak/synthetic/proposed label，必须经过独立规则、人审、gold set 对照或可审计 adjudication 后才能进入训练。Nature model collapse 证据、NIST governance、Datasheets 和 label quality 资料足以支撑该规则进入 draft。",
+        "audit_result_id": "audit_result_phase36_ai_engineering_batch_04_of_10_20260609_gpt55_pro_strict_sources"
+      },
+      {
+        "at": "2026-06-09",
+        "actor": "codex",
+        "decision": "converted_to_reviewed",
+        "reason": "按 Phase 36 批量审计结果优化候选并转为 formal reviewed；未升级 approved。",
+        "audit_result_id": "audit_result_phase36_ai_engineering_batch_04_of_10_20260609_gpt55_pro_strict_sources"
+      }
+    ],
+    "approval_status": "not_requested",
+    "default_guidance_allowed": false,
+    "source_candidate_id": "cand_20260609_ai_engineering_feedback_model_output_cannot_label_itself_v1_001",
+    "ai_audit_result_id": "audit_result_phase36_ai_engineering_batch_04_of_10_20260609_gpt55_pro_strict_sources",
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase36_ai_engineering_batch_04_of_10_20260609_gpt55_pro_strict_sources",
+      "source_package_id": "phase36_ai_engineering_candidate_audit_batch_04_of_10_20260609",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立，但正式 draft 必须精确改写。模型输出、LLM 自评、线上 response 或自动反馈不能直接变成 ground-truth label；它们最多是 weak/synthetic/proposed label，必须经过独立规则、人审、gold set 对照或可审计 adjudication 后才能进入训练。Nature model collapse 证据、NIST governance、Datasheets 和 label quality 资料足以支撑该规则进入 draft。",
+      "source_patch_notes": [
+        "保留 NIST AI RMF 作为治理、风险测量和持续改进来源。",
+        "保留 Datasheets for Datasets，支持记录数据来源、生成过程、用途和限制。",
+        "补 Nature 2024 model collapse 作为模型生成数据污染训练集的直接风险来源。",
+        "补 weak supervision / Snorkel 或 Label Studio / IBM ground-truth 流程，支持 weak labels 与 ground truth 的区别。",
+        "scikit-learn data leakage 可作为 supporting source，但不是本条主证据。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：Model-generated outputs, self-critiques and online feedback must not be promoted to training truth labels without independent rule-based verification, human review or adjudicated gold-set evidence.",
+        "建议字段：feedback_event_id、model_output_id、self_label_flag、label_source、label_status、review_method、reviewer_id_hash、rule_check_id、adjudication_id、approved_for_training、training_pool_target。",
+        "label_status 建议枚举：proposed、weak_label、synthetic_label、human_reviewed、rule_verified、adjudicated_gold、rejected。",
+        "明确 LLM 可以提出 label suggestion，但不能成为自身训练真值的唯一来源。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 管理 feedback-to-training 的质量 gate、label status 和审计字段。",
+        "交易结果、收益解释、策略归因、订单执行事实由 Trading Engineering 或项目 owner 提供。",
+        "不得把模型输出中的私有交易上下文、账户、订单或策略规则直接写入通用训练标签。"
+      ],
+      "conflict_patch_notes": [
+        "与 label_factory.gold_set_required、label_factory.label_guideline_required、dpo.preference_data_quality_required 应互链。",
+        "与 research_feedback.llm_suggestion_is_hypothesis_only 后续候选可能重叠；建议一个偏训练数据，一个偏研究反馈。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 feedback_label_status_enum.yaml。",
+        "补 self_label_blocking_rule.md。",
+        "补 eval cases：LLM grades its own answer、online thumbs-up used as truth、LLM-generated preference pair without review。"
+      ]
+    },
+    "approved_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "contribution": {
+    "contribution_id": null,
+    "source_project": null,
+    "sanitization_status": "not_applicable",
+    "private_data_removed": true,
+    "generic_mapping_notes": "Phase 36 public-source AI Engineering candidate; no project-private trading facts included."
+  },
+  "copyright": {
+    "stores_full_text": false,
+    "stores_long_quote": false,
+    "summary_only": true,
+    "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+    "reuse_risk": "low"
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于审计 AI Engineering、LLM 训练、RAG/MCP、部署、安全或治理链路。",
+      "用于提醒外接项目补齐来源、适用边界、冲突状态、审计记录和人工审批。",
+      "用于 reviewed/audit 模式下带 caveat 引用。"
+    ],
+    "not_allowed": [
+      "不得生成买卖点、仓位、杠杆、止损止盈或实盘执行指令。",
+      "不得覆盖确定性风控、交易执行系统或人工审批。",
+      "不得作为 approved/default guidance 直接返回。"
+    ],
+    "required_context": [
+      "project_type",
+      "task_type",
+      "mode",
+      "strategy_version",
+      "data_boundary",
+      "review_status"
+    ],
+    "fallback_behavior": "cite_with_caveat"
+  },
+  "machine_gate": {
+    "default_guidance": "caveat_only",
+    "reason": "reviewed only; accepted_for_draft is not approved; default guidance requires later human governance approval.",
+    "requires_human_escalation": true,
+    "blocking_reasons": [
+      "not_approved",
+      "phase36_batch04_reviewed_only"
+    ],
+    "checked_at": "2026-06-09",
+    "gate_version": "1.0.0",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "recommended_extra_sources": [
+    {
+      "title": "保留 NIST AI RMF 作为治理、风险测量和持续改进来源。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_1"
+    },
+    {
+      "title": "保留 Datasheets for Datasets，支持记录数据来源、生成过程、用途和限制。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_2"
+    },
+    {
+      "title": "补 Nature 2024 model collapse 作为模型生成数据污染训练集的直接风险来源。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_3"
+    },
+    {
+      "title": "补 weak supervision / Snorkel 或 Label Studio / IBM ground-truth 流程，支持 weak labels 与 ground truth 的区别。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_4"
+    },
+    {
+      "title": "scikit-learn data leakage 可作为 supporting source，但不是本条主证据。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_5"
+    }
+  ]
+}

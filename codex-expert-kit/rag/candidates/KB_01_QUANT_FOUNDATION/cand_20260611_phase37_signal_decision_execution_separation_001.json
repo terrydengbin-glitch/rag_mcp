@@ -1,0 +1,357 @@
+{
+  "schema_version": "1.1.0-candidate",
+  "candidate_id": "cand_20260611_phase37_signal_decision_execution_separation_001",
+  "research_task_id": "P37-A-Q08",
+  "status": {
+    "review_status": "accepted",
+    "ingestion_decision": "accepted_for_draft",
+    "decision_reason": "Phase 37 二审结论为 accepted_for_draft；不允许 reviewed/approved/default guidance/hard gate。",
+    "created_at": "2026-06-11",
+    "updated_at": "2026-06-11"
+  },
+  "classification": {
+    "tree_node_id": "kt.quant_foundation.signal_flow",
+    "canonical_node_id": "kt.quant_foundation.signal_flow",
+    "tree_path": "CEK-TA / Trading Engineering / Quant Foundation",
+    "related_nodes": [
+      "kt.trading_engineering",
+      "kt.ai_engineering",
+      "kt.ai_engineering.llm_training"
+    ],
+    "partition_id": "KB_01_QUANT_FOUNDATION",
+    "domain": "quant_trading",
+    "subdomain": "signal_flow",
+    "rule_type": "architecture_rule",
+    "claim_type": "architecture_rule",
+    "used_for": [
+      "trading_knowledge_audit",
+      "ai_trader_project_design",
+      "trade_quality_scoring_context",
+      "external_project_rag_retrieval"
+    ],
+    "classification_notes": "本候选主归属 Trading Engineering / Quant Foundation；AI Engineering 只能通过 knowledge_refs 引用，不得复制交易规则本体。"
+  },
+  "claim": {
+    "claim_id": "claim_p37_a_q08",
+    "statement": "市场信号、交易决策、订单意图、成交回报和交易结果必须分层记录；一个信号只能作为候选输入，不能直接等同于下单许可或实盘执行结果。",
+    "normalized_claim": "phase37_signal_decision_execution_separation_requires_source_backed_boundary",
+    "evidence_summary": "CFA execution material distinguishes investment objective, trading strategy and execution; day-trading risk sources support explicit risk boundaries before frequent execution.",
+    "interpretation_notes": "本候选只定义交易专业知识边界，不输出买卖点、仓位、止损止盈、杠杆或实盘执行建议。 二审补丁：将“必须分层记录”限定为 CEK-TA 交易系统事件流与 AI 审计 schema 的架构要求，不表述为所有市场的外部监管硬要求。；建议 schema 显式拆分 signal_id、decision_id、order_intent_id、execution_report_id、fill_id、trade_result_id。；AI Engineering 只能引用，不得复制或改写 Trading Engineering 规则本体。",
+    "claim_strength": "medium_high",
+    "performance_claim": false
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "general",
+    "data_granularity": "general",
+    "project_type": "trading_ai_support_layer",
+    "applies_when": [
+      "设计交易系统事件流",
+      "审计 AI gating/scoring 是否把信号误当执行许可",
+      "构建数据 schema 或训练样本链路"
+    ],
+    "not_applicable_when": [
+      "只是在解释某个静态指标定义",
+      "用户要求具体下单、撤单或仓位调整",
+      "需要具体交易策略参数、账户事实、交易所配置、密钥或实盘权限时，应由外接项目事实层处理。",
+      "AI Engineering 只能引用本规则，不得把本规则改写为模型训练、MCP 或 RAG 本体规则。"
+    ],
+    "assumptions": [
+      "候选用于 CEK-TA 通用支持层知识库，而不是某个项目私有策略。",
+      "所有交易结论都必须保留市场、样本、成本、执行和验证边界。",
+      "候选通过外部审计前不能进入正式 reviewed 知识库。"
+    ],
+    "limitations": [
+      "首批候选以公开专业资料、监管资料、论文和教育资料为来源，仍需要外部 AI/人工严格审计。",
+      "部分来源是教育或供应商文章，只能作为 supporting evidence，不能单独支撑 approved。",
+      "本候选不提供任何投资建议或实盘执行许可。"
+    ]
+  },
+  "source_refs": [
+    {
+      "source_id": "src_001",
+      "source_title": "Trade Strategy and Execution",
+      "source_url": "https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/trade-strategy-execution",
+      "source_type": "professional_body",
+      "publisher": "CFA Institute",
+      "published_at": "2026-01-01",
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "high",
+      "score": 88,
+      "relevance": "high",
+      "freshness": "time_sensitive",
+      "limitations": [
+        "Professional learning material; it supports execution/cost/risk framing, not any specific strategy edge."
+      ],
+      "evidence_summary": "CFA Institute explains that execution strategy must consider urgency, order size, market conditions, expected costs, risk, and trader objectives.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_002",
+      "source_title": "FINRA Rule 2270 Day-Trading Risk Disclosure Statement",
+      "source_url": "https://www.finra.org/rules-guidance/rulebooks/finra-rules/2270",
+      "source_type": "regulatory_rule",
+      "publisher": "FINRA",
+      "published_at": null,
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "high",
+      "score": 86,
+      "relevance": "high",
+      "freshness": "time_sensitive",
+      "limitations": [
+        "U.S. day-trading regulatory source; does not define a universal frequency threshold."
+      ],
+      "evidence_summary": "FINRA requires day-trading risk disclosure, supporting the rule that frequent trading requires explicit risk and suitability boundaries.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_003",
+      "source_title": "Measuring and Managing Market Risk",
+      "source_url": "https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/measuring-managing-market-risk",
+      "source_type": "professional_body",
+      "publisher": "CFA Institute",
+      "published_at": "2026-01-01",
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "high",
+      "score": 86,
+      "relevance": "high",
+      "freshness": "time_sensitive",
+      "limitations": [
+        "Market-risk overview; it does not define a trading strategy's full validation protocol."
+      ],
+      "evidence_summary": "CFA Institute frames market-risk management around risk measurement, limits, stress, and portfolio exposure.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_004",
+      "source_title": "FIXimate: Message ExecutionReport",
+      "source_url": "https://fiximate.fixtrading.org/en/FIX.Latest/msg9.html",
+      "source_type": "protocol_reference",
+      "publisher": "FIX Trading Community / FIXimate",
+      "published_at": null,
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "high",
+      "score": 86,
+      "relevance": "high",
+      "freshness": "stable",
+      "limitations": [
+        "补证来源；正式入库前仍需二审确认是否足以支撑 claim。"
+      ],
+      "evidence_summary": "FIXimate describes ExecutionReport as relaying order receipt, order status, fills, rejects, and post-trade fee calculations.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_005",
+      "source_title": "Execution Report <8> message - FIX 4.4",
+      "source_url": "https://www.onixs.biz/fix-dictionary/4.4/msgtype_8_8.html",
+      "source_type": "protocol_reference",
+      "publisher": "OnixS FIX Dictionary",
+      "published_at": null,
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "medium_high",
+      "score": 82,
+      "relevance": "high",
+      "freshness": "stable",
+      "limitations": [
+        "补证来源；正式入库前仍需二审确认是否足以支撑 claim。"
+      ],
+      "evidence_summary": "The FIX dictionary states Execution Report is used to confirm orders, relay status, relay fill information and reject orders.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_006",
+      "source_title": "Execution Report (8) Message",
+      "source_url": "https://library.tradingtechnologies.com/tt-fix/Msg_ExecutionReport_8.html",
+      "source_type": "broker_platform_doc",
+      "publisher": "Trading Technologies",
+      "published_at": null,
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "medium_high",
+      "score": 78,
+      "relevance": "high",
+      "freshness": "stable",
+      "limitations": [
+        "补证来源；正式入库前仍需二审确认是否足以支撑 claim。"
+      ],
+      "evidence_summary": "TT FIX documentation describes Execution Report as sending order information such as confirmations, fills and unsolicited changes.",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 84,
+    "score_version": "phase37_source_scoring_v1",
+    "primary_source_count": 5,
+    "supporting_source_count": 1,
+    "low_reliability_source_count": 0,
+    "mandatory_downgrades": [],
+    "limitations": [
+      "正式入库前必须由外部审计确认 claim 没有超出来源可证明范围。",
+      "监管资料按地区适用，不能自动泛化到所有市场或交易所。",
+      "补充 FIX/FIXimate/OnixS Execution Report 来源，直接支撑订单状态、成交、拒单、费用和执行回报与信号/决策分层记录的必要性。",
+      "将 claim 强化为事件链审计规则：signal、decision、order intent、execution report、fill report、trade result 必须可追踪分层。",
+      "保留不输出下单许可或执行建议的边界。",
+      "将“必须分层记录”限定为 CEK-TA 交易系统事件流与 AI 审计 schema 的架构要求，不表述为所有市场的外部监管硬要求。",
+      "建议 schema 显式拆分 signal_id、decision_id、order_intent_id、execution_report_id、fill_id、trade_result_id。",
+      "AI Engineering 只能引用，不得复制或改写 Trading Engineering 规则本体。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "Phase 36/38/40/41 AI Engineering 知识边界",
+      "现有 KB_01_QUANT_FOUNDATION formal 知识"
+    ],
+    "conflicts": [],
+    "resolution_summary": "二审允许 accepted_for_draft，但仍需后续 reviewed/caveat_only 准备审计；不得直接 approved/default guidance/hard gate。",
+    "approval_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于提醒 AI IDE 检索 Trading Engineering 规则本体。",
+      "用于审计交易项目方案中是否缺少成本、风险、样本和验证边界。",
+      "用于辅助外接项目设计 schema、label、reason code 和 review checklist。"
+    ],
+    "not_allowed": [
+      "不得生成买卖点、仓位、杠杆、止损止盈或实盘执行建议。",
+      "不得把候选知识当作 approved 或默认指导。",
+      "不得绕过外接项目事实、风控 hard gate 或人工治理流程。"
+    ]
+  },
+  "machine_gate": {
+    "default_guidance": "deny",
+    "reason": "Phase 37 candidate re-audit does not allow default guidance; formal reviewed requires a later gate.",
+    "requires_human_escalation": true,
+    "hidden_from_default_queue": true
+  },
+  "review": {
+    "confidence": "medium_high",
+    "freshness": "mixed",
+    "reviewer": "external_ai_and_codex_alignment",
+    "reviewed_at": "2026-06-11",
+    "open_questions": [
+      "外部审计是否认为来源足以支撑该 claim？",
+      "是否需要补充更强的一手来源、交易所规则、教材或论文？",
+      "是否存在与现有 Trading Engineering formal 知识的重叠，需要合并或拆分？",
+      "二审是否认为补证足以升级为 accepted_for_draft？",
+      "是否需要为 risk-normalized performance metrics 新增独立 L3 知识树节点？",
+      "正式 draft 前补 OMS/EMS/order lifecycle 文档或内部事件链 schema 标准。",
+      "补充不同 venue / broker / asset class 下 ExecutionReport 或 fill-report 字段差异。"
+    ],
+    "audit_log": [
+      {
+        "at": "2026-06-11",
+        "actor": "codex",
+        "action": "created",
+        "reason": "根据 Phase 37 P37-A Quant Foundation 队列生成首批 Trading Engineering 候选知识。"
+      },
+      {
+        "at": "2026-06-11",
+        "actor": "codex",
+        "action": "sourced",
+        "reason": "记录公开专业资料、监管资料、论文和教育资料的来源摘要。"
+      },
+      {
+        "at": "2026-06-11",
+        "actor": "codex",
+        "action": "classified",
+        "reason": "归类到 KB_01_QUANT_FOUNDATION / kt.quant_foundation.signal_flow / signal_flow。"
+      },
+      {
+        "at": "2026-06-11",
+        "actor": "external_ai_strict_audit",
+        "action": "phase37_quant_foundation_first_audit_imported",
+        "reason": "needs_more_evidence / confidence=high",
+        "audit_result_id": "audit_result_phase37_quant_foundation_candidate_audit_20260611_strict_v1"
+      },
+      {
+        "at": "2026-06-11",
+        "actor": "codex",
+        "action": "phase37_needs_more_evidence_supplemented",
+        "reason": "根据首轮严格审计补充来源、边界和分类说明，并准备二审包。",
+        "audit_result_id": "audit_result_phase37_quant_foundation_candidate_audit_20260611_strict_v1"
+      },
+      {
+        "at": "2026-06-11",
+        "actor": "external_ai_strict_reaudit",
+        "action": "phase37_quant_foundation_supplemental_reaudit_imported",
+        "reason": "accepted_for_draft / confidence=high",
+        "audit_result_id": "audit_result_phase37_quant_foundation_supplemental_reaudit_20260611_strict_v1"
+      },
+      {
+        "at": "2026-06-11",
+        "actor": "codex",
+        "action": "phase37_quant_foundation_formal_reviewed_created",
+        "reason": "CEK-TA-380: formal reviewed/caveat_only written to codex-expert-kit/rag/knowledge/KB_01_QUANT_FOUNDATION/kb_01_quant_foundation.signal_decision_execution_separation.v1.json."
+      },
+      {
+        "at": "2026-06-11",
+        "actor": "codex",
+        "action": "phase37_quant_foundation_formal_reviewed_created",
+        "reason": "CEK-TA-380: formal reviewed/caveat_only written to codex-expert-kit/rag/knowledge/KB_01_QUANT_FOUNDATION/kb_01_quant_foundation.signal_decision_execution_separation.v1.json."
+      }
+    ],
+    "ai_audit": {
+      "audit_result_id": "phase37_quant_foundation_reviewed_preparation_audit_result_20260611_strict_v2",
+      "source_package_id": "phase37_quant_foundation_reviewed_preparation_audit_package_20260611",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "required_patches": {
+        "source": [],
+        "content": [
+          "限定为 CEK-TA 事件流与审计 schema 架构要求，不得说成所有市场监管硬要求。"
+        ],
+        "boundary": [
+          "限定为 CEK-TA 事件流与审计 schema 架构要求，不得说成所有市场监管硬要求。"
+        ],
+        "conflict": [
+          "可见上下文内未发现可证冲突；完整 formal KB 冲突检查由 CEK-TA-196/197 继续执行。"
+        ]
+      }
+    }
+  },
+  "copyright": {
+    "stores_full_text": false,
+    "stores_long_quote": false,
+    "summary_only": true,
+    "license_notes": "仅保存来源链接、元数据和摘要，不保存长段原文。",
+    "reuse_risk": "low"
+  },
+  "conversion_target": {
+    "proposed_knowledge_id": "kb_01_quant_foundation.signal_decision_execution_separation.v1",
+    "target_schema": "cek_ta_knowledge_item_schema_v1_1",
+    "target_review_status": "reviewed",
+    "target_machine_gate": "deny_until_audit",
+    "skill_candidate": false,
+    "eval_case_candidate": true,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "workflow": {
+    "stage": "formalized_reviewed",
+    "queue_group": "formalized",
+    "formal_knowledge_id": "kb_01_quant_foundation.signal_decision_execution_separation.v1",
+    "formal_review_status": "reviewed",
+    "default_guidance_allowed": false,
+    "approved_allowed": false,
+    "hard_gate_allowed": false,
+    "hidden_from_default_queue": true,
+    "next_action": "none",
+    "ai_audit_result_id": "phase37_quant_foundation_reviewed_preparation_audit_result_20260611_strict_v2",
+    "visible_in_default_guidance_queue": false,
+    "knowledge_path": "codex-expert-kit/rag/knowledge/KB_01_QUANT_FOUNDATION/kb_01_quant_foundation.signal_decision_execution_separation.v1.json",
+    "formal_knowledge_path": "codex-expert-kit/rag/knowledge/KB_01_QUANT_FOUNDATION/kb_01_quant_foundation.signal_decision_execution_separation.v1.json"
+  }
+}

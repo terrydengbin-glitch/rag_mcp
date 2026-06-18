@@ -1,0 +1,417 @@
+{
+  "schema_version": "1.0.0",
+  "candidate_id": "cand_20260610_phase40_p40_c15_release_manifest_rollback_target_kill_switch_001",
+  "research_task_id": "P40-C15",
+  "status": {
+    "review_status": "accepted",
+    "ingestion_decision": "accepted_for_draft",
+    "decision_reason": "三审 accepted_for_draft 且 reviewed_allowed=true；已生成 formal reviewed knowledge。",
+    "created_at": "2026-06-10",
+    "updated_at": "2026-06-10"
+  },
+  "classification": {
+    "tree_node_id": "kt.ai_feedback_governance.rollback_governance",
+    "canonical_node_id": "kt.ai_feedback_governance.rollback_governance",
+    "tree_path": "CEK-TA / AI Engineering / Continuous Learning And Feedback Governance",
+    "related_nodes": [],
+    "partition_id": "KB_AI_18_FEEDBACK_GOVERNANCE",
+    "domain": "ai_governance",
+    "subdomain": "rollback_governance",
+    "rule_type": "governance_rule",
+    "used_for": [
+      "llm_training",
+      "trading_gating_scoring",
+      "continuous_learning",
+      "rag_engineering",
+      "mcp",
+      "vue_audit_ui"
+    ]
+  },
+  "claim": {
+    "claim_id": "claim_001",
+    "statement": "每次影响交易 AI gating/scoring 决策链路的发布都必须有 release manifest、rollback target、kill_switch_policy_ref、secret_scan_status、rollback_drill_status、kill_switch_tested_at 和 human_approval_record_ref；缺任一关键控制必须 block_release。",
+    "normalized_claim": "phase40.release_manifest_rollback_target_kill_switch.v1",
+    "claim_type": "ai_governance_rule",
+    "evidence_summary": "GitHub secret scanning detects hardcoded credentials such as API keys, passwords and tokens in repository history and branches.；NIST AI RMF Manage covers post-deployment monitoring, override, decommissioning, incident response, recovery and change management.；FCA algorithmic trading review discusses risk controls including kill functionality, control inventories, testing and governance.；Defines ReleaseManifest, RollbackPlan, HumanApprovalRecord and release blockers for rollback and kill switch.；Defines ReleaseSafetyChecklist, KillSwitchPolicy, RollbackDrillRecord and SecretScanResult fields.",
+    "interpretation_notes": "本候选只沉淀 AI Engineering 的持续学习、反馈治理、再训练、再校准、发布回滚或 LLM 改进方法；交易规则本体必须路由到 Phase 37。",
+    "claim_strength": "medium",
+    "performance_claim": false
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "general",
+    "data_granularity": "general",
+    "project_type": "trading_llm_gating_scoring",
+    "applies_when": [
+      "外接项目正在建设交易 AI gating/scoring 的反馈日志、标签刷新、漂移检测、再训练、再校准、shadow/paper/canary 或发布治理链路。",
+      "该规则用于阻断自动上线、PnL-only 标签、allow-only logging、反馈回路污染、无 rollback 发布或 LLM 越权 final gate。"
+    ],
+    "not_applicable_when": [
+      "用户需要具体买卖点、仓位、止损止盈、K 线形态、策略参数或实盘订单执行。",
+      "知识点主要描述 fill model、订单状态机、实盘风控阈值或交易所异常处理，应路由到 Trading Engineering。"
+    ],
+    "assumptions": [
+      "外接项目提供私有交易事实、模型输出和发布上下文；CEK-TA 只沉淀可复用专业规则。",
+      "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+    ],
+    "limitations": [
+      "本条仍是 candidate，需要外部 AI/人工审计确认来源充分性、适用边界和是否需要补充交易项目实例。",
+      "release manifest 不得包含私有策略正文、账号密钥或交易执行规则本体；订单撤单和实盘控制由 Trading Engineering 或外接项目实现。"
+    ]
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于提醒 AI IDE 在外接项目中实现持续学习治理字段、审计追踪和发布门禁。",
+      "用于阻断自动上线、无来源默认指导和 LLM 越权 final gate。",
+      "用于生成任务卡、契约、测试计划和审计 checklist。"
+    ],
+    "not_allowed": [
+      "不得据此生成买卖点、仓位、杠杆、止损止盈或实盘下单建议。",
+      "不得据此跳过人工审批或 release/rollback 门禁。",
+      "不得把 candidate 当作 approved 默认指导。"
+    ]
+  },
+  "source_refs": [
+    {
+      "source_id": "src_mlflow_model_registry",
+      "source_title": "MLflow Model Registry",
+      "source_url": "https://mlflow.org/docs/latest/ml/model-registry/",
+      "source_type": "official_doc",
+      "publisher": "MLflow",
+      "published_at": null,
+      "accessed_at": "2026-06-10",
+      "version": null,
+      "reliability": "high",
+      "score": 84,
+      "relevance": "high",
+      "freshness": "time_sensitive",
+      "limitations": [],
+      "evidence_summary": "MLflow Model Registry documents registered models, versions, aliases, tags, and lifecycle metadata.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_argo_rollouts",
+      "source_title": "Argo Rollouts documentation",
+      "source_url": "https://argoproj.github.io/rollouts/",
+      "source_type": "official_doc",
+      "publisher": "Argo Project",
+      "published_at": null,
+      "accessed_at": "2026-06-10",
+      "version": null,
+      "reliability": "high",
+      "score": 84,
+      "relevance": "high",
+      "freshness": "time_sensitive",
+      "limitations": [],
+      "evidence_summary": "Argo Rollouts documents progressive delivery capabilities such as blue-green, canary, canary analysis, and experimentation.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_nist_ai_rmf_core",
+      "source_title": "AI RMF - NIST AI Resource Center",
+      "source_url": "https://airc.nist.gov/airmf-resources/airmf/",
+      "source_type": "governance_framework",
+      "publisher": "NIST",
+      "published_at": null,
+      "accessed_at": "2026-06-10",
+      "version": null,
+      "reliability": "high",
+      "score": 88,
+      "relevance": "high",
+      "freshness": "time_sensitive",
+      "limitations": [],
+      "evidence_summary": "NIST AI RMF Core provides outcomes and actions for governing, mapping, measuring, and managing AI risks.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_google_sre_canarying",
+      "source_title": "Canary Release: Deployment Safety and Efficiency",
+      "source_url": "https://sre.google/workbook/canarying-releases/",
+      "source_type": "official_doc",
+      "publisher": "Google SRE",
+      "published_at": null,
+      "accessed_at": "2026-06-10",
+      "version": null,
+      "reliability": "high",
+      "score": 88,
+      "relevance": "high",
+      "freshness": "time_sensitive",
+      "limitations": [
+        "软件发布来源，不定义交易 capital limit 或订单控制本体。"
+      ],
+      "evidence_summary": "Google SRE describes canarying as exposing changes to a small portion of traffic to reduce deployment risk before broader rollout.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_github_secret_scanning",
+      "source_title": "Secret scanning - GitHub Docs",
+      "source_url": "https://docs.github.com/code-security/secret-scanning/about-secret-scanning",
+      "source_type": "official_doc",
+      "publisher": "GitHub",
+      "published_at": null,
+      "accessed_at": "2026-06-10",
+      "version": null,
+      "reliability": "high",
+      "score": 86,
+      "relevance": "high",
+      "freshness": "time_sensitive",
+      "limitations": [
+        "支撑发布前 secret scan，不允许在知识库保存密钥正文。"
+      ],
+      "evidence_summary": "GitHub secret scanning detects hardcoded credentials such as API keys, passwords and tokens in repository history and branches.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_nist_ai_rmf_manage",
+      "source_title": "Manage - NIST AI RMF Playbook",
+      "source_url": "https://airc.nist.gov/airmf-resources/playbook/manage/",
+      "source_type": "governance_framework",
+      "publisher": "NIST",
+      "published_at": null,
+      "accessed_at": "2026-06-10",
+      "version": null,
+      "reliability": "high",
+      "score": 88,
+      "relevance": "high",
+      "freshness": "time_sensitive",
+      "limitations": [
+        "治理框架来源，不替代项目级 release manifest。"
+      ],
+      "evidence_summary": "NIST AI RMF Manage covers post-deployment monitoring, override, decommissioning, incident response, recovery and change management.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_fca_algo_trading_controls",
+      "source_title": "Algorithmic Trading Compliance in Wholesale Markets",
+      "source_url": "https://www.fca.org.uk/publication/multi-firm-reviews/algorithmic-trading-compliance-wholesale-markets.pdf",
+      "source_type": "governance_framework",
+      "publisher": "FCA",
+      "published_at": "2018-02-12",
+      "accessed_at": "2026-06-10",
+      "version": null,
+      "reliability": "high",
+      "score": 86,
+      "relevance": "medium",
+      "freshness": "time_sensitive",
+      "limitations": [
+        "监管来源用于 kill functionality 边界，不定义本项目交易执行实现。"
+      ],
+      "evidence_summary": "FCA algorithmic trading review discusses risk controls including kill functionality, control inventories, testing and governance.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_cek_ta_phase40_champion_release_contract",
+      "source_title": "CEK-TA Phase 40 Champion Challenger Release Contract",
+      "source_url": "docs/contracts/phase40_champion_challenger_release_contract.md",
+      "source_type": "internal_contract",
+      "publisher": "CEK-TA",
+      "published_at": "2026-06-10",
+      "accessed_at": "2026-06-10",
+      "version": null,
+      "reliability": "high",
+      "score": 90,
+      "relevance": "high",
+      "freshness": "stable",
+      "limitations": [
+        "内部发布契约不替代真实部署验证。"
+      ],
+      "evidence_summary": "Defines ReleaseManifest, RollbackPlan, HumanApprovalRecord and release blockers for rollback and kill switch.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_cek_ta_phase40_release_manifest_kill_switch_contract",
+      "source_title": "CEK-TA Phase 40 Release Manifest Kill Switch Contract",
+      "source_url": "docs/contracts/phase40_release_manifest_kill_switch_contract.md",
+      "source_type": "internal_contract",
+      "publisher": "CEK-TA",
+      "published_at": "2026-06-10",
+      "accessed_at": "2026-06-10",
+      "version": null,
+      "reliability": "high",
+      "score": 90,
+      "relevance": "high",
+      "freshness": "stable",
+      "limitations": [
+        "内部契约只定义安全发布字段和阻断规则。"
+      ],
+      "evidence_summary": "Defines ReleaseSafetyChecklist, KillSwitchPolicy, RollbackDrillRecord and SecretScanResult fields.",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 88,
+    "score_version": "1.1.0",
+    "primary_source_count": 9,
+    "supporting_source_count": 0,
+    "low_reliability_source_count": 0,
+    "mandatory_downgrades": [],
+    "limitations": [
+      "来源支持通用 AI/ML/MLOps/LLMOps/治理工程原则；正式知识转换时需保留 CEK-TA 具体上下游引用和冲突链接。",
+      "补证后仍需外部 AI/人工三审确认 claim-specific 充分性，不能直接转 reviewed 或 approved。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "docs/contracts/phase40_feedback_dataset_contract.md",
+      "docs/contracts/phase40_drift_retraining_recalibration_contract.md",
+      "docs/contracts/phase40_champion_challenger_release_contract.md",
+      "docs/research/phase40_ai_continuous_learning_scope.md",
+      "docs/contracts/phase40_review_budget_threshold_policy_contract.md",
+      "docs/contracts/phase40_release_manifest_kill_switch_contract.md"
+    ],
+    "conflicts": [],
+    "resolution_summary": "补证后未发现直接理论冲突；仍需三审确认来源充分性和 AI/Trading 分支边界。",
+    "approval_allowed": false
+  },
+  "machine_gate": {
+    "default_guidance": "deny",
+    "reason": "supplemented candidate awaiting third review; not reviewed, approved, default guidance, or hard gate.",
+    "requires_human_escalation": true
+  },
+  "review": {
+    "confidence": "medium",
+    "freshness": "time_sensitive",
+    "reviewer": "codex_supplemental_evidence",
+    "reviewed_at": "2026-06-10",
+    "open_questions": [
+      "请三审确认补证后是否 accepted_for_draft；如果仍不足，请返回 needs_more_evidence 或 rejected。",
+      "即使三审通过，本条仍只能进入 formal reviewed draft，不得直接 approved、default guidance 或 hard gate。"
+    ],
+    "audit_log": [
+      {
+        "at": "2026-06-10",
+        "actor": "codex",
+        "action": "created",
+        "reason": "Phase 40 P0-Core continuous learning candidate expansion."
+      },
+      {
+        "at": "2026-06-10",
+        "actor": "codex",
+        "action": "phase40_strict_audit_accepted_for_draft",
+        "reason": "候选进入 formal draft 准备队列；直接 reviewed/approved 被审计结果禁止。"
+      },
+      {
+        "at": "2026-06-10",
+        "actor": "codex",
+        "action": "phase40_strict_audit_accepted_for_draft",
+        "reason": "候选进入 formal draft 准备队列；直接 reviewed/approved 被审计结果禁止。"
+      },
+      {
+        "at": "2026-06-10",
+        "actor": "codex",
+        "action": "phase40_reviewed_preparation_needs_more_evidence",
+        "reason": "CEK-TA-316: 二审仍需补证，保持 candidate，不生成 formal reviewed。"
+      },
+      {
+        "at": "2026-06-10",
+        "actor": "codex",
+        "action": "phase40_reviewed_preparation_supplemental_evidence_ready",
+        "reason": "按 CEK-TA-317 补充来源和契约，并准备三审。"
+      },
+      {
+        "at": "2026-06-10",
+        "actor": "codex",
+        "action": "phase40_reviewed_preparation_supplemental_evidence_ready",
+        "reason": "按 CEK-TA-317 补充来源和契约，并准备三审。"
+      },
+      {
+        "at": "2026-06-10",
+        "actor": "codex",
+        "action": "phase40_reviewed_preparation_supplemental_evidence_ready",
+        "reason": "按 CEK-TA-317 补充来源和契约，并准备三审。"
+      },
+      {
+        "at": "2026-06-10",
+        "actor": "codex",
+        "action": "phase40_formal_reviewed_created",
+        "reason": "CEK-TA-328: formal reviewed knowledge written to codex-expert-kit/rag/knowledge/KB_AI_18_FEEDBACK_GOVERNANCE/kb_ai_feedback_governance.phase40.release_manifest_rollback_target_kill_switch.v1.json."
+      },
+      {
+        "at": "2026-06-10",
+        "actor": "codex",
+        "action": "phase40_reviewed_preparation_supplemental_reaudit_formalized",
+        "reason": "CEK-TA-328: 三审通过，formal reviewed knowledge written to codex-expert-kit/rag/knowledge/KB_AI_18_FEEDBACK_GOVERNANCE/kb_ai_feedback_governance.phase40.release_manifest_rollback_target_kill_switch.v1.json."
+      }
+    ],
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase40_reviewed_preparation_supplemental_reaudit_20260610_strict_v1",
+      "source_package_id": "phase40_reviewed_preparation_supplemental_reaudit_package_20260610",
+      "candidate_id": "cand_20260610_phase40_p40_c15_release_manifest_rollback_target_kill_switch_001",
+      "research_task_id": "P40-C15",
+      "decision": "accepted_for_draft",
+      "reason": "release manifest、rollback、kill switch、secret scan、rollback drill 和 human approval 证据已补足。",
+      "content_patch_notes": [
+        "release manifest 必须记录 release_manifest_id、rollback_target、kill_switch_policy_ref、secret_scan_status、rollback_drill_status、kill_switch_tested_at、human_approval_record_ref。",
+        "缺任一关键控制必须 block_release。",
+        "release manifest 不得包含私有策略正文、账号密钥或交易执行规则本体；kill switch 具体实现归 Trading Engineering 或外接项目 owner。"
+      ],
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "allowed_next_stage": "formal_reviewed_knowledge"
+    },
+    "reviewed_allowed": false,
+    "approved_allowed": false
+  },
+  "copyright": {
+    "stores_full_text": false,
+    "stores_long_quote": false,
+    "summary_only": true,
+    "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+    "reuse_risk": "low"
+  },
+  "conversion_target": {
+    "proposed_knowledge_id": "kb_ai_feedback_governance.phase40.release_manifest_rollback_target_kill_switch.v1",
+    "target_schema": "cek_ta_knowledge_item",
+    "target_review_status": "reviewed",
+    "skill_candidate": false,
+    "eval_case_candidate": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "workflow": {
+    "stage": "formalized_reviewed",
+    "queue_group": "formalized",
+    "formal_knowledge_id": "kb_ai_feedback_governance.phase40.release_manifest_rollback_target_kill_switch.v1",
+    "formal_review_status": "reviewed",
+    "ai_audit_result_id": "audit_result_phase40_reviewed_preparation_supplemental_reaudit_20260610_strict_v1",
+    "hidden_from_default_queue": true,
+    "next_action": "none",
+    "default_guidance_allowed": false,
+    "visible_in_default_guidance_queue": false,
+    "knowledge_path": "codex-expert-kit/rag/knowledge/KB_AI_18_FEEDBACK_GOVERNANCE/kb_ai_feedback_governance.phase40.release_manifest_rollback_target_kill_switch.v1.json",
+    "formal_knowledge_path": "codex-expert-kit/rag/knowledge/KB_AI_18_FEEDBACK_GOVERNANCE/kb_ai_feedback_governance.phase40.release_manifest_rollback_target_kill_switch.v1.json"
+  },
+  "phase40_trace": {
+    "acceptance_gate": "缺 rollback 直接阻断",
+    "search_direction": "release manifest rollback kill switch model deployment approval",
+    "related_contracts": [
+      "docs/contracts/phase40_feedback_dataset_contract.md",
+      "docs/contracts/phase40_drift_retraining_recalibration_contract.md",
+      "docs/contracts/phase40_champion_challenger_release_contract.md",
+      "docs/research/phase40_ai_continuous_learning_scope.md",
+      "docs/contracts/phase40_review_budget_threshold_policy_contract.md",
+      "docs/contracts/phase40_release_manifest_kill_switch_contract.md"
+    ],
+    "supplemental_evidence_ready": true,
+    "supplemental_evidence_added_at": "2026-06-10",
+    "supplemental_task_id": "CEK-TA-317",
+    "audit_patch_notes": {
+      "source_ids_added_or_confirmed": [
+        "src_google_sre_canarying",
+        "src_github_secret_scanning",
+        "src_nist_ai_rmf_manage",
+        "src_fca_algo_trading_controls",
+        "src_cek_ta_phase40_champion_release_contract",
+        "src_cek_ta_phase40_release_manifest_kill_switch_contract"
+      ],
+      "remaining_boundary": "release manifest 不得包含私有策略正文、账号密钥或交易执行规则本体；订单撤单和实盘控制由 Trading Engineering 或外接项目实现。"
+    }
+  }
+}

@@ -1,0 +1,427 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_ai_engineering.eval.time_split_walk_forward_required.v1",
+  "title": "涉及 chronological market data 的交易 LLM gate/scoring 评估必须使用 t",
+  "metadata": {
+    "partition_id": "KB_09_LLM_TRAINING",
+    "domain": "llm_training",
+    "subdomain": "evaluation_governance",
+    "rule_type": "decision_rule",
+    "content_type": "json",
+    "project_binding": "none",
+    "tree_node_id": "kt.llm_training.model_training_engineering",
+    "tree_path": "CEK-TA / AI Engineering",
+    "canonical_node_id": "kt.llm_training.model_training_engineering",
+    "canonical_tree_path": "CEK-TA / AI Engineering",
+    "risk_level": "medium",
+    "used_for": [
+      "llm_training",
+      "trading_gating_scoring",
+      "rag_engineering",
+      "mcp",
+      "vue_audit_ui"
+    ],
+    "source_candidate_id": "cand_20260609_ai_engineering_eval_time_split_walk_forward_required_v1_001",
+    "research_task_id": "RIT-P36-C-33",
+    "claim_type": "llm_eval_rule",
+    "classification_notes": "Phase 36 AI Engineering reviewed knowledge; UI tree and canonical node are inherited from candidate classification. Trading rule bodies must remain in Trading Engineering."
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "general",
+    "data_granularity": "general",
+    "project_type": "trading_llm_assistant",
+    "applies_when": [
+      "评估样本包含按时间发生的交易候选、市场数据、信号快照、回测/模拟/实盘日志或 feature snapshots。",
+      "模型、prompt、RAG 或 gate policy 的评估结果会用于 promotion、shadow/paper 或 hard gate 讨论。",
+      "普通随机 split 可能让未来信息、相邻标签窗口或同一市场事件泄漏到训练侧。"
+    ],
+    "not_applicable_when": [
+      "数据没有时间依赖，且 leakage analysis 明确证明随机 split 不会污染最终评估。",
+      "只是在声明 eval case 的 time/strategy/regime 元数据，应引用 eval_case.time_strategy_regime_split_required。",
+      "需要定义具体交易 session、市场日历、regime 标签或策略参数，应由 Trading Engineering 或项目 owner 提供。"
+    ]
+  },
+  "content": {
+    "statement": "涉及 chronological market data 的交易 LLM gate/scoring 评估必须使用 time-aware split，例如 walk-forward、rolling window、expanding window 或明确 train-before-test cutoff；除非有 leakage analysis 批准，否则不得使用随机切分作为最终评估。",
+    "rationale": "本候选是 time-aware technical split 规则；eval_case.time_strategy_regime_split_required 负责元数据声明。本条不定义市场状态或策略规则本体。 审计结论：补证后可升级。statement 已明确聚焦 chronological market data 的 time-aware split / walk-forward / rolling / expanding window / train-before-test cutoff，source_refs 也补入 scikit-learn TimeSeriesSplit 和金融 purged / embargoed CV 相关资料。scikit-learn TimeSeriesSplit 直接说明 time-ordered data 不适合普通 CV，因为会导致未来训练、过去评估；金融 purged/embargoed CV 资料可作为交易时间序列泄漏防护的补充证据。因此可进入 draft，但正式 draft 应把 purged/embargo 作为可选技术模式，并由 Trading Engineering 或项目 owner 定义具体 market calendar、label horizon、embargo/gap。",
+    "procedure": [
+      "确认项目事实匹配 applies_when，且没有命中 not_applicable_when。",
+      "按 source_patch_notes 检查来源是否足够支撑 statement。",
+      "按 content_patch_notes 补齐正式实现、schema、字段和 checklist。",
+      "按 boundary_patch_notes 确认没有把交易规则本体、项目私有参数或实盘执行规则写入 AI Engineering。",
+      "保留 required_followups，后续由来源增强或治理任务继续关闭。"
+    ],
+    "examples": [],
+    "anti_patterns": [
+      "把 reviewed 知识当作 approved 默认指导。",
+      "把 AI Engineering 规则扩写成具体交易阈值、仓位、买卖点或执行参数。",
+      "忽略审计结果中的来源限制、适用范围和后续补强要求。"
+    ],
+    "validation": [
+      "source_evidence 至少 2 条，且没有 low-only 来源。",
+      "conflict_status 为 none 或 resolved。",
+      "review_status 为 reviewed 时 machine_gate 必须是 caveat_only。",
+      "MCP/SearchLab 默认指导不得把本条当作 approved 返回。"
+    ],
+    "risk_notes": [
+      "AI Engineering 只管理 time-aware split schema、审计和阻断条件。",
+      "市场日历、交易 session、策略版本、regime 切分和 timeframe 含义由 Trading Engineering 或项目 owner 提供。",
+      "不得写入具体交易策略、K 线条件、持仓或执行规则。",
+      "AI Engineering 管理 time-aware split schema、审计字段、阻断条件和 leakage analysis 记录。",
+      "市场日历、交易 session、策略版本、regime 切分、timeframe、label horizon 和具体 embargo/gap 由 Trading Engineering 或项目 owner 提供。",
+      "不得写入具体交易策略、K 线条件、买卖信号、持仓、仓位、止损止盈或订单执行规则。",
+      "与 eval_case.time_strategy_regime_split_required 是父子或兄弟关系：本条负责 time-aware technical split，后者负责 eval case 的 time/strategy/regime metadata。",
+      "与 dataset.train_validation_test_split_required、eval.holdout_test_set_required、eval_case.no_training_overlap_required 互补。",
+      "与 leakage_train_test_contamination_block 后续候选应互链，用于发现时间泄漏或 split contamination。",
+      "未发现需要 rejected 的直接冲突。",
+      "补 time_split_manifest_schema.json。",
+      "补 split_method enum：time_cutoff、walk_forward、rolling_window、expanding_window、purged_kfold、embargoed_split、approved_random_with_leakage_analysis。",
+      "补 gap_or_embargo owner 规则：AI Engineering 记录字段和 gate，Trading Engineering 提供 label horizon / market calendar 语义。",
+      "补 eval cases：future leakage、random split on time series、rolling window、expanding window、purged split、embargo gap、strategy version crossover。"
+    ],
+    "citation_notes": "scikit-learn TimeSeriesSplit 说明时间序列中普通 CV 不适用，因为会导致用未来训练、过去测试等问题；金融机器学习中的 purged/embargoed CV 用于避免标签窗口重叠和序列泄漏；通用 cross-validation 文档支持评估拆分纪律。",
+    "audit_patch_notes": {
+      "source_patch_notes": [
+        "将 scikit-learn TimeSeriesSplit 设为主来源，用于支撑 time-ordered data 的 train/test split 和普通 CV 不适用风险。",
+        "保留金融机器学习 purged / embargoed CV 来源作为交易时序泄漏防护 supporting source；如果来源是书籍目录或二级来源，正式 draft 应补项目内持有版本或更直接页码引用。",
+        "PMC 金融时间序列研究可作为 serial correlation、purging/embargoing cross-validation 的补充来源。",
+        "OpenAI evals 和 scikit-learn general CV 只作为 workflow / split discipline supporting sources，不应作为 time-aware split 主来源。",
+        "建议补 Trading Engineering split_policy_contract，定义交易日历、session、label horizon、gap/embargo、strategy_version。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议保留补充包写法：涉及 chronological market data 的交易 LLM gate/scoring 评估必须使用 time-aware split，例如 walk-forward、rolling window、expanding window 或明确 train-before-test cutoff；除非有 leakage analysis 批准，否则不得使用随机切分作为最终评估。",
+        "建议字段：split_method、train_start、train_end、validation_start、validation_end、test_start、test_end、gap_or_embargo、label_horizon_ref、walk_forward_window_id、rolling_or_expanding、time_leakage_check_id。",
+        "明确 random split 对交易时序数据默认不合格；若使用随机 split，必须记录理由、leakage analysis、reviewer 和 approved_exception_id。",
+        "将本条定位为 time-series split technical rule；eval_case.time_strategy_regime_split_required 保留为 eval case metadata declaration。",
+        "补充说明：time-aware split 不能单独解决 strategy leakage、asset leakage、regime leakage，因此仍需与 group split / strategy version split 互链。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 管理 time-aware split schema、审计字段、阻断条件和 leakage analysis 记录。",
+        "市场日历、交易 session、策略版本、regime 切分、timeframe、label horizon 和具体 embargo/gap 由 Trading Engineering 或项目 owner 提供。",
+        "不得写入具体交易策略、K 线条件、买卖信号、持仓、仓位、止损止盈或订单执行规则。"
+      ],
+      "conflict_patch_notes": [
+        "与 eval_case.time_strategy_regime_split_required 是父子或兄弟关系：本条负责 time-aware technical split，后者负责 eval case 的 time/strategy/regime metadata。",
+        "与 dataset.train_validation_test_split_required、eval.holdout_test_set_required、eval_case.no_training_overlap_required 互补。",
+        "与 leakage_train_test_contamination_block 后续候选应互链，用于发现时间泄漏或 split contamination。",
+        "未发现需要 rejected 的直接冲突。"
+      ],
+      "required_followups": [
+        "补 time_split_manifest_schema.json。",
+        "补 split_method enum：time_cutoff、walk_forward、rolling_window、expanding_window、purged_kfold、embargoed_split、approved_random_with_leakage_analysis。",
+        "补 gap_or_embargo owner 规则：AI Engineering 记录字段和 gate，Trading Engineering 提供 label horizon / market calendar 语义。",
+        "补 eval cases：future leakage、random split on time series、rolling window、expanding window、purged split、embargo gap、strategy version crossover。"
+      ]
+    }
+  },
+  "assumptions": [
+    "外接项目提供项目事实、私有交易数据和策略上下文；CEK-TA 只沉淀可复用专业规则。",
+    "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+  ],
+  "source_evidence": [
+    {
+      "source_id": "src_openai_evals",
+      "source_title": "Working with evals | OpenAI API",
+      "source_url": "https://platform.openai.com/docs/guides/evals?api-mode=chat",
+      "source_type": "official_doc",
+      "publisher": "OpenAI",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "OpenAI evals documentation supports programmatic evaluation setup and workflow-specific quality checks before relying on model behavior.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_sklearn_cv",
+      "source_title": "Cross-validation: evaluating estimator performance | scikit-learn",
+      "source_url": "https://scikit-learn.org/stable/modules/cross_validation.html",
+      "source_type": "official_doc",
+      "publisher": "scikit-learn",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "scikit-learn cross-validation guidance supports held-out evaluation, splitting discipline, and avoiding evaluation on training data.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_rules_ml",
+      "source_title": "Rules of Machine Learning",
+      "source_url": "https://martin.zinkevich.org/rules_of_ml/rules_of_ml.pdf",
+      "source_type": "paper",
+      "publisher": "Google / Martin Zinkevich",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "medium",
+      "relevance": "high",
+      "evidence_summary": "Rules of ML discusses train/serve consistency, baselines, monitoring, and production ML safeguards.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_sklearn_time_series_split",
+      "source_title": "TimeSeriesSplit | scikit-learn",
+      "source_url": "https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.TimeSeriesSplit.html",
+      "source_type": "official_doc",
+      "publisher": "scikit-learn",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "TimeSeriesSplit 文档直接说明时间序列交叉验证应保证 train/test 时间顺序，其他 CV 方法不适合时间排序数据。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_sklearn_cross_validation_time_series",
+      "source_title": "Cross-validation: evaluating estimator performance | scikit-learn",
+      "source_url": "https://scikit-learn.org/stable/modules/cross_validation.html",
+      "source_type": "official_doc",
+      "publisher": "scikit-learn",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "medium",
+      "evidence_summary": "scikit-learn cross-validation 文档支持按任务选择合适 split 方法，并为时间序列切分提供上下文。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_lopez_de_prado_afml_purged_kfold",
+      "source_title": "Advances in Financial Machine Learning",
+      "source_url": "https://philpapers.org/rec/LPEAIF",
+      "source_type": "book",
+      "publisher": "Marcos López de Prado / Wiley",
+      "published_at": "2018",
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "medium",
+      "relevance": "high",
+      "evidence_summary": "该书包含金融机器学习交叉验证章节，讨论为什么普通 K-Fold 在金融场景失败，并提出 Purged K-Fold 与 Embargo 思路。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_pmc_financial_time_series_purged_kfold",
+      "source_title": "A Bayesian-based classification framework for financial time series trend prediction",
+      "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9521884/",
+      "source_type": "paper",
+      "publisher": "PMC",
+      "published_at": "2022",
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "medium",
+      "evidence_summary": "该金融时间序列研究讨论 serial correlation 与 purging/embargoing cross-validation，可作为金融时序评估补充来源。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_occ_fed_fdic_revised_model_risk_2026",
+      "source_title": "Model Risk Management: Revised Guidance",
+      "source_url": "https://occ.gov/news-issuances/bulletins/2026/bulletin-2026-13.html",
+      "source_type": "standard_or_risk_framework",
+      "publisher": "OCC / Federal Reserve / FDIC",
+      "published_at": "2026-04-17",
+      "accessed_at": "2026-06-09",
+      "version": "OCC Bulletin 2026-13 / SR 26-2",
+      "reliability": "high",
+      "relevance": "medium",
+      "evidence_summary": "2026 年跨机构模型风险管理修订指南支持模型治理、验证、变更控制和风险分层；同时需注明 generative AI 和 agentic AI 不在其直接范围内，只能作为模型风险治理类比来源。",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 85,
+    "score_version": "1.0.0",
+    "primary_source_count": 2,
+    "supporting_source_count": 6,
+    "low_reliability_source_count": 0,
+    "limitations": [
+      "本条为 reviewed 知识，来源和审计补丁已记录；默认指导仍需后续人工治理升级 approved。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "docs/contracts/ai_engineering_gating_scoring_contract.md",
+      "docs/contracts/ai_engineering_knowledge_item_policy.md",
+      "docs/tasks/phase36_ai_engineering_gating_scoring_knowledge.md"
+    ],
+    "conflicts": [],
+    "resolution_summary": "未发现与当前 CEK-TA formal knowledge 的直接冲突；候选不会进入默认指导。",
+    "default_recommendation": "caveat_only_until_approved"
+  },
+  "review": {
+    "confidence": "medium",
+    "freshness": "time_sensitive",
+    "review_status": "reviewed",
+    "reviewer": "codex",
+    "reviewed_at": "2026-06-09",
+    "created_at": "2026-06-09",
+    "updated_at": "2026-06-09",
+    "open_questions": [
+      "检查是否从泛化评估改为 time-aware / walk-forward split，source_refs 是否包含 TimeSeriesSplit 或金融 purged/embargoed CV 直接来源。",
+      "是否与相邻 reviewed 知识重复，应该作为父子规则、互链规则还是合并？",
+      "是否仍需要更多领域直接来源或内部 schema contract？",
+      "补 time_split_manifest_schema.json。",
+      "补 split_method enum：time_cutoff、walk_forward、rolling_window、expanding_window、purged_kfold、embargoed_split、approved_random_with_leakage_analysis。",
+      "补 gap_or_embargo owner 规则：AI Engineering 记录字段和 gate，Trading Engineering 提供 label horizon / market calendar 语义。",
+      "补 eval cases：future leakage、random split on time series、rolling window、expanding window、purged split、embargo gap、strategy version crossover。"
+    ],
+    "decision_log": [
+      {
+        "at": "2026-06-09",
+        "actor": "external_ai",
+        "decision": "accepted_for_draft",
+        "reason": "补证后可升级。statement 已明确聚焦 chronological market data 的 time-aware split / walk-forward / rolling / expanding window / train-before-test cutoff，source_refs 也补入 scikit-learn TimeSeriesSplit 和金融 purged / embargoed CV 相关资料。scikit-learn TimeSeriesSplit 直接说明 time-ordered data 不适合普通 CV，因为会导致未来训练、过去评估；金融 purged/embargoed CV 资料可作为交易时间序列泄漏防护的补充证据。因此可进入 draft，但正式 draft 应把 purged/embargo 作为可选技术模式，并由 Trading Engineering 或项目 owner 定义具体 market calendar、label horizon、embargo/gap。",
+        "audit_result_id": "audit_result_phase36_batch03_supplemental_reaudit_20260609_gpt55_pro_strict_sources"
+      },
+      {
+        "at": "2026-06-09",
+        "actor": "codex",
+        "decision": "converted_to_reviewed",
+        "reason": "按 Phase 36 批量审计结果优化候选并转为 formal reviewed；未升级 approved。",
+        "audit_result_id": "audit_result_phase36_batch03_supplemental_reaudit_20260609_gpt55_pro_strict_sources"
+      }
+    ],
+    "approval_status": "not_requested",
+    "default_guidance_allowed": false,
+    "source_candidate_id": "cand_20260609_ai_engineering_eval_time_split_walk_forward_required_v1_001",
+    "ai_audit_result_id": "audit_result_phase36_batch03_supplemental_reaudit_20260609_gpt55_pro_strict_sources",
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase36_batch03_supplemental_reaudit_20260609_gpt55_pro_strict_sources",
+      "source_package_id": "phase36_batch03_supplemental_audit_package_20260609",
+      "decision": "accepted_for_draft",
+      "reason": "补证后可升级。statement 已明确聚焦 chronological market data 的 time-aware split / walk-forward / rolling / expanding window / train-before-test cutoff，source_refs 也补入 scikit-learn TimeSeriesSplit 和金融 purged / embargoed CV 相关资料。scikit-learn TimeSeriesSplit 直接说明 time-ordered data 不适合普通 CV，因为会导致未来训练、过去评估；金融 purged/embargoed CV 资料可作为交易时间序列泄漏防护的补充证据。因此可进入 draft，但正式 draft 应把 purged/embargo 作为可选技术模式，并由 Trading Engineering 或项目 owner 定义具体 market calendar、label horizon、embargo/gap。",
+      "source_patch_notes": [
+        "将 scikit-learn TimeSeriesSplit 设为主来源，用于支撑 time-ordered data 的 train/test split 和普通 CV 不适用风险。",
+        "保留金融机器学习 purged / embargoed CV 来源作为交易时序泄漏防护 supporting source；如果来源是书籍目录或二级来源，正式 draft 应补项目内持有版本或更直接页码引用。",
+        "PMC 金融时间序列研究可作为 serial correlation、purging/embargoing cross-validation 的补充来源。",
+        "OpenAI evals 和 scikit-learn general CV 只作为 workflow / split discipline supporting sources，不应作为 time-aware split 主来源。",
+        "建议补 Trading Engineering split_policy_contract，定义交易日历、session、label horizon、gap/embargo、strategy_version。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议保留补充包写法：涉及 chronological market data 的交易 LLM gate/scoring 评估必须使用 time-aware split，例如 walk-forward、rolling window、expanding window 或明确 train-before-test cutoff；除非有 leakage analysis 批准，否则不得使用随机切分作为最终评估。",
+        "建议字段：split_method、train_start、train_end、validation_start、validation_end、test_start、test_end、gap_or_embargo、label_horizon_ref、walk_forward_window_id、rolling_or_expanding、time_leakage_check_id。",
+        "明确 random split 对交易时序数据默认不合格；若使用随机 split，必须记录理由、leakage analysis、reviewer 和 approved_exception_id。",
+        "将本条定位为 time-series split technical rule；eval_case.time_strategy_regime_split_required 保留为 eval case metadata declaration。",
+        "补充说明：time-aware split 不能单独解决 strategy leakage、asset leakage、regime leakage，因此仍需与 group split / strategy version split 互链。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 管理 time-aware split schema、审计字段、阻断条件和 leakage analysis 记录。",
+        "市场日历、交易 session、策略版本、regime 切分、timeframe、label horizon 和具体 embargo/gap 由 Trading Engineering 或项目 owner 提供。",
+        "不得写入具体交易策略、K 线条件、买卖信号、持仓、仓位、止损止盈或订单执行规则。"
+      ],
+      "conflict_patch_notes": [
+        "与 eval_case.time_strategy_regime_split_required 是父子或兄弟关系：本条负责 time-aware technical split，后者负责 eval case 的 time/strategy/regime metadata。",
+        "与 dataset.train_validation_test_split_required、eval.holdout_test_set_required、eval_case.no_training_overlap_required 互补。",
+        "与 leakage_train_test_contamination_block 后续候选应互链，用于发现时间泄漏或 split contamination。",
+        "未发现需要 rejected 的直接冲突。"
+      ],
+      "required_followups": [
+        "补 time_split_manifest_schema.json。",
+        "补 split_method enum：time_cutoff、walk_forward、rolling_window、expanding_window、purged_kfold、embargoed_split、approved_random_with_leakage_analysis。",
+        "补 gap_or_embargo owner 规则：AI Engineering 记录字段和 gate，Trading Engineering 提供 label horizon / market calendar 语义。",
+        "补 eval cases：future leakage、random split on time series、rolling window、expanding window、purged split、embargo gap、strategy version crossover。"
+      ]
+    },
+    "approved_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "contribution": {
+    "contribution_id": null,
+    "source_project": null,
+    "sanitization_status": "not_applicable",
+    "private_data_removed": true,
+    "generic_mapping_notes": "Phase 36 public-source AI Engineering candidate; no project-private trading facts included."
+  },
+  "copyright": {
+    "stores_full_text": false,
+    "stores_long_quote": false,
+    "summary_only": true,
+    "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+    "reuse_risk": "low"
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于审计 AI Engineering、LLM 训练、RAG/MCP、部署、安全或治理链路。",
+      "用于提醒外接项目补齐来源、适用边界、冲突状态、审计记录和人工审批。",
+      "用于 reviewed/audit 模式下带 caveat 引用。"
+    ],
+    "not_allowed": [
+      "不得生成买卖点、仓位、杠杆、止损止盈或实盘执行指令。",
+      "不得覆盖确定性风控、交易执行系统或人工审批。",
+      "不得作为 approved/default guidance 直接返回。"
+    ],
+    "required_context": [
+      "project_type",
+      "task_type",
+      "mode",
+      "strategy_version",
+      "data_boundary",
+      "review_status"
+    ],
+    "fallback_behavior": "cite_with_caveat"
+  },
+  "machine_gate": {
+    "default_guidance": "caveat_only",
+    "reason": "reviewed only; accepted_for_draft is not approved; default guidance requires later human governance approval.",
+    "requires_human_escalation": true,
+    "blocking_reasons": [
+      "not_approved",
+      "phase36_batch_reviewed_only"
+    ],
+    "checked_at": "2026-06-09",
+    "gate_version": "1.0.0",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "recommended_extra_sources": [
+    {
+      "title": "将 scikit-learn TimeSeriesSplit 设为主来源，用于支撑 time-ordered data 的 train/test split 和普通 CV 不适用风险。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_1"
+    },
+    {
+      "title": "保留金融机器学习 purged / embargoed CV 来源作为交易时序泄漏防护 supporting source；如果来源是书籍目录或二级来源，正式 draft 应补项目内持有版本或更直接页码引用。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_2"
+    },
+    {
+      "title": "PMC 金融时间序列研究可作为 serial correlation、purging/embargoing cross-validation 的补充来源。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_3"
+    },
+    {
+      "title": "OpenAI evals 和 scikit-learn general CV 只作为 workflow / split discipline supporting sources，不应作为 time-aware split 主来源。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_4"
+    },
+    {
+      "title": "建议补 Trading Engineering split_policy_contract，定义交易日历、session、label horizon、gap/embargo、strategy_version。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_5"
+    }
+  ]
+}

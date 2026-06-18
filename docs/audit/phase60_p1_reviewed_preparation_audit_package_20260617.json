@@ -1,0 +1,1972 @@
+{
+  "package_id": "phase60_p1_reviewed_preparation_audit_package_20260617",
+  "created_at": "2026-06-17T15:46:15+00:00",
+  "created_by": "codex",
+  "phase": "Phase 60",
+  "task_id": "CEK-TA-585",
+  "audit_goal": "严格审计 Phase 60 P1 accepted_for_draft 候选是否可进入 formal reviewed/caveat_only；不得创建 approved、default guidance 或 hard gate。",
+  "hard_boundaries": {
+    "candidate_is_not_formal_knowledge": true,
+    "accepted_for_draft_is_not_reviewed": true,
+    "reviewed_allowed_only_if_explicitly_accepted_for_reviewed_caveat_only": true,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "trade_execution_advice_allowed": false,
+    "risk_threshold_advice_allowed": false,
+    "live_permission_allowed": false,
+    "must_search_professional_sources": true,
+    "must_check_sources_cases_and_data": true
+  },
+  "required_audit_checks": [
+    "逐条判断是否可进入 accepted_for_reviewed_caveat_only。",
+    "检查 source、content、boundary、conflict patch 是否已被正确回写。",
+    "特别检查 P60-P1-02、P60-P1-05、P60-P1-06 是否仍需更多直接来源。",
+    "检查是否存在 approval_allowed=true、默认指导、hard gate、交易建议、上线许可或风险阈值。",
+    "检查与 Phase 60 P0、Phase 58、Phase 37、Phase 45 的重复、alias 和 owner 边界。",
+    "检查中文乱码、mock/test 污染、私有策略参数、账户事实、密钥或实盘敏感信息。"
+  ],
+  "allowed_decisions": [
+    "accepted_for_reviewed_caveat_only",
+    "needs_more_evidence",
+    "rejected",
+    "blocked"
+  ],
+  "forbidden_decisions": [
+    "approved",
+    "default_guidance",
+    "hard_gate",
+    "live_permission"
+  ],
+  "expected_output_schema": {
+    "candidate_results": [
+      {
+        "candidate_id": "string",
+        "research_task_id": "string",
+        "decision": "accepted_for_reviewed_caveat_only | needs_more_evidence | rejected | blocked",
+        "confidence": "low | medium | medium_high | high",
+        "reviewed_allowed": "boolean",
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "reasons": [
+          "string"
+        ],
+        "required_followups": [
+          "string"
+        ],
+        "patch_notes": {
+          "source": [
+            "string"
+          ],
+          "content": [
+            "string"
+          ],
+          "boundary": [
+            "string"
+          ],
+          "conflict": [
+            "string"
+          ]
+        }
+      }
+    ]
+  },
+  "gap_report": {
+    "report_id": "phase60_p1_reviewed_preparation_gap_report",
+    "generated_at": "2026-06-17T15:46:15+00:00",
+    "task_id": "CEK-TA-585",
+    "candidate_count": 6,
+    "failure_count": 0,
+    "warning_count": 0,
+    "failures": [],
+    "warnings": [],
+    "rows": [
+      {
+        "candidate_id": "cand_20260617_phase60_p1_fix_broker_certification_required_001",
+        "research_task_id": "P60-P1-01",
+        "path": "codex-expert-kit/rag/candidates/KB_06_LIVE_EXECUTION/cand_20260617_phase60_p1_fix_broker_certification_required_001.json",
+        "source_count": 4,
+        "required_field_count": 12,
+        "reviewed_preparation_expectation": {
+          "required_focus": [
+            "确认 certification_result_not_live_permission、adapter_certification_scope、certified_message_types、certified_order_lifecycle_cases 是否足够。",
+            "确认 TT / Paxos / FIXSIM 均保留平台或工具来源边界。"
+          ],
+          "known_risk": "FIX/broker certification 被误读为真实流动性、策略收益或上线许可。"
+        }
+      },
+      {
+        "candidate_id": "cand_20260617_phase60_p1_replay_scenario_library_versioned_001",
+        "research_task_id": "P60-P1-02",
+        "path": "codex-expert-kit/rag/candidates/KB_05_REPLAY_SIMULATION/cand_20260617_phase60_p1_replay_scenario_library_versioned_001.json",
+        "source_count": 3,
+        "required_field_count": 16,
+        "reviewed_preparation_expectation": {
+          "required_focus": [
+            "重点审计 scenario schema 是否足以进入 reviewed/caveat_only。",
+            "判断是否仍需补更直接的 regression testing / simulation reproducibility / dataset snapshot manifest 来源。"
+          ],
+          "known_risk": "scenario library 通过被误读为未来收益或 live-ready。"
+        }
+      },
+      {
+        "candidate_id": "cand_20260617_phase60_p1_paper_account_reset_trace_required_001",
+        "research_task_id": "P60-P1-03",
+        "path": "codex-expert-kit/rag/candidates/KB_06_LIVE_EXECUTION/cand_20260617_phase60_p1_paper_account_reset_trace_required_001.json",
+        "source_count": 3,
+        "required_field_count": 14,
+        "reviewed_preparation_expectation": {
+          "required_focus": [
+            "确认 paper account reset、initial_cash、position_seed_ref、paper_broker_model_version 和 paper_account_api_key_scope 是否足够。",
+            "确认 paper account state 不会混入 live account facts。"
+          ],
+          "known_risk": "paper 虚拟账户状态被误读为真实账户、保证金或购买力。"
+        }
+      },
+      {
+        "candidate_id": "cand_20260617_phase60_p1_realtime_sim_health_monitor_required_001",
+        "research_task_id": "P60-P1-04",
+        "path": "codex-expert-kit/rag/candidates/KB_06_LIVE_EXECUTION/cand_20260617_phase60_p1_realtime_sim_health_monitor_required_001.json",
+        "source_count": 3,
+        "required_field_count": 15,
+        "reviewed_preparation_expectation": {
+          "required_focus": [
+            "确认 heartbeat、disconnect、reconnect、data_stale、order_event_lag、adapter_error reason code 是否足够。",
+            "确认 Google SRE 只作为通用工程来源，不生成交易 hard gate。"
+          ],
+          "known_risk": "环境健康监控被误读为交易许可或策略有效。"
+        }
+      },
+      {
+        "candidate_id": "cand_20260617_phase60_p1_live_canary_rollback_owner_required_001",
+        "research_task_id": "P60-P1-05",
+        "path": "codex-expert-kit/rag/candidates/KB_07_RISK_MANAGEMENT/cand_20260617_phase60_p1_live_canary_rollback_owner_required_001.json",
+        "source_count": 3,
+        "required_field_count": 16,
+        "reviewed_preparation_expectation": {
+          "required_focus": [
+            "重点审计 canary_scope、stop_condition_ref、rollback_plan_ref、risk_owner、live_execution_owner、manual_review_required 和 residual_gap。",
+            "判断是否需要交易系统特定 live canary / broker risk owner 来源才能 reviewed/caveat_only。"
+          ],
+          "known_risk": "live canary 通过被误读为 full live 或自动扩容许可。"
+        }
+      },
+      {
+        "candidate_id": "cand_20260617_phase60_p1_environment_drift_monitor_required_001",
+        "research_task_id": "P60-P1-06",
+        "path": "codex-expert-kit/rag/candidates/KB_05_REPLAY_SIMULATION/cand_20260617_phase60_p1_environment_drift_monitor_required_001.json",
+        "source_count": 4,
+        "required_field_count": 20,
+        "reviewed_preparation_expectation": {
+          "required_focus": [
+            "确认 drift report 字段是否足以比较 replay、paper、canary 与 live 差异趋势。",
+            "判断是否需要 QuantConnect live reconciliation 或 Nautilus live reconciliation 作为 reviewed 前直接来源。"
+          ],
+          "known_risk": "environment drift report 被误读为收益证明、交易许可或 hard gate。"
+        }
+      }
+    ],
+    "gate_status": "pass",
+    "boundary": "This package may only allow accepted_for_reviewed_caveat_only / needs_more_evidence / rejected / blocked. It must not create approved/default guidance/hard gate."
+  },
+  "candidates": [
+    {
+      "schema_version": "1.1.0-candidate",
+      "candidate_id": "cand_20260617_phase60_p1_fix_broker_certification_required_001",
+      "research_task_id": "P60-P1-01",
+      "status": {
+        "review_status": "accepted_for_draft",
+        "ingestion_decision": "accepted_for_draft",
+        "decision_reason": "Phase 60 P1 strict audit accepted this candidate for draft only; reviewed/approved/default/hard gate are not allowed.",
+        "created_at": "2026-06-17",
+        "updated_at": "2026-06-17"
+      },
+      "classification": {
+        "tree_node_id": "kt.live_execution",
+        "canonical_node_id": "kt.live_execution",
+        "tree_path": "CEK-TA / Trading Engineering / Live Execution",
+        "related_nodes": [
+          "kt.trading_engineering",
+          "kt.replay_simulation",
+          "kt.live_execution",
+          "kt.risk_management",
+          "kt.data_engineering",
+          "kt.market_microstructure"
+        ],
+        "partition_id": "KB_06_LIVE_EXECUTION",
+        "domain": "live_execution",
+        "subdomain": "adapter_certification",
+        "rule_type": "adapter_certification_boundary_rule",
+        "claim_type": "environment_evidence_requirement",
+        "used_for": [
+          "adapter_review",
+          "sandbox_certification",
+          "live_execution_readiness",
+          "external_project_rag_retrieval"
+        ],
+        "classification_notes": "Phase 60 P1 增强环境治理候选；只用于 sandbox/replay/paper/canary 的测试、监控、晋级和 gap 审计，不接管策略、实盘执行或风控阈值。"
+      },
+      "claim": {
+        "claim_id": "claim_p60_p1_01",
+        "title": "FIX / broker certification sandbox 必须作为 adapter 上线前的契约测试证据",
+        "statement": "外接项目接入 FIX、broker API 或 exchange adapter 前，必须把认证 sandbox / UAT / simulator 结果记录为 adapter 契约测试证据；该证据只能说明消息、字段、状态转换和错误场景被覆盖，不能证明策略收益、真实流动性或实盘许可。",
+        "normalized_claim": "phase60.p1.fix_broker_certification_required.v1",
+        "evidence_summary": "TT documents FIX certification as a process to ensure a FIX application works as expected in the TT production environment.；FIXSIM describes a web-based FIX simulator for manual workflows and automated deterministic regression tests.；Paxos documents FIX certification scenarios such as valid and invalid markets, order types and execution reports.",
+        "interpretation_notes": "本候选是 Phase 60 P1 增强治理知识，只允许外部审计后进入 accepted_for_draft；不得直接 reviewed、approved、default guidance 或 hard gate。",
+        "claim_strength": "medium_high",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general_with_platform_or_venue_specific_mapping",
+        "asset": "general",
+        "timeframe": "sandbox_replay_paper_or_live_canary_environment",
+        "data_granularity": "api_message_order_event_fill_event_health_metric_or_gap_report",
+        "project_type": "trading_ai_support_layer",
+        "applies_when": [
+          "外接项目设计 sandbox、UAT、testnet、replay、paper trading 或 live canary 环境治理",
+          "需要审计 adapter certification、scenario library、paper account state、runtime health、canary rollback 或 environment drift",
+          "需要把 Phase 60 P0 manifest/gap report 扩展为更完整的测试治理证据"
+        ],
+        "not_applicable_when": [
+          "需要生成买卖点、仓位、杠杆、止损止盈、风险阈值或实盘执行建议",
+          "需要直接证明策略有效、live-ready 或收益优势",
+          "没有平台、broker、exchange、API 版本、环境类型或数据来源证据"
+        ],
+        "assumptions": [
+          "候选用于 CEK-TA 通用支持层知识库，不包含外接项目私有策略参数。",
+          "每条候选都需要外部 AI/人工严格审计后才能进入 accepted_for_draft。",
+          "平台和工具来源只能作为 implementation pattern 或 supporting source。"
+        ],
+        "limitations": [
+          "P1 增强知识不能替代 P0 的 EnvironmentManifest、PromotionDecision 和 GapReport。",
+          "候选不能自动创建 reviewed、approved、default guidance 或 hard gate。",
+          "本候选不提供投资建议、订单建议、风险阈值或实盘许可。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_title": "TT FIX Certification",
+          "source_url": "https://library.tradingtechnologies.com/tt-fix/tt-fix-general/getting-started-tt-fix-general/tt-fix-certification/",
+          "source_type": "official_doc",
+          "publisher": "Trading Technologies",
+          "reliability": "high",
+          "score": 86,
+          "freshness": "time_sensitive",
+          "evidence_summary": "TT documents FIX certification as a process to ensure a FIX application works as expected in the TT production environment.",
+          "limitations": [
+            "TT-specific certification process; use as adapter certification pattern, not a universal requirement."
+          ],
+          "source_id": "src_tt_fix_cert",
+          "accessed_at": "2026-06-17",
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "FIXSIM",
+          "source_url": "https://www.fixsim.com/",
+          "source_type": "tool_doc",
+          "publisher": "FIXSIM",
+          "reliability": "medium_high",
+          "score": 78,
+          "freshness": "time_sensitive",
+          "evidence_summary": "FIXSIM describes a web-based FIX simulator for manual workflows and automated deterministic regression tests.",
+          "limitations": [
+            "Vendor tool source; use only as testing workflow example."
+          ],
+          "source_id": "src_fixsim",
+          "accessed_at": "2026-06-17",
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "FIX Certification",
+          "source_url": "https://docs.paxos.com/guides/crypto-brokerage/fix/certify",
+          "source_type": "official_doc",
+          "publisher": "Paxos",
+          "reliability": "high",
+          "score": 82,
+          "freshness": "time_sensitive",
+          "evidence_summary": "Paxos documents FIX certification scenarios such as valid and invalid markets, order types and execution reports.",
+          "limitations": [
+            "Paxos-specific; use as crypto brokerage FIX certification example."
+          ],
+          "source_id": "src_paxos_fix_cert",
+          "accessed_at": "2026-06-17",
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Phase 60 Sandbox / Replay / Paper Environment Contract",
+          "source_url": "docs/contracts/phase60_sandbox_replay_paper_environment_contract.md",
+          "source_type": "internal_contract",
+          "publisher": "CEK-TA",
+          "reliability": "high",
+          "score": 88,
+          "freshness": "current",
+          "evidence_summary": "CEK-TA internal contract defines EnvironmentManifest fields, owner boundaries and machine gate restrictions.",
+          "limitations": [
+            "Internal schema; candidate requires external audit before accepted_for_draft or reviewed."
+          ],
+          "source_id": "src_phase60_env_contract",
+          "accessed_at": "2026-06-17",
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "source_count": 4,
+        "primary_source_count": 3,
+        "quality_level": "medium_high",
+        "limitations": [
+          "候选来源需要外部严格审计；vendor/tool 文档不得过度泛化。"
+        ],
+        "freshness": "mixed"
+      },
+      "content": {
+        "statement": "外接项目接入 FIX、broker API 或 exchange adapter 前，必须把认证 sandbox / UAT / simulator 结果记录为 adapter 契约测试证据；该证据只能说明消息、字段、状态转换和错误场景被覆盖，不能证明策略收益、真实流动性或实盘许可。",
+        "required_fields_or_contract": [
+          "environment_id",
+          "environment_type",
+          "adapter_or_scenario_version",
+          "evidence_source_id",
+          "audit_trace_id",
+          "owner",
+          "known_limitations",
+          "not_live_permission",
+          "certification_result_not_live_permission",
+          "adapter_certification_scope",
+          "certified_message_types",
+          "certified_order_lifecycle_cases"
+        ],
+        "procedure": [
+          "识别环境类型、平台、broker/exchange、API 版本和数据来源。",
+          "记录候选主题所需的 evidence 字段、owner 和限制。",
+          "将通过/失败写入 gap report 或 promotion decision，不直接写成实盘许可。"
+        ],
+        "anti_patterns": [
+          "把 paper/replay/sandbox/canary 表现写成策略有效。",
+          "把 vendor-specific 行为泛化为所有市场。",
+          "把测试通过写成 approved、default guidance、hard gate 或自动交易许可。"
+        ],
+        "validation": [
+          "外部 AI/人工严格审计 source、content、boundary、conflict patch notes。",
+          "正式转换前做完整 KB 冲突、重复和 owner 边界检查。"
+        ],
+        "risk_notes": [
+          "测试环境的通过结果容易被误读为 live-ready。",
+          "环境健康、认证、场景覆盖或 canary 观察都不能替代 Risk/Live owner 的正式决策。",
+          "Phase 60 P1 只能作为增强治理证据，不替代 P0 EnvironmentManifest / PromotionDecision / GapReport。",
+          "certification、scenario、paper reset、health、canary、drift 结果不得解释为 live-ready、收益证明、交易许可或 hard gate。"
+        ]
+      },
+      "review": {
+        "review_status": "accepted_for_draft",
+        "reviewed_by": "external_ai_strict_audit",
+        "reviewed_at": "2026-06-17",
+        "default_guidance_allowed": false,
+        "approved_allowed": false,
+        "hard_gate_allowed": false,
+        "notes": "Accepted for draft only. Requires reviewed-preparation audit before formal reviewed/caveat_only.",
+        "ai_audit": {
+          "audit_result_id": "audit_result_phase60_p1_candidate_20260617_strict_v1",
+          "package_id": "phase60_p1_candidate_audit_package_20260617",
+          "decision": "accepted_for_draft",
+          "confidence": "medium_high",
+          "reviewed_allowed": false,
+          "approved_allowed": false,
+          "default_guidance_allowed": false,
+          "hard_gate_allowed": false,
+          "required_followups": [
+            "修复 conflict_audit.approval_allowed=false。",
+            "补 certification_result_not_live_permission=true。",
+            "补 certified_message_types、certified_order_lifecycle_cases、adapter_certification_scope。",
+            "明确 TT / Paxos / FIXSIM 均为平台或工具来源，不是 universal rule。"
+          ],
+          "patch_notes": {
+            "source": [
+              "TT 是 TT-specific certification process。",
+              "FIXSIM 是 vendor tool source，只能作为 testing workflow example。",
+              "Paxos 是 crypto brokerage FIX certification example。"
+            ],
+            "content": [
+              "certification 只能作为 adapter 契约测试证据。",
+              "不得证明策略收益、真实流动性或 live permission。"
+            ],
+            "boundary": [
+              "不得 reviewed、approved、default guidance 或 hard gate。"
+            ],
+            "conflict": [
+              "与 Phase 45 order semantics 可能重叠，需做 adapter/order lifecycle alias。"
+            ]
+          },
+          "global_required_patch": [
+            "将所有 candidate.conflict_audit.approval_allowed 从 true 改为 false。",
+            "明确 Phase 60 P1 只能作为增强治理证据，不替代 P0 EnvironmentManifest / PromotionDecision / GapReport。",
+            "所有 certification、scenario、paper reset、health、canary、drift 结果均不得解释为 live-ready、收益证明、交易许可或 hard gate。",
+            "所有 FIX、broker、paper、canary、monitoring 来源必须保留平台、工具或工程语境边界。"
+          ]
+        }
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "known_conflicts": [],
+        "potential_conflicts": [
+          "可能与 Phase 60 P0、Phase 58 环境等效链条、Phase 37 Replay/Live/Risk 知识重叠；正式转换前必须做重复和 owner 边界检查。"
+        ],
+        "resolution_summary": "Phase 60 P1 candidate audit accepted this item for draft only; reviewed/approved/default guidance/hard gate remain forbidden.",
+        "approval_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒外接项目记录环境治理证据和 gap report。",
+          "用于审计 sandbox/replay/paper/canary 是否保留 owner 和边界。",
+          "用于阻止 AI 把测试环境结果泛化为 live-ready。"
+        ],
+        "not_allowed": [
+          "不得生成买卖点、仓位、杠杆、止损止盈或风险阈值。",
+          "不得授权实盘、自动拒单、自动停机或 hard gate。",
+          "不得把 candidate 当作正式 reviewed 或 approved 知识。"
+        ]
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reviewed_allowed": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "trade_execution_advice_allowed": false,
+        "risk_threshold_advice_allowed": false,
+        "requires_human_escalation": true,
+        "reason": "accepted_for_draft only; reviewed-preparation audit required before formal reviewed/caveat_only."
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_phase60_live_execution.adapter_certification.fix_broker_certification_required.v1",
+        "target_partition": "KB_06_LIVE_EXECUTION",
+        "target_review_status": "accepted_for_draft_pending_reviewed_preparation",
+        "default_guidance_target": "deny",
+        "hard_gate_target": "deny"
+      },
+      "workflow": {
+        "stage": "accepted_for_draft",
+        "queue_group": "ai_passed",
+        "hidden_from_default_queue": true,
+        "next_action": "export_reviewed_preparation_audit_package",
+        "formal_knowledge_id": null,
+        "formal_review_status": null
+      },
+      "audit_log": [
+        {
+          "event": "candidate_created",
+          "at": "2026-06-17",
+          "by": "codex",
+          "notes": "Phase 60 P1 候选生成，等待严格审计。"
+        },
+        {
+          "event": "strict_ai_audit_imported",
+          "at": "2026-06-17",
+          "by": "codex",
+          "task_id": "CEK-TA-584",
+          "audit_result_id": "audit_result_phase60_p1_candidate_20260617_strict_v1",
+          "decision": "accepted_for_draft",
+          "notes": "Candidate moved to accepted_for_draft only; no formal reviewed knowledge created."
+        }
+      ],
+      "copyright": {
+        "stores_full_text": false,
+        "stores_long_quote": false,
+        "summary_only": true
+      }
+    },
+    {
+      "schema_version": "1.1.0-candidate",
+      "candidate_id": "cand_20260617_phase60_p1_replay_scenario_library_versioned_001",
+      "research_task_id": "P60-P1-02",
+      "status": {
+        "review_status": "accepted_for_draft",
+        "ingestion_decision": "accepted_for_draft",
+        "decision_reason": "Phase 60 P1 strict audit accepted this candidate for draft only; reviewed/approved/default/hard gate are not allowed.",
+        "created_at": "2026-06-17",
+        "updated_at": "2026-06-17"
+      },
+      "classification": {
+        "tree_node_id": "kt.replay_simulation",
+        "canonical_node_id": "kt.replay_simulation",
+        "tree_path": "CEK-TA / Trading Engineering / Replay Simulation",
+        "related_nodes": [
+          "kt.trading_engineering",
+          "kt.replay_simulation",
+          "kt.live_execution",
+          "kt.risk_management",
+          "kt.data_engineering",
+          "kt.market_microstructure"
+        ],
+        "partition_id": "KB_05_REPLAY_SIMULATION",
+        "domain": "replay_simulation",
+        "subdomain": "scenario_library",
+        "rule_type": "scenario_replay_governance_rule",
+        "claim_type": "versioned_test_evidence_requirement",
+        "used_for": [
+          "replay_testing",
+          "simulation_qa",
+          "gap_report",
+          "external_project_rag_retrieval"
+        ],
+        "classification_notes": "Phase 60 P1 增强环境治理候选；只用于 sandbox/replay/paper/canary 的测试、监控、晋级和 gap 审计，不接管策略、实盘执行或风控阈值。"
+      },
+      "claim": {
+        "claim_id": "claim_p60_p1_02",
+        "title": "replay / simulation scenario library 必须版本化",
+        "statement": "用于测试极端行情、停牌、auction、断线、拒单、部分成交、延迟和错误恢复的 replay / simulation scenario library 必须记录 scenario_id、dataset_version、event_clock、seed、assumption_hash 和 expected_observation；场景通过只能证明测试覆盖，不能证明未来收益。",
+        "normalized_claim": "phase60.p1.replay_scenario_library_versioned.v1",
+        "evidence_summary": "The paper distinguishes market replay and multi-agent simulation as different methods for strategy evaluation.；NautilusTrader separates backtest, sandbox and live contexts while sharing core runtime architecture.；CEK-TA internal contract defines EnvironmentManifest fields, owner boundaries and machine gate restrictions.",
+        "interpretation_notes": "本候选是 Phase 60 P1 增强治理知识，只允许外部审计后进入 accepted_for_draft；不得直接 reviewed、approved、default guidance 或 hard gate。",
+        "claim_strength": "medium_high",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general_with_platform_or_venue_specific_mapping",
+        "asset": "general",
+        "timeframe": "sandbox_replay_paper_or_live_canary_environment",
+        "data_granularity": "api_message_order_event_fill_event_health_metric_or_gap_report",
+        "project_type": "trading_ai_support_layer",
+        "applies_when": [
+          "外接项目设计 sandbox、UAT、testnet、replay、paper trading 或 live canary 环境治理",
+          "需要审计 adapter certification、scenario library、paper account state、runtime health、canary rollback 或 environment drift",
+          "需要把 Phase 60 P0 manifest/gap report 扩展为更完整的测试治理证据"
+        ],
+        "not_applicable_when": [
+          "需要生成买卖点、仓位、杠杆、止损止盈、风险阈值或实盘执行建议",
+          "需要直接证明策略有效、live-ready 或收益优势",
+          "没有平台、broker、exchange、API 版本、环境类型或数据来源证据"
+        ],
+        "assumptions": [
+          "候选用于 CEK-TA 通用支持层知识库，不包含外接项目私有策略参数。",
+          "每条候选都需要外部 AI/人工严格审计后才能进入 accepted_for_draft。",
+          "平台和工具来源只能作为 implementation pattern 或 supporting source。"
+        ],
+        "limitations": [
+          "P1 增强知识不能替代 P0 的 EnvironmentManifest、PromotionDecision 和 GapReport。",
+          "候选不能自动创建 reviewed、approved、default guidance 或 hard gate。",
+          "本候选不提供投资建议、订单建议、风险阈值或实盘许可。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_title": "How to Evaluate Trading Strategies: Single Agent Market Replay or Multi-Agent Simulation",
+          "source_url": "https://www.jpmorgan.com/content/dam/jpm/cib/complex/content/technology/ai-research-publications/pdf-12.pdf",
+          "source_type": "research_paper",
+          "publisher": "J.P. Morgan AI Research",
+          "reliability": "high",
+          "score": 86,
+          "freshness": "stable",
+          "evidence_summary": "The paper distinguishes market replay and multi-agent simulation as different methods for strategy evaluation.",
+          "limitations": [
+            "Research context; does not define CEK-TA scenario schema or prove live readiness."
+          ],
+          "source_id": "src_jpm_replay",
+          "accessed_at": "2026-06-17",
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "NautilusTrader Architecture",
+          "source_url": "https://nautilustrader.io/docs/latest/concepts/architecture/",
+          "source_type": "framework_doc",
+          "publisher": "NautilusTrader",
+          "reliability": "high",
+          "score": 86,
+          "freshness": "time_sensitive",
+          "evidence_summary": "NautilusTrader separates backtest, sandbox and live contexts while sharing core runtime architecture.",
+          "limitations": [
+            "Framework-specific; use as environment implementation pattern."
+          ],
+          "source_id": "src_nautilus_arch",
+          "accessed_at": "2026-06-17",
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Phase 60 Sandbox / Replay / Paper Environment Contract",
+          "source_url": "docs/contracts/phase60_sandbox_replay_paper_environment_contract.md",
+          "source_type": "internal_contract",
+          "publisher": "CEK-TA",
+          "reliability": "high",
+          "score": 88,
+          "freshness": "current",
+          "evidence_summary": "CEK-TA internal contract defines EnvironmentManifest fields, owner boundaries and machine gate restrictions.",
+          "limitations": [
+            "Internal schema; candidate requires external audit before accepted_for_draft or reviewed."
+          ],
+          "source_id": "src_phase60_env_contract",
+          "accessed_at": "2026-06-17",
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "source_count": 3,
+        "primary_source_count": 2,
+        "quality_level": "medium_high",
+        "limitations": [
+          "候选来源需要外部严格审计；vendor/tool 文档不得过度泛化。"
+        ],
+        "freshness": "mixed"
+      },
+      "content": {
+        "statement": "用于测试极端行情、停牌、auction、断线、拒单、部分成交、延迟和错误恢复的 replay / simulation scenario library 必须记录 scenario_id、dataset_version、event_clock、seed、assumption_hash 和 expected_observation；场景通过只能证明测试覆盖，不能证明未来收益。",
+        "required_fields_or_contract": [
+          "environment_id",
+          "environment_type",
+          "adapter_or_scenario_version",
+          "evidence_source_id",
+          "audit_trace_id",
+          "owner",
+          "known_limitations",
+          "not_live_permission",
+          "scenario_result_not_profit_evidence",
+          "scenario_library_not_live_permission",
+          "scenario_id",
+          "dataset_version",
+          "event_clock",
+          "seed",
+          "assumption_hash",
+          "expected_observation"
+        ],
+        "procedure": [
+          "识别环境类型、平台、broker/exchange、API 版本和数据来源。",
+          "记录候选主题所需的 evidence 字段、owner 和限制。",
+          "将通过/失败写入 gap report 或 promotion decision，不直接写成实盘许可。"
+        ],
+        "anti_patterns": [
+          "把 paper/replay/sandbox/canary 表现写成策略有效。",
+          "把 vendor-specific 行为泛化为所有市场。",
+          "把测试通过写成 approved、default guidance、hard gate 或自动交易许可。"
+        ],
+        "validation": [
+          "外部 AI/人工严格审计 source、content、boundary、conflict patch notes。",
+          "正式转换前做完整 KB 冲突、重复和 owner 边界检查。"
+        ],
+        "risk_notes": [
+          "测试环境的通过结果容易被误读为 live-ready。",
+          "环境健康、认证、场景覆盖或 canary 观察都不能替代 Risk/Live owner 的正式决策。",
+          "Phase 60 P1 只能作为增强治理证据，不替代 P0 EnvironmentManifest / PromotionDecision / GapReport。",
+          "certification、scenario、paper reset、health、canary、drift 结果不得解释为 live-ready、收益证明、交易许可或 hard gate。"
+        ]
+      },
+      "review": {
+        "review_status": "accepted_for_draft",
+        "reviewed_by": "external_ai_strict_audit",
+        "reviewed_at": "2026-06-17",
+        "default_guidance_allowed": false,
+        "approved_allowed": false,
+        "hard_gate_allowed": false,
+        "notes": "Accepted for draft only. Requires reviewed-preparation audit before formal reviewed/caveat_only.",
+        "ai_audit": {
+          "audit_result_id": "audit_result_phase60_p1_candidate_20260617_strict_v1",
+          "package_id": "phase60_p1_candidate_audit_package_20260617",
+          "decision": "accepted_for_draft",
+          "confidence": "medium",
+          "reviewed_allowed": false,
+          "approved_allowed": false,
+          "default_guidance_allowed": false,
+          "hard_gate_allowed": false,
+          "required_followups": [
+            "修复 conflict_audit.approval_allowed=false。",
+            "补 scenario_result_not_profit_evidence=true。",
+            "补 scenario_library_not_live_permission=true。",
+            "补更直接的回归测试、simulation reproducibility、dataset snapshot manifest 来源。",
+            "补最小 scenario schema：scenario_id、dataset_version、event_clock、seed、assumption_hash、expected_observation。"
+          ],
+          "patch_notes": {
+            "source": [
+              "J.P. Morgan / ABIDES 类资料支持 replay/simulation 区分，但不直接定义 CEK-TA scenario schema。",
+              "NautilusTrader 只能作为 framework context source。"
+            ],
+            "content": [
+              "scenario library 是测试覆盖证据，不是策略有效证据。"
+            ],
+            "boundary": [
+              "不得收益证明，不得 live-ready，不得 hard gate。"
+            ],
+            "conflict": [
+              "与 Phase 37 replay/simulation 可能重叠，应作为测试场景治理补充。"
+            ]
+          },
+          "global_required_patch": [
+            "将所有 candidate.conflict_audit.approval_allowed 从 true 改为 false。",
+            "明确 Phase 60 P1 只能作为增强治理证据，不替代 P0 EnvironmentManifest / PromotionDecision / GapReport。",
+            "所有 certification、scenario、paper reset、health、canary、drift 结果均不得解释为 live-ready、收益证明、交易许可或 hard gate。",
+            "所有 FIX、broker、paper、canary、monitoring 来源必须保留平台、工具或工程语境边界。"
+          ]
+        }
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "known_conflicts": [],
+        "potential_conflicts": [
+          "可能与 Phase 60 P0、Phase 58 环境等效链条、Phase 37 Replay/Live/Risk 知识重叠；正式转换前必须做重复和 owner 边界检查。"
+        ],
+        "resolution_summary": "Phase 60 P1 candidate audit accepted this item for draft only; reviewed/approved/default guidance/hard gate remain forbidden.",
+        "approval_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒外接项目记录环境治理证据和 gap report。",
+          "用于审计 sandbox/replay/paper/canary 是否保留 owner 和边界。",
+          "用于阻止 AI 把测试环境结果泛化为 live-ready。"
+        ],
+        "not_allowed": [
+          "不得生成买卖点、仓位、杠杆、止损止盈或风险阈值。",
+          "不得授权实盘、自动拒单、自动停机或 hard gate。",
+          "不得把 candidate 当作正式 reviewed 或 approved 知识。"
+        ]
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reviewed_allowed": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "trade_execution_advice_allowed": false,
+        "risk_threshold_advice_allowed": false,
+        "requires_human_escalation": true,
+        "reason": "accepted_for_draft only; reviewed-preparation audit required before formal reviewed/caveat_only."
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_phase60_replay_simulation.scenario_library.versioned_required.v1",
+        "target_partition": "KB_05_REPLAY_SIMULATION",
+        "target_review_status": "accepted_for_draft_pending_reviewed_preparation",
+        "default_guidance_target": "deny",
+        "hard_gate_target": "deny"
+      },
+      "workflow": {
+        "stage": "accepted_for_draft",
+        "queue_group": "ai_passed",
+        "hidden_from_default_queue": true,
+        "next_action": "export_reviewed_preparation_audit_package",
+        "formal_knowledge_id": null,
+        "formal_review_status": null
+      },
+      "audit_log": [
+        {
+          "event": "candidate_created",
+          "at": "2026-06-17",
+          "by": "codex",
+          "notes": "Phase 60 P1 候选生成，等待严格审计。"
+        },
+        {
+          "event": "strict_ai_audit_imported",
+          "at": "2026-06-17",
+          "by": "codex",
+          "task_id": "CEK-TA-584",
+          "audit_result_id": "audit_result_phase60_p1_candidate_20260617_strict_v1",
+          "decision": "accepted_for_draft",
+          "notes": "Candidate moved to accepted_for_draft only; no formal reviewed knowledge created."
+        }
+      ],
+      "copyright": {
+        "stores_full_text": false,
+        "stores_long_quote": false,
+        "summary_only": true
+      }
+    },
+    {
+      "schema_version": "1.1.0-candidate",
+      "candidate_id": "cand_20260617_phase60_p1_paper_account_reset_trace_required_001",
+      "research_task_id": "P60-P1-03",
+      "status": {
+        "review_status": "accepted_for_draft",
+        "ingestion_decision": "accepted_for_draft",
+        "decision_reason": "Phase 60 P1 strict audit accepted this candidate for draft only; reviewed/approved/default/hard gate are not allowed.",
+        "created_at": "2026-06-17",
+        "updated_at": "2026-06-17"
+      },
+      "classification": {
+        "tree_node_id": "kt.live_execution",
+        "canonical_node_id": "kt.live_execution",
+        "tree_path": "CEK-TA / Trading Engineering / Live Execution",
+        "related_nodes": [
+          "kt.trading_engineering",
+          "kt.replay_simulation",
+          "kt.live_execution",
+          "kt.risk_management",
+          "kt.data_engineering",
+          "kt.market_microstructure"
+        ],
+        "partition_id": "KB_06_LIVE_EXECUTION",
+        "domain": "live_execution",
+        "subdomain": "paper_account_state",
+        "rule_type": "paper_account_governance_rule",
+        "claim_type": "account_state_boundary",
+        "used_for": [
+          "paper_trading_review",
+          "account_state_audit",
+          "paper_live_gap",
+          "external_project_rag_retrieval"
+        ],
+        "classification_notes": "Phase 60 P1 增强环境治理候选；只用于 sandbox/replay/paper/canary 的测试、监控、晋级和 gap 审计，不接管策略、实盘执行或风控阈值。"
+      },
+      "claim": {
+        "claim_id": "claim_p60_p1_03",
+        "title": "paper account reset、初始资金和账户状态必须可追踪",
+        "statement": "paper trading 的 account reset、virtual buying power、initial cash、position seed 和 broker model version 会改变评估语义，必须写入 audit trace；paper 账户状态不得与 live 账户事实、真实保证金或真实购买力混用。",
+        "normalized_claim": "phase60.p1.paper_account_reset_trace_required.v1",
+        "evidence_summary": "Alpaca documents paper trading as a test environment and discusses limitations such as market impact, latency, queue position, fees and dividends.；QuantConnect documents paper trading as live real-time data with fictional capital and simulated fills.；CEK-TA internal contract defines EnvironmentManifest fields, owner boundaries and machine gate restrictions.",
+        "interpretation_notes": "本候选是 Phase 60 P1 增强治理知识，只允许外部审计后进入 accepted_for_draft；不得直接 reviewed、approved、default guidance 或 hard gate。",
+        "claim_strength": "medium_high",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general_with_platform_or_venue_specific_mapping",
+        "asset": "general",
+        "timeframe": "sandbox_replay_paper_or_live_canary_environment",
+        "data_granularity": "api_message_order_event_fill_event_health_metric_or_gap_report",
+        "project_type": "trading_ai_support_layer",
+        "applies_when": [
+          "外接项目设计 sandbox、UAT、testnet、replay、paper trading 或 live canary 环境治理",
+          "需要审计 adapter certification、scenario library、paper account state、runtime health、canary rollback 或 environment drift",
+          "需要把 Phase 60 P0 manifest/gap report 扩展为更完整的测试治理证据"
+        ],
+        "not_applicable_when": [
+          "需要生成买卖点、仓位、杠杆、止损止盈、风险阈值或实盘执行建议",
+          "需要直接证明策略有效、live-ready 或收益优势",
+          "没有平台、broker、exchange、API 版本、环境类型或数据来源证据"
+        ],
+        "assumptions": [
+          "候选用于 CEK-TA 通用支持层知识库，不包含外接项目私有策略参数。",
+          "每条候选都需要外部 AI/人工严格审计后才能进入 accepted_for_draft。",
+          "平台和工具来源只能作为 implementation pattern 或 supporting source。"
+        ],
+        "limitations": [
+          "P1 增强知识不能替代 P0 的 EnvironmentManifest、PromotionDecision 和 GapReport。",
+          "候选不能自动创建 reviewed、approved、default guidance 或 hard gate。",
+          "本候选不提供投资建议、订单建议、风险阈值或实盘许可。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_title": "Paper Trading",
+          "source_url": "https://docs.alpaca.markets/us/docs/paper-trading",
+          "source_type": "official_doc",
+          "publisher": "Alpaca",
+          "reliability": "high",
+          "score": 86,
+          "freshness": "time_sensitive",
+          "evidence_summary": "Alpaca documents paper trading as a test environment and discusses limitations such as market impact, latency, queue position, fees and dividends.",
+          "limitations": [
+            "Alpaca-specific; use as paper/live gap example."
+          ],
+          "source_id": "src_alpaca_paper",
+          "accessed_at": "2026-06-17",
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "QuantConnect Paper Trading",
+          "source_url": "https://www.quantconnect.com/docs/v2/cloud-platform/live-trading/brokerages/quantconnect-paper-trading",
+          "source_type": "platform_doc",
+          "publisher": "QuantConnect",
+          "reliability": "high",
+          "score": 86,
+          "freshness": "time_sensitive",
+          "evidence_summary": "QuantConnect documents paper trading as live real-time data with fictional capital and simulated fills.",
+          "limitations": [
+            "Platform-specific paper brokerage behavior; not universal broker truth."
+          ],
+          "source_id": "src_quantconnect_paper",
+          "accessed_at": "2026-06-17",
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Phase 60 Sandbox / Replay / Paper Environment Contract",
+          "source_url": "docs/contracts/phase60_sandbox_replay_paper_environment_contract.md",
+          "source_type": "internal_contract",
+          "publisher": "CEK-TA",
+          "reliability": "high",
+          "score": 88,
+          "freshness": "current",
+          "evidence_summary": "CEK-TA internal contract defines EnvironmentManifest fields, owner boundaries and machine gate restrictions.",
+          "limitations": [
+            "Internal schema; candidate requires external audit before accepted_for_draft or reviewed."
+          ],
+          "source_id": "src_phase60_env_contract",
+          "accessed_at": "2026-06-17",
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "source_count": 3,
+        "primary_source_count": 2,
+        "quality_level": "medium_high",
+        "limitations": [
+          "候选来源需要外部严格审计；vendor/tool 文档不得过度泛化。"
+        ],
+        "freshness": "mixed"
+      },
+      "content": {
+        "statement": "paper trading 的 account reset、virtual buying power、initial cash、position seed 和 broker model version 会改变评估语义，必须写入 audit trace；paper 账户状态不得与 live 账户事实、真实保证金或真实购买力混用。",
+        "required_fields_or_contract": [
+          "environment_id",
+          "environment_type",
+          "adapter_or_scenario_version",
+          "evidence_source_id",
+          "audit_trace_id",
+          "owner",
+          "known_limitations",
+          "not_live_permission",
+          "paper_account_state_not_live_account_fact",
+          "paper_account_reset_event_id",
+          "initial_cash",
+          "position_seed_ref",
+          "paper_broker_model_version",
+          "paper_account_api_key_scope"
+        ],
+        "procedure": [
+          "识别环境类型、平台、broker/exchange、API 版本和数据来源。",
+          "记录候选主题所需的 evidence 字段、owner 和限制。",
+          "将通过/失败写入 gap report 或 promotion decision，不直接写成实盘许可。"
+        ],
+        "anti_patterns": [
+          "把 paper/replay/sandbox/canary 表现写成策略有效。",
+          "把 vendor-specific 行为泛化为所有市场。",
+          "把测试通过写成 approved、default guidance、hard gate 或自动交易许可。"
+        ],
+        "validation": [
+          "外部 AI/人工严格审计 source、content、boundary、conflict patch notes。",
+          "正式转换前做完整 KB 冲突、重复和 owner 边界检查。"
+        ],
+        "risk_notes": [
+          "测试环境的通过结果容易被误读为 live-ready。",
+          "环境健康、认证、场景覆盖或 canary 观察都不能替代 Risk/Live owner 的正式决策。",
+          "Phase 60 P1 只能作为增强治理证据，不替代 P0 EnvironmentManifest / PromotionDecision / GapReport。",
+          "certification、scenario、paper reset、health、canary、drift 结果不得解释为 live-ready、收益证明、交易许可或 hard gate。"
+        ]
+      },
+      "review": {
+        "review_status": "accepted_for_draft",
+        "reviewed_by": "external_ai_strict_audit",
+        "reviewed_at": "2026-06-17",
+        "default_guidance_allowed": false,
+        "approved_allowed": false,
+        "hard_gate_allowed": false,
+        "notes": "Accepted for draft only. Requires reviewed-preparation audit before formal reviewed/caveat_only.",
+        "ai_audit": {
+          "audit_result_id": "audit_result_phase60_p1_candidate_20260617_strict_v1",
+          "package_id": "phase60_p1_candidate_audit_package_20260617",
+          "decision": "accepted_for_draft",
+          "confidence": "high",
+          "reviewed_allowed": false,
+          "approved_allowed": false,
+          "default_guidance_allowed": false,
+          "hard_gate_allowed": false,
+          "required_followups": [
+            "修复 conflict_audit.approval_allowed=false。",
+            "补 paper_account_state_not_live_account_fact=true。",
+            "补 paper_account_reset_event_id、initial_cash、position_seed_ref、paper_broker_model_version。",
+            "补 paper_account_api_key_scope。"
+          ],
+          "patch_notes": {
+            "source": [
+              "Alpaca / QuantConnect 均为平台特定来源，不代表所有 broker。"
+            ],
+            "content": [
+              "paper reset、initial cash、position seed 会改变评估语义，必须进 audit trace。"
+            ],
+            "boundary": [
+              "不得混入 live account facts。"
+            ],
+            "conflict": [
+              "与 Phase 60 P0 paper_not_live 一致，应作为 paper account state 子项。"
+            ]
+          },
+          "global_required_patch": [
+            "将所有 candidate.conflict_audit.approval_allowed 从 true 改为 false。",
+            "明确 Phase 60 P1 只能作为增强治理证据，不替代 P0 EnvironmentManifest / PromotionDecision / GapReport。",
+            "所有 certification、scenario、paper reset、health、canary、drift 结果均不得解释为 live-ready、收益证明、交易许可或 hard gate。",
+            "所有 FIX、broker、paper、canary、monitoring 来源必须保留平台、工具或工程语境边界。"
+          ]
+        }
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "known_conflicts": [],
+        "potential_conflicts": [
+          "可能与 Phase 60 P0、Phase 58 环境等效链条、Phase 37 Replay/Live/Risk 知识重叠；正式转换前必须做重复和 owner 边界检查。"
+        ],
+        "resolution_summary": "Phase 60 P1 candidate audit accepted this item for draft only; reviewed/approved/default guidance/hard gate remain forbidden.",
+        "approval_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒外接项目记录环境治理证据和 gap report。",
+          "用于审计 sandbox/replay/paper/canary 是否保留 owner 和边界。",
+          "用于阻止 AI 把测试环境结果泛化为 live-ready。"
+        ],
+        "not_allowed": [
+          "不得生成买卖点、仓位、杠杆、止损止盈或风险阈值。",
+          "不得授权实盘、自动拒单、自动停机或 hard gate。",
+          "不得把 candidate 当作正式 reviewed 或 approved 知识。"
+        ]
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reviewed_allowed": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "trade_execution_advice_allowed": false,
+        "risk_threshold_advice_allowed": false,
+        "requires_human_escalation": true,
+        "reason": "accepted_for_draft only; reviewed-preparation audit required before formal reviewed/caveat_only."
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_phase60_live_execution.paper_account_state.reset_trace_required.v1",
+        "target_partition": "KB_06_LIVE_EXECUTION",
+        "target_review_status": "accepted_for_draft_pending_reviewed_preparation",
+        "default_guidance_target": "deny",
+        "hard_gate_target": "deny"
+      },
+      "workflow": {
+        "stage": "accepted_for_draft",
+        "queue_group": "ai_passed",
+        "hidden_from_default_queue": true,
+        "next_action": "export_reviewed_preparation_audit_package",
+        "formal_knowledge_id": null,
+        "formal_review_status": null
+      },
+      "audit_log": [
+        {
+          "event": "candidate_created",
+          "at": "2026-06-17",
+          "by": "codex",
+          "notes": "Phase 60 P1 候选生成，等待严格审计。"
+        },
+        {
+          "event": "strict_ai_audit_imported",
+          "at": "2026-06-17",
+          "by": "codex",
+          "task_id": "CEK-TA-584",
+          "audit_result_id": "audit_result_phase60_p1_candidate_20260617_strict_v1",
+          "decision": "accepted_for_draft",
+          "notes": "Candidate moved to accepted_for_draft only; no formal reviewed knowledge created."
+        }
+      ],
+      "copyright": {
+        "stores_full_text": false,
+        "stores_long_quote": false,
+        "summary_only": true
+      }
+    },
+    {
+      "schema_version": "1.1.0-candidate",
+      "candidate_id": "cand_20260617_phase60_p1_realtime_sim_health_monitor_required_001",
+      "research_task_id": "P60-P1-04",
+      "status": {
+        "review_status": "accepted_for_draft",
+        "ingestion_decision": "accepted_for_draft",
+        "decision_reason": "Phase 60 P1 strict audit accepted this candidate for draft only; reviewed/approved/default/hard gate are not allowed.",
+        "created_at": "2026-06-17",
+        "updated_at": "2026-06-17"
+      },
+      "classification": {
+        "tree_node_id": "kt.live_execution",
+        "canonical_node_id": "kt.live_execution",
+        "tree_path": "CEK-TA / Trading Engineering / Live Execution",
+        "related_nodes": [
+          "kt.trading_engineering",
+          "kt.replay_simulation",
+          "kt.live_execution",
+          "kt.risk_management",
+          "kt.data_engineering",
+          "kt.market_microstructure"
+        ],
+        "partition_id": "KB_06_LIVE_EXECUTION",
+        "domain": "live_execution",
+        "subdomain": "environment_health_monitoring",
+        "rule_type": "runtime_observability_rule",
+        "claim_type": "health_evidence_requirement",
+        "used_for": [
+          "runtime_observability",
+          "paper_trading_monitoring",
+          "adapter_healthcheck",
+          "external_project_rag_retrieval"
+        ],
+        "classification_notes": "Phase 60 P1 增强环境治理候选；只用于 sandbox/replay/paper/canary 的测试、监控、晋级和 gap 审计，不接管策略、实盘执行或风控阈值。"
+      },
+      "claim": {
+        "claim_id": "claim_p60_p1_04",
+        "title": "realtime simulation 必须记录心跳、断线、延迟和数据 stale 状态",
+        "statement": "实时模拟和 sandbox execution 必须记录 heartbeat、disconnect、reconnect、latency、data stale、order event lag、adapter error 和 recovery evidence；这些指标只能说明环境健康和 adapter 稳定性，不等于交易许可或策略有效。",
+        "normalized_claim": "phase60.p1.realtime_sim_health_monitor_required.v1",
+        "evidence_summary": "Google SRE describes monitoring systems with symptoms, causes and golden signals such as latency, traffic, errors and saturation.；NautilusTrader separates backtest, sandbox and live contexts while sharing core runtime architecture.；CEK-TA internal contract defines EnvironmentManifest fields, owner boundaries and machine gate restrictions.",
+        "interpretation_notes": "本候选是 Phase 60 P1 增强治理知识，只允许外部审计后进入 accepted_for_draft；不得直接 reviewed、approved、default guidance 或 hard gate。",
+        "claim_strength": "medium_high",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general_with_platform_or_venue_specific_mapping",
+        "asset": "general",
+        "timeframe": "sandbox_replay_paper_or_live_canary_environment",
+        "data_granularity": "api_message_order_event_fill_event_health_metric_or_gap_report",
+        "project_type": "trading_ai_support_layer",
+        "applies_when": [
+          "外接项目设计 sandbox、UAT、testnet、replay、paper trading 或 live canary 环境治理",
+          "需要审计 adapter certification、scenario library、paper account state、runtime health、canary rollback 或 environment drift",
+          "需要把 Phase 60 P0 manifest/gap report 扩展为更完整的测试治理证据"
+        ],
+        "not_applicable_when": [
+          "需要生成买卖点、仓位、杠杆、止损止盈、风险阈值或实盘执行建议",
+          "需要直接证明策略有效、live-ready 或收益优势",
+          "没有平台、broker、exchange、API 版本、环境类型或数据来源证据"
+        ],
+        "assumptions": [
+          "候选用于 CEK-TA 通用支持层知识库，不包含外接项目私有策略参数。",
+          "每条候选都需要外部 AI/人工严格审计后才能进入 accepted_for_draft。",
+          "平台和工具来源只能作为 implementation pattern 或 supporting source。"
+        ],
+        "limitations": [
+          "P1 增强知识不能替代 P0 的 EnvironmentManifest、PromotionDecision 和 GapReport。",
+          "候选不能自动创建 reviewed、approved、default guidance 或 hard gate。",
+          "本候选不提供投资建议、订单建议、风险阈值或实盘许可。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_title": "Monitoring Distributed Systems",
+          "source_url": "https://sre.google/sre-book/monitoring-distributed-systems/",
+          "source_type": "engineering_book",
+          "publisher": "Google SRE",
+          "reliability": "high",
+          "score": 84,
+          "freshness": "stable",
+          "evidence_summary": "Google SRE describes monitoring systems with symptoms, causes and golden signals such as latency, traffic, errors and saturation.",
+          "limitations": [
+            "General SRE source; apply to trading environments only through CEK-TA boundary mapping."
+          ],
+          "source_id": "src_sre_monitoring",
+          "accessed_at": "2026-06-17",
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "NautilusTrader Architecture",
+          "source_url": "https://nautilustrader.io/docs/latest/concepts/architecture/",
+          "source_type": "framework_doc",
+          "publisher": "NautilusTrader",
+          "reliability": "high",
+          "score": 86,
+          "freshness": "time_sensitive",
+          "evidence_summary": "NautilusTrader separates backtest, sandbox and live contexts while sharing core runtime architecture.",
+          "limitations": [
+            "Framework-specific; use as environment implementation pattern."
+          ],
+          "source_id": "src_nautilus_arch",
+          "accessed_at": "2026-06-17",
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Phase 60 Sandbox / Replay / Paper Environment Contract",
+          "source_url": "docs/contracts/phase60_sandbox_replay_paper_environment_contract.md",
+          "source_type": "internal_contract",
+          "publisher": "CEK-TA",
+          "reliability": "high",
+          "score": 88,
+          "freshness": "current",
+          "evidence_summary": "CEK-TA internal contract defines EnvironmentManifest fields, owner boundaries and machine gate restrictions.",
+          "limitations": [
+            "Internal schema; candidate requires external audit before accepted_for_draft or reviewed."
+          ],
+          "source_id": "src_phase60_env_contract",
+          "accessed_at": "2026-06-17",
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "source_count": 3,
+        "primary_source_count": 2,
+        "quality_level": "medium_high",
+        "limitations": [
+          "候选来源需要外部严格审计；vendor/tool 文档不得过度泛化。"
+        ],
+        "freshness": "mixed"
+      },
+      "content": {
+        "statement": "实时模拟和 sandbox execution 必须记录 heartbeat、disconnect、reconnect、latency、data stale、order event lag、adapter error 和 recovery evidence；这些指标只能说明环境健康和 adapter 稳定性，不等于交易许可或策略有效。",
+        "required_fields_or_contract": [
+          "environment_id",
+          "environment_type",
+          "adapter_or_scenario_version",
+          "evidence_source_id",
+          "audit_trace_id",
+          "owner",
+          "known_limitations",
+          "not_live_permission",
+          "health_monitor_not_live_permission",
+          "heartbeat_policy",
+          "disconnect_event_id",
+          "reconnect_event_id",
+          "data_stale_policy",
+          "order_event_lag_policy",
+          "adapter_error_reason_code"
+        ],
+        "procedure": [
+          "识别环境类型、平台、broker/exchange、API 版本和数据来源。",
+          "记录候选主题所需的 evidence 字段、owner 和限制。",
+          "将通过/失败写入 gap report 或 promotion decision，不直接写成实盘许可。"
+        ],
+        "anti_patterns": [
+          "把 paper/replay/sandbox/canary 表现写成策略有效。",
+          "把 vendor-specific 行为泛化为所有市场。",
+          "把测试通过写成 approved、default guidance、hard gate 或自动交易许可。"
+        ],
+        "validation": [
+          "外部 AI/人工严格审计 source、content、boundary、conflict patch notes。",
+          "正式转换前做完整 KB 冲突、重复和 owner 边界检查。"
+        ],
+        "risk_notes": [
+          "测试环境的通过结果容易被误读为 live-ready。",
+          "环境健康、认证、场景覆盖或 canary 观察都不能替代 Risk/Live owner 的正式决策。",
+          "Phase 60 P1 只能作为增强治理证据，不替代 P0 EnvironmentManifest / PromotionDecision / GapReport。",
+          "certification、scenario、paper reset、health、canary、drift 结果不得解释为 live-ready、收益证明、交易许可或 hard gate。"
+        ]
+      },
+      "review": {
+        "review_status": "accepted_for_draft",
+        "reviewed_by": "external_ai_strict_audit",
+        "reviewed_at": "2026-06-17",
+        "default_guidance_allowed": false,
+        "approved_allowed": false,
+        "hard_gate_allowed": false,
+        "notes": "Accepted for draft only. Requires reviewed-preparation audit before formal reviewed/caveat_only.",
+        "ai_audit": {
+          "audit_result_id": "audit_result_phase60_p1_candidate_20260617_strict_v1",
+          "package_id": "phase60_p1_candidate_audit_package_20260617",
+          "decision": "accepted_for_draft",
+          "confidence": "medium_high",
+          "reviewed_allowed": false,
+          "approved_allowed": false,
+          "default_guidance_allowed": false,
+          "hard_gate_allowed": false,
+          "required_followups": [
+            "修复 conflict_audit.approval_allowed=false。",
+            "补 health_monitor_not_live_permission=true。",
+            "补 heartbeat_policy、disconnect_event_id、reconnect_event_id、data_stale_policy、order_event_lag_policy、adapter_error_reason_code。"
+          ],
+          "patch_notes": {
+            "source": [
+              "Google SRE 是通用工程来源，必须通过 CEK-TA trading boundary mapping 使用。",
+              "NautilusTrader 只能作为环境实现模式来源。"
+            ],
+            "content": [
+              "health monitor 证明环境健康和 adapter 稳定性，不证明策略有效。"
+            ],
+            "boundary": [
+              "不得交易许可，不得 hard gate。"
+            ],
+            "conflict": [
+              "与 Live Execution observability 不冲突，但 owner 要保留。"
+            ]
+          },
+          "global_required_patch": [
+            "将所有 candidate.conflict_audit.approval_allowed 从 true 改为 false。",
+            "明确 Phase 60 P1 只能作为增强治理证据，不替代 P0 EnvironmentManifest / PromotionDecision / GapReport。",
+            "所有 certification、scenario、paper reset、health、canary、drift 结果均不得解释为 live-ready、收益证明、交易许可或 hard gate。",
+            "所有 FIX、broker、paper、canary、monitoring 来源必须保留平台、工具或工程语境边界。"
+          ]
+        }
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "known_conflicts": [],
+        "potential_conflicts": [
+          "可能与 Phase 60 P0、Phase 58 环境等效链条、Phase 37 Replay/Live/Risk 知识重叠；正式转换前必须做重复和 owner 边界检查。"
+        ],
+        "resolution_summary": "Phase 60 P1 candidate audit accepted this item for draft only; reviewed/approved/default guidance/hard gate remain forbidden.",
+        "approval_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒外接项目记录环境治理证据和 gap report。",
+          "用于审计 sandbox/replay/paper/canary 是否保留 owner 和边界。",
+          "用于阻止 AI 把测试环境结果泛化为 live-ready。"
+        ],
+        "not_allowed": [
+          "不得生成买卖点、仓位、杠杆、止损止盈或风险阈值。",
+          "不得授权实盘、自动拒单、自动停机或 hard gate。",
+          "不得把 candidate 当作正式 reviewed 或 approved 知识。"
+        ]
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reviewed_allowed": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "trade_execution_advice_allowed": false,
+        "risk_threshold_advice_allowed": false,
+        "requires_human_escalation": true,
+        "reason": "accepted_for_draft only; reviewed-preparation audit required before formal reviewed/caveat_only."
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_phase60_live_execution.environment_health.monitor_required.v1",
+        "target_partition": "KB_06_LIVE_EXECUTION",
+        "target_review_status": "accepted_for_draft_pending_reviewed_preparation",
+        "default_guidance_target": "deny",
+        "hard_gate_target": "deny"
+      },
+      "workflow": {
+        "stage": "accepted_for_draft",
+        "queue_group": "ai_passed",
+        "hidden_from_default_queue": true,
+        "next_action": "export_reviewed_preparation_audit_package",
+        "formal_knowledge_id": null,
+        "formal_review_status": null
+      },
+      "audit_log": [
+        {
+          "event": "candidate_created",
+          "at": "2026-06-17",
+          "by": "codex",
+          "notes": "Phase 60 P1 候选生成，等待严格审计。"
+        },
+        {
+          "event": "strict_ai_audit_imported",
+          "at": "2026-06-17",
+          "by": "codex",
+          "task_id": "CEK-TA-584",
+          "audit_result_id": "audit_result_phase60_p1_candidate_20260617_strict_v1",
+          "decision": "accepted_for_draft",
+          "notes": "Candidate moved to accepted_for_draft only; no formal reviewed knowledge created."
+        }
+      ],
+      "copyright": {
+        "stores_full_text": false,
+        "stores_long_quote": false,
+        "summary_only": true
+      }
+    },
+    {
+      "schema_version": "1.1.0-candidate",
+      "candidate_id": "cand_20260617_phase60_p1_live_canary_rollback_owner_required_001",
+      "research_task_id": "P60-P1-05",
+      "status": {
+        "review_status": "accepted_for_draft",
+        "ingestion_decision": "accepted_for_draft",
+        "decision_reason": "Phase 60 P1 strict audit accepted this candidate for draft only; reviewed/approved/default/hard gate are not allowed.",
+        "created_at": "2026-06-17",
+        "updated_at": "2026-06-17"
+      },
+      "classification": {
+        "tree_node_id": "kt.risk_management",
+        "canonical_node_id": "kt.risk_management",
+        "tree_path": "CEK-TA / Trading Engineering / Risk Management",
+        "related_nodes": [
+          "kt.trading_engineering",
+          "kt.replay_simulation",
+          "kt.live_execution",
+          "kt.risk_management",
+          "kt.data_engineering",
+          "kt.market_microstructure"
+        ],
+        "partition_id": "KB_07_RISK_MANAGEMENT",
+        "domain": "risk_management",
+        "subdomain": "live_canary_governance",
+        "rule_type": "live_canary_boundary_rule",
+        "claim_type": "rollback_governance_requirement",
+        "used_for": [
+          "live_canary_review",
+          "promotion_decision",
+          "risk_owner_review",
+          "external_project_rag_retrieval"
+        ],
+        "classification_notes": "Phase 60 P1 增强环境治理候选；只用于 sandbox/replay/paper/canary 的测试、监控、晋级和 gap 审计，不接管策略、实盘执行或风控阈值。"
+      },
+      "claim": {
+        "claim_id": "claim_p60_p1_05",
+        "title": "live canary 必须有 rollback、停止条件和 owner",
+        "statement": "live canary 只能作为小范围真实环境观察阶段，必须记录 scope、stop_condition_ref、rollback_plan_ref、owner、manual_review_required 和 residual_gap；canary 通过不得自动扩大为 full live 或默认 hard gate。",
+        "normalized_claim": "phase60.p1.live_canary_rollback_owner_required.v1",
+        "evidence_summary": "LaunchDarkly documents canary releases as gradual exposure to a subset of users before broader rollout.；Google SRE describes monitoring systems with symptoms, causes and golden signals such as latency, traffic, errors and saturation.；CEK-TA internal contract defines promotion decisions, gap report fields, required evidence and hard boundaries.",
+        "interpretation_notes": "本候选是 Phase 60 P1 增强治理知识，只允许外部审计后进入 accepted_for_draft；不得直接 reviewed、approved、default guidance 或 hard gate。",
+        "claim_strength": "medium_high",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general_with_platform_or_venue_specific_mapping",
+        "asset": "general",
+        "timeframe": "sandbox_replay_paper_or_live_canary_environment",
+        "data_granularity": "api_message_order_event_fill_event_health_metric_or_gap_report",
+        "project_type": "trading_ai_support_layer",
+        "applies_when": [
+          "外接项目设计 sandbox、UAT、testnet、replay、paper trading 或 live canary 环境治理",
+          "需要审计 adapter certification、scenario library、paper account state、runtime health、canary rollback 或 environment drift",
+          "需要把 Phase 60 P0 manifest/gap report 扩展为更完整的测试治理证据"
+        ],
+        "not_applicable_when": [
+          "需要生成买卖点、仓位、杠杆、止损止盈、风险阈值或实盘执行建议",
+          "需要直接证明策略有效、live-ready 或收益优势",
+          "没有平台、broker、exchange、API 版本、环境类型或数据来源证据"
+        ],
+        "assumptions": [
+          "候选用于 CEK-TA 通用支持层知识库，不包含外接项目私有策略参数。",
+          "每条候选都需要外部 AI/人工严格审计后才能进入 accepted_for_draft。",
+          "平台和工具来源只能作为 implementation pattern 或 supporting source。"
+        ],
+        "limitations": [
+          "P1 增强知识不能替代 P0 的 EnvironmentManifest、PromotionDecision 和 GapReport。",
+          "候选不能自动创建 reviewed、approved、default guidance 或 hard gate。",
+          "本候选不提供投资建议、订单建议、风险阈值或实盘许可。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_title": "Canary deployments",
+          "source_url": "https://launchdarkly.com/docs/home/releases/canary",
+          "source_type": "engineering_doc",
+          "publisher": "LaunchDarkly",
+          "reliability": "medium_high",
+          "score": 78,
+          "freshness": "time_sensitive",
+          "evidence_summary": "LaunchDarkly documents canary releases as gradual exposure to a subset of users before broader rollout.",
+          "limitations": [
+            "Software deployment source; trading live canary requires stricter broker, risk and execution boundaries."
+          ],
+          "source_id": "src_launchdarkly_canary",
+          "accessed_at": "2026-06-17",
+          "relevance": "medium",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Monitoring Distributed Systems",
+          "source_url": "https://sre.google/sre-book/monitoring-distributed-systems/",
+          "source_type": "engineering_book",
+          "publisher": "Google SRE",
+          "reliability": "high",
+          "score": 84,
+          "freshness": "stable",
+          "evidence_summary": "Google SRE describes monitoring systems with symptoms, causes and golden signals such as latency, traffic, errors and saturation.",
+          "limitations": [
+            "General SRE source; apply to trading environments only through CEK-TA boundary mapping."
+          ],
+          "source_id": "src_sre_monitoring",
+          "accessed_at": "2026-06-17",
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Phase 60 Environment Promotion Decision and Gap Report Contract",
+          "source_url": "docs/contracts/phase60_environment_promotion_gap_report_contract.md",
+          "source_type": "internal_contract",
+          "publisher": "CEK-TA",
+          "reliability": "high",
+          "score": 88,
+          "freshness": "current",
+          "evidence_summary": "CEK-TA internal contract defines promotion decisions, gap report fields, required evidence and hard boundaries.",
+          "limitations": [
+            "Internal schema; candidate requires external audit before formal reviewed."
+          ],
+          "source_id": "src_phase60_gap_contract",
+          "accessed_at": "2026-06-17",
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "source_count": 3,
+        "primary_source_count": 2,
+        "quality_level": "medium_high",
+        "limitations": [
+          "候选来源需要外部严格审计；vendor/tool 文档不得过度泛化。"
+        ],
+        "freshness": "mixed"
+      },
+      "content": {
+        "statement": "live canary 只能作为小范围真实环境观察阶段，必须记录 scope、stop_condition_ref、rollback_plan_ref、owner、manual_review_required 和 residual_gap；canary 通过不得自动扩大为 full live 或默认 hard gate。",
+        "required_fields_or_contract": [
+          "environment_id",
+          "environment_type",
+          "adapter_or_scenario_version",
+          "evidence_source_id",
+          "audit_trace_id",
+          "owner",
+          "known_limitations",
+          "not_live_permission",
+          "canary_not_full_live_permission",
+          "canary_scope",
+          "stop_condition_ref",
+          "rollback_plan_ref",
+          "risk_owner",
+          "live_execution_owner",
+          "manual_review_required",
+          "residual_gap"
+        ],
+        "procedure": [
+          "识别环境类型、平台、broker/exchange、API 版本和数据来源。",
+          "记录候选主题所需的 evidence 字段、owner 和限制。",
+          "将通过/失败写入 gap report 或 promotion decision，不直接写成实盘许可。"
+        ],
+        "anti_patterns": [
+          "把 paper/replay/sandbox/canary 表现写成策略有效。",
+          "把 vendor-specific 行为泛化为所有市场。",
+          "把测试通过写成 approved、default guidance、hard gate 或自动交易许可。"
+        ],
+        "validation": [
+          "外部 AI/人工严格审计 source、content、boundary、conflict patch notes。",
+          "正式转换前做完整 KB 冲突、重复和 owner 边界检查。"
+        ],
+        "risk_notes": [
+          "测试环境的通过结果容易被误读为 live-ready。",
+          "环境健康、认证、场景覆盖或 canary 观察都不能替代 Risk/Live owner 的正式决策。",
+          "Phase 60 P1 只能作为增强治理证据，不替代 P0 EnvironmentManifest / PromotionDecision / GapReport。",
+          "certification、scenario、paper reset、health、canary、drift 结果不得解释为 live-ready、收益证明、交易许可或 hard gate。"
+        ]
+      },
+      "review": {
+        "review_status": "accepted_for_draft",
+        "reviewed_by": "external_ai_strict_audit",
+        "reviewed_at": "2026-06-17",
+        "default_guidance_allowed": false,
+        "approved_allowed": false,
+        "hard_gate_allowed": false,
+        "notes": "Accepted for draft only. Requires reviewed-preparation audit before formal reviewed/caveat_only.",
+        "ai_audit": {
+          "audit_result_id": "audit_result_phase60_p1_candidate_20260617_strict_v1",
+          "package_id": "phase60_p1_candidate_audit_package_20260617",
+          "decision": "accepted_for_draft",
+          "confidence": "medium_high",
+          "reviewed_allowed": false,
+          "approved_allowed": false,
+          "default_guidance_allowed": false,
+          "hard_gate_allowed": false,
+          "required_followups": [
+            "修复 conflict_audit.approval_allowed=false。",
+            "补 canary_not_full_live_permission=true。",
+            "补 canary_scope、stop_condition_ref、rollback_plan_ref、risk_owner、live_execution_owner、manual_review_required、residual_gap。",
+            "补交易系统特定 live canary / broker risk owner 来源后，才能考虑 reviewed/caveat_only。"
+          ],
+          "patch_notes": {
+            "source": [
+              "LaunchDarkly / Google SRE / Google Cloud Deploy 是软件部署来源，不是交易实盘风控来源。"
+            ],
+            "content": [
+              "live canary 是小范围真实环境观察阶段，不是 full live。"
+            ],
+            "boundary": [
+              "不得自动扩大到 full live。",
+              "不得默认 hard gate。",
+              "不得生成上线许可。"
+            ],
+            "conflict": [
+              "与 Phase 60 promotion decision / Risk owner 边界一致。"
+            ]
+          },
+          "global_required_patch": [
+            "将所有 candidate.conflict_audit.approval_allowed 从 true 改为 false。",
+            "明确 Phase 60 P1 只能作为增强治理证据，不替代 P0 EnvironmentManifest / PromotionDecision / GapReport。",
+            "所有 certification、scenario、paper reset、health、canary、drift 结果均不得解释为 live-ready、收益证明、交易许可或 hard gate。",
+            "所有 FIX、broker、paper、canary、monitoring 来源必须保留平台、工具或工程语境边界。"
+          ]
+        }
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "known_conflicts": [],
+        "potential_conflicts": [
+          "可能与 Phase 60 P0、Phase 58 环境等效链条、Phase 37 Replay/Live/Risk 知识重叠；正式转换前必须做重复和 owner 边界检查。"
+        ],
+        "resolution_summary": "Phase 60 P1 candidate audit accepted this item for draft only; reviewed/approved/default guidance/hard gate remain forbidden.",
+        "approval_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒外接项目记录环境治理证据和 gap report。",
+          "用于审计 sandbox/replay/paper/canary 是否保留 owner 和边界。",
+          "用于阻止 AI 把测试环境结果泛化为 live-ready。"
+        ],
+        "not_allowed": [
+          "不得生成买卖点、仓位、杠杆、止损止盈或风险阈值。",
+          "不得授权实盘、自动拒单、自动停机或 hard gate。",
+          "不得把 candidate 当作正式 reviewed 或 approved 知识。"
+        ]
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reviewed_allowed": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "trade_execution_advice_allowed": false,
+        "risk_threshold_advice_allowed": false,
+        "requires_human_escalation": true,
+        "reason": "accepted_for_draft only; reviewed-preparation audit required before formal reviewed/caveat_only."
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_phase60_risk_management.live_canary.rollback_owner_required.v1",
+        "target_partition": "KB_07_RISK_MANAGEMENT",
+        "target_review_status": "accepted_for_draft_pending_reviewed_preparation",
+        "default_guidance_target": "deny",
+        "hard_gate_target": "deny"
+      },
+      "workflow": {
+        "stage": "accepted_for_draft",
+        "queue_group": "ai_passed",
+        "hidden_from_default_queue": true,
+        "next_action": "export_reviewed_preparation_audit_package",
+        "formal_knowledge_id": null,
+        "formal_review_status": null
+      },
+      "audit_log": [
+        {
+          "event": "candidate_created",
+          "at": "2026-06-17",
+          "by": "codex",
+          "notes": "Phase 60 P1 候选生成，等待严格审计。"
+        },
+        {
+          "event": "strict_ai_audit_imported",
+          "at": "2026-06-17",
+          "by": "codex",
+          "task_id": "CEK-TA-584",
+          "audit_result_id": "audit_result_phase60_p1_candidate_20260617_strict_v1",
+          "decision": "accepted_for_draft",
+          "notes": "Candidate moved to accepted_for_draft only; no formal reviewed knowledge created."
+        }
+      ],
+      "copyright": {
+        "stores_full_text": false,
+        "stores_long_quote": false,
+        "summary_only": true
+      }
+    },
+    {
+      "schema_version": "1.1.0-candidate",
+      "candidate_id": "cand_20260617_phase60_p1_environment_drift_monitor_required_001",
+      "research_task_id": "P60-P1-06",
+      "status": {
+        "review_status": "accepted_for_draft",
+        "ingestion_decision": "accepted_for_draft",
+        "decision_reason": "Phase 60 P1 strict audit accepted this candidate for draft only; reviewed/approved/default/hard gate are not allowed.",
+        "created_at": "2026-06-17",
+        "updated_at": "2026-06-17"
+      },
+      "classification": {
+        "tree_node_id": "kt.replay_simulation",
+        "canonical_node_id": "kt.replay_simulation",
+        "tree_path": "CEK-TA / Trading Engineering / Replay Simulation",
+        "related_nodes": [
+          "kt.trading_engineering",
+          "kt.replay_simulation",
+          "kt.live_execution",
+          "kt.risk_management",
+          "kt.data_engineering",
+          "kt.market_microstructure"
+        ],
+        "partition_id": "KB_05_REPLAY_SIMULATION",
+        "domain": "replay_simulation",
+        "subdomain": "environment_drift",
+        "rule_type": "environment_drift_governance_rule",
+        "claim_type": "drift_report_requirement",
+        "used_for": [
+          "environment_drift_review",
+          "paper_live_gap",
+          "promotion_decision",
+          "external_project_rag_retrieval"
+        ],
+        "classification_notes": "Phase 60 P1 增强环境治理候选；只用于 sandbox/replay/paper/canary 的测试、监控、晋级和 gap 审计，不接管策略、实盘执行或风控阈值。"
+      },
+      "claim": {
+        "claim_id": "claim_p60_p1_06",
+        "title": "environment drift monitor 必须比较 replay、paper、canary 与 live 的差异趋势",
+        "statement": "外接项目必须把 replay、paper、canary 与 live 的 fill、fee、latency、reject、cancel、order_state、data_staleness 和 risk_event 差异做成 environment drift report；drift report 是治理和人工复核材料，不是收益证明、交易许可或 hard gate。",
+        "normalized_claim": "phase60.p1.environment_drift_monitor_required.v1",
+        "evidence_summary": "QuantConnect documents paper trading as live real-time data with fictional capital and simulated fills.；Alpaca documents paper trading as a test environment and discusses limitations such as market impact, latency, queue position, fees and dividends.；Google SRE describes monitoring systems with symptoms, causes and golden signals such as latency, traffic, errors and saturation.",
+        "interpretation_notes": "本候选是 Phase 60 P1 增强治理知识，只允许外部审计后进入 accepted_for_draft；不得直接 reviewed、approved、default guidance 或 hard gate。",
+        "claim_strength": "medium_high",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general_with_platform_or_venue_specific_mapping",
+        "asset": "general",
+        "timeframe": "sandbox_replay_paper_or_live_canary_environment",
+        "data_granularity": "api_message_order_event_fill_event_health_metric_or_gap_report",
+        "project_type": "trading_ai_support_layer",
+        "applies_when": [
+          "外接项目设计 sandbox、UAT、testnet、replay、paper trading 或 live canary 环境治理",
+          "需要审计 adapter certification、scenario library、paper account state、runtime health、canary rollback 或 environment drift",
+          "需要把 Phase 60 P0 manifest/gap report 扩展为更完整的测试治理证据"
+        ],
+        "not_applicable_when": [
+          "需要生成买卖点、仓位、杠杆、止损止盈、风险阈值或实盘执行建议",
+          "需要直接证明策略有效、live-ready 或收益优势",
+          "没有平台、broker、exchange、API 版本、环境类型或数据来源证据"
+        ],
+        "assumptions": [
+          "候选用于 CEK-TA 通用支持层知识库，不包含外接项目私有策略参数。",
+          "每条候选都需要外部 AI/人工严格审计后才能进入 accepted_for_draft。",
+          "平台和工具来源只能作为 implementation pattern 或 supporting source。"
+        ],
+        "limitations": [
+          "P1 增强知识不能替代 P0 的 EnvironmentManifest、PromotionDecision 和 GapReport。",
+          "候选不能自动创建 reviewed、approved、default guidance 或 hard gate。",
+          "本候选不提供投资建议、订单建议、风险阈值或实盘许可。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_title": "QuantConnect Paper Trading",
+          "source_url": "https://www.quantconnect.com/docs/v2/cloud-platform/live-trading/brokerages/quantconnect-paper-trading",
+          "source_type": "platform_doc",
+          "publisher": "QuantConnect",
+          "reliability": "high",
+          "score": 86,
+          "freshness": "time_sensitive",
+          "evidence_summary": "QuantConnect documents paper trading as live real-time data with fictional capital and simulated fills.",
+          "limitations": [
+            "Platform-specific paper brokerage behavior; not universal broker truth."
+          ],
+          "source_id": "src_quantconnect_paper",
+          "accessed_at": "2026-06-17",
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Paper Trading",
+          "source_url": "https://docs.alpaca.markets/us/docs/paper-trading",
+          "source_type": "official_doc",
+          "publisher": "Alpaca",
+          "reliability": "high",
+          "score": 86,
+          "freshness": "time_sensitive",
+          "evidence_summary": "Alpaca documents paper trading as a test environment and discusses limitations such as market impact, latency, queue position, fees and dividends.",
+          "limitations": [
+            "Alpaca-specific; use as paper/live gap example."
+          ],
+          "source_id": "src_alpaca_paper",
+          "accessed_at": "2026-06-17",
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Monitoring Distributed Systems",
+          "source_url": "https://sre.google/sre-book/monitoring-distributed-systems/",
+          "source_type": "engineering_book",
+          "publisher": "Google SRE",
+          "reliability": "high",
+          "score": 84,
+          "freshness": "stable",
+          "evidence_summary": "Google SRE describes monitoring systems with symptoms, causes and golden signals such as latency, traffic, errors and saturation.",
+          "limitations": [
+            "General SRE source; apply to trading environments only through CEK-TA boundary mapping."
+          ],
+          "source_id": "src_sre_monitoring",
+          "accessed_at": "2026-06-17",
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Phase 60 Environment Promotion Decision and Gap Report Contract",
+          "source_url": "docs/contracts/phase60_environment_promotion_gap_report_contract.md",
+          "source_type": "internal_contract",
+          "publisher": "CEK-TA",
+          "reliability": "high",
+          "score": 88,
+          "freshness": "current",
+          "evidence_summary": "CEK-TA internal contract defines promotion decisions, gap report fields, required evidence and hard boundaries.",
+          "limitations": [
+            "Internal schema; candidate requires external audit before formal reviewed."
+          ],
+          "source_id": "src_phase60_gap_contract",
+          "accessed_at": "2026-06-17",
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "source_count": 4,
+        "primary_source_count": 3,
+        "quality_level": "medium_high",
+        "limitations": [
+          "候选来源需要外部严格审计；vendor/tool 文档不得过度泛化。"
+        ],
+        "freshness": "mixed"
+      },
+      "content": {
+        "statement": "外接项目必须把 replay、paper、canary 与 live 的 fill、fee、latency、reject、cancel、order_state、data_staleness 和 risk_event 差异做成 environment drift report；drift report 是治理和人工复核材料，不是收益证明、交易许可或 hard gate。",
+        "required_fields_or_contract": [
+          "environment_id",
+          "environment_type",
+          "adapter_or_scenario_version",
+          "evidence_source_id",
+          "audit_trace_id",
+          "owner",
+          "known_limitations",
+          "not_live_permission",
+          "drift_report_not_live_permission",
+          "baseline_environment",
+          "comparison_environment",
+          "fill_drift",
+          "fee_drift",
+          "latency_drift",
+          "reject_drift",
+          "cancel_drift",
+          "order_state_drift",
+          "data_staleness_drift",
+          "risk_event_drift",
+          "human_review_required"
+        ],
+        "procedure": [
+          "识别环境类型、平台、broker/exchange、API 版本和数据来源。",
+          "记录候选主题所需的 evidence 字段、owner 和限制。",
+          "将通过/失败写入 gap report 或 promotion decision，不直接写成实盘许可。"
+        ],
+        "anti_patterns": [
+          "把 paper/replay/sandbox/canary 表现写成策略有效。",
+          "把 vendor-specific 行为泛化为所有市场。",
+          "把测试通过写成 approved、default guidance、hard gate 或自动交易许可。"
+        ],
+        "validation": [
+          "外部 AI/人工严格审计 source、content、boundary、conflict patch notes。",
+          "正式转换前做完整 KB 冲突、重复和 owner 边界检查。"
+        ],
+        "risk_notes": [
+          "测试环境的通过结果容易被误读为 live-ready。",
+          "环境健康、认证、场景覆盖或 canary 观察都不能替代 Risk/Live owner 的正式决策。",
+          "Phase 60 P1 只能作为增强治理证据，不替代 P0 EnvironmentManifest / PromotionDecision / GapReport。",
+          "certification、scenario、paper reset、health、canary、drift 结果不得解释为 live-ready、收益证明、交易许可或 hard gate。"
+        ]
+      },
+      "review": {
+        "review_status": "accepted_for_draft",
+        "reviewed_by": "external_ai_strict_audit",
+        "reviewed_at": "2026-06-17",
+        "default_guidance_allowed": false,
+        "approved_allowed": false,
+        "hard_gate_allowed": false,
+        "notes": "Accepted for draft only. Requires reviewed-preparation audit before formal reviewed/caveat_only.",
+        "ai_audit": {
+          "audit_result_id": "audit_result_phase60_p1_candidate_20260617_strict_v1",
+          "package_id": "phase60_p1_candidate_audit_package_20260617",
+          "decision": "accepted_for_draft",
+          "confidence": "medium_high",
+          "reviewed_allowed": false,
+          "approved_allowed": false,
+          "default_guidance_allowed": false,
+          "hard_gate_allowed": false,
+          "required_followups": [
+            "修复 conflict_audit.approval_allowed=false。",
+            "补 drift_report_not_live_permission=true。",
+            "补 baseline_environment、comparison_environment、fill_drift、fee_drift、latency_drift、reject_drift、cancel_drift、order_state_drift、data_staleness_drift、risk_event_drift。",
+            "补 QuantConnect live reconciliation 或 Nautilus live reconciliation 作为 reviewed 前直接来源。"
+          ],
+          "patch_notes": {
+            "source": [
+              "QuantConnect / Alpaca 是平台特定来源。",
+              "Google SRE 是通用监控来源。"
+            ],
+            "content": [
+              "environment drift report 是差异趋势治理材料，不是通过证书。"
+            ],
+            "boundary": [
+              "不得收益证明，不得交易许可，不得 hard gate。"
+            ],
+            "conflict": [
+              "与 Phase 58 / Phase 60 P0 gap report 一致，应作为 drift 子报告。"
+            ]
+          },
+          "global_required_patch": [
+            "将所有 candidate.conflict_audit.approval_allowed 从 true 改为 false。",
+            "明确 Phase 60 P1 只能作为增强治理证据，不替代 P0 EnvironmentManifest / PromotionDecision / GapReport。",
+            "所有 certification、scenario、paper reset、health、canary、drift 结果均不得解释为 live-ready、收益证明、交易许可或 hard gate。",
+            "所有 FIX、broker、paper、canary、monitoring 来源必须保留平台、工具或工程语境边界。"
+          ]
+        }
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "known_conflicts": [],
+        "potential_conflicts": [
+          "可能与 Phase 60 P0、Phase 58 环境等效链条、Phase 37 Replay/Live/Risk 知识重叠；正式转换前必须做重复和 owner 边界检查。"
+        ],
+        "resolution_summary": "Phase 60 P1 candidate audit accepted this item for draft only; reviewed/approved/default guidance/hard gate remain forbidden.",
+        "approval_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒外接项目记录环境治理证据和 gap report。",
+          "用于审计 sandbox/replay/paper/canary 是否保留 owner 和边界。",
+          "用于阻止 AI 把测试环境结果泛化为 live-ready。"
+        ],
+        "not_allowed": [
+          "不得生成买卖点、仓位、杠杆、止损止盈或风险阈值。",
+          "不得授权实盘、自动拒单、自动停机或 hard gate。",
+          "不得把 candidate 当作正式 reviewed 或 approved 知识。"
+        ]
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reviewed_allowed": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "trade_execution_advice_allowed": false,
+        "risk_threshold_advice_allowed": false,
+        "requires_human_escalation": true,
+        "reason": "accepted_for_draft only; reviewed-preparation audit required before formal reviewed/caveat_only."
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_phase60_replay_simulation.environment_drift.monitor_required.v1",
+        "target_partition": "KB_05_REPLAY_SIMULATION",
+        "target_review_status": "accepted_for_draft_pending_reviewed_preparation",
+        "default_guidance_target": "deny",
+        "hard_gate_target": "deny"
+      },
+      "workflow": {
+        "stage": "accepted_for_draft",
+        "queue_group": "ai_passed",
+        "hidden_from_default_queue": true,
+        "next_action": "export_reviewed_preparation_audit_package",
+        "formal_knowledge_id": null,
+        "formal_review_status": null
+      },
+      "audit_log": [
+        {
+          "event": "candidate_created",
+          "at": "2026-06-17",
+          "by": "codex",
+          "notes": "Phase 60 P1 候选生成，等待严格审计。"
+        },
+        {
+          "event": "strict_ai_audit_imported",
+          "at": "2026-06-17",
+          "by": "codex",
+          "task_id": "CEK-TA-584",
+          "audit_result_id": "audit_result_phase60_p1_candidate_20260617_strict_v1",
+          "decision": "accepted_for_draft",
+          "notes": "Candidate moved to accepted_for_draft only; no formal reviewed knowledge created."
+        }
+      ],
+      "copyright": {
+        "stores_full_text": false,
+        "stores_long_quote": false,
+        "summary_only": true
+      }
+    }
+  ]
+}

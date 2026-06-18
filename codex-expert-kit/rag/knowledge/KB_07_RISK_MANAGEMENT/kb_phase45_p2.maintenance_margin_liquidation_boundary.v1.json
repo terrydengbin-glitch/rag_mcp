@@ -1,0 +1,347 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_phase45_p2.maintenance_margin_liquidation_boundary.v1",
+  "title": "maintenance margin 和 liquidation 不能等同普通止损",
+  "metadata": {
+    "partition_id": "KB_07_RISK_MANAGEMENT",
+    "domain": "risk_management",
+    "subdomain": "crypto_perpetual_liquidation",
+    "rule_type": "crypto_perpetual_boundary_rule",
+    "claim_type": "risk_boundary_rule",
+    "content_type": "json",
+    "project_binding": "none",
+    "tree_node_id": "kt.trading_engineering.risk_management.crypto_perpetual_risk",
+    "tree_path": "CEK-TA / Trading Engineering / Crypto Perpetual",
+    "canonical_node_id": "kt.trading_engineering.risk_management.crypto_perpetual_risk",
+    "canonical_tree_path": "CEK-TA / Trading Engineering / Crypto Perpetual",
+    "risk_level": "medium_high",
+    "used_for": [
+      "trading_ai_project_design_audit",
+      "crypto_perpetual_risk_review",
+      "market_microstructure_schema_review",
+      "external_project_rag_retrieval"
+    ],
+    "source_candidate_id": "cand_20260612_phase45_crypto_perp_p45_h_crypto03_001",
+    "research_task_id": "P45-H-CRYPTO03",
+    "phase": "Phase 45",
+    "classification_notes": "Phase 45 P2 formal reviewed/caveat_only；只用于数据授权、reference data、crypto perpetual 风险审计上下文，不是 approved/default guidance/hard gate，不生成交易动作或法律授权结论。",
+    "related_nodes": [
+      "kt.trading_engineering.market_microstructure.liquidity_regime",
+      "kt.trading_engineering.risk_management.layered_risk_controls",
+      "kt.trading_engineering.live_execution.order_semantics",
+      "kt.trading_engineering.data_engineering.reference_data_entitlement"
+    ]
+  },
+  "applicability": {
+    "market": "crypto_perpetual_with_exchange_product_and_account_mode_caveats",
+    "asset": "crypto_perpetual_swaps_and_futures",
+    "timeframe": "historical_realtime_risk_backtest_replay_and_audit_context",
+    "data_granularity": "mark_price_index_price_funding_liquidation_adl_outage_status",
+    "project_type": "trading_ai_support_layer",
+    "applies_when": [
+      "外接项目涉及 crypto perpetual、永续合约、USDT/coin margined futures、funding、liquidation、ADL 或 crypto venue outage 风险。",
+      "AI IDE 需要区分 mark/index/last price、funding fee、price PnL、手续费、清算和 ADL/insurance fund 机制。",
+      "需要检查 crypto perpetual 知识是否被错误泛化到传统期货、股票、现货或普通回测规则。"
+    ],
+    "not_applicable_when": [
+      "用户要求具体仓位、杠杆、止损止盈、清算规避、交易许可或实盘操作。",
+      "需要某个账户、交易所或产品的实时保证金、清算线、费率、funding 或 ADL 状态时，应由外接项目事实层提供。",
+      "需要合规、法律、税务、托管或资金安全结论时，应由对应 owner 判断。"
+    ]
+  },
+  "content": {
+    "statement": "Crypto perpetual 的 maintenance margin、margin mode、liquidation price、bankruptcy price、partial liquidation、insurance fund takeover 和 ADL 风险必须按 venue/product/account mode 建模；不得把清算价等同普通止损，也不得把避免清算写成 CEK-TA 通用仓位建议。",
+    "rationale": "本候选只定义 crypto perpetual 风险和数据边界，不输出交易参数、仓位、杠杆、清算规避建议或实盘执行许可。",
+    "normalized_claim": "phase45_crypto_perp.maintenance_margin_liquidation_boundary.v1",
+    "claim_strength": "reviewed_caveat_only",
+    "performance_claim": false,
+    "procedure": [
+      "确认问题属于 Phase 45 P2 数据授权、reference data 或 crypto perpetual 风险边界。",
+      "检查 source_evidence 是否绑定 vendor、venue、dataset、product、account mode、schema/API/rulebook/version 和 accessed_at。",
+      "返回知识时必须携带 reviewed/caveat_only、source_evidence、适用范围、不适用场景、owner 边界和 machine gate。",
+      "不得把本条解释成法律授权结论、训练授权结论、交易许可、清算规避、仓位、杠杆、止损止盈、默认指导或 hard gate。"
+    ],
+    "anti_patterns": [
+      "不得输出清算规避建议。",
+      "不得输出仓位或杠杆建议。",
+      "不得输出止损参数。",
+      "不得生成 hard gate。"
+    ],
+    "validation": [
+      "review.review_status 必须为 reviewed；review_mode 必须为 caveat_only。",
+      "approved_allowed、default_guidance_allowed、hard_gate_allowed、risk_threshold_advice_allowed、trade_execution_advice_allowed、legal_license_conclusion_allowed 必须为 false。",
+      "source_evidence 至少包含 3 条可审计来源，并保留 venue/vendor/product/API/rulebook 限制。",
+      "不得出现买卖点、仓位、杠杆、止损止盈、清算规避、法律授权结论、训练授权结论或实盘执行建议。"
+    ],
+    "risk_notes": [
+      "本条只可作为 reviewed/caveat_only 审计上下文。",
+      "供应商、交易所、crypto venue 和 API 文档具有时间敏感性，外接项目必须复核当前有效版本。",
+      "本条不创建 approved，不进入默认指导，不启用 hard gate。"
+    ],
+    "citation_notes": "Binance explains liquidation protocols, bankruptcy price and insurance fund takeover in volatile conditions.；Binance describes liquidation as a risk-control feature intended to prevent negative equity when leveraged positions suffer gaps.；Binance explains Mark Price and Price Index in futures and states that the Price Index mitigates manipulation risk by using multiple exchanges.；Bybit says mark price is used as a liquidation trigger and for unrealized PnL measurement in perpetual contracts.；Binance leverage and margin trading parameters provide venue/product-specific margin bracket context.；Bybit risk limit documentation supports position tier, maintenance margin and liquidation-risk context for perpetual/futures contracts.",
+    "audit_patch_notes": {
+      "source": [
+        "保留 Binance liquidation、Binance mark price、Bybit mark price 来源。",
+        "新增并保留 Binance Futures Leverage & Margin。",
+        "新增并保留 Bybit Risk Limit / maintenance margin / liquidation-risk 来源。"
+      ],
+      "content": [
+        "CRYPTO03 可作为 maintenance margin / liquidation boundary 的 reviewed/caveat_only 知识。",
+        "liquidation price、bankruptcy price、maintenance margin、margin mode、partial liquidation 必须分字段。",
+        "清算价不得等同普通止损。"
+      ],
+      "boundary": [
+        "不得输出清算规避建议。",
+        "不得输出仓位或杠杆建议。",
+        "不得输出止损参数。",
+        "不得生成 hard gate。"
+      ],
+      "conflict": []
+    }
+  },
+  "assumptions": [
+    "Crypto perpetual 是 venue-specific 高风险产品，所有机制必须绑定交易所、产品、保证金模式、抵押资产和规则版本。",
+    "官方交易所/平台来源只能证明自身规则，不得泛化为全市场标准。",
+    "候选通过外部审计前不能进入 formal reviewed 知识库。"
+  ],
+  "source_evidence": [
+    {
+      "source_title": "Binance Futures Liquidation Protocols",
+      "source_url": "https://www.binance.com/en/support/faq/detail/360033525271",
+      "source_type": "official_platform_doc",
+      "publisher": "Binance",
+      "reliability": "high",
+      "score": 84,
+      "freshness": "time_sensitive",
+      "evidence_summary": "Binance explains liquidation protocols, bankruptcy price and insurance fund takeover in volatile conditions.",
+      "limitations": [
+        "Binance-specific liquidation process; not a universal crypto venue rule."
+      ],
+      "source_id": "src_001",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "Binance: How Liquidation Works in Futures Trading",
+      "source_url": "https://www.binance.com/en/support/faq/detail/7ba80e1b406f40a0a140a84b3a10c387",
+      "source_type": "official_platform_doc",
+      "publisher": "Binance",
+      "reliability": "high",
+      "score": 84,
+      "freshness": "time_sensitive",
+      "evidence_summary": "Binance describes liquidation as a risk-control feature intended to prevent negative equity when leveraged positions suffer gaps.",
+      "limitations": [
+        "Educational/platform-specific source; threshold formulas and modes require product-specific rules."
+      ],
+      "source_id": "src_002",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "Binance Futures: What Are Mark Price and Price Index in USDⓈ-Margined Futures?",
+      "source_url": "https://www.binance.com/en/support/faq/detail/360033525071",
+      "source_type": "official_platform_doc",
+      "publisher": "Binance",
+      "reliability": "high",
+      "score": 86,
+      "freshness": "time_sensitive",
+      "evidence_summary": "Binance explains Mark Price and Price Index in futures and states that the Price Index mitigates manipulation risk by using multiple exchanges.",
+      "limitations": [
+        "Binance USDⓈ-Margined Futures context; not a universal perpetual-futures standard."
+      ],
+      "source_id": "src_003",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "Bybit Mark Price Calculation for Perpetual and Expiry Contracts",
+      "source_url": "https://www.bybit.com/en/help-center/article/Mark-Price-Calculation-Perpetual-Expiry-Contracts",
+      "source_type": "official_platform_doc",
+      "publisher": "Bybit",
+      "reliability": "high",
+      "score": 84,
+      "freshness": "time_sensitive",
+      "evidence_summary": "Bybit says mark price is used as a liquidation trigger and for unrealized PnL measurement in perpetual contracts.",
+      "limitations": [
+        "Bybit-specific formula and product context."
+      ],
+      "source_id": "src_004",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_supp_crypto03_001",
+      "source_title": "Binance Futures Leverage & Margin",
+      "source_url": "https://www.binance.com/en/futures/trading-parameters/perpetual/leverage-margin",
+      "source_type": "official_platform_doc",
+      "publisher": "Binance",
+      "reliability": "high",
+      "score": 86,
+      "freshness": "time_sensitive",
+      "relevance": "high",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "quoted_excerpt_allowed": false,
+      "evidence_summary": "Binance leverage and margin trading parameters provide venue/product-specific margin bracket context.",
+      "limitations": [
+        "Binance-specific; not a universal margin or liquidation rule."
+      ]
+    },
+    {
+      "source_id": "src_supp_crypto03_002",
+      "source_title": "Risk Limit (Perpetual and Futures)",
+      "source_url": "https://www.bybit.com/en/help-center/article/Risk-Limit-USDT-Contract",
+      "source_type": "official_platform_doc",
+      "publisher": "Bybit",
+      "reliability": "high",
+      "score": 85,
+      "freshness": "time_sensitive",
+      "relevance": "high",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "quoted_excerpt_allowed": false,
+      "evidence_summary": "Bybit risk limit documentation supports position tier, maintenance margin and liquidation-risk context for perpetual/futures contracts.",
+      "limitations": [
+        "Bybit-specific; not a universal crypto perpetual standard."
+      ]
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 84.83,
+    "score_version": "phase45_source_scoring_v1",
+    "primary_source_count": 6,
+    "supporting_source_count": 0,
+    "low_reliability_source_count": 0,
+    "mandatory_downgrades": [],
+    "limitations": [
+      "正式 reviewed 前必须由外部审计确认 claim 没有超出来源可证明范围。",
+      "Binance、Bybit、OKX 等来源只能作为各自 venue/product/account mode 证据，不得泛化。",
+      "若后续使用内部 crypto_perp_risk schema，需要提供 contract extract 或 hash。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "Phase 37 Market Microstructure formal reviewed knowledge",
+      "Phase 37 Risk Management formal reviewed knowledge",
+      "Phase 45 Layered Risk formal reviewed knowledge",
+      "Phase 45 Stress Scenario formal reviewed knowledge"
+    ],
+    "conflicts": [],
+    "resolution_summary": "Phase 45 P2 reviewed/caveat_only preparation audit passed for this item; approved/default guidance/hard gate/legal or trading conclusions remain disabled.",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "risk_threshold_advice_allowed": false,
+    "trade_execution_advice_allowed": false,
+    "legal_license_conclusion_allowed": false
+  },
+  "review": {
+    "review_status": "reviewed",
+    "review_mode": "caveat_only",
+    "confidence": "high",
+    "freshness": "time_sensitive",
+    "reviewer": "external_ai_strict_audit_and_codex",
+    "reviewed_at": "2026-06-12",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "risk_threshold_advice_allowed": false,
+    "trade_execution_advice_allowed": false,
+    "legal_license_conclusion_allowed": false,
+    "ai_audit": {
+      "audit_result_id": "audit_phase45_p2_reviewed_blocked_supplemental_reaudit_20260612",
+      "package_id": "phase45_p2_reviewed_blocked_supplemental_reaudit_package_20260612",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "trade_execution_advice_allowed": false,
+      "legal_license_conclusion_allowed": false,
+      "reasons": [
+        "补证已加入 Binance Futures Leverage & Margin，支撑 Binance-specific leverage / margin bracket / margin context。",
+        "补证已加入 Bybit Risk Limit，支撑 position tier、risk limit tier、maintenance margin requirement 与 liquidation-risk context。",
+        "外部复核来源显示 Bybit liquidation process 使用 laddered approach 调整 maintenance margin requirement，足以支撑 partial / staged liquidation 语境。",
+        "claim 明确 liquidation price、bankruptcy price、maintenance margin、margin mode、partial liquidation 必须分字段建模，并禁止把清算价等同普通止损。",
+        "claim 未输出仓位、杠杆、止损止盈、清算规避或实盘执行建议。"
+      ],
+      "required_followups": [
+        "正式 reviewed/caveat_only 文本必须保留 Binance-specific 与 Bybit-specific caveat。",
+        "maintenance_margin_source_ref、margin_mode、liquidation_price、bankruptcy_price、partial_liquidation_ref 必须来自外接项目事实层或对应 venue rulebook/API。",
+        "不得将 maintenance margin tier 或 risk limit tier 转换为 CEK-TA 风险阈值或 hard gate。"
+      ],
+      "patch_notes": {
+        "source": [
+          "保留 Binance liquidation、Binance mark price、Bybit mark price 来源。",
+          "新增并保留 Binance Futures Leverage & Margin。",
+          "新增并保留 Bybit Risk Limit / maintenance margin / liquidation-risk 来源。"
+        ],
+        "content": [
+          "CRYPTO03 可作为 maintenance margin / liquidation boundary 的 reviewed/caveat_only 知识。",
+          "liquidation price、bankruptcy price、maintenance margin、margin mode、partial liquidation 必须分字段。",
+          "清算价不得等同普通止损。"
+        ],
+        "boundary": [
+          "不得输出清算规避建议。",
+          "不得输出仓位或杠杆建议。",
+          "不得输出止损参数。",
+          "不得生成 hard gate。"
+        ],
+        "conflict": []
+      }
+    },
+    "source_candidate_id": "cand_20260612_phase45_crypto_perp_p45_h_crypto03_001",
+    "ai_audit_result_id": "audit_phase45_p2_reviewed_blocked_supplemental_reaudit_20260612"
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于 AI IDE 检查数据授权、reference data、point-in-time metadata、crypto perpetual 特有风险的设计边界。",
+      "用于 RAG 检索、schema review、adapter contract review、数据 lineage 审计和风险上下文说明。"
+    ],
+    "not_allowed": [
+      "不得生成法律授权结论、训练授权结论、再分发许可、买卖点、仓位、杠杆、止损止盈、清算规避或实盘执行建议。",
+      "不得把 reviewed/caveat_only 当作 approved 或默认指导。",
+      "不得替外接项目启用 hard gate、自动停机、自动解锁、自动撤单、自动强平处理或风控阈值。"
+    ],
+    "required_context": [
+      "必须同时返回 source_evidence、applicability、not_applicable_when、review_status、conflict_status 和 machine_gate。",
+      "若外接项目问题涉及实盘、法律、授权、资金或风控动作，必须要求项目事实层或人工 owner 复核。"
+    ],
+    "fallback_behavior": "cite_with_caveat"
+  },
+  "machine_gate": {
+    "default_guidance": "caveat_only",
+    "review_visibility": "reviewed_caveat_only",
+    "reason": "Phase 45 P2 reviewed/caveat_only audit passed; approved/default guidance/hard gate/legal and trading conclusions remain disabled.",
+    "requires_human_escalation": false,
+    "hidden_from_default_queue": true,
+    "visible_in_default_guidance_queue": false,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "risk_threshold_advice_allowed": false,
+    "trade_execution_advice_allowed": false,
+    "legal_license_conclusion_allowed": false,
+    "blocking_reasons": [],
+    "checked_at": "2026-06-13T10:29:14+00:00",
+    "gate_version": "1.0.0"
+  },
+  "contribution": {
+    "source": "phase45_professional_research",
+    "private_data_removed": true,
+    "project_specific_details_removed": true,
+    "notes": "Generated for external strict audit; no project account, key, position, threshold, liquidation line, leverage, or private strategy data included."
+  },
+  "recommended_extra_sources": []
+}

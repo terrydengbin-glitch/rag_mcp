@@ -1,0 +1,39 @@
+{
+  "test_schema_version": "1.0.0",
+  "tests": [
+    {
+      "test_id": "rt_001_tree_node_filter",
+      "purpose": "Search can route by tree_node_id and return tree path.",
+      "request_ref": "examples/sample_search_requests.json#sr_backtest_001",
+      "knowledge_items_path": "codex-expert-kit/rag/examples/sample_knowledge_items.json",
+      "expected": {
+        "min_result_count": 1,
+        "required_item_ids": ["kb_04_backtest.bias.lookahead_boundary.v1"],
+        "required_fields": ["item_id", "tree_node_id", "tree_path", "source_refs", "confidence", "conflict_status"],
+        "forbidden_review_statuses": ["rejected"],
+        "forbidden_conflict_statuses": ["confirmed"]
+      }
+    },
+    {
+      "test_id": "rt_002_reviewed_with_conflict_warning",
+      "purpose": "Reviewed item with potential conflict can be returned only with warnings and caveat.",
+      "request_ref": "examples/sample_search_requests.json#sr_fill_001",
+      "knowledge_items_path": "codex-expert-kit/rag/examples/sample_knowledge_items.json",
+      "expected": {
+        "min_result_count": 1,
+        "required_item_ids": ["kb_05_replay_simulation.fill_model.same_candle_boundary.v1"],
+        "required_warning_contains": ["potential"],
+        "recommended_next_action": "cite_with_caveat"
+      }
+    },
+    {
+      "test_id": "rt_003_no_proposed_in_formal_retrieval",
+      "purpose": "Proposed contribution data must not be part of default formal retrieval.",
+      "knowledge_items_path": "codex-expert-kit/rag/examples/sample_knowledge_items.json",
+      "expected": {
+        "forbidden_statuses": ["proposed"],
+        "formal_store_only": true
+      }
+    }
+  ]
+}

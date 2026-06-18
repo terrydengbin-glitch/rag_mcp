@@ -1,0 +1,194 @@
+{
+  "schema_version": "phase59_candidate_audit_package.v1",
+  "package_id": "phase59_microstructure_feature_store_candidate_audit_package_20260617",
+  "generated_at": "2026-06-17",
+  "phase": "Phase 59",
+  "audit_goal": "严格审计 Microstructure Feature Store & Hybrid Snapshot Contract 的 3 条候选知识是否可进入 accepted_for_draft。审计必须搜索相关专业网站、官方资料、案例和数据，核验来源是否足以支撑候选 claim、分类、边界和不做什么。",
+  "hard_boundaries": {
+    "candidate_is_not_formal_knowledge": true,
+    "reviewed_allowed": false,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "trade_execution_advice_allowed": false,
+    "ddl_or_migration_allowed": false,
+    "allowed_decisions": [
+      "accepted_for_draft",
+      "needs_more_evidence",
+      "rejected",
+      "blocked"
+    ],
+    "forbidden_decisions": [
+      "reviewed",
+      "approved",
+      "default_guidance",
+      "hard_gate",
+      "trade_execution_advice",
+      "database_migration"
+    ]
+  },
+  "contract_refs": [
+    {
+      "contract_id": "phase59_microstructure_feature_store_hybrid_snapshot_contract",
+      "path": "docs/contracts/phase59_microstructure_feature_store_hybrid_snapshot_contract.md",
+      "purpose": "定义 canonical_registry_identity、audit_ledger_identity、kline_snapshot_identity、microstructure_store_identity、microstructure_feature_identity、feature_store_identity、hybrid_training_dataset_snapshot_manifest、point_in_time_join_policy 和 readiness_policy。"
+    },
+    {
+      "contract_id": "phase42_database_storage_contract",
+      "path": "docs/contracts/phase42_database_storage_contract.md",
+      "purpose": "作为 canonical facts、audit_trace、dataset snapshot manifest 和存储治理的上游契约。"
+    },
+    {
+      "contract_id": "phase38_training_data_and_eval_contract",
+      "path": "docs/contracts/phase38_training_data_and_eval_contract.md",
+      "purpose": "作为 decision-time feature frame、训练数据泄漏控制和 scorer dataset 边界的上游契约。"
+    }
+  ],
+  "source_seed_refs": [
+    {
+      "source_id": "feast_point_in_time",
+      "title": "Point-in-time joins",
+      "url": "https://docs.feast.dev/getting-started/concepts/point-in-time-joins",
+      "expected_use": "核验 point-in-time training feature retrieval 和避免未来特征泄漏。"
+    },
+    {
+      "source_id": "feast_docs",
+      "title": "Feast documentation",
+      "url": "https://docs.feast.dev/",
+      "expected_use": "核验 feature platform 抽象底层数据基础设施、offline/online store 的实现模式。"
+    },
+    {
+      "source_id": "iceberg_partitioning",
+      "title": "Apache Iceberg partitioning",
+      "url": "https://iceberg.apache.org/docs/latest/partitioning/",
+      "expected_use": "核验逻辑 schema 与物理分区布局解耦、partition evolution。"
+    },
+    {
+      "source_id": "iceberg_spec",
+      "title": "Apache Iceberg spec",
+      "url": "https://iceberg.apache.org/spec/",
+      "expected_use": "核验 snapshot/manifest 作为可追溯数据版本引用模式。"
+    },
+    {
+      "source_id": "clickhouse_mergetree",
+      "title": "ClickHouse MergeTree",
+      "url": "https://clickhouse.com/docs/engines/table-engines/mergetree-family/mergetree",
+      "expected_use": "核验高写入、大数据量分析存储作为 microstructure store 实现模式。"
+    },
+    {
+      "source_id": "kx_tick",
+      "title": "KX tick data capture and analysis",
+      "url": "https://code.kx.com/q/learn/startingkdb/tick/",
+      "expected_use": "核验实时和历史市场数据分层架构案例。"
+    }
+  ],
+  "audit_questions": [
+    "三条候选是否分别归类正确：Market Microstructure 本体、AI/Database Feature Store、AI/Database Relational Core Schema？",
+    "外部来源是否足以支撑“不要把 K 线 snap 和 microstructure 高频数据混成一个宽表”的 draft 级 claim？",
+    "是否需要补充更多交易所、数据供应商或金融市场数据架构案例？",
+    "Feast、Iceberg、ClickHouse、kdb+ 是否被正确限制为 implementation pattern，而不是强制技术栈？",
+    "候选是否错误生成了交易信号、仓位、杠杆、止损止盈、实盘执行建议、DDL 或数据库迁移？",
+    "canonical registry / audit ledger 不按 AI Trader 物理分库的表述是否过度？是否需要补充合规隔离或超大规模多库例外？",
+    "hybrid training dataset snapshot manifest 的字段是否足够覆盖 point-in-time、known_at、readiness、feature_schema_hash、dataset_hash、label_policy_version 和 audit_trace_id？"
+  ],
+  "output_schema": {
+    "audit_result_id": "string",
+    "package_id": "phase59_microstructure_feature_store_candidate_audit_package_20260617",
+    "summary": {
+      "total": "number",
+      "accepted_for_draft": "number",
+      "needs_more_evidence": "number",
+      "rejected": "number",
+      "blocked": "number"
+    },
+    "candidate_results": [
+      {
+        "candidate_id": "string",
+        "research_task_id": "string",
+        "decision": "accepted_for_draft | needs_more_evidence | rejected | blocked",
+        "confidence": "low | medium | medium_high | high",
+        "reviewed_allowed": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "trade_execution_advice_allowed": false,
+        "reasons": [
+          "string"
+        ],
+        "required_followups": [
+          "string"
+        ],
+        "patch_notes": {
+          "source": [
+            "string"
+          ],
+          "content": [
+            "string"
+          ],
+          "boundary": [
+            "string"
+          ],
+          "conflict": [
+            "string"
+          ]
+        }
+      }
+    ]
+  },
+  "candidates": [
+    {
+      "candidate_id": "cand_20260617_phase59_kline_microstructure_store_separation_001",
+      "research_task_id": "P59-MFS-001",
+      "path": "codex-expert-kit/rag/candidates/KB_03_MARKET_MICROSTRUCTURE/cand_20260617_phase59_kline_microstructure_store_separation_001.json",
+      "classification": {
+        "partition_id": "KB_03_MARKET_MICROSTRUCTURE",
+        "canonical_node_id": "kt.market_microstructure.order_flow"
+      },
+      "title": "Kline snapshot 与 microstructure 高频数据不应混成一个物理宽表",
+      "claim_summary": "Kline snapshot、指标和 entry/exit snap 属于低频决策上下文；tick、order book、trade prints、spread、depth、OFI、CVD 等 microstructure 原始或高频聚合数据属于高写入、高粒度市场事件层。二者应按数据粒度、写入频率、查询模式、保留策略和审计需求物理分层，再通过引用和 point-in-time manifest 组合训练样本。",
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reviewed_allowed": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      }
+    },
+    {
+      "candidate_id": "cand_20260617_phase59_hybrid_training_dataset_snapshot_manifest_001",
+      "research_task_id": "P59-MFS-002",
+      "path": "codex-expert-kit/rag/candidates/KB_AI_26_DATABASE_STORAGE/cand_20260617_phase59_hybrid_training_dataset_snapshot_manifest_001.json",
+      "classification": {
+        "partition_id": "KB_AI_26_DATABASE_STORAGE",
+        "canonical_node_id": "kt.ai_engineering.database_storage_engineering.feature_store_storage"
+      },
+      "title": "Hybrid training dataset 必须通过 snapshot manifest 逻辑组合 K 线与 micro features",
+      "claim_summary": "同时使用 Kline snapshot 与 microstructure 特征的训练集必须通过 hybrid training dataset snapshot manifest 绑定 kline_snapshot_ref、micro_snapshot_ref、micro_feature_ref、feature_schema_hash、dataset_hash、label_policy_version、split_manifest_ref、known_at_pass、readiness 和 audit_trace_id，并通过 point-in-time policy 阻断未来特征泄漏。",
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reviewed_allowed": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      }
+    },
+    {
+      "candidate_id": "cand_20260617_phase59_canonical_registry_not_per_trader_db_001",
+      "research_task_id": "P59-MFS-003",
+      "path": "codex-expert-kit/rag/candidates/KB_AI_26_DATABASE_STORAGE/cand_20260617_phase59_canonical_registry_not_per_trader_db_001.json",
+      "classification": {
+        "partition_id": "KB_AI_26_DATABASE_STORAGE",
+        "canonical_node_id": "kt.ai_engineering.database_storage_engineering.relational_core_schema"
+      },
+      "title": "中央 canonical registry / audit ledger 不应按 AI Trader 物理分库",
+      "claim_summary": "Trading AI 项目应保留中央 canonical registry / audit ledger 作为 unit、dataset、manifest、feature schema、audit trace、readiness 和 lineage 的事实索引与治理入口。AI Trader、Unit 或策略版本应通过 unit_id、unit_version、strategy_id、strategy_version 等字段逻辑隔离，而不是默认按每个 AI Trader 物理分库。",
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reviewed_allowed": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      }
+    }
+  ]
+}

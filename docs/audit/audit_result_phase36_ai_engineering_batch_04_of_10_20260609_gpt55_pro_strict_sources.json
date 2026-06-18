@@ -1,0 +1,372 @@
+{
+  "audit_result_id": "audit_result_phase36_ai_engineering_batch_04_of_10_20260609_gpt55_pro_strict_sources",
+  "source_package_id": "phase36_ai_engineering_candidate_audit_batch_04_of_10_20260609",
+  "decisions": [
+    {
+      "candidate_id": "cand_20260609_ai_engineering_feature_schema_feature_timestamp_cutoff_required_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立，candidate_id、normalized_claim 和 statement 基本对齐。训练输入特征必须声明 feature_timestamp_cutoff / decision_timestamp / available_at_decision_time，否则会产生未来信息泄漏或 post-decision leakage。Feast、TFDV 和 scikit-learn data leakage 资料均支持该规则进入 draft。",
+      "source_patch_notes": [
+        "保留 Feast 作为 feature definitions、historical feature retrieval、event timestamp、point-in-time join 的主来源。",
+        "保留 TFDV 作为 schema validation、label-as-feature leakage、training-serving skew 和 drift detection 来源。",
+        "保留 scikit-learn common pitfalls 作为 data leakage 和 test/preprocessing 隔离来源。",
+        "建议补内部 feature_schema_decision_time_contract.json，定义 CEK-TA 字段名和 severity。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：Every input feature must declare decision_timestamp, feature_timestamp, feature_timestamp_cutoff and decision-time availability before training, evaluation, RAG indexing or gating.",
+        "建议字段：feature_name、feature_source、event_timestamp、feature_timestamp、feature_timestamp_cutoff、decision_timestamp、available_at_decision_time、availability_proof_ref、validation_rule_id。",
+        "增加阻断动作：feature_timestamp 晚于 decision_timestamp 或无法证明 decision-time availability 时，block_training 或 needs_more_evidence。",
+        "本条应作为 batch 03 中 feature_schema.decision_time_only 的子规则，而不是重复父规则。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 只沉淀字段时间语义、schema、验证动作和审计字段。",
+        "具体 K 线计算、市场特征公式、交易信号、策略参数和回测逻辑路由到 Trading Engineering。",
+        "不得把真实交易样本、账户、订单、买卖点或私有策略上下文写入本知识项。"
+      ],
+      "conflict_patch_notes": [
+        "与 feature_schema.decision_time_only 高度相关；建议保留 decision_time_only 为父项，本条为 timestamp cutoff 子项。",
+        "与 post_trade_fields_forbidden_in_input 是兄弟规则：本条管时间截止，后者管字段类别。",
+        "未发现需要 rejected 的直接冲突。"
+      ],
+      "required_followups": [
+        "补 feature_timestamp_cutoff_schema.json。",
+        "补 validation severity：error、warning、info。",
+        "补 eval cases：feature timestamp after decision、missing cutoff、timezone mismatch、delayed market data availability。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_feature_schema_post_trade_fields_forbidden_in_input_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立。post-trade outcome、future return、fill result、realized PnL 或 later human label 进入 input feature 会构成 label leakage / future leakage。TFDV 明确把 labels treated as features 列为训练中偷看答案的问题，scikit-learn data leakage 资料也直接支持该规则。",
+      "source_patch_notes": [
+        "保留 TFDV 作为 label-as-feature leakage 和 schema environment 来源。",
+        "保留 scikit-learn common pitfalls 作为 data leakage 主来源。",
+        "保留 Feast 作为 feature timestamp 和 feature registry 支撑来源。",
+        "建议补内部 outcome_schema.post_trade_fields_separated 作为互链来源。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：Post-trade fields and future outcome fields are forbidden in model input features; they must be stored only as labels, outcomes, audit context or post-trade analysis fields.",
+        "建议 post_trade_field enum：realized_pnl、fill_price、fill_quantity、exit_price、future_return、future_price_path、later_human_label、post_trade_reason_code、execution_outcome。",
+        "建议字段：field_name、field_role、allowed_in_input、allowed_as_label、allowed_as_outcome、forbidden_reason、validation_rule_id。",
+        "如果 post-trade field 出现在 input schema，默认 block_training，不应仅 warning。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 定义 input/label/outcome 字段分离和泄漏阻断规则。",
+        "成交模型、fill model、滑点、费用、实盘执行和交易结果解释由 Trading Engineering 维护。",
+        "不得在知识库中保存具体订单、账户、fill 明细或策略收益路径。"
+      ],
+      "conflict_patch_notes": [
+        "与 feature_timestamp_cutoff_required 和 outcome_schema.post_trade_fields_separated 应建立强互链。",
+        "与 leakage.label_in_input_forbidden 后续候选可能重复；建议形成 feature/outcome leakage family。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 post_trade_field_enum.yaml。",
+        "补 input_target_outcome_separation_schema.json。",
+        "补 red-team eval case：realized_pnl hidden in feature、future_return alias、later label accidentally joined。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_feature_store_feature_schema_registry_required_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立。特征进入训练、评估、RAG/MCP 或 serving 前，需要登记 schema、source、time semantics、online/offline parity 和 validation constraints。Feast 与 TFDV 是直接相关来源，足以支持进入 draft。",
+      "source_patch_notes": [
+        "保留 Feast 作为 feature store、feature definitions、offline/online store、historical retrieval 和 registry 来源。",
+        "保留 TFDV 作为 schema validation、training-serving skew、drift detection 来源。",
+        "建议补 Great Expectations / Pandera / JSON Schema 作为 schema registry 执行层可选来源。",
+        "补内部 feature_registry_contract.md，定义 CEK-TA registry 字段。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：Features must be registered with schema, source lineage, time semantics, offline/online consistency constraints and validation reports before use in training or serving.",
+        "建议字段：feature_id、feature_name、feature_view_id、source_system、source_owner、schema_version、dtype、nullable、allowed_values、event_timestamp_field、feature_timestamp_cutoff_rule、offline_store_ref、online_store_ref、train_serve_skew_check_id。",
+        "要求 registry 变更触发 schema diff、owner review、lineage update 和 validation report。",
+        "将 feature registry 与 dataset schema registry 区分：前者管理 reusable feature，后者管理 dataset manifest。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 只保存 feature metadata、schema、hash、引用和验证状态。",
+        "具体交易特征公式、市场数据清洗逻辑、K 线信号、alpha 因子和策略版本解释路由 Trading Engineering。",
+        "不得把私有市场数据、策略表达式、账号或订单信息写入 registry 知识项。"
+      ],
+      "conflict_patch_notes": [
+        "与 dataset.schema_required 是互补关系：dataset schema 管样本集合，feature registry 管特征定义与服务一致性。",
+        "与 serving_consistency.train_like_serve_required 和 training_serving_parity_test_required 后续候选应互链。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 feature_registry_schema.json。",
+        "补 feature_registry_change_request 模板。",
+        "补 train_serve_skew_check_report 字段。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_feedback_model_output_cannot_label_itself_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立，但正式 draft 必须精确改写。模型输出、LLM 自评、线上 response 或自动反馈不能直接变成 ground-truth label；它们最多是 weak/synthetic/proposed label，必须经过独立规则、人审、gold set 对照或可审计 adjudication 后才能进入训练。Nature model collapse 证据、NIST governance、Datasheets 和 label quality 资料足以支撑该规则进入 draft。",
+      "source_patch_notes": [
+        "保留 NIST AI RMF 作为治理、风险测量和持续改进来源。",
+        "保留 Datasheets for Datasets，支持记录数据来源、生成过程、用途和限制。",
+        "补 Nature 2024 model collapse 作为模型生成数据污染训练集的直接风险来源。",
+        "补 weak supervision / Snorkel 或 Label Studio / IBM ground-truth 流程，支持 weak labels 与 ground truth 的区别。",
+        "scikit-learn data leakage 可作为 supporting source，但不是本条主证据。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：Model-generated outputs, self-critiques and online feedback must not be promoted to training truth labels without independent rule-based verification, human review or adjudicated gold-set evidence.",
+        "建议字段：feedback_event_id、model_output_id、self_label_flag、label_source、label_status、review_method、reviewer_id_hash、rule_check_id、adjudication_id、approved_for_training、training_pool_target。",
+        "label_status 建议枚举：proposed、weak_label、synthetic_label、human_reviewed、rule_verified、adjudicated_gold、rejected。",
+        "明确 LLM 可以提出 label suggestion，但不能成为自身训练真值的唯一来源。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 管理 feedback-to-training 的质量 gate、label status 和审计字段。",
+        "交易结果、收益解释、策略归因、订单执行事实由 Trading Engineering 或项目 owner 提供。",
+        "不得把模型输出中的私有交易上下文、账户、订单或策略规则直接写入通用训练标签。"
+      ],
+      "conflict_patch_notes": [
+        "与 label_factory.gold_set_required、label_factory.label_guideline_required、dpo.preference_data_quality_required 应互链。",
+        "与 research_feedback.llm_suggestion_is_hypothesis_only 后续候选可能重叠；建议一个偏训练数据，一个偏研究反馈。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 feedback_label_status_enum.yaml。",
+        "补 self_label_blocking_rule.md。",
+        "补 eval cases：LLM grades its own answer、online thumbs-up used as truth、LLM-generated preference pair without review。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_gating_false_allow_more_dangerous_than_false_block_v1_001",
+      "decision": "needs_more_evidence",
+      "reason": "当前候选不应直接转 draft。方向作为 CEK-TA hard-gate 默认风险偏好是合理的，但 normalized_claim 断言 false allow 一定比 false block 更危险，这需要内部 risk ledger、cost matrix、loss-severity policy 或 Trading Engineering owner 责任链支撑。现有 FINRA / NIST / model risk 来源只能支持监督、测试、控制和风险管理，不能直接证明所有交易场景下 false allow 成本必然高于 false block。",
+      "source_patch_notes": [
+        "保留 FINRA 15-09 / FINRA algorithmic trading 作为交易自动化监督和控制来源。",
+        "保留 NIST AI RMF 作为 risk tolerance、risk measurement 和治理来源。",
+        "将旧 Federal Reserve model risk 来源更新或补充为 2026 OCC/Fed/FDIC revised model risk guidance，并注明 GenAI/agentic AI 不在其直接范围内。",
+        "补 cost-sensitive classification、false positive / false negative risk tradeoff、risk ledger 或内部 false_allow_cost_record_required 来源。",
+        "补 OpenAI usage policies 作为高风险金融自动化需要 human review 的 supporting source。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议改为：For CEK-TA hard-gate trading LLM workflows, false_allow is treated as higher-severity by default unless an approved risk ledger and Trading Engineering owner define a different cost model.",
+        "避免写成所有场景的普适定论；应限定在 hard gate、实盘前置风控或默认交易建议场景。",
+        "建议字段：risk_ledger_id、false_allow_severity、false_block_severity、cost_model_ref、risk_owner、trading_engineering_owner、override_reason、reviewed_at。",
+        "如果没有 risk ledger，不能用该条决定阈值，只能触发 human_review / needs_more_evidence。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 可定义 risk event schema、severity 默认值和审计要求。",
+        "具体成本函数、策略收益、机会成本、仓位影响、风控预算和交易阈值属于 Trading Engineering。",
+        "不得把具体交易参数、账户风控规则、止损止盈或订单执行逻辑写入本知识项。"
+      ],
+      "conflict_patch_notes": [
+        "与 gating.low_confidence_cannot_allow 重复但不等价：后者是低置信度不能 hard allow，本条是 false_allow vs false_block 成本排序。",
+        "与 risk_ledger.false_allow_cost_record_required 后续候选应互链或合并。",
+        "当前直接 accepted 会把内部风险偏好伪装成外部事实。"
+      ],
+      "required_followups": [
+        "补 false_allow_false_block_cost_matrix.md。",
+        "补 risk_ledger_schema.json。",
+        "补 Trading Engineering owner override policy。",
+        "补 eval cases：false allow causes rule violation、false block causes missed profit、risk ledger overrides default severity。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_gating_low_confidence_cannot_allow_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立。低置信度、未校准 score、source conflict、RAG no-hit 或高风险候选不应由 LLM 直接 hard allow，应降级为 abstain、block_default_guidance 或 human review。FINRA/NIST 支持高风险交易自动化监督控制，LLM calibration 资料支持置信度不可未经校准直接用于 gating，OpenAI usage policies 支持金融等高风险自动化决策需要 human review。",
+      "source_patch_notes": [
+        "保留 FINRA 15-09 / FINRA algorithmic trading 作为交易自动化监督与控制来源。",
+        "保留 NIST AI RMF 作为 AI 风险治理来源。",
+        "补 ACL 2024 LLM confidence estimation and calibration survey 作为 LLM confidence 风险直接来源。",
+        "补 OpenAI Usage Policies，支持金融活动等敏感高风险自动化决策不应无 human review。",
+        "更新 OCC 2026 model risk guidance，并标注 GenAI/agentic AI 范围限制。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：Low-confidence, uncalibrated, high-risk, no-source or source-conflicted LLM gate outputs must not hard allow; safe actions are abstain, neutral_score, block_default_guidance or human_review.",
+        "建议字段：confidence_status、calibration_report_id、source_status、risk_level、fallback_action、review_queue_id、deterministic_gate_result、audit_event_id。",
+        "明确 low confidence 不等于自动 reject 交易；AI Engineering 只定义不能 hard allow，后续交易处理由 Trading Engineering 或人工复核决定。",
+        "与 calibration.llm_score_not_probability、runtime_final_gate_deterministic_engine_required 互链。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 管理 LLM score semantics、fallback action、human review 和审计 trace。",
+        "交易阈值、仓位、风险预算、订单动作和具体交易后果由 Trading Engineering 管理。",
+        "不得在本条写入具体 low-confidence 数值阈值或策略参数。"
+      ],
+      "conflict_patch_notes": [
+        "与 false_allow_more_dangerous_than_false_block 不应合并：本条可 accepted，false_allow 成本排序仍需补 risk ledger 证据。",
+        "与 calibration.threshold_requires_shadow_data、audit.every_gate_decision_requires_trace 强互补。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 low_confidence_fallback_policy.yaml。",
+        "补 confidence_status enum：uncalibrated、low_confidence、conflicted_source、rag_no_hit、high_risk、calibrated_ok。",
+        "补 UI 展示字段：fallback_action、review_status、source_refs、calibration_report_id。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_governance_dataset_card_and_model_card_required_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "方向充分成立。dataset card / datasheet 和 model card 是训练、评估、RAG、MCP、deployment governance 的核心文档，能记录 intended use、limitations、evaluation、training data、license、governance status 和风险边界。Datasheets、Model Cards 和 Hugging Face 官方文档均直接支持该规则。",
+      "source_patch_notes": [
+        "保留 Datasheets for Datasets 作为 dataset documentation 主来源。",
+        "保留 Model Cards for Model Reporting 作为 model intended use、limitations、evaluation procedures 主来源。",
+        "保留 Hugging Face Model Cards / Dataset Cards 作为工程实践来源。",
+        "建议补内部 CEK-TA dataset_card_template.md 和 model_card_template.md。"
+      ],
+      "content_patch_notes": [
+        "将 statement 中的 should 改为 CEK-TA 内部 must：Deployable LLM trade quality scoring/gating systems must maintain dataset cards and model cards before draft/review promotion.",
+        "建议字段：dataset_card_id、model_card_id、intended_use、out_of_scope_use、limitations、evaluation_summary、training_data_refs、license_status、privacy_status、governance_status、owner、last_reviewed_at。",
+        "明确 dataset card / model card 缺失时，不得进入 production-like eval、shadow promotion 或 formal reviewed。",
+        "本条可作为 dataset/model documentation family 的父规则。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 只存可复用文档模板、元数据、hash、引用和脱敏摘要。",
+        "不得把私有交易样本、账号、供应商合同全文、策略参数或订单细节写入 card。",
+        "交易执行、策略收益和风险解释字段只保存外部引用，由 Trading Engineering 或项目 owner 维护。"
+      ],
+      "conflict_patch_notes": [
+        "与 dataset.dataset_card_required 重复，应合并或建立父子关系：本条为 dataset+model governance 父项，第二批 dataset_card_required 为 dataset 子项。",
+        "与 model_card_required 后续候选如果出现，应作为同一 family。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 dataset_card_template.md。",
+        "补 model_card_template.md。",
+        "补 card completeness checklist 和 blocking rule。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_label_factory_gold_set_required_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立，但 statement 需要改得更贴合 candidate_id。当前 statement 是标签流程总规则，gold_set_required 应聚焦：未通过 guideline、IAA、一致性检查、冲突 adjudication 和版本化的标签不能进入 gold set，也不能作为训练真值。IBM ground-truth 流程、Datasheets 和 annotation disagreement resolution 文献能够支撑进入 draft。",
+      "source_patch_notes": [
+        "保留 Datasheets for Datasets，支持记录 labeling / collection / intended use / limitations。",
+        "补 IBM Watson Knowledge Studio ground truth 文档作为 promote ground truth、IAA、reject/return、adjudication 的直接来源。",
+        "补 annotation disagreement resolution 文献，支持 guideline、disagreement resolution 和 traceable decisions。",
+        "Model Cards 仅作 deployment documentation supporting source，不应作为 gold set 主来源。",
+        "scikit-learn CV 只支持训练/评估分离，不是 gold set 主来源。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：A label may enter the gold set only after guideline coverage, reviewer approval, inter-annotator agreement or adjudication evidence, conflict resolution and versioned audit records.",
+        "建议字段：gold_set_id、gold_set_version、label_guideline_version、annotation_task_id、reviewer_id_hash、iaa_report_id、conflict_resolution_id、gold_label_status、dataset_hash、created_at、deprecated_at。",
+        "明确 unverified、self-labeled、auto-labeled 或 unresolved-conflict labels 不得作为 training truth。",
+        "gold set 应 versioned immutable；变更生成新版本，不静默覆盖。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 定义 gold set promotion gate、schema、审计和版本化要求。",
+        "交易标签的业务含义、交易结果解释、策略收益归因由 Trading Engineering 或项目 owner 提供。",
+        "不得保存原始私有交易样本、账户、订单或策略细节。"
+      ],
+      "conflict_patch_notes": [
+        "与 data_asset.gold_set_immutable_required 互补：本条负责 label promotion，前者负责 gold set version immutability。",
+        "与 label_guideline_required、inter_annotator_agreement_required、label_conflict_resolution_required 形成 label factory family。",
+        "当前四个 label_factory candidate 共用同一句 statement，正式 draft 应拆为父子结构，避免重复。"
+      ],
+      "required_followups": [
+        "补 gold_set_promotion_schema.json。",
+        "补 gold_label_status enum：candidate、reviewed、adjudicated、gold、rejected、deprecated。",
+        "补 gold set promotion checklist。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_label_factory_inter_annotator_agreement_required_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立。人工标注或需要专家判断的标签流程应有 inter-annotator agreement / agreement review 或等价一致性检查；低一致性样本应返工、补指南、进入 adjudication 或降级为 ambiguous/needs_review。IBM ground-truth 和 Label Studio agreement 文档直接支持该规则。",
+      "source_patch_notes": [
+        "补 IBM Watson Knowledge Studio ground-truth 文档作为 IAA 与 promote ground truth 的主来源。",
+        "补 Label Studio / HumanSignal agreement 文档作为 task agreement、dataset readiness 和 annotator quality 的工程来源。",
+        "保留 Datasheets 作为 labeling process documentation 支撑来源。",
+        "Model Cards 不是 IAA 主来源，建议降为 supporting 或移除。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：Labels produced by human or expert annotation workflows must include inter-annotator agreement or an approved equivalent consistency check before promotion to gold or training truth.",
+        "建议字段：annotation_task_id、overlap_sample_ids、annotator_count、agreement_metric、agreement_score、threshold_ref、low_agreement_action、reviewer、guideline_version。",
+        "允许例外：单专家高敏任务或 deterministic rule label 可用 expert_review / rule_validation 替代 IAA，但必须记录 exception_reason。",
+        "低一致性不是自动删除样本；应触发 guideline update、training、adjudication 或 ambiguous label。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 管理 IAA schema、指标记录和 promotion gate。",
+        "具体交易标签争议的业务判断由 domain expert / Trading Engineering / project owner 提供。",
+        "不得在知识项中写入真实交易样本或私有标注内容。"
+      ],
+      "conflict_patch_notes": [
+        "与 gold_set_required 是父子关系：IAA 是 gold set promotion 的一个证据类型。",
+        "与 label_conflict_resolution_required 互补：IAA 发现分歧，conflict resolution 处理分歧。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 iaa_report_schema.json。",
+        "补 agreement_metric enum：percent_agreement、cohen_kappa、fleiss_kappa、krippendorff_alpha、pairwise_agreement。",
+        "补 low_agreement_action enum：return_to_annotator、update_guideline、adjudicate、mark_ambiguous、reject_label。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_label_factory_label_conflict_resolution_required_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立。标注冲突不能静默通过，也不能把 unresolved conflict 当作训练真值；需要 adjudication、理由记录、guideline 更新或 ambiguous/needs_review 状态。IBM ground-truth 文档和 annotation disagreement resolution 文献都直接支持冲突解决和可追踪决策。",
+      "source_patch_notes": [
+        "补 IBM Watson Knowledge Studio ground-truth / adjudication 文档作为主来源。",
+        "补 Interrater Disagreement Resolution 文献作为 disagreement resolution 和 traceability 的专业来源。",
+        "保留 Datasheets 作为标注过程和限制记录来源。",
+        "Model Cards 和 scikit-learn CV 不应作为本条主来源。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：Conflicting labels must be resolved through adjudication, guideline revision or explicit ambiguous status before any label is promoted to training truth or gold set.",
+        "建议字段：conflict_id、sample_id、label_candidates、conflict_type、adjudicator_id_hash、resolution_action、final_label、final_reason_code、guideline_update_id、trace_id。",
+        "明确多数投票可以是 resolution_method 之一，但不能无理由、无审计地覆盖专家冲突。",
+        "无法解决的样本应标记 ambiguous / needs_more_evidence，而不是强行生成 truth label。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 定义 conflict resolution workflow、schema 和审计字段。",
+        "交易标签业务裁决由 Trading Engineering、domain expert 或项目 owner 完成。",
+        "不得在通用知识库中保存具体交易样本、账户、订单或策略信息。"
+      ],
+      "conflict_patch_notes": [
+        "与 inter_annotator_agreement_required 是流程上下游：IAA 发现冲突，本条解决冲突。",
+        "与 gold_set_required 互链：未解决冲突不得进入 gold set。",
+        "与 ambiguous_trade_needs_human_review 后续候选可能重叠，应区分 label factory 冲突和 trade scoring runtime ambiguity。"
+      ],
+      "required_followups": [
+        "补 label_conflict_resolution_schema.json。",
+        "补 conflict_type enum：guideline_gap、ambiguous_case、annotator_error、domain_disagreement、data_quality_issue、future_info_leakage。",
+        "补 adjudication UI 字段和 audit log。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_label_factory_label_guideline_required_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立。人工或自动标注流程必须有版本化 label guideline、正负例、边界案例、禁止使用的信息和冲突处理说明，否则 IAA 与 gold set promotion 不可审计。IBM annotation guideline / ground truth 流程、Datasheets 和 disagreement resolution 文献均支持该规则。",
+      "source_patch_notes": [
+        "补 IBM Watson Knowledge Studio annotation guideline / ground-truth 文档作为直接来源。",
+        "补 Interrater Disagreement Resolution 文献，支持 task specification、guideline、traceable decisions。",
+        "保留 Datasheets 作为 labeling process documentation 来源。",
+        "Model Cards 仅作系统文档支持，不作为 label guideline 主来源。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：Every human, rule-based or automated label factory must maintain a versioned label guideline before labels are promoted to training truth, preference data or gold set.",
+        "建议字段：label_guideline_id、version、task_definition、label_schema_version、positive_examples、negative_examples、edge_cases、forbidden_information、conflict_policy、owner、effective_at。",
+        "增加禁止项：不得使用未来价格路径、post-trade outcome、LLM self-label 或未授权私有事实作为普通 label 依据。",
+        "guideline 变更应触发 affected label review 或 new gold set version。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 维护 label guideline 模板、审计字段和 promotion gate。",
+        "具体交易判断标准、策略有效性、交易结果解释应由 Trading Engineering 或项目 domain expert 提供。",
+        "不得把具体买卖点、仓位、止损止盈、策略参数或账户事实写入通用 label guideline。"
+      ],
+      "conflict_patch_notes": [
+        "与 inter_annotator_agreement_required、label_conflict_resolution_required、gold_set_required 构成 label factory family。",
+        "建议 label_guideline_required 作为 label factory 父规则，IAA/conflict/gold set 作为子规则。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 label_guideline_template.md。",
+        "补 label_guideline_change_log schema。",
+        "补 eval cases：missing guideline、guideline ambiguity、future info included in labeling instruction、LLM self-label allowed by mistake。"
+      ]
+    }
+  ],
+  "normalization": {
+    "normalized_from": "C:\\Users\\dove\\.codex\\attachments\\7989161d-968d-4f24-a8f7-f40e6549cca1\\pasted-text.txt",
+    "normalized_at": "2026-06-09",
+    "governance": [
+      "accepted_for_draft is not approved.",
+      "Formal knowledge created from this audit must remain reviewed/caveat_only.",
+      "needs_more_evidence items stay in candidate queue and must not become formal reviewed."
+    ]
+  }
+}

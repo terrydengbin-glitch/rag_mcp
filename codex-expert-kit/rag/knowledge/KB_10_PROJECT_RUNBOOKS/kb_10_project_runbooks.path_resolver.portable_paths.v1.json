@@ -1,0 +1,206 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_10_project_runbooks.path_resolver.portable_paths.v1",
+  "title": "CEK-TA 运行时代码必须通过 path resolver 定位项目路径",
+  "metadata": {
+    "partition_id": "KB_10_PROJECT_RUNBOOKS",
+    "domain": "project_runbooks",
+    "subdomain": "path_resolver",
+    "rule_type": "adapter_rule",
+    "content_type": "json",
+    "project_binding": "none",
+    "tree_node_id": "kt.project_integration.adapter",
+    "tree_path": "CEK-TA / Project Integration / Project Adapter",
+    "canonical_node_id": "kt.project_integration.adapter",
+    "canonical_tree_path": "CEK-TA / Project Integration / Project Adapter",
+    "risk_level": "medium",
+    "used_for": [
+      "code_review",
+      "rag_engineering",
+      "mcp",
+      "project_integration",
+      "vue_audit_ui"
+    ],
+    "claim_type": "project_integration_rule",
+    "classification_notes": "UI tree node and canonical classification are aligned."
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "general",
+    "data_granularity": "general",
+    "project_type": "general",
+    "applies_when": [
+      "CEK-TA 代码、脚本、MCP tool、索引生成器或测试需要访问仓库内文件",
+      "CEK-TA 被其他项目通过本地路径、Git submodule、MCP、Skill 或 Plugin 复用",
+      "外部项目需要配置 CEK-TA 根目录或正式知识索引路径"
+    ],
+    "not_applicable_when": [
+      "纯文档示例展示本机路径且明确说明可替换",
+      "用户一次性在命令行中显式传入完整路径并且不写入运行时代码",
+      "第三方工具要求固定格式的外部路径配置且已有 resolver 生成或校验"
+    ]
+  },
+  "content": {
+    "statement": "CEK-TA 运行时代码不得依赖开发机绝对路径或当前工作目录；访问仓库内文件必须通过 path resolver 或显式环境变量解析。",
+    "rationale": "CEK-TA 是支持层项目，会被多个业务项目复用。如果运行时代码写死 E 盘、本机目录或固定 parents 层级，项目迁移、submodule 复用、CI、团队安装和 MCP 调用都会变得脆弱。",
+    "procedure": [
+      "新增 Python 运行时代码时，优先使用 codex-expert-kit/core/path_resolver.py。",
+      "需要 CEK-TA 根目录时调用 resolve_project_root(start_file)。",
+      "需要仓库内文件时调用 resolve_repo_path(..., start_file=__file__)。",
+      "外部项目接入时优先配置 CEK_TA_ROOT；需要覆盖知识聚合索引时配置 CEK_TA_KNOWLEDGE_ITEMS_PATH。",
+      "代码审查时搜索硬编码盘符、固定绝对路径和重复的 parents[n] 根目录推导。"
+    ],
+    "examples": [
+      "MCP server 使用 resolver 定位 codex-expert-kit/rag/indexes/knowledge_items.json。",
+      "正式知识索引生成脚本使用 resolver 定位 rag/knowledge 和 rag/indexes。"
+    ],
+    "anti_patterns": [
+      "在运行时代码中写死 E:\\collector\\rag。",
+      "每个模块都手写一套 Path(__file__).parents[n] 根目录推导。",
+      "依赖执行命令时的当前工作目录来找到知识库。",
+      "外部项目复制 CEK-TA 路径常量而不是配置 CEK_TA_ROOT。"
+    ],
+    "validation": [
+      "pytest codex-expert-kit/core/tests",
+      "pytest codex-expert-kit/mcp/tests",
+      "server.py --info 返回的 knowledge_items_path 能在迁移后通过 CEK_TA_ROOT 解析",
+      "正式知识索引生成脚本在不同工作目录下仍能找到知识目录"
+    ],
+    "risk_notes": [
+      "文档中可以保留示例路径，但运行时代码不能依赖示例路径。",
+      "CEK_TA_ROOT 指向错误目录时 resolver 必须失败，而不是静默使用错误根目录。",
+      "该规则不改变 MCP 权限，也不授予写入、交易、账户或密钥能力。"
+    ],
+    "citation_notes": "Phase 22 任务卡定义了 path resolver 地基任务；AGENTS.md 写入了路径 Resolver 开发规范；path_resolver.py 提供 resolve_project_root 和 resolve_repo_path 的实现。"
+  },
+  "assumptions": [
+    "CEK-TA 仓库根目录包含 AGENTS.md、docs/index_tasks.md 和 codex-expert-kit/。",
+    "外部项目可以通过环境变量声明 CEK-TA 根目录。",
+    "正式运行时代码应优先保证可移植性。"
+  ],
+  "source_evidence": [
+    {
+      "source_id": "src_phase22_task_card",
+      "source_title": "Phase 22: Path Resolver 移植复用地基任务卡",
+      "source_url": "docs/tasks/phase22_path_resolver_foundation.md",
+      "source_type": "task_card",
+      "publisher": "CEK-TA",
+      "published_at": "2026-06-08",
+      "accessed_at": "2026-06-08",
+      "version": "v1",
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "任务卡定义 resolver 的目标、契约、边界、DoD 和测试要求。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_agents_path_resolver_rule",
+      "source_title": "CEK-TA AGENTS.md Path Resolver 规范",
+      "source_url": "AGENTS.md",
+      "source_type": "runbook",
+      "publisher": "CEK-TA",
+      "published_at": "2026-06-08",
+      "accessed_at": "2026-06-08",
+      "version": "v1",
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "AGENTS.md 明确禁止运行时代码硬编码开发机绝对路径，并要求使用 path_resolver.py。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_path_resolver_code",
+      "source_title": "CEK-TA path_resolver.py",
+      "source_url": "codex-expert-kit/core/path_resolver.py",
+      "source_type": "code_doc",
+      "publisher": "CEK-TA",
+      "published_at": "2026-06-08",
+      "accessed_at": "2026-06-08",
+      "version": "v1",
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "path_resolver.py 实现 CEK_TA_ROOT 优先和向上查找根目录的路径解析。",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 92,
+    "score_version": "1.0.0",
+    "primary_source_count": 3,
+    "supporting_source_count": 0,
+    "limitations": [
+      "该知识是 CEK-TA 内部工程规则，来源为项目任务卡、开发规范和代码实现。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "kb_10_project_runbooks.adapter.read_only_boundary.v1"
+    ],
+    "conflicts": [],
+    "resolution_summary": "路径 resolver 规则与外部项目只读接入边界一致，都是提高跨项目复用安全性的工程规则。",
+    "default_recommendation": "use_as_guidance"
+  },
+  "review": {
+    "confidence": "high",
+    "freshness": "stable",
+    "review_status": "approved",
+    "reviewer": "codex",
+    "reviewed_at": "2026-06-08",
+    "created_at": "2026-06-08",
+    "updated_at": "2026-06-08",
+    "open_questions": [
+      "后续可扩展 resolver 到 Node/Vue 构建脚本和 Plugin 分发配置。"
+    ],
+    "decision_log": [
+      {
+        "at": "2026-06-08",
+        "actor": "codex",
+        "decision": "approved",
+        "reason": "该规则有任务卡、AGENTS 开发规范和代码实现支撑，适用边界清晰且不改变权限。"
+      }
+    ],
+    "approval_status": "approved",
+    "default_guidance_allowed": true,
+    "source_candidate_id": null,
+    "ai_audit_result_id": null
+  },
+  "contribution": {
+    "contribution_id": null,
+    "source_project": null,
+    "sanitization_status": "not_applicable",
+    "private_data_removed": true,
+    "generic_mapping_notes": "通用 CEK-TA 工程可移植性规则，不含项目私有事实。"
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于审计和解释 CEK-TA / Project Integration / Project Adapter 范围内的专业边界。",
+      "用于提醒用户补充适用范围、来源、冲突状态和验证条件。",
+      "用于阻止 AI 把未满足边界的知识当成默认交易建议。"
+    ],
+    "not_allowed": [
+      "不得据此生成买卖点、仓位、杠杆或实盘执行指令。",
+      "不得在缺少适用边界、来源或冲突状态时作为默认指导。",
+      "不得把 reviewed 或 caveat_only 知识表述为 approved 结论。"
+    ],
+    "required_context": [
+      "project_type",
+      "market",
+      "asset",
+      "timeframe",
+      "data_granularity",
+      "task_type"
+    ],
+    "fallback_behavior": "cite_with_caveat"
+  },
+  "machine_gate": {
+    "default_guidance": "allow",
+    "reason": "approved; default_guidance_allowed=true; sources, conflict, freshness, and privacy gates passed.",
+    "requires_human_escalation": false,
+    "blocking_reasons": [],
+    "checked_at": "2026-06-09",
+    "gate_version": "1.0.0"
+  },
+  "recommended_extra_sources": []
+}

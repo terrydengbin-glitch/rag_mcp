@@ -1,0 +1,128 @@
+{
+  "audit_result_id": "audit_phase45_layered_risk_p45_c_20260612_external_strict_v1",
+  "auditor": "GPT-5.5 Thinking",
+  "audited_at": "2026-06-12",
+  "package_id": "phase45_layered_risk_candidate_audit_package_20260612",
+  "summary": {
+    "total": 6,
+    "accepted_for_draft": 5,
+    "needs_more_evidence": 1,
+    "rejected": 0,
+    "blocked": 0
+  },
+  "candidate_results": [
+    {
+      "research_task_id": "P45-C-RISK01",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "reasons": [
+        "SEC 15c3-5、CME 和 FIA 足以支撑 pre-trade controls 分层边界，但层级 taxonomy 是 CEK-TA 内部分类。"
+      ],
+      "required_followups": [
+        "将订单级、账户级、策略级、产品/venue 级、信用/保证金级和系统级标记为 CEK-TA 内部分层 taxonomy。",
+        "不得声称 SEC/CME/FIA 逐字要求这些 CEK-TA 字段层级。",
+        "不得把分层 pre-trade control 变成默认 hard gate 或自动拒单规则。"
+      ]
+    },
+    {
+      "research_task_id": "P45-C-RISK02",
+      "decision": "accepted_for_draft",
+      "confidence": "medium_high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "reasons": [
+        "SEC/CME 支撑 credit/capital/exposure controls；credit owner 与 strategy risk owner 分离是 CEK-TA owner-boundary 规则。"
+      ],
+      "required_followups": [
+        "credit limit owner 与 strategy risk owner 分开应标记为 CEK-TA owner-boundary 规则。",
+        "不得从 CME clearing-firm controls 泛化到所有 broker、crypto exchange 或外接账户。",
+        "不得输出具体信用额度、资本阈值或账户限制数值。"
+      ]
+    },
+    {
+      "research_task_id": "P45-C-RISK03",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "reasons": [
+        "SEC FAQ 支撑 price/size parameter controls；CME 支撑 price banding / erroneous-order prevention。"
+      ],
+      "required_followups": [
+        "策略信号强度不能绕过价格或数量控制应标记为 CEK-TA 风控边界。",
+        "CME price banding 只能作为 CME Globex 示例，不得泛化为所有 venue。",
+        "不得输出 price band、max order size 或 fat-finger 阈值数值。"
+      ]
+    },
+    {
+      "research_task_id": "P45-C-RISK04",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "reasons": [
+        "CME/FIA 支撑 messaging controls 和 automated-trading safeguards。"
+      ],
+      "required_followups": [
+        "不得输出 CME MPS、EMT、volume ratio 或 cancel-rate 具体数值作为 CEK-TA 通用阈值。",
+        "burst 行为、超限动作、恢复流程应标记为外接项目/venue-specific contract。",
+        "需要明确 message pressure 是系统/venue risk，不是成交风险、PnL 风险或策略 alpha。"
+      ]
+    },
+    {
+      "research_task_id": "P45-C-RISK05",
+      "decision": "needs_more_evidence",
+      "confidence": "medium",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "reasons": [
+        "CME 来源足以支撑 clearing margin/performance bond，但不足以完整支撑 collateral、available funds、broker buying power、strategy capital budget 和可交易现金误判边界。"
+      ],
+      "required_followups": [
+        "补充 broker 官方 margin / buying power / available funds 文档，例如 IBKR、prime broker、clearing broker 或 crypto exchange collateral 文档。",
+        "补充 collateral 与 cash balance / available balance / buying power 的字段边界来源。",
+        "补充 point-in-time margin/collateral evidence 的数据契约来源。",
+        "将不得把任一字段默认为可交易现金保留为 CEK-TA 内部审计边界，而不是 CME 直接结论。"
+      ]
+    },
+    {
+      "research_task_id": "P45-C-RISK06",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "reasons": [
+        "SEC/FIA/CME 支撑 pre-trade controls 与 post-trade analysis 分工。"
+      ],
+      "required_followups": [
+        "deterministic gate 应标记为 CEK-TA / 外接项目内部实现边界，不是 SEC/FIA/CME 原文要求。",
+        "不得由本候选启用 hard gate、拒单、停机、撤单或解锁流程。",
+        "post-trade surveillance 只能做发现、解释、复盘和合规监控，不能替代 pre-trade controls。"
+      ]
+    }
+  ],
+  "global_notes": [
+    "审计包边界合格：candidate 审计，禁止 reviewed/approved/default guidance/hard gate。",
+    "5 条可进入 accepted_for_draft，P45-C-RISK05 需要补 broker/available funds/buying power/collateral 证据。"
+  ]
+}

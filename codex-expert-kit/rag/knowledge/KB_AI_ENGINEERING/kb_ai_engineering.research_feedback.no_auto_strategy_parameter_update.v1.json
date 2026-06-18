@@ -1,0 +1,432 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_ai_engineering.research_feedback.no_auto_strategy_parameter_update.v1",
+  "title": "LLM 输出不得自动创建、修改或部署交易策略参数；任何参数变更建议都必须转成 research ticket，并经过",
+  "metadata": {
+    "partition_id": "KB_AI_ENGINEERING",
+    "domain": "ai_engineering",
+    "subdomain": "feedback_governance",
+    "rule_type": "checklist",
+    "content_type": "json",
+    "project_binding": "none",
+    "tree_node_id": "kt.ai_feedback_governance",
+    "tree_path": "CEK-TA / AI Engineering",
+    "canonical_node_id": "kt.ai_feedback_governance",
+    "canonical_tree_path": "CEK-TA / AI Engineering",
+    "risk_level": "medium",
+    "used_for": [
+      "llm_training",
+      "trading_gating_scoring",
+      "rag_engineering",
+      "mcp",
+      "vue_audit_ui"
+    ],
+    "source_candidate_id": "cand_20260609_ai_engineering_research_feedback_no_auto_strategy_parameter_update_v1_001",
+    "research_task_id": "RIT-P36-D-B15",
+    "claim_type": "ai_governance_rule",
+    "classification_notes": "Phase 36 AI Engineering reviewed knowledge; UI tree and canonical node are inherited from candidate classification. Trading rule bodies must remain in Trading Engineering."
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "general",
+    "data_granularity": "general",
+    "project_type": "trading_llm_assistant",
+    "applies_when": [
+      "LLM、agent、MCP tool、RAG workflow 或训练反馈输出包含策略参数、阈值、止损止盈、仓位、过滤条件或配置变更建议。",
+      "外接项目存在可写 strategy config、prompt-to-config、auto-tune、auto-deploy、paper/live promotion 或参数回灌接口。"
+    ],
+    "not_applicable_when": [
+      "LLM 只生成只读解释、复盘摘要或人工研究假设，且没有任何可写参数接口。",
+      "具体参数值、策略有效性、阈值、仓位、止损止盈或实盘更新由 Trading Engineering 明确接管。"
+    ]
+  },
+  "content": {
+    "statement": "LLM 输出不得自动创建、修改或部署交易策略参数；任何参数变更建议都必须转成 research ticket，并经过 Trading Engineering owner 审查、验证证据和审批。",
+    "rationale": "本候选仅沉淀 AI Engineering 中训练、评估、RAG/MCP、安全、部署或治理规则；不定义 K 线信号、具体交易策略、订单执行规则或账户参数。 审计结论：补证后可以升级为 accepted_for_draft。该候选已从 hypothesis-only 父规则中拆出，重写为工具权限和变更控制规则：LLM 输出不得自动创建、修改或部署交易策略参数，任何参数变更建议都必须转成 research ticket，并经过 Trading Engineering owner 审查、验证证据和审批。OWASP 支持 least-privilege tool scopes 和高风险动作 human approval；MCP security / authorization 支持敏感资源与操作的 server-side authorization / scope 控制；FINRA 支持算法交易系统的监督、测试和控制。证据足以进入 draft，但正式知识必须继续强调：具体策略参数、阈值、仓位、止损止盈和部署动作属于 Trading Engineering。",
+    "procedure": [
+      "确认项目事实匹配 applies_when，且没有命中 not_applicable_when。",
+      "按 source_patch_notes 检查来源是否足够支撑 statement。",
+      "按 content_patch_notes 补齐正式实现、schema、字段和 checklist。",
+      "按 boundary_patch_notes 确认没有把交易规则本体、项目私有参数或实盘执行规则写入 AI Engineering。",
+      "保留 required_followups，后续由来源增强或治理任务继续关闭。"
+    ],
+    "examples": [],
+    "anti_patterns": [
+      "把 reviewed 知识当作 approved 默认指导。",
+      "把 AI Engineering 规则扩写成具体交易阈值、仓位、买卖点或执行参数。",
+      "忽略审计结果中的来源限制、适用范围和后续补强要求。"
+    ],
+    "validation": [
+      "source_evidence 至少 2 条，且没有 low-only 来源。",
+      "conflict_status 为 none 或 resolved。",
+      "review_status 为 reviewed 时 machine_gate 必须是 caveat_only。",
+      "MCP/SearchLab 默认指导不得把本条当作 approved 返回。"
+    ],
+    "risk_notes": [
+      "本条仍是 candidate，需要外部 AI/人工审计确认来源充分性、适用边界和是否需要拆分。",
+      "AI Engineering 管理 no-auto-mutation、tool permission、audit event、research ticket handoff 和 UI 展示字段。",
+      "Trading Engineering 管理策略参数、阈值、仓位、止损止盈、回测、样本外验证、paper/live promotion 和实盘部署。",
+      "AI Engineering KB 不得保存具体策略参数值、买卖点、账户事实、订单动作、K 线规则、仓位规则或私有策略上下文。",
+      "如果 LLM 输出涉及具体策略更新，只能保存脱敏摘要和外部 ticket/ref，由 Trading Engineering owner 解释和审批。",
+      "与 research_feedback.llm_suggestion_is_hypothesis_only 是父子关系：hypothesis-only 是原则父项，本条是 no-auto-mutation / change-control 子项。",
+      "与 mcp.server_side_permission_enforcement_required、mcp.read_only_knowledge_access、safety.no_tool_permission_escalation、approval.hard_gate_enable_requires_approval 应互链。",
+      "与 runtime_final_gate_deterministic_engine_required 互补：本条禁止 LLM 自动改策略参数，runtime_final_gate 禁止 LLM 成为最终交易许可。",
+      "未发现需要 rejected 的直接冲突；accepted_for_draft 仍不等于 approved。",
+      "补 no_auto_strategy_parameter_update_policy.md。",
+      "补 strategy_parameter_update_approval_policy.md 或 Trading Engineering change-control contract。",
+      "补 tool/write permission schema：tool_name、access_mode、write_allowed、scope_required、owner_approval_required。",
+      "补 eval cases：LLM tries to update stop-loss、LLM changes threshold config、LLM writes strategy version、LLM creates approved-looking config。",
+      "补 Vue audit UI 字段：parameter_change_requested、auto_update_blocked、change_ticket_id、approval_status、trading_engineering_owner。"
+    ],
+    "citation_notes": "OWASP LLM 安全资料支持最小权限、工具访问限制和敏感动作人工审批；MCP 安全与授权文档支持按工具/能力拆分权限并在服务端验证 scope；FINRA 自动化交易资料支持交易系统变更、测试、监督和控制。",
+    "audit_patch_notes": {
+      "source_patch_notes": [
+        "保留 OpenAI evals 与 scikit-learn CV 作为研究建议进入验证流程前的 supporting sources，但不作为 no-auto-mutation 的主来源。",
+        "保留 FINRA algorithmic trading / 15-09，支持算法交易系统变更、测试、监督和控制的行业治理背景。",
+        "将 OWASP Prompt Injection Prevention Cheat Sheet / OWASP LLM01 Prompt Injection 作为工具权限、least privilege、human approval for high-risk actions 的主要安全来源。",
+        "将 MCP Security Best Practices 与 MCP Authorization 文档作为 server-side permission、scope、restricted resources / operations 的主要来源。",
+        "正式 draft 仍需要补 CEK-TA strategy_parameter_update_approval_policy 或 Trading Engineering change-control contract，作为具体审批路径的内部主来源。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议保留补充包写法：LLM 输出不得自动创建、修改或部署交易策略参数；任何参数变更建议都必须转成 research ticket，并经过 Trading Engineering owner 审查、验证证据和审批。",
+        "建议字段：suggestion_id、parameter_change_requested、auto_update_blocked、strategy_version_ref、requested_change_summary、change_ticket_id、owner_review_id、validation_evidence_ref、approval_status、audit_event_id。",
+        "增加 forbidden_action enum：create_strategy_parameter、modify_strategy_parameter、deploy_strategy_config、write_threshold_config、set_stop_loss、set_take_profit、change_position_sizing、promote_paper_to_live。",
+        "明确 no-auto-update 是 tool permission / change-control rule，不只是“LLM suggestion is hypothesis”的研究语义规则。",
+        "允许 LLM 生成 read-only explanation、research hypothesis、review ticket draft 或 evidence checklist，但不得写入配置、部署策略或伪造 approved 状态。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 管理 no-auto-mutation、tool permission、audit event、research ticket handoff 和 UI 展示字段。",
+        "Trading Engineering 管理策略参数、阈值、仓位、止损止盈、回测、样本外验证、paper/live promotion 和实盘部署。",
+        "AI Engineering KB 不得保存具体策略参数值、买卖点、账户事实、订单动作、K 线规则、仓位规则或私有策略上下文。",
+        "如果 LLM 输出涉及具体策略更新，只能保存脱敏摘要和外部 ticket/ref，由 Trading Engineering owner 解释和审批。"
+      ],
+      "conflict_patch_notes": [
+        "与 research_feedback.llm_suggestion_is_hypothesis_only 是父子关系：hypothesis-only 是原则父项，本条是 no-auto-mutation / change-control 子项。",
+        "与 mcp.server_side_permission_enforcement_required、mcp.read_only_knowledge_access、safety.no_tool_permission_escalation、approval.hard_gate_enable_requires_approval 应互链。",
+        "与 runtime_final_gate_deterministic_engine_required 互补：本条禁止 LLM 自动改策略参数，runtime_final_gate 禁止 LLM 成为最终交易许可。",
+        "未发现需要 rejected 的直接冲突；accepted_for_draft 仍不等于 approved。"
+      ],
+      "required_followups": [
+        "补 no_auto_strategy_parameter_update_policy.md。",
+        "补 strategy_parameter_update_approval_policy.md 或 Trading Engineering change-control contract。",
+        "补 tool/write permission schema：tool_name、access_mode、write_allowed、scope_required、owner_approval_required。",
+        "补 eval cases：LLM tries to update stop-loss、LLM changes threshold config、LLM writes strategy version、LLM creates approved-looking config。",
+        "补 Vue audit UI 字段：parameter_change_requested、auto_update_blocked、change_ticket_id、approval_status、trading_engineering_owner。"
+      ]
+    }
+  },
+  "assumptions": [
+    "外接项目提供项目事实、私有交易数据和策略上下文；CEK-TA 只沉淀可复用专业规则。",
+    "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+  ],
+  "source_evidence": [
+    {
+      "source_id": "src_openai_evals",
+      "source_title": "Working with evals | OpenAI API",
+      "source_url": "https://platform.openai.com/docs/guides/evals?api-mode=chat",
+      "source_type": "official_doc",
+      "publisher": "OpenAI",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "OpenAI evals documentation supports programmatic evaluation setup and workflow-specific quality checks before relying on model behavior.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_sklearn_cv",
+      "source_title": "Cross-validation: evaluating estimator performance | scikit-learn",
+      "source_url": "https://scikit-learn.org/stable/modules/cross_validation.html",
+      "source_type": "official_doc",
+      "publisher": "scikit-learn",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "scikit-learn cross-validation guidance supports held-out evaluation, splitting discipline, and avoiding evaluation on training data.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_finra_algo",
+      "source_title": "Algorithmic Trading | FINRA",
+      "source_url": "https://www.finra.org/rules-guidance/key-topics/algorithmic-trading",
+      "source_type": "standard_or_risk_framework",
+      "publisher": "FINRA",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "FINRA algorithmic trading guidance supports supervision, controls, risk assessment, testing, and governance for automated trading systems.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_owasp_prompt_tool_least_privilege",
+      "source_title": "LLM Prompt Injection Prevention Cheat Sheet",
+      "source_url": "https://cheatsheetseries.owasp.org/cheatsheets/LLM_Prompt_Injection_Prevention_Cheat_Sheet.html",
+      "source_type": "standard_or_risk_framework",
+      "publisher": "OWASP",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "OWASP 支持最小权限、工具访问限制、敏感/破坏性动作人工审批和外部内容隔离，可支撑 LLM 不得自动写入策略参数。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_mcp_security_best_practices",
+      "source_title": "Security Best Practices - Model Context Protocol",
+      "source_url": "https://modelcontextprotocol.io/docs/tutorials/security/security_best_practices",
+      "source_type": "official_doc",
+      "publisher": "Model Context Protocol",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": "current",
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "MCP 安全最佳实践强调最小权限 scope、工具/资源访问限制和降低授权爆炸半径，可支撑 no-write/no-auto-mutation 工具边界。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_mcp_authorization_scopes",
+      "source_title": "Understanding Authorization in MCP",
+      "source_url": "https://modelcontextprotocol.io/docs/tutorials/security/authorization",
+      "source_type": "official_doc",
+      "publisher": "Model Context Protocol",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": "current",
+      "reliability": "high",
+      "relevance": "medium",
+      "evidence_summary": "MCP 授权文档支持按工具或能力拆分权限，并在资源服务器验证 route/tool 所需 scope。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_occ_fed_fdic_revised_model_risk_2026",
+      "source_title": "Model Risk Management: Revised Guidance",
+      "source_url": "https://occ.gov/news-issuances/bulletins/2026/bulletin-2026-13.html",
+      "source_type": "standard_or_risk_framework",
+      "publisher": "OCC / Federal Reserve / FDIC",
+      "published_at": "2026-04-17",
+      "accessed_at": "2026-06-09",
+      "version": "OCC Bulletin 2026-13 / SR 26-2",
+      "reliability": "high",
+      "relevance": "medium",
+      "evidence_summary": "2026 年跨机构模型风险管理修订指南支持模型治理、验证、变更控制和风险分层；同时需注明 generative AI 和 agentic AI 不在其直接范围内，只能作为模型风险治理类比来源。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_finra_regulatory_notice_15_09",
+      "source_title": "FINRA Regulatory Notice 15-09",
+      "source_url": "https://www.finra.org/industry/notices/15-09",
+      "source_type": "standard_or_risk_framework",
+      "publisher": "FINRA",
+      "published_at": "2015-03-01",
+      "accessed_at": "2026-06-09",
+      "version": "Regulatory Notice 15-09",
+      "reliability": "high",
+      "relevance": "medium",
+      "evidence_summary": "FINRA 15-09 支持自动化交易系统的监督、测试、控制、变更和合规治理要求，适合作为交易自动化治理类来源。",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 90,
+    "score_version": "1.0.0",
+    "primary_source_count": 2,
+    "supporting_source_count": 6,
+    "low_reliability_source_count": 0,
+    "limitations": [
+      "本条为 reviewed 知识，来源和审计补丁已记录；默认指导仍需后续人工治理升级 approved。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "docs/contracts/ai_engineering_gating_scoring_contract.md",
+      "docs/contracts/ai_engineering_knowledge_item_policy.md",
+      "docs/tasks/phase36_ai_engineering_gating_scoring_knowledge.md",
+      "kb_ai_engineering.mcp.server_side_permission_enforcement_required.v1",
+      "kb_ai_engineering.research_feedback.llm_suggestion_is_hypothesis_only.v1",
+      "kb_ai_engineering.safety.no_tool_permission_escalation.v1"
+    ],
+    "conflicts": [],
+    "resolution_summary": "未发现与当前 CEK-TA formal knowledge 的直接冲突；候选不会进入默认指导。",
+    "default_recommendation": "caveat_only_until_approved"
+  },
+  "review": {
+    "confidence": "medium",
+    "freshness": "time_sensitive",
+    "review_status": "reviewed",
+    "reviewer": "codex",
+    "reviewed_at": "2026-06-09",
+    "created_at": "2026-06-09",
+    "updated_at": "2026-06-09",
+    "open_questions": [
+      "二审确认 no-auto-update 是否已从 hypothesis-only 父规则中拆出为工具权限/变更控制子规则。",
+      "确认是否需要在 formal reviewed 后补 strategy_parameter_update_approval_policy.md。",
+      "补 no_auto_strategy_parameter_update_policy.md。",
+      "补 strategy_parameter_update_approval_policy.md 或 Trading Engineering change-control contract。",
+      "补 tool/write permission schema：tool_name、access_mode、write_allowed、scope_required、owner_approval_required。",
+      "补 eval cases：LLM tries to update stop-loss、LLM changes threshold config、LLM writes strategy version、LLM creates approved-looking config。",
+      "补 Vue audit UI 字段：parameter_change_requested、auto_update_blocked、change_ticket_id、approval_status、trading_engineering_owner。"
+    ],
+    "decision_log": [
+      {
+        "at": "2026-06-09",
+        "actor": "external_ai",
+        "decision": "accepted_for_draft",
+        "reason": "补证后可以升级为 accepted_for_draft。该候选已从 hypothesis-only 父规则中拆出，重写为工具权限和变更控制规则：LLM 输出不得自动创建、修改或部署交易策略参数，任何参数变更建议都必须转成 research ticket，并经过 Trading Engineering owner 审查、验证证据和审批。OWASP 支持 least-privilege tool scopes 和高风险动作 human approval；MCP security / authorization 支持敏感资源与操作的 server-side authorization / scope 控制；FINRA 支持算法交易系统的监督、测试和控制。证据足以进入 draft，但正式知识必须继续强调：具体策略参数、阈值、仓位、止损止盈和部署动作属于 Trading Engineering。",
+        "audit_result_id": "audit_result_phase36_batch07_rag_parameter_risk_ledger_supplemental_reaudit_20260609_gpt55_pro_strict_sources"
+      },
+      {
+        "at": "2026-06-09",
+        "actor": "codex",
+        "decision": "converted_to_reviewed",
+        "reason": "按 Phase 36 批量审计结果优化候选并转为 formal reviewed；未升级 approved。",
+        "audit_result_id": "audit_result_phase36_batch07_rag_parameter_risk_ledger_supplemental_reaudit_20260609_gpt55_pro_strict_sources"
+      }
+    ],
+    "approval_status": "not_requested",
+    "default_guidance_allowed": false,
+    "source_candidate_id": "cand_20260609_ai_engineering_research_feedback_no_auto_strategy_parameter_update_v1_001",
+    "ai_audit_result_id": "audit_result_phase36_batch07_rag_parameter_risk_ledger_supplemental_reaudit_20260609_gpt55_pro_strict_sources",
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase36_batch07_rag_parameter_risk_ledger_supplemental_reaudit_20260609_gpt55_pro_strict_sources",
+      "source_package_id": "phase36_batch07_rag_parameter_risk_ledger_supplemental_audit_package_20260609",
+      "decision": "accepted_for_draft",
+      "reason": "补证后可以升级为 accepted_for_draft。该候选已从 hypothesis-only 父规则中拆出，重写为工具权限和变更控制规则：LLM 输出不得自动创建、修改或部署交易策略参数，任何参数变更建议都必须转成 research ticket，并经过 Trading Engineering owner 审查、验证证据和审批。OWASP 支持 least-privilege tool scopes 和高风险动作 human approval；MCP security / authorization 支持敏感资源与操作的 server-side authorization / scope 控制；FINRA 支持算法交易系统的监督、测试和控制。证据足以进入 draft，但正式知识必须继续强调：具体策略参数、阈值、仓位、止损止盈和部署动作属于 Trading Engineering。",
+      "source_patch_notes": [
+        "保留 OpenAI evals 与 scikit-learn CV 作为研究建议进入验证流程前的 supporting sources，但不作为 no-auto-mutation 的主来源。",
+        "保留 FINRA algorithmic trading / 15-09，支持算法交易系统变更、测试、监督和控制的行业治理背景。",
+        "将 OWASP Prompt Injection Prevention Cheat Sheet / OWASP LLM01 Prompt Injection 作为工具权限、least privilege、human approval for high-risk actions 的主要安全来源。",
+        "将 MCP Security Best Practices 与 MCP Authorization 文档作为 server-side permission、scope、restricted resources / operations 的主要来源。",
+        "正式 draft 仍需要补 CEK-TA strategy_parameter_update_approval_policy 或 Trading Engineering change-control contract，作为具体审批路径的内部主来源。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议保留补充包写法：LLM 输出不得自动创建、修改或部署交易策略参数；任何参数变更建议都必须转成 research ticket，并经过 Trading Engineering owner 审查、验证证据和审批。",
+        "建议字段：suggestion_id、parameter_change_requested、auto_update_blocked、strategy_version_ref、requested_change_summary、change_ticket_id、owner_review_id、validation_evidence_ref、approval_status、audit_event_id。",
+        "增加 forbidden_action enum：create_strategy_parameter、modify_strategy_parameter、deploy_strategy_config、write_threshold_config、set_stop_loss、set_take_profit、change_position_sizing、promote_paper_to_live。",
+        "明确 no-auto-update 是 tool permission / change-control rule，不只是“LLM suggestion is hypothesis”的研究语义规则。",
+        "允许 LLM 生成 read-only explanation、research hypothesis、review ticket draft 或 evidence checklist，但不得写入配置、部署策略或伪造 approved 状态。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 管理 no-auto-mutation、tool permission、audit event、research ticket handoff 和 UI 展示字段。",
+        "Trading Engineering 管理策略参数、阈值、仓位、止损止盈、回测、样本外验证、paper/live promotion 和实盘部署。",
+        "AI Engineering KB 不得保存具体策略参数值、买卖点、账户事实、订单动作、K 线规则、仓位规则或私有策略上下文。",
+        "如果 LLM 输出涉及具体策略更新，只能保存脱敏摘要和外部 ticket/ref，由 Trading Engineering owner 解释和审批。"
+      ],
+      "conflict_patch_notes": [
+        "与 research_feedback.llm_suggestion_is_hypothesis_only 是父子关系：hypothesis-only 是原则父项，本条是 no-auto-mutation / change-control 子项。",
+        "与 mcp.server_side_permission_enforcement_required、mcp.read_only_knowledge_access、safety.no_tool_permission_escalation、approval.hard_gate_enable_requires_approval 应互链。",
+        "与 runtime_final_gate_deterministic_engine_required 互补：本条禁止 LLM 自动改策略参数，runtime_final_gate 禁止 LLM 成为最终交易许可。",
+        "未发现需要 rejected 的直接冲突；accepted_for_draft 仍不等于 approved。"
+      ],
+      "required_followups": [
+        "补 no_auto_strategy_parameter_update_policy.md。",
+        "补 strategy_parameter_update_approval_policy.md 或 Trading Engineering change-control contract。",
+        "补 tool/write permission schema：tool_name、access_mode、write_allowed、scope_required、owner_approval_required。",
+        "补 eval cases：LLM tries to update stop-loss、LLM changes threshold config、LLM writes strategy version、LLM creates approved-looking config。",
+        "补 Vue audit UI 字段：parameter_change_requested、auto_update_blocked、change_ticket_id、approval_status、trading_engineering_owner。"
+      ]
+    },
+    "approved_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "contribution": {
+    "contribution_id": null,
+    "source_project": null,
+    "sanitization_status": "not_applicable",
+    "private_data_removed": true,
+    "generic_mapping_notes": "Phase 36 public-source AI Engineering candidate; no project-private trading facts included."
+  },
+  "copyright": {
+    "stores_full_text": false,
+    "stores_long_quote": false,
+    "summary_only": true,
+    "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+    "reuse_risk": "low"
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于审计 AI Engineering、LLM 训练、RAG/MCP、部署、安全或治理链路。",
+      "用于提醒外接项目补齐来源、适用边界、冲突状态、审计记录和人工审批。",
+      "用于 reviewed/audit 模式下带 caveat 引用。"
+    ],
+    "not_allowed": [
+      "不得生成买卖点、仓位、杠杆、止损止盈或实盘执行指令。",
+      "不得覆盖确定性风控、交易执行系统或人工审批。",
+      "不得作为 approved/default guidance 直接返回。"
+    ],
+    "required_context": [
+      "project_type",
+      "task_type",
+      "mode",
+      "strategy_version",
+      "data_boundary",
+      "review_status"
+    ],
+    "fallback_behavior": "cite_with_caveat"
+  },
+  "machine_gate": {
+    "default_guidance": "caveat_only",
+    "reason": "reviewed only; accepted_for_draft is not approved; default guidance requires later human governance approval.",
+    "requires_human_escalation": true,
+    "blocking_reasons": [
+      "not_approved",
+      "phase36_batch_reviewed_only"
+    ],
+    "checked_at": "2026-06-09",
+    "gate_version": "1.0.0",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "recommended_extra_sources": [
+    {
+      "title": "保留 OpenAI evals 与 scikit-learn CV 作为研究建议进入验证流程前的 supporting sources，但不作为 no-auto-mutation 的主来源。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_1"
+    },
+    {
+      "title": "保留 FINRA algorithmic trading / 15-09，支持算法交易系统变更、测试、监督和控制的行业治理背景。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_2"
+    },
+    {
+      "title": "将 OWASP Prompt Injection Prevention Cheat Sheet / OWASP LLM01 Prompt Injection 作为工具权限、least privilege、human approval for high-risk actions 的主要安全来源。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_3"
+    },
+    {
+      "title": "将 MCP Security Best Practices 与 MCP Authorization 文档作为 server-side permission、scope、restricted resources / operations 的主要来源。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_4"
+    },
+    {
+      "title": "正式 draft 仍需要补 CEK-TA strategy_parameter_update_approval_policy 或 Trading Engineering change-control contract，作为具体审批路径的内部主来源。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_5"
+    }
+  ]
+}

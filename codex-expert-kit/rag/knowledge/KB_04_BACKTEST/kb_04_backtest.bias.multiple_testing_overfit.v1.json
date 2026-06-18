@@ -1,0 +1,195 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_04_backtest.bias.multiple_testing_overfit.v1",
+  "title": "回测中的多重测试和过拟合偏差必须作为默认风险审计项",
+  "metadata": {
+    "partition_id": "KB_04_BACKTEST",
+    "domain": "backtest",
+    "subdomain": "bias",
+    "rule_type": "principle",
+    "content_type": "json",
+    "project_binding": "none",
+    "tree_node_id": "kt.backtest.bias",
+    "tree_path": "CEK-TA / Trading Engineering / Backtest / Bias",
+    "canonical_node_id": "kt.trading_engineering.backtest.bias",
+    "canonical_tree_path": "CEK-TA / Trading Engineering / Backtest / Bias",
+    "risk_level": "high",
+    "used_for": [
+      "strategy_design",
+      "code_review",
+      "backtest_review",
+      "trade_analysis",
+      "llm_training",
+      "rag_engineering",
+      "mcp",
+      "vue_audit_ui"
+    ],
+    "claim_type": "backtest_validity_rule",
+    "classification_notes": "UI tree node is kt.backtest.bias; canonical classification is kt.trading_engineering.backtest.bias."
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "general",
+    "data_granularity": "general",
+    "project_type": "general",
+    "applies_when": [
+      "评估策略回测结果、因子组合、参数搜索、信号筛选或模型选择结果",
+      "同一研究过程中尝试了多个信号、多个参数、多个过滤条件或多个资产池",
+      "需要判断回测表现是否可能被样本内选择和多重测试夸大"
+    ],
+    "not_applicable_when": [
+      "只是在说明一个交易系统的接口字段，不评价策略有效性",
+      "已有严格预注册研究设计、独立样本验证和完整试验次数记录，但仍需保留审计记录",
+      "下游任务要求的是实盘执行规则而非回测统计有效性"
+    ]
+  },
+  "content": {
+    "statement": "任何经过多信号、多参数或多组合筛选得到的优秀回测结果，都必须默认接受多重测试和过拟合偏差审计，不能直接作为策略有效性的证据。",
+    "rationale": "当研究者尝试大量信号或组合时，样本内表现优秀可能来自选择过程本身，而不是稳定可复现的预测能力。回测审计必须要求披露试验空间、选择过程、样本外验证和稳健性测试。",
+    "procedure": [
+      "记录被尝试的信号、参数、过滤条件、资产池和样本区间。",
+      "区分样本内选择、验证集选择和真正样本外评估。",
+      "检查是否存在只报告最好结果、隐藏失败组合或反复调整规则的情况。",
+      "要求给出 walk-forward、holdout、bootstrap、交叉市场或跨周期稳健性证据。",
+      "在 Codex code review 中检查参数搜索、特征筛选和回测报告是否保留完整试验痕迹。"
+    ],
+    "examples": [
+      "一个策略从 200 个指标组合中挑出收益最高的组合，必须标注多重测试风险。",
+      "一个因子只展示最优参数窗口的收益曲线，不足以证明它有真实预测能力。"
+    ],
+    "anti_patterns": [
+      "只展示最优组合，不披露候选组合数量。",
+      "把样本内调参后的收益曲线当作样本外表现。",
+      "没有记录失败实验，导致评估者无法估计选择偏差。"
+    ],
+    "validation": [
+      "检查回测报告是否列出候选信号和参数空间。",
+      "检查是否有独立样本外评估或 walk-forward 评估。",
+      "检查收益、回撤、胜率、夏普等指标是否只来自单个最优组合。",
+      "检查代码是否在测试集上反复调参。"
+    ],
+    "risk_notes": [
+      "该知识不判断某个具体策略是否能盈利。",
+      "该知识不提供投资建议或交易信号。",
+      "该知识主要用于防止回测结果被选择过程夸大。"
+    ],
+    "citation_notes": "NBER Working Paper 21329 讨论了多信号策略中组合筛选导致的严重过拟合和多重测试偏差，本条知识将其泛化为 CEK-TA 回测审计默认检查项。"
+  },
+  "assumptions": [
+    "回测研究存在多个候选信号、参数或组合。",
+    "评估者需要判断结果是否能作为策略有效性证据。",
+    "本条知识不假设任何特定市场或资产类别。"
+  ],
+  "source_evidence": [
+    {
+      "source_id": "src_seed_001",
+      "source_title": "Backtesting Strategies Based on Multiple Signals",
+      "source_url": "https://www.nber.org/papers/w21329",
+      "source_type": "paper",
+      "publisher": "National Bureau of Economic Research",
+      "published_at": "2015-07-01",
+      "accessed_at": "2026-06-08",
+      "version": "Working Paper 21329",
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "该论文分析了多信号策略回测中因选择最佳组合而产生的过拟合和多重测试偏差，支持将这类风险设为回测审计默认项。",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 91,
+    "score_version": "1.0.0",
+    "primary_source_count": 1,
+    "supporting_source_count": 0,
+    "limitations": [
+      "来源讨论的是多信号策略统计偏差；具体项目仍需结合自身参数搜索、数据划分和执行假设审计。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [],
+    "conflicts": [],
+    "resolution_summary": "未发现与现有 accepted 知识的直接冲突；该规则是审计约束，不是否定所有回测。",
+    "default_recommendation": "use_as_guidance"
+  },
+  "review": {
+    "confidence": "high",
+    "freshness": "stable",
+    "review_status": "approved",
+    "reviewer": "codex",
+    "reviewed_at": "2026-06-08",
+    "created_at": "2026-06-08",
+    "updated_at": "2026-06-08",
+    "open_questions": [
+      "后续可补充更多关于 deflated Sharpe ratio、概率化回测和数据窥探校正的来源。"
+    ],
+    "decision_log": [
+      {
+        "at": "2026-06-08",
+        "actor": "codex",
+        "decision": "approved",
+        "reason": "来源权威、适用边界明确、无未消解冲突，适合作为首批回测审计 seed 知识。"
+      }
+    ],
+    "approval_status": "approved",
+    "default_guidance_allowed": true,
+    "source_candidate_id": null,
+    "ai_audit_result_id": null
+  },
+  "contribution": {
+    "contribution_id": null,
+    "source_project": null,
+    "sanitization_status": "not_applicable",
+    "private_data_removed": true,
+    "generic_mapping_notes": "通用回测审计知识，不含项目私有事实。"
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于审计和解释 CEK-TA / Trading Engineering / Backtest / Bias 范围内的专业边界。",
+      "用于提醒用户补充适用范围、来源、冲突状态和验证条件。",
+      "用于阻止 AI 把未满足边界的知识当成默认交易建议。"
+    ],
+    "not_allowed": [
+      "不得据此生成买卖点、仓位、杠杆或实盘执行指令。",
+      "不得在缺少适用边界、来源或冲突状态时作为默认指导。",
+      "不得把 reviewed 或 caveat_only 知识表述为 approved 结论。"
+    ],
+    "required_context": [
+      "project_type",
+      "market",
+      "asset",
+      "timeframe",
+      "data_granularity",
+      "task_type"
+    ],
+    "fallback_behavior": "cite_with_caveat"
+  },
+  "machine_gate": {
+    "default_guidance": "allow",
+    "reason": "approved; default_guidance_allowed=true; sources, conflict, freshness, and privacy gates passed.",
+    "requires_human_escalation": false,
+    "blocking_reasons": [],
+    "checked_at": "2026-06-09",
+    "gate_version": "1.0.0"
+  },
+  "recommended_extra_sources": [
+    {
+      "title": "White, 2000, A Reality Check for Data Snooping",
+      "source_url": null,
+      "source_type": "paper",
+      "purpose": "补强 data snooping、多重测试和样本外检验边界。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_1"
+    },
+    {
+      "title": "Bailey et al., The Probability of Backtest Overfitting",
+      "source_url": null,
+      "source_type": "paper",
+      "purpose": "补强回测过拟合概率、参数搜索和模型选择风险。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_2"
+    }
+  ]
+}

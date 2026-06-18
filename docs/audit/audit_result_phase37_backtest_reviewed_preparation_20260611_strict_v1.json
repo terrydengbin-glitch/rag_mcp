@@ -1,0 +1,371 @@
+{
+  "audit_result_id": "audit_result_phase37_backtest_reviewed_preparation_20260611_strict_v1",
+  "package_id": "phase37_backtest_reviewed_preparation_audit_package_20260611",
+  "auditor": "external_ai_strict_audit",
+  "audited_at": "2026-06-11",
+  "quality_gate": {
+    "pass": false,
+    "reason": "存在 B10/B11/B12 三条未达到 reviewed/caveat_only 门槛；其余条目可在 caveat-only 边界下进入 reviewed。"
+  },
+  "summary": {
+    "total": 12,
+    "accepted_for_reviewed_caveat_only": 9,
+    "needs_more_evidence": 3,
+    "rejected": 0,
+    "blocked": 0
+  },
+  "candidate_results": [
+    {
+      "candidate_id": "cand_20260611_phase37_backtest_cost_model_required_001",
+      "research_task_id": "P37-E-B07",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "CFA execution/TCA 与 QuantConnect fee/slippage/fill model 官方文档足以支持成本模型和净表现边界。",
+        "平台文档只作为实现语义示例，不代表所有 backtest engine。"
+      ],
+      "required_followups": [],
+      "patch_notes": {
+        "source": [
+          "QuantConnect 等平台文档只能作为实现语义示例，不得泛化为所有 backtest engine。"
+        ],
+        "content": [],
+        "boundary": [
+          "reviewed/caveat_only 不等于 approved、default guidance 或 hard gate。",
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+          "样本外、walk-forward、成本建模或回测复现通过，也不等于实盘许可。"
+        ],
+        "conflict": [
+          "与 Quant Foundation、Data Engineering、Market Microstructure、Replay、Live Execution、Risk Management、AI Engineering 仅做 cross-reference 和 owner 边界拆分。"
+        ]
+      }
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_backtest_data_leakage_block_001",
+      "research_task_id": "P37-E-B02",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "White data snooping、Bailey PBO 与 CFA backtesting 足以支持数据泄漏导致回测证据失效。",
+        "block/阻断语义已限定为 evidence invalidation，不得解释为 hard gate。"
+      ],
+      "required_followups": [],
+      "patch_notes": {
+        "source": [],
+        "content": [
+          "将 block/阻断固定解释为 evidence invalidation：该回测不得作为策略有效性证据；不得被机器消费为 hard gate。"
+        ],
+        "boundary": [
+          "reviewed/caveat_only 不等于 approved、default guidance 或 hard gate。",
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+          "样本外、walk-forward、成本建模或回测复现通过，也不等于实盘许可。"
+        ],
+        "conflict": [
+          "与 Quant Foundation、Data Engineering、Market Microstructure、Replay、Live Execution、Risk Management、AI Engineering 仅做 cross-reference 和 owner 边界拆分。"
+        ]
+      }
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_backtest_lookahead_bias_block_001",
+      "research_task_id": "P37-E-B01",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "lookahead bias 破坏 decision_time 可见性；Databricks point-in-time feature joins 补强 available_time / label-time 可见性边界。",
+        "正式转换时需把 point-in-time / available_time source 纳入 source_refs。"
+      ],
+      "required_followups": [],
+      "patch_notes": {
+        "source": [
+          "正式转换前把 point-in-time / available_time / bar availability 来源写入 source_refs。"
+        ],
+        "content": [
+          "将 block/阻断固定解释为 evidence invalidation：该回测不得作为策略有效性证据；不得被机器消费为 hard gate。"
+        ],
+        "boundary": [
+          "reviewed/caveat_only 不等于 approved、default guidance 或 hard gate。",
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+          "样本外、walk-forward、成本建模或回测复现通过，也不等于实盘许可。"
+        ],
+        "conflict": [
+          "与 Quant Foundation、Data Engineering、Market Microstructure、Replay、Live Execution、Risk Management、AI Engineering 仅做 cross-reference 和 owner 边界拆分。"
+        ]
+      }
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_backtest_metric_interpretation_boundary_001",
+      "research_task_id": "P37-E-B09",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "CFA backtesting、Deflated Sharpe Ratio 与 PBO 直接支持回测指标必须结合样本、非正态、选择偏差和风险解释。",
+        "QuantConnect report 只能作为报告字段示例。"
+      ],
+      "required_followups": [],
+      "patch_notes": {
+        "source": [],
+        "content": [],
+        "boundary": [
+          "reviewed/caveat_only 不等于 approved、default guidance 或 hard gate。",
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+          "样本外、walk-forward、成本建模或回测复现通过，也不等于实盘许可。"
+        ],
+        "conflict": [
+          "与 Quant Foundation、Data Engineering、Market Microstructure、Replay、Live Execution、Risk Management、AI Engineering 仅做 cross-reference 和 owner 边界拆分。"
+        ]
+      }
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_backtest_out_of_sample_required_001",
+      "research_task_id": "P37-E-B06",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "CFA rolling-window backtesting、Bailey PBO、DSR 与 White data snooping 支撑不能只依赖 in-sample 表现。"
+      ],
+      "required_followups": [],
+      "patch_notes": {
+        "source": [],
+        "content": [],
+        "boundary": [
+          "reviewed/caveat_only 不等于 approved、default guidance 或 hard gate。",
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+          "样本外、walk-forward、成本建模或回测复现通过，也不等于实盘许可。"
+        ],
+        "conflict": [
+          "与 Quant Foundation、Data Engineering、Market Microstructure、Replay、Live Execution、Risk Management、AI Engineering 仅做 cross-reference 和 owner 边界拆分。"
+        ]
+      }
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_backtest_parameter_search_separate_from_final_eval_001",
+      "research_task_id": "P37-E-B04",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "White Reality Check、Sullivan/Timmermann/White、DSR 与 PBO 足以支持参数搜索和最终评估样本分离。"
+      ],
+      "required_followups": [],
+      "patch_notes": {
+        "source": [],
+        "content": [],
+        "boundary": [
+          "reviewed/caveat_only 不等于 approved、default guidance 或 hard gate。",
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+          "样本外、walk-forward、成本建模或回测复现通过，也不等于实盘许可。"
+        ],
+        "conflict": [
+          "与 Quant Foundation、Data Engineering、Market Microstructure、Replay、Live Execution、Risk Management、AI Engineering 仅做 cross-reference 和 owner 边界拆分。"
+        ]
+      }
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_backtest_profit_factor_drawdown_context_required_001",
+      "research_task_id": "P37-E-B10",
+      "decision": "needs_more_evidence",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "当前来源能支撑指标解释边界，但 profit factor、drawdown、收益回撤比的本体定义和局限仍缺 reviewed 级专业来源。"
+      ],
+      "required_followups": [
+        "补 profit factor、drawdown、return/drawdown 或收益回撤比的专业定义和局限来源。"
+      ],
+      "patch_notes": {
+        "source": [
+          "补 profit factor、drawdown、return/drawdown 或收益回撤比的专业定义和局限来源。"
+        ],
+        "content": [],
+        "boundary": [
+          "reviewed/caveat_only 不等于 approved、default guidance 或 hard gate。",
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+          "样本外、walk-forward、成本建模或回测复现通过，也不等于实盘许可。"
+        ],
+        "conflict": [
+          "与 Quant Foundation、Data Engineering、Market Microstructure、Replay、Live Execution、Risk Management、AI Engineering 仅做 cross-reference 和 owner 边界拆分。"
+        ]
+      }
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_backtest_reproducibility_package_required_001",
+      "research_task_id": "P37-E-B11",
+      "decision": "needs_more_evidence",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "MLflow/DVC 支撑实验追踪和 pipeline 复现，但 CEK-TA backtest_run_manifest / reproducibility_package schema 未提供，不能支撑全部字段本体。"
+      ],
+      "required_followups": [
+        "上传或内联 CEK-TA backtest_run_manifest / reproducibility_package / versioning schema。"
+      ],
+      "patch_notes": {
+        "source": [
+          "上传或内联 CEK-TA backtest_run_manifest / reproducibility_package / versioning schema。"
+        ],
+        "content": [
+          "区分外部工具可支持的实验追踪能力与 CEK-TA 内部字段契约。"
+        ],
+        "boundary": [
+          "reviewed/caveat_only 不等于 approved、default guidance 或 hard gate。",
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+          "样本外、walk-forward、成本建模或回测复现通过，也不等于实盘许可。"
+        ],
+        "conflict": [
+          "与 Quant Foundation、Data Engineering、Market Microstructure、Replay、Live Execution、Risk Management、AI Engineering 仅做 cross-reference 和 owner 边界拆分。"
+        ]
+      }
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_backtest_slippage_fee_spread_required_001",
+      "research_task_id": "P37-E-B08",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "QuantConnect fill/slippage/fee 和 CFA execution 来源足以支持 fill price、slippage、fee、spread、partial fill 和订单类型假设披露。"
+      ],
+      "required_followups": [],
+      "patch_notes": {
+        "source": [
+          "QuantConnect 等平台文档只能作为实现语义示例，不得泛化为所有 backtest engine。"
+        ],
+        "content": [],
+        "boundary": [
+          "reviewed/caveat_only 不等于 approved、default guidance 或 hard gate。",
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+          "样本外、walk-forward、成本建模或回测复现通过，也不等于实盘许可。"
+        ],
+        "conflict": [
+          "与 Quant Foundation、Data Engineering、Market Microstructure、Replay、Live Execution、Risk Management、AI Engineering 仅做 cross-reference 和 owner 边界拆分。"
+        ]
+      }
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_backtest_strategy_version_and_data_version_required_001",
+      "research_task_id": "P37-E-B12",
+      "decision": "needs_more_evidence",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "MLflow/DVC 支撑参数、代码和 artifact 版本追踪，但 strategy_rule_version、calendar/session version、cost/fill model version 属于 CEK-TA schema 字段，当前缺内部 schema。"
+      ],
+      "required_followups": [
+        "上传或内联 CEK-TA backtest_run_manifest / reproducibility_package / versioning schema。"
+      ],
+      "patch_notes": {
+        "source": [
+          "上传或内联 CEK-TA backtest_run_manifest / reproducibility_package / versioning schema。"
+        ],
+        "content": [
+          "区分外部工具可支持的实验追踪能力与 CEK-TA 内部字段契约。"
+        ],
+        "boundary": [
+          "reviewed/caveat_only 不等于 approved、default guidance 或 hard gate。",
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+          "样本外、walk-forward、成本建模或回测复现通过，也不等于实盘许可。"
+        ],
+        "conflict": [
+          "与 Quant Foundation、Data Engineering、Market Microstructure、Replay、Live Execution、Risk Management、AI Engineering 仅做 cross-reference 和 owner 边界拆分。"
+        ]
+      }
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_backtest_survivorship_selection_bias_check_001",
+      "research_task_id": "P37-E-B03",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "medium",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "CFA backtesting 直接提示 survivorship/look-ahead 等行为问题，White/DSR/STW 支撑选择偏差；外部 survivorship 与 CME rollover 来源可补齐退市/合约换月边界。",
+        "正式 source_refs 应补 survivorship/delisted/historical universe/contract rollover 直接来源。"
+      ],
+      "required_followups": [],
+      "patch_notes": {
+        "source": [
+          "正式转换前补 survivorship bias、delisted assets、historical universe、contract expiry/rollover 的直接来源。"
+        ],
+        "content": [
+          "universe 构建时间点、退市/过期资产、合约换月、样本选择和排除规则必须可审计。"
+        ],
+        "boundary": [
+          "reviewed/caveat_only 不等于 approved、default guidance 或 hard gate。",
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+          "样本外、walk-forward、成本建模或回测复现通过，也不等于实盘许可。"
+        ],
+        "conflict": [
+          "与 Quant Foundation、Data Engineering、Market Microstructure、Replay、Live Execution、Risk Management、AI Engineering 仅做 cross-reference 和 owner 边界拆分。"
+        ]
+      }
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_backtest_walk_forward_validation_required_001",
+      "research_task_id": "P37-E-B05",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "CFA rolling-window backtesting、Bailey PBO、White data snooping 和 metadata 追踪来源足以支持 walk-forward 窗口和参数冻结边界。"
+      ],
+      "required_followups": [],
+      "patch_notes": {
+        "source": [],
+        "content": [],
+        "boundary": [
+          "reviewed/caveat_only 不等于 approved、default guidance 或 hard gate。",
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+          "样本外、walk-forward、成本建模或回测复现通过，也不等于实盘许可。"
+        ],
+        "conflict": [
+          "与 Quant Foundation、Data Engineering、Market Microstructure、Replay、Live Execution、Risk Management、AI Engineering 仅做 cross-reference 和 owner 边界拆分。"
+        ]
+      }
+    }
+  ],
+  "global_notes": [
+    "本次未创建 approved/default guidance/hard gate。",
+    "上传包未提供完整 CEK-TA formal KB；冲突审计仅限可见上下文。",
+    "所有 backtest 条目仅约束回测可信度、偏差、成本、验证和复现边界，不证明任何策略盈利。"
+  ]
+}

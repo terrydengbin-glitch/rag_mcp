@@ -1,0 +1,157 @@
+[
+  {
+    "case_id": "retrieval.kline.boundary.001",
+    "category": "kline",
+    "priority": "P0",
+    "task_type": "strategy_design",
+    "query": "K线形态规则可以直接用于所有周期和所有市场吗？",
+    "mode": "default_guidance",
+    "filters": {
+      "domain": "kline_strategy",
+      "review_status": "approved"
+    },
+    "project_context": {
+      "market": "crypto",
+      "asset": "BTC",
+      "timeframe": "1m",
+      "data_granularity": "kline",
+      "project_type": "kline_trend_strategy"
+    },
+    "expected": {
+      "expected_domains": ["kline_strategy"],
+      "expected_node_ids": ["kt.kline_strategy", "kt.trading_engineering.strategy_engineering"],
+      "required_fields": ["source_refs", "applicable_scope", "not_applicable_scope", "confidence", "freshness", "conflict_status", "recommended_next_action"],
+      "required_warnings": ["timeframe_or_market_boundary"]
+    },
+    "must_not": {
+      "return_review_status": ["draft", "rejected", "deprecated"],
+      "return_conflict_status": ["confirmed"],
+      "claim_universal_applicability": true,
+      "use_raw_kline_market_data": true
+    },
+    "metrics": ["retrieval_hit_rate", "boundary_preservation_rate", "unsafe_default_guidance_rate"],
+    "review_notes": "K线知识评测关注专业规则边界，不采集或评测实时 K 线行情。"
+  },
+  {
+    "case_id": "retrieval.backtest.bias.001",
+    "category": "backtest",
+    "priority": "P0",
+    "task_type": "backtest_review",
+    "query": "如何审计回测中的未来函数和同一根K线止盈止损先后顺序问题？",
+    "mode": "default_guidance",
+    "filters": {
+      "domain": "backtest",
+      "tree_node_id": "kt.backtest.bias"
+    },
+    "project_context": {
+      "market": "crypto",
+      "asset": "multi",
+      "timeframe": "1m",
+      "data_granularity": "kline",
+      "project_type": "kline_trend_strategy"
+    },
+    "expected": {
+      "expected_domains": ["backtest"],
+      "expected_node_ids": ["kt.backtest.bias"],
+      "required_concepts": ["lookahead_bias", "same_candle_ordering", "fill_model_assumption"],
+      "required_fields": ["source_refs", "applicable_scope", "not_applicable_scope", "why_matched", "recommended_next_action"]
+    },
+    "must_not": {
+      "infer_tick_order_from_ohlc_without_caveat": true,
+      "return_unsourced": true,
+      "return_review_status": ["draft", "rejected", "deprecated"]
+    },
+    "metrics": ["retrieval_hit_rate", "top1_node_accuracy", "boundary_preservation_rate", "citation_completeness"],
+    "review_notes": "回测问题必须保留数据粒度和 fill model 假设。"
+  },
+  {
+    "case_id": "retrieval.risk.live.001",
+    "category": "risk",
+    "priority": "P0",
+    "task_type": "live_trading",
+    "query": "实盘交易系统的 kill switch 和最大亏损风控应该如何设计？",
+    "mode": "default_guidance",
+    "filters": {
+      "domain": "live_trading"
+    },
+    "project_context": {
+      "market": "crypto",
+      "asset": "multi",
+      "timeframe": "general",
+      "data_granularity": "account_event",
+      "project_type": "live_binance_futures"
+    },
+    "expected": {
+      "expected_domains": ["live_trading", "risk_management"],
+      "expected_node_ids": ["kt.live_execution.risk_control", "kt.trading_engineering.risk_management"],
+      "required_warnings": ["high_impact", "freshness_or_exchange_rule_check"],
+      "required_fields": ["source_refs", "freshness", "recommended_next_action", "warnings"]
+    },
+    "must_not": {
+      "return_stale_without_warning": true,
+      "return_confirmed_conflict": true,
+      "suggest_unsafe_live_operation": true
+    },
+    "metrics": ["freshness_score", "recommended_action_accuracy", "unsafe_default_guidance_rate"],
+    "review_notes": "高影响实盘风控必须有保守默认和人工审计提示。"
+  },
+  {
+    "case_id": "retrieval.execution.fill.001",
+    "category": "execution",
+    "priority": "P1",
+    "task_type": "simulation",
+    "query": "模拟盘和回放系统如何定义成交模型，避免和实盘执行语义不一致？",
+    "mode": "default_guidance",
+    "filters": {
+      "domain": "replay_simulation"
+    },
+    "project_context": {
+      "market": "crypto",
+      "asset": "multi",
+      "timeframe": "1m",
+      "data_granularity": "kline",
+      "project_type": "high_fidelity_simulator"
+    },
+    "expected": {
+      "expected_domains": ["replay_simulation", "live_trading", "backtest"],
+      "required_concepts": ["fill_model", "latency", "slippage", "order_type", "data_granularity"],
+      "required_fields": ["applicable_scope", "assumptions", "not_applicable_scope", "source_refs"]
+    },
+    "must_not": {
+      "treat_backtest_fill_as_live_truth": true,
+      "omit_latency_or_slippage_assumption": true
+    },
+    "metrics": ["boundary_preservation_rate", "retrieval_hit_rate", "citation_completeness"],
+    "review_notes": "执行语义评测必须检查模拟盘、回放、实盘边界。"
+  },
+  {
+    "case_id": "retrieval.llm_rag.source.001",
+    "category": "llm_rag",
+    "priority": "P0",
+    "task_type": "rag_engineering",
+    "query": "RAG 知识条目什么时候可以被 Codex 当成默认专业指导？",
+    "mode": "default_guidance",
+    "filters": {
+      "domain": "rag_engineering"
+    },
+    "project_context": {
+      "market": "general",
+      "asset": "general",
+      "timeframe": "general",
+      "data_granularity": "general",
+      "project_type": "trading_llm_assistant"
+    },
+    "expected": {
+      "expected_domains": ["rag_engineering", "project_runbooks"],
+      "required_concepts": ["source_refs", "review_status", "conflict_status", "applicability_boundary", "freshness"],
+      "required_fields": ["source_refs", "review_status", "conflict_status", "recommended_next_action"]
+    },
+    "must_not": {
+      "approve_unsourced_knowledge": true,
+      "ignore_conflict_status": true,
+      "promote_project_private_fact": true
+    },
+    "metrics": ["citation_completeness", "conflict_safety_score", "review_readiness_score"],
+    "review_notes": "LLM/RAG 评测重点是来源、边界、冲突和项目事实隔离。"
+  }
+]

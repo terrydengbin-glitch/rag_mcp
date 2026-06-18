@@ -1,0 +1,357 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_ai_engineering.label_factory.inter_annotator_agreement_required.v1",
+  "title": "人工标注进入 Gold/Training 前必须有一致性检查",
+  "metadata": {
+    "partition_id": "KB_AI_ENGINEERING",
+    "domain": "ai_engineering",
+    "subdomain": "label_factory",
+    "rule_type": "decision_rule",
+    "content_type": "json",
+    "project_binding": "none",
+    "tree_node_id": "kt.ai_label_factory",
+    "tree_path": "CEK-TA / AI Engineering",
+    "canonical_node_id": "kt.ai_label_factory",
+    "canonical_tree_path": "CEK-TA / AI Engineering",
+    "risk_level": "medium",
+    "used_for": [
+      "llm_training",
+      "trading_gating_scoring",
+      "rag_engineering",
+      "mcp",
+      "vue_audit_ui"
+    ],
+    "source_candidate_id": "cand_20260609_ai_engineering_label_factory_inter_annotator_agreement_required_v1_001",
+    "research_task_id": "RIT-P36-N-10",
+    "claim_type": "ai_governance_rule",
+    "classification_notes": "Phase 36 AI Engineering reviewed knowledge；本条只沉淀 AI/LLM/RAG/MCP/训练数据、评估、部署或治理规则。交易规则本体、K 线、策略、实盘执行和风控阈值必须路由到 Trading Engineering。"
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "general",
+    "data_granularity": "general",
+    "project_type": "trading_llm_assistant",
+    "applies_when": [
+      "标签由多人、人机协作或专家流程生成，并将进入训练、评估、gold set 或 preference data。",
+      "项目需要判断标注任务是否 ready for gold promotion。",
+      "存在 overlap samples 或可用于一致性评估的标注结果。"
+    ],
+    "not_applicable_when": [
+      "标签来自 deterministic rule 且已有 rule_validation 证据。",
+      "单专家高敏任务有明确 expert_review 例外和 owner 审批。",
+      "需要解决具体标注冲突，应路由到 label_conflict_resolution_required。"
+    ]
+  },
+  "content": {
+    "statement": "人工或专家标注流程产出的标签，在进入 gold set 或 training truth 前，必须包含 inter-annotator agreement 或经批准的等价一致性检查。",
+    "rationale": "低一致性说明指南不清、样本歧义或标注质量不足。直接把低一致性标签作为真值，会让模型学到冲突标准。",
+    "procedure": [
+      "记录 annotation_task_id、overlap_sample_ids、annotator_count 和 guideline_version。",
+      "计算 agreement_metric 和 agreement_score，并绑定 threshold_ref。",
+      "低一致性触发 low_agreement_action：return_to_annotator、update_guideline、adjudicate、mark_ambiguous 或 reject_label。",
+      "例外路径必须记录 exception_reason、expert_review 或 rule_validation。",
+      "保存 reviewer 和审计记录。"
+    ],
+    "examples": [],
+    "anti_patterns": [
+      "把 reviewed 知识当作 approved 默认指导。",
+      "把 AI Engineering 规则扩写成具体交易阈值、仓位、买卖点、止损止盈或执行参数。",
+      "缺少来源、schema、适用范围、冲突检查或审计记录仍进入训练、评估、RAG promotion 或默认指导。"
+    ],
+    "validation": [
+      "source_evidence 至少存在 2 条，且没有 unresolved conflict。",
+      "review_status 为 reviewed 时 machine_gate.default_guidance 必须是 caveat_only。",
+      "外接项目调用时必须返回 knowledge_id、source_refs、review_status、machine_gate 和适用边界。",
+      "前端候选页、知识树和 SearchLab 不得显示乱码或未解释的英文 demo 文案。"
+    ],
+    "risk_notes": [
+      "accepted_for_draft 不是 approved；本条只能作为 formal reviewed 知识进入审计和检索。",
+      "本知识项只处理 AI Engineering 边界，不沉淀项目私有交易数据和交易规则本体。",
+      "若项目事实涉及具体策略、实盘订单、风控阈值或市场结构，应路由到 Trading Engineering 对应分支。"
+    ],
+    "citation_notes": "IBM Watson Knowledge Studio ground-truth 文档支持 IAA 与 promote ground truth；Label Studio/HumanSignal agreement 文档支持 task agreement、dataset readiness 和 annotator quality。",
+    "audit_patch_notes": {
+      "source_patch_notes": [
+        "补 IBM Watson Knowledge Studio ground-truth 文档作为 IAA 与 promote ground truth 的主来源。",
+        "补 Label Studio / HumanSignal agreement 文档作为 task agreement、dataset readiness 和 annotator quality 的工程来源。",
+        "保留 Datasheets 作为 labeling process documentation 支撑来源。",
+        "Model Cards 不是 IAA 主来源，建议降为 supporting 或移除。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：Labels produced by human or expert annotation workflows must include inter-annotator agreement or an approved equivalent consistency check before promotion to gold or training truth.",
+        "建议字段：annotation_task_id、overlap_sample_ids、annotator_count、agreement_metric、agreement_score、threshold_ref、low_agreement_action、reviewer、guideline_version。",
+        "允许例外：单专家高敏任务或 deterministic rule label 可用 expert_review / rule_validation 替代 IAA，但必须记录 exception_reason。",
+        "低一致性不是自动删除样本；应触发 guideline update、training、adjudication 或 ambiguous label。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 管理 IAA schema、指标记录和 promotion gate。",
+        "具体交易标签争议的业务判断由 domain expert / Trading Engineering / project owner 提供。",
+        "不得在知识项中写入真实交易样本或私有标注内容。"
+      ],
+      "conflict_patch_notes": [
+        "与 gold_set_required 是父子关系：IAA 是 gold set promotion 的一个证据类型。",
+        "与 label_conflict_resolution_required 互补：IAA 发现分歧，conflict resolution 处理分歧。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 iaa_report_schema.json。",
+        "补 agreement_metric enum：percent_agreement、cohen_kappa、fleiss_kappa、krippendorff_alpha、pairwise_agreement。",
+        "补 low_agreement_action enum：return_to_annotator、update_guideline、adjudicate、mark_ambiguous、reject_label。"
+      ]
+    },
+    "required_fields": [
+      "annotation_task_id",
+      "overlap_sample_ids",
+      "annotator_count",
+      "agreement_metric",
+      "agreement_score",
+      "threshold_ref",
+      "low_agreement_action",
+      "reviewer",
+      "guideline_version"
+    ],
+    "linked_rules": [
+      "label_factory.gold_set_required.v1",
+      "label_factory.label_conflict_resolution_required.v1",
+      "label_factory.label_guideline_required.v1"
+    ]
+  },
+  "assumptions": [
+    "外接项目提供项目事实、私有交易数据和策略上下文；CEK-TA 只沉淀可复用专业规则。",
+    "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+  ],
+  "source_evidence": [
+    {
+      "source_id": "src_datasheets",
+      "source_title": "Datasheets for Datasets",
+      "source_url": "https://arxiv.org/abs/1803.09010",
+      "source_type": "paper",
+      "publisher": "arXiv",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "The paper supports documenting dataset motivation, composition, collection, intended use, maintenance, and limitations.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_model_cards",
+      "source_title": "Model Cards for Model Reporting",
+      "source_url": "https://arxiv.org/abs/1810.03993",
+      "source_type": "paper",
+      "publisher": "arXiv",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "Model Cards support documenting intended use, performance, limitations, and ethical considerations for model deployment and review.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_sklearn_cv",
+      "source_title": "Cross-validation: evaluating estimator performance | scikit-learn",
+      "source_url": "https://scikit-learn.org/stable/modules/cross_validation.html",
+      "source_type": "official_doc",
+      "publisher": "scikit-learn",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "scikit-learn cross-validation guidance supports held-out evaluation, splitting discipline, and avoiding evaluation on training data.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_occ_fed_fdic_revised_model_risk_2026",
+      "source_title": "Model Risk Management: Revised Guidance",
+      "source_url": "https://occ.gov/news-issuances/bulletins/2026/bulletin-2026-13.html",
+      "source_type": "standard_or_risk_framework",
+      "publisher": "OCC / Federal Reserve / FDIC",
+      "published_at": "2026-04-17",
+      "accessed_at": "2026-06-09",
+      "version": "OCC Bulletin 2026-13 / SR 26-2",
+      "reliability": "high",
+      "relevance": "medium",
+      "evidence_summary": "2026 年跨机构模型风险管理修订指南支持模型治理、验证、变更控制和风险分层；同时需注明 generative AI 和 agentic AI 不在其直接范围内，只能作为模型风险治理类比来源。",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 90,
+    "score_version": "1.0.0",
+    "primary_source_count": 2,
+    "supporting_source_count": 2,
+    "low_reliability_source_count": 0,
+    "limitations": [
+      "本条为 reviewed 知识，来源和审计补丁已记录；默认指导仍需后续人工治理升级 approved。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "docs/contracts/ai_engineering_gating_scoring_contract.md",
+      "docs/contracts/ai_engineering_knowledge_item_policy.md",
+      "docs/tasks/phase36_ai_engineering_gating_scoring_knowledge.md"
+    ],
+    "conflicts": [],
+    "resolution_summary": "未发现与当前 CEK-TA formal knowledge 的直接冲突；候选不会进入默认指导。",
+    "default_recommendation": "caveat_only_until_approved"
+  },
+  "review": {
+    "confidence": "medium",
+    "freshness": "time_sensitive",
+    "review_status": "reviewed",
+    "reviewer": "codex",
+    "reviewed_at": "2026-06-09",
+    "created_at": "2026-06-09",
+    "updated_at": "2026-06-09",
+    "open_questions": [
+      "审计时确认该候选是否应与相邻 AI Engineering 规则合并、拆分，或改路由到 Trading Engineering。",
+      "补 iaa_report_schema.json。",
+      "补 agreement_metric enum：percent_agreement、cohen_kappa、fleiss_kappa、krippendorff_alpha、pairwise_agreement。",
+      "补 low_agreement_action enum：return_to_annotator、update_guideline、adjudicate、mark_ambiguous、reject_label。"
+    ],
+    "decision_log": [
+      {
+        "at": "2026-06-09",
+        "actor": "external_ai",
+        "decision": "accepted_for_draft",
+        "reason": "方向成立。人工标注或需要专家判断的标签流程应有 inter-annotator agreement / agreement review 或等价一致性检查；低一致性样本应返工、补指南、进入 adjudication 或降级为 ambiguous/needs_review。IBM ground-truth 和 Label Studio agreement 文档直接支持该规则。",
+        "audit_result_id": "audit_result_phase36_ai_engineering_batch_04_of_10_20260609_gpt55_pro_strict_sources"
+      },
+      {
+        "at": "2026-06-09",
+        "actor": "codex",
+        "decision": "converted_to_reviewed",
+        "reason": "按 Phase 36 批量审计结果优化候选并转为 formal reviewed；未升级 approved。",
+        "audit_result_id": "audit_result_phase36_ai_engineering_batch_04_of_10_20260609_gpt55_pro_strict_sources"
+      }
+    ],
+    "approval_status": "not_requested",
+    "default_guidance_allowed": false,
+    "source_candidate_id": "cand_20260609_ai_engineering_label_factory_inter_annotator_agreement_required_v1_001",
+    "ai_audit_result_id": "audit_result_phase36_ai_engineering_batch_04_of_10_20260609_gpt55_pro_strict_sources",
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase36_ai_engineering_batch_04_of_10_20260609_gpt55_pro_strict_sources",
+      "source_package_id": "phase36_ai_engineering_candidate_audit_batch_04_of_10_20260609",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立。人工标注或需要专家判断的标签流程应有 inter-annotator agreement / agreement review 或等价一致性检查；低一致性样本应返工、补指南、进入 adjudication 或降级为 ambiguous/needs_review。IBM ground-truth 和 Label Studio agreement 文档直接支持该规则。",
+      "source_patch_notes": [
+        "补 IBM Watson Knowledge Studio ground-truth 文档作为 IAA 与 promote ground truth 的主来源。",
+        "补 Label Studio / HumanSignal agreement 文档作为 task agreement、dataset readiness 和 annotator quality 的工程来源。",
+        "保留 Datasheets 作为 labeling process documentation 支撑来源。",
+        "Model Cards 不是 IAA 主来源，建议降为 supporting 或移除。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：Labels produced by human or expert annotation workflows must include inter-annotator agreement or an approved equivalent consistency check before promotion to gold or training truth.",
+        "建议字段：annotation_task_id、overlap_sample_ids、annotator_count、agreement_metric、agreement_score、threshold_ref、low_agreement_action、reviewer、guideline_version。",
+        "允许例外：单专家高敏任务或 deterministic rule label 可用 expert_review / rule_validation 替代 IAA，但必须记录 exception_reason。",
+        "低一致性不是自动删除样本；应触发 guideline update、training、adjudication 或 ambiguous label。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 管理 IAA schema、指标记录和 promotion gate。",
+        "具体交易标签争议的业务判断由 domain expert / Trading Engineering / project owner 提供。",
+        "不得在知识项中写入真实交易样本或私有标注内容。"
+      ],
+      "conflict_patch_notes": [
+        "与 gold_set_required 是父子关系：IAA 是 gold set promotion 的一个证据类型。",
+        "与 label_conflict_resolution_required 互补：IAA 发现分歧，conflict resolution 处理分歧。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 iaa_report_schema.json。",
+        "补 agreement_metric enum：percent_agreement、cohen_kappa、fleiss_kappa、krippendorff_alpha、pairwise_agreement。",
+        "补 low_agreement_action enum：return_to_annotator、update_guideline、adjudicate、mark_ambiguous、reject_label。"
+      ]
+    },
+    "approved_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "contribution": {
+    "contribution_id": null,
+    "source_project": null,
+    "sanitization_status": "not_applicable",
+    "private_data_removed": true,
+    "generic_mapping_notes": "Phase 36 public-source AI Engineering candidate; no project-private trading facts included."
+  },
+  "copyright": {
+    "stores_full_text": false,
+    "stores_long_quote": false,
+    "summary_only": true,
+    "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+    "reuse_risk": "low"
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于审计 AI Engineering、LLM 训练、RAG/MCP、部署、安全或治理链路。",
+      "用于提醒外接项目补齐来源、适用边界、冲突状态、审计记录和人工审批。",
+      "用于 reviewed/audit 模式下带 caveat 引用。"
+    ],
+    "not_allowed": [
+      "不得生成买卖点、仓位、杠杆、止损止盈或实盘执行指令。",
+      "不得覆盖确定性风控、交易执行系统或人工审批。",
+      "不得作为 approved/default guidance 直接返回。"
+    ],
+    "required_context": [
+      "project_type",
+      "task_type",
+      "mode",
+      "strategy_version",
+      "data_boundary",
+      "review_status"
+    ],
+    "fallback_behavior": "cite_with_caveat"
+  },
+  "machine_gate": {
+    "default_guidance": "caveat_only",
+    "reason": "reviewed only; accepted_for_draft is not approved; default guidance requires later human governance approval.",
+    "requires_human_escalation": true,
+    "blocking_reasons": [
+      "not_approved",
+      "phase36_batch04_reviewed_only"
+    ],
+    "checked_at": "2026-06-09",
+    "gate_version": "1.0.0",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "recommended_extra_sources": [
+    {
+      "title": "补 IBM Watson Knowledge Studio ground-truth 文档作为 IAA 与 promote ground truth 的主来源。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_1"
+    },
+    {
+      "title": "补 Label Studio / HumanSignal agreement 文档作为 task agreement、dataset readiness 和 annotator quality 的工程来源。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_2"
+    },
+    {
+      "title": "保留 Datasheets 作为 labeling process documentation 支撑来源。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_3"
+    },
+    {
+      "title": "Model Cards 不是 IAA 主来源，建议降为 supporting 或移除。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_4"
+    }
+  ]
+}

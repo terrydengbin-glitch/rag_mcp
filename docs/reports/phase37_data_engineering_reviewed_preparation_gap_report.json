@@ -1,0 +1,96 @@
+{
+  "report_id": "phase37_data_engineering_reviewed_preparation_gap_report",
+  "generated_at": "2026-06-11",
+  "task_id": "CEK-TA-387",
+  "package_id": "phase37_data_engineering_reviewed_preparation_audit_package_20260611",
+  "audit_package": "E:/collector/rag/docs/audit/phase37_data_engineering_reviewed_preparation_audit_package_20260611.json",
+  "candidate_count": 12,
+  "by_node": {
+    "kt.trading_engineering.data_engineering": 12
+  },
+  "by_research_task": {
+    "P37-B-D01": "cand_20260611_phase37_data_engineering_timestamp_alignment_required_001",
+    "P37-B-D02": "cand_20260611_phase37_data_engineering_timezone_policy_required_001",
+    "P37-B-D03": "cand_20260611_phase37_data_engineering_missing_bar_detection_required_001",
+    "P37-B-D04": "cand_20260611_phase37_data_engineering_duplicate_event_detection_required_001",
+    "P37-B-D05": "cand_20260611_phase37_data_engineering_ohlcv_schema_required_001",
+    "P37-B-D06": "cand_20260611_phase37_data_engineering_feature_timestamp_required_001",
+    "P37-B-D07": "cand_20260611_phase37_data_engineering_data_versioning_required_001",
+    "P37-B-D08": "cand_20260611_phase37_data_engineering_symbol_contract_normalization_required_001",
+    "P37-B-D09": "cand_20260611_phase37_data_engineering_corporate_action_or_contract_rollover_policy_001",
+    "P37-B-D10": "cand_20260611_phase37_data_engineering_outlier_detection_required_001",
+    "P37-B-D11": "cand_20260611_phase37_data_engineering_raw_vs_adjusted_data_boundary_001",
+    "P37-B-D12": "cand_20260611_phase37_data_engineering_data_quality_report_required_001"
+  },
+  "patch_notes_by_candidate": {
+    "cand_20260611_phase37_data_engineering_corporate_action_or_contract_rollover_policy_001": [
+      "将期货换月/连续合约部分的主来源补入 Databento Symbology continuous contracts 或交易所连续合约/roll methodology 文档；不要只靠 corporate action 来源支撑 rollover。",
+      "明确 raw、adjusted、back-adjusted、continuous-symbol 原始未复权价格分别是什么，不得把 vendor 的字段名/roll rule 泛化为所有供应商。"
+    ],
+    "cand_20260611_phase37_data_engineering_data_quality_report_required_001": [
+      "把“必须产出数据质量报告”限定为 CEK-TA 回测/训练/评估/上线前审计包要求。",
+      "source_refs 应补 Great Expectations Data Docs/Checkpoint、Deequ/Soda/dbt tests 或内部数据质量报告 schema；当前 GX Try page 只支持 validation result 形态。"
+    ],
+    "cand_20260611_phase37_data_engineering_data_versioning_required_001": [
+      "不要把 Iceberg/DVC 当作强制实现；允许等价 immutable snapshot、content hash、vendor dataset version 或 object-store manifest。",
+      "补充数据供应商 dataset condition/last_modified 或 lakeFS/Delta Lake 作为可替代实现来源。"
+    ],
+    "cand_20260611_phase37_data_engineering_duplicate_event_detection_required_001": [
+      "补直接来源：Great Expectations uniqueness expectations、Databricks silver-layer deduplication、Kafka/event-id/idempotent ingestion 或交易所 sequence-number 文档。",
+      "将“唯一键”改成“natural key、provider event id、sequence tuple 或可审计 synthetic key”，避免暗示所有 venue 都有全局唯一 event_id。"
+    ],
+    "cand_20260611_phase37_data_engineering_feature_timestamp_required_001": [
+      "必须区分 event_time、vendor_receive_time、feature_compute_time、available_time、decision_time；feature_timestamp 不能被单独当作充分条件。",
+      "补充交易日历、publication lag、vendor correction lag 和 late-arriving data 的处理规则。"
+    ],
+    "cand_20260611_phase37_data_engineering_missing_bar_detection_required_001": [
+      "将“缺失 bar”与“交易所休市/无成交/供应商丢包/过滤后为空”区分开，避免把全部空区间都当成数据错误。",
+      "补 market calendar / session hours / halt status 来源，才能处理跨市场假期和盘中停牌。"
+    ],
+    "cand_20260611_phase37_data_engineering_ohlcv_schema_required_001": [
+      "补充 price scale、volume unit、currency、session calendar、adjustment status、vendor aggregation rule 字段；字段名相同不等于语义相同。",
+      "保留“图表展示不进入决策/训练/审计时可不适用”的边界。"
+    ],
+    "cand_20260611_phase37_data_engineering_outlier_detection_required_001": [
+      "强制加入“异常值不等于错误数据；可以标记、隔离、解释或保留，不得默认删除”的限定。",
+      "补市场数据专门来源：bad tick/trade break/venue correction/sequence gap/flags 文档；当前 source_refs 偏通用数据质量。"
+    ],
+    "cand_20260611_phase37_data_engineering_raw_vs_adjusted_data_boundary_001": [
+      "将 raw、cleaned、adjusted、feature-ready、label-ready 定义为 CEK-TA 数据契约层级；不要声称所有平台必须采用这些确切层名。",
+      "补 medallion architecture、feature store lineage、label store 或 internal dataset layer schema 作为主来源；Nasdaq corporate action 只能支持 adjusted 数据的一部分。"
+    ],
+    "cand_20260611_phase37_data_engineering_symbol_contract_normalization_required_001": [
+      "将版本记录具体化为 start_date/end_date、provider、dataset、stype_in/stype_out、instrument_id、raw_symbol、exchange、contract month/expiry。",
+      "补交易所/security master/FIGI/ISIN/OPRA/CTA 等更广泛 symbology 来源，避免 Databento 单一供应商化。"
+    ],
+    "cand_20260611_phase37_data_engineering_timestamp_alignment_required_001": [
+      "补 OHLCV/BBO 来源以直接支撑 bar start/end 语义；不同供应商的 bar timestamp 可能表示开始、结束或发布时刻。",
+      "decision_time 必须由外部项目事实层提供，不得由候选规则推断。"
+    ],
+    "cand_20260611_phase37_data_engineering_timezone_policy_required_001": [
+      "补 IANA tz database / exchange calendar / session schedule 作为主来源；PostgreSQL 是数据库实现，不是交易所时区政策。",
+      "明确存储时区、显示时区、交易所本地时区、业务交易日/session boundary 与 DST 处理策略的字段名。"
+    ]
+  },
+  "quality_gate": {
+    "pass": true,
+    "expected_candidate_count": 12,
+    "candidate_count": 12,
+    "ready_count": 12,
+    "blocked_count": 0,
+    "gap_counts": {},
+    "source_audit_result_id": "audit_result_phase37_data_engineering_candidate_audit_20260611_strict_v1_schema_patched",
+    "schema_patched_audit_used": true,
+    "reviewed_created": 0,
+    "approved_created": 0,
+    "default_guidance_created": 0,
+    "hard_gate_created": 0,
+    "boundary": "export only; no formal reviewed knowledge is created by this task."
+  },
+  "next_action": "将审计包交给外部 AI/人工严格审计；只有返回 accepted_for_reviewed_caveat_only 且 reviewed_allowed=true 的候选，才能进入后续 formal reviewed/caveat_only 转换。",
+  "known_non_blocking_notes": [
+    "候选 review.confidence 可能保留历史 medium_high 文案；本门禁只以 review.ai_audit.confidence 的 schema-patched low/medium/high 为准。",
+    "首轮审计 patch_notes 必须在 reviewed-preparation 审计或 formal conversion 时逐条处理。",
+    "本任务不创建正式知识，不重建 knowledge_items.json，不影响 MCP/SearchLab 默认正式知识索引。"
+  ]
+}

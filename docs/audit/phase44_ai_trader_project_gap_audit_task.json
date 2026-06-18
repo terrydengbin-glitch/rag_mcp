@@ -1,0 +1,190 @@
+{
+  "schema": "cek_ta_ai_trader_project_gap_audit_task",
+  "schema_version": "1.0.0",
+  "task_id": "CEK-TA-372",
+  "phase": "Phase 44",
+  "created_at": "2026-06-11",
+  "title": "AI 交易者项目方案知识断层审计任务",
+  "purpose": "使用当前 CEK-TA 正式知识库设计一个 AI 交易者项目的理论方案，检查知识库是否足以支撑外接项目从数据收集、分析、归类、AI 训练、持续学习到交易治理的端到端开发。",
+  "knowledge_index_path": "codex-expert-kit/rag/indexes/knowledge_items.json",
+  "hard_boundaries": [
+    "本任务不是实现 AI 交易者项目。",
+    "不得生成买卖点、仓位、杠杆、止损止盈、策略参数或实盘订单。",
+    "不得连接交易所、券商、行情源或实盘账户。",
+    "不得把 reviewed/caveat_only 知识升级为 approved。",
+    "AI Engineering 知识只能指导 scorer、LLM 审计、RAG、训练、评估和治理，不能替代 Trading Engineering 的交易本体规则。",
+    "Project Memory 只能保存外接项目的项目状态，不得污染 CEK-TA 通用知识库。"
+  ],
+  "target_project": {
+    "name": "AI 交易者项目理论方案",
+    "goal": "构建一个由数据契约、表格评分模型、LLM 审计助手、RAG 引用、确定性 final gate、shadow/paper 验证、持续学习和项目记忆组成的交易质量提升系统。",
+    "not_goal": [
+      "不是全自动下单系统方案。",
+      "不是策略买卖点生成方案。",
+      "不是实盘权限开通方案。"
+    ]
+  },
+  "workflow_stages": [
+    {
+      "stage_id": "S01",
+      "name": "项目目标与边界",
+      "expected_knowledge": [
+        "Project Memory 与 RAG Knowledge 边界",
+        "外接项目主动检索协议",
+        "LLM/RAG 输出来源、边界和人工升级"
+      ],
+      "audit_questions": [
+        "知识库是否能约束 AI 交易者项目不直接下单？",
+        "是否能说明 CEK-TA 只提供知识与契约，不保存项目私有事实？"
+      ]
+    },
+    {
+      "stage_id": "S02",
+      "name": "数据收集与数据契约",
+      "expected_knowledge": [
+        "event_time / decision_time / ingestion_time / label_time 分离",
+        "dataset_snapshot_manifest",
+        "feature_snapshot_manifest",
+        "source_hash 和 lineage"
+      ],
+      "audit_questions": [
+        "是否覆盖行情、成交、订单、账户、交易日志和人工复盘数据的采集边界？",
+        "是否能阻断未来函数、标签泄漏和数据版本不可复现？"
+      ]
+    },
+    {
+      "stage_id": "S03",
+      "name": "交易知识归类与信号边界",
+      "expected_knowledge": [
+        "K 线/技术指标必须绑定市场、周期和样本边界",
+        "Trading Engineering 与 AI Engineering 分区边界"
+      ],
+      "audit_questions": [
+        "知识库是否能指导交易信号、K 线结构、市场微观结构、风控本体正确归类？",
+        "是否存在把交易本体误塞进 AI Engineering 的风险？"
+      ]
+    },
+    {
+      "stage_id": "S04",
+      "name": "回测、回放和模拟盘",
+      "expected_knowledge": [
+        "回测泄漏、过拟合、多重测试",
+        "OHLC 同 bar TP/SL 模糊",
+        "fill model、slippage、fee model",
+        "回测不能替代模拟盘/实盘执行语义"
+      ],
+      "audit_questions": [
+        "知识库是否足以审计 AI 训练标签来自回测时的偏差？",
+        "是否足以定义从回测到模拟盘的验证门槛？"
+      ]
+    },
+    {
+      "stage_id": "S05",
+      "name": "交易质量标签与训练数据",
+      "expected_knowledge": [
+        "训练样本 input/target 分离",
+        "dataset card",
+        "label policy version",
+        "R/R、PnL、胜率、解释质量和审计成本边界"
+      ],
+      "audit_questions": [
+        "知识库是否能定义交易质量标签，不只看 PnL？",
+        "是否覆盖 MAE/MFE、机会成本、滑点调整、风险暴露和出场质量？"
+      ]
+    },
+    {
+      "stage_id": "S06",
+      "name": "AI 评分模型与 LLM 审计助手",
+      "expected_knowledge": [
+        "LightGBM / XGBoost / Logistic Regression 表格 scorer",
+        "Qwen3 只负责审计解释、reason code、RAG 引用、缺字段检查",
+        "calibration、threshold、abstain band",
+        "deterministic final gate"
+      ],
+      "audit_questions": [
+        "知识库是否能阻止 Qwen3 直接做 numeric scorer 或 final gate？",
+        "是否能定义表格模型、LLM 审计和 final gate 的职责边界？"
+      ]
+    },
+    {
+      "stage_id": "S07",
+      "name": "RAG/MCP 检索与来源引用",
+      "expected_knowledge": [
+        "主动检索协议",
+        "source/citation/confidence",
+        "RAG context 不可信",
+        "MCP 只读权限"
+      ],
+      "audit_questions": [
+        "AI IDE 是否知道什么时候必须检索 CEK-TA？",
+        "没搜到、冲突、过期、无来源时是否知道降级和人工升级？"
+      ]
+    },
+    {
+      "stage_id": "S08",
+      "name": "Shadow / Paper / OPE 验证",
+      "expected_knowledge": [
+        "shadow mode",
+        "paper trading",
+        "OPE",
+        "no-hit/conflict/citation completeness",
+        "prompt/model/threshold ablation"
+      ],
+      "audit_questions": [
+        "知识库是否能定义模型上线前的 shadow/paper 验收？",
+        "是否能区分模型评分提升与真实交易质量提升？"
+      ]
+    },
+    {
+      "stage_id": "S09",
+      "name": "实盘前 final gate 与风控执行",
+      "expected_knowledge": [
+        "pre-trade risk gate",
+        "kill switch",
+        "订单状态机",
+        "final gate audit trace"
+      ],
+      "audit_questions": [
+        "知识库是否足以指导实盘前 deterministic final gate？",
+        "是否覆盖组合暴露、账户同步、交易所异常、撤单和平仓权限？"
+      ]
+    },
+    {
+      "stage_id": "S10",
+      "name": "持续学习与模型发布治理",
+      "expected_knowledge": [
+        "feedback logging",
+        "label refresh",
+        "drift monitoring",
+        "retraining trigger",
+        "model registry",
+        "release manifest"
+      ],
+      "audit_questions": [
+        "知识库是否能定义从交易结果到再训练的闭环？",
+        "是否能防止坏数据、概念漂移和模型回滚缺失？"
+      ]
+    },
+    {
+      "stage_id": "S11",
+      "name": "数据库、审计日志和项目记忆",
+      "expected_knowledge": [
+        "PostgreSQL canonical store",
+        "append-only audit ledger",
+        "vector index 不是事实源",
+        "Project Memory write gate"
+      ],
+      "audit_questions": [
+        "知识库是否能支撑可追踪、可回滚、可审计的数据层？",
+        "项目记忆是否能辅助 AI IDE，又不污染通用知识？"
+      ]
+    }
+  ],
+  "expected_output_schema": {
+    "project_blueprint": "端到端理论方案，不含实现细节和交易指令",
+    "knowledge_mapping": "每个阶段映射到代表性 knowledge_id",
+    "gap_list": "知识断层清单，按 missing/thin/contract_gap/runtime_gap/governance_gap 分类",
+    "priority": "P0/P1/P2",
+    "recommended_next_phase": "建议后续知识采集或契约补强方向"
+  }
+}

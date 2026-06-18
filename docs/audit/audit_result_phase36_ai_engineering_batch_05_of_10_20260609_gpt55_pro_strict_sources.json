@@ -1,0 +1,371 @@
+{
+  "audit_result_id": "audit_result_phase36_ai_engineering_batch_05_of_10_20260609_gpt55_pro_strict_sources",
+  "source_package_id": "phase36_ai_engineering_candidate_audit_batch_05_of_10_20260609",
+  "decisions": [
+    {
+      "candidate_id": "cand_20260609_ai_engineering_label_schema_good_loss_bad_win_required_v1_001",
+      "decision": "needs_more_evidence",
+      "reason": "方向合理，但当前不应直接转 draft。candidate_id / normalized_claim 指向 good_loss_bad_win_required，而 statement 实际是“交易质量标签不能只用 PnL，必须包含过程质量、风险、规则合规和 reason codes”。现有 Datasheets、Model Cards、scikit-learn 来源支持标签/数据文档化和泄漏防护，但不能直接支撑 good loss / bad win 的交易语义判定。该语义容易变成具体交易判断，应补 CEK-TA 内部 label guideline、Trading Engineering owner 解释权、示例集和 reason_code taxonomy 后再转 draft。",
+      "source_patch_notes": [
+        "保留 Datasheets for Datasets 和 Model Cards 作为 label schema / dataset / model documentation 的 supporting sources。",
+        "保留 scikit-learn pitfalls 作为避免标签、未来字段或泄漏字段进入 input 的 supporting source。",
+        "补 FINRA 15-09 / algorithmic trading controls，支持交易自动化标签需要覆盖规则合规、风险控制和监督，而不是只看 PnL。",
+        "补内部 label_guideline.good_loss_bad_win.md，明确 good_loss、bad_win 的定义、例外和裁决 owner。",
+        "补至少一组内部 anonymized example / eval case：loss_but_rule_compliant、win_but_rule_violation、win_with_excess_risk、loss_due_to_risk_control。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议改为：PnL outcome must be separated from process quality, risk compliance and rule adherence; good_loss / bad_win may be used only as audited reason-code categories, not as standalone trading truth.",
+        "避免写成“亏损一定可能是好交易、盈利一定可能是坏交易”的外部事实；应限定为 CEK-TA label schema 内部分类。",
+        "建议字段：pnl_outcome、process_quality_score、risk_compliance_status、rule_compliance_status、reason_code、review_owner、evidence_refs、label_guideline_version。",
+        "good_loss / bad_win 应进入 reason_code 或 review_category，而不是单独作为最终二分类标签。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 只定义标签字段、reason_code、review 状态和审计要求。",
+        "具体交易是否“好亏损”或“坏盈利”的业务判断应由 Trading Engineering / domain owner 提供。",
+        "不得写入具体买卖点、仓位、止损止盈、策略参数、账户信息或订单执行细节。"
+      ],
+      "conflict_patch_notes": [
+        "与 label_schema.multi_dimensional_trade_quality、label_schema.no_pnl_only_label、labeling.good_loss_bad_win_distinction 高度重叠。",
+        "建议保留 multi_dimensional_trade_quality / no_pnl_only_label 作为父规则；good_loss_bad_win_required 作为补证后的 reason-code 子规则。",
+        "当前直接 accepted 会把交易语义判断和 AI Engineering 标签治理混在一起。"
+      ],
+      "required_followups": [
+        "补 good_loss_bad_win_label_guideline.md。",
+        "补 Trading Engineering owner / domain owner 裁决规则。",
+        "补 reason_code taxonomy 和匿名示例集。",
+        "补 label schema 字段：pnl_outcome、process_quality、risk_compliance、rule_compliance、evidence_refs。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_label_schema_label_reason_codes_required_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立。交易质量标签如果没有 reason codes，后续无法审计标签来源、冲突原因、风险维度和人工复核依据。虽然当前 statement 与其他 label_schema 条目重复，但 normalized_claim 中的 reason_codes_required 与 statement 的最后一部分对齐，可进入 draft，但应作为 multi-dimensional label schema 的子规则。",
+      "source_patch_notes": [
+        "保留 Datasheets for Datasets 和 Model Cards 作为数据/模型文档化来源。",
+        "补 IBM Watson Knowledge Studio ground truth / adjudication 来源，支持人工标注、冲突处理和 ground truth promotion 需要可追踪依据。",
+        "补 Label Studio IAA / consensus workflow 作为 human consensus 与 ground truth 建立的工程来源。",
+        "补 CEK-TA reason_code_taxonomy.yaml 作为内部主来源。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议改为：Every trade-quality label must include reason_codes explaining process quality, risk status, rule compliance, evidence gaps and review outcome.",
+        "建议字段：label_id、label_value、reason_codes、reason_code_version、evidence_refs、review_status、annotator_id_hash、adjudication_id。",
+        "reason_codes 应有受控枚举，不允许自由文本无限扩散。",
+        "reason code 不等于交易建议；它只解释标签或 gate/scoring 决策原因。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 负责 reason_code schema、枚举、审计和 UI 展示。",
+        "交易业务原因、策略违规解释和风险裁决由 Trading Engineering 或项目 owner 提供。",
+        "不得把具体策略规则、订单、账户、仓位或止损止盈写入通用 reason_code。"
+      ],
+      "conflict_patch_notes": [
+        "与 label_schema.multi_dimensional_trade_quality 是父子关系。",
+        "与 audit.every_gate_decision_requires_trace、scoring_rubric.reason_code_required 后续候选应互链。",
+        "与 good_loss_bad_win_required 重叠，但本条更可执行，建议保留。"
+      ],
+      "required_followups": [
+        "补 reason_code_taxonomy.yaml。",
+        "补 reason_code_version 字段。",
+        "补 UI 展示规则：reason_codes、evidence_refs、review_status。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_label_schema_multi_dimensional_trade_quality_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立。该条是本批 label schema 的父规则：交易质量标签不能只有单一 outcome，应覆盖过程质量、风险、规则合规、证据质量和 reason codes。Datasheets、Model Cards、FINRA 算法交易治理和 NIST 风险管理来源可以支撑多维标签治理，但正式 draft 需要避免写具体交易策略。",
+      "source_patch_notes": [
+        "保留 Datasheets for Datasets 与 Model Cards。",
+        "补 FINRA 15-09 作为交易自动化监督、控制、风险管理和合规来源。",
+        "补 NIST AI RMF 作为风险识别、测量、管理和治理来源。",
+        "补 CEK-TA label_schema.trade_quality_multidimensional.yaml。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：Trade-quality labels for LLM gating/scoring must be multi-dimensional and separate outcome, process quality, risk compliance, rule compliance, evidence quality and reason codes.",
+        "建议字段：outcome_context、process_quality、risk_status、rule_compliance、evidence_quality、reason_codes、label_confidence、review_status。",
+        "PnL 可以作为 outcome_context，但不得成为唯一 training truth 或 preference label。",
+        "如果某个维度缺失，应标记 missing_dimension / needs_review，而不是强行生成最终标签。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 只定义多维标签 schema 和缺失时的降级动作。",
+        "交易过程质量、风险状态和规则合规的业务解释由 Trading Engineering / project owner 提供。",
+        "不得写入具体交易参数、策略规则、买卖点、订单或账户信息。"
+      ],
+      "conflict_patch_notes": [
+        "建议作为 label_schema.no_pnl_only_label、label_schema.label_reason_codes_required、good_loss_bad_win_required 的父规则。",
+        "与 business_objective.success_metric_not_only_pnl、label_factory.gold_set_required、dpo.preference_data_quality_required 应互链。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 multi_dimensional_trade_quality_schema.json。",
+        "补 label_dimension enum。",
+        "补缺失维度处理规则：needs_review、exclude_from_training、weak_label_only。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_label_schema_no_pnl_only_label_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "方向充分成立。PnL-only label 会把交易 outcome 与过程质量、风险合规、规则执行和证据质量混在一起，容易导致 LLM 学到错误偏好。该条与 statement 直接对齐，可进入 draft，但应作为 multi-dimensional trade quality 的核心子规则。",
+      "source_patch_notes": [
+        "保留 Datasheets for Datasets 和 Model Cards。",
+        "补 FINRA 15-09 / algorithmic trading controls，支持交易自动化需要风险控制、监督和合规，而非只看结果。",
+        "补 NIST AI RMF 作为风险维度和治理来源。",
+        "可补 CFA/GIPS 或内部 performance reporting policy，用于说明 performance 解释不能脱离风险、口径和限制。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：A trade-quality training label must not use PnL as the only label; PnL may be recorded as outcome context but must be separated from process, risk, rule compliance and evidence-quality dimensions.",
+        "建议字段：pnl_outcome、outcome_window、process_quality、risk_compliance、rule_compliance、reason_codes、label_source、label_review_status。",
+        "blocked trade、counterfactual_missing 或 no-fill 样本不得用事后价格路径自动生成 PnL 标签。",
+        "若只有 PnL，无其他标签维度，应降级为 weak_label / needs_more_evidence。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 负责 no-PnL-only 的标签规则和 schema。",
+        "PnL 计算口径、滑点、fill、费用、回测/实盘结果由 Trading Engineering 维护。",
+        "不得在本知识项中写具体收益目标、交易阈值或策略参数。"
+      ],
+      "conflict_patch_notes": [
+        "与 labeling.no_pnl_only_labeling 重复，应建立 canonical rule：label_schema.no_pnl_only_label 为主。",
+        "与 business_objective.success_metric_not_only_pnl、eval.blocked_trade_cannot_be_labeled_as_loss、preference_pair_not_based_on_pnl_only 互链。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 no_pnl_only_label_policy.md。",
+        "补 label schema 中 outcome_context 与 label_value 的分离字段。",
+        "补 eval cases：profit_but_rule_violation、loss_but_risk_compliant、blocked_trade_later_profitable。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_labeling_ambiguous_trade_needs_human_review_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立，但需要重写得更聚焦。当前 statement 同时讲观察窗口、未来信息、PnL-only 和 ambiguous sample；normalized_claim 只指向 ambiguous trade needs human review。专业资料支持人工标注一致性、adjudication、ground truth promotion 和 human consensus，因此可进入 draft，但必须补 human review / adjudication 来源。",
+      "source_patch_notes": [
+        "保留 Datasheets 作为 labeling process documentation 来源。",
+        "保留 scikit-learn pitfalls 作为避免未来信息和泄漏的 supporting source。",
+        "补 IBM Watson Knowledge Studio ground truth / adjudication，支持冲突标签需要 adjudication。",
+        "补 Label Studio inter-annotator agreement / human consensus workflow。",
+        "补 CEK-TA ambiguous_trade_review_policy.md。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议改为：Ambiguous trade labels must not be auto-promoted to training truth; they must be marked ambiguous / needs_human_review and resolved through guideline-based review or adjudication.",
+        "建议字段：sample_id、ambiguity_reason_code、review_queue_id、reviewer_role、adjudication_id、final_label_status、label_guideline_version。",
+        "明确 ambiguous 不等于 bad trade，也不等于 rejected sample；它是标签证据不足或规则冲突状态。",
+        "若人审后仍无法裁决，应保留 ambiguous / excluded_from_gold，而不是强行生成 truth。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 负责 ambiguous 状态、review queue、adjudication schema 和训练阻断规则。",
+        "具体交易语义裁决由 Trading Engineering、domain expert 或项目 owner 完成。",
+        "不得写入具体交易上下文、订单、账户或策略规则。"
+      ],
+      "conflict_patch_notes": [
+        "与 label_factory.label_conflict_resolution_required 和 inter_annotator_agreement_required 互补。",
+        "与 labeling.no_future_information、labeling.no_pnl_only_labeling 不应混成同一条。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 ambiguous_trade_review_schema.json。",
+        "补 ambiguity_reason_code enum。",
+        "补 review outcome enum：resolved_label、needs_more_evidence、ambiguous_excluded、adjudicated_gold。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_labeling_good_loss_bad_win_distinction_v1_001",
+      "decision": "needs_more_evidence",
+      "reason": "当前候选不应直接转 draft。normalized_claim 指向 good_loss_bad_win_distinction，但 statement 是泛化的观察窗口、未来信息、PnL-only、含糊样本误标规则；source_refs 只有 scikit-learn pitfalls 和 Datasheets，无法直接支撑 good loss / bad win 的交易标签判定。建议与 good_loss_bad_win_required 合并补证。",
+      "source_patch_notes": [
+        "保留 scikit-learn pitfalls 作为 no future information / leakage supporting source。",
+        "保留 Datasheets 作为 label process documentation supporting source。",
+        "补 FINRA / NIST 治理来源只能支持风险和合规维度，不能直接证明 good_loss / bad_win 判定。",
+        "必须补 CEK-TA 或 Trading Engineering label guideline，定义 good_loss / bad_win 的可审计条件。",
+        "补匿名示例和反例，避免该概念被误用为主观交易复盘结论。"
+      ],
+      "content_patch_notes": [
+        "将 statement 改为：Good-loss / bad-win distinction is a reviewed reason-code category, not an automatic label; it requires evidence for process quality, risk compliance, rule compliance and owner review.",
+        "区分 good_loss、bad_win、ordinary_loss、ordinary_win、ambiguous 和 counterfactual_missing。",
+        "加入 forbidden rule：不得只凭事后 PnL 或价格路径自动判定 good_loss / bad_win。",
+        "与 label_schema.good_loss_bad_win_required 合并后再进 draft。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 只能定义字段和 reason-code 状态。",
+        "交易行为质量的裁决属于 Trading Engineering / domain owner。",
+        "不得沉淀具体交易策略、止损止盈、买卖点、仓位或订单执行逻辑。"
+      ],
+      "conflict_patch_notes": [
+        "与 label_schema.good_loss_bad_win_required 重复，应合并。",
+        "与 no_pnl_only_label、multi_dimensional_trade_quality 互补，但当前不能替代它们。",
+        "当前直接 accepted 会导致泛化 statement 与 specific normalized_claim 不匹配。"
+      ],
+      "required_followups": [
+        "补 good_loss_bad_win taxonomy。",
+        "补 Trading Engineering owner 裁决流程。",
+        "补最少 4 个匿名 eval cases。",
+        "补字段：review_owner、evidence_refs、rule_compliance_status、risk_compliance_status。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_labeling_no_future_information_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "方向充分成立。标注交易样本时不得使用决策时不可用的信息、未来价格路径、post-trade outcome 或后验人工解释作为普通训练输入/标签依据。scikit-learn data leakage、TFDV schema/skew 和 IBM data leakage 定义都支持该规则。",
+      "source_patch_notes": [
+        "保留 scikit-learn common pitfalls 作为主来源。",
+        "补 TFDV 作为 schema validation、training-serving skew 和异常检测来源。",
+        "补 IBM data leakage 定义，支持预测时不可用的信息不能进入训练逻辑。",
+        "与 feature_schema.decision_time_only、post_trade_fields_forbidden_in_input、training_data_feature_timestamp_cutoff_required 互链。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：Trade labeling must use only information available inside the approved observation window and at or before the decision timestamp; future price path, realized PnL, fills and later human labels must be separated from input labels unless explicitly marked post-trade outcome context.",
+        "建议字段：decision_timestamp、observation_window_start、observation_window_end、label_timestamp、label_source、future_info_check_id、post_trade_field_flag。",
+        "如果 label evidence 超出允许观察窗口，应 block_training 或 needs_review。",
+        "允许 post-trade outcome 作为 outcome_context，但不得混入 decision-time label evidence。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 负责 observation window、时间戳和 future-info 检查。",
+        "交易时间窗、市场日历、fill/outcome 解释由 Trading Engineering 提供。",
+        "不得写入具体 K 线信号、交易策略、订单或账户信息。"
+      ],
+      "conflict_patch_notes": [
+        "与 feature_schema.feature_timestamp_cutoff_required、feature_schema.post_trade_fields_forbidden_in_input、leakage.label_in_input_forbidden 强互补。",
+        "与 labeling.no_pnl_only_labeling 是兄弟规则。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 observation_window_schema.json。",
+        "补 future_info_check_id 和 post_trade_field_flag。",
+        "补 eval cases：future_return_used_as_label、fill_price_used_in_input、later_human_label_joined_before split。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_labeling_no_pnl_only_labeling_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立，但与 label_schema.no_pnl_only_label 高度重复。建议作为 labeling workflow 子规则保留，强调“标注过程不得只用 PnL 生成标签”；而 label_schema.no_pnl_only_label 作为 schema 父规则。",
+      "source_patch_notes": [
+        "保留 scikit-learn pitfalls 和 Datasheets。",
+        "补 FINRA / NIST 作为风险与合规维度来源。",
+        "补 Model Cards 或 dataset card 来源，支持记录 label intended use、limitations 和 evaluation context。",
+        "与 label_schema.no_pnl_only_label 共享 source family。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：The labeling workflow must not derive training truth labels solely from PnL; PnL-only labels must be marked weak_label or needs_more_evidence unless reviewed with process, risk and rule-compliance evidence.",
+        "建议字段：label_generation_method、pnl_used、additional_evidence_present、label_status、reviewer、reason_codes。",
+        "允许 PnL 作为 outcome_context，不允许 PnL 成为唯一 label_value。",
+        "若与 label_schema.no_pnl_only_label 合并，本条可作为 eval case 或 checklist。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 管理标注流程和状态机。",
+        "PnL 计算、成本、滑点、fill、回测/实盘结果由 Trading Engineering 维护。",
+        "不得写具体交易收益目标或策略参数。"
+      ],
+      "conflict_patch_notes": [
+        "与 label_schema.no_pnl_only_label 重复，建议父子化或合并。",
+        "与 eval.blocked_trade_cannot_be_labeled_as_loss、preference_pair_not_based_on_pnl_only 互链。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 labeling_workflow_no_pnl_only_checklist.md。",
+        "补 label_status enum：weak_label、reviewed_label、gold_candidate、rejected。",
+        "补 PnL-only 自动检测规则。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_leakage_label_in_input_forbidden_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立。训练、验证和评估链路必须阻断 label-as-feature、future field、post-trade outcome、跨集合污染等数据泄漏；否则评估结果会虚高，不能作为上线依据。scikit-learn common pitfalls / CV 与 TFDV 可直接支撑。",
+      "source_patch_notes": [
+        "保留 scikit-learn common pitfalls 和 cross-validation 作为主来源。",
+        "补 TFDV label-as-feature / schema validation / skew detection 作为直接工程来源。",
+        "补 IBM data leakage 定义作为 supporting source。",
+        "与 feature_schema.post_trade_fields_forbidden_in_input、training_example_input_target_separation 互链。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议缩窄为：Labels, target fields, post-trade outcomes and future information are forbidden in model input features; any label/input leakage blocks training/evaluation promotion.",
+        "建议字段：field_name、field_role、allowed_in_input、allowed_as_label、leakage_type、validation_rule_id、action_taken。",
+        "leakage_type 建议枚举：label_in_input、target_proxy、future_field、post_trade_outcome、cross_split_contamination。",
+        "如果同一条还想覆盖 train/test contamination，应交给 leakage.train_test_contamination_block。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 负责 input/target/outcome 字段分离和泄漏阻断规则。",
+        "具体交易结果字段、fill、费用、滑点和执行事实由 Trading Engineering 维护。",
+        "不得把原始交易样本或订单详情写入知识库。"
+      ],
+      "conflict_patch_notes": [
+        "与 leakage.train_test_contamination_block 重叠但不等价：本条管 label/input 字段泄漏，后者管集合污染。",
+        "与 feature_schema.post_trade_fields_forbidden_in_input、outcome_schema.post_trade_fields_separated 应互链。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 leakage_field_role_schema.json。",
+        "补 forbidden_field enum。",
+        "补 validation cases：label column in input、future_return alias、target encoded feature、post_trade outcome joined into features。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_leakage_train_test_contamination_block_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "方向充分成立，statement 与 normalized_claim 对齐。训练与评估数据必须在特征选择、transform、prompt/example selection、model tuning 前分离；否则会造成 contamination 和 optimistic metrics。scikit-learn 官方文档直接支持该规则。",
+      "source_patch_notes": [
+        "保留 scikit-learn common pitfalls / data leakage 作为主来源。",
+        "保留 scikit-learn cross-validation 作为 held-out validation / final test separation 来源。",
+        "补第二批已二审通过的 dataset.deduplication_required，覆盖 exact/near duplicate overlap。",
+        "补 split_manifest / contamination_check_report 内部 schema。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 可基本保留。",
+        "建议扩展到 LLM 场景：prompt/example selection、RAG construction、fine-tuning、DPO selection、threshold tuning 都不得使用 final eval/test/gold。",
+        "建议字段：split_id、train_dataset_id、eval_dataset_id、gold_dataset_id、transform_fit_scope、prompt_selection_scope、overlap_check_id、contamination_status。",
+        "污染发现后应 block_promotion 或重建 split。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 管理 split、hash、overlap check 和 promotion gate。",
+        "原始交易样本、策略上下文和订单信息只保留引用或 hash。",
+        "业务等价样本判断可路由到项目 data owner 或 Trading Engineering。"
+      ],
+      "conflict_patch_notes": [
+        "与 dataset.train_validation_test_split_required、dataset.deduplication_required、eval_case.no_training_overlap_required 强互补。",
+        "与 leakage.label_in_input_forbidden 区分：字段泄漏 vs split contamination。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 contamination_check_report_schema.json。",
+        "补 action enum：block_promotion、rebuild_split、move_to_validation、create_new_holdout。",
+        "补 eval cases：test used for prompt selection、gold in RAG index、train/eval near duplicate。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_lineage_model_prompt_rag_data_strategy_bound_together_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立。模型、prompt、RAG index、dataset、eval set、scoring rubric 和 strategy_version_ref 需要绑定成 release manifest，才能复现实验、追踪问题和审计上线版本。MLflow 和 DVC 来源足以支撑 artifact lineage / versioning；但 strategy 只能作为外部引用，不得把策略本体写入 AI Engineering。",
+      "source_patch_notes": [
+        "保留 MLflow Tracking / Model Registry 作为 run、artifact、model lineage、versioning 来源。",
+        "保留 DVC 作为 data/model versioning 和 reproducible pipeline 来源。",
+        "保留 Model Cards 作为 intended use、limitations、evaluation summary 文档来源。",
+        "补 RAG index manifest 或 vector index versioning 内部 schema。",
+        "补 CEK-TA release_manifest.schema.json。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：Every deployable LLM gating/scoring release must bind model_version, prompt_version, RAG_index_version, dataset_version, eval_set_version, scoring_rubric_version and strategy_version_ref into one immutable release manifest.",
+        "建议字段：release_id、model_version、prompt_version、rag_index_version、embedding_model_version、dataset_version、eval_set_version、scoring_rubric_version、strategy_version_ref、git_commit、run_id、artifact_hashes、owner、review_status。",
+        "strategy_version_ref 只存引用；策略规则、信号、参数和交易逻辑不进入 AI Engineering。",
+        "release manifest 变更应触发回归评估、审计记录和 rollback plan。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 负责 release manifest、artifact lineage、hash、版本和审计。",
+        "Trading Engineering 负责 strategy version 本体、交易逻辑、回测、风控和执行。",
+        "不得存储具体交易规则、账户信息、订单、仓位、止损止盈或私有数据。"
+      ],
+      "conflict_patch_notes": [
+        "与 dataset.version_and_hash_required、audit.every_gate_decision_requires_trace、versioning.model_prompt_rag_strategy_snapshot_required 后续候选互补。",
+        "与 Trading Engineering 边界存在潜在风险：strategy 只能是 ref，不是内容。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 release_manifest.schema.json。",
+        "补 strategy_version_ref 边界说明。",
+        "补 artifact_hash 字段和 rollback_release_id。",
+        "补 Vue audit UI 展示：model、prompt、RAG、dataset、strategy_ref、eval report、approval state。"
+      ]
+    }
+  ],
+  "raw_external_report_path": "C:\\Users\\dove\\.codex\\attachments\\c8aeca56-f687-4599-a2f2-c8cb43ac43aa\\pasted-text.txt",
+  "normalization_notes": [
+    "外部第五批审计报告已使用 CEK-TA 内部 decisions[] 契约。",
+    "accepted_for_draft 只允许转 formal reviewed，不能转 approved 或默认指导。",
+    "needs_more_evidence 候选必须保留在候选队列，等待补证二审。"
+  ]
+}

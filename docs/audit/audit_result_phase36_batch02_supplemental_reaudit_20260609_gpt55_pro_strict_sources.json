@@ -1,0 +1,100 @@
+{
+  "audit_result_id": "audit_result_phase36_batch02_supplemental_reaudit_20260609_gpt55_pro_strict_sources",
+  "source_package_id": "phase36_batch02_supplemental_audit_package_20260609",
+  "decisions": [
+    {
+      "candidate_id": "cand_20260609_ai_engineering_dataset_deduplication_required_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "补充后的 candidate_id、normalized_claim、statement 和 source_refs 已基本对齐。该候选已经从原来的泛 dataset schema/governance 规则，改写为 exact duplicate、near-duplicate、train/eval/gold/shadow/preference contamination 检查规则。补充来源包含 ACL 2022 Deduplicating Training Data Makes Language Models Better、BigCode dataset decontamination / near_deduplication pipeline、scikit-learn data leakage guidance，并保留 Datasheets、OpenAI fine-tuning、TFDV 作为 supporting sources，已经足够进入 formal draft。但 accepted_for_draft 仍不是 approved，正式 draft 需要写清检测方法、阈值 owner、例外保留策略和 split isolation。",
+      "source_patch_notes": [
+        "将 ACL 2022 Deduplicating Training Data Makes Language Models Better 设为主来源之一，用于支持近重复、memorization、train-test overlap 和 dedup 对评估准确性的影响。",
+        "将 BigCode dataset repo 中 decontamination 与 near_deduplication pipeline 设为工程实践来源，用于支持 benchmark decontamination 和 near-dedup pipeline 的可执行性。",
+        "保留 scikit-learn common pitfalls / data leakage 作为 train/test leakage 和 split contamination 的通用 ML 方法论来源。",
+        "保留 Datasheets for Datasets、OpenAI fine-tuning best practices、TFDV 作为支持性来源；这些来源支撑数据文档化、数据质量、schema validation，但不应作为 deduplication 的主来源。",
+        "建议补内部来源：CEK-TA dataset_split_manifest、dedupe_run_report、leakage_check_report 的 schema 或 contract。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：Training、eval、gold、shadow、RAG 和 preference datasets must run exact duplicate、near-duplicate and split-contamination checks before training/evaluation/RAG promotion。",
+        "建议字段：dedupe_run_id、dataset_id、dataset_version、pool_type、split_id、dedupe_method、hash_algorithm、exact_hash_match_count、near_duplicate_method、near_duplicate_threshold、near_duplicate_group_id、train_eval_overlap_count、gold_overlap_count、benchmark_contamination_count、action_taken、reviewer、reviewed_at。",
+        "明确 deduplication 不等于无条件删除所有重复：业务上合理重复、hard negative、重复 incident pattern 可以保留，但必须记录 reason、weighting policy、split isolation 和 reviewer。",
+        "增加 promotion gate：未完成 dedupe / contamination check 的数据集不得进入 train_pool、eval_pool、gold_set、RAG index 或 preference training。",
+        "增加 leakage link：如果发现 eval/gold/preference 与 train pool exact 或 near duplicate，应触发 leakage_train_test_contamination_block 或 new split version。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 只定义重复检测、污染检测、promotion gate、metadata schema 和审计字段。",
+        "原始交易文本、截图、订单记录、账户信息、策略细节、K 线样本不得写入 AI Engineering KB；只保存 hash、duplicate_group_id、脱敏摘要和外部 dataset reference。",
+        "判断两个交易样本是否业务上等价、是否允许作为重复样本保留，应由项目 data owner 或 Trading Engineering 提供解释。",
+        "不得把具体交易规则、买卖点、仓位、止损止盈、fill model 或策略参数沉淀进本知识项。"
+      ],
+      "conflict_patch_notes": [
+        "与 dataset_schema_required、dataset_source_lineage_required、dataset_version_and_hash_required 不再是重复关系：本条聚焦 dedup / contamination gate，那三条分别负责 schema、lineage、version/hash。",
+        "与 leakage_train_test_contamination_block 后续候选高度相关，建议建立 canonical family：dataset.deduplication_required 负责检测，leakage.train_test_contamination_block 负责阻断动作。",
+        "与 eval_case_no_training_overlap_required、eval_holdout_test_set_required、data_asset_eval_pool_must_not_train 应互链。",
+        "未发现需要 rejected 的直接冲突。"
+      ],
+      "required_followups": [
+        "补 dedupe_report_schema.json。",
+        "补 near_duplicate_threshold 的 owner 规则：默认由 AI Engineering 定义技术阈值，由 data owner / Trading Engineering 解释业务等价。",
+        "补 dedupe action enum：drop、quarantine、keep_with_reason、move_to_incident_pool、reassign_split、needs_human_review。",
+        "补 UI audit 字段：duplicate_group_id、overlap_pool、evidence_hash、action_taken、reviewer。",
+        "补 eval case：train/eval exact duplicate、near duplicate paraphrase、gold contamination、preference pair duplicate、RAG chunk duplicate。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_deployment_llm_timeout_or_mcp_failure_fallback_required_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "补充后的 candidate_id、normalized_claim、statement 和 source_refs 已对齐。该候选已经从原来的 offline eval / shadow / paper deployment readiness 规则，改写为 LLM/MCP timeout、tool error、permission failure、RAG no-hit、source conflict、schema validation failure 的 runtime failure fallback 规则。补充来源覆盖 OpenAI rate limit/backoff、AWS retry/backoff、AWS circuit breaker、AWS graceful degradation、MCP tool error handling 和 MCP runtime fault taxonomy，足够支撑进入 draft。但正式 draft 必须声明 safe default 是 CEK-TA 内部高风险 gating 安全规则，不是外部文档逐字要求。",
+      "source_patch_notes": [
+        "将 OpenAI rate limit / exponential backoff 官方帮助文档作为 LLM API transient failure 与 retry budget 的主来源之一。",
+        "将 AWS Retry with Backoff Pattern 作为 transient error、429、timeout、limited retries 的可靠性来源。",
+        "将 AWS Circuit Breaker Pattern 和 AWS Well-Architected graceful degradation 作为 repeated timeout/failure、fail fast、degraded response 的可靠性来源。",
+        "将 MCP official tools spec 作为 protocol errors、tool execution errors、isError=true、tool input validation、access controls、rate limiting、sanitize outputs、timeout 和 audit 的主来源。",
+        "将 arXiv 2026 MCP runtime fault taxonomy 作为补充证据；正式 draft 应标注其为新研究 / preprint，不作为唯一主来源。",
+        "保留 model risk guidance、Rules of ML、OpenAI evals 作为支持 deployment governance 的辅助来源，不再让它们承担 timeout/MCP failure 的主证据角色。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：LLM/MCP timeout、rate limit、tool execution error、protocol error、permission failure、RAG no-hit、source conflict、schema validation failure or invalid output schema must fallback to abstain、neutral_score、needs_review、block_default_guidance or degraded_read_only_response; it must never hard allow before deterministic risk gate。",
+        "建议字段：failure_event_id、failure_type、provider、model_id、mcp_server_id、tool_name、tool_call_id、error_code、http_status、isError、timeout_ms、retry_policy_id、retry_count、circuit_state、fallback_action、safe_default、deterministic_gate_result、review_queue_id、audit_event_id。",
+        "增加 failure_type enum：llm_timeout、rate_limit、provider_error、mcp_protocol_error、mcp_tool_execution_error、permission_denied、rag_no_hit、source_conflict、schema_validation_error、output_parse_error、policy_violation、unknown_error。",
+        "增加 fallback_action enum：abstain、neutral_score、needs_human_review、block_default_guidance、degraded_read_only_response、retry_with_backoff、open_circuit、fail_closed_for_hard_gate。",
+        "明确 retry 与 fallback 的关系：transient error 可有限重试；non-transient error、permission failure、schema violation、source conflict 不应无限重试，应 fail closed 或进入 review。",
+        "明确 hard gate 场景默认 fail closed；非 hard gate 的解释型 UI 可以 degraded_read_only_response，但不得生成默认交易指导。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 负责 LLM/MCP failure taxonomy、retry policy、safe default、fallback_action、审计 trace 和 Vue audit UI 展示。",
+        "Trading Engineering / Live Execution / Risk Management 负责实盘订单状态、kill switch、broker action、仓位调整、止损止盈、风控阈值和执行引擎处理。",
+        "本知识项不得定义具体交易执行动作、仓位、订单取消逻辑、止损止盈或策略阈值。",
+        "如果 LLM/MCP failure 影响 live order、risk gate 或 execution engine，只能记录引用和审计事件，具体处理路由到 Trading Engineering。",
+        "不得记录 API key、账号标识、broker token、私有订单详情或完整交易上下文。"
+      ],
+      "conflict_patch_notes": [
+        "与 deployment_shadow_mode_before_live 不再是重复关系：本条处理 runtime failure fallback；deployment_shadow_mode_before_live 处理上线前 offline/shadow/paper readiness。",
+        "应与 rag_no_hit_requires_neutral_or_review、rag_no_source_or_conflict_blocks_default_guidance、mcp_server_side_permission_enforcement_required、safety_no_tool_permission_escalation、runtime_final_gate_deterministic_engine_required 互链。",
+        "与 audit_every_gate_decision_requires_trace 正向依赖：每次 fallback 都必须记录 failure_event_id、fallback_action 和 audit_event_id。",
+        "与 approval_hard_gate_enable_requires_approval 互补：fallback policy 变更或 fail-closed 行为变更应走审批。",
+        "未发现需要 rejected 的直接冲突。"
+      ],
+      "required_followups": [
+        "补 llm_mcp_failure_taxonomy.yaml。",
+        "补 fallback_action_enum.yaml。",
+        "补 retry_policy_schema.json，至少包含 max_retries、backoff_strategy、jitter、timeout_ms、retryable_error_types、non_retryable_error_types。",
+        "补 circuit_breaker_state 字段：closed、open、half_open、disabled。",
+        "补 failure injection / chaos test / red-team eval case：LLM timeout、429、MCP isError=true、permission denied、RAG no-hit、source conflict、invalid schema、tool returns unsafe action。",
+        "补 Vue audit UI 展示：failure_type、source_refs、fallback_action、deterministic_gate_result、review_status。"
+      ]
+    }
+  ],
+  "normalization": {
+    "normalized_from": "C:\\Users\\dove\\.codex\\attachments\\1b8bade5-3c2f-423f-8e38-ebbf72c4c512\\pasted-text.txt",
+    "normalized_at": "2026-06-09",
+    "changes": [
+      "Converted top-level items to decisions for import_phase36_batch_audit_result.py.",
+      "Preserved accepted_for_draft as draft/reviewed processing only; no approved promotion."
+    ]
+  },
+  "governance_notes": [
+    "accepted_for_draft is not approved.",
+    "Formal knowledge created from this result must remain reviewed unless a later human governance task promotes it.",
+    "Default guidance must stay blocked or caveat-only until explicit approved governance."
+  ]
+}

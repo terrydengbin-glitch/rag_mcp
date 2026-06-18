@@ -1,0 +1,355 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_ai_engineering.feature_schema.post_trade_fields_forbidden_in_input.v1",
+  "title": "事后结果字段禁止进入模型输入",
+  "metadata": {
+    "partition_id": "KB_09_LLM_TRAINING",
+    "domain": "llm_training",
+    "subdomain": "training_dataset_schema_engineering",
+    "rule_type": "decision_rule",
+    "content_type": "json",
+    "project_binding": "none",
+    "tree_node_id": "kt.llm_training.training_dataset_schema_engineering",
+    "tree_path": "CEK-TA / AI Engineering",
+    "canonical_node_id": "kt.llm_training.training_dataset_schema_engineering",
+    "canonical_tree_path": "CEK-TA / AI Engineering",
+    "risk_level": "medium",
+    "used_for": [
+      "llm_training",
+      "trading_gating_scoring",
+      "rag_engineering",
+      "mcp",
+      "vue_audit_ui"
+    ],
+    "source_candidate_id": "cand_20260609_ai_engineering_feature_schema_post_trade_fields_forbidden_in_input_v1_001",
+    "research_task_id": "RIT-P36-B-S10",
+    "claim_type": "training_data_schema_rule",
+    "classification_notes": "Phase 36 AI Engineering reviewed knowledge；本条只沉淀 AI/LLM/RAG/MCP/训练数据、评估、部署或治理规则。交易规则本体、K 线、策略、实盘执行和风控阈值必须路由到 Trading Engineering。"
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "general",
+    "data_granularity": "general",
+    "project_type": "trading_llm_assistant",
+    "applies_when": [
+      "交易样本同时包含决策前输入和事后 outcome、fill、PnL、人工复盘或标签字段。",
+      "项目准备生成 SFT input、preference prompt、eval input 或 scoring input。",
+      "需要检查字段角色是否从 outcome/label 被错误 join 到 input。"
+    ],
+    "not_applicable_when": [
+      "字段只保存在 outcome_record、labeling_record 或复盘报告中，不进入模型输入。",
+      "需要定义成交模型、fill model、滑点、费用、实盘执行和交易结果解释。",
+      "只是检查时间戳截止点，应引用 feature_timestamp_cutoff_required。"
+    ]
+  },
+  "content": {
+    "statement": "Post-trade fields 和 future outcome fields 禁止进入模型输入特征；它们只能作为 label、outcome、audit context 或 post-trade analysis 字段保存。",
+    "rationale": "realized PnL、fill result、exit price、future return、later human label 等字段如果进入输入，会构成 label leakage 或 future leakage。",
+    "procedure": [
+      "为每个字段声明 field_role、allowed_in_input、allowed_as_label 和 allowed_as_outcome。",
+      "识别 post_trade_field enum，包括 realized_pnl、fill_price、fill_quantity、exit_price、future_return、future_price_path、later_human_label、post_trade_reason_code、execution_outcome。",
+      "如果 post-trade field 出现在 input schema，默认 block_training。",
+      "记录 forbidden_reason、validation_rule_id 和 reviewer。",
+      "将合法 outcome/label 字段与 input schema 物理或逻辑分离。"
+    ],
+    "examples": [],
+    "anti_patterns": [
+      "把 reviewed 知识当作 approved 默认指导。",
+      "把 AI Engineering 规则扩写成具体交易阈值、仓位、买卖点、止损止盈或执行参数。",
+      "缺少来源、schema、适用范围、冲突检查或审计记录仍进入训练、评估、RAG promotion 或默认指导。"
+    ],
+    "validation": [
+      "source_evidence 至少存在 2 条，且没有 unresolved conflict。",
+      "review_status 为 reviewed 时 machine_gate.default_guidance 必须是 caveat_only。",
+      "外接项目调用时必须返回 knowledge_id、source_refs、review_status、machine_gate 和适用边界。",
+      "前端候选页、知识树和 SearchLab 不得显示乱码或未解释的英文 demo 文案。"
+    ],
+    "risk_notes": [
+      "accepted_for_draft 不是 approved；本条只能作为 formal reviewed 知识进入审计和检索。",
+      "本知识项只处理 AI Engineering 边界，不沉淀项目私有交易数据和交易规则本体。",
+      "若项目事实涉及具体策略、实盘订单、风控阈值或市场结构，应路由到 Trading Engineering 对应分支。"
+    ],
+    "citation_notes": "TFDV 将 labels treated as features 列为会让模型看到答案的数据问题；scikit-learn common pitfalls 支持 data leakage 防护；Feast 支持 feature registry 与时间语义管理。",
+    "audit_patch_notes": {
+      "source_patch_notes": [
+        "保留 TFDV 作为 label-as-feature leakage 和 schema environment 来源。",
+        "保留 scikit-learn common pitfalls 作为 data leakage 主来源。",
+        "保留 Feast 作为 feature timestamp 和 feature registry 支撑来源。",
+        "建议补内部 outcome_schema.post_trade_fields_separated 作为互链来源。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：Post-trade fields and future outcome fields are forbidden in model input features; they must be stored only as labels, outcomes, audit context or post-trade analysis fields.",
+        "建议 post_trade_field enum：realized_pnl、fill_price、fill_quantity、exit_price、future_return、future_price_path、later_human_label、post_trade_reason_code、execution_outcome。",
+        "建议字段：field_name、field_role、allowed_in_input、allowed_as_label、allowed_as_outcome、forbidden_reason、validation_rule_id。",
+        "如果 post-trade field 出现在 input schema，默认 block_training，不应仅 warning。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 定义 input/label/outcome 字段分离和泄漏阻断规则。",
+        "成交模型、fill model、滑点、费用、实盘执行和交易结果解释由 Trading Engineering 维护。",
+        "不得在知识库中保存具体订单、账户、fill 明细或策略收益路径。"
+      ],
+      "conflict_patch_notes": [
+        "与 feature_timestamp_cutoff_required 和 outcome_schema.post_trade_fields_separated 应建立强互链。",
+        "与 leakage.label_in_input_forbidden 后续候选可能重复；建议形成 feature/outcome leakage family。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 post_trade_field_enum.yaml。",
+        "补 input_target_outcome_separation_schema.json。",
+        "补 red-team eval case：realized_pnl hidden in feature、future_return alias、later label accidentally joined。"
+      ]
+    },
+    "required_fields": [
+      "field_name",
+      "field_role",
+      "allowed_in_input",
+      "allowed_as_label",
+      "allowed_as_outcome",
+      "forbidden_reason",
+      "validation_rule_id"
+    ],
+    "linked_rules": [
+      "feature_schema.feature_timestamp_cutoff_required.v1",
+      "outcome_schema.post_trade_fields_separated.v1",
+      "leakage.label_in_input_forbidden.v1"
+    ]
+  },
+  "assumptions": [
+    "外接项目提供项目事实、私有交易数据和策略上下文；CEK-TA 只沉淀可复用专业规则。",
+    "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+  ],
+  "source_evidence": [
+    {
+      "source_id": "src_feast",
+      "source_title": "Feast: the Open Source Feature Store",
+      "source_url": "https://docs.feast.dev/getting-started",
+      "source_type": "official_doc",
+      "publisher": "Feast",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "Feast documents feature definitions, offline/online stores, retrieval, and a registry for reusable feature metadata.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_tfdv",
+      "source_title": "TensorFlow Data Validation: Checking and analyzing your data",
+      "source_url": "https://tensorflow.github.io/tfx/guide/tfdv/",
+      "source_type": "official_doc",
+      "publisher": "TensorFlow / TFX",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "TFDV supports schema-based data validation, anomaly detection, and train/serve skew checks in ML pipelines.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_sklearn_pitfalls",
+      "source_title": "Common pitfalls and recommended practices | scikit-learn",
+      "source_url": "https://scikit-learn.org/stable/common_pitfalls.html",
+      "source_type": "official_doc",
+      "publisher": "scikit-learn",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "scikit-learn documents inconsistent preprocessing and data leakage pitfalls, including fitting transformations only on training data.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_occ_fed_fdic_revised_model_risk_2026",
+      "source_title": "Model Risk Management: Revised Guidance",
+      "source_url": "https://occ.gov/news-issuances/bulletins/2026/bulletin-2026-13.html",
+      "source_type": "standard_or_risk_framework",
+      "publisher": "OCC / Federal Reserve / FDIC",
+      "published_at": "2026-04-17",
+      "accessed_at": "2026-06-09",
+      "version": "OCC Bulletin 2026-13 / SR 26-2",
+      "reliability": "high",
+      "relevance": "medium",
+      "evidence_summary": "2026 年跨机构模型风险管理修订指南支持模型治理、验证、变更控制和风险分层；同时需注明 generative AI 和 agentic AI 不在其直接范围内，只能作为模型风险治理类比来源。",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 90,
+    "score_version": "1.0.0",
+    "primary_source_count": 2,
+    "supporting_source_count": 2,
+    "low_reliability_source_count": 0,
+    "limitations": [
+      "本条为 reviewed 知识，来源和审计补丁已记录；默认指导仍需后续人工治理升级 approved。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "docs/contracts/ai_engineering_gating_scoring_contract.md",
+      "docs/contracts/ai_engineering_knowledge_item_policy.md",
+      "docs/tasks/phase36_ai_engineering_gating_scoring_knowledge.md"
+    ],
+    "conflicts": [],
+    "resolution_summary": "未发现与当前 CEK-TA formal knowledge 的直接冲突；候选不会进入默认指导。",
+    "default_recommendation": "caveat_only_until_approved"
+  },
+  "review": {
+    "confidence": "medium",
+    "freshness": "time_sensitive",
+    "review_status": "reviewed",
+    "reviewer": "codex",
+    "reviewed_at": "2026-06-09",
+    "created_at": "2026-06-09",
+    "updated_at": "2026-06-09",
+    "open_questions": [
+      "审计时确认该候选是否应与相邻 AI Engineering 规则合并、拆分，或改路由到 Trading Engineering。",
+      "补 post_trade_field_enum.yaml。",
+      "补 input_target_outcome_separation_schema.json。",
+      "补 red-team eval case：realized_pnl hidden in feature、future_return alias、later label accidentally joined。"
+    ],
+    "decision_log": [
+      {
+        "at": "2026-06-09",
+        "actor": "external_ai",
+        "decision": "accepted_for_draft",
+        "reason": "方向成立。post-trade outcome、future return、fill result、realized PnL 或 later human label 进入 input feature 会构成 label leakage / future leakage。TFDV 明确把 labels treated as features 列为训练中偷看答案的问题，scikit-learn data leakage 资料也直接支持该规则。",
+        "audit_result_id": "audit_result_phase36_ai_engineering_batch_04_of_10_20260609_gpt55_pro_strict_sources"
+      },
+      {
+        "at": "2026-06-09",
+        "actor": "codex",
+        "decision": "converted_to_reviewed",
+        "reason": "按 Phase 36 批量审计结果优化候选并转为 formal reviewed；未升级 approved。",
+        "audit_result_id": "audit_result_phase36_ai_engineering_batch_04_of_10_20260609_gpt55_pro_strict_sources"
+      }
+    ],
+    "approval_status": "not_requested",
+    "default_guidance_allowed": false,
+    "source_candidate_id": "cand_20260609_ai_engineering_feature_schema_post_trade_fields_forbidden_in_input_v1_001",
+    "ai_audit_result_id": "audit_result_phase36_ai_engineering_batch_04_of_10_20260609_gpt55_pro_strict_sources",
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase36_ai_engineering_batch_04_of_10_20260609_gpt55_pro_strict_sources",
+      "source_package_id": "phase36_ai_engineering_candidate_audit_batch_04_of_10_20260609",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立。post-trade outcome、future return、fill result、realized PnL 或 later human label 进入 input feature 会构成 label leakage / future leakage。TFDV 明确把 labels treated as features 列为训练中偷看答案的问题，scikit-learn data leakage 资料也直接支持该规则。",
+      "source_patch_notes": [
+        "保留 TFDV 作为 label-as-feature leakage 和 schema environment 来源。",
+        "保留 scikit-learn common pitfalls 作为 data leakage 主来源。",
+        "保留 Feast 作为 feature timestamp 和 feature registry 支撑来源。",
+        "建议补内部 outcome_schema.post_trade_fields_separated 作为互链来源。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：Post-trade fields and future outcome fields are forbidden in model input features; they must be stored only as labels, outcomes, audit context or post-trade analysis fields.",
+        "建议 post_trade_field enum：realized_pnl、fill_price、fill_quantity、exit_price、future_return、future_price_path、later_human_label、post_trade_reason_code、execution_outcome。",
+        "建议字段：field_name、field_role、allowed_in_input、allowed_as_label、allowed_as_outcome、forbidden_reason、validation_rule_id。",
+        "如果 post-trade field 出现在 input schema，默认 block_training，不应仅 warning。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 定义 input/label/outcome 字段分离和泄漏阻断规则。",
+        "成交模型、fill model、滑点、费用、实盘执行和交易结果解释由 Trading Engineering 维护。",
+        "不得在知识库中保存具体订单、账户、fill 明细或策略收益路径。"
+      ],
+      "conflict_patch_notes": [
+        "与 feature_timestamp_cutoff_required 和 outcome_schema.post_trade_fields_separated 应建立强互链。",
+        "与 leakage.label_in_input_forbidden 后续候选可能重复；建议形成 feature/outcome leakage family。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 post_trade_field_enum.yaml。",
+        "补 input_target_outcome_separation_schema.json。",
+        "补 red-team eval case：realized_pnl hidden in feature、future_return alias、later label accidentally joined。"
+      ]
+    },
+    "approved_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "contribution": {
+    "contribution_id": null,
+    "source_project": null,
+    "sanitization_status": "not_applicable",
+    "private_data_removed": true,
+    "generic_mapping_notes": "Phase 36 public-source AI Engineering candidate; no project-private trading facts included."
+  },
+  "copyright": {
+    "stores_full_text": false,
+    "stores_long_quote": false,
+    "summary_only": true,
+    "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+    "reuse_risk": "low"
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于审计 AI Engineering、LLM 训练、RAG/MCP、部署、安全或治理链路。",
+      "用于提醒外接项目补齐来源、适用边界、冲突状态、审计记录和人工审批。",
+      "用于 reviewed/audit 模式下带 caveat 引用。"
+    ],
+    "not_allowed": [
+      "不得生成买卖点、仓位、杠杆、止损止盈或实盘执行指令。",
+      "不得覆盖确定性风控、交易执行系统或人工审批。",
+      "不得作为 approved/default guidance 直接返回。"
+    ],
+    "required_context": [
+      "project_type",
+      "task_type",
+      "mode",
+      "strategy_version",
+      "data_boundary",
+      "review_status"
+    ],
+    "fallback_behavior": "cite_with_caveat"
+  },
+  "machine_gate": {
+    "default_guidance": "caveat_only",
+    "reason": "reviewed only; accepted_for_draft is not approved; default guidance requires later human governance approval.",
+    "requires_human_escalation": true,
+    "blocking_reasons": [
+      "not_approved",
+      "phase36_batch04_reviewed_only"
+    ],
+    "checked_at": "2026-06-09",
+    "gate_version": "1.0.0",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "recommended_extra_sources": [
+    {
+      "title": "保留 TFDV 作为 label-as-feature leakage 和 schema environment 来源。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_1"
+    },
+    {
+      "title": "保留 scikit-learn common pitfalls 作为 data leakage 主来源。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_2"
+    },
+    {
+      "title": "保留 Feast 作为 feature timestamp 和 feature registry 支撑来源。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_3"
+    },
+    {
+      "title": "建议补内部 outcome_schema.post_trade_fields_separated 作为互链来源。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_4"
+    }
+  ]
+}

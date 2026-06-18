@@ -1,0 +1,1562 @@
+{
+  "package_id": "phase36_batch03_supplemental_audit_package_20260609",
+  "package_type": "candidate_ai_audit_package",
+  "created_at": "2026-06-09",
+  "created_by": "codex",
+  "phase": "Phase 36",
+  "task_ids": [
+    "CEK-TA-213",
+    "CEK-TA-214"
+  ],
+  "source_audit_result_id": "audit_result_phase36_ai_engineering_batch_03_of_10_20260609_gpt55_pro_strict_sources",
+  "purpose": "对 Phase 36 第三批审计中 5 条 needs_more_evidence 候选进行补证后二次审计。",
+  "workflow_boundary": {
+    "candidate_is_not_formal_knowledge": true,
+    "accepted_for_draft_is_not_approved": true,
+    "reviewed_is_not_approved": true,
+    "do_not_set_approved": true,
+    "current_required_decision": "accepted_for_draft | needs_more_evidence | rejected"
+  },
+  "auditor_instructions": {
+    "language": "中文",
+    "review_focus": [
+      "补证后的 rewritten statement 是否与 candidate_id、normalized_claim 对齐。",
+      "source_refs 是否包含能直接支撑该具体规则的来源，而不是只支撑泛化评估。",
+      "是否与相邻 reviewed 知识重复，应该 accepted、继续 needs_more_evidence、合并或标记 rejected。",
+      "AI Engineering 与 Trading Engineering 边界是否清楚。",
+      "如 accepted_for_draft，只代表可转 formal reviewed，不代表 approved。"
+    ],
+    "required_output_schema": {
+      "audit_result_id": "string",
+      "source_package_id": "phase36_batch03_supplemental_audit_package_20260609",
+      "items": [
+        {
+          "candidate_id": "string",
+          "decision": "accepted_for_draft | needs_more_evidence | rejected",
+          "reason": "string",
+          "source_patch_notes": [
+            "string"
+          ],
+          "content_patch_notes": [
+            "string"
+          ],
+          "boundary_patch_notes": [
+            "string"
+          ],
+          "conflict_patch_notes": [
+            "string"
+          ],
+          "required_followups": [
+            "string"
+          ]
+        }
+      ]
+    }
+  },
+  "candidates": [
+    {
+      "schema_version": "1.0.0",
+      "candidate_id": "cand_20260609_ai_engineering_eval_ablation_required_for_rag_prompt_model_components_v1_001",
+      "research_task_id": "RIT-P36-N-09",
+      "status": {
+        "review_status": "needs_more_evidence",
+        "ingestion_decision": "needs_more_evidence",
+        "decision_reason": "已按第三批审计意见补充直接来源和重写 statement，等待二次审计；该状态不是 accepted、reviewed 或 approved。",
+        "created_at": "2026-06-09",
+        "updated_at": "2026-06-09"
+      },
+      "classification": {
+        "tree_node_id": "kt.llm_training.model_training_engineering",
+        "canonical_node_id": "kt.llm_training.model_training_engineering",
+        "tree_path": "CEK-TA / AI Engineering",
+        "related_nodes": [],
+        "partition_id": "KB_09_LLM_TRAINING",
+        "domain": "llm_training",
+        "subdomain": "evaluation_governance",
+        "rule_type": "decision_rule",
+        "used_for": [
+          "llm_training",
+          "trading_gating_scoring",
+          "rag_engineering",
+          "mcp",
+          "vue_audit_ui"
+        ]
+      },
+      "claim": {
+        "claim_id": "claim_001",
+        "statement": "RAG、prompt、model、reranker、tool 或 MCP 组件变更在进入 gate/scoring promotion 前，必须在同一隔离 eval set 上执行组件级 ablation，对比 baseline、component-disabled、component-enabled 和 combined 配置差异。",
+        "normalized_claim": "eval.ablation_required_for_rag_prompt_model_components.v1",
+        "evidence_summary": "OpenAI model optimization 支持先建立 eval baseline 再迭代模型、prompt 和 fine-tuning；OpenAI evals 支持用测试输入和评分标准评估不同模型与参数；PMLR ABLATOR 说明 ablation experiments 用于理解方法或组件有效性；RAG 最佳实践研究使用 ablation studies 分析检索、上下文和生成等组件贡献。",
+        "interpretation_notes": "本候选已从泛化评估规则收敛为组件级 ablation 规则。它不要求证明某个交易策略有效，只要求外接 LLM gating/scoring 项目在改动 RAG、prompt、model、reranker、tool/MCP 时能说明组件边际贡献。",
+        "claim_strength": "high",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general",
+        "asset": "general",
+        "timeframe": "general",
+        "data_granularity": "general",
+        "project_type": "trading_llm_assistant",
+        "applies_when": [
+          "外接项目改动 RAG、prompt、model、reranker、tool、MCP 或 scoring pipeline 组件，并准备把结果用于 gate/scoring promotion。",
+          "同一模型质量改进可能来自多个组件叠加，需要隔离每个组件的边际贡献。",
+          "评估结果会用于 SearchLab 回归、模型发布、prompt/RAG 版本选择或人工审批。"
+        ],
+        "not_applicable_when": [
+          "只是在建立 production-like eval 父评估环境，应引用 eval.production_like_eval_required。",
+          "只是在比较确定性 baseline 与 LLM gate，应引用 eval.deterministic_baseline_required_before_llm_gate。",
+          "ablation 涉及具体交易收益解释、K 线信号、fill model 或策略参数，应路由到 Trading Engineering。"
+        ],
+        "assumptions": [
+          "外接项目提供项目事实、私有交易数据和策略上下文；CEK-TA 只沉淀可复用专业规则。",
+          "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+        ],
+        "limitations": [
+          "ablation 不等于调参搜索；它用于解释组件贡献，而不是穷举寻找最优参数。",
+          "AI Engineering 只定义 ablation 方法、字段和审计要求，不写具体交易规则。",
+          "若只有 combined system 通过但无法解释组件贡献，不应作为 hard gate 上线证据。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_id": "src_openai_evals",
+          "source_title": "Working with evals | OpenAI API",
+          "source_url": "https://platform.openai.com/docs/guides/evals?api-mode=chat",
+          "source_type": "official_doc",
+          "publisher": "OpenAI",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 86,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "OpenAI evals documentation supports programmatic evaluation setup and workflow-specific quality checks before relying on model behavior.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_sklearn_cv",
+          "source_title": "Cross-validation: evaluating estimator performance | scikit-learn",
+          "source_url": "https://scikit-learn.org/stable/modules/cross_validation.html",
+          "source_type": "official_doc",
+          "publisher": "scikit-learn",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 84,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "scikit-learn cross-validation guidance supports held-out evaluation, splitting discipline, and avoiding evaluation on training data.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_rules_ml",
+          "source_title": "Rules of Machine Learning",
+          "source_url": "https://martin.zinkevich.org/rules_of_ml/rules_of_ml.pdf",
+          "source_type": "paper",
+          "publisher": "Google / Martin Zinkevich",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "medium",
+          "score": 78,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "Rules of ML discusses train/serve consistency, baselines, monitoring, and production ML safeguards.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_openai_model_optimization_baseline",
+          "source_title": "Model optimization | OpenAI API",
+          "source_url": "https://platform.openai.com/docs/guides/model-optimization",
+          "source_type": "official_doc",
+          "publisher": "OpenAI",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 90,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "OpenAI model optimization 文档支持先写 evals 建立 baseline，再围绕 prompt、fine-tuning 和模型输出质量进行迭代。",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_openai_evals_api_runs",
+          "source_title": "Evals | OpenAI API Reference",
+          "source_url": "https://platform.openai.com/docs/api-reference/evals/createRun?api-mode=chat",
+          "source_type": "official_doc",
+          "publisher": "OpenAI",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 82,
+          "relevance": "medium",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "OpenAI Evals API 支持创建评估结构并在不同模型和参数上运行，可支撑同一 eval set 下的配置对比。",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_pmlr_ablator_ablation_experiments",
+          "source_title": "ABLATOR: Robust Horizontal-Scaling of Machine Learning Ablation Experiments",
+          "source_url": "https://proceedings.mlr.press/v224/fostiropoulos23a.html",
+          "source_type": "paper",
+          "publisher": "PMLR",
+          "published_at": "2023-11-12",
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 90,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "PMLR ABLATOR 论文直接说明 ablation experiments 用于理解方法、组件和训练设置的有效性。",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_coling_2025_rag_best_practices_ablation",
+          "source_title": "Enhancing Retrieval-Augmented Generation: A Study of Best Practices",
+          "source_url": "https://aclanthology.org/2025.coling-main.449.pdf",
+          "source_type": "paper",
+          "publisher": "ACL Anthology / COLING",
+          "published_at": "2025",
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 90,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "该 RAG 最佳实践研究使用 ablation studies 分析 RAG 组件和配置对效果的影响，可作为 RAG 组件级消融的直接来源。",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "high",
+        "score": 88,
+        "score_version": "1.0.0",
+        "primary_source_count": 2,
+        "supporting_source_count": 1,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "仍是 candidate，不得作为 formal reviewed 或 approved 知识使用。",
+          "二次审计前不得进入默认指导。"
+        ],
+        "review_notes": "补证后增加了与 normalized_claim 直接相关的主来源；等待二次审计决定是否 accepted_for_draft。"
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "checked_against": [
+          "docs/contracts/ai_engineering_gating_scoring_contract.md",
+          "docs/contracts/ai_engineering_knowledge_item_policy.md",
+          "docs/tasks/phase36_ai_engineering_gating_scoring_knowledge.md"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与当前 CEK-TA formal knowledge 的直接冲突；候选不会进入默认指导。",
+        "approval_allowed": true
+      },
+      "review": {
+        "confidence": "medium",
+        "freshness": "time_sensitive",
+        "reviewer": "external_ai_and_codex_alignment",
+        "reviewed_at": "2026-06-09",
+        "open_questions": [
+          "检查 rewritten statement 是否从泛化评估改为组件级 ablation，source_refs 是否能直接支撑 RAG/prompt/model/tool 组件消融。",
+          "是否与相邻 reviewed 知识重复，应该作为父子规则、互链规则还是合并？",
+          "是否仍需要更多领域直接来源或内部 schema contract？"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-09",
+            "actor": "codex",
+            "action": "created",
+            "reason": "Phase 36 bulk AI Engineering candidate expansion."
+          },
+          {
+            "at": "2026-06-09",
+            "actor": "external_ai",
+            "action": "phase36_batch_audit_result_received",
+            "reason": "当前候选不应直接转 draft。candidate_id 和 normalized_claim 指向 RAG、prompt、model components 的 ablation required，但 statement 只是泛化评估规则：使用隔离、可复现、贴近生产任务的评测集并记录指标、阈值和失败样本。OpenAI evals、scikit-learn cross-validation 和 Rules of ML 可以支持通用评估、holdout、baseline、生产一致性，但不足以直接支撑“必须做 RAG/prompt/model 组件消融”的具体要求。",
+            "audit_result_id": "audit_result_phase36_ai_engineering_batch_03_of_10_20260609_gpt55_pro_strict_sources"
+          }
+        ],
+        "ai_audit": {
+          "audit_result_id": "audit_result_phase36_ai_engineering_batch_03_of_10_20260609_gpt55_pro_strict_sources",
+          "source_package_id": "phase36_ai_engineering_candidate_audit_batch_03_of_10_20260609",
+          "decision": "needs_more_evidence",
+          "reason": "当前候选不应直接转 draft。candidate_id 和 normalized_claim 指向 RAG、prompt、model components 的 ablation required，但 statement 只是泛化评估规则：使用隔离、可复现、贴近生产任务的评测集并记录指标、阈值和失败样本。OpenAI evals、scikit-learn cross-validation 和 Rules of ML 可以支持通用评估、holdout、baseline、生产一致性，但不足以直接支撑“必须做 RAG/prompt/model 组件消融”的具体要求。",
+          "source_patch_notes": [
+            "保留 OpenAI evals 作为 LLM workflow evaluation 的 supporting source，但注明 Evals platform 正在退役，新项目应使用 Datasets / 新评估流程。",
+            "保留 scikit-learn cross-validation 作为 holdout / split discipline 来源。",
+            "保留 Rules of ML 作为生产 ML baseline、monitoring、train/serve consistency 的 supporting source。",
+            "补直接 ablation 来源，例如 ML ablation study 方法资料或可执行工程文档，说明移除或替换组件以测量组件影响。",
+            "补 RAG/prompt/model 组件级评估来源，或内部 CEK-TA ablation_report schema / ablation contract。"
+          ],
+          "content_patch_notes": [
+            "将正式 statement 改为：RAG、prompt、model 或 tool-chain 组件变更在进入 gate/scoring promotion 前，必须在同一隔离 eval set 上执行组件级 ablation，并记录 baseline、component-disabled、component-enabled 和 combined 配置差异。",
+            "建议字段：ablation_run_id、baseline_config_id、component_name、component_version、component_disabled、eval_dataset_id、eval_dataset_hash、metric_set_id、failure_case_ids、delta_vs_baseline、decision、reviewer。",
+            "明确 ablation 不等于调参搜索；它用于证明 RAG、prompt、model、reranker、tool 或 MCP 组件对质量、安全和可审计性的边际贡献。",
+            "增加 negative case：如果 only combined system pass，但无法解释哪个组件带来增益或风险，不能直接作为 hard gate 上线证据。"
+          ],
+          "boundary_patch_notes": [
+            "AI Engineering 只定义 ablation 方法、评估字段、组件版本和审计要求。",
+            "不得在本知识项中写入具体交易策略、信号、仓位、止损止盈、订单执行或账户参数。",
+            "若 ablation 涉及交易收益、滑点、fill model 或市场 regime 的业务解释，应路由到 Trading Engineering。"
+          ],
+          "conflict_patch_notes": [
+            "与 eval.production_like_eval_required、eval.deterministic_baseline_required_before_llm_gate 存在父子关系：production_like_eval 是父评估环境，deterministic_baseline 是 baseline，ablation 是组件贡献分析。",
+            "当前 statement 与 normalized_claim 不一致，直接 accepted 会导致知识项名称和内容错配。",
+            "未发现需要 rejected 的方向性冲突。"
+          ],
+          "required_followups": [
+            "重写 candidate statement，使其明确描述 RAG/prompt/model component ablation。",
+            "补至少一个直接支持 ablation study 的专业来源。",
+            "补 ablation_report_schema.json。",
+            "补 eval case：RAG off、prompt version swap、model swap、reranker off、tool/MCP unavailable。"
+          ],
+          "boundary": "accepted_for_draft 不是 approved；reviewed 不会进入默认指导。"
+        }
+      },
+      "copyright": {
+        "stores_full_text": false,
+        "stores_long_quote": false,
+        "summary_only": true,
+        "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+        "reuse_risk": "low"
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_ai_engineering.eval.ablation_required_for_rag_prompt_model_components.v1",
+        "target_schema": "cek_ta_knowledge_item",
+        "target_review_status": "draft",
+        "skill_candidate": false,
+        "eval_case_candidate": true,
+        "required_fields": [
+          "ablation_run_id",
+          "baseline_config_id",
+          "component_name",
+          "component_version",
+          "component_disabled",
+          "eval_dataset_id",
+          "eval_dataset_hash",
+          "metric_set_id",
+          "failure_case_ids",
+          "delta_vs_baseline",
+          "decision",
+          "reviewer"
+        ]
+      },
+      "workflow": {
+        "stage": "needs_more_evidence",
+        "queue_group": "needs_more_evidence",
+        "formal_knowledge_id": null,
+        "formal_review_status": null,
+        "ai_audit_result_id": "audit_result_phase36_ai_engineering_batch_03_of_10_20260609_gpt55_pro_strict_sources",
+        "hidden_from_default_queue": false,
+        "next_action": "export_ai_audit",
+        "supplemental_research_status": "ready_for_reaudit",
+        "source_package_id": "phase36_batch03_supplemental_audit_package_20260609",
+        "last_supplemented_at": "2026-06-09"
+      }
+    },
+    {
+      "schema_version": "1.0.0",
+      "candidate_id": "cand_20260609_ai_engineering_eval_blocked_trade_cannot_be_labeled_as_loss_v1_001",
+      "research_task_id": "RIT-P36-N-03",
+      "status": {
+        "review_status": "needs_more_evidence",
+        "ingestion_decision": "needs_more_evidence",
+        "decision_reason": "已按第三批审计意见补充直接来源和重写 statement，等待二次审计；该状态不是 accepted、reviewed 或 approved。",
+        "created_at": "2026-06-09",
+        "updated_at": "2026-06-09"
+      },
+      "classification": {
+        "tree_node_id": "kt.llm_training.model_training_engineering",
+        "canonical_node_id": "kt.llm_training.model_training_engineering",
+        "tree_path": "CEK-TA / AI Engineering",
+        "related_nodes": [],
+        "partition_id": "KB_09_LLM_TRAINING",
+        "domain": "llm_training",
+        "subdomain": "evaluation_governance",
+        "rule_type": "decision_rule",
+        "used_for": [
+          "llm_training",
+          "trading_gating_scoring",
+          "rag_engineering",
+          "mcp",
+          "vue_audit_ui"
+        ]
+      },
+      "claim": {
+        "claim_id": "claim_001",
+        "statement": "被 gate 阻断或过滤的交易没有 observed execution outcome，不能仅因为被阻断就标记为 loss；除非有 approved off-policy、simulation 或 human review evidence，否则应标记为 counterfactual_missing、blocked_no_outcome 或 needs_human_review。",
+        "normalized_claim": "eval.blocked_trade_cannot_be_labeled_as_loss.v1",
+        "evidence_summary": "Counterfactual Risk Minimization 与 logged bandit feedback 文献说明日志只观测被历史策略选择动作的反馈，未执行动作需要反事实或离策略处理；OPE 资料支持用历史日志评估不同策略时必须处理 logging policy 与未观测反馈问题。",
+        "interpretation_notes": "本候选是 counterfactual outcome family 的 label action 子规则：它不是说被阻断交易一定好或坏，而是规定不能把缺失反事实结果伪装成真实 loss 标签。",
+        "claim_strength": "high",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general",
+        "asset": "general",
+        "timeframe": "general",
+        "data_granularity": "general",
+        "project_type": "trading_llm_assistant",
+        "applies_when": [
+          "交易候选被 LLM gate、risk gate、规则过滤或人工过滤阻断，没有真实执行结果。",
+          "外接项目想把 blocked trade 放入监督训练、偏好训练、eval、false_block review 或 risk ledger。",
+          "只能观察 old/logging policy 允许并执行的交易结果。"
+        ],
+        "not_applicable_when": [
+          "交易已经实际执行并有完整成交、费用、滑点和 outcome 记录。",
+          "项目已有已审批的 off-policy evaluation、simulation、paper replay 或人工复盘证据。",
+          "需要定义成交模拟、fill model、滑点、回测或实盘执行事实，应路由到 Trading Engineering。"
+        ],
+        "assumptions": [
+          "外接项目提供项目事实、私有交易数据和策略上下文；CEK-TA 只沉淀可复用专业规则。",
+          "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+        ],
+        "limitations": [
+          "blocked_no_outcome 不等于交易本应 allow，也不等于交易一定盈利。",
+          "missed profit、unrealized PnL 或事后价格路径不能自动转成 LLM 训练标签。",
+          "AI Engineering 只定义 label semantics 和审计字段，交易执行和回测假设由 Trading Engineering 维护。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_id": "src_openai_evals",
+          "source_title": "Working with evals | OpenAI API",
+          "source_url": "https://platform.openai.com/docs/guides/evals?api-mode=chat",
+          "source_type": "official_doc",
+          "publisher": "OpenAI",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 86,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "OpenAI evals documentation supports programmatic evaluation setup and workflow-specific quality checks before relying on model behavior.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_sklearn_cv",
+          "source_title": "Cross-validation: evaluating estimator performance | scikit-learn",
+          "source_url": "https://scikit-learn.org/stable/modules/cross_validation.html",
+          "source_type": "official_doc",
+          "publisher": "scikit-learn",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 84,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "scikit-learn cross-validation guidance supports held-out evaluation, splitting discipline, and avoiding evaluation on training data.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_rules_ml",
+          "source_title": "Rules of Machine Learning",
+          "source_url": "https://martin.zinkevich.org/rules_of_ml/rules_of_ml.pdf",
+          "source_type": "paper",
+          "publisher": "Google / Martin Zinkevich",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "medium",
+          "score": 78,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "Rules of ML discusses train/serve consistency, baselines, monitoring, and production ML safeguards.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_pmlr_counterfactual_risk_minimization",
+          "source_title": "Counterfactual Risk Minimization: Learning from Logged Bandit Feedback",
+          "source_url": "https://proceedings.mlr.press/v37/swaminathan15.html",
+          "source_type": "paper",
+          "publisher": "PMLR",
+          "published_at": "2015",
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 90,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "CRM 文献说明 logged bandit feedback 只包含历史策略选择动作的反馈，学习或评估新策略需要反事实处理。",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_arxiv_off_policy_logged_bandit_surrogate",
+          "source_title": "Off-Policy Evaluation and Learning from Logged Bandit Feedback: Error Reduction via Surrogate Policy",
+          "source_url": "https://arxiv.org/abs/1808.00232",
+          "source_type": "paper",
+          "publisher": "arXiv",
+          "published_at": "2018-08-01",
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "medium",
+          "score": 82,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "该论文讨论从 logged bandit feedback 做 off-policy evaluation 和 learning，支持历史日志反馈不完整时不能直接当普通监督标签。",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_arxiv_effective_eval_multiple_loggers",
+          "source_title": "Effective Evaluation using Logged Bandit Feedback from Multiple Loggers",
+          "source_url": "https://arxiv.org/abs/1703.06180",
+          "source_type": "paper",
+          "publisher": "arXiv",
+          "published_at": "2017-03-18",
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "medium",
+          "score": 82,
+          "relevance": "medium",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "该文说明可用不同 logging policies 的日志进行 counterfactual estimators 评估，支持记录 logging policy 与反馈可观测性。",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "high",
+        "score": 88,
+        "score_version": "1.0.0",
+        "primary_source_count": 2,
+        "supporting_source_count": 1,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "仍是 candidate，不得作为 formal reviewed 或 approved 知识使用。",
+          "二次审计前不得进入默认指导。"
+        ],
+        "review_notes": "补证后增加了与 normalized_claim 直接相关的主来源；等待二次审计决定是否 accepted_for_draft。"
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "checked_against": [
+          "docs/contracts/ai_engineering_gating_scoring_contract.md",
+          "docs/contracts/ai_engineering_knowledge_item_policy.md",
+          "docs/tasks/phase36_ai_engineering_gating_scoring_knowledge.md"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与当前 CEK-TA formal knowledge 的直接冲突；候选不会进入默认指导。",
+        "approval_allowed": true
+      },
+      "review": {
+        "confidence": "medium",
+        "freshness": "time_sensitive",
+        "reviewer": "external_ai_and_codex_alignment",
+        "reviewed_at": "2026-06-09",
+        "open_questions": [
+          "检查 blocked trade 不能直接标 loss 的 label action 是否有 counterfactual/logged feedback 来源支撑，并是否与父规则 counterfactual_outcome_missing 区分。",
+          "是否与相邻 reviewed 知识重复，应该作为父子规则、互链规则还是合并？",
+          "是否仍需要更多领域直接来源或内部 schema contract？"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-09",
+            "actor": "codex",
+            "action": "created",
+            "reason": "Phase 36 bulk AI Engineering candidate expansion."
+          },
+          {
+            "at": "2026-06-09",
+            "actor": "external_ai",
+            "action": "phase36_batch_audit_result_received",
+            "reason": "当前候选不应直接转 draft。candidate_id 和 normalized_claim 指向“被阻断交易不能直接标为 loss”，但 statement 仍是泛化评估集规则，source_refs 也只有 OpenAI evals、scikit-learn CV 和 Rules of ML，缺少 blocked trade、censored outcome、counterfactual outcome 或 off-policy evaluation 的直接证据。方向合理，但必须先重写 claim 并补 counterfactual / logged feedback 证据。",
+            "audit_result_id": "audit_result_phase36_ai_engineering_batch_03_of_10_20260609_gpt55_pro_strict_sources"
+          }
+        ],
+        "ai_audit": {
+          "audit_result_id": "audit_result_phase36_ai_engineering_batch_03_of_10_20260609_gpt55_pro_strict_sources",
+          "source_package_id": "phase36_ai_engineering_candidate_audit_batch_03_of_10_20260609",
+          "decision": "needs_more_evidence",
+          "reason": "当前候选不应直接转 draft。candidate_id 和 normalized_claim 指向“被阻断交易不能直接标为 loss”，但 statement 仍是泛化评估集规则，source_refs 也只有 OpenAI evals、scikit-learn CV 和 Rules of ML，缺少 blocked trade、censored outcome、counterfactual outcome 或 off-policy evaluation 的直接证据。方向合理，但必须先重写 claim 并补 counterfactual / logged feedback 证据。",
+          "source_patch_notes": [
+            "补 Counterfactual Risk Minimization / logged bandit feedback 作为主来源，用于说明历史日志只观测已执行动作结果，未执行或被阻断动作缺少 counterfactual outcome。",
+            "补 off-policy evaluation 或 causal inference / censored outcome 相关资料作为 supporting source。",
+            "OpenAI evals 和 scikit-learn CV 只能保留为评估流程和隔离数据的 supporting sources，不应作为本条主证据。",
+            "与本批 counterfactual_outcome_missing_for_blocked_trades 共用来源，避免重复建源。"
+          ],
+          "content_patch_notes": [
+            "将正式 statement 改为：A blocked or filtered trade has no observed execution outcome and must not be labeled as loss solely because it was blocked; it should be marked counterfactual_missing / censored_outcome unless an approved off-policy or simulation method supplies evidence.",
+            "建议字段：trade_candidate_id、gate_decision、executed_flag、observed_outcome_available、counterfactual_outcome_status、label_value、label_reason_code、ope_method_id、simulation_ref、reviewer。",
+            "明确 missed profit、unrealized PnL 或事后价格路径不能自动转成 LLM 训练标签。",
+            "允许标注为 needs_more_evidence、blocked_no_outcome、counterfactual_missing、human_review_required。"
+          ],
+          "boundary_patch_notes": [
+            "AI Engineering 只定义 label semantics、缺失 counterfactual outcome 的审计字段和训练阻断规则。",
+            "交易结果模拟、成交假设、回测、fill model、滑点和交易执行事实由 Trading Engineering 维护。",
+            "不得把具体交易、买卖点、账户、订单或策略参数写入本知识项。"
+          ],
+          "conflict_patch_notes": [
+            "与 eval.counterfactual_outcome_missing_for_blocked_trades 高度重叠，建议本条作为 label action 子规则，counterfactual_outcome_missing 作为原理父规则。",
+            "与 label_schema.no_pnl_only_label、eval_blocked_trade_cannot_be_labeled_as_loss、business_objective.success_metric_not_only_pnl 应互链。",
+            "当前版本如直接 accepted，会导致 ID/claim 与 statement/source 不匹配。"
+          ],
+          "required_followups": [
+            "重写 statement，明确 blocked trade label 规则。",
+            "补 CRM / off-policy / censored outcome 直接来源。",
+            "补 blocked_trade_label_schema。",
+            "补 eval case：blocked trade later profitable、blocked trade later loss、blocked trade no fill、paper-only simulated outcome。"
+          ],
+          "boundary": "accepted_for_draft 不是 approved；reviewed 不会进入默认指导。"
+        }
+      },
+      "copyright": {
+        "stores_full_text": false,
+        "stores_long_quote": false,
+        "summary_only": true,
+        "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+        "reuse_risk": "low"
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_ai_engineering.eval.blocked_trade_cannot_be_labeled_as_loss.v1",
+        "target_schema": "cek_ta_knowledge_item",
+        "target_review_status": "draft",
+        "skill_candidate": false,
+        "eval_case_candidate": true,
+        "required_fields": [
+          "trade_candidate_id",
+          "gate_decision",
+          "executed_flag",
+          "observed_outcome_available",
+          "counterfactual_outcome_status",
+          "label_value",
+          "label_reason_code",
+          "ope_method_id",
+          "simulation_ref",
+          "reviewer"
+        ]
+      },
+      "workflow": {
+        "stage": "needs_more_evidence",
+        "queue_group": "needs_more_evidence",
+        "formal_knowledge_id": null,
+        "formal_review_status": null,
+        "ai_audit_result_id": "audit_result_phase36_ai_engineering_batch_03_of_10_20260609_gpt55_pro_strict_sources",
+        "hidden_from_default_queue": false,
+        "next_action": "export_ai_audit",
+        "supplemental_research_status": "ready_for_reaudit",
+        "source_package_id": "phase36_batch03_supplemental_audit_package_20260609",
+        "last_supplemented_at": "2026-06-09"
+      }
+    },
+    {
+      "schema_version": "1.0.0",
+      "candidate_id": "cand_20260609_ai_engineering_eval_deterministic_baseline_required_before_llm_gate_v1_001",
+      "research_task_id": "RIT-P36-N-08",
+      "status": {
+        "review_status": "needs_more_evidence",
+        "ingestion_decision": "needs_more_evidence",
+        "decision_reason": "已按第三批审计意见补充直接来源和重写 statement，等待二次审计；该状态不是 accepted、reviewed 或 approved。",
+        "created_at": "2026-06-09",
+        "updated_at": "2026-06-09"
+      },
+      "classification": {
+        "tree_node_id": "kt.llm_training.model_training_engineering",
+        "canonical_node_id": "kt.llm_training.model_training_engineering",
+        "tree_path": "CEK-TA / AI Engineering",
+        "related_nodes": [],
+        "partition_id": "KB_09_LLM_TRAINING",
+        "domain": "llm_training",
+        "subdomain": "evaluation_governance",
+        "rule_type": "decision_rule",
+        "used_for": [
+          "llm_training",
+          "trading_gating_scoring",
+          "rag_engineering",
+          "mcp",
+          "vue_audit_ui"
+        ]
+      },
+      "claim": {
+        "claim_id": "claim_001",
+        "statement": "LLM gate/scoring 在进入 promotion、shadow 或 hard gate 讨论前，必须先与 deterministic baseline、规则 baseline 或当前生产 gate baseline 在同一隔离 eval set 上比较；没有 baseline comparison 不得声称 LLM 带来增益。",
+        "normalized_claim": "eval.deterministic_baseline_required_before_llm_gate.v1",
+        "evidence_summary": "OpenAI model optimization 要求用 evals 建立 performance/accuracy baseline；OpenAI evals 支持在不同模型和参数上运行同一评估；Rules of ML 支持先建立简单可解释 baseline 并持续比较生产 ML 行为。",
+        "interpretation_notes": "本候选只要求上线前评估 baseline，不定义生产运行时最终权限。deterministic baseline 如包含具体交易风控、价格规则或策略逻辑，只能保存引用，规则本体由 Trading Engineering 持有。",
+        "claim_strength": "high",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general",
+        "asset": "general",
+        "timeframe": "general",
+        "data_granularity": "general",
+        "project_type": "trading_llm_assistant",
+        "applies_when": [
+          "外接项目计划让 LLM 输出影响 trading gate、score、soft block、hard block 或人工复核优先级。",
+          "项目想证明 LLM/RAG/prompt/model 比现有规则、人工流程或 deterministic baseline 更好。",
+          "评估结果会用于 promotion、shadow/paper 准入或 hard gate 讨论。"
+        ],
+        "not_applicable_when": [
+          "LLM 只生成离线解释文本，不影响评分、门禁、队列优先级或上线决策。",
+          "讨论的是生产运行时最终权限，应路由到 runtime_final_gate_deterministic_engine_required。",
+          "需要定义具体交易风控阈值、策略参数、订单执行或仓位规则。"
+        ],
+        "assumptions": [
+          "外接项目提供项目事实、私有交易数据和策略上下文；CEK-TA 只沉淀可复用专业规则。",
+          "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+        ],
+        "limitations": [
+          "baseline 可以是规则、当前生产 gate、人工审核基线或 deterministic risk gate，但 AI Engineering 只保存 baseline_config_id 和引用。",
+          "LLM 通过 eval 不等于 live-ready，还需要 shadow/paper、审批和监控。",
+          "baseline comparison 不得使用被训练或调参污染的 eval set。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_id": "src_openai_evals",
+          "source_title": "Working with evals | OpenAI API",
+          "source_url": "https://platform.openai.com/docs/guides/evals?api-mode=chat",
+          "source_type": "official_doc",
+          "publisher": "OpenAI",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 86,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "OpenAI evals documentation supports programmatic evaluation setup and workflow-specific quality checks before relying on model behavior.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_sklearn_cv",
+          "source_title": "Cross-validation: evaluating estimator performance | scikit-learn",
+          "source_url": "https://scikit-learn.org/stable/modules/cross_validation.html",
+          "source_type": "official_doc",
+          "publisher": "scikit-learn",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 84,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "scikit-learn cross-validation guidance supports held-out evaluation, splitting discipline, and avoiding evaluation on training data.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_rules_ml",
+          "source_title": "Rules of Machine Learning",
+          "source_url": "https://martin.zinkevich.org/rules_of_ml/rules_of_ml.pdf",
+          "source_type": "paper",
+          "publisher": "Google / Martin Zinkevich",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "medium",
+          "score": 78,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "Rules of ML discusses train/serve consistency, baselines, monitoring, and production ML safeguards.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_openai_model_optimization_baseline",
+          "source_title": "Model optimization | OpenAI API",
+          "source_url": "https://platform.openai.com/docs/guides/model-optimization",
+          "source_type": "official_doc",
+          "publisher": "OpenAI",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 90,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "OpenAI model optimization 明确支持先写 evals 建立 performance/accuracy baseline，再进行 prompt、fine-tuning 或模型优化。",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_openai_evals_api_runs",
+          "source_title": "Evals | OpenAI API Reference",
+          "source_url": "https://platform.openai.com/docs/api-reference/evals/createRun?api-mode=chat",
+          "source_type": "official_doc",
+          "publisher": "OpenAI",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 82,
+          "relevance": "medium",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "OpenAI Evals API 支持在不同模型和参数上运行评估，可支撑同一 eval set 下的 baseline 对比。",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_rules_ml_baseline",
+          "source_title": "Rules of Machine Learning",
+          "source_url": "https://martin.zinkevich.org/rules_of_ml/rules_of_ml.pdf",
+          "source_type": "paper",
+          "publisher": "Google / Martin Zinkevich",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "medium",
+          "score": 82,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "Rules of ML 支持从简单、可解释、可监控的 baseline 开始，并围绕生产目标持续比较和迭代。",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "high",
+        "score": 88,
+        "score_version": "1.0.0",
+        "primary_source_count": 2,
+        "supporting_source_count": 1,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "仍是 candidate，不得作为 formal reviewed 或 approved 知识使用。",
+          "二次审计前不得进入默认指导。"
+        ],
+        "review_notes": "补证后增加了与 normalized_claim 直接相关的主来源；等待二次审计决定是否 accepted_for_draft。"
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "checked_against": [
+          "docs/contracts/ai_engineering_gating_scoring_contract.md",
+          "docs/contracts/ai_engineering_knowledge_item_policy.md",
+          "docs/tasks/phase36_ai_engineering_gating_scoring_knowledge.md"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与当前 CEK-TA formal knowledge 的直接冲突；候选不会进入默认指导。",
+        "approval_allowed": true
+      },
+      "review": {
+        "confidence": "medium",
+        "freshness": "time_sensitive",
+        "reviewer": "external_ai_and_codex_alignment",
+        "reviewed_at": "2026-06-09",
+        "open_questions": [
+          "检查 statement 是否明确 deterministic/current baseline before LLM gate，且不把 Trading Engineering 的交易规则本体写入 AI Engineering。",
+          "是否与相邻 reviewed 知识重复，应该作为父子规则、互链规则还是合并？",
+          "是否仍需要更多领域直接来源或内部 schema contract？"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-09",
+            "actor": "codex",
+            "action": "created",
+            "reason": "Phase 36 bulk AI Engineering candidate expansion."
+          },
+          {
+            "at": "2026-06-09",
+            "actor": "external_ai",
+            "action": "phase36_batch_audit_result_received",
+            "reason": "当前候选不应直接转 draft。normalized_claim 指向 deterministic baseline required before LLM gate，但 statement 只是泛化评估集规则；source_refs 支持评估、holdout 和生产 ML baseline 的一般原则，尚不足以直接支撑“上线 LLM gate 前必须有 deterministic baseline”的强制规则。方向合理，但需要重写 statement，并补直接 baseline / model optimization / deterministic rule baseline 来源。",
+            "audit_result_id": "audit_result_phase36_ai_engineering_batch_03_of_10_20260609_gpt55_pro_strict_sources"
+          }
+        ],
+        "ai_audit": {
+          "audit_result_id": "audit_result_phase36_ai_engineering_batch_03_of_10_20260609_gpt55_pro_strict_sources",
+          "source_package_id": "phase36_ai_engineering_candidate_audit_batch_03_of_10_20260609",
+          "decision": "needs_more_evidence",
+          "reason": "当前候选不应直接转 draft。normalized_claim 指向 deterministic baseline required before LLM gate，但 statement 只是泛化评估集规则；source_refs 支持评估、holdout 和生产 ML baseline 的一般原则，尚不足以直接支撑“上线 LLM gate 前必须有 deterministic baseline”的强制规则。方向合理，但需要重写 statement，并补直接 baseline / model optimization / deterministic rule baseline 来源。",
+          "source_patch_notes": [
+            "补 OpenAI model optimization 文档作为建立 baseline、用代表性测试数据迭代模型改动的来源。",
+            "保留 OpenAI evals 作为 LLM workflow evaluation supporting source，但注明退役风险。",
+            "保留 Rules of ML 作为 baseline、monitoring、production ML safeguard supporting source。",
+            "补 deterministic baseline / rule-based baseline / non-LLM baseline 的内部 contract，例如 baseline_config_id、baseline_owner、baseline_eval_report。",
+            "scikit-learn CV 仅支持评估 split，不足以单独支撑 deterministic baseline before LLM gate。"
+          ],
+          "content_patch_notes": [
+            "正式 statement 建议改为：Before an LLM gate receives promotion authority, a deterministic or non-LLM baseline must be evaluated on the same held-out production-like eval set and compared on safety, false allow, false block, auditability and latency.",
+            "建议字段：baseline_config_id、baseline_type、baseline_owner、eval_dataset_id、metric_set_id、llm_gate_config_id、comparison_report_id、false_allow_delta、false_block_delta、latency_delta、decision。",
+            "明确 deterministic baseline 可以是 rule-based validator、schema-only gate、existing numeric/deterministic gate 或 human-review baseline，不应在知识库写具体交易策略规则。",
+            "增加 negative case：LLM gate 只比空 baseline 或主观 demo 好，不能作为 hard gate promotion 证据。"
+          ],
+          "boundary_patch_notes": [
+            "AI Engineering 只定义 baseline 要求、评估比较字段和 promotion gate。",
+            "baseline 如包含具体交易风控、价格规则、仓位、订单执行或策略逻辑，应由 Trading Engineering 持有，AI Engineering 只存引用。",
+            "不得把具体 deterministic trading rule 写入本知识项。"
+          ],
+          "conflict_patch_notes": [
+            "与 eval.ablation_required_for_rag_prompt_model_components 和 eval.production_like_eval_required 有父子关系。",
+            "与 runtime_final_gate_deterministic_engine_required 后续候选可能重叠；本条应限于上线前评估 baseline，runtime_final_gate 应限于生产运行时最终权限。",
+            "当前 statement 与 normalized_claim 不一致。"
+          ],
+          "required_followups": [
+            "重写 candidate statement，使其明确 deterministic baseline before LLM gate。",
+            "补 OpenAI model optimization baseline 来源或等价专业来源。",
+            "补 baseline_comparison_report_schema.json。",
+            "补例外路径：无 deterministic baseline 时必须 human review / needs_more_evidence。"
+          ],
+          "boundary": "accepted_for_draft 不是 approved；reviewed 不会进入默认指导。"
+        }
+      },
+      "copyright": {
+        "stores_full_text": false,
+        "stores_long_quote": false,
+        "summary_only": true,
+        "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+        "reuse_risk": "low"
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_ai_engineering.eval.deterministic_baseline_required_before_llm_gate.v1",
+        "target_schema": "cek_ta_knowledge_item",
+        "target_review_status": "draft",
+        "skill_candidate": false,
+        "eval_case_candidate": true,
+        "required_fields": [
+          "baseline_config_id",
+          "baseline_type",
+          "llm_gate_config_id",
+          "eval_dataset_id",
+          "metric_set_id",
+          "baseline_score",
+          "llm_score",
+          "delta",
+          "failure_case_ids",
+          "decision",
+          "reviewer"
+        ]
+      },
+      "workflow": {
+        "stage": "needs_more_evidence",
+        "queue_group": "needs_more_evidence",
+        "formal_knowledge_id": null,
+        "formal_review_status": null,
+        "ai_audit_result_id": "audit_result_phase36_ai_engineering_batch_03_of_10_20260609_gpt55_pro_strict_sources",
+        "hidden_from_default_queue": false,
+        "next_action": "export_ai_audit",
+        "supplemental_research_status": "ready_for_reaudit",
+        "source_package_id": "phase36_batch03_supplemental_audit_package_20260609",
+        "last_supplemented_at": "2026-06-09"
+      }
+    },
+    {
+      "schema_version": "1.0.0",
+      "candidate_id": "cand_20260609_ai_engineering_eval_score_calibration_required_before_gating_v1_001",
+      "research_task_id": "RIT-P36-C-34",
+      "status": {
+        "review_status": "needs_more_evidence",
+        "ingestion_decision": "needs_more_evidence",
+        "decision_reason": "已按第三批审计意见补充直接来源和重写 statement，等待二次审计；该状态不是 accepted、reviewed 或 approved。",
+        "created_at": "2026-06-09",
+        "updated_at": "2026-06-09"
+      },
+      "classification": {
+        "tree_node_id": "kt.llm_training.model_training_engineering",
+        "canonical_node_id": "kt.llm_training.model_training_engineering",
+        "tree_path": "CEK-TA / AI Engineering",
+        "related_nodes": [],
+        "partition_id": "KB_09_LLM_TRAINING",
+        "domain": "llm_training",
+        "subdomain": "evaluation_governance",
+        "rule_type": "decision_rule",
+        "used_for": [
+          "llm_training",
+          "trading_gating_scoring",
+          "rag_engineering",
+          "mcp",
+          "vue_audit_ui"
+        ]
+      },
+      "claim": {
+        "claim_id": "claim_001",
+        "statement": "LLM raw score、rubric score、verbal confidence 或 logprob-derived score 在用于 gating 前，必须在独立 holdout 或 shadow 数据上完成校准或验证，并记录 reliability、subgroup 和样本量；未校准前不得 hard allow。",
+        "normalized_claim": "eval.score_calibration_required_before_gating.v1",
+        "evidence_summary": "scikit-learn calibration 文档支持 probability calibration、reliability diagram、Brier/log loss 等校准检查；NAACL 2024 LLM confidence calibration survey 说明 LLM confidence estimation 与 calibration 是降低不可靠输出风险的重要问题；OpenAI evals 支持用测试输入和评分标准验证模型输出。",
+        "interpretation_notes": "本候选应作为 calibration family 的 eval 子规则：它不定义具体交易阈值，只定义 raw score 进入 gating 前必须有校准或独立验证证据。",
+        "claim_strength": "high",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general",
+        "asset": "general",
+        "timeframe": "general",
+        "data_granularity": "general",
+        "project_type": "trading_llm_assistant",
+        "applies_when": [
+          "外接项目准备用 LLM 分数、rubric 分数、语言置信度或 logprob-derived score 决定 allow、block、review priority 或 threshold。",
+          "分数会影响交易 gate/scoring、shadow/paper promotion、hard gate 讨论或人工复核队列。",
+          "项目需要比较不同策略、市场状态、资产组或任务类型下的分数可靠性。"
+        ],
+        "not_applicable_when": [
+          "分数只用于离线排序或人工参考，且不会进入 gate、threshold 或默认指导。",
+          "讨论的是具体交易阈值、收益影响、仓位或风险预算，应由 Trading Engineering 或项目配置管理。",
+          "已有更高层 calibration.llm_score_not_probability 或 threshold_requires_shadow_data 覆盖，且本条只是重复描述。"
+        ],
+        "assumptions": [
+          "外接项目提供项目事实、私有交易数据和策略上下文；CEK-TA 只沉淀可复用专业规则。",
+          "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+        ],
+        "limitations": [
+          "校准前只能输出 advisory score、neutral 或 needs_review，不得 hard allow。",
+          "不要把 LLM verbal confidence 当成概率。",
+          "不得在本知识项写入具体 hard gate threshold 数值。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_id": "src_openai_evals",
+          "source_title": "Working with evals | OpenAI API",
+          "source_url": "https://platform.openai.com/docs/guides/evals?api-mode=chat",
+          "source_type": "official_doc",
+          "publisher": "OpenAI",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 86,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "OpenAI evals documentation supports programmatic evaluation setup and workflow-specific quality checks before relying on model behavior.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_sklearn_cv",
+          "source_title": "Cross-validation: evaluating estimator performance | scikit-learn",
+          "source_url": "https://scikit-learn.org/stable/modules/cross_validation.html",
+          "source_type": "official_doc",
+          "publisher": "scikit-learn",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 84,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "scikit-learn cross-validation guidance supports held-out evaluation, splitting discipline, and avoiding evaluation on training data.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_rules_ml",
+          "source_title": "Rules of Machine Learning",
+          "source_url": "https://martin.zinkevich.org/rules_of_ml/rules_of_ml.pdf",
+          "source_type": "paper",
+          "publisher": "Google / Martin Zinkevich",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "medium",
+          "score": 78,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "Rules of ML discusses train/serve consistency, baselines, monitoring, and production ML safeguards.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_sklearn_probability_calibration",
+          "source_title": "Probability calibration | scikit-learn",
+          "source_url": "https://scikit-learn.org/stable/modules/calibration.html",
+          "source_type": "official_doc",
+          "publisher": "scikit-learn",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 90,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "scikit-learn 概率校准文档支持 reliability diagrams、proper scoring rules 和校准/区分能力拆分分析。",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_sklearn_calibration_curve",
+          "source_title": "calibration_curve | scikit-learn",
+          "source_url": "https://scikit-learn.org/1.5/modules/generated/sklearn.calibration.calibration_curve.html",
+          "source_type": "official_doc",
+          "publisher": "scikit-learn",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 82,
+          "relevance": "medium",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "calibration_curve 文档支持计算 true/predicted probabilities，并说明 calibration curves 也称 reliability diagrams。",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_acl_2024_llm_confidence_calibration_survey",
+          "source_title": "A Survey of Confidence Estimation and Calibration in Large Language Models",
+          "source_url": "https://aclanthology.org/2024.naacl-long.366/",
+          "source_type": "paper",
+          "publisher": "ACL Anthology / NAACL",
+          "published_at": "2024-06",
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 90,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "NAACL 2024 survey 系统总结 LLM confidence estimation 和 calibration 的挑战与技术进展，支持 LLM 分数和置信度不得未经校准进入高影响门禁。",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "high",
+        "score": 88,
+        "score_version": "1.0.0",
+        "primary_source_count": 2,
+        "supporting_source_count": 1,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "仍是 candidate，不得作为 formal reviewed 或 approved 知识使用。",
+          "二次审计前不得进入默认指导。"
+        ],
+        "review_notes": "补证后增加了与 normalized_claim 直接相关的主来源；等待二次审计决定是否 accepted_for_draft。"
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "checked_against": [
+          "docs/contracts/ai_engineering_gating_scoring_contract.md",
+          "docs/contracts/ai_engineering_knowledge_item_policy.md",
+          "docs/tasks/phase36_ai_engineering_gating_scoring_knowledge.md"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与当前 CEK-TA formal knowledge 的直接冲突；候选不会进入默认指导。",
+        "approval_allowed": true
+      },
+      "review": {
+        "confidence": "medium",
+        "freshness": "time_sensitive",
+        "reviewer": "external_ai_and_codex_alignment",
+        "reviewed_at": "2026-06-09",
+        "open_questions": [
+          "检查是否补足 calibration 直接来源，并是否与 calibration.llm_score_not_probability、calibration.threshold_requires_shadow_data 正确区分或互链。",
+          "是否与相邻 reviewed 知识重复，应该作为父子规则、互链规则还是合并？",
+          "是否仍需要更多领域直接来源或内部 schema contract？"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-09",
+            "actor": "codex",
+            "action": "created",
+            "reason": "Phase 36 bulk AI Engineering candidate expansion."
+          },
+          {
+            "at": "2026-06-09",
+            "actor": "external_ai",
+            "action": "phase36_batch_audit_result_received",
+            "reason": "当前候选不应直接转 draft。normalized_claim 是 score calibration required before gating，但 statement 仍是泛化评估集规则，source_refs 也缺少 calibration / confidence estimation 的直接来源。该候选还与第一批已审计的 calibration.llm_score_not_probability 和 calibration.threshold_requires_shadow_data 高度重叠，应先补直接来源并决定合并或作为子规则。",
+            "audit_result_id": "audit_result_phase36_ai_engineering_batch_03_of_10_20260609_gpt55_pro_strict_sources"
+          }
+        ],
+        "ai_audit": {
+          "audit_result_id": "audit_result_phase36_ai_engineering_batch_03_of_10_20260609_gpt55_pro_strict_sources",
+          "source_package_id": "phase36_ai_engineering_candidate_audit_batch_03_of_10_20260609",
+          "decision": "needs_more_evidence",
+          "reason": "当前候选不应直接转 draft。normalized_claim 是 score calibration required before gating，但 statement 仍是泛化评估集规则，source_refs 也缺少 calibration / confidence estimation 的直接来源。该候选还与第一批已审计的 calibration.llm_score_not_probability 和 calibration.threshold_requires_shadow_data 高度重叠，应先补直接来源并决定合并或作为子规则。",
+          "source_patch_notes": [
+            "补 scikit-learn probability calibration / calibration curves / reliability diagrams 作为校准主来源。",
+            "补 ACL 2024 LLM confidence estimation and calibration survey，支持 LLM confidence / score 不应未经校准直接用于高影响 gating。",
+            "保留 OpenAI evals 作为评估流程 supporting source，但注明平台退役。",
+            "保留 scikit-learn CV 作为独立校准/验证数据来源，不应作为 calibration 唯一主证据。",
+            "与第一批 calibration.llm_score_not_probability、calibration.threshold_requires_shadow_data 共用来源，避免重复知识项。"
+          ],
+          "content_patch_notes": [
+            "正式 statement 建议改为：LLM raw score, rubric score, verbal confidence or logprob-derived score must not be used for gating until calibrated or validated on independent holdout/shadow data with reliability and subgroup checks.",
+            "建议字段：raw_score_type、calibration_dataset_id、calibration_method、calibrated_score、ece、brier_score、reliability_bucket、subgroup_key、sample_count、calibration_report_id。",
+            "明确校准前不得 hard allow；可以降级为 advisory score、needs_review 或 neutral。",
+            "如果该知识项保留，应定位为 calibration family 的 eval 子规则，而不是重复第一批通用 calibration 规则。"
+          ],
+          "boundary_patch_notes": [
+            "AI Engineering 定义 score semantics、校准报告和 gating 前置条件。",
+            "具体交易阈值、收益影响、仓位或策略风险预算由 Trading Engineering 或项目配置管理。",
+            "不得在本条写入具体 hard gate threshold 数值。"
+          ],
+          "conflict_patch_notes": [
+            "与第一批 calibration.llm_score_not_probability 和 calibration.threshold_requires_shadow_data 高度重复，建议合并或降为子规则。",
+            "与 eval.holdout_test_set_required、deployment_shadow_mode_before_live、approval_hard_gate_enable_requires_approval 互补。",
+            "当前 statement 与 normalized_claim 不一致，直接 accepted 会造成内容错配。"
+          ],
+          "required_followups": [
+            "重写 statement，使其明确 calibration before gating。",
+            "补 scikit-learn calibration 和 LLM calibration survey 直接来源。",
+            "决定 canonical ID：保留 eval.score_calibration_required_before_gating 作为子项，或并入 calibration.threshold_requires_shadow_data。",
+            "补 calibration_report_schema.json。"
+          ],
+          "boundary": "accepted_for_draft 不是 approved；reviewed 不会进入默认指导。"
+        }
+      },
+      "copyright": {
+        "stores_full_text": false,
+        "stores_long_quote": false,
+        "summary_only": true,
+        "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+        "reuse_risk": "low"
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_ai_engineering.eval.score_calibration_required_before_gating.v1",
+        "target_schema": "cek_ta_knowledge_item",
+        "target_review_status": "draft",
+        "skill_candidate": false,
+        "eval_case_candidate": true,
+        "required_fields": [
+          "raw_score_type",
+          "calibration_dataset_id",
+          "calibration_method",
+          "calibrated_score",
+          "ece",
+          "brier_score",
+          "reliability_bucket",
+          "subgroup_key",
+          "sample_count",
+          "calibration_report_id"
+        ]
+      },
+      "workflow": {
+        "stage": "needs_more_evidence",
+        "queue_group": "needs_more_evidence",
+        "formal_knowledge_id": null,
+        "formal_review_status": null,
+        "ai_audit_result_id": "audit_result_phase36_ai_engineering_batch_03_of_10_20260609_gpt55_pro_strict_sources",
+        "hidden_from_default_queue": false,
+        "next_action": "export_ai_audit",
+        "supplemental_research_status": "ready_for_reaudit",
+        "source_package_id": "phase36_batch03_supplemental_audit_package_20260609",
+        "last_supplemented_at": "2026-06-09"
+      }
+    },
+    {
+      "schema_version": "1.0.0",
+      "candidate_id": "cand_20260609_ai_engineering_eval_time_split_walk_forward_required_v1_001",
+      "research_task_id": "RIT-P36-C-33",
+      "status": {
+        "review_status": "needs_more_evidence",
+        "ingestion_decision": "needs_more_evidence",
+        "decision_reason": "已按第三批审计意见补充直接来源和重写 statement，等待二次审计；该状态不是 accepted、reviewed 或 approved。",
+        "created_at": "2026-06-09",
+        "updated_at": "2026-06-09"
+      },
+      "classification": {
+        "tree_node_id": "kt.llm_training.model_training_engineering",
+        "canonical_node_id": "kt.llm_training.model_training_engineering",
+        "tree_path": "CEK-TA / AI Engineering",
+        "related_nodes": [],
+        "partition_id": "KB_09_LLM_TRAINING",
+        "domain": "llm_training",
+        "subdomain": "evaluation_governance",
+        "rule_type": "decision_rule",
+        "used_for": [
+          "llm_training",
+          "trading_gating_scoring",
+          "rag_engineering",
+          "mcp",
+          "vue_audit_ui"
+        ]
+      },
+      "claim": {
+        "claim_id": "claim_001",
+        "statement": "涉及 chronological market data 的交易 LLM gate/scoring 评估必须使用 time-aware split，例如 walk-forward、rolling window、expanding window 或明确 train-before-test cutoff；除非有 leakage analysis 批准，否则不得使用随机切分作为最终评估。",
+        "normalized_claim": "eval.time_split_walk_forward_required.v1",
+        "evidence_summary": "scikit-learn TimeSeriesSplit 说明时间序列中普通 CV 不适用，因为会导致用未来训练、过去测试等问题；金融机器学习中的 purged/embargoed CV 用于避免标签窗口重叠和序列泄漏；通用 cross-validation 文档支持评估拆分纪律。",
+        "interpretation_notes": "本候选是 time-aware technical split 规则；eval_case.time_strategy_regime_split_required 负责元数据声明。本条不定义市场状态或策略规则本体。",
+        "claim_strength": "high",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general",
+        "asset": "general",
+        "timeframe": "general",
+        "data_granularity": "general",
+        "project_type": "trading_llm_assistant",
+        "applies_when": [
+          "评估样本包含按时间发生的交易候选、市场数据、信号快照、回测/模拟/实盘日志或 feature snapshots。",
+          "模型、prompt、RAG 或 gate policy 的评估结果会用于 promotion、shadow/paper 或 hard gate 讨论。",
+          "普通随机 split 可能让未来信息、相邻标签窗口或同一市场事件泄漏到训练侧。"
+        ],
+        "not_applicable_when": [
+          "数据没有时间依赖，且 leakage analysis 明确证明随机 split 不会污染最终评估。",
+          "只是在声明 eval case 的 time/strategy/regime 元数据，应引用 eval_case.time_strategy_regime_split_required。",
+          "需要定义具体交易 session、市场日历、regime 标签或策略参数，应由 Trading Engineering 或项目 owner 提供。"
+        ],
+        "assumptions": [
+          "外接项目提供项目事实、私有交易数据和策略上下文；CEK-TA 只沉淀可复用专业规则。",
+          "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+        ],
+        "limitations": [
+          "AI Engineering 只管理 time-aware split schema、审计和阻断条件。",
+          "市场日历、交易 session、策略版本、regime 切分和 timeframe 含义由 Trading Engineering 或项目 owner 提供。",
+          "不得写入具体交易策略、K 线条件、持仓或执行规则。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_id": "src_openai_evals",
+          "source_title": "Working with evals | OpenAI API",
+          "source_url": "https://platform.openai.com/docs/guides/evals?api-mode=chat",
+          "source_type": "official_doc",
+          "publisher": "OpenAI",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 86,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "OpenAI evals documentation supports programmatic evaluation setup and workflow-specific quality checks before relying on model behavior.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_sklearn_cv",
+          "source_title": "Cross-validation: evaluating estimator performance | scikit-learn",
+          "source_url": "https://scikit-learn.org/stable/modules/cross_validation.html",
+          "source_type": "official_doc",
+          "publisher": "scikit-learn",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 84,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "scikit-learn cross-validation guidance supports held-out evaluation, splitting discipline, and avoiding evaluation on training data.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_rules_ml",
+          "source_title": "Rules of Machine Learning",
+          "source_url": "https://martin.zinkevich.org/rules_of_ml/rules_of_ml.pdf",
+          "source_type": "paper",
+          "publisher": "Google / Martin Zinkevich",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "medium",
+          "score": 78,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "Rules of ML discusses train/serve consistency, baselines, monitoring, and production ML safeguards.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_sklearn_time_series_split",
+          "source_title": "TimeSeriesSplit | scikit-learn",
+          "source_url": "https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.TimeSeriesSplit.html",
+          "source_type": "official_doc",
+          "publisher": "scikit-learn",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 90,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "TimeSeriesSplit 文档直接说明时间序列交叉验证应保证 train/test 时间顺序，其他 CV 方法不适合时间排序数据。",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_sklearn_cross_validation_time_series",
+          "source_title": "Cross-validation: evaluating estimator performance | scikit-learn",
+          "source_url": "https://scikit-learn.org/stable/modules/cross_validation.html",
+          "source_type": "official_doc",
+          "publisher": "scikit-learn",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 82,
+          "relevance": "medium",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "scikit-learn cross-validation 文档支持按任务选择合适 split 方法，并为时间序列切分提供上下文。",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_lopez_de_prado_afml_purged_kfold",
+          "source_title": "Advances in Financial Machine Learning",
+          "source_url": "https://philpapers.org/rec/LPEAIF",
+          "source_type": "book",
+          "publisher": "Marcos López de Prado / Wiley",
+          "published_at": "2018",
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "medium",
+          "score": 82,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [
+            "书籍目录来源用于定位章节；正式实现可补充出版社或项目内持有版本。"
+          ],
+          "evidence_summary": "该书包含金融机器学习交叉验证章节，讨论为什么普通 K-Fold 在金融场景失败，并提出 Purged K-Fold 与 Embargo 思路。",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_pmc_financial_time_series_purged_kfold",
+          "source_title": "A Bayesian-based classification framework for financial time series trend prediction",
+          "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9521884/",
+          "source_type": "paper",
+          "publisher": "PMC",
+          "published_at": "2022",
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 82,
+          "relevance": "medium",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "该金融时间序列研究讨论 serial correlation 与 purging/embargoing cross-validation，可作为金融时序评估补充来源。",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "high",
+        "score": 88,
+        "score_version": "1.0.0",
+        "primary_source_count": 2,
+        "supporting_source_count": 1,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "仍是 candidate，不得作为 formal reviewed 或 approved 知识使用。",
+          "二次审计前不得进入默认指导。"
+        ],
+        "review_notes": "补证后增加了与 normalized_claim 直接相关的主来源；等待二次审计决定是否 accepted_for_draft。"
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "checked_against": [
+          "docs/contracts/ai_engineering_gating_scoring_contract.md",
+          "docs/contracts/ai_engineering_knowledge_item_policy.md",
+          "docs/tasks/phase36_ai_engineering_gating_scoring_knowledge.md"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与当前 CEK-TA formal knowledge 的直接冲突；候选不会进入默认指导。",
+        "approval_allowed": true
+      },
+      "review": {
+        "confidence": "medium",
+        "freshness": "time_sensitive",
+        "reviewer": "external_ai_and_codex_alignment",
+        "reviewed_at": "2026-06-09",
+        "open_questions": [
+          "检查是否从泛化评估改为 time-aware / walk-forward split，source_refs 是否包含 TimeSeriesSplit 或金融 purged/embargoed CV 直接来源。",
+          "是否与相邻 reviewed 知识重复，应该作为父子规则、互链规则还是合并？",
+          "是否仍需要更多领域直接来源或内部 schema contract？"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-09",
+            "actor": "codex",
+            "action": "created",
+            "reason": "Phase 36 bulk AI Engineering candidate expansion."
+          },
+          {
+            "at": "2026-06-09",
+            "actor": "external_ai",
+            "action": "phase36_batch_audit_result_received",
+            "reason": "当前候选不应直接转 draft。normalized_claim 指向 time split / walk-forward required，但 statement 是泛化评估集规则，source_refs 也只列出通用 OpenAI evals、scikit-learn CV 和 Rules of ML，没有直接引用 TimeSeriesSplit、walk-forward validation、purged/embargo split 或交易时序评估来源。方向正确，但需要重写 statement 并补直接时序评估证据。",
+            "audit_result_id": "audit_result_phase36_ai_engineering_batch_03_of_10_20260609_gpt55_pro_strict_sources"
+          }
+        ],
+        "ai_audit": {
+          "audit_result_id": "audit_result_phase36_ai_engineering_batch_03_of_10_20260609_gpt55_pro_strict_sources",
+          "source_package_id": "phase36_ai_engineering_candidate_audit_batch_03_of_10_20260609",
+          "decision": "needs_more_evidence",
+          "reason": "当前候选不应直接转 draft。normalized_claim 指向 time split / walk-forward required，但 statement 是泛化评估集规则，source_refs 也只列出通用 OpenAI evals、scikit-learn CV 和 Rules of ML，没有直接引用 TimeSeriesSplit、walk-forward validation、purged/embargo split 或交易时序评估来源。方向正确，但需要重写 statement 并补直接时序评估证据。",
+          "source_patch_notes": [
+            "补 scikit-learn TimeSeriesSplit 作为时间序列 train/test split 的直接来源。",
+            "补 walk-forward validation、rolling-window / expanding-window validation 或金融机器学习 purged / embargoed CV 来源。",
+            "保留 OpenAI evals 作为 LLM workflow evaluation supporting source，但不作为 time split 主来源。",
+            "保留 scikit-learn CV 作为 general split source，但正式 source_refs 应指向 TimeSeriesSplit 具体页面或章节。",
+            "建议补 Trading Engineering split_policy contract，用于定义市场日历、交易时间窗、策略版本和 embargo/gap。"
+          ],
+          "content_patch_notes": [
+            "正式 statement 建议改为：Trading LLM gate/scoring evaluation involving chronological market data must use time-aware split such as walk-forward, rolling/expanding window or explicit train-before-test cutoff; random split is not allowed unless leakage analysis approves it.",
+            "建议字段：split_method、train_start、train_end、validation_start、validation_end、test_start、test_end、gap_or_embargo、walk_forward_window_id、rolling_or_expanding、time_leakage_check_id。",
+            "明确 random split 对时序交易数据默认不合格；如使用随机 split，必须记录理由和 leakage analysis。",
+            "将本条定位为 time-series split technical rule，而 eval_case.time_strategy_regime_split_required 保留为 eval case metadata rule。"
+          ],
+          "boundary_patch_notes": [
+            "AI Engineering 管理 time-aware split 的 schema、审计和阻断条件。",
+            "市场日历、交易 session、策略版本、regime 切分和具体 timeframe 由 Trading Engineering 或项目 owner 提供。",
+            "不得写入具体交易策略、信号、K 线条件、持仓或执行规则。"
+          ],
+          "conflict_patch_notes": [
+            "与 eval_case.time_strategy_regime_split_required 高度相关，应拆成父子：本条是 time-aware technical split，eval_case 条是 metadata declaration。",
+            "与 dataset.train_validation_test_split_required、eval.holdout_test_set_required 互补。",
+            "当前 statement 与 normalized_claim 不一致。"
+          ],
+          "required_followups": [
+            "重写 candidate statement，使其明确 walk-forward / time-aware split。",
+            "补 TimeSeriesSplit / walk-forward / purged CV 专业来源。",
+            "补 time_split_manifest_schema.json。",
+            "补 eval case：future leakage、random split on time series、rolling window、expanding window、embargo gap。"
+          ],
+          "boundary": "accepted_for_draft 不是 approved；reviewed 不会进入默认指导。"
+        }
+      },
+      "copyright": {
+        "stores_full_text": false,
+        "stores_long_quote": false,
+        "summary_only": true,
+        "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+        "reuse_risk": "low"
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_ai_engineering.eval.time_split_walk_forward_required.v1",
+        "target_schema": "cek_ta_knowledge_item",
+        "target_review_status": "draft",
+        "skill_candidate": false,
+        "eval_case_candidate": true,
+        "required_fields": [
+          "split_method",
+          "train_start",
+          "train_end",
+          "validation_start",
+          "validation_end",
+          "test_start",
+          "test_end",
+          "gap_or_embargo",
+          "walk_forward_window_id",
+          "rolling_or_expanding",
+          "time_leakage_check_id"
+        ]
+      },
+      "workflow": {
+        "stage": "needs_more_evidence",
+        "queue_group": "needs_more_evidence",
+        "formal_knowledge_id": null,
+        "formal_review_status": null,
+        "ai_audit_result_id": "audit_result_phase36_ai_engineering_batch_03_of_10_20260609_gpt55_pro_strict_sources",
+        "hidden_from_default_queue": false,
+        "next_action": "export_ai_audit",
+        "supplemental_research_status": "ready_for_reaudit",
+        "source_package_id": "phase36_batch03_supplemental_audit_package_20260609",
+        "last_supplemented_at": "2026-06-09"
+      }
+    }
+  ]
+}

@@ -1,0 +1,957 @@
+{
+  "package_id": "phase36_batch05_good_loss_bad_win_supplemental_audit_package_20260609",
+  "package_type": "candidate_ai_audit_package",
+  "created_at": "2026-06-09",
+  "created_by": "codex",
+  "phase": "Phase 36",
+  "task_ids": [
+    "CEK-TA-227",
+    "CEK-TA-228"
+  ],
+  "source_audit_result_id": "audit_result_phase36_ai_engineering_batch_05_of_10_20260609_gpt55_pro_strict_sources",
+  "purpose": "对 Phase 36 第五批 2 条 good_loss/bad_win needs_more_evidence 候选进行补证后二次审计。",
+  "workflow_boundary": {
+    "candidate_is_not_formal_knowledge": true,
+    "accepted_for_draft_is_not_approved": true,
+    "reviewed_is_not_approved": true,
+    "do_not_set_approved": true,
+    "current_required_decision": "accepted_for_draft | needs_more_evidence | rejected"
+  },
+  "auditor_instructions": {
+    "language": "中文",
+    "review_focus": [
+      "补证后的 statement 是否已把 good_loss / bad_win 限定为 CEK-TA 内部 reason-code 或 review_category。",
+      "source_refs 是否能支撑 outcome 与决策质量分离、算法交易风险合规、human consensus/adjudication 和 schema validation。",
+      "是否仍把交易质量裁决保留给 Trading Engineering/domain owner。",
+      "如 accepted_for_draft，只代表可转 formal reviewed，不代表 approved。"
+    ],
+    "required_output_schema": {
+      "audit_result_id": "string",
+      "source_package_id": "phase36_batch05_good_loss_bad_win_supplemental_audit_package_20260609",
+      "items": [
+        {
+          "candidate_id": "string",
+          "decision": "accepted_for_draft | needs_more_evidence | rejected",
+          "reason": "string",
+          "source_patch_notes": [
+            "string"
+          ],
+          "content_patch_notes": [
+            "string"
+          ],
+          "boundary_patch_notes": [
+            "string"
+          ],
+          "conflict_patch_notes": [
+            "string"
+          ],
+          "required_followups": [
+            "string"
+          ]
+        }
+      ]
+    }
+  },
+  "candidates": [
+    {
+      "schema_version": "1.0.0",
+      "candidate_id": "cand_20260609_ai_engineering_label_schema_good_loss_bad_win_required_v1_001",
+      "research_task_id": "RIT-P36-B-S13",
+      "status": {
+        "review_status": "needs_more_evidence",
+        "ingestion_decision": "needs_more_evidence",
+        "decision_reason": "已补 outcome bias、FINRA algorithmic controls、human consensus/adjudication、TFDV schema validation 等来源，等待二次审计；该状态不是 accepted、reviewed 或 approved。",
+        "created_at": "2026-06-09",
+        "updated_at": "2026-06-09"
+      },
+      "classification": {
+        "tree_node_id": "kt.llm_training.training_dataset_schema_engineering",
+        "canonical_node_id": "kt.llm_training.training_dataset_schema_engineering",
+        "tree_path": "CEK-TA / AI Engineering",
+        "related_nodes": [],
+        "partition_id": "KB_09_LLM_TRAINING",
+        "domain": "llm_training",
+        "subdomain": "label_schema_engineering",
+        "rule_type": "checklist",
+        "used_for": [
+          "llm_training",
+          "trading_gating_scoring",
+          "rag_engineering",
+          "mcp",
+          "vue_audit_ui"
+        ]
+      },
+      "claim": {
+        "claim_id": "claim_001",
+        "statement": "在 CEK-TA 交易 LLM 标签体系中，good_loss / bad_win 只能作为已审计 reason-code 或 review_category，用于分离 PnL outcome 与决策过程质量、风险合规、规则合规和证据质量；不得作为自动二分类真值或跨策略通用交易事实。",
+        "normalized_claim": "label_schema.good_loss_bad_win_required.v1",
+        "evidence_summary": "Outcome bias 研究支持结果不能替代决策质量评估；FINRA 算法交易治理支持风险、规则和控制维度；Label Studio human consensus 支持含糊标签需要 guideline、owner review 和 adjudication。该候选仍需二审确认可转 formal reviewed。",
+        "interpretation_notes": "该条是 AI Engineering 标签 schema 规则，只定义字段、reason-code、审计状态和回灌边界；具体 good_loss / bad_win 交易语义必须由 Trading Engineering 或 domain owner 通过 guideline 和匿名案例定义。",
+        "claim_strength": "medium",
+        "performance_claim": false,
+        "recommended_fields": [
+          "pnl_outcome",
+          "process_quality_status",
+          "risk_compliance_status",
+          "rule_compliance_status",
+          "evidence_quality_status",
+          "review_category",
+          "reason_codes",
+          "label_guideline_version",
+          "trading_engineering_owner",
+          "domain_owner_review_id",
+          "evidence_refs",
+          "adjudication_id"
+        ]
+      },
+      "applicability": {
+        "market": "general",
+        "asset": "general",
+        "timeframe": "general",
+        "data_granularity": "general",
+        "project_type": "trading_llm_assistant",
+        "applies_when": [
+          "外接项目正在构建交易 LLM gating/scoring 的标签 schema、reason-code、训练数据、人工复核或回灌审计链路。",
+          "用户需要区分 PnL outcome、过程质量、风险合规、规则合规、证据质量和 owner review。",
+          "good_loss / bad_win 只作为内部 review_category 或 reason-code 分类，并且存在 label guideline、证据引用和 Trading Engineering/domain owner 复核。"
+        ],
+        "not_applicable_when": [
+          "用户需要具体买卖点、仓位、止损止盈、策略参数或实盘订单执行。",
+          "项目希望仅凭事后 PnL、价格路径或单次交易结果自动判断 good_loss / bad_win。",
+          "缺少 Trading Engineering/domain owner guideline、匿名案例、证据引用或审定记录。",
+          "知识点主要描述 K 线结构、市场微观结构、回测模型、fill model 或交易风控本体，应路由到 Trading Engineering。"
+        ],
+        "assumptions": [
+          "外接项目提供项目事实、私有交易数据和策略上下文；CEK-TA 只沉淀可复用专业规则。",
+          "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+        ],
+        "limitations": [
+          "本条仍是 needs_more_evidence candidate，补证后二审通过前不得转 formal reviewed。",
+          "该条仅沉淀 AI Engineering 标签治理字段和工作流，不沉淀具体交易规则或策略判断。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_id": "src_datasheets",
+          "source_title": "Datasheets for Datasets",
+          "source_url": "https://arxiv.org/abs/1803.09010",
+          "source_type": "paper",
+          "publisher": "arXiv",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 88,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "The paper supports documenting dataset motivation, composition, collection, intended use, maintenance, and limitations.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_model_cards",
+          "source_title": "Model Cards for Model Reporting",
+          "source_url": "https://arxiv.org/abs/1810.03993",
+          "source_type": "paper",
+          "publisher": "arXiv",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 86,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "Model Cards support documenting intended use, performance, limitations, and ethical considerations for model deployment and review.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_sklearn_pitfalls",
+          "source_title": "Common pitfalls and recommended practices | scikit-learn",
+          "source_url": "https://scikit-learn.org/stable/common_pitfalls.html",
+          "source_type": "official_doc",
+          "publisher": "scikit-learn",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 86,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "scikit-learn documents inconsistent preprocessing and data leakage pitfalls, including fitting transformations only on training data.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_baron_hershey_outcome_bias_decision_evaluation",
+          "source_title": "Outcome Bias in Decision Evaluation",
+          "source_url": "https://bear.warrington.ufl.edu/brenner/mar7588/Papers/baron-hershey-jpsp1988.pdf",
+          "source_type": "paper",
+          "publisher": "Journal of Personality and Social Psychology",
+          "published_at": "1988-04-01",
+          "accessed_at": "2026-06-09",
+          "version": "Vol. 54, No. 4",
+          "reliability": "high",
+          "score": 90,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "Baron and Hershey 的 outcome bias 研究支持在不确定性下评估决策质量时不能只看结果；这能支撑 PnL outcome 与决策过程质量、风险和规则执行分离记录。",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_finra_regulatory_notice_15_09_algorithmic_controls",
+          "source_title": "FINRA Regulatory Notice 15-09",
+          "source_url": "https://www.finra.org/rules-guidance/notices/15-09",
+          "source_type": "standard_or_risk_framework",
+          "publisher": "FINRA",
+          "published_at": "2015-03-01",
+          "accessed_at": "2026-06-09",
+          "version": "Regulatory Notice 15-09",
+          "reliability": "high",
+          "score": 82,
+          "relevance": "medium",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "FINRA 15-09 支持算法交易的监督、风险评估、软件测试、系统验证、交易系统控制和合规治理；可支撑交易标签需要覆盖风险合规和规则执行，而不是只看 PnL。",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_label_studio_human_consensus_iaa_ground_truth",
+          "source_title": "How to Measure Inter-Annotator Agreement and Build Human Consensus with Label Studio",
+          "source_url": "https://labelstud.io/tutorials/how_to_measure_inter_annotator_agreement_and_build_human_consensus",
+          "source_type": "official_doc",
+          "publisher": "Label Studio",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 90,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "Label Studio 文档支持用多标注者一致性、human consensus 和 ground truth 流程处理含糊或主观标签；可支撑 good_loss/bad_win 需要 owner review 和 adjudication。",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_tfx_tfdv_schema_skew_validation",
+          "source_title": "TensorFlow Data Validation: Checking and analyzing your data",
+          "source_url": "https://tensorflow.github.io/tfx/guide/tfdv/",
+          "source_type": "official_doc",
+          "publisher": "TensorFlow / TFX",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 82,
+          "relevance": "medium",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "TFDV 支持 schema validation、training-serving skew 和 drift detection；可补强标签字段、证据字段和未来信息/字段泄漏检查。",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_cmc_markets_trading_journal_process_outcome",
+          "source_title": "Trading Journals: The Missing Link in the Trading Process",
+          "source_url": "https://www.cmcmarkets.com/en-nz/cfd/learn/trading-guides/how-to-use-a-trading-journal",
+          "source_type": "other",
+          "publisher": "CMC Markets",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "medium",
+          "score": 82,
+          "relevance": "medium",
+          "freshness": "stable",
+          "limitations": [
+            "商业券商教育内容，只能作为交易日志实践参考。"
+          ],
+          "evidence_summary": "CMC Markets 交易日志指南直接区分交易过程、风险管理和交易结果；仅作为交易复盘实践 supporting source，不作为科学或监管主证据。",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "high",
+        "score": 88,
+        "score_version": "1.0.0",
+        "primary_source_count": 3,
+        "supporting_source_count": 5,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "good_loss / bad_win 是 CEK-TA 内部标签分类和 reason-code 语义，不是外部监管或学术文献的逐字事实。",
+          "正式入库前必须由二审确认 Trading Engineering owner、label guideline、匿名案例和 reason-code taxonomy 边界足够清楚。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "checked_against": [
+          "docs/contracts/ai_engineering_gating_scoring_contract.md",
+          "docs/contracts/ai_engineering_knowledge_item_policy.md",
+          "docs/tasks/phase36_ai_engineering_gating_scoring_knowledge.md"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与当前 CEK-TA formal knowledge 的直接冲突；候选不会进入默认指导。",
+        "approval_allowed": true
+      },
+      "review": {
+        "confidence": "medium",
+        "freshness": "time_sensitive",
+        "reviewer": "external_ai_and_codex_alignment",
+        "reviewed_at": "2026-06-09",
+        "open_questions": [
+          "审计时确认该候选是否应与相邻 AI Engineering 规则合并、拆分，或改路由到 Trading Engineering。",
+          "二审需确认 good_loss / bad_win 是否已经限定为内部 reason-code/review_category，而不是通用交易事实。",
+          "二审需确认 Trading Engineering/domain owner guideline、匿名案例和 reason-code taxonomy 是否足够作为后续 formal reviewed 的 required_followups。"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-09",
+            "actor": "codex",
+            "action": "created",
+            "reason": "Phase 36 bulk AI Engineering candidate expansion."
+          },
+          {
+            "at": "2026-06-09",
+            "actor": "external_ai",
+            "action": "phase36_batch_audit_result_received",
+            "reason": "方向合理，但当前不应直接转 draft。candidate_id / normalized_claim 指向 good_loss_bad_win_required，而 statement 实际是“交易质量标签不能只用 PnL，必须包含过程质量、风险、规则合规和 reason codes”。现有 Datasheets、Model Cards、scikit-learn 来源支持标签/数据文档化和泄漏防护，但不能直接支撑 good loss / bad win 的交易语义判定。该语义容易变成具体交易判断，应补 CEK-TA 内部 label guideline、Trading Engineering owner 解释权、示例集和 reason_code taxonomy 后再转 draft。",
+            "audit_result_id": "audit_result_phase36_ai_engineering_batch_05_of_10_20260609_gpt55_pro_strict_sources"
+          }
+        ],
+        "ai_audit": {
+          "audit_result_id": "audit_result_phase36_ai_engineering_batch_05_of_10_20260609_gpt55_pro_strict_sources",
+          "source_package_id": "phase36_ai_engineering_candidate_audit_batch_05_of_10_20260609",
+          "decision": "needs_more_evidence",
+          "reason": "方向合理，但当前不应直接转 draft。candidate_id / normalized_claim 指向 good_loss_bad_win_required，而 statement 实际是“交易质量标签不能只用 PnL，必须包含过程质量、风险、规则合规和 reason codes”。现有 Datasheets、Model Cards、scikit-learn 来源支持标签/数据文档化和泄漏防护，但不能直接支撑 good loss / bad win 的交易语义判定。该语义容易变成具体交易判断，应补 CEK-TA 内部 label guideline、Trading Engineering owner 解释权、示例集和 reason_code taxonomy 后再转 draft。",
+          "source_patch_notes": [
+            "保留 Datasheets for Datasets 和 Model Cards 作为 label schema / dataset / model documentation 的 supporting sources。",
+            "保留 scikit-learn pitfalls 作为避免标签、未来字段或泄漏字段进入 input 的 supporting source。",
+            "补 FINRA 15-09 / algorithmic trading controls，支持交易自动化标签需要覆盖规则合规、风险控制和监督，而不是只看 PnL。",
+            "补内部 label_guideline.good_loss_bad_win.md，明确 good_loss、bad_win 的定义、例外和裁决 owner。",
+            "补至少一组内部 anonymized example / eval case：loss_but_rule_compliant、win_but_rule_violation、win_with_excess_risk、loss_due_to_risk_control。"
+          ],
+          "content_patch_notes": [
+            "正式 statement 建议改为：PnL outcome must be separated from process quality, risk compliance and rule adherence; good_loss / bad_win may be used only as audited reason-code categories, not as standalone trading truth.",
+            "避免写成“亏损一定可能是好交易、盈利一定可能是坏交易”的外部事实；应限定为 CEK-TA label schema 内部分类。",
+            "建议字段：pnl_outcome、process_quality_score、risk_compliance_status、rule_compliance_status、reason_code、review_owner、evidence_refs、label_guideline_version。",
+            "good_loss / bad_win 应进入 reason_code 或 review_category，而不是单独作为最终二分类标签。"
+          ],
+          "boundary_patch_notes": [
+            "AI Engineering 只定义标签字段、reason_code、review 状态和审计要求。",
+            "具体交易是否“好亏损”或“坏盈利”的业务判断应由 Trading Engineering / domain owner 提供。",
+            "不得写入具体买卖点、仓位、止损止盈、策略参数、账户信息或订单执行细节。"
+          ],
+          "conflict_patch_notes": [
+            "与 label_schema.multi_dimensional_trade_quality、label_schema.no_pnl_only_label、labeling.good_loss_bad_win_distinction 高度重叠。",
+            "建议保留 multi_dimensional_trade_quality / no_pnl_only_label 作为父规则；good_loss_bad_win_required 作为补证后的 reason-code 子规则。",
+            "当前直接 accepted 会把交易语义判断和 AI Engineering 标签治理混在一起。"
+          ],
+          "required_followups": [
+            "补 good_loss_bad_win_label_guideline.md。",
+            "补 Trading Engineering owner / domain owner 裁决规则。",
+            "补 reason_code taxonomy 和匿名示例集。",
+            "补 label schema 字段：pnl_outcome、process_quality、risk_compliance、rule_compliance、evidence_refs。"
+          ],
+          "boundary": "accepted_for_draft 不是 approved；reviewed 不会进入默认指导。"
+        }
+      },
+      "copyright": {
+        "stores_full_text": false,
+        "stores_long_quote": false,
+        "summary_only": true,
+        "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+        "reuse_risk": "low"
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_ai_engineering.label_schema.good_loss_bad_win_required.v1",
+        "target_schema": "cek_ta_knowledge_item",
+        "target_review_status": "draft",
+        "skill_candidate": false,
+        "eval_case_candidate": false
+      },
+      "workflow": {
+        "stage": "needs_more_evidence",
+        "queue_group": "needs_more_evidence",
+        "formal_knowledge_id": null,
+        "formal_review_status": null,
+        "ai_audit_result_id": "audit_result_phase36_ai_engineering_batch_05_of_10_20260609_gpt55_pro_strict_sources",
+        "hidden_from_default_queue": false,
+        "next_action": "export_ai_audit"
+      },
+      "source_evidence_for_audit": [
+        {
+          "source_id": "src_datasheets",
+          "source_title": "Datasheets for Datasets",
+          "source_url": "https://arxiv.org/abs/1803.09010",
+          "source_type": "paper",
+          "publisher": "arXiv",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 88,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "The paper supports documenting dataset motivation, composition, collection, intended use, maintenance, and limitations.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_model_cards",
+          "source_title": "Model Cards for Model Reporting",
+          "source_url": "https://arxiv.org/abs/1810.03993",
+          "source_type": "paper",
+          "publisher": "arXiv",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 86,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "Model Cards support documenting intended use, performance, limitations, and ethical considerations for model deployment and review.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_sklearn_pitfalls",
+          "source_title": "Common pitfalls and recommended practices | scikit-learn",
+          "source_url": "https://scikit-learn.org/stable/common_pitfalls.html",
+          "source_type": "official_doc",
+          "publisher": "scikit-learn",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 86,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "scikit-learn documents inconsistent preprocessing and data leakage pitfalls, including fitting transformations only on training data.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_baron_hershey_outcome_bias_decision_evaluation",
+          "source_title": "Outcome Bias in Decision Evaluation",
+          "source_url": "https://bear.warrington.ufl.edu/brenner/mar7588/Papers/baron-hershey-jpsp1988.pdf",
+          "source_type": "paper",
+          "publisher": "Journal of Personality and Social Psychology",
+          "published_at": "1988-04-01",
+          "accessed_at": "2026-06-09",
+          "version": "Vol. 54, No. 4",
+          "reliability": "high",
+          "score": 90,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "Baron and Hershey 的 outcome bias 研究支持在不确定性下评估决策质量时不能只看结果；这能支撑 PnL outcome 与决策过程质量、风险和规则执行分离记录。",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_finra_regulatory_notice_15_09_algorithmic_controls",
+          "source_title": "FINRA Regulatory Notice 15-09",
+          "source_url": "https://www.finra.org/rules-guidance/notices/15-09",
+          "source_type": "standard_or_risk_framework",
+          "publisher": "FINRA",
+          "published_at": "2015-03-01",
+          "accessed_at": "2026-06-09",
+          "version": "Regulatory Notice 15-09",
+          "reliability": "high",
+          "score": 82,
+          "relevance": "medium",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "FINRA 15-09 支持算法交易的监督、风险评估、软件测试、系统验证、交易系统控制和合规治理；可支撑交易标签需要覆盖风险合规和规则执行，而不是只看 PnL。",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_label_studio_human_consensus_iaa_ground_truth",
+          "source_title": "How to Measure Inter-Annotator Agreement and Build Human Consensus with Label Studio",
+          "source_url": "https://labelstud.io/tutorials/how_to_measure_inter_annotator_agreement_and_build_human_consensus",
+          "source_type": "official_doc",
+          "publisher": "Label Studio",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 90,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "Label Studio 文档支持用多标注者一致性、human consensus 和 ground truth 流程处理含糊或主观标签；可支撑 good_loss/bad_win 需要 owner review 和 adjudication。",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_tfx_tfdv_schema_skew_validation",
+          "source_title": "TensorFlow Data Validation: Checking and analyzing your data",
+          "source_url": "https://tensorflow.github.io/tfx/guide/tfdv/",
+          "source_type": "official_doc",
+          "publisher": "TensorFlow / TFX",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 82,
+          "relevance": "medium",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "TFDV 支持 schema validation、training-serving skew 和 drift detection；可补强标签字段、证据字段和未来信息/字段泄漏检查。",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_cmc_markets_trading_journal_process_outcome",
+          "source_title": "Trading Journals: The Missing Link in the Trading Process",
+          "source_url": "https://www.cmcmarkets.com/en-nz/cfd/learn/trading-guides/how-to-use-a-trading-journal",
+          "source_type": "other",
+          "publisher": "CMC Markets",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "medium",
+          "score": 82,
+          "relevance": "medium",
+          "freshness": "stable",
+          "limitations": [
+            "商业券商教育内容，只能作为交易日志实践参考。"
+          ],
+          "evidence_summary": "CMC Markets 交易日志指南直接区分交易过程、风险管理和交易结果；仅作为交易复盘实践 supporting source，不作为科学或监管主证据。",
+          "quoted_excerpt_allowed": false
+        }
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "candidate_id": "cand_20260609_ai_engineering_labeling_good_loss_bad_win_distinction_v1_001",
+      "research_task_id": "RIT-P36-C-10",
+      "status": {
+        "review_status": "needs_more_evidence",
+        "ingestion_decision": "needs_more_evidence",
+        "decision_reason": "已补 outcome bias、FINRA algorithmic controls、human consensus/adjudication、TFDV schema validation 等来源，等待二次审计；该状态不是 accepted、reviewed 或 approved。",
+        "created_at": "2026-06-09",
+        "updated_at": "2026-06-09"
+      },
+      "classification": {
+        "tree_node_id": "kt.llm_training.trading_scoring_gating_training",
+        "canonical_node_id": "kt.llm_training.trading_scoring_gating_training",
+        "tree_path": "CEK-TA / AI Engineering",
+        "related_nodes": [],
+        "partition_id": "KB_09_LLM_TRAINING",
+        "domain": "llm_training",
+        "subdomain": "trading_labeling_governance",
+        "rule_type": "checklist",
+        "used_for": [
+          "llm_training",
+          "trading_gating_scoring",
+          "rag_engineering",
+          "mcp",
+          "vue_audit_ui"
+        ]
+      },
+      "claim": {
+        "claim_id": "claim_001",
+        "statement": "交易 LLM 标注工作流必须区分 good_loss、bad_win、ordinary_win、ordinary_loss、ambiguous 和 counterfactual_missing；任何 good_loss / bad_win 判定都必须引用 label guideline、证据引用和 Trading Engineering/domain owner review，不得只凭事后 PnL 或价格路径自动生成。",
+        "normalized_claim": "labeling.good_loss_bad_win_distinction.v1",
+        "evidence_summary": "Outcome bias 研究支持避免用事后结果替代决策质量；Label Studio human consensus 支持含糊标签通过多方一致性或审定生成 ground truth；FINRA 和 TFDV 来源补强风险合规、字段 schema 与泄漏防护。",
+        "interpretation_notes": "该条是 labeling workflow 子规则，不定义交易策略好坏，不给买卖点、仓位、止损止盈或执行建议；它只规定 good_loss/bad_win 分类必须经证据、owner 和审计链确认。",
+        "claim_strength": "medium",
+        "performance_claim": false,
+        "recommended_fields": [
+          "case_id",
+          "pnl_outcome",
+          "review_category",
+          "process_quality_status",
+          "risk_compliance_status",
+          "rule_compliance_status",
+          "counterfactual_outcome_status",
+          "label_guideline_version",
+          "evidence_refs",
+          "review_owner",
+          "adjudication_id",
+          "final_label_status"
+        ]
+      },
+      "applicability": {
+        "market": "general",
+        "asset": "general",
+        "timeframe": "general",
+        "data_granularity": "general",
+        "project_type": "trading_llm_assistant",
+        "applies_when": [
+          "外接项目正在构建交易 LLM gating/scoring 的标签 schema、reason-code、训练数据、人工复核或回灌审计链路。",
+          "用户需要区分 PnL outcome、过程质量、风险合规、规则合规、证据质量和 owner review。",
+          "good_loss / bad_win 只作为内部 review_category 或 reason-code 分类，并且存在 label guideline、证据引用和 Trading Engineering/domain owner 复核。"
+        ],
+        "not_applicable_when": [
+          "用户需要具体买卖点、仓位、止损止盈、策略参数或实盘订单执行。",
+          "项目希望仅凭事后 PnL、价格路径或单次交易结果自动判断 good_loss / bad_win。",
+          "缺少 Trading Engineering/domain owner guideline、匿名案例、证据引用或审定记录。",
+          "知识点主要描述 K 线结构、市场微观结构、回测模型、fill model 或交易风控本体，应路由到 Trading Engineering。"
+        ],
+        "assumptions": [
+          "外接项目提供项目事实、私有交易数据和策略上下文；CEK-TA 只沉淀可复用专业规则。",
+          "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+        ],
+        "limitations": [
+          "本条仍是 needs_more_evidence candidate，补证后二审通过前不得转 formal reviewed。",
+          "该条仅沉淀 AI Engineering 标签治理字段和工作流，不沉淀具体交易规则或策略判断。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_id": "src_sklearn_pitfalls",
+          "source_title": "Common pitfalls and recommended practices | scikit-learn",
+          "source_url": "https://scikit-learn.org/stable/common_pitfalls.html",
+          "source_type": "official_doc",
+          "publisher": "scikit-learn",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 86,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "scikit-learn documents inconsistent preprocessing and data leakage pitfalls, including fitting transformations only on training data.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_datasheets",
+          "source_title": "Datasheets for Datasets",
+          "source_url": "https://arxiv.org/abs/1803.09010",
+          "source_type": "paper",
+          "publisher": "arXiv",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 88,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "The paper supports documenting dataset motivation, composition, collection, intended use, maintenance, and limitations.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_baron_hershey_outcome_bias_decision_evaluation",
+          "source_title": "Outcome Bias in Decision Evaluation",
+          "source_url": "https://bear.warrington.ufl.edu/brenner/mar7588/Papers/baron-hershey-jpsp1988.pdf",
+          "source_type": "paper",
+          "publisher": "Journal of Personality and Social Psychology",
+          "published_at": "1988-04-01",
+          "accessed_at": "2026-06-09",
+          "version": "Vol. 54, No. 4",
+          "reliability": "high",
+          "score": 90,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "Baron and Hershey 的 outcome bias 研究支持在不确定性下评估决策质量时不能只看结果；这能支撑 PnL outcome 与决策过程质量、风险和规则执行分离记录。",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_finra_regulatory_notice_15_09_algorithmic_controls",
+          "source_title": "FINRA Regulatory Notice 15-09",
+          "source_url": "https://www.finra.org/rules-guidance/notices/15-09",
+          "source_type": "standard_or_risk_framework",
+          "publisher": "FINRA",
+          "published_at": "2015-03-01",
+          "accessed_at": "2026-06-09",
+          "version": "Regulatory Notice 15-09",
+          "reliability": "high",
+          "score": 82,
+          "relevance": "medium",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "FINRA 15-09 支持算法交易的监督、风险评估、软件测试、系统验证、交易系统控制和合规治理；可支撑交易标签需要覆盖风险合规和规则执行，而不是只看 PnL。",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_label_studio_human_consensus_iaa_ground_truth",
+          "source_title": "How to Measure Inter-Annotator Agreement and Build Human Consensus with Label Studio",
+          "source_url": "https://labelstud.io/tutorials/how_to_measure_inter_annotator_agreement_and_build_human_consensus",
+          "source_type": "official_doc",
+          "publisher": "Label Studio",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 90,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "Label Studio 文档支持用多标注者一致性、human consensus 和 ground truth 流程处理含糊或主观标签；可支撑 good_loss/bad_win 需要 owner review 和 adjudication。",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_tfx_tfdv_schema_skew_validation",
+          "source_title": "TensorFlow Data Validation: Checking and analyzing your data",
+          "source_url": "https://tensorflow.github.io/tfx/guide/tfdv/",
+          "source_type": "official_doc",
+          "publisher": "TensorFlow / TFX",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 82,
+          "relevance": "medium",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "TFDV 支持 schema validation、training-serving skew 和 drift detection；可补强标签字段、证据字段和未来信息/字段泄漏检查。",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_cmc_markets_trading_journal_process_outcome",
+          "source_title": "Trading Journals: The Missing Link in the Trading Process",
+          "source_url": "https://www.cmcmarkets.com/en-nz/cfd/learn/trading-guides/how-to-use-a-trading-journal",
+          "source_type": "other",
+          "publisher": "CMC Markets",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "medium",
+          "score": 82,
+          "relevance": "medium",
+          "freshness": "stable",
+          "limitations": [
+            "商业券商教育内容，只能作为交易日志实践参考。"
+          ],
+          "evidence_summary": "CMC Markets 交易日志指南直接区分交易过程、风险管理和交易结果；仅作为交易复盘实践 supporting source，不作为科学或监管主证据。",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "high",
+        "score": 88,
+        "score_version": "1.0.0",
+        "primary_source_count": 3,
+        "supporting_source_count": 4,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "good_loss / bad_win 是 CEK-TA 内部标签分类和 reason-code 语义，不是外部监管或学术文献的逐字事实。",
+          "正式入库前必须由二审确认 Trading Engineering owner、label guideline、匿名案例和 reason-code taxonomy 边界足够清楚。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "checked_against": [
+          "docs/contracts/ai_engineering_gating_scoring_contract.md",
+          "docs/contracts/ai_engineering_knowledge_item_policy.md",
+          "docs/tasks/phase36_ai_engineering_gating_scoring_knowledge.md"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与当前 CEK-TA formal knowledge 的直接冲突；候选不会进入默认指导。",
+        "approval_allowed": true
+      },
+      "review": {
+        "confidence": "medium",
+        "freshness": "time_sensitive",
+        "reviewer": "external_ai_and_codex_alignment",
+        "reviewed_at": "2026-06-09",
+        "open_questions": [
+          "审计时确认该候选是否应与相邻 AI Engineering 规则合并、拆分，或改路由到 Trading Engineering。",
+          "二审需确认 good_loss / bad_win 是否已经限定为内部 reason-code/review_category，而不是通用交易事实。",
+          "二审需确认 Trading Engineering/domain owner guideline、匿名案例和 reason-code taxonomy 是否足够作为后续 formal reviewed 的 required_followups。"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-09",
+            "actor": "codex",
+            "action": "created",
+            "reason": "Phase 36 bulk AI Engineering candidate expansion."
+          },
+          {
+            "at": "2026-06-09",
+            "actor": "external_ai",
+            "action": "phase36_batch_audit_result_received",
+            "reason": "当前候选不应直接转 draft。normalized_claim 指向 good_loss_bad_win_distinction，但 statement 是泛化的观察窗口、未来信息、PnL-only、含糊样本误标规则；source_refs 只有 scikit-learn pitfalls 和 Datasheets，无法直接支撑 good loss / bad win 的交易标签判定。建议与 good_loss_bad_win_required 合并补证。",
+            "audit_result_id": "audit_result_phase36_ai_engineering_batch_05_of_10_20260609_gpt55_pro_strict_sources"
+          }
+        ],
+        "ai_audit": {
+          "audit_result_id": "audit_result_phase36_ai_engineering_batch_05_of_10_20260609_gpt55_pro_strict_sources",
+          "source_package_id": "phase36_ai_engineering_candidate_audit_batch_05_of_10_20260609",
+          "decision": "needs_more_evidence",
+          "reason": "当前候选不应直接转 draft。normalized_claim 指向 good_loss_bad_win_distinction，但 statement 是泛化的观察窗口、未来信息、PnL-only、含糊样本误标规则；source_refs 只有 scikit-learn pitfalls 和 Datasheets，无法直接支撑 good loss / bad win 的交易标签判定。建议与 good_loss_bad_win_required 合并补证。",
+          "source_patch_notes": [
+            "保留 scikit-learn pitfalls 作为 no future information / leakage supporting source。",
+            "保留 Datasheets 作为 label process documentation supporting source。",
+            "补 FINRA / NIST 治理来源只能支持风险和合规维度，不能直接证明 good_loss / bad_win 判定。",
+            "必须补 CEK-TA 或 Trading Engineering label guideline，定义 good_loss / bad_win 的可审计条件。",
+            "补匿名示例和反例，避免该概念被误用为主观交易复盘结论。"
+          ],
+          "content_patch_notes": [
+            "将 statement 改为：Good-loss / bad-win distinction is a reviewed reason-code category, not an automatic label; it requires evidence for process quality, risk compliance, rule compliance and owner review.",
+            "区分 good_loss、bad_win、ordinary_loss、ordinary_win、ambiguous 和 counterfactual_missing。",
+            "加入 forbidden rule：不得只凭事后 PnL 或价格路径自动判定 good_loss / bad_win。",
+            "与 label_schema.good_loss_bad_win_required 合并后再进 draft。"
+          ],
+          "boundary_patch_notes": [
+            "AI Engineering 只能定义字段和 reason-code 状态。",
+            "交易行为质量的裁决属于 Trading Engineering / domain owner。",
+            "不得沉淀具体交易策略、止损止盈、买卖点、仓位或订单执行逻辑。"
+          ],
+          "conflict_patch_notes": [
+            "与 label_schema.good_loss_bad_win_required 重复，应合并。",
+            "与 no_pnl_only_label、multi_dimensional_trade_quality 互补，但当前不能替代它们。",
+            "当前直接 accepted 会导致泛化 statement 与 specific normalized_claim 不匹配。"
+          ],
+          "required_followups": [
+            "补 good_loss_bad_win taxonomy。",
+            "补 Trading Engineering owner 裁决流程。",
+            "补最少 4 个匿名 eval cases。",
+            "补字段：review_owner、evidence_refs、rule_compliance_status、risk_compliance_status。"
+          ],
+          "boundary": "accepted_for_draft 不是 approved；reviewed 不会进入默认指导。"
+        }
+      },
+      "copyright": {
+        "stores_full_text": false,
+        "stores_long_quote": false,
+        "summary_only": true,
+        "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+        "reuse_risk": "low"
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_ai_engineering.labeling.good_loss_bad_win_distinction.v1",
+        "target_schema": "cek_ta_knowledge_item",
+        "target_review_status": "draft",
+        "skill_candidate": false,
+        "eval_case_candidate": false
+      },
+      "workflow": {
+        "stage": "needs_more_evidence",
+        "queue_group": "needs_more_evidence",
+        "formal_knowledge_id": null,
+        "formal_review_status": null,
+        "ai_audit_result_id": "audit_result_phase36_ai_engineering_batch_05_of_10_20260609_gpt55_pro_strict_sources",
+        "hidden_from_default_queue": false,
+        "next_action": "export_ai_audit"
+      },
+      "source_evidence_for_audit": [
+        {
+          "source_id": "src_sklearn_pitfalls",
+          "source_title": "Common pitfalls and recommended practices | scikit-learn",
+          "source_url": "https://scikit-learn.org/stable/common_pitfalls.html",
+          "source_type": "official_doc",
+          "publisher": "scikit-learn",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 86,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "scikit-learn documents inconsistent preprocessing and data leakage pitfalls, including fitting transformations only on training data.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_datasheets",
+          "source_title": "Datasheets for Datasets",
+          "source_url": "https://arxiv.org/abs/1803.09010",
+          "source_type": "paper",
+          "publisher": "arXiv",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 88,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "The paper supports documenting dataset motivation, composition, collection, intended use, maintenance, and limitations.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_baron_hershey_outcome_bias_decision_evaluation",
+          "source_title": "Outcome Bias in Decision Evaluation",
+          "source_url": "https://bear.warrington.ufl.edu/brenner/mar7588/Papers/baron-hershey-jpsp1988.pdf",
+          "source_type": "paper",
+          "publisher": "Journal of Personality and Social Psychology",
+          "published_at": "1988-04-01",
+          "accessed_at": "2026-06-09",
+          "version": "Vol. 54, No. 4",
+          "reliability": "high",
+          "score": 90,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "Baron and Hershey 的 outcome bias 研究支持在不确定性下评估决策质量时不能只看结果；这能支撑 PnL outcome 与决策过程质量、风险和规则执行分离记录。",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_finra_regulatory_notice_15_09_algorithmic_controls",
+          "source_title": "FINRA Regulatory Notice 15-09",
+          "source_url": "https://www.finra.org/rules-guidance/notices/15-09",
+          "source_type": "standard_or_risk_framework",
+          "publisher": "FINRA",
+          "published_at": "2015-03-01",
+          "accessed_at": "2026-06-09",
+          "version": "Regulatory Notice 15-09",
+          "reliability": "high",
+          "score": 82,
+          "relevance": "medium",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "FINRA 15-09 支持算法交易的监督、风险评估、软件测试、系统验证、交易系统控制和合规治理；可支撑交易标签需要覆盖风险合规和规则执行，而不是只看 PnL。",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_label_studio_human_consensus_iaa_ground_truth",
+          "source_title": "How to Measure Inter-Annotator Agreement and Build Human Consensus with Label Studio",
+          "source_url": "https://labelstud.io/tutorials/how_to_measure_inter_annotator_agreement_and_build_human_consensus",
+          "source_type": "official_doc",
+          "publisher": "Label Studio",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 90,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "Label Studio 文档支持用多标注者一致性、human consensus 和 ground truth 流程处理含糊或主观标签；可支撑 good_loss/bad_win 需要 owner review 和 adjudication。",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_tfx_tfdv_schema_skew_validation",
+          "source_title": "TensorFlow Data Validation: Checking and analyzing your data",
+          "source_url": "https://tensorflow.github.io/tfx/guide/tfdv/",
+          "source_type": "official_doc",
+          "publisher": "TensorFlow / TFX",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 82,
+          "relevance": "medium",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "TFDV 支持 schema validation、training-serving skew 和 drift detection；可补强标签字段、证据字段和未来信息/字段泄漏检查。",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_cmc_markets_trading_journal_process_outcome",
+          "source_title": "Trading Journals: The Missing Link in the Trading Process",
+          "source_url": "https://www.cmcmarkets.com/en-nz/cfd/learn/trading-guides/how-to-use-a-trading-journal",
+          "source_type": "other",
+          "publisher": "CMC Markets",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "medium",
+          "score": 82,
+          "relevance": "medium",
+          "freshness": "stable",
+          "limitations": [
+            "商业券商教育内容，只能作为交易日志实践参考。"
+          ],
+          "evidence_summary": "CMC Markets 交易日志指南直接区分交易过程、风险管理和交易结果；仅作为交易复盘实践 supporting source，不作为科学或监管主证据。",
+          "quoted_excerpt_allowed": false
+        }
+      ]
+    }
+  ]
+}

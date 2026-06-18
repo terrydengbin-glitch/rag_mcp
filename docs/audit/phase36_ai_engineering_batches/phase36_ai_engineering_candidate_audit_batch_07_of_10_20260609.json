@@ -1,0 +1,1985 @@
+{
+  "package_id": "phase36_ai_engineering_candidate_audit_batch_07_of_10_20260609",
+  "package_type": "candidate_ai_audit_package_batch",
+  "generated_at": "2026-06-09",
+  "phase": "36",
+  "title": "Phase 36 AI Engineering 候选知识审计包",
+  "purpose": "审计 Phase 36 AI Engineering 交易 LLM gating/scoring 知识候选，确认来源充分性、适用边界、冲突风险、AI 使用安全和跨分支路由。",
+  "hard_boundaries": [
+    "candidate 不是正式知识，不能作为默认指导。",
+    "AI 审计 accepted_for_draft 不是 approved。",
+    "不得把项目私有事实、账号数据、密钥或具体交易规则写入 AI Engineering。",
+    "K 线、策略、回测、实盘执行和交易风控本体应路由到 Trading Engineering。"
+  ],
+  "auditor_instruction": {
+    "goal": "逐条判断候选是否可转为 formal draft/reviewed，或需要补来源、改边界、拆分、拒绝。",
+    "required_output_schema": {
+      "audit_result_id": "string",
+      "source_package_id": "phase36_ai_engineering_candidate_audit_package_20260609",
+      "decisions": [
+        {
+          "candidate_id": "string",
+          "decision": "accepted_for_draft | needs_more_evidence | rejected",
+          "reason": "string",
+          "source_patch_notes": [
+            "string"
+          ],
+          "content_patch_notes": [
+            "string"
+          ],
+          "boundary_patch_notes": [
+            "string"
+          ],
+          "conflict_patch_notes": [
+            "string"
+          ],
+          "required_followups": [
+            "string"
+          ]
+        }
+      ]
+    }
+  },
+  "quality_gate_report": "docs/reports/phase36_ai_engineering_candidate_quality_gate.json",
+  "candidate_count": 11,
+  "planned_total": 113,
+  "p0_core_total": 62,
+  "source_package_id": "phase36_ai_engineering_candidate_audit_package_20260609",
+  "batch_index": 7,
+  "batch_count": 10,
+  "candidate_range": {
+    "start_index_1_based": 70,
+    "end_index_1_based": 80
+  },
+  "batch_audit_instruction": {
+    "说明": "本文件是 Phase 36 总审计包的一个分批文件。请只审计本批 candidates，并按 required_output_schema 输出 JSON 审计结果。",
+    "输出要求": [
+      "audit_result_id 必须包含 batch 编号，方便回写。",
+      "source_package_id 使用本 batch 的 package_id。",
+      "每个 candidate_id 必须输出一条 decision。",
+      "decision 只能是 accepted_for_draft、needs_more_evidence 或 rejected。",
+      "accepted_for_draft 不等于 approved，只表示可交给 CEK-TA 转 draft/reviewed。"
+    ]
+  },
+  "candidates": [
+    {
+      "schema_version": "1.0.0",
+      "candidate_id": "cand_20260609_ai_engineering_preference_training_preference_pair_schema_required_v1_001",
+      "research_task_id": "RIT-P36-A-T13",
+      "status": {
+        "review_status": "proposed",
+        "ingestion_decision": "convert_to_knowledge_item",
+        "decision_reason": "Phase 36 P0-Extended sourced candidate; not reviewed, not approved, not default guidance.",
+        "created_at": "2026-06-09",
+        "updated_at": "2026-06-09"
+      },
+      "classification": {
+        "tree_node_id": "kt.llm_training.model_training_engineering",
+        "canonical_node_id": "kt.llm_training.model_training_engineering",
+        "tree_path": "CEK-TA / AI Engineering",
+        "related_nodes": [],
+        "partition_id": "KB_09_LLM_TRAINING",
+        "domain": "llm_training",
+        "subdomain": "preference_training",
+        "rule_type": "checklist",
+        "used_for": [
+          "llm_training",
+          "trading_gating_scoring",
+          "rag_engineering",
+          "mcp",
+          "vue_audit_ui"
+        ]
+      },
+      "claim": {
+        "claim_id": "claim_001",
+        "statement": "偏好训练必须基于同一 prompt 下的 chosen/rejected 样本，并记录偏好理由和质量边界。",
+        "normalized_claim": "preference_training.preference_pair_schema_required.v1",
+        "evidence_summary": "Hugging Face TRL documents supervised and preference training workflows that require structured data and evaluation discipline.；OpenAI model optimization guidance supports defining task objectives, choosing between prompting, RAG, fine-tuning, and evaluating quality before model changes.",
+        "interpretation_notes": "本候选仅沉淀 AI Engineering 中训练、评估、RAG/MCP、安全、部署或治理规则；不定义 K 线信号、具体交易策略、订单执行规则或账户参数。",
+        "claim_strength": "medium",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general",
+        "asset": "general",
+        "timeframe": "general",
+        "data_granularity": "general",
+        "project_type": "trading_llm_assistant",
+        "applies_when": [
+          "外接项目正在构建或审计交易 LLM gating/scoring、训练数据、评估、RAG/MCP、部署或治理链路。",
+          "该规则用于阻断数据泄漏、权限越界、无来源默认指导、训练/评估污染或上线前治理缺口。"
+        ],
+        "not_applicable_when": [
+          "用户需要具体买卖点、仓位、止损止盈、策略参数或实盘订单执行。",
+          "知识点主要描述 K 线结构、市场微观结构、回测模型、fill model 或交易风控本体，应路由到 Trading Engineering。"
+        ],
+        "assumptions": [
+          "外接项目提供项目事实、私有交易数据和策略上下文；CEK-TA 只沉淀可复用专业规则。",
+          "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+        ],
+        "limitations": [
+          "本条仍是 candidate，需要外部 AI/人工审计确认来源充分性、适用边界和是否需要拆分。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_id": "src_hf_trl",
+          "source_title": "TRL documentation | Hugging Face",
+          "source_url": "https://huggingface.co/docs/trl",
+          "source_type": "official_doc",
+          "publisher": "Hugging Face",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 84,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "Hugging Face TRL documents supervised and preference training workflows that require structured data and evaluation discipline.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_openai_model",
+          "source_title": "Model optimization | OpenAI API",
+          "source_url": "https://platform.openai.com/docs/guides/model-optimization",
+          "source_type": "official_doc",
+          "publisher": "OpenAI",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 88,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "OpenAI model optimization guidance supports defining task objectives, choosing between prompting, RAG, fine-tuning, and evaluating quality before model changes.",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "high",
+        "score": 86,
+        "score_version": "1.0.0",
+        "primary_source_count": 2,
+        "supporting_source_count": 0,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "来源支持通用 AI/ML/RAG/MCP/治理工程原则；正式知识转换时需补 CEK-TA 具体上下游引用和冲突链接。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "checked_against": [
+          "docs/contracts/ai_engineering_gating_scoring_contract.md",
+          "docs/contracts/ai_engineering_knowledge_item_policy.md",
+          "docs/tasks/phase36_ai_engineering_gating_scoring_knowledge.md"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与当前 CEK-TA formal knowledge 的直接冲突；候选不会进入默认指导。",
+        "approval_allowed": true
+      },
+      "review": {
+        "confidence": "medium",
+        "freshness": "time_sensitive",
+        "reviewer": "codex",
+        "reviewed_at": null,
+        "open_questions": [
+          "审计时确认该候选是否应与相邻 AI Engineering 规则合并、拆分，或改路由到 Trading Engineering。"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-09",
+            "actor": "codex",
+            "action": "created",
+            "reason": "Phase 36 bulk AI Engineering candidate expansion."
+          }
+        ]
+      },
+      "copyright": {
+        "stores_full_text": false,
+        "stores_long_quote": false,
+        "summary_only": true,
+        "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+        "reuse_risk": "low"
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_ai_engineering.preference_training.preference_pair_schema_required.v1",
+        "target_schema": "cek_ta_knowledge_item",
+        "target_review_status": "draft",
+        "skill_candidate": false,
+        "eval_case_candidate": false
+      },
+      "workflow": {
+        "stage": "candidate_ready",
+        "queue_group": "pending",
+        "formal_knowledge_id": null,
+        "formal_review_status": null,
+        "ai_audit_result_id": null,
+        "hidden_from_default_queue": false,
+        "next_action": "export_for_ai_or_human_audit"
+      }
+    },
+    {
+      "schema_version": "1.0.0",
+      "candidate_id": "cand_20260609_ai_engineering_rag_approved_machine_gate_allow_only_default_guidance_v1_001",
+      "research_task_id": "RIT-P36-C-24",
+      "status": {
+        "review_status": "proposed",
+        "ingestion_decision": "convert_to_knowledge_item",
+        "decision_reason": "Phase 36 P0-Core sourced candidate; not reviewed, not approved, not default guidance.",
+        "created_at": "2026-06-09",
+        "updated_at": "2026-06-09"
+      },
+      "classification": {
+        "tree_node_id": "kt.rag_engineering",
+        "canonical_node_id": "kt.rag_engineering",
+        "tree_path": "CEK-TA / AI Engineering",
+        "related_nodes": [],
+        "partition_id": "KB_AI_ENGINEERING",
+        "domain": "ai_engineering",
+        "subdomain": "rag_retrieval_governance",
+        "rule_type": "decision_rule",
+        "used_for": [
+          "llm_training",
+          "trading_gating_scoring",
+          "rag_engineering",
+          "mcp",
+          "vue_audit_ui"
+        ]
+      },
+      "claim": {
+        "claim_id": "claim_001",
+        "statement": "交易评分前必须按任务主动检索 CEK-TA，且只允许有来源、无冲突、machine_gate 合格的知识进入默认指导。",
+        "normalized_claim": "rag.approved_machine_gate_allow_only_default_guidance.v1",
+        "evidence_summary": "OpenAI file search documentation supports retrieval with annotations and controlled result selection for RAG workflows.；OWASP documents prompt injection risks and mitigations for user input, retrieved content, tool output, and agent workflows.",
+        "interpretation_notes": "本候选仅沉淀 AI Engineering 中训练、评估、RAG/MCP、安全、部署或治理规则；不定义 K 线信号、具体交易策略、订单执行规则或账户参数。",
+        "claim_strength": "high",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general",
+        "asset": "general",
+        "timeframe": "general",
+        "data_granularity": "general",
+        "project_type": "trading_llm_assistant",
+        "applies_when": [
+          "外接项目正在构建或审计交易 LLM gating/scoring、训练数据、评估、RAG/MCP、部署或治理链路。",
+          "该规则用于阻断数据泄漏、权限越界、无来源默认指导、训练/评估污染或上线前治理缺口。"
+        ],
+        "not_applicable_when": [
+          "用户需要具体买卖点、仓位、止损止盈、策略参数或实盘订单执行。",
+          "知识点主要描述 K 线结构、市场微观结构、回测模型、fill model 或交易风控本体，应路由到 Trading Engineering。"
+        ],
+        "assumptions": [
+          "外接项目提供项目事实、私有交易数据和策略上下文；CEK-TA 只沉淀可复用专业规则。",
+          "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+        ],
+        "limitations": [
+          "本条仍是 candidate，需要外部 AI/人工审计确认来源充分性、适用边界和是否需要拆分。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_id": "src_openai_file_search",
+          "source_title": "File search | OpenAI API",
+          "source_url": "https://platform.openai.com/docs/guides/tools-file-search?lang=javascript",
+          "source_type": "official_doc",
+          "publisher": "OpenAI",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 84,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "OpenAI file search documentation supports retrieval with annotations and controlled result selection for RAG workflows.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_owasp_prompt",
+          "source_title": "LLM Prompt Injection Prevention Cheat Sheet",
+          "source_url": "https://cheatsheetseries.owasp.org/cheatsheets/LLM_Prompt_Injection_Prevention_Cheat_Sheet.html",
+          "source_type": "standard_or_risk_framework",
+          "publisher": "OWASP",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 86,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "OWASP documents prompt injection risks and mitigations for user input, retrieved content, tool output, and agent workflows.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_nist",
+          "source_title": "AI Risk Management Framework | NIST",
+          "source_url": "https://www.nist.gov/itl/ai-risk-management-framework",
+          "source_type": "standard_or_risk_framework",
+          "publisher": "NIST",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 88,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "NIST AI RMF supports governance, mapping, measurement, and management of AI risks across design, deployment, and monitoring.",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "high",
+        "score": 86,
+        "score_version": "1.0.0",
+        "primary_source_count": 2,
+        "supporting_source_count": 1,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "来源支持通用 AI/ML/RAG/MCP/治理工程原则；正式知识转换时需补 CEK-TA 具体上下游引用和冲突链接。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "checked_against": [
+          "docs/contracts/ai_engineering_gating_scoring_contract.md",
+          "docs/contracts/ai_engineering_knowledge_item_policy.md",
+          "docs/tasks/phase36_ai_engineering_gating_scoring_knowledge.md"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与当前 CEK-TA formal knowledge 的直接冲突；候选不会进入默认指导。",
+        "approval_allowed": true
+      },
+      "review": {
+        "confidence": "medium",
+        "freshness": "time_sensitive",
+        "reviewer": "codex",
+        "reviewed_at": null,
+        "open_questions": [
+          "审计时确认该候选是否应与相邻 AI Engineering 规则合并、拆分，或改路由到 Trading Engineering。"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-09",
+            "actor": "codex",
+            "action": "created",
+            "reason": "Phase 36 bulk AI Engineering candidate expansion."
+          }
+        ]
+      },
+      "copyright": {
+        "stores_full_text": false,
+        "stores_long_quote": false,
+        "summary_only": true,
+        "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+        "reuse_risk": "low"
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_ai_engineering.rag.approved_machine_gate_allow_only_default_guidance.v1",
+        "target_schema": "cek_ta_knowledge_item",
+        "target_review_status": "draft",
+        "skill_candidate": false,
+        "eval_case_candidate": false
+      },
+      "workflow": {
+        "stage": "candidate_ready",
+        "queue_group": "pending",
+        "formal_knowledge_id": null,
+        "formal_review_status": null,
+        "ai_audit_result_id": null,
+        "hidden_from_default_queue": false,
+        "next_action": "export_for_ai_or_human_audit"
+      }
+    },
+    {
+      "schema_version": "1.0.0",
+      "candidate_id": "cand_20260609_ai_engineering_rag_no_hit_requires_neutral_or_review_v1_001",
+      "research_task_id": "RIT-P36-C-26",
+      "status": {
+        "review_status": "proposed",
+        "ingestion_decision": "convert_to_knowledge_item",
+        "decision_reason": "Phase 36 P0-Core sourced candidate; not reviewed, not approved, not default guidance.",
+        "created_at": "2026-06-09",
+        "updated_at": "2026-06-09"
+      },
+      "classification": {
+        "tree_node_id": "kt.rag_engineering",
+        "canonical_node_id": "kt.rag_engineering",
+        "tree_path": "CEK-TA / AI Engineering",
+        "related_nodes": [],
+        "partition_id": "KB_AI_ENGINEERING",
+        "domain": "ai_engineering",
+        "subdomain": "rag_retrieval_governance",
+        "rule_type": "decision_rule",
+        "used_for": [
+          "llm_training",
+          "trading_gating_scoring",
+          "rag_engineering",
+          "mcp",
+          "vue_audit_ui"
+        ]
+      },
+      "claim": {
+        "claim_id": "claim_001",
+        "statement": "交易评分前必须按任务主动检索 CEK-TA，且只允许有来源、无冲突、machine_gate 合格的知识进入默认指导。",
+        "normalized_claim": "rag.no_hit_requires_neutral_or_review.v1",
+        "evidence_summary": "OpenAI file search documentation supports retrieval with annotations and controlled result selection for RAG workflows.；OWASP documents prompt injection risks and mitigations for user input, retrieved content, tool output, and agent workflows.",
+        "interpretation_notes": "本候选仅沉淀 AI Engineering 中训练、评估、RAG/MCP、安全、部署或治理规则；不定义 K 线信号、具体交易策略、订单执行规则或账户参数。",
+        "claim_strength": "high",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general",
+        "asset": "general",
+        "timeframe": "general",
+        "data_granularity": "general",
+        "project_type": "trading_llm_assistant",
+        "applies_when": [
+          "外接项目正在构建或审计交易 LLM gating/scoring、训练数据、评估、RAG/MCP、部署或治理链路。",
+          "该规则用于阻断数据泄漏、权限越界、无来源默认指导、训练/评估污染或上线前治理缺口。"
+        ],
+        "not_applicable_when": [
+          "用户需要具体买卖点、仓位、止损止盈、策略参数或实盘订单执行。",
+          "知识点主要描述 K 线结构、市场微观结构、回测模型、fill model 或交易风控本体，应路由到 Trading Engineering。"
+        ],
+        "assumptions": [
+          "外接项目提供项目事实、私有交易数据和策略上下文；CEK-TA 只沉淀可复用专业规则。",
+          "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+        ],
+        "limitations": [
+          "本条仍是 candidate，需要外部 AI/人工审计确认来源充分性、适用边界和是否需要拆分。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_id": "src_openai_file_search",
+          "source_title": "File search | OpenAI API",
+          "source_url": "https://platform.openai.com/docs/guides/tools-file-search?lang=javascript",
+          "source_type": "official_doc",
+          "publisher": "OpenAI",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 84,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "OpenAI file search documentation supports retrieval with annotations and controlled result selection for RAG workflows.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_owasp_prompt",
+          "source_title": "LLM Prompt Injection Prevention Cheat Sheet",
+          "source_url": "https://cheatsheetseries.owasp.org/cheatsheets/LLM_Prompt_Injection_Prevention_Cheat_Sheet.html",
+          "source_type": "standard_or_risk_framework",
+          "publisher": "OWASP",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 86,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "OWASP documents prompt injection risks and mitigations for user input, retrieved content, tool output, and agent workflows.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_nist",
+          "source_title": "AI Risk Management Framework | NIST",
+          "source_url": "https://www.nist.gov/itl/ai-risk-management-framework",
+          "source_type": "standard_or_risk_framework",
+          "publisher": "NIST",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 88,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "NIST AI RMF supports governance, mapping, measurement, and management of AI risks across design, deployment, and monitoring.",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "high",
+        "score": 86,
+        "score_version": "1.0.0",
+        "primary_source_count": 2,
+        "supporting_source_count": 1,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "来源支持通用 AI/ML/RAG/MCP/治理工程原则；正式知识转换时需补 CEK-TA 具体上下游引用和冲突链接。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "checked_against": [
+          "docs/contracts/ai_engineering_gating_scoring_contract.md",
+          "docs/contracts/ai_engineering_knowledge_item_policy.md",
+          "docs/tasks/phase36_ai_engineering_gating_scoring_knowledge.md"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与当前 CEK-TA formal knowledge 的直接冲突；候选不会进入默认指导。",
+        "approval_allowed": true
+      },
+      "review": {
+        "confidence": "medium",
+        "freshness": "time_sensitive",
+        "reviewer": "codex",
+        "reviewed_at": null,
+        "open_questions": [
+          "审计时确认该候选是否应与相邻 AI Engineering 规则合并、拆分，或改路由到 Trading Engineering。"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-09",
+            "actor": "codex",
+            "action": "created",
+            "reason": "Phase 36 bulk AI Engineering candidate expansion."
+          }
+        ]
+      },
+      "copyright": {
+        "stores_full_text": false,
+        "stores_long_quote": false,
+        "summary_only": true,
+        "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+        "reuse_risk": "low"
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_ai_engineering.rag.no_hit_requires_neutral_or_review.v1",
+        "target_schema": "cek_ta_knowledge_item",
+        "target_review_status": "draft",
+        "skill_candidate": false,
+        "eval_case_candidate": false
+      },
+      "workflow": {
+        "stage": "candidate_ready",
+        "queue_group": "pending",
+        "formal_knowledge_id": null,
+        "formal_review_status": null,
+        "ai_audit_result_id": null,
+        "hidden_from_default_queue": false,
+        "next_action": "export_for_ai_or_human_audit"
+      }
+    },
+    {
+      "schema_version": "1.0.0",
+      "candidate_id": "cand_20260609_ai_engineering_rag_no_source_or_conflict_blocks_default_guidance_v1_001",
+      "research_task_id": "RIT-P36-C-25",
+      "status": {
+        "review_status": "proposed",
+        "ingestion_decision": "convert_to_knowledge_item",
+        "decision_reason": "Phase 36 P0-Core sourced candidate; not reviewed, not approved, not default guidance.",
+        "created_at": "2026-06-09",
+        "updated_at": "2026-06-09"
+      },
+      "classification": {
+        "tree_node_id": "kt.rag_engineering",
+        "canonical_node_id": "kt.rag_engineering",
+        "tree_path": "CEK-TA / AI Engineering",
+        "related_nodes": [],
+        "partition_id": "KB_AI_ENGINEERING",
+        "domain": "ai_engineering",
+        "subdomain": "rag_retrieval_governance",
+        "rule_type": "decision_rule",
+        "used_for": [
+          "llm_training",
+          "trading_gating_scoring",
+          "rag_engineering",
+          "mcp",
+          "vue_audit_ui"
+        ]
+      },
+      "claim": {
+        "claim_id": "claim_001",
+        "statement": "交易评分前必须按任务主动检索 CEK-TA，且只允许有来源、无冲突、machine_gate 合格的知识进入默认指导。",
+        "normalized_claim": "rag.no_source_or_conflict_blocks_default_guidance.v1",
+        "evidence_summary": "OpenAI file search documentation supports retrieval with annotations and controlled result selection for RAG workflows.；OWASP documents prompt injection risks and mitigations for user input, retrieved content, tool output, and agent workflows.",
+        "interpretation_notes": "本候选仅沉淀 AI Engineering 中训练、评估、RAG/MCP、安全、部署或治理规则；不定义 K 线信号、具体交易策略、订单执行规则或账户参数。",
+        "claim_strength": "high",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general",
+        "asset": "general",
+        "timeframe": "general",
+        "data_granularity": "general",
+        "project_type": "trading_llm_assistant",
+        "applies_when": [
+          "外接项目正在构建或审计交易 LLM gating/scoring、训练数据、评估、RAG/MCP、部署或治理链路。",
+          "该规则用于阻断数据泄漏、权限越界、无来源默认指导、训练/评估污染或上线前治理缺口。"
+        ],
+        "not_applicable_when": [
+          "用户需要具体买卖点、仓位、止损止盈、策略参数或实盘订单执行。",
+          "知识点主要描述 K 线结构、市场微观结构、回测模型、fill model 或交易风控本体，应路由到 Trading Engineering。"
+        ],
+        "assumptions": [
+          "外接项目提供项目事实、私有交易数据和策略上下文；CEK-TA 只沉淀可复用专业规则。",
+          "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+        ],
+        "limitations": [
+          "本条仍是 candidate，需要外部 AI/人工审计确认来源充分性、适用边界和是否需要拆分。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_id": "src_openai_file_search",
+          "source_title": "File search | OpenAI API",
+          "source_url": "https://platform.openai.com/docs/guides/tools-file-search?lang=javascript",
+          "source_type": "official_doc",
+          "publisher": "OpenAI",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 84,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "OpenAI file search documentation supports retrieval with annotations and controlled result selection for RAG workflows.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_owasp_prompt",
+          "source_title": "LLM Prompt Injection Prevention Cheat Sheet",
+          "source_url": "https://cheatsheetseries.owasp.org/cheatsheets/LLM_Prompt_Injection_Prevention_Cheat_Sheet.html",
+          "source_type": "standard_or_risk_framework",
+          "publisher": "OWASP",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 86,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "OWASP documents prompt injection risks and mitigations for user input, retrieved content, tool output, and agent workflows.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_nist",
+          "source_title": "AI Risk Management Framework | NIST",
+          "source_url": "https://www.nist.gov/itl/ai-risk-management-framework",
+          "source_type": "standard_or_risk_framework",
+          "publisher": "NIST",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 88,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "NIST AI RMF supports governance, mapping, measurement, and management of AI risks across design, deployment, and monitoring.",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "high",
+        "score": 86,
+        "score_version": "1.0.0",
+        "primary_source_count": 2,
+        "supporting_source_count": 1,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "来源支持通用 AI/ML/RAG/MCP/治理工程原则；正式知识转换时需补 CEK-TA 具体上下游引用和冲突链接。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "checked_against": [
+          "docs/contracts/ai_engineering_gating_scoring_contract.md",
+          "docs/contracts/ai_engineering_knowledge_item_policy.md",
+          "docs/tasks/phase36_ai_engineering_gating_scoring_knowledge.md"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与当前 CEK-TA formal knowledge 的直接冲突；候选不会进入默认指导。",
+        "approval_allowed": true
+      },
+      "review": {
+        "confidence": "medium",
+        "freshness": "time_sensitive",
+        "reviewer": "codex",
+        "reviewed_at": null,
+        "open_questions": [
+          "审计时确认该候选是否应与相邻 AI Engineering 规则合并、拆分，或改路由到 Trading Engineering。"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-09",
+            "actor": "codex",
+            "action": "created",
+            "reason": "Phase 36 bulk AI Engineering candidate expansion."
+          }
+        ]
+      },
+      "copyright": {
+        "stores_full_text": false,
+        "stores_long_quote": false,
+        "summary_only": true,
+        "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+        "reuse_risk": "low"
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_ai_engineering.rag.no_source_or_conflict_blocks_default_guidance.v1",
+        "target_schema": "cek_ta_knowledge_item",
+        "target_review_status": "draft",
+        "skill_candidate": false,
+        "eval_case_candidate": false
+      },
+      "workflow": {
+        "stage": "candidate_ready",
+        "queue_group": "pending",
+        "formal_knowledge_id": null,
+        "formal_review_status": null,
+        "ai_audit_result_id": null,
+        "hidden_from_default_queue": false,
+        "next_action": "export_for_ai_or_human_audit"
+      }
+    },
+    {
+      "schema_version": "1.0.0",
+      "candidate_id": "cand_20260609_ai_engineering_rag_retrieval_required_before_trade_scoring_v1_001",
+      "research_task_id": "RIT-P36-C-23",
+      "status": {
+        "review_status": "proposed",
+        "ingestion_decision": "convert_to_knowledge_item",
+        "decision_reason": "Phase 36 P0-Core sourced candidate; not reviewed, not approved, not default guidance.",
+        "created_at": "2026-06-09",
+        "updated_at": "2026-06-09"
+      },
+      "classification": {
+        "tree_node_id": "kt.rag_engineering",
+        "canonical_node_id": "kt.rag_engineering",
+        "tree_path": "CEK-TA / AI Engineering",
+        "related_nodes": [],
+        "partition_id": "KB_AI_ENGINEERING",
+        "domain": "ai_engineering",
+        "subdomain": "rag_retrieval_governance",
+        "rule_type": "decision_rule",
+        "used_for": [
+          "llm_training",
+          "trading_gating_scoring",
+          "rag_engineering",
+          "mcp",
+          "vue_audit_ui"
+        ]
+      },
+      "claim": {
+        "claim_id": "claim_001",
+        "statement": "交易评分前必须按任务主动检索 CEK-TA，且只允许有来源、无冲突、machine_gate 合格的知识进入默认指导。",
+        "normalized_claim": "rag.retrieval_required_before_trade_scoring.v1",
+        "evidence_summary": "OpenAI file search documentation supports retrieval with annotations and controlled result selection for RAG workflows.；OWASP documents prompt injection risks and mitigations for user input, retrieved content, tool output, and agent workflows.",
+        "interpretation_notes": "本候选仅沉淀 AI Engineering 中训练、评估、RAG/MCP、安全、部署或治理规则；不定义 K 线信号、具体交易策略、订单执行规则或账户参数。",
+        "claim_strength": "high",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general",
+        "asset": "general",
+        "timeframe": "general",
+        "data_granularity": "general",
+        "project_type": "trading_llm_assistant",
+        "applies_when": [
+          "外接项目正在构建或审计交易 LLM gating/scoring、训练数据、评估、RAG/MCP、部署或治理链路。",
+          "该规则用于阻断数据泄漏、权限越界、无来源默认指导、训练/评估污染或上线前治理缺口。"
+        ],
+        "not_applicable_when": [
+          "用户需要具体买卖点、仓位、止损止盈、策略参数或实盘订单执行。",
+          "知识点主要描述 K 线结构、市场微观结构、回测模型、fill model 或交易风控本体，应路由到 Trading Engineering。"
+        ],
+        "assumptions": [
+          "外接项目提供项目事实、私有交易数据和策略上下文；CEK-TA 只沉淀可复用专业规则。",
+          "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+        ],
+        "limitations": [
+          "本条仍是 candidate，需要外部 AI/人工审计确认来源充分性、适用边界和是否需要拆分。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_id": "src_openai_file_search",
+          "source_title": "File search | OpenAI API",
+          "source_url": "https://platform.openai.com/docs/guides/tools-file-search?lang=javascript",
+          "source_type": "official_doc",
+          "publisher": "OpenAI",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 84,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "OpenAI file search documentation supports retrieval with annotations and controlled result selection for RAG workflows.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_owasp_prompt",
+          "source_title": "LLM Prompt Injection Prevention Cheat Sheet",
+          "source_url": "https://cheatsheetseries.owasp.org/cheatsheets/LLM_Prompt_Injection_Prevention_Cheat_Sheet.html",
+          "source_type": "standard_or_risk_framework",
+          "publisher": "OWASP",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 86,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "OWASP documents prompt injection risks and mitigations for user input, retrieved content, tool output, and agent workflows.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_nist",
+          "source_title": "AI Risk Management Framework | NIST",
+          "source_url": "https://www.nist.gov/itl/ai-risk-management-framework",
+          "source_type": "standard_or_risk_framework",
+          "publisher": "NIST",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 88,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "NIST AI RMF supports governance, mapping, measurement, and management of AI risks across design, deployment, and monitoring.",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "high",
+        "score": 86,
+        "score_version": "1.0.0",
+        "primary_source_count": 2,
+        "supporting_source_count": 1,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "来源支持通用 AI/ML/RAG/MCP/治理工程原则；正式知识转换时需补 CEK-TA 具体上下游引用和冲突链接。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "checked_against": [
+          "docs/contracts/ai_engineering_gating_scoring_contract.md",
+          "docs/contracts/ai_engineering_knowledge_item_policy.md",
+          "docs/tasks/phase36_ai_engineering_gating_scoring_knowledge.md"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与当前 CEK-TA formal knowledge 的直接冲突；候选不会进入默认指导。",
+        "approval_allowed": true
+      },
+      "review": {
+        "confidence": "medium",
+        "freshness": "time_sensitive",
+        "reviewer": "codex",
+        "reviewed_at": null,
+        "open_questions": [
+          "审计时确认该候选是否应与相邻 AI Engineering 规则合并、拆分，或改路由到 Trading Engineering。"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-09",
+            "actor": "codex",
+            "action": "created",
+            "reason": "Phase 36 bulk AI Engineering candidate expansion."
+          }
+        ]
+      },
+      "copyright": {
+        "stores_full_text": false,
+        "stores_long_quote": false,
+        "summary_only": true,
+        "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+        "reuse_risk": "low"
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_ai_engineering.rag.retrieval_required_before_trade_scoring.v1",
+        "target_schema": "cek_ta_knowledge_item",
+        "target_review_status": "draft",
+        "skill_candidate": false,
+        "eval_case_candidate": false
+      },
+      "workflow": {
+        "stage": "candidate_ready",
+        "queue_group": "pending",
+        "formal_knowledge_id": null,
+        "formal_review_status": null,
+        "ai_audit_result_id": null,
+        "hidden_from_default_queue": false,
+        "next_action": "export_for_ai_or_human_audit"
+      }
+    },
+    {
+      "schema_version": "1.0.0",
+      "candidate_id": "cand_20260609_ai_engineering_readiness_offline_eval_pass_not_equal_live_ready_v1_001",
+      "research_task_id": "RIT-P36-D-B24",
+      "status": {
+        "review_status": "proposed",
+        "ingestion_decision": "convert_to_knowledge_item",
+        "decision_reason": "Phase 36 P0-Extended sourced candidate; not reviewed, not approved, not default guidance.",
+        "created_at": "2026-06-09",
+        "updated_at": "2026-06-09"
+      },
+      "classification": {
+        "tree_node_id": "kt.llmops_deployment",
+        "canonical_node_id": "kt.llmops_deployment",
+        "tree_path": "CEK-TA / AI Engineering",
+        "related_nodes": [],
+        "partition_id": "KB_AI_ENGINEERING",
+        "domain": "ai_engineering",
+        "subdomain": "llmops_deployment",
+        "rule_type": "checklist",
+        "used_for": [
+          "llm_training",
+          "trading_gating_scoring",
+          "rag_engineering",
+          "mcp",
+          "vue_audit_ui"
+        ]
+      },
+      "claim": {
+        "claim_id": "claim_001",
+        "statement": "离线评估通过不等于可实盘上线，仍需要 shadow/paper 验证、监控和事故回滚。",
+        "normalized_claim": "readiness.offline_eval_pass_not_equal_live_ready.v1",
+        "evidence_summary": "OpenAI evals documentation supports programmatic evaluation setup and workflow-specific quality checks before relying on model behavior.；Model risk guidance supports independent validation, governance, change control, and risk-based model oversight.",
+        "interpretation_notes": "本候选仅沉淀 AI Engineering 中训练、评估、RAG/MCP、安全、部署或治理规则；不定义 K 线信号、具体交易策略、订单执行规则或账户参数。",
+        "claim_strength": "medium",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general",
+        "asset": "general",
+        "timeframe": "general",
+        "data_granularity": "general",
+        "project_type": "trading_llm_assistant",
+        "applies_when": [
+          "外接项目正在构建或审计交易 LLM gating/scoring、训练数据、评估、RAG/MCP、部署或治理链路。",
+          "该规则用于阻断数据泄漏、权限越界、无来源默认指导、训练/评估污染或上线前治理缺口。"
+        ],
+        "not_applicable_when": [
+          "用户需要具体买卖点、仓位、止损止盈、策略参数或实盘订单执行。",
+          "知识点主要描述 K 线结构、市场微观结构、回测模型、fill model 或交易风控本体，应路由到 Trading Engineering。"
+        ],
+        "assumptions": [
+          "外接项目提供项目事实、私有交易数据和策略上下文；CEK-TA 只沉淀可复用专业规则。",
+          "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+        ],
+        "limitations": [
+          "本条仍是 candidate，需要外部 AI/人工审计确认来源充分性、适用边界和是否需要拆分。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_id": "src_openai_evals",
+          "source_title": "Working with evals | OpenAI API",
+          "source_url": "https://platform.openai.com/docs/guides/evals?api-mode=chat",
+          "source_type": "official_doc",
+          "publisher": "OpenAI",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 86,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "OpenAI evals documentation supports programmatic evaluation setup and workflow-specific quality checks before relying on model behavior.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_fed_model_risk",
+          "source_title": "Supervisory Guidance on Model Risk Management",
+          "source_url": "https://www.federalreserve.gov/frrs/guidance/supervisory-guidance-on-model-risk-management.htm",
+          "source_type": "standard_or_risk_framework",
+          "publisher": "Federal Reserve",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 84,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "Model risk guidance supports independent validation, governance, change control, and risk-based model oversight.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_rules_ml",
+          "source_title": "Rules of Machine Learning",
+          "source_url": "https://martin.zinkevich.org/rules_of_ml/rules_of_ml.pdf",
+          "source_type": "paper",
+          "publisher": "Google / Martin Zinkevich",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "medium",
+          "score": 78,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [],
+          "evidence_summary": "Rules of ML discusses train/serve consistency, baselines, monitoring, and production ML safeguards.",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "high",
+        "score": 83,
+        "score_version": "1.0.0",
+        "primary_source_count": 2,
+        "supporting_source_count": 1,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "来源支持通用 AI/ML/RAG/MCP/治理工程原则；正式知识转换时需补 CEK-TA 具体上下游引用和冲突链接。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "checked_against": [
+          "docs/contracts/ai_engineering_gating_scoring_contract.md",
+          "docs/contracts/ai_engineering_knowledge_item_policy.md",
+          "docs/tasks/phase36_ai_engineering_gating_scoring_knowledge.md"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与当前 CEK-TA formal knowledge 的直接冲突；候选不会进入默认指导。",
+        "approval_allowed": true
+      },
+      "review": {
+        "confidence": "medium",
+        "freshness": "time_sensitive",
+        "reviewer": "codex",
+        "reviewed_at": null,
+        "open_questions": [
+          "审计时确认该候选是否应与相邻 AI Engineering 规则合并、拆分，或改路由到 Trading Engineering。"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-09",
+            "actor": "codex",
+            "action": "created",
+            "reason": "Phase 36 bulk AI Engineering candidate expansion."
+          }
+        ]
+      },
+      "copyright": {
+        "stores_full_text": false,
+        "stores_long_quote": false,
+        "summary_only": true,
+        "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+        "reuse_risk": "low"
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_ai_engineering.readiness.offline_eval_pass_not_equal_live_ready.v1",
+        "target_schema": "cek_ta_knowledge_item",
+        "target_review_status": "draft",
+        "skill_candidate": false,
+        "eval_case_candidate": false
+      },
+      "workflow": {
+        "stage": "candidate_ready",
+        "queue_group": "pending",
+        "formal_knowledge_id": null,
+        "formal_review_status": null,
+        "ai_audit_result_id": null,
+        "hidden_from_default_queue": false,
+        "next_action": "export_for_ai_or_human_audit"
+      }
+    },
+    {
+      "schema_version": "1.0.0",
+      "candidate_id": "cand_20260609_ai_engineering_redteam_hard_gate_override_attempt_test_v1_001",
+      "research_task_id": "RIT-P36-D-B22",
+      "status": {
+        "review_status": "proposed",
+        "ingestion_decision": "convert_to_knowledge_item",
+        "decision_reason": "Phase 36 P0-Extended sourced candidate; not reviewed, not approved, not default guidance.",
+        "created_at": "2026-06-09",
+        "updated_at": "2026-06-09"
+      },
+      "classification": {
+        "tree_node_id": "kt.trading_ai_safety",
+        "canonical_node_id": "kt.trading_ai_safety",
+        "tree_path": "CEK-TA / AI Engineering",
+        "related_nodes": [],
+        "partition_id": "KB_AI_ENGINEERING",
+        "domain": "ai_engineering",
+        "subdomain": "trading_ai_safety",
+        "rule_type": "checklist",
+        "used_for": [
+          "llm_training",
+          "trading_gating_scoring",
+          "rag_engineering",
+          "mcp",
+          "vue_audit_ui"
+        ]
+      },
+      "claim": {
+        "claim_id": "claim_001",
+        "statement": "上线前必须测试 LLM 是否会尝试覆盖硬风控、绕过审批或把建议伪装成最终交易许可。",
+        "normalized_claim": "redteam.hard_gate_override_attempt_test.v1",
+        "evidence_summary": "OWASP documents prompt injection risks and mitigations for user input, retrieved content, tool output, and agent workflows.；OWASP LLMSVS supports treating LLM outputs as untrusted and validating downstream system use.",
+        "interpretation_notes": "本候选仅沉淀 AI Engineering 中训练、评估、RAG/MCP、安全、部署或治理规则；不定义 K 线信号、具体交易策略、订单执行规则或账户参数。",
+        "claim_strength": "medium",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general",
+        "asset": "general",
+        "timeframe": "general",
+        "data_granularity": "general",
+        "project_type": "trading_llm_assistant",
+        "applies_when": [
+          "外接项目正在构建或审计交易 LLM gating/scoring、训练数据、评估、RAG/MCP、部署或治理链路。",
+          "该规则用于阻断数据泄漏、权限越界、无来源默认指导、训练/评估污染或上线前治理缺口。"
+        ],
+        "not_applicable_when": [
+          "用户需要具体买卖点、仓位、止损止盈、策略参数或实盘订单执行。",
+          "知识点主要描述 K 线结构、市场微观结构、回测模型、fill model 或交易风控本体，应路由到 Trading Engineering。"
+        ],
+        "assumptions": [
+          "外接项目提供项目事实、私有交易数据和策略上下文；CEK-TA 只沉淀可复用专业规则。",
+          "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+        ],
+        "limitations": [
+          "本条仍是 candidate，需要外部 AI/人工审计确认来源充分性、适用边界和是否需要拆分。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_id": "src_owasp_prompt",
+          "source_title": "LLM Prompt Injection Prevention Cheat Sheet",
+          "source_url": "https://cheatsheetseries.owasp.org/cheatsheets/LLM_Prompt_Injection_Prevention_Cheat_Sheet.html",
+          "source_type": "standard_or_risk_framework",
+          "publisher": "OWASP",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 86,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "OWASP documents prompt injection risks and mitigations for user input, retrieved content, tool output, and agent workflows.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_owasp_llmsvs",
+          "source_title": "OWASP LLM Verification Standard",
+          "source_url": "https://owasp.org/www-project-llm-verification-standard/LLMSVS-v1.0-en.html",
+          "source_type": "standard_or_risk_framework",
+          "publisher": "OWASP",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 84,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "OWASP LLMSVS supports treating LLM outputs as untrusted and validating downstream system use.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_mcp_security",
+          "source_title": "Security Best Practices - Model Context Protocol",
+          "source_url": "https://modelcontextprotocol.io/specification/2025-06-18/basic/security_best_practices",
+          "source_type": "official_doc",
+          "publisher": "Model Context Protocol",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 86,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "MCP security best practices support least privilege, token scope control, and authorization boundaries for tool and resource access.",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "high",
+        "score": 85,
+        "score_version": "1.0.0",
+        "primary_source_count": 2,
+        "supporting_source_count": 1,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "来源支持通用 AI/ML/RAG/MCP/治理工程原则；正式知识转换时需补 CEK-TA 具体上下游引用和冲突链接。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "checked_against": [
+          "docs/contracts/ai_engineering_gating_scoring_contract.md",
+          "docs/contracts/ai_engineering_knowledge_item_policy.md",
+          "docs/tasks/phase36_ai_engineering_gating_scoring_knowledge.md"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与当前 CEK-TA formal knowledge 的直接冲突；候选不会进入默认指导。",
+        "approval_allowed": true
+      },
+      "review": {
+        "confidence": "medium",
+        "freshness": "time_sensitive",
+        "reviewer": "codex",
+        "reviewed_at": null,
+        "open_questions": [
+          "审计时确认该候选是否应与相邻 AI Engineering 规则合并、拆分，或改路由到 Trading Engineering。"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-09",
+            "actor": "codex",
+            "action": "created",
+            "reason": "Phase 36 bulk AI Engineering candidate expansion."
+          }
+        ]
+      },
+      "copyright": {
+        "stores_full_text": false,
+        "stores_long_quote": false,
+        "summary_only": true,
+        "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+        "reuse_risk": "low"
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_ai_engineering.redteam.hard_gate_override_attempt_test.v1",
+        "target_schema": "cek_ta_knowledge_item",
+        "target_review_status": "draft",
+        "skill_candidate": false,
+        "eval_case_candidate": true
+      },
+      "workflow": {
+        "stage": "candidate_ready",
+        "queue_group": "pending",
+        "formal_knowledge_id": null,
+        "formal_review_status": null,
+        "ai_audit_result_id": null,
+        "hidden_from_default_queue": false,
+        "next_action": "export_for_ai_or_human_audit"
+      }
+    },
+    {
+      "schema_version": "1.0.0",
+      "candidate_id": "cand_20260609_ai_engineering_research_feedback_llm_suggestion_is_hypothesis_only_v1_001",
+      "research_task_id": "RIT-P36-D-B14",
+      "status": {
+        "review_status": "proposed",
+        "ingestion_decision": "convert_to_knowledge_item",
+        "decision_reason": "Phase 36 P1 sourced candidate; not reviewed, not approved, not default guidance.",
+        "created_at": "2026-06-09",
+        "updated_at": "2026-06-09"
+      },
+      "classification": {
+        "tree_node_id": "kt.ai_feedback_governance",
+        "canonical_node_id": "kt.ai_feedback_governance",
+        "tree_path": "CEK-TA / AI Engineering",
+        "related_nodes": [],
+        "partition_id": "KB_AI_ENGINEERING",
+        "domain": "ai_engineering",
+        "subdomain": "feedback_governance",
+        "rule_type": "checklist",
+        "used_for": [
+          "llm_training",
+          "trading_gating_scoring",
+          "rag_engineering",
+          "mcp",
+          "vue_audit_ui"
+        ]
+      },
+      "claim": {
+        "claim_id": "claim_001",
+        "statement": "LLM 的策略或参数建议只能作为研究假设，必须经过回测、样本外、模拟盘和人工审查。",
+        "normalized_claim": "research_feedback.llm_suggestion_is_hypothesis_only.v1",
+        "evidence_summary": "OpenAI evals documentation supports programmatic evaluation setup and workflow-specific quality checks before relying on model behavior.；scikit-learn cross-validation guidance supports held-out evaluation, splitting discipline, and avoiding evaluation on training data.",
+        "interpretation_notes": "本候选仅沉淀 AI Engineering 中训练、评估、RAG/MCP、安全、部署或治理规则；不定义 K 线信号、具体交易策略、订单执行规则或账户参数。",
+        "claim_strength": "medium",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general",
+        "asset": "general",
+        "timeframe": "general",
+        "data_granularity": "general",
+        "project_type": "trading_llm_assistant",
+        "applies_when": [
+          "外接项目正在构建或审计交易 LLM gating/scoring、训练数据、评估、RAG/MCP、部署或治理链路。",
+          "该规则用于阻断数据泄漏、权限越界、无来源默认指导、训练/评估污染或上线前治理缺口。"
+        ],
+        "not_applicable_when": [
+          "用户需要具体买卖点、仓位、止损止盈、策略参数或实盘订单执行。",
+          "知识点主要描述 K 线结构、市场微观结构、回测模型、fill model 或交易风控本体，应路由到 Trading Engineering。"
+        ],
+        "assumptions": [
+          "外接项目提供项目事实、私有交易数据和策略上下文；CEK-TA 只沉淀可复用专业规则。",
+          "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+        ],
+        "limitations": [
+          "本条仍是 candidate，需要外部 AI/人工审计确认来源充分性、适用边界和是否需要拆分。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_id": "src_openai_evals",
+          "source_title": "Working with evals | OpenAI API",
+          "source_url": "https://platform.openai.com/docs/guides/evals?api-mode=chat",
+          "source_type": "official_doc",
+          "publisher": "OpenAI",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 86,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "OpenAI evals documentation supports programmatic evaluation setup and workflow-specific quality checks before relying on model behavior.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_sklearn_cv",
+          "source_title": "Cross-validation: evaluating estimator performance | scikit-learn",
+          "source_url": "https://scikit-learn.org/stable/modules/cross_validation.html",
+          "source_type": "official_doc",
+          "publisher": "scikit-learn",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 84,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "scikit-learn cross-validation guidance supports held-out evaluation, splitting discipline, and avoiding evaluation on training data.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_finra_algo",
+          "source_title": "Algorithmic Trading | FINRA",
+          "source_url": "https://www.finra.org/rules-guidance/key-topics/algorithmic-trading",
+          "source_type": "standard_or_risk_framework",
+          "publisher": "FINRA",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 82,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "FINRA algorithmic trading guidance supports supervision, controls, risk assessment, testing, and governance for automated trading systems.",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "high",
+        "score": 84,
+        "score_version": "1.0.0",
+        "primary_source_count": 2,
+        "supporting_source_count": 1,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "来源支持通用 AI/ML/RAG/MCP/治理工程原则；正式知识转换时需补 CEK-TA 具体上下游引用和冲突链接。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "checked_against": [
+          "docs/contracts/ai_engineering_gating_scoring_contract.md",
+          "docs/contracts/ai_engineering_knowledge_item_policy.md",
+          "docs/tasks/phase36_ai_engineering_gating_scoring_knowledge.md"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与当前 CEK-TA formal knowledge 的直接冲突；候选不会进入默认指导。",
+        "approval_allowed": true
+      },
+      "review": {
+        "confidence": "medium",
+        "freshness": "time_sensitive",
+        "reviewer": "codex",
+        "reviewed_at": null,
+        "open_questions": [
+          "审计时确认该候选是否应与相邻 AI Engineering 规则合并、拆分，或改路由到 Trading Engineering。"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-09",
+            "actor": "codex",
+            "action": "created",
+            "reason": "Phase 36 bulk AI Engineering candidate expansion."
+          }
+        ]
+      },
+      "copyright": {
+        "stores_full_text": false,
+        "stores_long_quote": false,
+        "summary_only": true,
+        "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+        "reuse_risk": "low"
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_ai_engineering.research_feedback.llm_suggestion_is_hypothesis_only.v1",
+        "target_schema": "cek_ta_knowledge_item",
+        "target_review_status": "draft",
+        "skill_candidate": false,
+        "eval_case_candidate": false
+      },
+      "workflow": {
+        "stage": "candidate_ready",
+        "queue_group": "pending",
+        "formal_knowledge_id": null,
+        "formal_review_status": null,
+        "ai_audit_result_id": null,
+        "hidden_from_default_queue": false,
+        "next_action": "export_for_ai_or_human_audit"
+      }
+    },
+    {
+      "schema_version": "1.0.0",
+      "candidate_id": "cand_20260609_ai_engineering_research_feedback_no_auto_strategy_parameter_update_v1_001",
+      "research_task_id": "RIT-P36-D-B15",
+      "status": {
+        "review_status": "proposed",
+        "ingestion_decision": "convert_to_knowledge_item",
+        "decision_reason": "Phase 36 P1 sourced candidate; not reviewed, not approved, not default guidance.",
+        "created_at": "2026-06-09",
+        "updated_at": "2026-06-09"
+      },
+      "classification": {
+        "tree_node_id": "kt.ai_feedback_governance",
+        "canonical_node_id": "kt.ai_feedback_governance",
+        "tree_path": "CEK-TA / AI Engineering",
+        "related_nodes": [],
+        "partition_id": "KB_AI_ENGINEERING",
+        "domain": "ai_engineering",
+        "subdomain": "feedback_governance",
+        "rule_type": "checklist",
+        "used_for": [
+          "llm_training",
+          "trading_gating_scoring",
+          "rag_engineering",
+          "mcp",
+          "vue_audit_ui"
+        ]
+      },
+      "claim": {
+        "claim_id": "claim_001",
+        "statement": "LLM 的策略或参数建议只能作为研究假设，必须经过回测、样本外、模拟盘和人工审查。",
+        "normalized_claim": "research_feedback.no_auto_strategy_parameter_update.v1",
+        "evidence_summary": "OpenAI evals documentation supports programmatic evaluation setup and workflow-specific quality checks before relying on model behavior.；scikit-learn cross-validation guidance supports held-out evaluation, splitting discipline, and avoiding evaluation on training data.",
+        "interpretation_notes": "本候选仅沉淀 AI Engineering 中训练、评估、RAG/MCP、安全、部署或治理规则；不定义 K 线信号、具体交易策略、订单执行规则或账户参数。",
+        "claim_strength": "medium",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general",
+        "asset": "general",
+        "timeframe": "general",
+        "data_granularity": "general",
+        "project_type": "trading_llm_assistant",
+        "applies_when": [
+          "外接项目正在构建或审计交易 LLM gating/scoring、训练数据、评估、RAG/MCP、部署或治理链路。",
+          "该规则用于阻断数据泄漏、权限越界、无来源默认指导、训练/评估污染或上线前治理缺口。"
+        ],
+        "not_applicable_when": [
+          "用户需要具体买卖点、仓位、止损止盈、策略参数或实盘订单执行。",
+          "知识点主要描述 K 线结构、市场微观结构、回测模型、fill model 或交易风控本体，应路由到 Trading Engineering。"
+        ],
+        "assumptions": [
+          "外接项目提供项目事实、私有交易数据和策略上下文；CEK-TA 只沉淀可复用专业规则。",
+          "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+        ],
+        "limitations": [
+          "本条仍是 candidate，需要外部 AI/人工审计确认来源充分性、适用边界和是否需要拆分。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_id": "src_openai_evals",
+          "source_title": "Working with evals | OpenAI API",
+          "source_url": "https://platform.openai.com/docs/guides/evals?api-mode=chat",
+          "source_type": "official_doc",
+          "publisher": "OpenAI",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 86,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "OpenAI evals documentation supports programmatic evaluation setup and workflow-specific quality checks before relying on model behavior.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_sklearn_cv",
+          "source_title": "Cross-validation: evaluating estimator performance | scikit-learn",
+          "source_url": "https://scikit-learn.org/stable/modules/cross_validation.html",
+          "source_type": "official_doc",
+          "publisher": "scikit-learn",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 84,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "scikit-learn cross-validation guidance supports held-out evaluation, splitting discipline, and avoiding evaluation on training data.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_finra_algo",
+          "source_title": "Algorithmic Trading | FINRA",
+          "source_url": "https://www.finra.org/rules-guidance/key-topics/algorithmic-trading",
+          "source_type": "standard_or_risk_framework",
+          "publisher": "FINRA",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 82,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "FINRA algorithmic trading guidance supports supervision, controls, risk assessment, testing, and governance for automated trading systems.",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "high",
+        "score": 84,
+        "score_version": "1.0.0",
+        "primary_source_count": 2,
+        "supporting_source_count": 1,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "来源支持通用 AI/ML/RAG/MCP/治理工程原则；正式知识转换时需补 CEK-TA 具体上下游引用和冲突链接。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "checked_against": [
+          "docs/contracts/ai_engineering_gating_scoring_contract.md",
+          "docs/contracts/ai_engineering_knowledge_item_policy.md",
+          "docs/tasks/phase36_ai_engineering_gating_scoring_knowledge.md"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与当前 CEK-TA formal knowledge 的直接冲突；候选不会进入默认指导。",
+        "approval_allowed": true
+      },
+      "review": {
+        "confidence": "medium",
+        "freshness": "time_sensitive",
+        "reviewer": "codex",
+        "reviewed_at": null,
+        "open_questions": [
+          "审计时确认该候选是否应与相邻 AI Engineering 规则合并、拆分，或改路由到 Trading Engineering。"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-09",
+            "actor": "codex",
+            "action": "created",
+            "reason": "Phase 36 bulk AI Engineering candidate expansion."
+          }
+        ]
+      },
+      "copyright": {
+        "stores_full_text": false,
+        "stores_long_quote": false,
+        "summary_only": true,
+        "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+        "reuse_risk": "low"
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_ai_engineering.research_feedback.no_auto_strategy_parameter_update.v1",
+        "target_schema": "cek_ta_knowledge_item",
+        "target_review_status": "draft",
+        "skill_candidate": false,
+        "eval_case_candidate": false
+      },
+      "workflow": {
+        "stage": "candidate_ready",
+        "queue_group": "pending",
+        "formal_knowledge_id": null,
+        "formal_review_status": null,
+        "ai_audit_result_id": null,
+        "hidden_from_default_queue": false,
+        "next_action": "export_for_ai_or_human_audit"
+      }
+    },
+    {
+      "schema_version": "1.0.0",
+      "candidate_id": "cand_20260609_ai_engineering_risk_ledger_false_allow_cost_record_required_v1_001",
+      "research_task_id": "RIT-P36-D-B20",
+      "status": {
+        "review_status": "proposed",
+        "ingestion_decision": "convert_to_knowledge_item",
+        "decision_reason": "Phase 36 P1 sourced candidate; not reviewed, not approved, not default guidance.",
+        "created_at": "2026-06-09",
+        "updated_at": "2026-06-09"
+      },
+      "classification": {
+        "tree_node_id": "kt.trading_ai_safety.false_allow_block_policy",
+        "canonical_node_id": "kt.trading_ai_safety.false_allow_block_policy",
+        "tree_path": "CEK-TA / AI Engineering",
+        "related_nodes": [],
+        "partition_id": "KB_AI_ENGINEERING",
+        "domain": "ai_engineering",
+        "subdomain": "trading_ai_safety",
+        "rule_type": "checklist",
+        "used_for": [
+          "llm_training",
+          "trading_gating_scoring",
+          "rag_engineering",
+          "mcp",
+          "vue_audit_ui"
+        ]
+      },
+      "claim": {
+        "claim_id": "claim_001",
+        "statement": "false allow、false block、机会成本和后续结果必须入风险账本，用于门控策略评估。",
+        "normalized_claim": "risk_ledger.false_allow_cost_record_required.v1",
+        "evidence_summary": "FINRA algorithmic trading guidance supports supervision, controls, risk assessment, testing, and governance for automated trading systems.；Model risk guidance supports independent validation, governance, change control, and risk-based model oversight.",
+        "interpretation_notes": "本候选仅沉淀 AI Engineering 中训练、评估、RAG/MCP、安全、部署或治理规则；不定义 K 线信号、具体交易策略、订单执行规则或账户参数。",
+        "claim_strength": "medium",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general",
+        "asset": "general",
+        "timeframe": "general",
+        "data_granularity": "general",
+        "project_type": "trading_llm_assistant",
+        "applies_when": [
+          "外接项目正在构建或审计交易 LLM gating/scoring、训练数据、评估、RAG/MCP、部署或治理链路。",
+          "该规则用于阻断数据泄漏、权限越界、无来源默认指导、训练/评估污染或上线前治理缺口。"
+        ],
+        "not_applicable_when": [
+          "用户需要具体买卖点、仓位、止损止盈、策略参数或实盘订单执行。",
+          "知识点主要描述 K 线结构、市场微观结构、回测模型、fill model 或交易风控本体，应路由到 Trading Engineering。"
+        ],
+        "assumptions": [
+          "外接项目提供项目事实、私有交易数据和策略上下文；CEK-TA 只沉淀可复用专业规则。",
+          "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+        ],
+        "limitations": [
+          "本条仍是 candidate，需要外部 AI/人工审计确认来源充分性、适用边界和是否需要拆分。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_id": "src_finra_algo",
+          "source_title": "Algorithmic Trading | FINRA",
+          "source_url": "https://www.finra.org/rules-guidance/key-topics/algorithmic-trading",
+          "source_type": "standard_or_risk_framework",
+          "publisher": "FINRA",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 82,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "FINRA algorithmic trading guidance supports supervision, controls, risk assessment, testing, and governance for automated trading systems.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_fed_model_risk",
+          "source_title": "Supervisory Guidance on Model Risk Management",
+          "source_url": "https://www.federalreserve.gov/frrs/guidance/supervisory-guidance-on-model-risk-management.htm",
+          "source_type": "standard_or_risk_framework",
+          "publisher": "Federal Reserve",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 84,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "Model risk guidance supports independent validation, governance, change control, and risk-based model oversight.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_nist",
+          "source_title": "AI Risk Management Framework | NIST",
+          "source_url": "https://www.nist.gov/itl/ai-risk-management-framework",
+          "source_type": "standard_or_risk_framework",
+          "publisher": "NIST",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 88,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "NIST AI RMF supports governance, mapping, measurement, and management of AI risks across design, deployment, and monitoring.",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "high",
+        "score": 85,
+        "score_version": "1.0.0",
+        "primary_source_count": 2,
+        "supporting_source_count": 1,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "来源支持通用 AI/ML/RAG/MCP/治理工程原则；正式知识转换时需补 CEK-TA 具体上下游引用和冲突链接。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "checked_against": [
+          "docs/contracts/ai_engineering_gating_scoring_contract.md",
+          "docs/contracts/ai_engineering_knowledge_item_policy.md",
+          "docs/tasks/phase36_ai_engineering_gating_scoring_knowledge.md"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与当前 CEK-TA formal knowledge 的直接冲突；候选不会进入默认指导。",
+        "approval_allowed": true
+      },
+      "review": {
+        "confidence": "medium",
+        "freshness": "time_sensitive",
+        "reviewer": "codex",
+        "reviewed_at": null,
+        "open_questions": [
+          "审计时确认该候选是否应与相邻 AI Engineering 规则合并、拆分，或改路由到 Trading Engineering。"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-09",
+            "actor": "codex",
+            "action": "created",
+            "reason": "Phase 36 bulk AI Engineering candidate expansion."
+          }
+        ]
+      },
+      "copyright": {
+        "stores_full_text": false,
+        "stores_long_quote": false,
+        "summary_only": true,
+        "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+        "reuse_risk": "low"
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_ai_engineering.risk_ledger.false_allow_cost_record_required.v1",
+        "target_schema": "cek_ta_knowledge_item",
+        "target_review_status": "draft",
+        "skill_candidate": false,
+        "eval_case_candidate": false
+      },
+      "workflow": {
+        "stage": "candidate_ready",
+        "queue_group": "pending",
+        "formal_knowledge_id": null,
+        "formal_review_status": null,
+        "ai_audit_result_id": null,
+        "hidden_from_default_queue": false,
+        "next_action": "export_for_ai_or_human_audit"
+      }
+    },
+    {
+      "schema_version": "1.0.0",
+      "candidate_id": "cand_20260609_ai_engineering_runtime_final_gate_deterministic_engine_required_v1_001",
+      "research_task_id": "RIT-P36-D-B17",
+      "status": {
+        "review_status": "proposed",
+        "ingestion_decision": "convert_to_knowledge_item",
+        "decision_reason": "Phase 36 P0-Core sourced candidate; not reviewed, not approved, not default guidance.",
+        "created_at": "2026-06-09",
+        "updated_at": "2026-06-09"
+      },
+      "classification": {
+        "tree_node_id": "kt.trading_ai_safety",
+        "canonical_node_id": "kt.trading_ai_safety",
+        "tree_path": "CEK-TA / AI Engineering",
+        "related_nodes": [],
+        "partition_id": "KB_AI_ENGINEERING",
+        "domain": "ai_engineering",
+        "subdomain": "trading_ai_safety",
+        "rule_type": "decision_rule",
+        "used_for": [
+          "llm_training",
+          "trading_gating_scoring",
+          "rag_engineering",
+          "mcp",
+          "vue_audit_ui"
+        ]
+      },
+      "claim": {
+        "claim_id": "claim_001",
+        "statement": "LLM gate 输出只能是建议，最终允许、阻断或升级必须由确定性风控和人工治理链路决定。",
+        "normalized_claim": "runtime.final_gate_deterministic_engine_required.v1",
+        "evidence_summary": "FINRA algorithmic trading guidance supports supervision, controls, risk assessment, testing, and governance for automated trading systems.；OWASP documents prompt injection risks and mitigations for user input, retrieved content, tool output, and agent workflows.",
+        "interpretation_notes": "本候选仅沉淀 AI Engineering 中训练、评估、RAG/MCP、安全、部署或治理规则；不定义 K 线信号、具体交易策略、订单执行规则或账户参数。",
+        "claim_strength": "high",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general",
+        "asset": "general",
+        "timeframe": "general",
+        "data_granularity": "general",
+        "project_type": "trading_llm_assistant",
+        "applies_when": [
+          "外接项目正在构建或审计交易 LLM gating/scoring、训练数据、评估、RAG/MCP、部署或治理链路。",
+          "该规则用于阻断数据泄漏、权限越界、无来源默认指导、训练/评估污染或上线前治理缺口。"
+        ],
+        "not_applicable_when": [
+          "用户需要具体买卖点、仓位、止损止盈、策略参数或实盘订单执行。",
+          "知识点主要描述 K 线结构、市场微观结构、回测模型、fill model 或交易风控本体，应路由到 Trading Engineering。"
+        ],
+        "assumptions": [
+          "外接项目提供项目事实、私有交易数据和策略上下文；CEK-TA 只沉淀可复用专业规则。",
+          "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+        ],
+        "limitations": [
+          "本条仍是 candidate，需要外部 AI/人工审计确认来源充分性、适用边界和是否需要拆分。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_id": "src_finra_algo",
+          "source_title": "Algorithmic Trading | FINRA",
+          "source_url": "https://www.finra.org/rules-guidance/key-topics/algorithmic-trading",
+          "source_type": "standard_or_risk_framework",
+          "publisher": "FINRA",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 82,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "FINRA algorithmic trading guidance supports supervision, controls, risk assessment, testing, and governance for automated trading systems.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_owasp_prompt",
+          "source_title": "LLM Prompt Injection Prevention Cheat Sheet",
+          "source_url": "https://cheatsheetseries.owasp.org/cheatsheets/LLM_Prompt_Injection_Prevention_Cheat_Sheet.html",
+          "source_type": "standard_or_risk_framework",
+          "publisher": "OWASP",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 86,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "OWASP documents prompt injection risks and mitigations for user input, retrieved content, tool output, and agent workflows.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_nist",
+          "source_title": "AI Risk Management Framework | NIST",
+          "source_url": "https://www.nist.gov/itl/ai-risk-management-framework",
+          "source_type": "standard_or_risk_framework",
+          "publisher": "NIST",
+          "published_at": null,
+          "accessed_at": "2026-06-09",
+          "version": null,
+          "reliability": "high",
+          "score": 88,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [],
+          "evidence_summary": "NIST AI RMF supports governance, mapping, measurement, and management of AI risks across design, deployment, and monitoring.",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "high",
+        "score": 85,
+        "score_version": "1.0.0",
+        "primary_source_count": 2,
+        "supporting_source_count": 1,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "来源支持通用 AI/ML/RAG/MCP/治理工程原则；正式知识转换时需补 CEK-TA 具体上下游引用和冲突链接。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "checked_against": [
+          "docs/contracts/ai_engineering_gating_scoring_contract.md",
+          "docs/contracts/ai_engineering_knowledge_item_policy.md",
+          "docs/tasks/phase36_ai_engineering_gating_scoring_knowledge.md"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与当前 CEK-TA formal knowledge 的直接冲突；候选不会进入默认指导。",
+        "approval_allowed": true
+      },
+      "review": {
+        "confidence": "medium",
+        "freshness": "time_sensitive",
+        "reviewer": "codex",
+        "reviewed_at": null,
+        "open_questions": [
+          "审计时确认该候选是否应与相邻 AI Engineering 规则合并、拆分，或改路由到 Trading Engineering。"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-09",
+            "actor": "codex",
+            "action": "created",
+            "reason": "Phase 36 bulk AI Engineering candidate expansion."
+          }
+        ]
+      },
+      "copyright": {
+        "stores_full_text": false,
+        "stores_long_quote": false,
+        "summary_only": true,
+        "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+        "reuse_risk": "low"
+      },
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_ai_engineering.runtime.final_gate_deterministic_engine_required.v1",
+        "target_schema": "cek_ta_knowledge_item",
+        "target_review_status": "draft",
+        "skill_candidate": false,
+        "eval_case_candidate": false
+      },
+      "workflow": {
+        "stage": "candidate_ready",
+        "queue_group": "pending",
+        "formal_knowledge_id": null,
+        "formal_review_status": null,
+        "ai_audit_result_id": null,
+        "hidden_from_default_queue": false,
+        "next_action": "export_for_ai_or_human_audit"
+      }
+    }
+  ]
+}

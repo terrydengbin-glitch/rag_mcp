@@ -1,0 +1,309 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_phase60_live_execution.adapter_certification.fix_broker_certification_required.v1",
+  "title": "FIX / broker certification sandbox 必须作为 adapter 上线前的契约测试证据",
+  "metadata": {
+    "partition_id": "KB_06_LIVE_EXECUTION",
+    "domain": "live_execution",
+    "subdomain": "adapter_certification",
+    "rule_type": "adapter_certification_boundary_rule",
+    "claim_type": "environment_evidence_requirement",
+    "content_type": "json",
+    "project_binding": "none",
+    "tree_node_id": "kt.live_execution",
+    "tree_path": "CEK-TA / Trading Engineering / Live Execution",
+    "canonical_node_id": "kt.live_execution",
+    "canonical_tree_path": "CEK-TA / Trading Engineering / Live Execution",
+    "related_nodes": [
+      "kt.trading_engineering",
+      "kt.replay_simulation",
+      "kt.live_execution",
+      "kt.risk_management",
+      "kt.data_engineering",
+      "kt.market_microstructure"
+    ],
+    "risk_level": "medium_high",
+    "used_for": [
+      "adapter_review",
+      "external_project_rag_retrieval",
+      "live_execution_readiness",
+      "mcp",
+      "sandbox_certification",
+      "searchlab",
+      "vue_audit_ui"
+    ],
+    "classification_notes": "Phase 60 P1 增强环境治理候选；只用于 sandbox/replay/paper/canary 的测试、监控、晋级和 gap 审计，不接管策略、实盘执行或风控阈值。",
+    "source_candidate_id": "cand_20260617_phase60_p1_fix_broker_certification_required_001",
+    "research_task_id": "P60-P1-01",
+    "phase": "Phase 60",
+    "formalization_task_id": "CEK-TA-586",
+    "review_mode": "reviewed_caveat_only"
+  },
+  "applicability": {
+    "market": "general_with_platform_or_venue_specific_mapping",
+    "asset": "general",
+    "timeframe": "sandbox_replay_paper_or_live_canary_environment",
+    "data_granularity": "api_message_order_event_fill_event_health_metric_or_gap_report",
+    "project_type": "trading_ai_support_layer",
+    "applies_when": [
+      "外接项目设计 sandbox、UAT、testnet、replay、paper trading 或 live canary 环境治理",
+      "需要审计 adapter certification、scenario library、paper account state、runtime health、canary rollback 或 environment drift",
+      "需要把 Phase 60 P0 manifest/gap report 扩展为更完整的测试治理证据"
+    ],
+    "not_applicable_when": [
+      "需要生成买卖点、仓位、杠杆、止损止盈、风险阈值或实盘执行建议",
+      "需要直接证明策略有效、live-ready 或收益优势",
+      "没有平台、broker、exchange、API 版本、环境类型或数据来源证据"
+    ]
+  },
+  "content": {
+    "statement": "外接项目接入 FIX、broker API 或 exchange adapter 前，必须把认证 sandbox / UAT / simulator 结果记录为 adapter 契约测试证据；该证据只能说明消息、字段、状态转换和错误场景被覆盖，不能证明策略收益、真实流动性或实盘许可。",
+    "rationale": "本候选是 Phase 60 P1 增强治理知识，只允许外部审计后进入 accepted_for_draft；不得直接 reviewed、approved、default guidance 或 hard gate。",
+    "procedure": [
+      "确认当前问题属于 sandbox、testnet、historical replay、realtime simulation、paper trading、live canary 或 live 环境治理。",
+      "要求外接项目提供 environment_manifest、gap_report、promotion_decision 或 order lifecycle mapping 的可审计证据。",
+      "返回来源、适用范围、不适用场景、owner 边界和 caveat，不返回交易执行许可。",
+      "遇到 live permission、risk threshold、hard gate 或实盘动作请求时，路由给外接项目 Live Execution / Risk Management owner。"
+    ],
+    "anti_patterns": [
+      "把 static API sandbox mocked response 当作真实市场行为。",
+      "把 testnet 订单、余额或成交写成 production fact。",
+      "把 paper trading 盈亏写成 live-ready 或策略有效。",
+      "把 historical replay fill 写成真实队列位置、真实 market impact 或 live 可成交性。",
+      "把 environment_manifest、promotion_decision 或 gap_report 写成实盘许可、自动晋级、自动拒单、自动停机或 hard gate。"
+    ],
+    "validation": [
+      "检查 source_evidence 是否至少包含官方/框架/标准/内部契约来源。",
+      "检查 conflict_audit.approval_allowed=false。",
+      "检查 machine_gate.default_guidance=caveat_only 且 approved/default/hard gate 均为 false。",
+      "检查内容没有买卖点、仓位、杠杆、止损止盈、风险阈值或 live permission。"
+    ],
+    "risk_notes": [
+      "P1 增强知识不能替代 P0 的 EnvironmentManifest、PromotionDecision 和 GapReport。",
+      "候选不能自动创建 reviewed、approved、default guidance 或 hard gate。",
+      "本候选不提供投资建议、订单建议、风险阈值或实盘许可。",
+      "不得证明真实流动性、策略收益或 live permission。",
+      "reviewed/caveat_only 只允许作为审计上下文、RAG 检索和项目方案 review；不等于 approved。",
+      "平台、broker、exchange 和 framework 来源必须保留具体适用范围，不得泛化为所有市场。"
+    ],
+    "citation_notes": "TT documents FIX certification as a process to ensure a FIX application works as expected in the TT production environment.；FIXSIM describes a web-based FIX simulator for manual workflows and automated deterministic regression tests.；Paxos documents FIX certification scenarios such as valid and invalid markets, order types and execution reports.",
+    "required_followups": [
+      "保留 TT / Paxos / FIXSIM 的平台或工具来源边界。",
+      "与 Phase 45 order semantics 做 adapter / order lifecycle alias。",
+      "正式写入时保留 certification_result_not_live_permission=true。"
+    ],
+    "audit_patch_notes": {
+      "source_patch_notes": [
+        "TT 是 TT-specific certification process。",
+        "FIXSIM 是 vendor tool source。",
+        "Paxos 是 crypto brokerage FIX certification example。"
+      ],
+      "content_patch_notes": [
+        "certification 只能作为 adapter 契约测试证据。"
+      ],
+      "boundary_patch_notes": [
+        "不得证明真实流动性、策略收益或 live permission。"
+      ],
+      "conflict_patch_notes": [
+        "与 Phase 45 order lifecycle / adapter mapping 有潜在重叠，建议 alias。"
+      ]
+    }
+  },
+  "assumptions": [
+    "候选用于 CEK-TA 通用支持层知识库，不包含外接项目私有策略参数。",
+    "每条候选都需要外部 AI/人工严格审计后才能进入 accepted_for_draft。",
+    "平台和工具来源只能作为 implementation pattern 或 supporting source。"
+  ],
+  "source_evidence": [
+    {
+      "source_id": "src_tt_fix_cert",
+      "source_title": "TT FIX Certification",
+      "source_url": "https://library.tradingtechnologies.com/tt-fix/tt-fix-general/getting-started-tt-fix-general/tt-fix-certification/",
+      "source_type": "official_doc",
+      "publisher": "Trading Technologies",
+      "published_at": null,
+      "accessed_at": "2026-06-17",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "TT documents FIX certification as a process to ensure a FIX application works as expected in the TT production environment.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_fixsim",
+      "source_title": "FIXSIM",
+      "source_url": "https://www.fixsim.com/",
+      "source_type": "tool_doc",
+      "publisher": "FIXSIM",
+      "published_at": null,
+      "accessed_at": "2026-06-17",
+      "version": null,
+      "reliability": "medium_high",
+      "relevance": "medium_high",
+      "evidence_summary": "FIXSIM describes a web-based FIX simulator for manual workflows and automated deterministic regression tests.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_paxos_fix_cert",
+      "source_title": "FIX Certification",
+      "source_url": "https://docs.paxos.com/guides/crypto-brokerage/fix/certify",
+      "source_type": "official_doc",
+      "publisher": "Paxos",
+      "published_at": null,
+      "accessed_at": "2026-06-17",
+      "version": null,
+      "reliability": "high",
+      "relevance": "medium_high",
+      "evidence_summary": "Paxos documents FIX certification scenarios such as valid and invalid markets, order types and execution reports.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_phase60_env_contract",
+      "source_title": "Phase 60 Sandbox / Replay / Paper Environment Contract",
+      "source_url": "docs/contracts/phase60_sandbox_replay_paper_environment_contract.md",
+      "source_type": "internal_contract",
+      "publisher": "CEK-TA",
+      "published_at": null,
+      "accessed_at": "2026-06-17",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "CEK-TA internal contract defines EnvironmentManifest fields, owner boundaries and machine gate restrictions.",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "medium_high",
+    "score": 84,
+    "source_count": 4,
+    "primary_source_count": 3,
+    "limitations": [
+      "候选来源需要外部严格审计；vendor/tool 文档不得过度泛化。"
+    ],
+    "source_quality_notes": [
+      "Reviewed/caveat_only sources support environment governance and audit boundaries, not strategy profitability or live permission.",
+      "Platform, broker, exchange and framework sources are implementation-pattern evidence and must retain scope caveats."
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "known_conflicts": [],
+    "potential_conflicts": [
+      "可能与 Phase 60 P0、Phase 58 环境等效链条、Phase 37 Replay/Live/Risk 知识重叠；正式转换前必须做重复和 owner 边界检查。"
+    ],
+    "resolution_summary": "Phase 60 P1 candidate audit accepted this item for draft only; reviewed/approved/default guidance/hard gate remain forbidden.",
+    "approval_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "approved_allowed": false
+  },
+  "review": {
+    "review_status": "reviewed",
+    "confidence": "medium_high",
+    "freshness": "mixed",
+    "reviewer": "external_ai_strict_audit_and_codex_backwrite",
+    "reviewed_at": "2026-06-18",
+    "source_candidate_id": "cand_20260617_phase60_p1_fix_broker_certification_required_001",
+    "ai_audit_result_id": "audit_result_phase60_p1_reviewed_preparation_20260618_strict_v1",
+    "approval_status": "not_requested",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase60_p1_reviewed_preparation_20260618_strict_v1",
+      "package_id": "phase60_p1_reviewed_preparation_audit_package_20260617",
+      "candidate_id": "cand_20260617_phase60_p1_fix_broker_certification_required_001",
+      "research_task_id": "P60-P1-01",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "medium_high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "trade_execution_advice_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "live_permission_allowed": false,
+      "required_followups": [
+        "保留 TT / Paxos / FIXSIM 的平台或工具来源边界。",
+        "与 Phase 45 order semantics 做 adapter / order lifecycle alias。",
+        "正式写入时保留 certification_result_not_live_permission=true。"
+      ],
+      "patch_notes": {
+        "source": [
+          "TT 是 TT-specific certification process。",
+          "FIXSIM 是 vendor tool source。",
+          "Paxos 是 crypto brokerage FIX certification example。"
+        ],
+        "content": [
+          "certification 只能作为 adapter 契约测试证据。"
+        ],
+        "boundary": [
+          "不得证明真实流动性、策略收益或 live permission。"
+        ],
+        "conflict": [
+          "与 Phase 45 order lifecycle / adapter mapping 有潜在重叠，建议 alias。"
+        ]
+      }
+    },
+    "audit_log": [
+      {
+        "at": "2026-06-18",
+        "actor": "external_ai_strict_audit",
+        "action": "phase60_reviewed_preparation_audit_passed",
+        "reason": "accepted_for_reviewed_caveat_only; approved/default/hard gate remain forbidden.",
+        "audit_result_id": "audit_result_phase60_p1_reviewed_preparation_20260618_strict_v1"
+      },
+      {
+        "at": "2026-06-18",
+        "actor": "codex",
+        "action": "formal_reviewed_caveat_only_created",
+        "reason": "CEK-TA-586 materialized formal reviewed/caveat_only knowledge."
+      }
+    ]
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于提醒外接项目记录环境治理证据和 gap report。",
+      "用于审计 sandbox/replay/paper/canary 是否保留 owner 和边界。",
+      "用于阻止 AI 把测试环境结果泛化为 live-ready。"
+    ],
+    "not_allowed": [
+      "不得生成买卖点、仓位、杠杆、止损止盈或风险阈值。",
+      "不得授权实盘、自动拒单、自动停机或 hard gate。",
+      "不得把 candidate 当作正式 reviewed 或 approved 知识。"
+    ]
+  },
+  "machine_gate": {
+    "default_guidance": "caveat_only",
+    "reason": "Formal reviewed/caveat_only only; not approved, not default guidance, not hard gate, not live permission.",
+    "requires_human_escalation": true,
+    "hidden_from_default_queue": true,
+    "visible_in_default_guidance_queue": false,
+    "reviewed_allowed": true,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "trade_execution_advice_allowed": false,
+    "risk_threshold_advice_allowed": false,
+    "live_permission_allowed": false
+  },
+  "contract_refs": [],
+  "workflow": {
+    "source_candidate_id": "cand_20260617_phase60_p1_fix_broker_certification_required_001",
+    "source_candidate_path": "codex-expert-kit/rag/candidates/KB_06_LIVE_EXECUTION/cand_20260617_phase60_p1_fix_broker_certification_required_001.json",
+    "formalized_by_task_id": "CEK-TA-586",
+    "formalized_at": "2026-06-18",
+    "review_mode": "reviewed_caveat_only",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "live_permission_allowed": false
+  },
+  "contribution": {
+    "formalized_from_candidate": "cand_20260617_phase60_p1_fix_broker_certification_required_001",
+    "private_data_removed": true,
+    "contains_project_private_strategy": false,
+    "contains_secret": false,
+    "contains_account_facts": false
+  }
+}

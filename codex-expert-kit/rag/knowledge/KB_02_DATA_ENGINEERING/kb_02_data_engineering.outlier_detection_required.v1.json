@@ -1,0 +1,420 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_02_data_engineering.outlier_detection_required.v1",
+  "title": "行情、成交、bar、spread 或特征数据进入回测和训练前，必须定义异常检测、标记、隔离、解释、保留或修复策略；异常不等于错误，不能默认删除，也不能静默改变策略或模型评估结论。",
+  "metadata": {
+    "partition_id": "KB_02_DATA_ENGINEERING",
+    "domain": "trading_engineering",
+    "subdomain": "data_quality",
+    "rule_type": "data_quality_gate",
+    "claim_type": "data_quality_rule",
+    "content_type": "json",
+    "project_binding": "none",
+    "tree_node_id": "kt.trading_engineering.data_engineering",
+    "tree_path": "CEK-TA / Trading Engineering / Data Engineering",
+    "canonical_node_id": "kt.trading_engineering.data_engineering",
+    "canonical_tree_path": "CEK-TA / Trading Engineering / Data Engineering",
+    "risk_level": "medium",
+    "used_for": [
+      "trading_data_contract",
+      "backtest_data_audit",
+      "ai_training_dataset_boundary",
+      "external_project_rag_retrieval"
+    ],
+    "source_candidate_id": "cand_20260611_phase37_data_engineering_outlier_detection_required_001",
+    "research_task_id": "P37-B-D10",
+    "phase": "Phase 37",
+    "classification_notes": "Phase 37 Data Engineering formal reviewed/caveat_only；这是 Trading Engineering 数据规则本体，不是 AI Engineering 训练/RAG/MCP 本体规则，也不是 approved/default guidance。"
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "general",
+    "data_granularity": "event_or_bar",
+    "project_type": "trading_ai_support_layer",
+    "applies_when": [
+      "行情、成交、盘口、bar、spread 或特征数据存在极端值、缺口、trade correction、cancel/re-entry、flags 或 vendor 修正时",
+      "异常事件可能影响回测成交、指标计算、标签、训练样本或模型评估结论时"
+    ],
+    "not_applicable_when": [
+      "异常值仅用于原始审计日志保留且不进入计算",
+      "人工复盘故意查看异常事件而非训练或回测",
+      "需要具体交易策略参数、账户事实、交易所私有配置、密钥或实盘权限时，应由外接项目事实层处理。",
+      "AI Engineering 只能引用本规则，不得把本规则改写为模型训练、MCP 或 RAG 本体规则。",
+      "异常事件只作为只读原始审计日志保留，且不进入任何计算或训练时",
+      "外接项目已有更强的一手交易所 correction/bust/cancel 契约并以其为准时"
+    ]
+  },
+  "content": {
+    "statement": "行情、成交、bar、spread 或特征数据进入回测和训练前，必须定义异常检测、标记、隔离、解释、保留或修复策略；异常不等于错误，不能默认删除，也不能静默改变策略或模型评估结论。",
+    "rationale": "CEK-TA-390 已按 reviewed-preparation 审计意见补强来源和边界；本候选仍只等待外部二审，不得直接进入 formal reviewed、approved、default guidance 或 hard gate。",
+    "procedure": [
+      "确认当前问题属于 CEK-TA 回测、训练、评估或审计数据契约，而不是外部监管硬要求。",
+      "检查 anomaly/outlier 是否被标记、隔离、解释、保留或以版本化修复记录表达。",
+      "确认 raw event、correction record、repair action、affected dataset version 和数据质量报告可追踪。"
+    ],
+    "examples": [],
+    "anti_patterns": [
+      "把 anomaly/outlier 自动等同于错误数据并默认删除。",
+      "静默重写 raw event、训练样本或回测评估样本。",
+      "把 Databento、CME、Nasdaq 的供应商/venue/protocol 字段名泛化为所有数据源通用 schema。"
+    ],
+    "validation": [
+      "source_evidence 覆盖 market-data cleaning、event taxonomy、trade correction/cancel 和 trade reporting/timestamp 边界。",
+      "content.audit_patch_notes 已纳入外部审计要求的 source/content/boundary/conflict 补丁。",
+      "machine_gate.default_guidance 必须为 caveat_only，review.default_guidance_allowed 必须为 false。"
+    ],
+    "risk_notes": [
+      "本批来源包含数据供应商、数据库、数据质量框架、特征存储和交易所/指数/参考数据资料，仍需要外部 AI/人工严格审计。",
+      "供应商和框架文档只能支撑通用工程边界，不能替代具体外接项目的数据契约。",
+      "本候选不提供任何投资建议或实盘执行许可。",
+      "不得把该规则解释为必须清洗所有市场数据；异常可能是真实市场行为。",
+      "不得把该规则解释为允许 AI 自动修复历史行情或自动改变回测/训练结论。",
+      "所有具体阈值、交易所 correction/bust/cancel 处理、vendor lag、market calendar 和 halts 必须由外接项目事实层定义。",
+      "可见上下文内未发现与 KB_02_DATA_ENGINEERING 或 AI Engineering 边界的直接冲突。",
+      "候选 workflow.allowed_next_decisions 仍列 accepted_for_draft 而未列 accepted_for_reviewed_caveat_only；正式入库前需按本轮 reviewed/caveat_only gate 更新。",
+      "候选 workflow.hidden_from_default_queue=false 与 machine_gate.hidden_from_default_queue=true 存在机器消费歧义；应统一为隐藏默认指导队列。",
+      "本条为 formal reviewed/caveat_only，不是 approved；不得作为默认指导或 hard gate。",
+      "不得据此生成买卖点、仓位、杠杆、止损止盈或实盘执行建议。",
+      "AI Engineering 只能引用本 Trading Engineering 数据工程规则本体，不得复制改写为模型训练、RAG 或 MCP 本体规则。"
+    ],
+    "citation_notes": "Databento market-data cleaning 资料支持异常不应被默认静默清洗；Databento trades/MBO schema、CME trade correction 和 Nasdaq FIX trade reporting 资料共同补强 market-data flags、order-book events、trade correction/cancel/re-entry 和时间戳字段边界。",
+    "audit_patch_notes": {
+      "source": [
+        "将 Great Expectations 产品页降为 supporting source；source_quality.primary_source_count 不应把产品页或通用框架页计为强主来源。",
+        "CME iLink - Trade Correction 来源位于 CME Client Systems Wiki/Confluence 且带 EPICSANDBOX 路径，应标为 venue-specific supporting/primary-with-caveat；正式转换前最好补 CME 正式 iLink/MDP 生产文档或交易所 rulebook 链接。",
+        "Nasdaq FIX PDF 已核验到 error-correction trade condition 与 timestamp/change-log 证据；正式转换前应补充 section/page references，并说明它只适用于 Nasdaq FIX Trade Reporting 语境。",
+        "保留 Databento MBO flags/sequence/event taxonomy 作为 market-data flags 与 event modelling 证据，但不得把 Databento 字段名当作通用 schema。"
+      ],
+      "content": [
+        "把 statement 中的“必须”限定为 CEK-TA 回测/训练/审计数据契约要求，而不是外部监管硬要求。",
+        "明确 anomaly/outlier 处理结果只能是标记、隔离、解释、保留、修复记录或有版本的修正；不得静默删除或静默重写评估样本。",
+        "补充字段建议：anomaly_flag、anomaly_type、detection_rule_id、source_event_id、correction_id、correction_source、repair_action、repair_timestamp、raw_event_ref、affected_dataset_version。"
+      ],
+      "boundary": [
+        "不得把该规则解释为必须清洗所有市场数据；异常可能是真实市场行为。",
+        "不得把该规则解释为允许 AI 自动修复历史行情或自动改变回测/训练结论。",
+        "所有具体阈值、交易所 correction/bust/cancel 处理、vendor lag、market calendar 和 halts 必须由外接项目事实层定义。"
+      ],
+      "conflict": [
+        "可见上下文内未发现与 KB_02_DATA_ENGINEERING 或 AI Engineering 边界的直接冲突。",
+        "候选 workflow.allowed_next_decisions 仍列 accepted_for_draft 而未列 accepted_for_reviewed_caveat_only；正式入库前需按本轮 reviewed/caveat_only gate 更新。",
+        "候选 workflow.hidden_from_default_queue=false 与 machine_gate.hidden_from_default_queue=true 存在机器消费歧义；应统一为隐藏默认指导队列。"
+      ]
+    },
+    "suggested_fields": [
+      "anomaly_flag",
+      "anomaly_type",
+      "detection_rule_id",
+      "source_event_id",
+      "correction_id",
+      "correction_source",
+      "repair_action",
+      "repair_timestamp",
+      "raw_event_ref",
+      "affected_dataset_version"
+    ]
+  },
+  "assumptions": [
+    "候选用于 CEK-TA 通用支持层知识库，而不是某个项目私有数据源配置。",
+    "所有数据工程结论必须保留来源、时间戳、版本、schema、修复和验证边界。",
+    "候选通过外部审计前不能进入正式 reviewed 知识库。"
+  ],
+  "source_evidence": [
+    {
+      "source_id": "src_001",
+      "source_title": "Try Great Expectations",
+      "source_url": "https://docs.greatexpectations.io/docs/core/introduction/try_gx/",
+      "source_type": "data_quality_framework_doc",
+      "publisher": "Great Expectations",
+      "published_at": null,
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "Great Expectations documents expectations, validation results, failed counts and percentages, and generated Data Docs.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_002",
+      "source_title": "Great Expectations",
+      "source_url": "https://greatexpectations.io/",
+      "source_type": "data_quality_framework_doc",
+      "publisher": "Great Expectations",
+      "published_at": null,
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "medium_high",
+      "relevance": "high",
+      "evidence_summary": "Great Expectations positions GX as a framework to validate, test, and document data quality.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_003",
+      "source_title": "OHLCV schema",
+      "source_url": "https://databento.com/docs/schemas-and-data-formats/ohlcv",
+      "source_type": "market_data_vendor_official_doc",
+      "publisher": "Databento",
+      "published_at": null,
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "Databento documents OHLCV aggregate bars with O/H/L/C/V fields, interval suffixes, start timestamps, and no-record semantics for empty intervals.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_004",
+      "source_title": "Trades schema",
+      "source_url": "https://databento.com/docs/schemas-and-data-formats/trades",
+      "source_type": "market_data_vendor_official_doc",
+      "publisher": "Databento",
+      "published_at": null,
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "high",
+      "relevance": "medium_high",
+      "evidence_summary": "Databento trade records distinguish matching-engine event timestamps from capture/receive timestamps.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_005",
+      "source_title": "High-frequency market data: Data integrity and cleaning",
+      "source_url": "https://databento.com/blog/data-cleaning",
+      "source_type": "official_doc",
+      "publisher": "Databento",
+      "published_at": null,
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "Databento explains market-data integrity checks, cleaning exceptions, QA strategies, and why indiscriminate cleaning can degrade market data.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_007",
+      "source_title": "MBO schema",
+      "source_url": "https://databento.com/docs/schemas-and-data-formats/mbo",
+      "source_type": "official_doc",
+      "publisher": "Databento",
+      "published_at": null,
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "Databento MBO schema covers order-book events such as trades, fills, adds, cancels, modifies and book clear events.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_008",
+      "source_title": "iLink - Trade Correction",
+      "source_url": "https://cmegroupclientsite.atlassian.net/wiki/spaces/EPICSANDBOX/pages/457574586/iLink%2B-%2BTrade%2BCorrection",
+      "source_type": "exchange_rule",
+      "publisher": "CME Group",
+      "published_at": null,
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "CME documents in-session trade corrections, common trade ID linkage, and real-time price adjustment messaging.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_009",
+      "source_title": "Nasdaq FIX Trade Reporting Programming Specification",
+      "source_url": "https://nasdaqtrader.com/content/technicalsupport/specifications/TradingProducts/fixactspec.pdf",
+      "source_type": "exchange_rule",
+      "publisher": "Nasdaq",
+      "published_at": null,
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "medium_high",
+      "relevance": "high",
+      "evidence_summary": "Nasdaq FIX trade reporting specification documents trade reporting, corrections via cancel/re-entry, and timestamp precision support.",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "medium_high",
+    "score": 83.8,
+    "score_version": "phase37_data_engineering_blocked_supplemental_reaudit_source_scoring_v1",
+    "primary_source_count": 4,
+    "supporting_source_count": 4,
+    "low_reliability_source_count": 0,
+    "limitations": [
+      "正式入库前必须由外部审计确认 claim 没有超出来源可证明范围。",
+      "vendor/framework 文档按其自身产品适用，不能自动泛化为所有交易所或所有数据平台实现。",
+      "将 outlier 明确限定为需要标记、隔离、解释、保留或修复的审计对象，不能等同于自动删除。",
+      "补充 market-data cleaning、trade correction、trade reporting、market data flags 和 order book event 来源。",
+      "保留 candidate-only 边界；外部二审前不得 formal reviewed、approved、default guidance 或 hard gate。",
+      "本补证只用于再审；正式 reviewed/caveat_only 仍需外部 AI/人工严格审计返回 reviewed_allowed=true。",
+      "来源中存在供应商和框架文档，正式转换时必须保留适用边界，不得泛化为所有平台强制实现。",
+      "将 Great Expectations 产品页降为 supporting source；source_quality.primary_source_count 不应把产品页或通用框架页计为强主来源。",
+      "CME iLink - Trade Correction 来源位于 CME Client Systems Wiki/Confluence 且带 EPICSANDBOX 路径，应标为 venue-specific supporting/primary-with-caveat；正式转换前最好补 CME 正式 iLink/MDP 生产文档或交易所 rulebook 链接。",
+      "Nasdaq FIX PDF 已核验到 error-correction trade condition 与 timestamp/change-log 证据；正式转换前应补充 section/page references，并说明它只适用于 Nasdaq FIX Trade Reporting 语境。",
+      "保留 Databento MBO flags/sequence/event taxonomy 作为 market-data flags 与 event modelling 证据，但不得把 Databento 字段名当作通用 schema。",
+      "Great Expectations 产品页和通用框架页只能作为 supporting source。",
+      "CME EPICSANDBOX / Confluence 来源必须保留 venue-specific caveat，正式生产文档可在后续版本补强。",
+      "Nasdaq FIX PDF 只适用于 Nasdaq FIX Trade Reporting 语境，不能泛化为所有交易所。",
+      "Databento 字段名只能作为供应商 schema 证据，不能泛化为所有市场数据字段名。",
+      "本条为 formal reviewed/caveat_only；不是 approved，不得进入默认指导或 hard gate。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none_known_in_visible_context",
+    "checked_against": [
+      "Phase 36/38/40/41 AI Engineering 知识边界",
+      "现有 KB_01_QUANT_FOUNDATION formal 知识",
+      "Phase 37 Trading 与 AI 跨分支引用契约"
+    ],
+    "conflicts": [],
+    "resolution_summary": "D10 supplemental re-audit accepted reviewed/caveat_only in visible context; full formal KB conflict coverage remains runtime validation.",
+    "default_recommendation": "caveat_only_until_human_approval"
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于 AI IDE 或外接项目审计交易数据异常值、correction、flags 和修复记录边界。",
+      "用于提示用户补充 anomaly/correction/repair/version 字段和数据质量报告。",
+      "用于 RAG/MCP/SearchLab 以 caveat 方式返回来源和边界。"
+    ],
+    "not_allowed": [
+      "不得据此生成买卖点、仓位、杠杆、止损止盈或实盘执行建议。",
+      "不得把 reviewed/caveat_only 当作 approved 默认指导。",
+      "不得允许 AI 自动修复历史行情或自动改变模型/策略评估结论。"
+    ],
+    "required_context": [
+      "canonical_node_id=kt.trading_engineering.data_engineering",
+      "必须返回 source_evidence、review_status、conflict_status、machine_gate 和不适用场景。"
+    ],
+    "fallback_behavior": "cite_with_caveat"
+  },
+  "machine_gate": {
+    "default_guidance": "caveat_only",
+    "reason": "CEK-TA-391: supplemental re-audit allowed formal reviewed/caveat_only only; no approved/default/hard gate.",
+    "requires_human_escalation": true,
+    "blocking_reasons": [
+      "reviewed_not_approved",
+      "default_guidance_allowed_false",
+      "hard_gate_allowed_false"
+    ],
+    "checked_at": "2026-06-11",
+    "gate_version": "1.0.0",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "recommended_extra_sources": [
+    {
+      "type": "venue_official_doc",
+      "purpose": "补 CME 正式生产 iLink/MDP trade correction 或 trade cancellation 文档，替代或补强 EPICSANDBOX Confluence 链接。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_1",
+      "title": "recommended extra source"
+    },
+    {
+      "type": "market_data_vendor_doc",
+      "purpose": "补 explicit bad tick / condition flags / correction flags / sequence gap handling 文档，用于更细粒度的 formal conversion。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_2",
+      "title": "recommended extra source"
+    }
+  ],
+  "review": {
+    "confidence": "high",
+    "freshness": "mixed",
+    "review_status": "reviewed",
+    "reviewer": "codex",
+    "reviewed_at": "2026-06-11",
+    "created_at": "2026-06-11",
+    "updated_at": "2026-06-11",
+    "default_guidance_allowed": false,
+    "approved_allowed": false,
+    "hard_gate_allowed": false,
+    "approval_status": "not_requested",
+    "source_candidate_id": "cand_20260611_phase37_data_engineering_outlier_detection_required_001",
+    "ai_audit_result_id": "audit_result_phase37_data_engineering_blocked_supplemental_reaudit_20260611_strict_v1",
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase37_data_engineering_blocked_supplemental_reaudit_20260611_strict_v1",
+      "source_package_id": "phase37_data_engineering_blocked_supplemental_reaudit_package_20260611",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "required_patches": {
+        "source": [
+          "将 Great Expectations 产品页降为 supporting source；source_quality.primary_source_count 不应把产品页或通用框架页计为强主来源。",
+          "CME iLink - Trade Correction 来源位于 CME Client Systems Wiki/Confluence 且带 EPICSANDBOX 路径，应标为 venue-specific supporting/primary-with-caveat；正式转换前最好补 CME 正式 iLink/MDP 生产文档或交易所 rulebook 链接。",
+          "Nasdaq FIX PDF 已核验到 error-correction trade condition 与 timestamp/change-log 证据；正式转换前应补充 section/page references，并说明它只适用于 Nasdaq FIX Trade Reporting 语境。",
+          "保留 Databento MBO flags/sequence/event taxonomy 作为 market-data flags 与 event modelling 证据，但不得把 Databento 字段名当作通用 schema。"
+        ],
+        "content": [
+          "把 statement 中的“必须”限定为 CEK-TA 回测/训练/审计数据契约要求，而不是外部监管硬要求。",
+          "明确 anomaly/outlier 处理结果只能是标记、隔离、解释、保留、修复记录或有版本的修正；不得静默删除或静默重写评估样本。",
+          "补充字段建议：anomaly_flag、anomaly_type、detection_rule_id、source_event_id、correction_id、correction_source、repair_action、repair_timestamp、raw_event_ref、affected_dataset_version。"
+        ],
+        "boundary": [
+          "不得把该规则解释为必须清洗所有市场数据；异常可能是真实市场行为。",
+          "不得把该规则解释为允许 AI 自动修复历史行情或自动改变回测/训练结论。",
+          "所有具体阈值、交易所 correction/bust/cancel 处理、vendor lag、market calendar 和 halts 必须由外接项目事实层定义。"
+        ],
+        "conflict": [
+          "可见上下文内未发现与 KB_02_DATA_ENGINEERING 或 AI Engineering 边界的直接冲突。",
+          "候选 workflow.allowed_next_decisions 仍列 accepted_for_draft 而未列 accepted_for_reviewed_caveat_only；正式入库前需按本轮 reviewed/caveat_only gate 更新。",
+          "候选 workflow.hidden_from_default_queue=false 与 machine_gate.hidden_from_default_queue=true 存在机器消费歧义；应统一为隐藏默认指导队列。"
+        ]
+      },
+      "required_extra_sources": [
+        {
+          "type": "venue_official_doc",
+          "purpose": "补 CME 正式生产 iLink/MDP trade correction 或 trade cancellation 文档，替代或补强 EPICSANDBOX Confluence 链接。"
+        },
+        {
+          "type": "market_data_vendor_doc",
+          "purpose": "补 explicit bad tick / condition flags / correction flags / sequence gap handling 文档，用于更细粒度的 formal conversion。"
+        }
+      ]
+    },
+    "open_questions": [
+      "后续版本可补 CME 正式生产 iLink/MDP trade correction 或 trade cancellation 文档。",
+      "后续版本可补更明确的 bad tick / condition flags / correction flags / sequence gap handling 文档。"
+    ],
+    "decision_log": [
+      {
+        "at": "2026-06-11",
+        "actor": "external_ai_strict_audit",
+        "decision": "accepted_for_reviewed_caveat_only",
+        "reason": "补证已覆盖上一轮阻断点：Databento market-data cleaning 资料支持异常不等于错误、默认清洗可能退化市场数据；Databento MBO schema 支持 order-book event taxonomy、flags 与 sequence；CME iLink trade correction 资料支持 correction/cancel/bust 事件需要建模；Nasdaq FIX trade reporting PDF 支持 error-correction trade condition 和 timestamps。; 候选 statement 已改为检测、标记、隔离、解释、保留或修复策略，而不是自动删除或静默修复；边界足够保守，适合作为 CEK-TA reviewed/caveat_only 数据质量审计规则。"
+      },
+      {
+        "at": "2026-06-11",
+        "actor": "codex",
+        "decision": "reviewed",
+        "reason": "CEK-TA-391: formal reviewed/caveat_only created; approved/default guidance/hard gate all disabled."
+      }
+    ]
+  },
+  "contribution": {
+    "contribution_id": null,
+    "source_project": null,
+    "sanitization_status": "not_applicable",
+    "private_data_removed": true,
+    "generic_mapping_notes": "Generated from Phase 37 public-source Trading Engineering Data Engineering candidate; no project-private trading facts included."
+  },
+  "copyright": {
+    "stores_full_text": false,
+    "stores_long_quote": false,
+    "summary_only": true,
+    "license_notes": "仅保存来源链接、元数据和摘要，不保存长段原文。",
+    "reuse_risk": "low"
+  },
+  "phase37_conversion": {
+    "source_candidate_status": "needs_more_evidence",
+    "source_ingestion_decision": "needs_more_evidence",
+    "promoted_by_task": "CEK-TA-391",
+    "reviewed_allowed": true,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  }
+}

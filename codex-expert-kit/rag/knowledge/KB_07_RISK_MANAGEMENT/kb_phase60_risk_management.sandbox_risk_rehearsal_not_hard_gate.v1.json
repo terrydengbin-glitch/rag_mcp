@@ -1,0 +1,376 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_phase60_risk_management.sandbox_risk_rehearsal_not_hard_gate.v1",
+  "title": "sandbox 风控演练不等于 live hard gate",
+  "metadata": {
+    "partition_id": "KB_07_RISK_MANAGEMENT",
+    "domain": "risk_management",
+    "subdomain": "risk_rehearsal_boundary",
+    "rule_type": "risk_boundary_rule",
+    "claim_type": "not_hard_gate_constraint",
+    "content_type": "json",
+    "project_binding": "none",
+    "tree_node_id": "kt.risk_management",
+    "tree_path": "CEK-TA / Trading Engineering / Risk Management",
+    "canonical_node_id": "kt.risk_management",
+    "canonical_tree_path": "CEK-TA / Trading Engineering / Risk Management",
+    "related_nodes": [
+      "kt.trading_engineering",
+      "kt.replay_simulation",
+      "kt.live_execution",
+      "kt.risk_management",
+      "kt.data_engineering",
+      "kt.market_microstructure",
+      "kt.ai_engineering"
+    ],
+    "risk_level": "medium_high",
+    "used_for": [
+      "external_project_rag_retrieval",
+      "live_readiness_audit",
+      "mcp",
+      "promotion_review",
+      "risk_rehearsal_review",
+      "searchlab",
+      "vue_audit_ui"
+    ],
+    "classification_notes": "本候选属于 Trading Engineering 的环境治理知识。AI Engineering 只能引用 manifest、gap report 和 reason code 做审计解释，不得拥有交易执行、阈值或 hard gate。",
+    "source_candidate_id": "cand_20260617_phase60_sandbox_risk_rehearsal_not_hard_gate_001",
+    "research_task_id": "P60-A10",
+    "phase": "Phase 60",
+    "formalization_task_id": "CEK-TA-579",
+    "review_mode": "reviewed_caveat_only"
+  },
+  "applicability": {
+    "market": "general_with_platform_or_venue_specific_mapping",
+    "asset": "general",
+    "timeframe": "testing_replay_paper_or_live_canary_environment",
+    "data_granularity": "mocked_response_historical_realtime_order_event_or_fill_event",
+    "project_type": "trading_ai_support_layer",
+    "applies_when": [
+      "外接项目设计 sandbox、testnet、historical replay、realtime simulation、paper trading 或 live canary 流程",
+      "需要审计测试环境、模拟成交、订单生命周期、风控 rehearsal 或 paper/live 差异",
+      "需要把回测、回放、模拟盘和实盘等效链条落实到环境证据"
+    ],
+    "not_applicable_when": [
+      "需要直接生成买卖点、仓位、杠杆、止损止盈、风险阈值或实盘执行建议",
+      "问题属于真实 live order routing、账户同步、真实保证金或 broker truth，应由 Live Execution / Risk owner 处理",
+      "没有平台、交易所、券商、API 版本、数据来源或环境类型证据"
+    ]
+  },
+  "content": {
+    "statement": "Sandbox、testnet、replay 或 paper 中的 risk rehearsal 只能验证字段、策略链条和审计流程；它不能替代 live risk owner 的真实风控政策、拒单、停机、解锁或 hard gate。",
+    "rationale": "本候选只定义 sandbox / testnet / replay / paper / live canary 环境边界、证据和审计流程，不输出买卖点、仓位、杠杆、止损止盈、风险阈值或实盘执行建议。 补证后仍只能等待 reviewed/caveat_only 复审；不得解释为 approved、default guidance、hard gate、live permission、交易建议或风险阈值。",
+    "procedure": [
+      "确认当前问题属于 sandbox、testnet、historical replay、realtime simulation、paper trading、live canary 或 live 环境治理。",
+      "要求外接项目提供 environment_manifest、gap_report、promotion_decision 或 order lifecycle mapping 的可审计证据。",
+      "返回来源、适用范围、不适用场景、owner 边界和 caveat，不返回交易执行许可。",
+      "遇到 live permission、risk threshold、hard gate 或实盘动作请求时，路由给外接项目 Live Execution / Risk Management owner。"
+    ],
+    "anti_patterns": [
+      "把 static API sandbox mocked response 当作真实市场行为。",
+      "把 testnet 订单、余额或成交写成 production fact。",
+      "把 paper trading 盈亏写成 live-ready 或策略有效。",
+      "把 historical replay fill 写成真实队列位置、真实 market impact 或 live 可成交性。",
+      "把 environment_manifest、promotion_decision 或 gap_report 写成实盘许可、自动晋级、自动拒单、自动停机或 hard gate。"
+    ],
+    "validation": [
+      "检查 source_evidence 是否至少包含官方/框架/标准/内部契约来源。",
+      "检查 conflict_audit.approval_allowed=false。",
+      "检查 machine_gate.default_guidance=caveat_only 且 approved/default/hard gate 均为 false。",
+      "检查内容没有买卖点、仓位、杠杆、止损止盈、风险阈值或 live permission。"
+    ],
+    "risk_notes": [
+      "平台、交易所、broker 和框架文档只能作为 implementation pattern 或 supporting source。",
+      "sandbox、testnet、paper trading 和 replay 的结果不能单独证明策略收益或实盘可行性。",
+      "本候选不提供投资建议、订单建议、风险阈值或实盘许可。",
+      "不得 approved。",
+      "不得 default guidance。",
+      "不得 hard gate。",
+      "不得 live permission。",
+      "不得自动拒单、自动停机、自动解锁。",
+      "不得生成风险阈值建议。",
+      "reviewed/caveat_only 只允许作为审计上下文、RAG 检索和项目方案 review；不等于 approved。",
+      "平台、broker、exchange 和 framework 来源必须保留具体适用范围，不得泛化为所有市场。"
+    ],
+    "citation_notes": "CEK-TA internal contract defining promotion decisions, gap report fields, required evidence and hard boundaries.；CEK-TA internal contract defining EnvironmentManifest fields, owner boundaries and machine gate restrictions.；NautilusTrader documents environment contexts for backtest, sandbox and live, including different data/execution contexts while sharing core runtime components.；NautilusTrader documents that the RiskEngine exists across backtest, sandbox and live, sits on submit/modify paths, validates price, quantity, notional, reduce-only, balances, rate limits, and trading states, and emits OrderDenied or OrderModifyRejected events when checks fail.；NautilusTrader architecture describes ExecutionEngine order lifecycle tracking, coordination with risk management, execution reports/fills, reconciliation, and RiskEngine pre-trade checks, position/exposure monitoring, real-time calculations, and configurable rules.；Binance USD-M Futures error-code documentation provides concrete broker/exchange rejection semantics, including reduce-only margin check failures, unsupported order types, and market order rejection conditions.；FIA best-practices guidance supports pre-trade risk controls, order-size checks, position limits, price tolerance checks, control ownership, regular review, and system safeguards.",
+    "required_followups": [
+      "正式写入 reviewed/caveat_only 时保留 Binance source limitation：仅为 Binance USD-M Futures-specific。",
+      "保留 FIA source limitation：行业最佳实践，不得转写为法律意见、固定阈值或自动 hard gate。",
+      "保留 risk_rehearsal_result_not_hard_gate=true。",
+      "补齐 broker_or_exchange_rejection_mapping_source、live_risk_owner_policy_source、kill_switch_or_manual_override_boundary。"
+    ],
+    "audit_patch_notes": {
+      "source_patch_notes": [
+        "NautilusTrader RiskEngine / Execution 文档可作为风控链条和 reason-code boundary 的实现模式来源。",
+        "Binance USD-M Futures error-code 文档可作为 broker/exchange rejection mapping 的 venue-specific 来源。",
+        "FIA 自动化交易风控最佳实践可作为 live risk owner、kill switch、定期复核和系统保护的行业来源。"
+      ],
+      "content_patch_notes": [
+        "risk rehearsal 只能验证字段、策略链条、拒绝原因映射和审计流程。",
+        "sandbox / testnet / replay / paper 风控演练不得替代 live risk owner 的真实政策、拒单、停机、解锁或 hard gate。"
+      ],
+      "boundary_patch_notes": [
+        "不得 approved。",
+        "不得 default guidance。",
+        "不得 hard gate。",
+        "不得 live permission。",
+        "不得自动拒单、自动停机、自动解锁。",
+        "不得生成风险阈值建议。"
+      ],
+      "conflict_patch_notes": [
+        "与 Risk Management owner 不冲突，真实政策和 hard gate 所有权仍归 Risk owner。",
+        "与 Live Execution owner 不冲突，真实拒单和交易所返回事实仍归 Live Execution owner。",
+        "AI/RAG 只能引用 reason code 和审计证据，不拥有执行或风控许可。"
+      ]
+    }
+  },
+  "assumptions": [
+    "候选用于 CEK-TA 通用支持层知识库，不包含任何外接项目私有策略参数。",
+    "每个环境都需要显式记录环境事实、模拟假设、owner 和审计 trace。",
+    "候选通过外部审计前不能进入正式 reviewed 知识库。"
+  ],
+  "source_evidence": [
+    {
+      "source_id": "src_phase60_gap_contract",
+      "source_title": "Phase 60 Environment Promotion Decision and Gap Report Contract",
+      "source_url": "docs/contracts/phase60_environment_promotion_gap_report_contract.md",
+      "source_type": "internal_contract",
+      "publisher": "CEK-TA",
+      "published_at": null,
+      "accessed_at": "2026-06-17",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "CEK-TA internal contract defining promotion decisions, gap report fields, required evidence and hard boundaries.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_phase60_env_contract",
+      "source_title": "Phase 60 Sandbox / Replay / Paper Environment Contract",
+      "source_url": "docs/contracts/phase60_sandbox_replay_paper_environment_contract.md",
+      "source_type": "internal_contract",
+      "publisher": "CEK-TA",
+      "published_at": null,
+      "accessed_at": "2026-06-17",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "CEK-TA internal contract defining EnvironmentManifest fields, owner boundaries and machine gate restrictions.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_nautilus_arch",
+      "source_title": "Architecture",
+      "source_url": "https://nautilustrader.io/docs/latest/concepts/architecture/",
+      "source_type": "framework_doc",
+      "publisher": "NautilusTrader",
+      "published_at": null,
+      "accessed_at": "2026-06-17",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "NautilusTrader documents environment contexts for backtest, sandbox and live, including different data/execution contexts while sharing core runtime components.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_nautilus_execution_risk_engine",
+      "source_title": "Execution - Risk engine",
+      "source_url": "https://nautilustrader.io/docs/nightly/concepts/execution/",
+      "source_type": "framework_doc",
+      "publisher": "NautilusTrader",
+      "published_at": null,
+      "accessed_at": "2026-06-17",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "NautilusTrader documents that the RiskEngine exists across backtest, sandbox and live, sits on submit/modify paths, validates price, quantity, notional, reduce-only, balances, rate limits, and trading states, and emits OrderDenied or OrderModifyRejected events when checks fail.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_nautilus_architecture_risk_engine",
+      "source_title": "Architecture - RiskEngine and ExecutionEngine",
+      "source_url": "https://nautilustrader.io/docs/latest/concepts/architecture/",
+      "source_type": "framework_doc",
+      "publisher": "NautilusTrader",
+      "published_at": null,
+      "accessed_at": "2026-06-17",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "NautilusTrader architecture describes ExecutionEngine order lifecycle tracking, coordination with risk management, execution reports/fills, reconciliation, and RiskEngine pre-trade checks, position/exposure monitoring, real-time calculations, and configurable rules.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_binance_usdm_futures_error_code",
+      "source_title": "USDⓈ-M Futures Error Code",
+      "source_url": "https://developers.binance.com/docs/derivatives/usds-margined-futures/error-code",
+      "source_type": "official_doc",
+      "publisher": "Binance Open Platform",
+      "published_at": null,
+      "accessed_at": "2026-06-17",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "Binance USD-M Futures error-code documentation provides concrete broker/exchange rejection semantics, including reduce-only margin check failures, unsupported order types, and market order rejection conditions.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_fia_automated_trading_risk_controls",
+      "source_title": "Best Practices for Automated Trading Risk Controls and System Safeguards",
+      "source_url": "https://www.fia.org/sites/default/files/2024-07/FIA_WP_AUTOMATED%20TRADING%20RISK%20CONTROLS_FINAL_0.pdf",
+      "source_type": "industry_best_practice",
+      "publisher": "FIA",
+      "published_at": null,
+      "accessed_at": "2026-06-17",
+      "version": null,
+      "reliability": "high",
+      "relevance": "medium_high",
+      "evidence_summary": "FIA best-practices guidance supports pre-trade risk controls, order-size checks, position limits, price tolerance checks, control ownership, regular review, and system safeguards.",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 84,
+    "source_count": 7,
+    "primary_source_count": 7,
+    "limitations": [
+      "外部来源具有平台、broker、exchange、asset class 或 API 版本边界。",
+      "内部契约需要外部 AI/人工审计后才能用于 formal reviewed/caveat_only。"
+    ],
+    "source_quality_notes": [
+      "Reviewed/caveat_only sources support environment governance and audit boundaries, not strategy profitability or live permission.",
+      "Platform, broker, exchange and framework sources are implementation-pattern evidence and must retain scope caveats."
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "known_conflicts": [],
+    "potential_conflicts": [
+      "可能与 Phase 58 environment equivalence manifest、Phase 37 replay/simulation、Phase 45 order/risk knowledge 重叠，正式转换前必须做重复和 owner 边界检查。"
+    ],
+    "resolution_summary": "Supplemental evidence added for reviewed/caveat_only reaudit only. Formal reviewed creation requires external audit; approved/default guidance/hard gate/live permission remain forbidden.",
+    "approval_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "approved_allowed": false
+  },
+  "review": {
+    "review_status": "reviewed",
+    "confidence": "medium_high",
+    "freshness": "mixed",
+    "reviewer": "external_ai_strict_audit_and_codex_backwrite",
+    "reviewed_at": "2026-06-17",
+    "source_candidate_id": "cand_20260617_phase60_sandbox_risk_rehearsal_not_hard_gate_001",
+    "ai_audit_result_id": "audit_result_phase60_a07_a10_supplemental_reaudit_20260617_strict_v1",
+    "approval_status": "not_requested",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase60_a07_a10_supplemental_reaudit_20260617_strict_v1",
+      "package_id": "phase60_a07_a10_supplemental_reaudit_package_20260617",
+      "candidate_id": "cand_20260617_phase60_sandbox_risk_rehearsal_not_hard_gate_001",
+      "research_task_id": "P60-A10",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "medium_high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "trade_execution_advice_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "live_permission_allowed": false,
+      "required_followups": [
+        "正式写入 reviewed/caveat_only 时保留 Binance source limitation：仅为 Binance USD-M Futures-specific。",
+        "保留 FIA source limitation：行业最佳实践，不得转写为法律意见、固定阈值或自动 hard gate。",
+        "保留 risk_rehearsal_result_not_hard_gate=true。",
+        "补齐 broker_or_exchange_rejection_mapping_source、live_risk_owner_policy_source、kill_switch_or_manual_override_boundary。"
+      ],
+      "patch_notes": {
+        "source": [
+          "NautilusTrader RiskEngine / Execution 文档可作为风控链条和 reason-code boundary 的实现模式来源。",
+          "Binance USD-M Futures error-code 文档可作为 broker/exchange rejection mapping 的 venue-specific 来源。",
+          "FIA 自动化交易风控最佳实践可作为 live risk owner、kill switch、定期复核和系统保护的行业来源。"
+        ],
+        "content": [
+          "risk rehearsal 只能验证字段、策略链条、拒绝原因映射和审计流程。",
+          "sandbox / testnet / replay / paper 风控演练不得替代 live risk owner 的真实政策、拒单、停机、解锁或 hard gate。"
+        ],
+        "boundary": [
+          "不得 approved。",
+          "不得 default guidance。",
+          "不得 hard gate。",
+          "不得 live permission。",
+          "不得自动拒单、自动停机、自动解锁。",
+          "不得生成风险阈值建议。"
+        ],
+        "conflict": [
+          "与 Risk Management owner 不冲突，真实政策和 hard gate 所有权仍归 Risk owner。",
+          "与 Live Execution owner 不冲突，真实拒单和交易所返回事实仍归 Live Execution owner。",
+          "AI/RAG 只能引用 reason code 和审计证据，不拥有执行或风控许可。"
+        ]
+      }
+    },
+    "audit_log": [
+      {
+        "at": "2026-06-17",
+        "actor": "external_ai_strict_audit",
+        "action": "phase60_reviewed_preparation_audit_passed",
+        "reason": "accepted_for_reviewed_caveat_only; approved/default/hard gate remain forbidden.",
+        "audit_result_id": "audit_result_phase60_a07_a10_supplemental_reaudit_20260617_strict_v1"
+      },
+      {
+        "at": "2026-06-17",
+        "actor": "codex",
+        "action": "formal_reviewed_caveat_only_created",
+        "reason": "CEK-TA-579 materialized formal reviewed/caveat_only knowledge."
+      }
+    ]
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于提醒外接项目区分 sandbox、testnet、replay、paper、live canary 和 live 环境",
+      "用于审计 environment_manifest、promotion_decision 和 gap_report 是否齐全",
+      "用于阻止 AI 把 paper 盈亏、sandbox 响应或 replay 成交泛化为 live-ready 证据"
+    ],
+    "not_allowed": [
+      "不得据此生成买卖点、仓位、杠杆、止损止盈或风险阈值",
+      "不得据此授权实盘、自动拒单、自动停机或 hard gate",
+      "不得把任何平台 sandbox/paper 行为泛化为所有市场"
+    ]
+  },
+  "machine_gate": {
+    "default_guidance": "caveat_only",
+    "reason": "Formal reviewed/caveat_only only; not approved, not default guidance, not hard gate, not live permission.",
+    "requires_human_escalation": true,
+    "hidden_from_default_queue": true,
+    "visible_in_default_guidance_queue": false,
+    "reviewed_allowed": true,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "trade_execution_advice_allowed": false,
+    "risk_threshold_advice_allowed": false,
+    "live_permission_allowed": false
+  },
+  "contract_refs": [],
+  "workflow": {
+    "source_candidate_id": "cand_20260617_phase60_sandbox_risk_rehearsal_not_hard_gate_001",
+    "source_candidate_path": "codex-expert-kit/rag/candidates/KB_07_RISK_MANAGEMENT/cand_20260617_phase60_sandbox_risk_rehearsal_not_hard_gate_001.json",
+    "formalized_by_task_id": "CEK-TA-579",
+    "formalized_at": "2026-06-17",
+    "review_mode": "reviewed_caveat_only",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "live_permission_allowed": false
+  },
+  "contribution": {
+    "formalized_from_candidate": "cand_20260617_phase60_sandbox_risk_rehearsal_not_hard_gate_001",
+    "private_data_removed": true,
+    "contains_project_private_strategy": false,
+    "contains_secret": false,
+    "contains_account_facts": false
+  }
+}

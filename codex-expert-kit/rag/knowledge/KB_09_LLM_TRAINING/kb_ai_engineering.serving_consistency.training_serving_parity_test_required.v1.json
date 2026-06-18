@@ -1,0 +1,332 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_ai_engineering.serving_consistency.training_serving_parity_test_required.v1",
+  "title": "训练侧和服务侧必须验证特征、schema、预处理和可见信息的一致性，避免 train-serving skew。",
+  "metadata": {
+    "partition_id": "KB_09_LLM_TRAINING",
+    "domain": "llm_training",
+    "subdomain": "training_serving_consistency",
+    "rule_type": "decision_rule",
+    "content_type": "json",
+    "project_binding": "none",
+    "tree_node_id": "kt.llm_training.model_training_engineering",
+    "tree_path": "CEK-TA / AI Engineering",
+    "canonical_node_id": "kt.llm_training.model_training_engineering",
+    "canonical_tree_path": "CEK-TA / AI Engineering",
+    "risk_level": "medium",
+    "used_for": [
+      "llm_training",
+      "trading_gating_scoring",
+      "rag_engineering",
+      "mcp",
+      "vue_audit_ui"
+    ],
+    "source_candidate_id": "cand_20260609_ai_engineering_serving_consistency_training_serving_parity_test_required_v1_001",
+    "research_task_id": "RIT-P36-N-12",
+    "claim_type": "llmops_release_rule",
+    "classification_notes": "Phase 36 AI Engineering reviewed knowledge; UI tree and canonical node are inherited from candidate classification. Trading rule bodies must remain in Trading Engineering."
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "general",
+    "data_granularity": "general",
+    "project_type": "trading_llm_assistant",
+    "applies_when": [
+      "外接项目正在构建或审计交易 LLM gating/scoring、训练数据、评估、RAG/MCP、部署或治理链路。",
+      "该规则用于阻断数据泄漏、权限越界、无来源默认指导、训练/评估污染或上线前治理缺口。"
+    ],
+    "not_applicable_when": [
+      "用户需要具体买卖点、仓位、止损止盈、策略参数或实盘订单执行。",
+      "知识点主要描述 K 线结构、市场微观结构、回测模型、fill model 或交易风控本体，应路由到 Trading Engineering。"
+    ]
+  },
+  "content": {
+    "statement": "训练侧和服务侧必须验证特征、schema、预处理和可见信息的一致性，避免 train-serving skew。",
+    "rationale": "本候选仅沉淀 AI Engineering 中训练、评估、RAG/MCP、安全、部署或治理规则；不定义 K 线信号、具体交易策略、订单执行规则或账户参数。 审计结论：方向成立，statement 与 normalized_claim 对齐。训练侧和服务侧必须验证特征、schema、预处理和可见信息一致性，以避免 train-serving skew。TFDV 直接支持 schema validation、schema skew、feature skew、distribution skew 和 training/serving schema environments；Rules of ML 可作为生产 ML consistency、baseline 和 monitoring 的 supporting source。",
+    "procedure": [
+      "确认项目事实匹配 applies_when，且没有命中 not_applicable_when。",
+      "按 source_patch_notes 检查来源是否足够支撑 statement。",
+      "按 content_patch_notes 补齐正式实现、schema、字段和 checklist。",
+      "按 boundary_patch_notes 确认没有把交易规则本体、项目私有参数或实盘执行规则写入 AI Engineering。",
+      "保留 required_followups，后续由来源增强或治理任务继续关闭。"
+    ],
+    "examples": [],
+    "anti_patterns": [
+      "把 reviewed 知识当作 approved 默认指导。",
+      "把 AI Engineering 规则扩写成具体交易阈值、仓位、买卖点或执行参数。",
+      "忽略审计结果中的来源限制、适用范围和后续补强要求。"
+    ],
+    "validation": [
+      "source_evidence 至少 2 条，且没有 low-only 来源。",
+      "conflict_status 为 none 或 resolved。",
+      "review_status 为 reviewed 时 machine_gate 必须是 caveat_only。",
+      "MCP/SearchLab 默认指导不得把本条当作 approved 返回。"
+    ],
+    "risk_notes": [
+      "本条仍是 candidate，需要外部 AI/人工审计确认来源充分性、适用边界和是否需要拆分。",
+      "AI Engineering 只定义 parity test、schema hash、preprocessing version、visible-information check 和审计字段。",
+      "具体交易特征公式、K 线字段、市场数据清洗、策略信号由 Trading Engineering 维护。",
+      "不得把原始交易样本、账户、订单、策略规则或 K 线逻辑写入本知识项。",
+      "与 serving_consistency.train_like_serve_required 高度重叠，建议父子化：train_like_serve 为父规则，training_serving_parity_test_required 为测试子规则。",
+      "与 feature_schema.feature_timestamp_cutoff_required、feature_schema.post_trade_fields_forbidden_in_input、outcome_schema.post_trade_fields_separated 互链。",
+      "未发现需要 rejected 的直接冲突。",
+      "补 training_serving_parity_test_schema.json。",
+      "补 train_serve_skew_check_report 字段。",
+      "补 eval cases：preprocessing mismatch、serving input contains label、feature timestamp after decision、RAG/source available in training but missing at serving。"
+    ],
+    "citation_notes": "TFDV supports schema-based data validation, anomaly detection, and train/serve skew checks in ML pipelines.；Rules of ML discusses train/serve consistency, baselines, monitoring, and production ML safeguards.",
+    "audit_patch_notes": {
+      "source_patch_notes": [
+        "保留 TFDV 作为主来源。",
+        "保留 Rules of ML 作为 production ML consistency supporting source。",
+        "建议补 TFX Transform、feature registry 或内部 preprocessing_parity_contract，支持 preprocessing_version 与 feature_registry_version 的一致性检查。",
+        "与第八批 serving_consistency.train_like_serve_required 建立父子关系：第八批为父规则，本条为 parity test 子规则。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：Training and serving pipelines must run parity tests for feature schema, preprocessing, feature availability and visible information before gate/scoring serving promotion.",
+        "建议字段：train_schema_hash、serve_schema_hash、preprocessing_version、feature_registry_version、train_serve_skew_check_id、visible_information_check_id、validation_report_id、promotion_decision。",
+        "明确 label、post-trade outcome、future fields 必须在 serving 输入中不可见。",
+        "发现 train-serving skew 时，fallback_action 应为 block_promotion 或 needs_more_evidence。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 只定义 parity test、schema hash、preprocessing version、visible-information check 和审计字段。",
+        "具体交易特征公式、K 线字段、市场数据清洗、策略信号由 Trading Engineering 维护。",
+        "不得把原始交易样本、账户、订单、策略规则或 K 线逻辑写入本知识项。"
+      ],
+      "conflict_patch_notes": [
+        "与 serving_consistency.train_like_serve_required 高度重叠，建议父子化：train_like_serve 为父规则，training_serving_parity_test_required 为测试子规则。",
+        "与 feature_schema.feature_timestamp_cutoff_required、feature_schema.post_trade_fields_forbidden_in_input、outcome_schema.post_trade_fields_separated 互链。",
+        "未发现需要 rejected 的直接冲突。"
+      ],
+      "required_followups": [
+        "补 training_serving_parity_test_schema.json。",
+        "补 train_serve_skew_check_report 字段。",
+        "补 eval cases：preprocessing mismatch、serving input contains label、feature timestamp after decision、RAG/source available in training but missing at serving。"
+      ]
+    }
+  },
+  "assumptions": [
+    "外接项目提供项目事实、私有交易数据和策略上下文；CEK-TA 只沉淀可复用专业规则。",
+    "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+  ],
+  "source_evidence": [
+    {
+      "source_id": "src_tfdv",
+      "source_title": "TensorFlow Data Validation: Checking and analyzing your data",
+      "source_url": "https://tensorflow.github.io/tfx/guide/tfdv/",
+      "source_type": "official_doc",
+      "publisher": "TensorFlow / TFX",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "TFDV supports schema-based data validation, anomaly detection, and train/serve skew checks in ML pipelines.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_rules_ml",
+      "source_title": "Rules of Machine Learning",
+      "source_url": "https://martin.zinkevich.org/rules_of_ml/rules_of_ml.pdf",
+      "source_type": "paper",
+      "publisher": "Google / Martin Zinkevich",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "medium",
+      "relevance": "high",
+      "evidence_summary": "Rules of ML discusses train/serve consistency, baselines, monitoring, and production ML safeguards.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_occ_fed_fdic_revised_model_risk_2026",
+      "source_title": "Model Risk Management: Revised Guidance",
+      "source_url": "https://occ.gov/news-issuances/bulletins/2026/bulletin-2026-13.html",
+      "source_type": "standard_or_risk_framework",
+      "publisher": "OCC / Federal Reserve / FDIC",
+      "published_at": "2026-04-17",
+      "accessed_at": "2026-06-09",
+      "version": "OCC Bulletin 2026-13 / SR 26-2",
+      "reliability": "high",
+      "relevance": "medium",
+      "evidence_summary": "2026 年跨机构模型风险管理修订指南支持模型治理、验证、变更控制和风险分层；同时需注明 generative AI 和 agentic AI 不在其直接范围内，只能作为模型风险治理类比来源。",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 83,
+    "score_version": "1.0.0",
+    "primary_source_count": 2,
+    "supporting_source_count": 1,
+    "low_reliability_source_count": 0,
+    "limitations": [
+      "本条为 reviewed 知识，来源和审计补丁已记录；默认指导仍需后续人工治理升级 approved。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "docs/contracts/ai_engineering_gating_scoring_contract.md",
+      "docs/contracts/ai_engineering_knowledge_item_policy.md",
+      "docs/tasks/phase36_ai_engineering_gating_scoring_knowledge.md"
+    ],
+    "conflicts": [],
+    "resolution_summary": "未发现与当前 CEK-TA formal knowledge 的直接冲突；候选不会进入默认指导。",
+    "default_recommendation": "caveat_only_until_approved"
+  },
+  "review": {
+    "confidence": "medium",
+    "freshness": "time_sensitive",
+    "review_status": "reviewed",
+    "reviewer": "codex",
+    "reviewed_at": "2026-06-09",
+    "created_at": "2026-06-09",
+    "updated_at": "2026-06-09",
+    "open_questions": [
+      "审计时确认该候选是否应与相邻 AI Engineering 规则合并、拆分，或改路由到 Trading Engineering。",
+      "补 training_serving_parity_test_schema.json。",
+      "补 train_serve_skew_check_report 字段。",
+      "补 eval cases：preprocessing mismatch、serving input contains label、feature timestamp after decision、RAG/source available in training but missing at serving。"
+    ],
+    "decision_log": [
+      {
+        "at": "2026-06-09",
+        "actor": "external_ai",
+        "decision": "accepted_for_draft",
+        "reason": "方向成立，statement 与 normalized_claim 对齐。训练侧和服务侧必须验证特征、schema、预处理和可见信息一致性，以避免 train-serving skew。TFDV 直接支持 schema validation、schema skew、feature skew、distribution skew 和 training/serving schema environments；Rules of ML 可作为生产 ML consistency、baseline 和 monitoring 的 supporting source。",
+        "audit_result_id": "audit_result_phase36_ai_engineering_batch_09_of_10_20260609_gpt55_pro_strict_sources"
+      },
+      {
+        "at": "2026-06-09",
+        "actor": "codex",
+        "decision": "converted_to_reviewed",
+        "reason": "按 Phase 36 批量审计结果优化候选并转为 formal reviewed；未升级 approved。",
+        "audit_result_id": "audit_result_phase36_ai_engineering_batch_09_of_10_20260609_gpt55_pro_strict_sources"
+      }
+    ],
+    "approval_status": "not_requested",
+    "default_guidance_allowed": false,
+    "source_candidate_id": "cand_20260609_ai_engineering_serving_consistency_training_serving_parity_test_required_v1_001",
+    "ai_audit_result_id": "audit_result_phase36_ai_engineering_batch_09_of_10_20260609_gpt55_pro_strict_sources",
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase36_ai_engineering_batch_09_of_10_20260609_gpt55_pro_strict_sources",
+      "source_package_id": "phase36_ai_engineering_candidate_audit_batch_09_of_10_20260609",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立，statement 与 normalized_claim 对齐。训练侧和服务侧必须验证特征、schema、预处理和可见信息一致性，以避免 train-serving skew。TFDV 直接支持 schema validation、schema skew、feature skew、distribution skew 和 training/serving schema environments；Rules of ML 可作为生产 ML consistency、baseline 和 monitoring 的 supporting source。",
+      "source_patch_notes": [
+        "保留 TFDV 作为主来源。",
+        "保留 Rules of ML 作为 production ML consistency supporting source。",
+        "建议补 TFX Transform、feature registry 或内部 preprocessing_parity_contract，支持 preprocessing_version 与 feature_registry_version 的一致性检查。",
+        "与第八批 serving_consistency.train_like_serve_required 建立父子关系：第八批为父规则，本条为 parity test 子规则。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：Training and serving pipelines must run parity tests for feature schema, preprocessing, feature availability and visible information before gate/scoring serving promotion.",
+        "建议字段：train_schema_hash、serve_schema_hash、preprocessing_version、feature_registry_version、train_serve_skew_check_id、visible_information_check_id、validation_report_id、promotion_decision。",
+        "明确 label、post-trade outcome、future fields 必须在 serving 输入中不可见。",
+        "发现 train-serving skew 时，fallback_action 应为 block_promotion 或 needs_more_evidence。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 只定义 parity test、schema hash、preprocessing version、visible-information check 和审计字段。",
+        "具体交易特征公式、K 线字段、市场数据清洗、策略信号由 Trading Engineering 维护。",
+        "不得把原始交易样本、账户、订单、策略规则或 K 线逻辑写入本知识项。"
+      ],
+      "conflict_patch_notes": [
+        "与 serving_consistency.train_like_serve_required 高度重叠，建议父子化：train_like_serve 为父规则，training_serving_parity_test_required 为测试子规则。",
+        "与 feature_schema.feature_timestamp_cutoff_required、feature_schema.post_trade_fields_forbidden_in_input、outcome_schema.post_trade_fields_separated 互链。",
+        "未发现需要 rejected 的直接冲突。"
+      ],
+      "required_followups": [
+        "补 training_serving_parity_test_schema.json。",
+        "补 train_serve_skew_check_report 字段。",
+        "补 eval cases：preprocessing mismatch、serving input contains label、feature timestamp after decision、RAG/source available in training but missing at serving。"
+      ]
+    },
+    "approved_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "contribution": {
+    "contribution_id": null,
+    "source_project": null,
+    "sanitization_status": "not_applicable",
+    "private_data_removed": true,
+    "generic_mapping_notes": "Phase 36 public-source AI Engineering candidate; no project-private trading facts included."
+  },
+  "copyright": {
+    "stores_full_text": false,
+    "stores_long_quote": false,
+    "summary_only": true,
+    "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+    "reuse_risk": "low"
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于审计 AI Engineering、LLM 训练、RAG/MCP、部署、安全或治理链路。",
+      "用于提醒外接项目补齐来源、适用边界、冲突状态、审计记录和人工审批。",
+      "用于 reviewed/audit 模式下带 caveat 引用。"
+    ],
+    "not_allowed": [
+      "不得生成买卖点、仓位、杠杆、止损止盈或实盘执行指令。",
+      "不得覆盖确定性风控、交易执行系统或人工审批。",
+      "不得作为 approved/default guidance 直接返回。"
+    ],
+    "required_context": [
+      "project_type",
+      "task_type",
+      "mode",
+      "strategy_version",
+      "data_boundary",
+      "review_status"
+    ],
+    "fallback_behavior": "cite_with_caveat"
+  },
+  "machine_gate": {
+    "default_guidance": "caveat_only",
+    "reason": "reviewed only; accepted_for_draft is not approved; default guidance requires later human governance approval.",
+    "requires_human_escalation": true,
+    "blocking_reasons": [
+      "not_approved",
+      "phase36_batch_reviewed_only"
+    ],
+    "checked_at": "2026-06-09",
+    "gate_version": "1.0.0",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "recommended_extra_sources": [
+    {
+      "title": "保留 TFDV 作为主来源。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_1"
+    },
+    {
+      "title": "保留 Rules of ML 作为 production ML consistency supporting source。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_2"
+    },
+    {
+      "title": "建议补 TFX Transform、feature registry 或内部 preprocessing_parity_contract，支持 preprocessing_version 与 feature_registry_version 的一致性检查。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_3"
+    },
+    {
+      "title": "与第八批 serving_consistency.train_like_serve_required 建立父子关系：第八批为父规则，本条为 parity test 子规则。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_4"
+    }
+  ]
+}

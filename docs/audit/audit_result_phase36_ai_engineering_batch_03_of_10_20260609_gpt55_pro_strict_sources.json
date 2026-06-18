@@ -1,0 +1,410 @@
+{
+  "audit_result_id": "audit_result_phase36_ai_engineering_batch_03_of_10_20260609_gpt55_pro_strict_sources",
+  "source_package_id": "phase36_ai_engineering_candidate_audit_batch_03_of_10_20260609",
+  "decisions": [
+    {
+      "candidate_id": "cand_20260609_ai_engineering_eval_ablation_required_for_rag_prompt_model_components_v1_001",
+      "decision": "needs_more_evidence",
+      "reason": "当前候选不应直接转 draft。candidate_id 和 normalized_claim 指向 RAG、prompt、model components 的 ablation required，但 statement 只是泛化评估规则：使用隔离、可复现、贴近生产任务的评测集并记录指标、阈值和失败样本。OpenAI evals、scikit-learn cross-validation 和 Rules of ML 可以支持通用评估、holdout、baseline、生产一致性，但不足以直接支撑“必须做 RAG/prompt/model 组件消融”的具体要求。",
+      "source_patch_notes": [
+        "保留 OpenAI evals 作为 LLM workflow evaluation 的 supporting source，但注明 Evals platform 正在退役，新项目应使用 Datasets / 新评估流程。",
+        "保留 scikit-learn cross-validation 作为 holdout / split discipline 来源。",
+        "保留 Rules of ML 作为生产 ML baseline、monitoring、train/serve consistency 的 supporting source。",
+        "补直接 ablation 来源，例如 ML ablation study 方法资料或可执行工程文档，说明移除或替换组件以测量组件影响。",
+        "补 RAG/prompt/model 组件级评估来源，或内部 CEK-TA ablation_report schema / ablation contract。"
+      ],
+      "content_patch_notes": [
+        "将正式 statement 改为：RAG、prompt、model 或 tool-chain 组件变更在进入 gate/scoring promotion 前，必须在同一隔离 eval set 上执行组件级 ablation，并记录 baseline、component-disabled、component-enabled 和 combined 配置差异。",
+        "建议字段：ablation_run_id、baseline_config_id、component_name、component_version、component_disabled、eval_dataset_id、eval_dataset_hash、metric_set_id、failure_case_ids、delta_vs_baseline、decision、reviewer。",
+        "明确 ablation 不等于调参搜索；它用于证明 RAG、prompt、model、reranker、tool 或 MCP 组件对质量、安全和可审计性的边际贡献。",
+        "增加 negative case：如果 only combined system pass，但无法解释哪个组件带来增益或风险，不能直接作为 hard gate 上线证据。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 只定义 ablation 方法、评估字段、组件版本和审计要求。",
+        "不得在本知识项中写入具体交易策略、信号、仓位、止损止盈、订单执行或账户参数。",
+        "若 ablation 涉及交易收益、滑点、fill model 或市场 regime 的业务解释，应路由到 Trading Engineering。"
+      ],
+      "conflict_patch_notes": [
+        "与 eval.production_like_eval_required、eval.deterministic_baseline_required_before_llm_gate 存在父子关系：production_like_eval 是父评估环境，deterministic_baseline 是 baseline，ablation 是组件贡献分析。",
+        "当前 statement 与 normalized_claim 不一致，直接 accepted 会导致知识项名称和内容错配。",
+        "未发现需要 rejected 的方向性冲突。"
+      ],
+      "required_followups": [
+        "重写 candidate statement，使其明确描述 RAG/prompt/model component ablation。",
+        "补至少一个直接支持 ablation study 的专业来源。",
+        "补 ablation_report_schema.json。",
+        "补 eval case：RAG off、prompt version swap、model swap、reranker off、tool/MCP unavailable。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_eval_blocked_trade_cannot_be_labeled_as_loss_v1_001",
+      "decision": "needs_more_evidence",
+      "reason": "当前候选不应直接转 draft。candidate_id 和 normalized_claim 指向“被阻断交易不能直接标为 loss”，但 statement 仍是泛化评估集规则，source_refs 也只有 OpenAI evals、scikit-learn CV 和 Rules of ML，缺少 blocked trade、censored outcome、counterfactual outcome 或 off-policy evaluation 的直接证据。方向合理，但必须先重写 claim 并补 counterfactual / logged feedback 证据。",
+      "source_patch_notes": [
+        "补 Counterfactual Risk Minimization / logged bandit feedback 作为主来源，用于说明历史日志只观测已执行动作结果，未执行或被阻断动作缺少 counterfactual outcome。",
+        "补 off-policy evaluation 或 causal inference / censored outcome 相关资料作为 supporting source。",
+        "OpenAI evals 和 scikit-learn CV 只能保留为评估流程和隔离数据的 supporting sources，不应作为本条主证据。",
+        "与本批 counterfactual_outcome_missing_for_blocked_trades 共用来源，避免重复建源。"
+      ],
+      "content_patch_notes": [
+        "将正式 statement 改为：A blocked or filtered trade has no observed execution outcome and must not be labeled as loss solely because it was blocked; it should be marked counterfactual_missing / censored_outcome unless an approved off-policy or simulation method supplies evidence.",
+        "建议字段：trade_candidate_id、gate_decision、executed_flag、observed_outcome_available、counterfactual_outcome_status、label_value、label_reason_code、ope_method_id、simulation_ref、reviewer。",
+        "明确 missed profit、unrealized PnL 或事后价格路径不能自动转成 LLM 训练标签。",
+        "允许标注为 needs_more_evidence、blocked_no_outcome、counterfactual_missing、human_review_required。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 只定义 label semantics、缺失 counterfactual outcome 的审计字段和训练阻断规则。",
+        "交易结果模拟、成交假设、回测、fill model、滑点和交易执行事实由 Trading Engineering 维护。",
+        "不得把具体交易、买卖点、账户、订单或策略参数写入本知识项。"
+      ],
+      "conflict_patch_notes": [
+        "与 eval.counterfactual_outcome_missing_for_blocked_trades 高度重叠，建议本条作为 label action 子规则，counterfactual_outcome_missing 作为原理父规则。",
+        "与 label_schema.no_pnl_only_label、eval_blocked_trade_cannot_be_labeled_as_loss、business_objective.success_metric_not_only_pnl 应互链。",
+        "当前版本如直接 accepted，会导致 ID/claim 与 statement/source 不匹配。"
+      ],
+      "required_followups": [
+        "重写 statement，明确 blocked trade label 规则。",
+        "补 CRM / off-policy / censored outcome 直接来源。",
+        "补 blocked_trade_label_schema。",
+        "补 eval case：blocked trade later profitable、blocked trade later loss、blocked trade no fill、paper-only simulated outcome。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_eval_case_no_training_overlap_required_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立。评估样本必须与训练样本隔离，不能与训练、prompt tuning、fine-tuning、threshold calibration 或 RAG construction 样本发生 exact / near-duplicate overlap。OpenAI eval / fine-tuning 资料和 scikit-learn cross-validation / data leakage 资料均支持 held-out evaluation 与避免训练评估污染。",
+      "source_patch_notes": [
+        "保留 OpenAI evals 作为 LLM workflow evaluation supporting source，但注明 Evals platform 退役风险。",
+        "保留 scikit-learn cross-validation 作为 held-out evaluation 和 split discipline 主要来源。",
+        "补 scikit-learn common pitfalls / data leakage 作为测试数据不得参与 fit / preprocessing / tuning 的来源。",
+        "建议补第二批已二审通过的 dataset.deduplication_required 作为 exact / near duplicate 和 contamination check 的内部互链来源。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：Eval cases must be isolated from training、prompt selection、fine-tuning、threshold calibration、RAG index construction and preference training data, with exact and near-duplicate overlap checks.",
+        "建议字段：eval_case_id、eval_dataset_id、split_id、train_dataset_ids_checked、overlap_check_id、exact_overlap_count、near_duplicate_count、contamination_status、action_taken、reviewer。",
+        "增加规则：overlap_check 未完成或发现 eval/gold 与 train pool 重叠时，不得用于最终模型或 gate promotion。",
+        "明确 no_training_overlap 是 eval case 最小 schema，不等于完整 dataset governance。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 只记录 split、hash、overlap check 和污染状态。",
+        "原始交易文本、订单、账户、策略细节和 K 线样本不得写入 AI Engineering KB。",
+        "若重叠判断涉及业务等价样本，应由项目 data owner 或 Trading Engineering 解释。"
+      ],
+      "conflict_patch_notes": [
+        "与 dataset.train_validation_test_split_required、data_asset.eval_pool_must_not_train、dataset.deduplication_required 构成正向互补。",
+        "与 eval_case.time_strategy_regime_split_required 有重叠：本条聚焦 no overlap，后者聚焦 split metadata。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 eval_case_overlap_check_schema.json。",
+        "补 exact/near duplicate 阈值和 owner 规则。",
+        "补 UI audit 字段：overlap_pool、duplicate_group_id、reviewer、action_taken。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_eval_case_time_strategy_regime_split_required_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立，但应作为 eval case split metadata 子规则，而不是泛化评估父规则。交易 LLM gate/scoring 的 eval case 应声明时间切分、策略版本分组、市场状态或数据池拆分，否则评估结果容易被时间泄漏、策略泄漏或 regime 偏差污染。当前来源支持 held-out / split discipline，但正式 draft 应补 TimeSeriesSplit、GroupKFold 或交易时序 walk-forward 相关来源。",
+      "source_patch_notes": [
+        "保留 OpenAI evals 作为工作流评估来源，并注明 Evals platform 退役时间线。",
+        "保留 scikit-learn cross-validation 作为 held-out evaluation supporting source。",
+        "补 scikit-learn TimeSeriesSplit 来源，支持时间序列评估应使用未来样本测试而不是普通随机 CV。",
+        "补 scikit-learn GroupKFold 或 GroupShuffleSplit 来源，支持 strategy_id、asset_group、market_regime 等分组不同时出现在 train/test。",
+        "建议补 Trading Engineering 的 regime taxonomy 或项目 split policy，但不得把具体策略规则写入 AI Engineering。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：Eval cases for trading LLM gating/scoring must declare split dimensions such as time window、strategy version、market regime、asset group and data pool before use.",
+        "建议字段：eval_case_id、split_policy_id、time_window_start、time_window_end、train_time_cutoff、strategy_group_key、strategy_version_ref、regime_label_ref、asset_group_key、pool_type、source_mode、leakage_check_id。",
+        "明确 market regime / strategy group 是 metadata 引用，不是 AI Engineering 内部定义交易策略。",
+        "如果 time、strategy、regime 或 pool split 缺失，应降级为 needs_more_evidence，不能作为 production-like final eval。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 管理 eval case schema、split 字段和缺失时的 gating 行为。",
+        "市场状态定义、策略版本、资产分组和交易时段含义由 Trading Engineering 或项目 owner 提供。",
+        "不得在本条写具体 K 线规则、策略参数、市场状态判定公式或仓位规则。"
+      ],
+      "conflict_patch_notes": [
+        "与 eval_case.no_training_overlap_required 是兄弟关系：no_training_overlap 检查污染，time_strategy_regime_split 记录切分维度。",
+        "与 eval.time_split_walk_forward_required 重叠；建议后者若补证据后作为 time-series split 技术规则，本条保留为 eval case metadata rule。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 split_manifest_schema.json。",
+        "补 regime_label_ref、strategy_version_ref、pool_type 枚举或引用规则。",
+        "补 TimeSeriesSplit / GroupKFold 专项来源到 source_refs。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_eval_counterfactual_outcome_missing_for_blocked_trades_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "方向充分成立。被 gate 阻断的交易没有实际执行结果，因此不能把普通 supervised label 当作完整真值。logged bandit feedback / counterfactual risk minimization 文献支持：历史日志只观测旧策略选择动作的反馈，未执行动作需要 counterfactual 或 off-policy 处理。该候选 statement 与 source_refs 对齐。",
+      "source_patch_notes": [
+        "保留 PMLR Counterfactual Risk Minimization 作为主来源。",
+        "保留 arXiv 版本作为同一论文的 backup source。",
+        "建议补 off-policy evaluation / contextual bandit logging requirements 来源，支持 propensity、logging policy、censored feedback 等字段。",
+        "可补内部 CEK-TA gate_decision_log_schema，用于记录 executed_flag 与 observed_outcome_available。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议保留核心含义：blocked trade lacks observed execution outcome; gate evaluation must record counterfactual_missing rather than treating ordinary supervised labels as complete.",
+        "建议字段：candidate_id、gate_policy_id、logging_policy_id、allowed_or_blocked、executed_flag、observed_outcome_available、counterfactual_outcome_status、label_status、label_reason_code、ope_possible、required_review。",
+        "增加 action：counterfactual_missing 样本不得进入普通 supervised outcome label 训练池，除非有 approved OPE / simulation / human review evidence。",
+        "明确 blocked 样本仍可用于 gate quality analysis，例如 false_block review、human review、risk ledger，但不能被简单当作 loss。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 只定义 outcome missing / censored feedback 的标签状态和审计规则。",
+        "交易执行结果、模拟成交、fill model、滑点、回测和实盘风控由 Trading Engineering 维护。",
+        "不得把具体交易、账户、策略、仓位或订单执行细节写入本知识项。"
+      ],
+      "conflict_patch_notes": [
+        "与 eval.blocked_trade_cannot_be_labeled_as_loss 应合并为同一 counterfactual label family；本条是原理父项，前者是 label action 子项。",
+        "与 eval.off_policy_evaluation_required_for_gate_policy 互补：本条说明缺失 counterfactual，后者说明 gate policy change 的评估规划。",
+        "与 label_schema.no_pnl_only_label、business_objective.success_metric_not_only_pnl 应互链。"
+      ],
+      "required_followups": [
+        "补 counterfactual_outcome_status enum。",
+        "补 blocked_trade_label_policy.md。",
+        "补 gate decision log 必填字段：logging_policy_id、executed_flag、observed_outcome_available。",
+        "补 eval case：blocked but later favorable price path、blocked but later unfavorable price path、blocked with no executable fill evidence。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_eval_deterministic_baseline_required_before_llm_gate_v1_001",
+      "decision": "needs_more_evidence",
+      "reason": "当前候选不应直接转 draft。normalized_claim 指向 deterministic baseline required before LLM gate，但 statement 只是泛化评估集规则；source_refs 支持评估、holdout 和生产 ML baseline 的一般原则，尚不足以直接支撑“上线 LLM gate 前必须有 deterministic baseline”的强制规则。方向合理，但需要重写 statement，并补直接 baseline / model optimization / deterministic rule baseline 来源。",
+      "source_patch_notes": [
+        "补 OpenAI model optimization 文档作为建立 baseline、用代表性测试数据迭代模型改动的来源。",
+        "保留 OpenAI evals 作为 LLM workflow evaluation supporting source，但注明退役风险。",
+        "保留 Rules of ML 作为 baseline、monitoring、production ML safeguard supporting source。",
+        "补 deterministic baseline / rule-based baseline / non-LLM baseline 的内部 contract，例如 baseline_config_id、baseline_owner、baseline_eval_report。",
+        "scikit-learn CV 仅支持评估 split，不足以单独支撑 deterministic baseline before LLM gate。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议改为：Before an LLM gate receives promotion authority, a deterministic or non-LLM baseline must be evaluated on the same held-out production-like eval set and compared on safety, false allow, false block, auditability and latency.",
+        "建议字段：baseline_config_id、baseline_type、baseline_owner、eval_dataset_id、metric_set_id、llm_gate_config_id、comparison_report_id、false_allow_delta、false_block_delta、latency_delta、decision。",
+        "明确 deterministic baseline 可以是 rule-based validator、schema-only gate、existing numeric/deterministic gate 或 human-review baseline，不应在知识库写具体交易策略规则。",
+        "增加 negative case：LLM gate 只比空 baseline 或主观 demo 好，不能作为 hard gate promotion 证据。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 只定义 baseline 要求、评估比较字段和 promotion gate。",
+        "baseline 如包含具体交易风控、价格规则、仓位、订单执行或策略逻辑，应由 Trading Engineering 持有，AI Engineering 只存引用。",
+        "不得把具体 deterministic trading rule 写入本知识项。"
+      ],
+      "conflict_patch_notes": [
+        "与 eval.ablation_required_for_rag_prompt_model_components 和 eval.production_like_eval_required 有父子关系。",
+        "与 runtime_final_gate_deterministic_engine_required 后续候选可能重叠；本条应限于上线前评估 baseline，runtime_final_gate 应限于生产运行时最终权限。",
+        "当前 statement 与 normalized_claim 不一致。"
+      ],
+      "required_followups": [
+        "重写 candidate statement，使其明确 deterministic baseline before LLM gate。",
+        "补 OpenAI model optimization baseline 来源或等价专业来源。",
+        "补 baseline_comparison_report_schema.json。",
+        "补例外路径：无 deterministic baseline 时必须 human review / needs_more_evidence。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_eval_holdout_test_set_required_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "方向充分成立。LLM trade quality scoring/gating 需要 holdout test/eval set，且该 set 不得用于训练、prompt selection、fine-tuning、threshold calibration 或其他会污染最终评估的过程。scikit-learn 和 OpenAI fine-tuning best practices 均直接支持训练/评估数据分离和 held-out evaluation。",
+      "source_patch_notes": [
+        "保留 scikit-learn cross-validation 作为 held-out evaluation 和 repeated test-set tuning 风险来源。",
+        "保留 OpenAI fine-tuning best practices 作为 training/test examples 拆分和用 test set 评估模型的来源，但注明 fine-tuning platform 相关页面存在迁移 / winding down freshness 风险。",
+        "补 scikit-learn common pitfalls / data leakage 作为 test data 不得参与 fit / preprocessing / tuning 的来源。",
+        "建议互链 dataset.train_validation_test_split_required、data_asset.eval_pool_must_not_train、gold_set_immutable_required。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：Holdout test/eval data for LLM gate/scoring must not be used for training, prompt selection, fine-tuning, DPO selection, threshold calibration, RAG index construction or model selection.",
+        "建议字段：holdout_dataset_id、holdout_version、holdout_hash、prohibited_use、used_for_final_eval_only、contamination_check_id、access_control_group、reviewer。",
+        "增加污染动作：如果 holdout 被用于调 prompt、调阈值或选择模型版本，则必须废弃该版本或降级为 validation set，并创建新 holdout。",
+        "明确 validation set 与 final holdout set 角色不同。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 管理 holdout set 的用途限制、hash、版本和污染检测。",
+        "原始交易样本、账户数据和策略细节保留在项目私有数据域，只在 AI Engineering 中记录引用和脱敏摘要。",
+        "与交易收益口径相关的评估由 Trading Engineering 提供或审核。"
+      ],
+      "conflict_patch_notes": [
+        "与 eval_case.no_training_overlap_required 正向重叠：本条是 holdout policy，后者是 eval case overlap check。",
+        "与 dataset.train_validation_test_split_required、data_asset.eval_pool_must_not_train、gold_set_immutable_required 互补。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 holdout_dataset_policy.md。",
+        "补 holdout_use_audit_log schema。",
+        "补污染处理流程：reclassify_as_validation、new_holdout_required、block_promotion。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_eval_off_policy_evaluation_required_for_gate_policy_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立。gate policy 变更在历史日志只显示已执行动作结果时，应要求 off-policy 或 counterfactual evaluation planning；否则无法直接从历史 observed outcomes 推断新 gate policy 的执行结果。Counterfactual Risk Minimization / logged bandit feedback 来源直接支持该类偏置或 censored feedback 场景。",
+      "source_patch_notes": [
+        "保留 PMLR Counterfactual Risk Minimization 作为主来源。",
+        "保留 arXiv 版本作为同一论文的 backup source。",
+        "建议补 off-policy evaluation logging requirements 来源，支持 propensity、logging policy、action space、support mismatch 等字段。",
+        "补内部 gate_policy_change_eval_plan schema。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：Gate policy changes must include an off-policy / counterfactual evaluation plan when logged outcomes are available only for actions allowed by a prior policy.",
+        "建议字段：old_gate_policy_id、new_gate_policy_id、logging_policy_id、action_space、propensity_available、support_coverage_check、counterfactual_method、ope_possible、offline_eval_report_id、shadow_required、reviewer。",
+        "明确如果缺少 propensity 或 logging policy 支持，应标注 OPE_not_identifiable，并要求 shadow/paper evaluation 或 human review，而不是伪造 offline PnL。",
+        "本条是 evaluation planning rule，不保证 off-policy estimate 一定可靠。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 只沉淀 off-policy evaluation planning、日志字段和 promotion gate。",
+        "交易执行、回测、成交模型、策略收益、仓位和订单规则由 Trading Engineering 管理。",
+        "不得将具体 gate 策略参数或实盘交易规则写入 AI Engineering。"
+      ],
+      "conflict_patch_notes": [
+        "与 eval.counterfactual_outcome_missing_for_blocked_trades 互补：本条处理 gate policy change planning，后者处理 blocked trade outcome 缺失。",
+        "与 deployment_shadow_mode_before_live、calibration_threshold_requires_shadow_data、approval_hard_gate_enable_requires_approval 应互链。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 gate_policy_change_eval_plan_schema.json。",
+        "补 OPE feasibility enum：propensity_available、support_mismatch、not_identifiable、shadow_required。",
+        "补 eval case：new gate would allow trades old gate blocked、new gate blocks old allowed trades、logging policy missing。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_eval_production_like_eval_required_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立。LLM gate/scoring 的评估应使用隔离、可复现、贴近生产任务的评测集，并记录指标、阈值、失败样本和运行约束。OpenAI evals / model optimization 支持用代表性真实输入建立和迭代评估，scikit-learn 支持 held-out evaluation，Rules of ML 支持生产一致性和 baseline 观念。",
+      "source_patch_notes": [
+        "保留 OpenAI evals 作为 LLM workflow evaluation source，但注明 Evals platform 退役风险，新项目转 Datasets / 新 eval workflow。",
+        "补 OpenAI model optimization 作为建立 baseline、用真实输入评估改动的当前官方来源。",
+        "保留 scikit-learn cross-validation 作为 held-out evaluation 来源。",
+        "保留 Rules of ML 作为 production ML consistency、baseline、monitoring 的 supporting source。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：LLM gate/scoring evaluation must use isolated, reproducible and production-like eval sets that reflect real input format, RAG retrieval behavior, tool/MCP failure modes, missing fields, source conflicts and latency/cost constraints.",
+        "建议字段：eval_dataset_id、eval_dataset_hash、production_context_profile、prompt_version、rag_index_version、tool_config_version、metric_set_id、threshold_ref、failure_case_ids、latency_budget、cost_budget、owner。",
+        "增加 production-like 覆盖项：normal case、missing required field、RAG no-hit、source conflict、tool error、low confidence、blocked trade、counterfactual missing。",
+        "明确 production-like eval pass 不等于 live-ready，还需 shadow/paper、审批、回滚和监控。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 定义评估环境、输入格式、RAG/MCP 场景、失败样本和质量指标。",
+        "实盘订单、交易风控、仓位、策略参数和具体 market signal 不进入本知识项。",
+        "交易执行上下文只用脱敏引用或由 Trading Engineering 提供的抽象字段。"
+      ],
+      "conflict_patch_notes": [
+        "本条可作为第三批多个 eval 规则的父项：holdout、no overlap、ablation、baseline、time split、calibration 都可作为子规则。",
+        "与 deployment_shadow_mode_before_live 互补：本条是 offline production-like eval，shadow_mode 是上线前旁路阶段。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 production_like_eval_profile_schema.json。",
+        "补 failure_case_catalog。",
+        "补与 shadow/paper promotion checklist 的互链。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_eval_score_calibration_required_before_gating_v1_001",
+      "decision": "needs_more_evidence",
+      "reason": "当前候选不应直接转 draft。normalized_claim 是 score calibration required before gating，但 statement 仍是泛化评估集规则，source_refs 也缺少 calibration / confidence estimation 的直接来源。该候选还与第一批已审计的 calibration.llm_score_not_probability 和 calibration.threshold_requires_shadow_data 高度重叠，应先补直接来源并决定合并或作为子规则。",
+      "source_patch_notes": [
+        "补 scikit-learn probability calibration / calibration curves / reliability diagrams 作为校准主来源。",
+        "补 ACL 2024 LLM confidence estimation and calibration survey，支持 LLM confidence / score 不应未经校准直接用于高影响 gating。",
+        "保留 OpenAI evals 作为评估流程 supporting source，但注明平台退役。",
+        "保留 scikit-learn CV 作为独立校准/验证数据来源，不应作为 calibration 唯一主证据。",
+        "与第一批 calibration.llm_score_not_probability、calibration.threshold_requires_shadow_data 共用来源，避免重复知识项。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议改为：LLM raw score, rubric score, verbal confidence or logprob-derived score must not be used for gating until calibrated or validated on independent holdout/shadow data with reliability and subgroup checks.",
+        "建议字段：raw_score_type、calibration_dataset_id、calibration_method、calibrated_score、ece、brier_score、reliability_bucket、subgroup_key、sample_count、calibration_report_id。",
+        "明确校准前不得 hard allow；可以降级为 advisory score、needs_review 或 neutral。",
+        "如果该知识项保留，应定位为 calibration family 的 eval 子规则，而不是重复第一批通用 calibration 规则。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 定义 score semantics、校准报告和 gating 前置条件。",
+        "具体交易阈值、收益影响、仓位或策略风险预算由 Trading Engineering 或项目配置管理。",
+        "不得在本条写入具体 hard gate threshold 数值。"
+      ],
+      "conflict_patch_notes": [
+        "与第一批 calibration.llm_score_not_probability 和 calibration.threshold_requires_shadow_data 高度重复，建议合并或降为子规则。",
+        "与 eval.holdout_test_set_required、deployment_shadow_mode_before_live、approval_hard_gate_enable_requires_approval 互补。",
+        "当前 statement 与 normalized_claim 不一致，直接 accepted 会造成内容错配。"
+      ],
+      "required_followups": [
+        "重写 statement，使其明确 calibration before gating。",
+        "补 scikit-learn calibration 和 LLM calibration survey 直接来源。",
+        "决定 canonical ID：保留 eval.score_calibration_required_before_gating 作为子项，或并入 calibration.threshold_requires_shadow_data。",
+        "补 calibration_report_schema.json。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_eval_time_split_walk_forward_required_v1_001",
+      "decision": "needs_more_evidence",
+      "reason": "当前候选不应直接转 draft。normalized_claim 指向 time split / walk-forward required，但 statement 是泛化评估集规则，source_refs 也只列出通用 OpenAI evals、scikit-learn CV 和 Rules of ML，没有直接引用 TimeSeriesSplit、walk-forward validation、purged/embargo split 或交易时序评估来源。方向正确，但需要重写 statement 并补直接时序评估证据。",
+      "source_patch_notes": [
+        "补 scikit-learn TimeSeriesSplit 作为时间序列 train/test split 的直接来源。",
+        "补 walk-forward validation、rolling-window / expanding-window validation 或金融机器学习 purged / embargoed CV 来源。",
+        "保留 OpenAI evals 作为 LLM workflow evaluation supporting source，但不作为 time split 主来源。",
+        "保留 scikit-learn CV 作为 general split source，但正式 source_refs 应指向 TimeSeriesSplit 具体页面或章节。",
+        "建议补 Trading Engineering split_policy contract，用于定义市场日历、交易时间窗、策略版本和 embargo/gap。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议改为：Trading LLM gate/scoring evaluation involving chronological market data must use time-aware split such as walk-forward, rolling/expanding window or explicit train-before-test cutoff; random split is not allowed unless leakage analysis approves it.",
+        "建议字段：split_method、train_start、train_end、validation_start、validation_end、test_start、test_end、gap_or_embargo、walk_forward_window_id、rolling_or_expanding、time_leakage_check_id。",
+        "明确 random split 对时序交易数据默认不合格；如使用随机 split，必须记录理由和 leakage analysis。",
+        "将本条定位为 time-series split technical rule，而 eval_case.time_strategy_regime_split_required 保留为 eval case metadata rule。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 管理 time-aware split 的 schema、审计和阻断条件。",
+        "市场日历、交易 session、策略版本、regime 切分和具体 timeframe 由 Trading Engineering 或项目 owner 提供。",
+        "不得写入具体交易策略、信号、K 线条件、持仓或执行规则。"
+      ],
+      "conflict_patch_notes": [
+        "与 eval_case.time_strategy_regime_split_required 高度相关，应拆成父子：本条是 time-aware technical split，eval_case 条是 metadata declaration。",
+        "与 dataset.train_validation_test_split_required、eval.holdout_test_set_required 互补。",
+        "当前 statement 与 normalized_claim 不一致。"
+      ],
+      "required_followups": [
+        "重写 candidate statement，使其明确 walk-forward / time-aware split。",
+        "补 TimeSeriesSplit / walk-forward / purged CV 专业来源。",
+        "补 time_split_manifest_schema.json。",
+        "补 eval case：future leakage、random split on time series、rolling window、expanding window、embargo gap。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_feature_schema_decision_time_only_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "方向充分成立。训练输入特征必须声明时间戳和决策时可用性，严禁把事后结果、post-trade fields 或未来字段放入模型输入。Feast 支持 feature registry、offline/online store 和 point-in-time correctness，TFDV 和 scikit-learn common pitfalls 支持 schema validation、train/serve skew、label leakage 和数据泄漏防护。",
+      "source_patch_notes": [
+        "保留 Feast 作为 feature definitions、feature registry、offline/online store、point-in-time correctness 和 feature versioning 来源。",
+        "保留 TFDV 作为 schema validation、anomaly detection、train/serve skew 和 label-as-feature leakage 来源。",
+        "保留 scikit-learn common pitfalls 作为 data leakage 和预测时不可用信息不得进入模型的来源。",
+        "建议补内部 feature_schema_contract：decision_timestamp、feature_timestamp_cutoff、available_at_decision_time、post_trade_forbidden。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：Every model input feature must declare event timestamp, feature timestamp cutoff and decision-time availability; post-trade outcomes, realized PnL, fill results, future price path or later human labels are forbidden in input.",
+        "建议字段：feature_name、feature_source、event_timestamp、feature_timestamp、feature_timestamp_cutoff、decision_timestamp、available_at_decision_time、is_post_trade_field、allowed_in_training_input、allowed_in_eval_input、validation_rule_id。",
+        "增加阻断动作：如果 feature availability 无法证明，降级为 needs_more_evidence；如果包含 post-trade outcome 或 future field，block_training。",
+        "明确 target / label 字段必须与 input feature schema 分离。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 定义 feature availability、时间戳、schema validation 和 leakage 防护。",
+        "具体交易特征公式、K 线计算、市场微观结构字段、策略信号和回测逻辑由 Trading Engineering 维护。",
+        "AI Engineering KB 只保存抽象字段定义、hash、引用和脱敏摘要，不保存私有交易样本。"
+      ],
+      "conflict_patch_notes": [
+        "与后续 feature_schema.feature_timestamp_cutoff_required、feature_schema.post_trade_fields_forbidden_in_input、training_data_feature_timestamp_cutoff_required 可能重叠；建议本条作为父规则，后续条目作为子规则。",
+        "与 leakage.label_in_input_forbidden、outcome_schema.post_trade_fields_separated 应互链。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 feature_schema_decision_time_contract.json。",
+        "补 post_trade_field enum：realized_pnl、fill_price、fill_quantity、exit_price、future_return、later_human_label。",
+        "补 validation cases：future field in input、label accidentally included as feature、feature timestamp after decision timestamp、online/offline skew。"
+      ]
+    }
+  ],
+  "normalization": {
+    "normalized_from": "C:\\Users\\dove\\.codex\\attachments\\5a65e6bd-3c18-4b7e-8c72-4a57002c0fc8\\pasted-text.txt",
+    "normalized_at": "2026-06-09",
+    "governance": [
+      "accepted_for_draft is not approved.",
+      "Formal knowledge created from this audit must remain reviewed/caveat_only.",
+      "needs_more_evidence items stay in candidate queue and must not become formal reviewed."
+    ]
+  }
+}

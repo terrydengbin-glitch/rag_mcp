@@ -1,0 +1,345 @@
+{
+  "audit_package_id": "phase53_market_conduct_supplemental_reaudit_package_20260613",
+  "phase": 53,
+  "created_at": "2026-06-13",
+  "status": "supplemental_reaudit_ready",
+  "reason": "P53-TR-MC01 首轮审计为 needs_more_evidence；已补 FINRA 2024 Momentum Ignition direct source，等待二审。",
+  "hard_boundaries": {
+    "candidate_is_not_formal_knowledge": true,
+    "accepted_for_draft_is_not_reviewed": true,
+    "reviewed_allowed": false,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "legal_opinion_allowed": false,
+    "trade_execution_advice_allowed": false
+  },
+  "audit_instructions": {
+    "language": "zh-CN",
+    "must_search_external_sources": true,
+    "must_search_requirement": "必须搜索相关专业网站、官方资料、案例和数据，重点核验 FINRA 2024 是否直接支撑 momentum ignition surveillance taxonomy。",
+    "allowed_decisions": [
+      "accepted_for_draft",
+      "needs_more_evidence",
+      "rejected",
+      "blocked"
+    ],
+    "required_output_fields": [
+      "candidate_id",
+      "research_task_id",
+      "decision",
+      "confidence",
+      "reviewed_allowed",
+      "approved_allowed",
+      "default_guidance_allowed",
+      "hard_gate_allowed",
+      "reasons",
+      "required_followups",
+      "patch_notes"
+    ]
+  },
+  "candidates": [
+    {
+      "schema_version": "1.1.0",
+      "candidate_id": "cand_20260613_phase53_market_conduct_surveillance_taxonomy_required_001",
+      "research_task_id": "P53-TR-MC01",
+      "status": {
+        "review_status": "needs_more_evidence",
+        "ingestion_decision": "needs_more_evidence",
+        "decision_reason": "Phase 53 外部严格审计结论为 needs_more_evidence；已按 patch notes 补证，等待补证二审，仍不得视为 accepted/reviewed/approved/default guidance/hard gate。",
+        "created_at": "2026-06-13",
+        "updated_at": "2026-06-13"
+      },
+      "classification": {
+        "tree_node_id": "kt.trading_engineering.market_conduct.surveillance_taxonomy",
+        "canonical_node_id": "kt.trading_engineering.market_conduct.surveillance_taxonomy",
+        "tree_path": "CEK-TA / Trading Engineering",
+        "related_nodes": [
+          "kt.trading_engineering.order_semantics",
+          "kt.trading_engineering.audit_trace",
+          "kt.trade_analysis.reason_code",
+          "kt.live_execution.order_event_log"
+        ],
+        "partition_id": "KB_08_TRADE_ANALYSIS",
+        "domain": "trading_engineering",
+        "subdomain": "market_conduct",
+        "claim_type": "surveillance_taxonomy_boundary",
+        "rule_type": "governance_boundary",
+        "used_for": [
+          "trade_analysis",
+          "audit_trace",
+          "live_execution_review",
+          "ai_audit_assistant"
+        ]
+      },
+      "claim": {
+        "claim_id": "claim_001",
+        "title": "Market conduct surveillance taxonomy must not be treated as legal finding",
+        "statement": "交易系统应将 spoofing、layering、wash/self-trade、momentum ignition、marking the close、front-running 等市场行为风险作为监控 taxonomy 和审计上下文；该 taxonomy 只用于合规/审计/人工复核，不得替代法律结论、操纵定性或自动交易许可。",
+        "normalized_claim": "phase53.market_conduct_surveillance_taxonomy_required.v1",
+        "evidence_summary": "FINRA manipulative trading guidance supports surveillance programs for layering, spoofing, wash trades, and related market conduct risks. / CFTC disruptive trading practice materials support futures/swaps market conduct risk context, including spoofing-related boundaries. / FINRA 2024 Manipulative Trading report directly supports Momentum Ignition Trading surveillance context.",
+        "interpretation_notes": "本候选已补 momentum ignition 直接来源，但仍需补证二审；taxonomy 只用于 surveillance labels、reason codes 和人工复核上下文，不得作为法律结论。",
+        "claim_strength": "medium_high",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general",
+        "asset": "general",
+        "timeframe": "general",
+        "data_granularity": "general",
+        "project_type": "external_trading_ai_project",
+        "applies_when": [
+          "系统处理订单事件、撤单事件、成交、订单簿或交易后复盘标签。",
+          "AI 审计助手需要给出市场行为风险 reason code 或人工复核上下文。"
+        ],
+        "not_applicable_when": [
+          "只有 K 线价格数据且无订单事件或订单簿证据。",
+          "用户请求法律定性、执法结论或针对个人/机构的违法判断。"
+        ],
+        "assumptions": [
+          "外接项目提供自身 jurisdiction、venue、asset class、broker/adapter、权限和项目事实。",
+          "CEK-TA 只沉淀可复用专业边界和证据契约，不接管项目私有运行决策。"
+        ],
+        "limitations": [
+          "本条仍是 candidate，必须经过外部 AI/人工严格审计和补丁回写后才能进入 formal reviewed/caveat_only。",
+          "来源具有 jurisdiction、system scope 或 tool scope 限制，不得跨市场泛化。"
+        ]
+      },
+      "required_fields_or_contract": {
+        "surveillance_taxonomy": [
+          "spoofing",
+          "layering",
+          "wash_or_self_trade",
+          "momentum_ignition",
+          "marking_the_close",
+          "front_running"
+        ],
+        "legal_owner_required": true,
+        "manual_review_required": true,
+        "not_hard_gate": true,
+        "evidence_required": [
+          "order_event_id",
+          "cancel_event_id",
+          "fill_event_id",
+          "venue",
+          "session",
+          "timestamp_quality"
+        ]
+      },
+      "anti_patterns": [
+        "把 surveillance label 写成法律结论。",
+        "把普通撤单或做市行为直接归类为操纵。",
+        "让 LLM 根据 taxonomy 自动阻断订单或认定违法。"
+      ],
+      "source_refs": [
+        {
+          "source_id": "P53-SRC-TR-003",
+          "source_title": "Manipulative Trading | FINRA 2026 Annual Regulatory Oversight Report",
+          "source_url": "https://www.finra.org/rules-guidance/guidance/reports/2026-finra-annual-regulatory-oversight-report/manipulative-trading",
+          "source_type": "regulatory_report",
+          "publisher": "FINRA",
+          "published_at": null,
+          "accessed_at": "2026-06-13",
+          "version": null,
+          "authority_level": "A1",
+          "jurisdiction_or_scope": "US broker-dealer surveillance",
+          "reliability": "high",
+          "score": 90,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [
+            "Does not produce legal findings for a specific actor."
+          ],
+          "evidence_summary": "FINRA manipulative trading guidance supports surveillance programs for layering, spoofing, wash trades, and related market conduct risks.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "P53-SRC-TR-007",
+          "source_title": "CFTC Disruptive Trading Practices",
+          "source_url": "https://www.cftc.gov/LawRegulation/DoddFrankAct/Rulemakings/DF_24_DisruptiveTrading/index.htm",
+          "source_type": "regulatory_guidance",
+          "publisher": "CFTC",
+          "published_at": null,
+          "accessed_at": "2026-06-13",
+          "version": null,
+          "authority_level": "A1",
+          "jurisdiction_or_scope": "US futures and swaps disruptive practices",
+          "reliability": "high",
+          "score": 90,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [
+            "Does not replace FINRA equity surveillance guidance."
+          ],
+          "evidence_summary": "CFTC disruptive trading practice materials support futures/swaps market conduct risk context, including spoofing-related boundaries.",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "P53-SRC-TR-011",
+          "source_title": "Manipulative Trading | FINRA 2024 Annual Regulatory Oversight Report",
+          "source_url": "https://www.finra.org/rules-guidance/guidance/reports/2024-finra-annual-regulatory-oversight-report/manipulative-trading",
+          "source_type": "regulatory_report",
+          "publisher": "FINRA",
+          "published_at": null,
+          "accessed_at": "2026-06-13",
+          "version": null,
+          "authority_level": "A1",
+          "jurisdiction_or_scope": "US broker-dealer surveillance",
+          "reliability": "high",
+          "score": 90,
+          "relevance": "high",
+          "freshness": "time_sensitive",
+          "limitations": [
+            "只支撑美国 broker-dealer surveillance 语境，不直接生成法律裁决。",
+            "只作为 momentum ignition 直接来源；不得把 taxonomy 写成操纵定性或自动 hard gate。"
+          ],
+          "evidence_summary": "FINRA 2024 Manipulative Trading 报告直接列出 Momentum Ignition Trading，并要求 firms 设计监控以检测潜在 momentum ignition trading，包括 layering/spoofing variants 和 marking the close 等语境。",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "high",
+        "score": 88,
+        "score_version": "1.1.0",
+        "primary_source_count": 3,
+        "supporting_source_count": 0,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "Does not produce legal findings for a specific actor.",
+          "Does not replace FINRA equity surveillance guidance.",
+          "只支撑美国 broker-dealer surveillance 语境，不直接生成法律裁决。",
+          "只作为 momentum ignition 直接来源；不得把 taxonomy 写成操纵定性或自动 hard gate。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "visible_context_no_direct_conflict",
+        "checked_against": [
+          "Phase 52 authoritative gap audit",
+          "Phase 53 scope audit accept_with_patch",
+          "formal knowledge index visible to local script"
+        ],
+        "resolution_summary": "未发现与当前 CEK-TA formal knowledge 的可见直接冲突；正式入库前仍需完整 KB 冲突、重复和 owner 边界检查。",
+        "open_questions": [
+          "外部审计需确认来源是否直接支撑 candidate statement。",
+          "外部审计需确认是否需要拆分 jurisdiction 或 owner 边界。"
+        ]
+      },
+      "review": {
+        "review_status": "needs_more_evidence",
+        "freshness": "time_sensitive",
+        "reviewed_by": null,
+        "reviewed_at": null,
+        "default_guidance_allowed": false,
+        "approved_allowed": false,
+        "hard_gate_allowed": false,
+        "legal_opinion_allowed": false,
+        "trade_execution_advice_allowed": false,
+        "risk_threshold_advice_allowed": false,
+        "ai_audit": {
+          "audit_result_id": "audit_phase53_candidate_20260613_external_strict",
+          "package_id": "phase53_candidate_audit_package_20260613",
+          "decision": "needs_more_evidence",
+          "confidence": "medium_high",
+          "reviewed_allowed": false,
+          "approved_allowed": false,
+          "default_guidance_allowed": false,
+          "hard_gate_allowed": false,
+          "imported_at": "2026-06-13",
+          "required_followups": [
+            "补 FINRA/SEC/CFTC/ESMA/IOSCO 中明确覆盖 momentum ignition 的直接来源。",
+            "将 taxonomy 明确写成 surveillance labels / reason codes / manual escalation context，不得写成 manipulation finding。",
+            "补 legal_owner_required=true、manual_review_required=true、not_hard_gate=true。"
+          ],
+          "patch_notes": {
+            "source": [
+              "保留 FINRA Manipulative Trading 与 CFTC Disruptive Trading Practices。",
+              "补 momentum ignition 直接来源后再审。"
+            ],
+            "content": [
+              "taxonomy 不等于法律结论。",
+              "不得把普通做市、撤单或订单簿管理直接归类为操纵。"
+            ],
+            "boundary": [
+              "不得输出法律意见。",
+              "不得生成操纵定性。",
+              "不得把异常标签直接变成硬阻断。"
+            ],
+            "conflict": []
+          }
+        }
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于外部 AI/人工审计候选知识边界。",
+          "用于生成 reviewed/caveat_only 准备项的补丁建议。",
+          "用于提醒外接项目声明来源、owner、jurisdiction 和不适用范围。"
+        ],
+        "not_allowed": [
+          "不得作为默认指导。",
+          "不得生成买卖点、仓位、杠杆、止损止盈或实盘执行建议。",
+          "不得生成法律意见或合规满足声明。",
+          "不得启用 hard gate。"
+        ]
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "needs_more_evidence; no reviewed/approved/default/hard gate created by Phase 53 candidate audit import.",
+        "requires_human_escalation": true,
+        "hidden_from_default_queue": true,
+        "visible_in_default_guidance_queue": false
+      },
+      "workflow": {
+        "stage": "supplemented_for_reaudit",
+        "phase": 53,
+        "next_allowed_decisions": [
+          "accepted_for_draft",
+          "needs_more_evidence",
+          "rejected",
+          "blocked"
+        ],
+        "forbidden_decisions": [
+          "reviewed",
+          "approved",
+          "default_guidance",
+          "hard_gate",
+          "legal_opinion",
+          "trade_execution_advice"
+        ],
+        "target_review_status": "draft",
+        "proposed_knowledge_id": "kb_trading_market_conduct.phase53.market_conduct_surveillance_taxonomy_required.v1",
+        "formal_knowledge_id": null,
+        "last_audit_result_id": "audit_phase53_candidate_20260613_external_strict",
+        "last_audit_decision": "needs_more_evidence"
+      },
+      "audit_patch_notes": {
+        "source": [
+          "FINRA 支撑 manipulative trading surveillance，CFTC 支撑 disruptive practices 语境。",
+          "保留 FINRA Manipulative Trading 与 CFTC Disruptive Trading Practices。",
+          "补 momentum ignition 直接来源后再审。",
+          "已补 FINRA 2024 Manipulative Trading 作为 momentum ignition 直接来源，供补证二审核验。"
+        ],
+        "content": [
+          "必须写成 surveillance taxonomy，不写成 manipulation finding。",
+          "taxonomy 不等于法律结论。",
+          "不得把普通做市、撤单或订单簿管理直接归类为操纵。"
+        ],
+        "boundary": [
+          "只能用于 labels/reason codes/escalation context，不得输出法律意见或 hard gate。",
+          "不得输出法律意见。",
+          "不得生成操纵定性。",
+          "不得把异常标签直接变成硬阻断。"
+        ],
+        "conflict": [
+          "Legal/compliance owner 才能作正式判断；CEK-TA 只提供审计上下文。"
+        ]
+      },
+      "_audit_export_meta": {
+        "exported_at": "2026-06-13T07:22:49+00:00",
+        "package_scope": "phase53_p0_candidate_audit",
+        "proposed_knowledge_id": "kb_trading_market_conduct.phase53.market_conduct_surveillance_taxonomy_required.v1",
+        "candidate_not_formal_knowledge": true
+      }
+    }
+  ]
+}

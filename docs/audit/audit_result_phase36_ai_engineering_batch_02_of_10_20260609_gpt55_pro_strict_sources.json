@@ -1,0 +1,395 @@
+{
+  "audit_result_id": "audit_result_phase36_ai_engineering_batch_02_of_10_20260609_gpt55_pro_strict_sources",
+  "source_package_id": "phase36_ai_engineering_candidate_audit_batch_02_of_10_20260609",
+  "decisions": [
+    {
+      "candidate_id": "cand_20260609_ai_engineering_data_quality_backtest_paper_live_separation_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立，但当前 statement 与 normalized_claim 不完全匹配：statement 是“核心字段、执行成本或数据来源模式缺失时阻断训练或降级”，normalized_claim 是 backtest/paper/live separation。正式 draft 应聚焦为 source_mode 分离规则：训练、评估、shadow 和上线分析样本必须标明 backtest、paper、shadow、live 等来源模式，来源模式缺失时不得进入训练或默认评估。",
+      "source_patch_notes": [
+        "保留 TFDV 作为 schema validation、anomaly detection、drift/skew、train/serve skew 的工程来源。",
+        "保留 Datasheets for Datasets 作为数据来源、组成、用途、限制和维护信息文档化来源。",
+        "补 QuantConnect Paper Trading 或同类专业资料，支持 paper/live 环境区分和真实资金前验证。",
+        "补 QuantConnect Reality Modeling、fees、slippage、fills 资料，说明回测、paper 和 live 的执行假设不同。",
+        "补 FINRA 15-09 或 FCA algorithmic trading control 作为上线前测试、系统验证和监督来源。"
+      ],
+      "content_patch_notes": [
+        "将正式 statement 改为：trade scoring/gating 训练或评估样本必须记录 source_mode，且 backtest、paper、shadow、live 数据不得无审计混用。",
+        "建议字段：sample_id、source_mode、environment、capture_time、decision_timestamp、feature_timestamp_cutoff、fill_source、label_source、allowed_use、prohibited_use、pool_type。",
+        "增加规则：source_mode 缺失、模式不一致或 lineage 不可追踪时，fallback_action 应为 block_training、needs_more_evidence 或 human_review。",
+        "避免继续与 execution_cost_required、missing_core_fields_block_training 共用同一句 generic statement。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 只沉淀 source_mode、数据 provenance、训练/评估隔离和 gating 数据质量规则。",
+        "具体回测模型、fill model、K 线、成交模型、交易成本模型、策略参数和实盘执行路由到 Trading Engineering。",
+        "不得在本知识项中写入项目私有策略规则、账户参数或真实订单细节。"
+      ],
+      "conflict_patch_notes": [
+        "与 data_quality.execution_cost_required、data_quality.missing_core_fields_block_training 存在重复，应拆成父规则 data_quality.trade_sample_minimum_quality_gate 和三个子规则。",
+        "与 dataset.source_lineage_required、dataset.version_and_hash_required、data_asset.eval_pool_must_not_train 建立互链。",
+        "未发现需要 rejected 的直接冲突。"
+      ],
+      "required_followups": [
+        "新增 source_mode 枚举：backtest、paper、shadow、live、synthetic、incident_replay。",
+        "补 source_mode transition policy，例如 live_to_train 需要审批、脱敏、license check、leakage check。",
+        "补 backtest/paper/live 混用检测用例和 UI audit warning。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_data_quality_execution_cost_required_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立。交易 LLM scoring/gating 的训练或评估样本如果缺少费用、滑点、spread、fill 等执行成本信息，会导致 trade quality label 或 outcome interpretation 不可靠。当前来源对 schema 和数据文档化支持充分，但执行成本本身需要补交易工程专业来源。",
+      "source_patch_notes": [
+        "保留 TFDV 作为 required fields/schema validation 来源。",
+        "保留 Datasheets for Datasets 作为 dataset composition、intended use、limitations 来源。",
+        "补 QuantConnect transaction fees、slippage、fill model、reality modeling 资料作为执行成本字段必要性的直接来源。",
+        "补 Trading Engineering 内部 cost model contract，但不要把具体模型公式或项目参数写入 AI Engineering。"
+      ],
+      "content_patch_notes": [
+        "将 statement 聚焦为 execution cost required，不再与 source_mode、missing_core_fields 共用同一句 generic statement。",
+        "建议最小字段：fee_model_id、commission、spread_estimate、slippage_estimate、expected_price、fill_price、fill_quantity、venue_or_broker_ref、liquidity_context_ref、cost_currency、cost_timestamp。",
+        "明确缺少执行成本时不得把 PnL 或 trade outcome 直接用作 LLM 质量标签。",
+        "允许降级为 needs_more_evidence，而不是一律永久 rejected；但不得进入 default training pool。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 定义字段存在性、完整性和缺失时的 gating 行为。",
+        "费用模型、滑点模型、fill model、成交质量和交易绩效口径由 Trading Engineering 维护。",
+        "不得在知识库沉淀具体交易成本参数、券商账户费率或私有成交记录。"
+      ],
+      "conflict_patch_notes": [
+        "与 data_quality.backtest_paper_live_separation 和 data_quality.missing_core_fields_block_training 重复，应保留为执行成本子规则。",
+        "与 trade_data_fee_slippage_execution_cost_required 后续候选可能重复，后续应统一 canonical ID。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 execution_cost_fields schema。",
+        "补缺失成本时的 label policy：no_pnl_only_label、needs_more_evidence、human_review。",
+        "补与 Trading Engineering cost model registry 的引用字段，例如 cost_model_version_ref。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_data_quality_missing_core_fields_block_training_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立。训练或评估数据缺少核心字段时，应通过 schema validation 阻断训练或降级为待补证据；TFDV、scikit-learn data leakage/pitfalls 和 dataset documentation 来源能够支持该类数据质量 gate。",
+      "source_patch_notes": [
+        "保留 TFDV 作为 schema、required feature、anomaly detection、train/serve skew 来源。",
+        "保留 scikit-learn common pitfalls / cross-validation 作为避免训练评估污染和不一致处理的来源。",
+        "保留 Datasheets for Datasets 作为字段含义、组成、用途、限制文档化来源。",
+        "补 CEK-TA trade_sample_schema 或内部 schema contract 作为核心字段清单来源。"
+      ],
+      "content_patch_notes": [
+        "正式 draft 应只处理 missing core fields，不再包含 execution cost 或 source_mode 的完整规则。",
+        "建议核心字段：sample_id、trade_candidate_id、strategy_id、strategy_version、decision_timestamp、feature_timestamp_cutoff、source_mode、pool_type、input_snapshot_hash、label_schema_version、outcome_available、license_check_status、privacy_scan_status。",
+        "增加数据质量动作：block_training、exclude_from_eval、needs_more_evidence、human_review。",
+        "要求 validation_report_id 和 failed_fields 写入审计记录。"
+      ],
+      "boundary_patch_notes": [
+        "核心字段 schema 属于 AI Engineering 可复用治理层。",
+        "字段内容若涉及具体策略、账户、订单、K 线或成交细节，只保存引用、hash 或脱敏摘要。",
+        "具体交易样本生产逻辑和交易事实解释路由 Trading Engineering。"
+      ],
+      "conflict_patch_notes": [
+        "与 dataset_schema_required 正向重叠：本条是 trade sample core fields gate，dataset_schema_required 是通用 dataset schema rule。",
+        "与 data_privacy.no_secret_or_account_identifier_in_training 互补：字段完整性检查不能泄露敏感字段。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 core_fields_required.yaml 或 JSON Schema。",
+        "补 validation severity：error、warning、info。",
+        "补 UI 审计页展示：failed_fields、evidence_needed、owner、deadline。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_dataset_dataset_card_required_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "方向充分成立。LLM trade quality scoring/gating 的训练集、评估集、RAG 数据集和偏好数据集应有 dataset card 或 datasheet，记录 motivation、composition、collection、intended use、limitations、license、privacy 和 maintenance。当前 statement 使用 should，正式 CEK-TA draft 建议改为内部 must。",
+      "source_patch_notes": [
+        "保留 Datasheets for Datasets 作为主要来源。",
+        "补 Hugging Face Dataset Cards 作为 dataset card 实务来源。",
+        "保留 OpenAI fine-tuning best practices 作为 train/test/eval data quality 与 split 来源。",
+        "建议补 Model Cards 或 Data Cards 相关来源，形成 dataset card 与 model card 的治理链路。"
+      ],
+      "content_patch_notes": [
+        "将 statement 改为：Training、eval、RAG、DPO/preference datasets used by LLM trade scoring/gating must have a dataset card or datasheet before draft/review promotion。",
+        "建议 dataset card 字段：dataset_id、owner、motivation、composition、collection_process、source_lineage、source_license、intended_use、prohibited_use、known_limitations、bias_or_coverage_notes、split_policy、version、hash、maintenance_plan、privacy_review_id。",
+        "增加缺失 dataset card 的处理：不能进入 formal reviewed，不能作为 default guidance 或 production eval source。",
+        "将 eval_case_candidate=true 保留，后续可转成 checklist eval case。"
+      ],
+      "boundary_patch_notes": [
+        "dataset card 可记录可复用元数据和脱敏摘要，不记录原始私有交易样本、账户标识、密钥或供应商合同全文。",
+        "涉及具体交易样本解释、策略规则和执行事实的字段应只存外部引用。",
+        "AI Engineering 负责 card schema 和 gating；数据事实 owner 由外接项目或 Trading Engineering 提供。"
+      ],
+      "conflict_patch_notes": [
+        "与 dataset_schema_required、dataset_source_lineage_required、dataset_version_and_hash_required 是父子关系，本条可作为 governance 父规则。",
+        "与 governance_dataset_card_and_model_card_required 后续候选可能重复，建议后续合并为 dataset/model documentation family。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 CEK-TA dataset_card_template.md。",
+        "补 dataset card completeness score 或 checklist。",
+        "补缺失字段时的 blocking rule：missing_license、missing_lineage、missing_limitations、missing_split_policy。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_dataset_deduplication_required_v1_001",
+      "decision": "needs_more_evidence",
+      "reason": "当前候选不应直接转 draft。candidate_id 和 normalized_claim 是 deduplication_required，但 statement 实际是“训练或评估数据集必须具备 schema、来源、版本、用途和限制”，source_refs 也主要支持 datasheet、fine-tuning data quality 和 TFDV schema，不直接支持去重、near-duplicate detection 或 contamination prevention。方向合理，但必须先重写 claim 并补直接来源。",
+      "source_patch_notes": [
+        "补 Hugging Face BigCode deduplication / data leakage / benchmark contamination 来源。",
+        "补语言模型训练数据去重研究，例如 Deduplicating Training Data Makes Language Models Better。",
+        "补 benchmark contamination 或 train/test overlap 检测来源。",
+        "保留 Datasheets、OpenAI fine-tuning 和 TFDV 作为 supporting sources，不应作为 dedup 主来源。",
+        "补 scikit-learn data leakage / holdout 来源，支持 train/eval/gold 之间不得重复或近重复。"
+      ],
+      "content_patch_notes": [
+        "将 statement 改为：Training、eval、gold、shadow 和 preference datasets must run exact and near-duplicate checks before training/evaluation promotion。",
+        "建议字段：dedupe_run_id、dedupe_method、exact_hash_match_count、near_duplicate_threshold、near_duplicate_group_id、train_eval_overlap_count、gold_overlap_count、action_taken、reviewer。",
+        "明确 deduplication 不等于删除所有重复：某些重复可保留但必须有 reason、weighting policy 和 split isolation。",
+        "如果只想表达 schema/source/version/use/limitations，应改 candidate_id 为 dataset_governance_required，而不是 deduplication_required。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 定义重复检测和污染防护规则。",
+        "原始交易文本、截图、订单记录或策略样本不应写入 AI Engineering KB；只记录 hash、group id 和脱敏摘要。",
+        "与具体交易样本是否业务上重复相关的判断可路由到项目数据 owner 或 Trading Engineering。"
+      ],
+      "conflict_patch_notes": [
+        "与 dataset_schema_required、dataset_source_lineage_required、dataset_version_and_hash_required 当前 statement 重复严重。",
+        "与 leakage_train_test_contamination_block 后续候选存在强重叠，建议建立 canonical rule 或合并。",
+        "当前版本如直接 accepted，会导致知识项名称和内容不一致。"
+      ],
+      "required_followups": [
+        "重写 candidate statement，使其真正描述 deduplication。",
+        "补 exact/near duplicate 检测阈值和 split overlap policy。",
+        "补至少两个直接支持去重/污染检测的专业来源后再转 draft。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_dataset_schema_required_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立。训练或评估数据集必须具备明确 schema，不能使用无法验证字段含义、类型、枚举、时间语义、缺失值和用途限制的数据。当前来源支持数据文档化、OpenAI 数据质量/split 要求和 TFDV schema validation。",
+      "source_patch_notes": [
+        "保留 TFDV 作为 schema-based validation、anomaly detection、train/serve skew 来源。",
+        "保留 Datasheets for Datasets 作为字段含义、组成、用途和限制文档来源。",
+        "保留 OpenAI fine-tuning best practices 作为数据质量、训练/测试拆分来源。",
+        "补 JSON Schema、Great Expectations 或 Pandera 等 schema validation 来源可提升工程可执行性。"
+      ],
+      "content_patch_notes": [
+        "将 statement 缩窄为 schema_required，不再同时声明来源、版本、用途和限制。",
+        "建议字段：dataset_schema_id、schema_version、field_name、dtype、nullable、required、allowed_values、range_constraints、timestamp_semantics、owner、validation_rule_id。",
+        "要求每次训练或评估前产出 schema_validation_report_id。",
+        "schema 变更应触发 dataset_version_and_hash_required 和 train_validation_test_split_required 的重新校验。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 维护 schema 规则和字段语义，不存储敏感原始字段值。",
+        "具体交易字段的业务含义若涉及策略、订单或账户事实，应只保存抽象字段定义和外部引用。",
+        "具体 K 线结构、执行模型和交易风控本体路由 Trading Engineering。"
+      ],
+      "conflict_patch_notes": [
+        "与 data_quality_missing_core_fields_block_training 是父子关系：schema_required 定义 schema，missing_core_fields 定义 gate 行为。",
+        "与 dataset_dataset_card_required、dataset_source_lineage_required、dataset_version_and_hash_required 重叠，应形成 dataset governance family。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 dataset_schema_template.json。",
+        "补 schema validation severity 和 promotion gate。",
+        "补 schema diff 审批流程。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_dataset_source_lineage_required_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立。训练、评估、RAG 和偏好数据必须有可追踪来源和转换 lineage，不能使用无法追踪的数据。当前 sources 支持数据文档化和数据质量，但正式 draft 应补 DVC/MLflow 或同类 lineage/versioning 来源，增强可复现和审计能力。",
+      "source_patch_notes": [
+        "保留 Datasheets for Datasets 作为 collection process、source、recommended use、limitations 来源。",
+        "保留 OpenAI fine-tuning best practices 作为训练/测试数据质量来源。",
+        "补 DVC data versioning 和 MLflow Tracking/Model Registry 作为 lineage、版本、artifacts、run 追踪来源。",
+        "补内部 source registry 或 data contract，定义 external_vendor、project_private、synthetic、incident_replay 等来源类别。"
+      ],
+      "content_patch_notes": [
+        "将 statement 改为：Every dataset used for LLM scoring/gating must have source lineage and transformation lineage before training/eval/RAG promotion。",
+        "建议字段：source_system、source_owner、source_license_ref、ingestion_job_id、transform_pipeline_id、transform_version、upstream_dataset_ids、artifact_uri、hash、created_at、reviewer。",
+        "要求 lineage 不可追踪时 fallback_action 为 block_training 或 needs_more_evidence。",
+        "对 RAG 数据额外记录 document_source_id、chunking_version、embedding_model_version、index_version。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 只记录 lineage metadata、hash、外部引用和脱敏摘要。",
+        "供应商合同全文、私有交易样本、账户数据和策略细节不进入 AI Engineering KB。",
+        "具体数据供应商授权细节应与 data_license rule 和合规 review 关联。"
+      ],
+      "conflict_patch_notes": [
+        "与 dataset_version_and_hash_required 正向互补：lineage 说明来源和转换，version/hash 确保内容可复现。",
+        "与 data_quality_backtest_paper_live_separation 互链：source_mode 是 lineage 的关键字段。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 lineage_registry schema。",
+        "补 lineage completeness checklist。",
+        "补 lineage missing 的 UI warning 和 blocking rule。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_dataset_train_validation_test_split_required_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立。训练、验证、测试和 gold/eval 数据必须隔离，不能把训练数据用于最终评估。scikit-learn 和 OpenAI fine-tuning 资料直接支持 held-out test/eval split；交易场景还需要额外强调 time split、strategy split、regime split 和 no future information。",
+      "source_patch_notes": [
+        "保留 scikit-learn cross-validation/holdout 来源，支持训练和测试分离、避免 data leakage。",
+        "保留 OpenAI fine-tuning best practices，支持 training/test examples 拆分和用 test set 评估训练后模型。",
+        "补 time-series split / walk-forward validation 专业来源，用于交易时间序列场景。",
+        "补 CEK-TA data_asset.eval_pool_must_not_train 和 gold_set_immutable_required 作为内部互链来源。"
+      ],
+      "content_patch_notes": [
+        "将 statement 改为：datasets must define train、validation、test/eval、gold、shadow split before model/prompt/RAG promotion。",
+        "建议字段：split_policy_id、split_method、time_cutoff、strategy_group_key、regime_group_key、asset_group_key、train_count、validation_count、test_count、gold_count、overlap_check_id。",
+        "明确 test/gold 不得用于 prompt tuning、fine-tuning、threshold tuning 或 DPO selection。",
+        "交易场景禁止随机 split 破坏时间顺序，除非有明确理由和 leakage analysis。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 负责 split policy 和 leakage 检测。",
+        "市场 regime 定义、策略版本分组和交易时间窗口由 Trading Engineering 或项目 owner 提供。",
+        "不得在知识项中写入具体策略收益、买卖点或账户表现。"
+      ],
+      "conflict_patch_notes": [
+        "与 data_asset.eval_pool_must_not_train、gold_set_immutable_required、leakage_train_test_contamination_block 强相关。",
+        "与 dataset_deduplication_required 后续修订版互补：split 后仍需 overlap/near-duplicate 检查。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 split_manifest schema。",
+        "补 time_split/walk_forward 示例。",
+        "补 train/eval/gold overlap check 和 near-duplicate check。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_dataset_version_and_hash_required_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立。训练、评估、RAG、gold 和 preference datasets 需要版本号、内容 hash、manifest hash 和转换 hash，才能复现实验、追踪变更并防止无审计污染。当前来源支持数据文档化和质量要求，但应补 DVC/MLflow 等版本化来源。",
+      "source_patch_notes": [
+        "保留 Datasheets for Datasets 作为数据集维护和限制说明来源。",
+        "补 DVC 官方文档作为 data/model versioning 来源。",
+        "补 MLflow Tracking / Model Registry 作为 run、artifact、model lineage、versioning 来源。",
+        "保留 OpenAI fine-tuning best practices 作为训练/测试数据质量和评估分离来源。"
+      ],
+      "content_patch_notes": [
+        "将 statement 改为：Every training/eval/RAG/preference dataset must have immutable version metadata and content hashes before use。",
+        "建议字段：dataset_id、dataset_version、content_hash、manifest_hash、schema_hash、transform_hash、split_hash、source_lineage_hash、created_at、owner、artifact_uri、deprecated_at。",
+        "要求任意内容变更生成新版本，不允许在原 version 上静默覆盖。",
+        "新增 version_diff_summary 和 change_reason。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 记录版本、hash、manifest 和变更摘要。",
+        "不记录原始敏感交易样本、账户标识、合同全文或策略参数。",
+        "涉及交易样本业务含义的变更说明应只保存脱敏摘要和外部引用。"
+      ],
+      "conflict_patch_notes": [
+        "与 dataset_source_lineage_required、dataset_schema_required、dataset_dataset_card_required 是 dataset governance family。",
+        "与 gold_set_immutable_required 的 version immutability 规则互补。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 dataset_manifest.json schema。",
+        "补 hash algorithm 规范，例如 sha256。",
+        "补 version promotion workflow：draft、candidate、reviewed、deprecated。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_deployment_llm_timeout_or_mcp_failure_fallback_required_v1_001",
+      "decision": "needs_more_evidence",
+      "reason": "当前候选不应直接转 draft。normalized_claim 指向 LLM timeout 或 MCP failure fallback，但 statement 实际是“上线前必须经过离线评估、shadow/paper 阶段和失败降级策略，不能直接进入实盘硬门”。原始 sources 支持通用模型风险、评估和生产 ML safeguard，但不足以直接支持 timeout、MCP failure、tool failure、permission failure 的具体 fallback 规则。",
+      "source_patch_notes": [
+        "补 OpenAI API timeout/error/retry 官方文档，支持 LLM timeout 和 API failure 处理。",
+        "补 AWS Well-Architected Reliability Pillar、retry with backoff/jitter、fail-fast/circuit breaker 等可靠性来源。",
+        "补 MCP server/tool permission/failure 的官方或内部 contract 来源。",
+        "保留 model risk guidance、Rules of ML、OpenAI evals 作为 deployment readiness 的 supporting sources。",
+        "OpenAI evals 来源需标注平台退役：2026-10-31 read-only，2026-11-30 shutdown，新项目优先使用 Datasets/新 eval workflow。"
+      ],
+      "content_patch_notes": [
+        "将 statement 改为：LLM/MCP timeout、tool error、permission failure、RAG no-hit、source conflict 或 schema validation failure must fallback to neutral/abstain/needs_review, never hard allow。",
+        "建议字段：failure_type、timeout_ms、mcp_server_id、tool_name、error_code、retry_policy_id、fallback_action、safe_default、review_queue_id、audit_event_id。",
+        "明确 fallback_action 可为 abstain、neutral_score、block_default_guidance、human_review、degraded_read_only_response。",
+        "避免把 broad shadow/paper deployment readiness 与 timeout/MCP failure 混成同一条。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 定义 LLM/MCP failure 的安全降级行为和审计字段。",
+        "不得定义实盘订单处理、仓位调整、止损止盈或交易执行规则。",
+        "如果 failure 影响订单状态、交易风控或执行引擎，应路由 Trading Engineering。"
+      ],
+      "conflict_patch_notes": [
+        "与 deployment_shadow_mode_before_live 当前 statement 重复，应拆成两个知识项：deployment readiness 和 runtime failure fallback。",
+        "与 safety_no_tool_permission_escalation、mcp_server_side_permission_enforcement_required、rag_no_hit_requires_neutral_or_review 后续候选互链。",
+        "当前版本如直接 accepted，会造成 ID 与内容错配。"
+      ],
+      "required_followups": [
+        "补 timeout_or_mcp_failure_fallback 专门来源。",
+        "补 MCP failure taxonomy 和 fallback_action enum。",
+        "补 failure injection / chaos test / red-team eval case。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_deployment_shadow_mode_before_live_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立。LLM gate 进入 live hard gate 之前，应经过 offline eval、paper/shadow 阶段、监控和回滚准备；shadow/paper 阶段不得直接影响实盘订单。外部资料支持 shadow testing、paper trading、上线前验证、自动化交易系统测试和模型治理。",
+      "source_patch_notes": [
+        "保留 model risk guidance 作为 validation、monitoring、governance、change control supporting source，并注明其 generative AI/agentic AI 范围限制。",
+        "保留 Rules of ML 作为生产 ML consistency、baseline、monitoring supporting source。",
+        "保留 OpenAI evals 作为 LLM workflow evaluation 来源，但注明 Evals platform 正在退役，应迁移到当前 Datasets/新评估流程。",
+        "补 AWS SageMaker shadow testing 或 KServe canary/shadow deployment 来源。",
+        "补 QuantConnect Paper Trading 和 FINRA/FCA algorithmic trading testing 来源。"
+      ],
+      "content_patch_notes": [
+        "将 statement 改为：Offline eval pass is not live-ready; LLM gate must pass paper/shadow period and rollback readiness before any live hard-gate authority。",
+        "建议字段：offline_eval_report_id、paper_run_id、shadow_run_id、shadow_window、sample_count、mismatch_rate、false_allow_reviewed、false_block_reviewed、latency_p95、rollback_plan_id、promotion_ticket_id。",
+        "明确 shadow/paper 输出只用于比较和审计，不得影响 live orders。",
+        "上线后仍需 monitoring、drift check、incident review 和 rollback trigger。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 管理 LLM gate deployment readiness、shadow comparison 和 promotion checklist。",
+        "live order routing、execution engine、风控阈值和策略参数由 Trading Engineering 管理。",
+        "不得把具体实盘交易规则或账户配置写入本知识项。"
+      ],
+      "conflict_patch_notes": [
+        "与 deployment_llm_timeout_or_mcp_failure_fallback_required 有 statement 重复，应拆分：本条保留上线前 shadow/paper，另一条保留运行时 failure fallback。",
+        "与 calibration_threshold_requires_shadow_data、approval_hard_gate_enable_requires_approval 互链。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 shadow/paper promotion checklist。",
+        "补 offline_eval_pass_not_equal_live_ready 的 cross-link。",
+        "补 promotion gate UI 字段和 rollback evidence 字段。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260609_ai_engineering_dpo_preference_data_quality_required_v1_001",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立。DPO 或偏好优化依赖高质量 preference pairs，不能用噪声标签、单一 PnL 结果、泄漏样本或自我生成无审计标签训练。现有 Hugging Face TRL 和 OpenAI model optimization 来源支持偏好训练与评估流程，但正式 draft 应补 OpenAI DPO 结构化数据来源和 contamination/dedup 来源。",
+      "source_patch_notes": [
+        "保留 Hugging Face TRL / DPOTrainer 作为 prompt、chosen、rejected preference training 数据结构来源。",
+        "补 OpenAI DPO 官方文档，支持 prompt、preferred output、non-preferred output 的结构化 pair 要求，并注明相关 fine-tuning platform 正在 wind down 的 freshness limitation。",
+        "保留 OpenAI model optimization 作为任务目标、评估、prompt/RAG/fine-tuning 方法选择来源。",
+        "补 train/eval leakage、deduplication、benchmark contamination 来源。",
+        "补 label guideline、inter-annotator agreement 或 preference data quality 来源。"
+      ],
+      "content_patch_notes": [
+        "将 statement 改为：DPO/preference optimization data must contain audited prompt、chosen、rejected、reason codes and leakage checks; it must not be based on noisy labels, PnL-only outcomes, future information, or self-labeling without review。",
+        "建议字段：preference_pair_id、prompt_id、chosen_response_id、rejected_response_id、preference_reason_code、annotator_id_hash、review_status、source_mode、split_id、no_future_info_check_id、dedupe_group_id、label_guideline_version。",
+        "明确 PnL 可以作为外部 outcome context，但不能成为唯一 preference label。",
+        "要求 chosen/rejected 均保留 reason code，方便后续审计和冲突 resolution。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 定义 preference pair schema、质量 gate、leakage/dedup 检查和评估要求。",
+        "交易 outcome 解释、策略收益口径、回测/实盘绩效由 Trading Engineering 提供或审核。",
+        "不得把项目私有交易事实、账户数据或策略参数写入通用 preference 数据规则。"
+      ],
+      "conflict_patch_notes": [
+        "与 preference_pair_not_based_on_pnl_only、preference_training_chosen_rejected_reason_required、label_schema_no_pnl_only_label 后续候选强相关。",
+        "与 dataset_deduplication_required 修订版和 train_validation_test_split_required 互补。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 preference_pair_schema.json。",
+        "补 noisy_label、pnl_only、future_information、self_labeling 四类质量失败用例。",
+        "补 DPO data audit checklist 和 human review queue。"
+      ]
+    }
+  ]
+}

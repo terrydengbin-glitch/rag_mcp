@@ -1,0 +1,332 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_phase45_order_semantics.order_type_semantics_required.v1",
+  "title": "订单类型语义必须由 adapter 和 venue 明确声明",
+  "metadata": {
+    "partition_id": "KB_06_LIVE_EXECUTION",
+    "domain": "live_trading",
+    "subdomain": "order_semantics",
+    "rule_type": "order_semantics_boundary_rule",
+    "claim_type": "execution_safety_rule",
+    "content_type": "json",
+    "project_binding": "none",
+    "tree_node_id": "kt.live_execution.order_semantics",
+    "tree_path": "CEK-TA / Trading Engineering / Live Execution / Order Semantics",
+    "canonical_node_id": "kt.live_execution.order_semantics",
+    "canonical_tree_path": "CEK-TA / Trading Engineering / Live Execution / Order Semantics",
+    "risk_level": "medium_high",
+    "used_for": [
+      "trading_ai_project_design_audit",
+      "execution_adapter_contract_review",
+      "order_semantics_checklist",
+      "external_project_rag_retrieval"
+    ],
+    "source_candidate_id": "cand_20260612_phase45_order_semantics_p45_f_ord01_001",
+    "research_task_id": "P45-F-ORD01",
+    "phase": "Phase 45",
+    "classification_notes": "Phase 45 Order Semantics formal reviewed/caveat_only；只用于 live execution adapter、订单语义、TIF、STP/SMP、fee evidence 和审计检查，不是 approved/default guidance/hard gate，不生成订单动作。",
+    "related_nodes": [
+      "kt.replay_simulation.order_semantics",
+      "kt.live_execution.order_state_machine",
+      "kt.live_execution.trade_audit_clock_sync",
+      "kt.trading_engineering.live_execution.execution_tca",
+      "kt.risk_management.layered_risk_controls"
+    ]
+  },
+  "applicability": {
+    "market": "general_with_venue_product_session_and_api_version_caveats",
+    "asset": "general",
+    "timeframe": "order_entry_execution_adapter_and_audit_context",
+    "data_granularity": "order_intent_order_event_execution_report_fill_fee_and_reject_events",
+    "project_type": "trading_ai_support_layer",
+    "applies_when": [
+      "外接项目需要设计交易所 adapter、订单状态机、订单事件审计、模拟与实盘订单语义映射。",
+      "AI IDE 需要检查 order type、TIF、post-only、reduce-only、STP/SMP 或 maker/taker fee 是否被误写成通用规则。",
+      "需要把 order intent、venue accepted order、execution report、fill、reject、expire、fee 和 audit trace 分开建模。"
+    ],
+    "not_applicable_when": [
+      "用户要求具体买卖点、下单价格、仓位、杠杆、止损止盈、路由选择、费用套利或实盘执行建议。",
+      "需要真实 broker/venue 当前订单事实、账户事实、费率表或交易权限时，应由外接项目事实层和 Live Execution owner 提供。",
+      "需要确定某个订单是否应该提交、撤销、修改或强制 reduce 时，应由外接项目 deterministic final gate / Risk Management owner 决定。"
+    ]
+  },
+  "content": {
+    "statement": "交易系统不能只用 market、limit、stop、stop-limit、iceberg、auction、TWAP/VWAP 等字符串枚举表示订单语义；每个订单类型必须声明适用 venue、产品、触发条件、价格保护、部分成交、拒单/过期状态、订单状态机映射和 ExecutionReport 证据边界。",
+    "rationale": "本候选只定义 live execution adapter / venue order semantics 的审计边界，不输出交易动作、费用优化或风控阈值。",
+    "normalized_claim": "phase45_order_semantics.order_type_semantics_required.v1",
+    "claim_strength": "reviewed_caveat_only",
+    "performance_claim": false,
+    "procedure": [
+      "确认问题属于 Live Execution / Order Semantics，而不是策略 alpha、路由建议或风控 hard gate。",
+      "检查 order intent、venue order request、venue ack、execution report、fill/reject/expire、fee evidence 是否分层。",
+      "对每个 order type、TIF、post-only、reduce-only、STP/SMP、maker/taker 字段保留 venue、product、session、API version 和 source_ref。",
+      "返回知识时必须携带 source_evidence、review_status、machine_gate、适用范围、不适用场景和 owner 边界。"
+    ],
+    "examples": [],
+    "anti_patterns": [
+      "把 order type、TIF、post-only、reduce-only、STP/SMP 或 fee 字段写成交易信号。",
+      "把某个 venue 的订单行为泛化为所有市场通用规则。",
+      "从 order semantics 生成订单提交许可、自动撤单、自动改单、路由建议或费用优化。"
+    ],
+    "validation": [
+      "source_evidence 必须包含协议、交易所、broker 或 venue 官方来源，并明确来源适用边界。",
+      "review.review_status 必须为 reviewed；approved/default guidance/hard gate 必须为 false。",
+      "machine_gate.default_guidance 必须为 caveat_only，且 visible_in_default_guidance_queue=false。",
+      "不得出现买卖点、仓位、杠杆、止损止盈、路由建议、费用套利、实盘执行建议或订单提交许可。"
+    ],
+    "risk_notes": [
+      "Order Semantics reviewed/caveat_only 只能作为 adapter 和审计设计上下文。",
+      "FIX 只是协议语义，不替代 venue/broker rulebook 或 API 事实。",
+      "交易所、broker 和 crypto venue 来源具有 venue/product/session/API version 边界。",
+      "本条不是 approved，不进入默认指导，不启用 hard gate。"
+    ],
+    "citation_notes": "FIX protocol provides standardized order-entry and execution-report message semantics used by many electronic trading integrations.；FIX Execution Report supports receipt, status, fill, cancel, replace and reject semantics for order-event lifecycle review.；CME explains futures order types such as market, limit, stop and GTC-style validity and warns participants to understand available order conditions.；Coinbase trading rules define limit, market, stop, TWAP, TIF, post-only, maker/taker and fee behavior with platform caveats.；Kraken futures API documents limit, post-only, IOC, market, stop, take-profit, trailing-stop and FOK order types, plus reduceOnly behavior.；FIX order-state guidance supports using ExecType and OrdStatus to drive order lifecycle state changes.",
+    "audit_patch_notes": {
+      "source": [
+        "保留 FIX Trading Community、FIX ExecutionReport、FIX order-state changes、CME、Coinbase、Kraken。",
+        "CME education source 只能作为辅助，不替代 product-level technical spec。"
+      ],
+      "content": [
+        "保留 order_intent、venue_order_request、venue_order_ack、execution_report、fill/reject/expire 分层。"
+      ],
+      "boundary": [
+        "不得生成订单提交许可。",
+        "不得生成撤单/改单动作。",
+        "不得生成交易建议。"
+      ],
+      "conflict": []
+    }
+  },
+  "assumptions": [
+    "Order Type / TIF / Venue Semantics 是执行 adapter 和审计契约上下文，不是策略 alpha。",
+    "所有交易所、broker、crypto venue 和 FIX 来源必须保留 venue、product、session、API version 和 account-mode caveat。",
+    "候选通过外部审计前不能进入 formal reviewed 知识库。"
+  ],
+  "source_evidence": [
+    {
+      "source_title": "FIX Trading Community FIX Protocol",
+      "source_url": "https://fixtrading.org/standards/fix-protocol/",
+      "source_type": "official_protocol_doc",
+      "publisher": "FIX Trading Community",
+      "reliability": "high",
+      "score": 91,
+      "freshness": "stable",
+      "evidence_summary": "FIX protocol provides standardized order-entry and execution-report message semantics used by many electronic trading integrations.",
+      "limitations": [
+        "Protocol standard; does not define every venue-specific order type, matching rule or fee behavior."
+      ],
+      "source_id": "src_001",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "FIXimate FIX 4.4 Execution Report",
+      "source_url": "https://fiximate.fixtrading.org/legacy/en/FIX.4.4/body_5756.html",
+      "source_type": "official_protocol_doc",
+      "publisher": "FIX Trading Community / FIXimate",
+      "reliability": "high",
+      "score": 90,
+      "freshness": "stable",
+      "evidence_summary": "FIX Execution Report supports receipt, status, fill, cancel, replace and reject semantics for order-event lifecycle review.",
+      "limitations": [
+        "Protocol schema; venue/broker implementations and reject reasons still need adapter evidence."
+      ],
+      "source_id": "src_002",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "CME Group Futures Order Types",
+      "source_url": "https://www.cmegroup.com/education/courses/things-to-know-before-trading-cme-futures/futures-order-types",
+      "source_type": "official_exchange_doc",
+      "publisher": "CME Group",
+      "reliability": "high",
+      "score": 86,
+      "freshness": "time_sensitive",
+      "evidence_summary": "CME explains futures order types such as market, limit, stop and GTC-style validity and warns participants to understand available order conditions.",
+      "limitations": [
+        "CME education source; product-specific Globex behavior still depends on CME technical/rulebook references."
+      ],
+      "source_id": "src_003",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "Coinbase Markets Trading Rules",
+      "source_url": "https://www.coinbase.com/legal/trading_rules",
+      "source_type": "official_platform_doc",
+      "publisher": "Coinbase",
+      "reliability": "high",
+      "score": 86,
+      "freshness": "time_sensitive",
+      "evidence_summary": "Coinbase trading rules define limit, market, stop, TWAP, TIF, post-only, maker/taker and fee behavior with platform caveats.",
+      "limitations": [
+        "Coinbase market/legal context; rules may differ by Coinbase entity, product and jurisdiction."
+      ],
+      "source_id": "src_004",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "Kraken Futures Send Order API",
+      "source_url": "https://docs.kraken.com/api-reference/order-management/send-order",
+      "source_type": "official_platform_doc",
+      "publisher": "Kraken",
+      "reliability": "high",
+      "score": 84,
+      "freshness": "time_sensitive",
+      "evidence_summary": "Kraken futures API documents limit, post-only, IOC, market, stop, take-profit, trailing-stop and FOK order types, plus reduceOnly behavior.",
+      "limitations": [
+        "Kraken futures context; not a universal crypto venue or equity/futures exchange rule."
+      ],
+      "source_id": "src_005",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "FIX Trading Community Order State Changes",
+      "source_url": "https://www.fixtrading.org/online-specification/order-state-changes/",
+      "source_type": "official_protocol_doc",
+      "publisher": "FIX Trading Community",
+      "reliability": "high",
+      "score": 91,
+      "freshness": "stable",
+      "relevance": "high",
+      "evidence_summary": "FIX order-state guidance supports using ExecType and OrdStatus to drive order lifecycle state changes.",
+      "limitations": [
+        "Protocol source; does not define venue-specific TIF or adapter behavior."
+      ],
+      "source_id": "src_reviewed_prep_fix_order_state_changes",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 88.0,
+    "score_version": "phase45_source_scoring_v1",
+    "primary_source_count": 6,
+    "supporting_source_count": 0,
+    "low_reliability_source_count": 0,
+    "mandatory_downgrades": [],
+    "limitations": [
+      "正式 reviewed 前必须由外部审计确认 claim 没有超出来源可证明范围。",
+      "CME/Nasdaq/Coinbase/Binance/Kraken/IBKR 等来源必须保留 venue、product、account mode、session 和 API version caveat。",
+      "若后续使用内部 order_semantics schema，需要提供 contract extract 或 hash。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "Phase 37 Live Execution order state machine formal reviewed knowledge",
+      "Phase 37 Replay / Simulation order semantics formal reviewed knowledge",
+      "Phase 45 Execution TCA formal reviewed knowledge",
+      "Phase 45 Audit Trail / Clock Sync formal reviewed knowledge",
+      "Phase 45 Layered Risk formal reviewed knowledge"
+    ],
+    "conflicts": [],
+    "resolution_summary": "reviewed/caveat_only 准备审计通过；formal creation 保持 caveat_only，不创建 approved、default guidance 或 hard gate。",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "risk_threshold_advice_allowed": false,
+    "trade_execution_advice_allowed": false
+  },
+  "review": {
+    "review_status": "reviewed",
+    "review_mode": "caveat_only",
+    "confidence": "high",
+    "freshness": "mixed",
+    "reviewer": "external_ai_strict_audit_and_codex",
+    "reviewed_at": "2026-06-12",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "risk_threshold_advice_allowed": false,
+    "trade_execution_advice_allowed": false,
+    "approved_at": null,
+    "ai_audit": {
+      "audit_result_id": "audit_phase45_order_semantics_reviewed_preparation_20260612",
+      "package_id": "phase45_order_semantics_reviewed_preparation_audit_package_20260612",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "trade_execution_advice_allowed": false,
+      "reasons": [
+        "FIX ExecutionReport 和 FIX order state guidance 足以支撑订单生命周期、状态、fill、cancel、replace、reject 的事件证据边界。",
+        "CME、Coinbase、Kraken 来源足以支撑不同 venue/product/API 的 order type 行为不能只用字符串枚举表示。",
+        "内部 order_semantics contract 已提供 order_semantics_identity、order_type_mapping 和 execution_report_mapping 字段本体。"
+      ],
+      "patch_notes": {
+        "source": [
+          "保留 FIX Trading Community、FIX ExecutionReport、FIX order-state changes、CME、Coinbase、Kraken。",
+          "CME education source 只能作为辅助，不替代 product-level technical spec。"
+        ],
+        "content": [
+          "保留 order_intent、venue_order_request、venue_order_ack、execution_report、fill/reject/expire 分层。"
+        ],
+        "boundary": [
+          "不得生成订单提交许可。",
+          "不得生成撤单/改单动作。",
+          "不得生成交易建议。"
+        ],
+        "conflict": []
+      }
+    },
+    "source_candidate_id": "cand_20260612_phase45_order_semantics_p45_f_ord01_001",
+    "ai_audit_result_id": "audit_phase45_order_semantics_reviewed_preparation_20260612"
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于提醒 AI IDE 区分 order type、TIF、adapter semantics、execution report、fill/reject/expire 和 fee evidence。",
+      "用于生成 order semantics checklist、adapter contract review、simulation/live mapping review 和 RAG 检索上下文。",
+      "用于检查外接项目是否把 venue-specific order behavior 误写成通用交易规则。"
+    ],
+    "not_allowed": [
+      "不得生成买卖点、仓位、杠杆、止损止盈、路由建议、费用套利、订单提交许可或实盘执行建议。",
+      "不得把 reviewed/caveat_only 当作 approved 或默认指导。",
+      "不得替外接项目启用 hard gate、拒单、撤单、改单、reduce-only 强制动作或路由策略。"
+    ],
+    "required_context": [
+      "必须同时返回 source_evidence、applicability、not_applicable_when、review_status、conflict_status 和 machine_gate。",
+      "若外接项目问题涉及实盘、法律、授权、资金或风控动作，必须要求项目事实层或人工 owner 复核。"
+    ],
+    "fallback_behavior": "cite_with_caveat"
+  },
+  "machine_gate": {
+    "default_guidance": "caveat_only",
+    "review_visibility": "reviewed_caveat_only",
+    "reason": "reviewed/caveat_only audit passed; approved/default guidance/hard gate remain disabled.",
+    "requires_human_escalation": false,
+    "hidden_from_default_queue": true,
+    "visible_in_default_guidance_queue": false,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "risk_threshold_advice_allowed": false,
+    "trade_execution_advice_allowed": false,
+    "blocking_reasons": [],
+    "checked_at": "2026-06-13T10:29:14+00:00",
+    "gate_version": "1.0.0"
+  },
+  "contribution": {
+    "source": "phase45_professional_research",
+    "private_data_removed": true,
+    "project_specific_details_removed": true,
+    "notes": "Generated for external strict audit; no project account, key, order, fee tier, threshold, position, or private strategy data included."
+  },
+  "recommended_extra_sources": []
+}

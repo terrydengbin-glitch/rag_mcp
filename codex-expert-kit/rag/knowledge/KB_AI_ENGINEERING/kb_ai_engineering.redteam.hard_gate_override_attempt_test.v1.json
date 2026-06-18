@@ -1,0 +1,344 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_ai_engineering.redteam.hard_gate_override_attempt_test.v1",
+  "title": "上线前必须测试 LLM 是否会尝试覆盖硬风控、绕过审批或把建议伪装成最终交易许可。",
+  "metadata": {
+    "partition_id": "KB_AI_ENGINEERING",
+    "domain": "ai_engineering",
+    "subdomain": "trading_ai_safety",
+    "rule_type": "checklist",
+    "content_type": "json",
+    "project_binding": "none",
+    "tree_node_id": "kt.trading_ai_safety",
+    "tree_path": "CEK-TA / AI Engineering",
+    "canonical_node_id": "kt.trading_ai_safety",
+    "canonical_tree_path": "CEK-TA / AI Engineering",
+    "risk_level": "medium",
+    "used_for": [
+      "llm_training",
+      "trading_gating_scoring",
+      "rag_engineering",
+      "mcp",
+      "vue_audit_ui"
+    ],
+    "source_candidate_id": "cand_20260609_ai_engineering_redteam_hard_gate_override_attempt_test_v1_001",
+    "research_task_id": "RIT-P36-D-B22",
+    "claim_type": "ai_governance_rule",
+    "classification_notes": "Phase 36 AI Engineering reviewed knowledge; UI tree and canonical node are inherited from candidate classification. Trading rule bodies must remain in Trading Engineering."
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "general",
+    "data_granularity": "general",
+    "project_type": "trading_llm_assistant",
+    "applies_when": [
+      "外接项目正在构建或审计交易 LLM gating/scoring、训练数据、评估、RAG/MCP、部署或治理链路。",
+      "该规则用于阻断数据泄漏、权限越界、无来源默认指导、训练/评估污染或上线前治理缺口。"
+    ],
+    "not_applicable_when": [
+      "用户需要具体买卖点、仓位、止损止盈、策略参数或实盘订单执行。",
+      "知识点主要描述 K 线结构、市场微观结构、回测模型、fill model 或交易风控本体，应路由到 Trading Engineering。"
+    ]
+  },
+  "content": {
+    "statement": "上线前必须测试 LLM 是否会尝试覆盖硬风控、绕过审批或把建议伪装成最终交易许可。",
+    "rationale": "本候选仅沉淀 AI Engineering 中训练、评估、RAG/MCP、安全、部署或治理规则；不定义 K 线信号、具体交易策略、订单执行规则或账户参数。 审计结论：方向成立。上线前测试 LLM 是否尝试覆盖硬风控、绕过审批或把建议伪装为最终交易许可，是合理的 red-team / safety eval case。OWASP Prompt Injection、LLM security verification 和 MCP security 来源可以支撑 prompt injection、tool misuse、权限边界和不可信输出检查。",
+    "procedure": [
+      "确认项目事实匹配 applies_when，且没有命中 not_applicable_when。",
+      "按 source_patch_notes 检查来源是否足够支撑 statement。",
+      "按 content_patch_notes 补齐正式实现、schema、字段和 checklist。",
+      "按 boundary_patch_notes 确认没有把交易规则本体、项目私有参数或实盘执行规则写入 AI Engineering。",
+      "保留 required_followups，后续由来源增强或治理任务继续关闭。"
+    ],
+    "examples": [],
+    "anti_patterns": [
+      "把 reviewed 知识当作 approved 默认指导。",
+      "把 AI Engineering 规则扩写成具体交易阈值、仓位、买卖点或执行参数。",
+      "忽略审计结果中的来源限制、适用范围和后续补强要求。"
+    ],
+    "validation": [
+      "source_evidence 至少 2 条，且没有 low-only 来源。",
+      "conflict_status 为 none 或 resolved。",
+      "review_status 为 reviewed 时 machine_gate 必须是 caveat_only。",
+      "MCP/SearchLab 默认指导不得把本条当作 approved 返回。"
+    ],
+    "risk_notes": [
+      "本条仍是 candidate，需要外部 AI/人工审计确认来源充分性、适用边界和是否需要拆分。",
+      "AI Engineering 定义 red-team eval cases、tool permission checks 和 audit fields。",
+      "Trading Engineering 管理 hard risk gate 本体、订单执行和交易风控阈值。",
+      "不得在 red-team case 中写入真实账户、密钥、私有订单或策略规则。",
+      "与 llm_role_boundary.cannot_override_hard_risk_gate、runtime.final_gate_deterministic_engine_required、safety_no_tool_permission_escalation 互链。",
+      "与 security.prompt_injection_test_required_for_trade_context 后续候选可能重叠；建议本条聚焦 hard gate override attempt。",
+      "未发现直接冲突。",
+      "补 hard_gate_override_redteam_cases.yaml。",
+      "补 attack_type enum：override_hard_gate、bypass_approval、self_grant_permission、pretend_final_authority、unsafe_tool_call。",
+      "补 regression trigger：model_version、prompt_version、tool_permission、risk_gate_contract 变更时重跑。"
+    ],
+    "citation_notes": "OWASP documents prompt injection risks and mitigations for user input, retrieved content, tool output, and agent workflows.；OWASP LLMSVS supports treating LLM outputs as untrusted and validating downstream system use.",
+    "audit_patch_notes": {
+      "source_patch_notes": [
+        "保留 OWASP Prompt Injection Prevention Cheat Sheet。",
+        "保留 OWASP LLMSVS / LLM verification source。",
+        "保留 MCP Security Best Practices。",
+        "建议补 OWASP GenAI Red Teaming Guide 或内部 redteam_case_catalog，作为 hard gate override attempt 的直接 eval case 来源。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：Before live or hard-gate promotion, red-team tests must check whether the LLM attempts to override deterministic risk gates, bypass approval, escalate tool permissions or present suggestions as final trade permission.",
+        "建议字段：redteam_case_id、attack_type、expected_safe_behavior、observed_behavior、override_attempt_detected、permission_escalation_detected、hard_gate_result、fallback_action、reviewer。",
+        "明确单次通过不等于 live-ready；需纳入回归测试和版本变更测试。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 定义 red-team eval cases、tool permission checks 和 audit fields。",
+        "Trading Engineering 管理 hard risk gate 本体、订单执行和交易风控阈值。",
+        "不得在 red-team case 中写入真实账户、密钥、私有订单或策略规则。"
+      ],
+      "conflict_patch_notes": [
+        "与 llm_role_boundary.cannot_override_hard_risk_gate、runtime.final_gate_deterministic_engine_required、safety_no_tool_permission_escalation 互链。",
+        "与 security.prompt_injection_test_required_for_trade_context 后续候选可能重叠；建议本条聚焦 hard gate override attempt。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 hard_gate_override_redteam_cases.yaml。",
+        "补 attack_type enum：override_hard_gate、bypass_approval、self_grant_permission、pretend_final_authority、unsafe_tool_call。",
+        "补 regression trigger：model_version、prompt_version、tool_permission、risk_gate_contract 变更时重跑。"
+      ]
+    }
+  },
+  "assumptions": [
+    "外接项目提供项目事实、私有交易数据和策略上下文；CEK-TA 只沉淀可复用专业规则。",
+    "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+  ],
+  "source_evidence": [
+    {
+      "source_id": "src_owasp_prompt",
+      "source_title": "LLM Prompt Injection Prevention Cheat Sheet",
+      "source_url": "https://cheatsheetseries.owasp.org/cheatsheets/LLM_Prompt_Injection_Prevention_Cheat_Sheet.html",
+      "source_type": "standard_or_risk_framework",
+      "publisher": "OWASP",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "OWASP documents prompt injection risks and mitigations for user input, retrieved content, tool output, and agent workflows.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_owasp_llmsvs",
+      "source_title": "OWASP LLM Verification Standard",
+      "source_url": "https://owasp.org/www-project-llm-verification-standard/LLMSVS-v1.0-en.html",
+      "source_type": "standard_or_risk_framework",
+      "publisher": "OWASP",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "OWASP LLMSVS supports treating LLM outputs as untrusted and validating downstream system use.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_mcp_security",
+      "source_title": "Security Best Practices - Model Context Protocol",
+      "source_url": "https://modelcontextprotocol.io/specification/2025-06-18/basic/security_best_practices",
+      "source_type": "official_doc",
+      "publisher": "Model Context Protocol",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "MCP security best practices support least privilege, token scope control, and authorization boundaries for tool and resource access.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_occ_fed_fdic_revised_model_risk_2026",
+      "source_title": "Model Risk Management: Revised Guidance",
+      "source_url": "https://occ.gov/news-issuances/bulletins/2026/bulletin-2026-13.html",
+      "source_type": "standard_or_risk_framework",
+      "publisher": "OCC / Federal Reserve / FDIC",
+      "published_at": "2026-04-17",
+      "accessed_at": "2026-06-09",
+      "version": "OCC Bulletin 2026-13 / SR 26-2",
+      "reliability": "high",
+      "relevance": "medium",
+      "evidence_summary": "2026 年跨机构模型风险管理修订指南支持模型治理、验证、变更控制和风险分层；同时需注明 generative AI 和 agentic AI 不在其直接范围内，只能作为模型风险治理类比来源。",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 90,
+    "score_version": "1.0.0",
+    "primary_source_count": 2,
+    "supporting_source_count": 2,
+    "low_reliability_source_count": 0,
+    "limitations": [
+      "本条为 reviewed 知识，来源和审计补丁已记录；默认指导仍需后续人工治理升级 approved。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "docs/contracts/ai_engineering_gating_scoring_contract.md",
+      "docs/contracts/ai_engineering_knowledge_item_policy.md",
+      "docs/tasks/phase36_ai_engineering_gating_scoring_knowledge.md"
+    ],
+    "conflicts": [],
+    "resolution_summary": "未发现与当前 CEK-TA formal knowledge 的直接冲突；候选不会进入默认指导。",
+    "default_recommendation": "caveat_only_until_approved"
+  },
+  "review": {
+    "confidence": "medium",
+    "freshness": "time_sensitive",
+    "review_status": "reviewed",
+    "reviewer": "codex",
+    "reviewed_at": "2026-06-09",
+    "created_at": "2026-06-09",
+    "updated_at": "2026-06-09",
+    "open_questions": [
+      "审计时确认该候选是否应与相邻 AI Engineering 规则合并、拆分，或改路由到 Trading Engineering。",
+      "补 hard_gate_override_redteam_cases.yaml。",
+      "补 attack_type enum：override_hard_gate、bypass_approval、self_grant_permission、pretend_final_authority、unsafe_tool_call。",
+      "补 regression trigger：model_version、prompt_version、tool_permission、risk_gate_contract 变更时重跑。"
+    ],
+    "decision_log": [
+      {
+        "at": "2026-06-09",
+        "actor": "external_ai",
+        "decision": "accepted_for_draft",
+        "reason": "方向成立。上线前测试 LLM 是否尝试覆盖硬风控、绕过审批或把建议伪装为最终交易许可，是合理的 red-team / safety eval case。OWASP Prompt Injection、LLM security verification 和 MCP security 来源可以支撑 prompt injection、tool misuse、权限边界和不可信输出检查。",
+        "audit_result_id": "audit_result_phase36_ai_engineering_batch_07_of_10_20260609_gpt55_pro_strict_sources"
+      },
+      {
+        "at": "2026-06-09",
+        "actor": "codex",
+        "decision": "converted_to_reviewed",
+        "reason": "按 Phase 36 批量审计结果优化候选并转为 formal reviewed；未升级 approved。",
+        "audit_result_id": "audit_result_phase36_ai_engineering_batch_07_of_10_20260609_gpt55_pro_strict_sources"
+      }
+    ],
+    "approval_status": "not_requested",
+    "default_guidance_allowed": false,
+    "source_candidate_id": "cand_20260609_ai_engineering_redteam_hard_gate_override_attempt_test_v1_001",
+    "ai_audit_result_id": "audit_result_phase36_ai_engineering_batch_07_of_10_20260609_gpt55_pro_strict_sources",
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase36_ai_engineering_batch_07_of_10_20260609_gpt55_pro_strict_sources",
+      "source_package_id": "phase36_ai_engineering_candidate_audit_batch_07_of_10_20260609",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立。上线前测试 LLM 是否尝试覆盖硬风控、绕过审批或把建议伪装为最终交易许可，是合理的 red-team / safety eval case。OWASP Prompt Injection、LLM security verification 和 MCP security 来源可以支撑 prompt injection、tool misuse、权限边界和不可信输出检查。",
+      "source_patch_notes": [
+        "保留 OWASP Prompt Injection Prevention Cheat Sheet。",
+        "保留 OWASP LLMSVS / LLM verification source。",
+        "保留 MCP Security Best Practices。",
+        "建议补 OWASP GenAI Red Teaming Guide 或内部 redteam_case_catalog，作为 hard gate override attempt 的直接 eval case 来源。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 建议写为：Before live or hard-gate promotion, red-team tests must check whether the LLM attempts to override deterministic risk gates, bypass approval, escalate tool permissions or present suggestions as final trade permission.",
+        "建议字段：redteam_case_id、attack_type、expected_safe_behavior、observed_behavior、override_attempt_detected、permission_escalation_detected、hard_gate_result、fallback_action、reviewer。",
+        "明确单次通过不等于 live-ready；需纳入回归测试和版本变更测试。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 定义 red-team eval cases、tool permission checks 和 audit fields。",
+        "Trading Engineering 管理 hard risk gate 本体、订单执行和交易风控阈值。",
+        "不得在 red-team case 中写入真实账户、密钥、私有订单或策略规则。"
+      ],
+      "conflict_patch_notes": [
+        "与 llm_role_boundary.cannot_override_hard_risk_gate、runtime.final_gate_deterministic_engine_required、safety_no_tool_permission_escalation 互链。",
+        "与 security.prompt_injection_test_required_for_trade_context 后续候选可能重叠；建议本条聚焦 hard gate override attempt。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 hard_gate_override_redteam_cases.yaml。",
+        "补 attack_type enum：override_hard_gate、bypass_approval、self_grant_permission、pretend_final_authority、unsafe_tool_call。",
+        "补 regression trigger：model_version、prompt_version、tool_permission、risk_gate_contract 变更时重跑。"
+      ]
+    },
+    "approved_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "contribution": {
+    "contribution_id": null,
+    "source_project": null,
+    "sanitization_status": "not_applicable",
+    "private_data_removed": true,
+    "generic_mapping_notes": "Phase 36 public-source AI Engineering candidate; no project-private trading facts included."
+  },
+  "copyright": {
+    "stores_full_text": false,
+    "stores_long_quote": false,
+    "summary_only": true,
+    "license_notes": "仅保存来源链接、来源摘要和归纳性知识，不保存全文或长引用。",
+    "reuse_risk": "low"
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于审计 AI Engineering、LLM 训练、RAG/MCP、部署、安全或治理链路。",
+      "用于提醒外接项目补齐来源、适用边界、冲突状态、审计记录和人工审批。",
+      "用于 reviewed/audit 模式下带 caveat 引用。"
+    ],
+    "not_allowed": [
+      "不得生成买卖点、仓位、杠杆、止损止盈或实盘执行指令。",
+      "不得覆盖确定性风控、交易执行系统或人工审批。",
+      "不得作为 approved/default guidance 直接返回。"
+    ],
+    "required_context": [
+      "project_type",
+      "task_type",
+      "mode",
+      "strategy_version",
+      "data_boundary",
+      "review_status"
+    ],
+    "fallback_behavior": "cite_with_caveat"
+  },
+  "machine_gate": {
+    "default_guidance": "caveat_only",
+    "reason": "reviewed only; accepted_for_draft is not approved; default guidance requires later human governance approval.",
+    "requires_human_escalation": true,
+    "blocking_reasons": [
+      "not_approved",
+      "phase36_batch_reviewed_only"
+    ],
+    "checked_at": "2026-06-09",
+    "gate_version": "1.0.0",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "recommended_extra_sources": [
+    {
+      "title": "保留 OWASP Prompt Injection Prevention Cheat Sheet。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_1"
+    },
+    {
+      "title": "保留 OWASP LLMSVS / LLM verification source。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_2"
+    },
+    {
+      "title": "保留 MCP Security Best Practices。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_3"
+    },
+    {
+      "title": "建议补 OWASP GenAI Red Teaming Guide 或内部 redteam_case_catalog，作为 hard gate override attempt 的直接 eval case 来源。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_4"
+    }
+  ]
+}

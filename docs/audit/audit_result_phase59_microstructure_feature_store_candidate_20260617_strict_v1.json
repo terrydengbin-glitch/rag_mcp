@@ -1,0 +1,134 @@
+{
+  "audit_result_id": "audit_result_phase59_microstructure_feature_store_candidate_20260617_strict_v1",
+  "package_id": "phase59_microstructure_feature_store_candidate_audit_package_20260617",
+  "audited_at": "2026-06-17",
+  "auditor": "external_ai_strict_audit",
+  "summary": {
+    "total": 3,
+    "accepted_for_draft": 3,
+    "needs_more_evidence": 0,
+    "rejected": 0,
+    "blocked": 0
+  },
+  "hard_boundaries": {
+    "reviewed_allowed": false,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "trade_execution_advice_allowed": false,
+    "ddl_or_migration_allowed": false
+  },
+  "candidate_results": [
+    {
+      "candidate_id": "cand_20260617_phase59_kline_microstructure_store_separation_001",
+      "research_task_id": "P59-MFS-001",
+      "decision": "accepted_for_draft",
+      "confidence": "medium_high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "trade_execution_advice_allowed": false,
+      "required_followups": [
+        "将“不应混成一个物理宽表”改为“不应默认混成一个物理宽表”。",
+        "补充 Binance market data streams、Databento/Kaiko/CoinAPI 等市场数据模型案例。",
+        "补充项目内部 Kline snapshot 与 micro event store 的读写频率、保留周期、查询模式和审计 trace 示例。",
+        "明确宽表例外：小规模研究、临时 notebook、只读导出、离线特征展开表可以存在，但不得替代 canonical store。"
+      ],
+      "patch_notes": {
+        "source": [
+          "Feast、Iceberg、ClickHouse、kdb+ 只能作为 implementation pattern，不得作为强制技术栈。",
+          "建议新增交易所官方 market data stream 资料作为市场数据粒度证据。"
+        ],
+        "content": [
+          "候选应强调 canonical raw/high-frequency store 与 low-frequency decision snapshot 分层。",
+          "训练样本可以是宽的 logical dataset view，但不代表底层必须是一个物理宽表。"
+        ],
+        "boundary": [
+          "不得输出 DDL。",
+          "不得输出 migration。",
+          "不得作为 default guidance。",
+          "不得作为 hard gate。"
+        ],
+        "conflict": [
+          "与 Phase 42 数据存储治理不冲突。",
+          "与 Phase 38 training data leakage control 一致。"
+        ]
+      }
+    },
+    {
+      "candidate_id": "cand_20260617_phase59_hybrid_training_dataset_snapshot_manifest_001",
+      "research_task_id": "P59-MFS-002",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "trade_execution_advice_allowed": false,
+      "required_followups": [
+        "补充 prediction_time、feature_event_time、feature_known_at、label_known_at、join_tolerance_policy、feature_ttl_policy、late_arrival_policy。",
+        "补充 null_feature_policy、timezone_policy、calendar_policy、split_time_boundary。",
+        "补充 feature materialization version 和 feature generation code hash。",
+        "用一条真实训练样本链路验证：kline_snapshot_ref + micro_snapshot_ref + label_policy_version + known_at_pass + dataset_hash。"
+      ],
+      "patch_notes": {
+        "source": [
+          "Feast point-in-time joins 和 Databricks time series feature tables 可作为主要证据源。",
+          "Iceberg manifest/snapshot 可作为 dataset snapshot manifest 的实现模式证据。"
+        ],
+        "content": [
+          "manifest 只证明训练样本版本、来源和时间边界可审计，不证明模型有效。",
+          "known_at_pass 必须绑定到 prediction_time / label_known_at，否则不能阻断全部时间泄漏。"
+        ],
+        "boundary": [
+          "不得把 readiness 解释为交易许可。",
+          "不得把 dataset_hash 解释为模型质量通过。",
+          "不得生成自动训练、自动上线或自动交易 hard gate。"
+        ],
+        "conflict": [
+          "与 Phase 38 decision-time feature frame 和 training leakage control 一致。",
+          "与 Phase 42 dataset snapshot manifest 和 audit trace 方向一致。"
+        ]
+      }
+    },
+    {
+      "candidate_id": "cand_20260617_phase59_canonical_registry_not_per_trader_db_001",
+      "research_task_id": "P59-MFS-003",
+      "decision": "accepted_for_draft",
+      "confidence": "medium",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "trade_execution_advice_allowed": false,
+      "required_followups": [
+        "将标题改为“central registry 默认集中治理，AI Trader 默认逻辑隔离；物理分库作为例外”。",
+        "补充 tenant isolation policy，明确 pool / silo / bridge 三类隔离模型。",
+        "补充 compliance_isolation_required、customer_key_required、regulatory_boundary_required、scale_sharding_required 等例外字段。",
+        "补充 cross-database lineage reconciliation 方案，防止物理拆库后 lineage 丢失。"
+      ],
+      "patch_notes": {
+        "source": [
+          "Feast Registry 可作为 central feature metadata catalog 证据。",
+          "OpenLineage 可作为 dataset/job/run lineage metadata 证据。",
+          "Azure SQL / AWS SaaS tenant isolation 文档应作为物理隔离例外证据。"
+        ],
+        "content": [
+          "central canonical registry / audit ledger 是治理默认值，不是绝对物理单库要求。",
+          "AI Trader 可以逻辑隔离；当合规、密钥、性能、地域、客户隔离要求成立时，可以物理拆分，但必须保留全局索引或跨库 lineage。"
+        ],
+        "boundary": [
+          "不得输出数据库 DDL。",
+          "不得输出 migration。",
+          "不得作为默认强制架构。",
+          "不得作为 hard gate。"
+        ],
+        "conflict": [
+          "与 Phase 42 canonical facts / audit_trace / dataset manifest 不冲突。",
+          "与多租户合规隔离不冲突，但必须显式加入例外策略。"
+        ]
+      }
+    }
+  ]
+}

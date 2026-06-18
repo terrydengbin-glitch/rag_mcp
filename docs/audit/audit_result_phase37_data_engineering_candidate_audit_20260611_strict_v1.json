@@ -1,0 +1,517 @@
+{
+  "audit_result_id": "audit_result_phase37_data_engineering_candidate_audit_20260611_strict_v1",
+  "auditor": "external_ai_strict_audit",
+  "audited_at": "2026-06-11",
+  "package_id": "phase37_data_engineering_candidate_audit_package_20260611",
+  "summary": {
+    "total": 12,
+    "accepted_for_draft": 12,
+    "needs_more_evidence": 0,
+    "rejected": 0,
+    "blocked": 0
+  },
+  "quality_gate": {
+    "pass": true,
+    "candidate_count": 12,
+    "notes": [
+      "本轮只允许 accepted_for_draft；不得创建 reviewed、approved、default guidance 或 hard gate。",
+      "所有 accepted_for_draft 均需保留 vendor/framework 文档不可泛化、外部项目事实层必需、非交易建议边界。",
+      "未提供完整 CEK-TA formal KB，冲突审计仅限当前可见上下文。"
+    ]
+  },
+  "candidate_results": [
+    {
+      "candidate_id": "cand_20260611_phase37_data_engineering_corporate_action_or_contract_rollover_policy_001",
+      "research_task_id": "P37-B-D09",
+      "decision": "accepted_for_draft",
+      "confidence": "medium_high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "官方交易所/数据供应商资料足以支持 corporate action 会导致合约/参考数据调整，Databento continuous symbology 也直接支持连续合约随日期/roll rule 映射到不同实际合约；因此可作为 draft 级数据调整边界。",
+        "候选未输出交易建议，分类在 Trading Engineering / Data Engineering 正确。"
+      ],
+      "required_followups": [],
+      "patch_notes": [
+        "将期货换月/连续合约部分的主来源补入 Databento Symbology continuous contracts 或交易所连续合约/roll methodology 文档；不要只靠 corporate action 来源支撑 rollover。",
+        "明确 raw、adjusted、back-adjusted、continuous-symbol 原始未复权价格分别是什么，不得把 vendor 的字段名/roll rule 泛化为所有供应商。"
+      ],
+      "source_assessment": {
+        "source_count": 4,
+        "missing_sources": [],
+        "weak_sources": [
+          "Nasdaq PDF 未在本审计中按 PDF screenshot 逐页核验，只能保留为待核验来源；ICE product page 只能 supporting。"
+        ],
+        "recommended_extra_sources": [
+          "Databento Symbology continuous contracts",
+          "交易所或指数供应商的 continuous futures / roll methodology 文档"
+        ]
+      },
+      "classification_assessment": {
+        "correct_partition": true,
+        "expected_partition": "KB_02_DATA_ENGINEERING",
+        "correct_tree_node": true,
+        "notes": "主归属 Trading Engineering / Data Engineering 正确；AI Engineering 只能引用，不得复制或改写本体规则。"
+      },
+      "boundary_assessment": {
+        "no_trade_advice": true,
+        "candidate_only": true,
+        "requires_external_project_facts": true
+      }
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_data_engineering_data_quality_report_required_001",
+      "research_task_id": "P37-B-D12",
+      "decision": "accepted_for_draft",
+      "confidence": "medium_high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "Great Expectations 可产生 expectations、validation results、failed counts/percentages；Iceberg/DVC 可支持版本/快照和复现引用，足以支撑 draft 级质量报告要求。",
+        "该条属于 CEK-TA 数据集发布/审计 artifact 边界，而不是外部法规硬要求。"
+      ],
+      "required_followups": [],
+      "patch_notes": [
+        "把“必须产出数据质量报告”限定为 CEK-TA 回测/训练/评估/上线前审计包要求。",
+        "source_refs 应补 Great Expectations Data Docs/Checkpoint、Deequ/Soda/dbt tests 或内部数据质量报告 schema；当前 GX Try page 只支持 validation result 形态。"
+      ],
+      "source_assessment": {
+        "source_count": 4,
+        "missing_sources": [],
+        "weak_sources": [
+          "Great Expectations 产品/框架文档不能单独定义所有交易数据质量报告字段。"
+        ],
+        "recommended_extra_sources": [
+          "Great Expectations Data Docs / Checkpoints",
+          "AWS Deequ or Soda data quality docs",
+          "内部 CEK-TA data_quality_report schema"
+        ]
+      },
+      "classification_assessment": {
+        "correct_partition": true,
+        "expected_partition": "KB_02_DATA_ENGINEERING",
+        "correct_tree_node": true,
+        "notes": "主归属 Trading Engineering / Data Engineering 正确；AI Engineering 只能引用，不得复制或改写本体规则。"
+      },
+      "boundary_assessment": {
+        "no_trade_advice": true,
+        "candidate_only": true,
+        "requires_external_project_facts": true
+      }
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_data_engineering_data_versioning_required_001",
+      "research_task_id": "P37-B-D07",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "Iceberg snapshots/manifests 与 DVC data/model versioning 直接支持数据版本、快照和可复现引用。",
+        "“无法定位数据版本的结果不得宣称可复现”是保守可复现性边界，适合作为 draft。"
+      ],
+      "required_followups": [],
+      "patch_notes": [
+        "不要把 Iceberg/DVC 当作强制实现；允许等价 immutable snapshot、content hash、vendor dataset version 或 object-store manifest。",
+        "补充数据供应商 dataset condition/last_modified 或 lakeFS/Delta Lake 作为可替代实现来源。"
+      ],
+      "source_assessment": {
+        "source_count": 4,
+        "missing_sources": [],
+        "weak_sources": [],
+        "recommended_extra_sources": [
+          "Delta Lake time travel/versioning",
+          "lakeFS versioning",
+          "dataset manifest/content hash pattern"
+        ]
+      },
+      "classification_assessment": {
+        "correct_partition": true,
+        "expected_partition": "KB_02_DATA_ENGINEERING",
+        "correct_tree_node": true,
+        "notes": "主归属 Trading Engineering / Data Engineering 正确；AI Engineering 只能引用，不得复制或改写本体规则。"
+      },
+      "boundary_assessment": {
+        "no_trade_advice": true,
+        "candidate_only": true,
+        "requires_external_project_facts": true
+      }
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_data_engineering_duplicate_event_detection_required_001",
+      "research_task_id": "P37-B-D04",
+      "decision": "accepted_for_draft",
+      "confidence": "medium_high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "Databento trades/common fields 区分 instrument_id、publisher_id、sequence、ts_event、ts_recv 等字段，IBM/Databricks 类资料支持 duplicate data 和 deduplication 是数据质量问题；可支撑 draft 级“定义唯一键和重复检测策略”。",
+        "候选表述为进入研究数据集前的审计策略，没有规定具体交易执行或下单动作。"
+      ],
+      "required_followups": [],
+      "patch_notes": [
+        "补直接来源：Great Expectations uniqueness expectations、Databricks silver-layer deduplication、Kafka/event-id/idempotent ingestion 或交易所 sequence-number 文档。",
+        "将“唯一键”改成“natural key、provider event id、sequence tuple 或可审计 synthetic key”，避免暗示所有 venue 都有全局唯一 event_id。"
+      ],
+      "source_assessment": {
+        "source_count": 4,
+        "missing_sources": [],
+        "weak_sources": [
+          "当前 source_refs 只间接支持唯一键/dedup；需要补显式 uniqueness/dedup 来源。"
+        ],
+        "recommended_extra_sources": [
+          "Great Expectations uniqueness expectations",
+          "Databricks medallion deduplication",
+          "Kafka exactly-once/idempotent event processing documentation"
+        ]
+      },
+      "classification_assessment": {
+        "correct_partition": true,
+        "expected_partition": "KB_02_DATA_ENGINEERING",
+        "correct_tree_node": true,
+        "notes": "主归属 Trading Engineering / Data Engineering 正确；AI Engineering 只能引用，不得复制或改写本体规则。"
+      },
+      "boundary_assessment": {
+        "no_trade_advice": true,
+        "candidate_only": true,
+        "requires_external_project_facts": true
+      }
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_data_engineering_feature_timestamp_required_001",
+      "research_task_id": "P37-B-D06",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "Databricks point-in-time feature joins 明确说明用标签时间点之前可用的特征以防未来数据泄漏，IBM 对 unavailable-at-prediction-time 的 leakage 定义一致。",
+        "Databento timestamp fields 支持把市场事件时间/接收时间映射到交易特征可用时间。"
+      ],
+      "required_followups": [],
+      "patch_notes": [
+        "必须区分 event_time、vendor_receive_time、feature_compute_time、available_time、decision_time；feature_timestamp 不能被单独当作充分条件。",
+        "补充交易日历、publication lag、vendor correction lag 和 late-arriving data 的处理规则。"
+      ],
+      "source_assessment": {
+        "source_count": 4,
+        "missing_sources": [],
+        "weak_sources": [],
+        "recommended_extra_sources": [
+          "feature store point-in-time join docs",
+          "ML data leakage academic/source"
+        ]
+      },
+      "classification_assessment": {
+        "correct_partition": true,
+        "expected_partition": "KB_02_DATA_ENGINEERING",
+        "correct_tree_node": true,
+        "notes": "主归属 Trading Engineering / Data Engineering 正确；AI Engineering 只能引用，不得复制或改写本体规则。"
+      },
+      "boundary_assessment": {
+        "no_trade_advice": true,
+        "candidate_only": true,
+        "requires_external_project_facts": true
+      }
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_data_engineering_missing_bar_detection_required_001",
+      "research_task_id": "P37-B-D03",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "Databento OHLCV 明确列出 O/H/L/C/V、interval suffix、bar start timestamp，并说明无成交时不打印记录；BBO interval 文档明确 no-record 与 forward-fill 语义。",
+        "GX/数据质量资料支持对缺失、空区间和质量规则进行验证。"
+      ],
+      "required_followups": [],
+      "patch_notes": [
+        "将“缺失 bar”与“交易所休市/无成交/供应商丢包/过滤后为空”区分开，避免把全部空区间都当成数据错误。",
+        "补 market calendar / session hours / halt status 来源，才能处理跨市场假期和盘中停牌。"
+      ],
+      "source_assessment": {
+        "source_count": 4,
+        "missing_sources": [],
+        "weak_sources": [],
+        "recommended_extra_sources": [
+          "exchange calendars/session hours docs",
+          "market halt/status schema"
+        ]
+      },
+      "classification_assessment": {
+        "correct_partition": true,
+        "expected_partition": "KB_02_DATA_ENGINEERING",
+        "correct_tree_node": true,
+        "notes": "主归属 Trading Engineering / Data Engineering 正确；AI Engineering 只能引用，不得复制或改写本体规则。"
+      },
+      "boundary_assessment": {
+        "no_trade_advice": true,
+        "candidate_only": true,
+        "requires_external_project_facts": true
+      }
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_data_engineering_ohlcv_schema_required_001",
+      "research_task_id": "P37-B-D05",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "Databento OHLCV schema 直接支持 OHLCV 字段、interval、timestamp start 与 no-record 语义；common fields 支持 timestamp-role 映射。",
+        "该条是 schema contract，不是交易性能 claim。"
+      ],
+      "required_followups": [],
+      "patch_notes": [
+        "补充 price scale、volume unit、currency、session calendar、adjustment status、vendor aggregation rule 字段；字段名相同不等于语义相同。",
+        "保留“图表展示不进入决策/训练/审计时可不适用”的边界。"
+      ],
+      "source_assessment": {
+        "source_count": 4,
+        "missing_sources": [],
+        "weak_sources": [],
+        "recommended_extra_sources": [
+          "Databento OHLCV docs",
+          "Polygon/Nasdaq/CTA SIP bar aggregation rules or vendor schema docs"
+        ]
+      },
+      "classification_assessment": {
+        "correct_partition": true,
+        "expected_partition": "KB_02_DATA_ENGINEERING",
+        "correct_tree_node": true,
+        "notes": "主归属 Trading Engineering / Data Engineering 正确；AI Engineering 只能引用，不得复制或改写本体规则。"
+      },
+      "boundary_assessment": {
+        "no_trade_advice": true,
+        "candidate_only": true,
+        "requires_external_project_facts": true
+      }
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_data_engineering_outlier_detection_required_001",
+      "research_task_id": "P37-B-D10",
+      "decision": "accepted_for_draft",
+      "confidence": "medium_high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "GX/DataRobot/IBM 支持 outlier、invalid、incomplete 等数据质量问题需要检测；Databento market-data cleaning 资料还警告异常可能是真实市场行为，修复/过滤会造成数据退化，因此“不得静默改变评估结论”成立。",
+        "候选没有要求删除或自动清洗异常值，只要求定义检测与处置策略。"
+      ],
+      "required_followups": [],
+      "patch_notes": [
+        "强制加入“异常值不等于错误数据；可以标记、隔离、解释或保留，不得默认删除”的限定。",
+        "补市场数据专门来源：bad tick/trade break/venue correction/sequence gap/flags 文档；当前 source_refs 偏通用数据质量。"
+      ],
+      "source_assessment": {
+        "source_count": 4,
+        "missing_sources": [],
+        "weak_sources": [
+          "当前 package source_refs 对交易行情异常值的直接支持不足，外部补充后仅够 draft，不够 reviewed。"
+        ],
+        "recommended_extra_sources": [
+          "Databento high-frequency market data cleaning",
+          "exchange trade correction/bust/cancel docs",
+          "market data flags/sequence gap documentation"
+        ]
+      },
+      "classification_assessment": {
+        "correct_partition": true,
+        "expected_partition": "KB_02_DATA_ENGINEERING",
+        "correct_tree_node": true,
+        "notes": "主归属 Trading Engineering / Data Engineering 正确；AI Engineering 只能引用，不得复制或改写本体规则。"
+      },
+      "boundary_assessment": {
+        "no_trade_advice": true,
+        "candidate_only": true,
+        "requires_external_project_facts": true
+      }
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_data_engineering_raw_vs_adjusted_data_boundary_001",
+      "research_task_id": "P37-B-D11",
+      "decision": "accepted_for_draft",
+      "confidence": "medium_high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "Iceberg/DVC 支持快照和版本化；Databricks medallion architecture 支持 raw、validated/refined、business-ready 分层，能够支撑 raw/cleaned/feature-ready 不应混写的 draft 级边界。",
+        "该条属于数据湖/训练集工程边界，不输出策略或交易执行建议。"
+      ],
+      "required_followups": [],
+      "patch_notes": [
+        "将 raw、cleaned、adjusted、feature-ready、label-ready 定义为 CEK-TA 数据契约层级；不要声称所有平台必须采用这些确切层名。",
+        "补 medallion architecture、feature store lineage、label store 或 internal dataset layer schema 作为主来源；Nasdaq corporate action 只能支持 adjusted 数据的一部分。"
+      ],
+      "source_assessment": {
+        "source_count": 4,
+        "missing_sources": [],
+        "weak_sources": [
+          "当前 source_refs 对 raw/cleaned/feature-ready/label-ready 分层本体支撑不够直接。"
+        ],
+        "recommended_extra_sources": [
+          "Databricks medallion architecture",
+          "feature store lineage docs",
+          "OpenLineage/MLMD lineage docs"
+        ]
+      },
+      "classification_assessment": {
+        "correct_partition": true,
+        "expected_partition": "KB_02_DATA_ENGINEERING",
+        "correct_tree_node": true,
+        "notes": "主归属 Trading Engineering / Data Engineering 正确；AI Engineering 只能引用，不得复制或改写本体规则。"
+      },
+      "boundary_assessment": {
+        "no_trade_advice": true,
+        "candidate_only": true,
+        "requires_external_project_facts": true
+      }
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_data_engineering_symbol_contract_normalization_required_001",
+      "research_task_id": "P37-B-D08",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "Databento symbology 明确支持 raw_symbol/instrument_id/parent/continuous 的映射和日期范围；instrument definitions 提供 point-in-time reference information、expiration/listing/tick size 等字段。",
+        "“不能把同名 symbol 当作同一交易对象”是稳健的跨市场/跨供应商数据契约边界。"
+      ],
+      "required_followups": [],
+      "patch_notes": [
+        "将版本记录具体化为 start_date/end_date、provider、dataset、stype_in/stype_out、instrument_id、raw_symbol、exchange、contract month/expiry。",
+        "补交易所/security master/FIGI/ISIN/OPRA/CTA 等更广泛 symbology 来源，避免 Databento 单一供应商化。"
+      ],
+      "source_assessment": {
+        "source_count": 4,
+        "missing_sources": [],
+        "weak_sources": [],
+        "recommended_extra_sources": [
+          "OpenFIGI / FIGI docs",
+          "exchange instrument master/security master docs",
+          "OPRA/CTA symbol specifications"
+        ]
+      },
+      "classification_assessment": {
+        "correct_partition": true,
+        "expected_partition": "KB_02_DATA_ENGINEERING",
+        "correct_tree_node": true,
+        "notes": "主归属 Trading Engineering / Data Engineering 正确；AI Engineering 只能引用，不得复制或改写本体规则。"
+      },
+      "boundary_assessment": {
+        "no_trade_advice": true,
+        "candidate_only": true,
+        "requires_external_project_facts": true
+      }
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_data_engineering_timestamp_alignment_required_001",
+      "research_task_id": "P37-B-D01",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "Databento common fields 区分 event、publisher sending、receive、output/index timestamps；Databricks point-in-time joins 和 IBM leakage 资料支持决策/标签时间前可用性约束。",
+        "claim 明确是对市场数据特征对齐与标签归因的 schema/data contract 要求，分类正确。"
+      ],
+      "required_followups": [],
+      "patch_notes": [
+        "补 OHLCV/BBO 来源以直接支撑 bar start/end 语义；不同供应商的 bar timestamp 可能表示开始、结束或发布时刻。",
+        "decision_time 必须由外部项目事实层提供，不得由候选规则推断。"
+      ],
+      "source_assessment": {
+        "source_count": 4,
+        "missing_sources": [],
+        "weak_sources": [],
+        "recommended_extra_sources": [
+          "Databento OHLCV/BBO interval docs",
+          "Databricks point-in-time feature join docs"
+        ]
+      },
+      "classification_assessment": {
+        "correct_partition": true,
+        "expected_partition": "KB_02_DATA_ENGINEERING",
+        "correct_tree_node": true,
+        "notes": "主归属 Trading Engineering / Data Engineering 正确；AI Engineering 只能引用，不得复制或改写本体规则。"
+      },
+      "boundary_assessment": {
+        "no_trade_advice": true,
+        "candidate_only": true,
+        "requires_external_project_facts": true
+      }
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_data_engineering_timezone_policy_required_001",
+      "research_task_id": "P37-B-D02",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "PostgreSQL 官方文档明确 timestamp with time zone 会存为 UTC、展示按当前 TimeZone 转换，并说明 DST 下可能出现不存在或歧义时间；Databento ts_recv 也以 UTC 同步。",
+        "该条适合 draft 级时区数据契约，尤其是跨市场对齐和训练场景。"
+      ],
+      "required_followups": [],
+      "patch_notes": [
+        "补 IANA tz database / exchange calendar / session schedule 作为主来源；PostgreSQL 是数据库实现，不是交易所时区政策。",
+        "明确存储时区、显示时区、交易所本地时区、业务交易日/session boundary 与 DST 处理策略的字段名。"
+      ],
+      "source_assessment": {
+        "source_count": 4,
+        "missing_sources": [],
+        "weak_sources": [],
+        "recommended_extra_sources": [
+          "IANA Time Zone Database",
+          "exchange calendars/session schedules",
+          "pandas/dateutil time zone handling docs"
+        ]
+      },
+      "classification_assessment": {
+        "correct_partition": true,
+        "expected_partition": "KB_02_DATA_ENGINEERING",
+        "correct_tree_node": true,
+        "notes": "主归属 Trading Engineering / Data Engineering 正确；AI Engineering 只能引用，不得复制或改写本体规则。"
+      },
+      "boundary_assessment": {
+        "no_trade_advice": true,
+        "candidate_only": true,
+        "requires_external_project_facts": true
+      }
+    }
+  ],
+  "global_findings": {
+    "no_trade_execution_advice_detected": true,
+    "no_project_private_facts_detected": true,
+    "no_api_keys_or_secrets_detected": true,
+    "mock_or_test_pollution_detected": false,
+    "classification_summary": "12 条均正确归属 KB_02_DATA_ENGINEERING / kt.trading_engineering.data_engineering；related_nodes 中 AI Engineering 只能作为引用目标。",
+    "source_quality_summary": "多数来源为官方文档、数据库/框架/市场数据供应商文档；适合 draft，但不能升级为 reviewed/approved，也不能作为 hard gate/default guidance。"
+  }
+}

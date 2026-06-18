@@ -1,0 +1,278 @@
+{
+  "schema_version": "1.0.0",
+  "candidate_id": "cand_20260608_backtest_bias_leakage_overfit_001",
+  "research_task_id": "CEK-TA-RESEARCH-20260608-023-001",
+  "status": {
+    "review_status": "accepted",
+    "ingestion_decision": "convert_to_knowledge_item",
+    "decision_reason": "AI 审计结果为 accepted_for_draft；本状态只表示候选通过审计并可作为 draft/reviewed 来源，不代表 approved 或默认指导。",
+    "created_at": "2026-06-08",
+    "updated_at": "2026-06-09"
+  },
+  "classification": {
+    "tree_node_id": "kt.trading_engineering.backtest.bias",
+    "tree_path": "CEK-TA / Trading Engineering / Backtest / Bias",
+    "related_nodes": [
+      "kt.trading_engineering.backtest.data_quality",
+      "kt.trading_engineering.backtest.walk_forward",
+      "kt.trading_engineering.backtest.reproducibility",
+      "kt.trading_engineering.data_engineering.feature_pipeline"
+    ],
+    "partition_id": "KB_04_BACKTEST",
+    "domain": "backtest",
+    "subdomain": "bias",
+    "rule_type": "checklist",
+    "used_for": [
+      "backtest_review",
+      "strategy_design",
+      "code_review",
+      "trade_analysis"
+    ]
+  },
+  "claim": {
+    "claim_id": "claim_001",
+    "statement": "回测审计必须把数据泄漏、前视信息、测试集调参和多重试验选择作为独立风险门检查；如果特征生成、预处理、参数选择或报告筛选使用了预测时不可获得的信息，回测指标不能作为默认可信证据。",
+    "normalized_claim": "backtest_bias_audit_requires_separate_gates_for_data_leakage_lookahead_test_tuning_and_multiple_testing",
+    "evidence_summary": "NBER 多信号回测研究支持对多信号/多参数选择引入过拟合和多重测试审计；PBO 文献提供评估回测过拟合概率的框架；scikit-learn 官方文档明确数据泄漏会导致过度乐观的评估，并要求在预处理前先切分训练/测试数据且测试集不得参与 fit、fit_transform 或模型选择。",
+    "interpretation_notes": "本候选把通用 ML 数据泄漏规则映射到交易回测工程：只要数据处理、特征选择、标准化、参数搜索、信号筛选或报告选择跨越了训练/验证/测试边界，就应被记录为回测可信度风险，而不是单纯代码风格问题。",
+    "claim_strength": "strong",
+    "performance_claim": false
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "general",
+    "data_granularity": "general",
+    "project_type": "general",
+    "applies_when": [
+      "审计策略回测、因子研究、机器学习预测模型、参数搜索、信号筛选或策略报告",
+      "回测流程包含训练/验证/测试划分、预处理、特征生成、特征选择、归一化、参数优化或多次试验",
+      "需要判断回测结果是否可作为后续模拟盘或实盘前验证依据"
+    ],
+    "not_applicable_when": [
+      "任务只是在定义静态接口字段，不评价回测表现或模型泛化能力",
+      "数据处理完全不涉及预测目标、未来信息、训练/测试划分、参数搜索或性能评估",
+      "下游任务只需要解释已明确标记为实验草稿的内部研究记录，且不会作为默认策略指导"
+    ],
+    "assumptions": [
+      "回测或模型评估中存在训练、验证、测试或样本外概念",
+      "回测指标可能被特征处理、数据切分、参数搜索或报告选择影响",
+      "候选规则不判断具体策略收益，只定义审计门槛"
+    ],
+    "limitations": [
+      "scikit-learn 文档是通用机器学习来源，迁移到交易回测时必须结合时间序列、样本重叠、交易成本和市场状态边界",
+      "NBER 多信号研究重点是多信号组合选择，不覆盖所有类型的数据泄漏",
+      "PBO 框架可评估过拟合风险，但不是消除偏差的充分条件"
+    ]
+  },
+  "source_refs": [
+    {
+      "source_id": "src_001",
+      "source_title": "Backtesting Strategies Based on Multiple Signals",
+      "source_url": "https://www.nber.org/papers/w21329",
+      "source_type": "paper",
+      "publisher": "National Bureau of Economic Research",
+      "published_at": "2015-07-01",
+      "accessed_at": "2026-06-08",
+      "version": "Working Paper 21329",
+      "reliability": "high",
+      "score": 91,
+      "relevance": "high",
+      "freshness": "stable",
+      "limitations": [
+        "主要支撑多信号、多参数和选择偏差相关风险，不单独覆盖预处理泄漏。"
+      ],
+      "evidence_summary": "论文说明多信号组合选择会产生严重过拟合偏差，并加剧研究者只呈现部分结果时的多重测试偏差。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_002",
+      "source_title": "The Probability of Backtest Overfitting",
+      "source_url": "https://escholarship.org/uc/item/4w1110bb",
+      "source_type": "paper",
+      "publisher": "eScholarship / University of California",
+      "published_at": "2015-01-01",
+      "accessed_at": "2026-06-08",
+      "version": null,
+      "reliability": "high",
+      "score": 88,
+      "relevance": "high",
+      "freshness": "stable",
+      "limitations": [
+        "来源主要支撑回测过拟合概率评估框架，具体工程检查仍需结合项目试验记录。"
+      ],
+      "evidence_summary": "该研究提出评估回测过拟合概率的框架，支持将样本内最佳模型和样本外表现差异纳入回测可信度审计。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_003",
+      "source_title": "Common pitfalls and recommended practices: Data leakage",
+      "source_url": "https://scikit-learn.org/stable/common_pitfalls.html",
+      "source_type": "official_doc",
+      "publisher": "scikit-learn",
+      "published_at": null,
+      "accessed_at": "2026-06-08",
+      "version": "1.9.0 documentation",
+      "reliability": "high",
+      "score": 89,
+      "relevance": "high",
+      "freshness": "time_sensitive",
+      "limitations": [
+        "官方文档是通用 ML 场景；金融时间序列还需要额外考虑时间顺序和标签重叠。"
+      ],
+      "evidence_summary": "官方文档定义数据泄漏为使用预测时不可获得的信息建模，并指出这会产生过度乐观的评估；它要求先切分训练/测试集，且测试集不参与 fit 或 fit_transform。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_004",
+      "source_title": "Cross-validation: evaluating estimator performance",
+      "source_url": "https://scikit-learn.org/stable/modules/cross_validation.html",
+      "source_type": "official_doc",
+      "publisher": "scikit-learn",
+      "published_at": null,
+      "accessed_at": "2026-06-08",
+      "version": "1.9.0 documentation",
+      "reliability": "high",
+      "score": 84,
+      "relevance": "medium",
+      "freshness": "time_sensitive",
+      "limitations": [
+        "该文档解释通用交叉验证和测试集泄漏风险，不替代金融时间序列专用验证方法。"
+      ],
+      "evidence_summary": "官方文档指出在测试集上反复调整参数会让测试集信息泄漏进模型选择，评估指标不再代表泛化表现。",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 89,
+    "score_version": "1.0.0",
+    "primary_source_count": 4,
+    "supporting_source_count": 0,
+    "low_reliability_source_count": 0,
+    "mandatory_downgrades": [],
+    "limitations": [
+      "候选综合了金融回测论文和通用 ML 官方文档；正式知识 draft 需要在人工审计时确认金融时间序列边界和现有 backtest approved 知识的合并关系。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "resolved",
+    "checked_against": [
+      "kb_04_backtest.bias.multiple_testing_overfit.v1"
+    ],
+    "conflicts": [
+      {
+        "knowledge_id": "kb_04_backtest.bias.multiple_testing_overfit.v1",
+        "conflict_type": "scope_conflict",
+        "severity": "informational",
+        "overlap_scope": {
+          "domain": "backtest",
+          "subdomain": "bias",
+          "market": "general",
+          "timeframe": "general",
+          "data_granularity": "general"
+        },
+        "candidate_claim": "回测审计必须把数据泄漏、前视信息、测试集调参和多重试验选择作为独立风险门检查。",
+        "existing_claim": "任何经过多信号、多参数或多组合筛选得到的优秀回测结果，都必须默认接受多重测试和过拟合偏差审计。",
+        "resolution": "现有知识覆盖多重测试和过拟合默认审计；本候选补充分层审计清单，增加数据泄漏、预处理泄漏和测试集调参边界。两者可并存，正式 draft 应避免重复表述并通过引用 existing item 建立关系。",
+        "default_recommendation": "treat_as_complementary_candidate",
+        "requires_human_review": true
+      }
+    ],
+    "resolution_summary": "发现与现有 approved backtest bias 知识存在主题重叠，但不是直接冲突；候选作为补强清单进入人工审计，不作为默认指导。",
+    "approval_allowed": true
+  },
+  "review": {
+    "confidence": "high",
+    "freshness": "stable",
+    "reviewer": "external_ai_and_codex_alignment",
+    "reviewed_at": "2026-06-09",
+    "open_questions": [
+      "是否将本候选拆成两条正式知识：一条 data leakage，一条 test-set tuning / multiple testing checklist？",
+      "是否需要补充金融时间序列专用来源，例如 purged/embargoed cross-validation 的原始出处或框架文档？",
+      "正式 draft 是否应引用并关联 kb_04_backtest.bias.multiple_testing_overfit.v1，避免重复表达？"
+    ],
+    "audit_log": [
+      {
+        "at": "2026-06-08",
+        "actor": "codex",
+        "action": "created",
+        "reason": "根据 Phase 23 P0 队列启动 KB_04_BACKTEST 专业知识采集。"
+      },
+      {
+        "at": "2026-06-08",
+        "actor": "codex",
+        "action": "sourced",
+        "reason": "记录 NBER、PBO 文献和 scikit-learn 官方文档作为 high reliability 来源。"
+      },
+      {
+        "at": "2026-06-08",
+        "actor": "codex",
+        "action": "classified",
+        "reason": "归类到 KB_04_BACKTEST / backtest.bias / checklist。"
+      },
+      {
+        "at": "2026-06-08",
+        "actor": "codex",
+        "action": "conflict_checked",
+        "reason": "已与现有 approved 知识 kb_04_backtest.bias.multiple_testing_overfit.v1 比对，结论为补强而非冲突。"
+      },
+      {
+        "at": "2026-06-09",
+        "actor": "GPT-5.5 Thinking",
+        "action": "ai_audit_result_received",
+        "reason": "accepted_for_draft / confidence=high",
+        "audit_result_id": "audit_20260609_cek_ta_candidate_ai_audit_001"
+      },
+      {
+        "at": "2026-06-09",
+        "actor": "codex",
+        "action": "candidate_marked_accepted_after_ai_audit",
+        "reason": "根据用户提供的 AI 审计结果和 CEK-TA 边界，将候选设为 accepted_for_draft；不得视为 approved。",
+        "audit_result_id": "audit_20260609_cek_ta_candidate_ai_audit_001"
+      }
+    ],
+    "ai_audit": {
+      "audit_result_id": "audit_20260609_cek_ta_candidate_ai_audit_001",
+      "package_id": "cek_ta_candidate_ai_audit_20260608",
+      "auditor": "GPT-5.5 Thinking",
+      "audited_at": "2026-06-09T00:00:00+09:00",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reasons": [
+        "PBO、多信号回测和 scikit-learn data leakage 文档足以支撑数据泄漏、前视、测试集调参、多重试验选择必须作为独立风险门。"
+      ],
+      "required_followups": [
+        "后续可拆分 data leakage 和 test-set tuning / multiple testing checklist。"
+      ],
+      "patch_notes": [
+        "保留拆分为多个知识条目的 open question。"
+      ],
+      "boundary": "accepted_for_draft/reviewed is not approved; approved requires a later human governance task."
+    }
+  },
+  "copyright": {
+    "stores_full_text": false,
+    "stores_long_quote": false,
+    "summary_only": true,
+    "license_notes": "仅保存来源链接和摘要，不保存论文或官方文档长段原文。",
+    "reuse_risk": "low"
+  },
+  "conversion_target": {
+    "proposed_knowledge_id": "kb_04_backtest.bias.leakage_overfit_audit_gates.v1",
+    "target_schema": "cek_ta_knowledge_item",
+    "target_review_status": "draft",
+    "skill_candidate": false,
+    "eval_case_candidate": true
+  },
+  "workflow": {
+    "stage": "formalized_reviewed",
+    "queue_group": "formalized",
+    "formal_knowledge_id": "kb_04_backtest.bias.leakage_overfit_audit_gates.v1",
+    "formal_review_status": "reviewed",
+    "ai_audit_result_id": "audit_20260609_cek_ta_candidate_ai_audit_001",
+    "hidden_from_default_queue": true,
+    "next_action": "none",
+    "formal_knowledge_path": "codex-expert-kit/rag/knowledge/KB_04_BACKTEST/kb_04_backtest.bias.leakage_overfit_audit_gates.v1.json"
+  }
+}

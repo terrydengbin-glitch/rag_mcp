@@ -1,0 +1,132 @@
+{
+  "audit_result_id": "audit_result_phase37_data_engineering_blocked_supplemental_reaudit_20260611_strict_v1",
+  "package_id": "phase37_data_engineering_blocked_supplemental_reaudit_package_20260611",
+  "auditor": "external_ai_strict_audit",
+  "audited_at": "2026-06-11",
+  "quality_gate": {
+    "pass": false,
+    "candidate_count": 2,
+    "notes": [
+      "本轮只审计 P37-B-D10 与 P37-B-D11；本次最高只能允许 accepted_for_reviewed_caveat_only。",
+      "P37-B-D10 补证已足以进入 reviewed/caveat_only，但必须保留 vendor/framework/venue-specific 边界，并修正 workflow/default queue 元数据。",
+      "P37-B-D11 外部来源已补强 layered architecture、feature-store point-in-time 和 dataset lineage/versioning，但 CEK-TA 内部 dataset layers contract 仅以路径和摘要出现，未提供可审计正文；因此不能进入 reviewed/caveat_only。",
+      "所有条目仍不得创建 approved、default guidance 或 hard gate，也不得输出实盘交易建议。"
+    ]
+  },
+  "decisions": [
+    {
+      "candidate_id": "cand_20260611_phase37_data_engineering_outlier_detection_required_001",
+      "research_task_id": "P37-B-D10",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "补证已覆盖上一轮阻断点：Databento market-data cleaning 资料支持异常不等于错误、默认清洗可能退化市场数据；Databento MBO schema 支持 order-book event taxonomy、flags 与 sequence；CME iLink trade correction 资料支持 correction/cancel/bust 事件需要建模；Nasdaq FIX trade reporting PDF 支持 error-correction trade condition 和 timestamps。",
+        "候选 statement 已改为检测、标记、隔离、解释、保留或修复策略，而不是自动删除或静默修复；边界足够保守，适合作为 CEK-TA reviewed/caveat_only 数据质量审计规则。",
+        "未发现买卖点、仓位、杠杆、止损止盈或实盘执行建议；主归属 KB_02_DATA_ENGINEERING / Trading Engineering / Data Engineering 正确。",
+        "仍需保留 caveat：Databento、CME、Nasdaq 均为供应商/venue/protocol-specific 来源，不得泛化成所有市场统一实现。"
+      ],
+      "required_patches": {
+        "source": [
+          "将 Great Expectations 产品页降为 supporting source；source_quality.primary_source_count 不应把产品页或通用框架页计为强主来源。",
+          "CME iLink - Trade Correction 来源位于 CME Client Systems Wiki/Confluence 且带 EPICSANDBOX 路径，应标为 venue-specific supporting/primary-with-caveat；正式转换前最好补 CME 正式 iLink/MDP 生产文档或交易所 rulebook 链接。",
+          "Nasdaq FIX PDF 已核验到 error-correction trade condition 与 timestamp/change-log 证据；正式转换前应补充 section/page references，并说明它只适用于 Nasdaq FIX Trade Reporting 语境。",
+          "保留 Databento MBO flags/sequence/event taxonomy 作为 market-data flags 与 event modelling 证据，但不得把 Databento 字段名当作通用 schema。"
+        ],
+        "content": [
+          "把 statement 中的“必须”限定为 CEK-TA 回测/训练/审计数据契约要求，而不是外部监管硬要求。",
+          "明确 anomaly/outlier 处理结果只能是标记、隔离、解释、保留、修复记录或有版本的修正；不得静默删除或静默重写评估样本。",
+          "补充字段建议：anomaly_flag、anomaly_type、detection_rule_id、source_event_id、correction_id、correction_source、repair_action、repair_timestamp、raw_event_ref、affected_dataset_version。"
+        ],
+        "boundary": [
+          "不得把该规则解释为必须清洗所有市场数据；异常可能是真实市场行为。",
+          "不得把该规则解释为允许 AI 自动修复历史行情或自动改变回测/训练结论。",
+          "所有具体阈值、交易所 correction/bust/cancel 处理、vendor lag、market calendar 和 halts 必须由外接项目事实层定义。"
+        ],
+        "conflict": [
+          "可见上下文内未发现与 KB_02_DATA_ENGINEERING 或 AI Engineering 边界的直接冲突。",
+          "候选 workflow.allowed_next_decisions 仍列 accepted_for_draft 而未列 accepted_for_reviewed_caveat_only；正式入库前需按本轮 reviewed/caveat_only gate 更新。",
+          "候选 workflow.hidden_from_default_queue=false 与 machine_gate.hidden_from_default_queue=true 存在机器消费歧义；应统一为隐藏默认指导队列。"
+        ]
+      },
+      "required_extra_sources": [
+        {
+          "type": "venue_official_doc",
+          "purpose": "补 CME 正式生产 iLink/MDP trade correction 或 trade cancellation 文档，替代或补强 EPICSANDBOX Confluence 链接。"
+        },
+        {
+          "type": "market_data_vendor_doc",
+          "purpose": "补 explicit bad tick / condition flags / correction flags / sequence gap handling 文档，用于更细粒度的 formal conversion。"
+        }
+      ],
+      "formal_conversion_notes": [
+        "可以转 formal reviewed/caveat_only；不得转 approved/default guidance/hard gate。",
+        "正式条目中把 rule_type 保持为 data_quality_gate / audit_contract，不得改写为 trading signal 或 execution rule。",
+        "AI Engineering 只能通过 knowledge_refs 引用，不得复制为模型训练、MCP、RAG 或 LLMOps 本体规则。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_data_engineering_raw_vs_adjusted_data_boundary_001",
+      "research_task_id": "P37-B-D11",
+      "decision": "needs_more_evidence",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "外部补证已显著增强：Databricks medallion architecture 支持 raw/validated/enriched layered design；Feast 支持 point-in-time feature retrieval；MLflow Dataset Tracking 支持 dataset lineage、source、schema、digest 与 training/evaluation context；Delta Lake/Iceberg/DVC 支持 versioning/time-travel/snapshot/reproducibility。",
+        "但该候选的核心强 claim 依赖 CEK-TA-specific 层名 raw/cleaned/adjusted/feature-ready/label-ready 以及“不得回写污染 raw”的内部写入边界；上传包只提供 contract path 与 source_ref 摘要，没有提供 docs/contracts/phase37_data_engineering_dataset_layers_contract.md 正文或机器可校验 schema。",
+        "在未核验内部 contract 正文前，不能把 source_ref.src_011 计为 high primary source；因此 reviewed/caveat_only 仍缺一个可审计主来源。",
+        "外部框架资料均是 pattern/tool-specific，不足以单独证明 CEK-TA 的 exact layer names、raw write-protection、label-ready semantics 和 transformation manifest 字段。"
+      ],
+      "required_patches": {
+        "source": [
+          "上传或内联 docs/contracts/phase37_data_engineering_dataset_layers_contract.md 正文，至少包含 layer definitions、write boundaries、allowed transforms、raw immutability/correction policy、lineage manifest schema、feature-ready/label-ready requirements。",
+          "source_quality.primary_source_count 必须下调；在内部 contract 正文不可审计前，src_011 不能计为已验证 high primary source。",
+          "把 Databricks/Feast/MLflow/Delta/Iceberg/DVC 都标为 implementation-pattern 或 tool-specific supporting/primary-with-caveat，不得作为 CEK-TA layer names 的唯一依据。"
+        ],
+        "content": [
+          "将 claim 拆成两层：外部通用 pattern：raw/validated/enriched 或 equivalent layered data architecture；CEK-TA 内部 contract：raw/cleaned/adjusted/feature-ready/label-ready exact names 与 write-protection。",
+          "明确 raw 修正只能通过 correction record、append-only delta、new dataset version 或 provenance-preserving manifest 表达；禁止下游层直接覆盖 raw。",
+          "补充 feature-ready 与 label-ready 的判定条件：point-in-time correctness、available_time、label horizon、source dataset version、transformation code/version、quality report id。"
+        ],
+        "boundary": [
+          "不得声称所有平台必须采用 CEK-TA exact layer names。",
+          "不得把 Databricks medallion 直接等同于 CEK-TA physical schema。",
+          "不得把 feature-ready/label-ready 解释为可直接用于实盘决策；它只是数据契约状态。"
+        ],
+        "conflict": [
+          "可见上下文内未发现直接冲突，但完整 CEK-TA formal KB 与内部 contract 未提供，不能完成最终冲突审计。",
+          "候选 workflow.hidden_from_default_queue=false 与 machine_gate.hidden_from_default_queue=true 存在机器消费歧义；需统一为隐藏默认指导队列。"
+        ]
+      },
+      "required_extra_sources": [
+        {
+          "type": "internal_contract",
+          "path": "docs/contracts/phase37_data_engineering_dataset_layers_contract.md",
+          "required_content": [
+            "layer taxonomy",
+            "raw immutability/write-protection",
+            "correction record policy",
+            "transformation manifest schema",
+            "feature-ready and label-ready criteria",
+            "lineage/reference fields"
+          ]
+        },
+        {
+          "type": "lineage_standard_or_tool_doc",
+          "purpose": "补 OpenLineage、ML Metadata、Feast registry/feature view lineage 或等价正式来源，用于支撑 lineage manifest 字段。"
+        }
+      ],
+      "formal_conversion_notes": [
+        "当前不得转 formal reviewed/caveat_only。",
+        "补齐并核验内部 contract 正文后，可快速复审；外部来源方向已基本足够。",
+        "保持 candidate-only；不得进入 approved/default guidance/hard gate。"
+      ]
+    }
+  ]
+}

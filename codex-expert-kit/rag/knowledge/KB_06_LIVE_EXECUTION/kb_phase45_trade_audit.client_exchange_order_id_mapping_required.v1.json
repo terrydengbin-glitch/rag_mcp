@@ -1,0 +1,278 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_phase45_trade_audit.client_exchange_order_id_mapping_required.v1",
+  "title": "client/exchange order id 映射必须可追踪",
+  "metadata": {
+    "partition_id": "KB_06_LIVE_EXECUTION",
+    "domain": "live_trading",
+    "subdomain": "audit_trail",
+    "rule_type": "trade_audit_boundary_rule",
+    "claim_type": "execution_safety_rule",
+    "content_type": "json",
+    "project_binding": "none",
+    "tree_node_id": "kt.live_execution.audit_trail",
+    "tree_path": "CEK-TA / Trading Engineering / Live Execution / Audit Trail",
+    "canonical_node_id": "kt.live_execution.audit_trail",
+    "canonical_tree_path": "CEK-TA / Trading Engineering / Live Execution / Audit Trail",
+    "risk_level": "medium_high",
+    "used_for": [
+      "trade_audit_trail_design",
+      "clock_sync_review",
+      "order_event_replay",
+      "external_project_rag_retrieval",
+      "ai_trader_project_design_audit"
+    ],
+    "source_candidate_id": "cand_20260612_phase45_trade_audit_p45_b_aud03_001",
+    "research_task_id": "P45-B-AUD03",
+    "phase": "Phase 45",
+    "classification_notes": "Phase 45 Audit Trail / Clock Sync formal reviewed/caveat_only；只用于审计链、时间同步、事件序列、幂等、retention 和完整性检查，不是 approved/default guidance/hard gate，不生成交易许可、风险阈值或法律合规结论。",
+    "related_nodes": [
+      "kt.trading_engineering.data_engineering.audit_clock",
+      "kt.live_execution.audit_trail",
+      "kt.ai_engineering.database_storage_engineering.audit_log_ledger",
+      "kt.ai_engineering.database_storage_engineering.runtime_observability_trace"
+    ]
+  },
+  "applicability": {
+    "market": "general_with_jurisdiction_and_venue_caveats",
+    "asset": "general",
+    "timeframe": "event_time",
+    "data_granularity": "order_events_execution_reports_audit_logs",
+    "project_type": "trading_ai_support_layer",
+    "applies_when": [
+      "外接项目需要设计订单事件审计链、交易日志、监管报告输入或事件回放证据",
+      "AI IDE 需要区分 event_time、receive_time、log_time、manual entry time 和 electronic event timestamp",
+      "需要设计 client/broker/exchange ID 映射、幂等键、事件序列或审计日志完整性字段"
+    ],
+    "not_applicable_when": [
+      "用户要求具体交易动作、仓位、杠杆、止损止盈或风险阈值",
+      "需要法律合规结论时，应由对应司法辖区合规/法律 owner 判断",
+      "需要 broker/venue 私有订单事实时，应由外接项目事实层和 Live Execution owner 提供",
+      "只有普通应用日志且缺少事件时间、来源系统、actor、原因和完整性证据时，不能声称具备监管级审计链"
+    ]
+  },
+  "content": {
+    "statement": "实盘订单审计必须保留 client_order_id、broker_order_id、exchange_order_id、execution_id、cancel/replace 关联 ID 和幂等请求 ID 的映射；不能只保留某一个系统内 ID 后声称订单链路可复盘。",
+    "rationale": "本候选只定义交易审计链、事件时间和日志治理边界，不输出买卖点、仓位、止损止盈、杠杆、风险阈值或实盘执行建议。",
+    "normalized_claim": "phase45_trade_audit.client_exchange_order_id_mapping_required.v1",
+    "claim_strength": "reviewed_caveat_only",
+    "performance_claim": false,
+    "procedure": [
+      "确认问题属于 Audit Trail / Clock Sync、订单事件审计链、事件时间、事件序列、幂等、retention 或日志完整性。",
+      "检查事件是否声明 event_time、receive_time、log_time、timezone、timestamp_precision、source_system 和 owner。",
+      "检查订单事件链是否保留 event_id、prev_event_id、parent_event_id、client/broker/exchange ID 映射和原因字段。",
+      "若涉及 replay/backfill/correction，必须确认原始事件未被静默覆盖，并保留 replay_cursor、correction_event_id 和 replay_reason。",
+      "若涉及 retention/integrity，必须声明 record_class、retention_policy_id、jurisdiction_scope、storage_mode、integrity_check 和 archive_restore_path。",
+      "返回知识时必须携带 source_evidence、review_status、machine_gate、适用范围、不适用场景和 owner 边界。"
+    ],
+    "examples": [],
+    "anti_patterns": [
+      "把 CAT/FINRA/ESMA 的 clock sync 数值写成全球通用硬规则。",
+      "把 Kafka/Event Sourcing/CDC/Object Lock 写成 CEK-TA mandatory vendor。",
+      "用审计链完整性推导策略有效、交易许可、风控阈值或法律合规结论。",
+      "在 replay/backfill/correction 中静默覆盖原始事件。",
+      "把普通应用日志当作可审计 ledger，而没有 retention、修改/删除审计、完整性校验和恢复路径。"
+    ],
+    "validation": [
+      "source_evidence 至少包含监管/协议/标准/官方平台来源，并明确辖区、协议或实现边界。",
+      "review.review_status 必须为 reviewed；approved/default guidance/hard gate 必须为 false。",
+      "machine_gate.default_guidance 必须为 caveat_only，且 visible_in_default_guidance_queue=false。",
+      "不得出现买卖点、仓位、杠杆、止损止盈、实盘执行建议、风险阈值数值或法律合规结论。"
+    ],
+    "risk_notes": [
+      "Audit Trail / Clock Sync reviewed/caveat_only 只能作为交易审计和工程设计检查上下文。",
+      "监管来源具有辖区边界；协议和平台来源具有实现边界。",
+      "Database/Storage 只拥有存储完整性和生命周期，不拥有策略、订单执行或风控阈值。",
+      "本条不是 approved，不进入默认指导，不启用 hard gate。"
+    ],
+    "citation_notes": "17 CFR 242.613 describes accurate time-sequenced order records, reportable events, clock synchronization, timestamps, and electronic reporting to the central repository.；FIX Execution Report supports order/execution event semantics, status transitions, fills, cancels, replaces, and identifiers.；FINRA describes CAT rules covering reporting, clock synchronization, time stamps, connectivity, data transmission, recordkeeping, timeliness, accuracy, and completeness.",
+    "audit_patch_notes": {
+      "source": [
+        "CAT/FIX 来源具有辖区、协议和 venue/broker 实现边界。"
+      ],
+      "content": [
+        "broker_order_id / exchange_order_id 必须由外接项目事实层提供。"
+      ],
+      "boundary": [
+        "不得把 CAT 字段直接等同于 crypto exchange 的 client_order_id / exchange_order_id。"
+      ],
+      "conflict": [
+        "cancel/replace 关联 ID 和 idempotency_key 属于 CEK-TA 工程字段契约。"
+      ]
+    }
+  },
+  "assumptions": [
+    "Audit Trail / Clock Sync 是交易工程审计上下文，不是策略信号。",
+    "所有 clock sync、timestamp precision 和 retention claim 必须声明适用市场、辖区、系统和事件类型。",
+    "候选通过外部审计前不能进入正式 reviewed 知识库。"
+  ],
+  "source_evidence": [
+    {
+      "source_title": "17 CFR 242.613: Consolidated audit trail",
+      "source_url": "https://www.ecfr.gov/current/title-17/chapter-II/part-242/subject-group-ECFRac68bdd026a46db/section-242.613",
+      "source_type": "regulatory_rule",
+      "publisher": "eCFR / U.S. SEC",
+      "reliability": "high",
+      "score": 94,
+      "freshness": "time_sensitive",
+      "evidence_summary": "17 CFR 242.613 describes accurate time-sequenced order records, reportable events, clock synchronization, timestamps, and electronic reporting to the central repository.",
+      "limitations": [
+        "Regulatory rule for CAT/NMS plan; use as audit-trail principle with jurisdiction caveat."
+      ],
+      "source_id": "src_001",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "FIX 4.4 Execution Report",
+      "source_url": "https://fiximate.fixtrading.org/legacy/en/FIX.4.4/body_5756.html",
+      "source_type": "official_protocol_doc",
+      "publisher": "FIX Trading Community",
+      "reliability": "medium_high",
+      "score": 82,
+      "freshness": "stable",
+      "evidence_summary": "FIX Execution Report supports order/execution event semantics, status transitions, fills, cancels, replaces, and identifiers.",
+      "limitations": [
+        "Protocol schema reference; does not define regulatory retention or venue-specific truth."
+      ],
+      "source_id": "src_002",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "FINRA 2023 Report: Consolidated Audit Trail",
+      "source_url": "https://www.finra.org/rules-guidance/guidance/reports/2023-finras-examination-and-risk-monitoring-program/cat",
+      "source_type": "regulatory_guidance",
+      "publisher": "FINRA",
+      "reliability": "high",
+      "score": 88,
+      "freshness": "time_sensitive",
+      "evidence_summary": "FINRA describes CAT rules covering reporting, clock synchronization, time stamps, connectivity, data transmission, recordkeeping, timeliness, accuracy, and completeness.",
+      "limitations": [
+        "FINRA member/CAT compliance context; not a global venue-agnostic standard."
+      ],
+      "source_id": "src_003",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 88.0,
+    "score_version": "phase45_source_scoring_v1",
+    "primary_source_count": 3,
+    "supporting_source_count": 0,
+    "low_reliability_source_count": 0,
+    "mandatory_downgrades": [],
+    "limitations": [
+      "正式 reviewed 前必须由外部审计确认 claim 没有超出来源可证明范围。",
+      "监管资料按地区适用，不能自动泛化到 crypto、外汇、非美市场或全部 broker。",
+      "内部字段契约若后续用于 reviewed，需要提供 schema extract 或 contract hash。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "Phase 37 Data Engineering / Live Execution formal reviewed knowledge",
+      "Phase 42 Database/Storage contracts",
+      "Phase 45 runtime contract"
+    ],
+    "conflicts": [],
+    "resolution_summary": "reviewed/caveat_only 准备审计通过；formal creation 保持 caveat_only，不创建 approved、default guidance 或 hard gate。",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "risk_threshold_advice_allowed": false,
+    "legal_compliance_conclusion_allowed": false
+  },
+  "review": {
+    "review_status": "reviewed",
+    "review_mode": "caveat_only",
+    "confidence": "high",
+    "freshness": "mixed",
+    "reviewer": "external_ai_strict_audit_and_codex",
+    "reviewed_at": "2026-06-12",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "risk_threshold_advice_allowed": false,
+    "legal_compliance_conclusion_allowed": false,
+    "approved_at": null,
+    "ai_audit": {
+      "audit_result_id": "audit_phase45_trade_audit_reviewed_caveat_only_preparation_20260612_v1",
+      "package_id": "phase45_trade_audit_reviewed_preparation_audit_package_20260612",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "SEC/CAT 支撑 order/customer/reporter 等审计标识；FIX 支撑 OrderID、ClOrdID、OrigClOrdID、ExecID 等协议 ID 语义。"
+      ],
+      "patch_notes": {
+        "source": [
+          "CAT/FIX 来源具有辖区、协议和 venue/broker 实现边界。"
+        ],
+        "content": [
+          "broker_order_id / exchange_order_id 必须由外接项目事实层提供。"
+        ],
+        "boundary": [
+          "不得把 CAT 字段直接等同于 crypto exchange 的 client_order_id / exchange_order_id。"
+        ],
+        "conflict": [
+          "cancel/replace 关联 ID 和 idempotency_key 属于 CEK-TA 工程字段契约。"
+        ]
+      }
+    },
+    "source_candidate_id": "cand_20260612_phase45_trade_audit_p45_b_aud03_001",
+    "ai_audit_result_id": "audit_phase45_trade_audit_reviewed_caveat_only_preparation_20260612_v1"
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于提醒 AI IDE 设计订单事件审计链、时间戳字段、ID 映射、幂等和日志完整性检查。",
+      "用于生成 trade audit checklist、schema review、RAG 检索上下文和 reason code。",
+      "用于检查外接项目方案是否遗漏 clock sync、event sequencing、idempotency、retention 或 integrity 边界。"
+    ],
+    "not_allowed": [
+      "不得生成买卖点、仓位、杠杆、止损止盈、风险阈值或实盘执行建议。",
+      "不得输出法律合规结论或具体 retention 年限作为通用规则。",
+      "不得把 reviewed/caveat_only 当作 approved 或默认指导。",
+      "不得把审计追踪、时间同步、事件序列或存储完整性写成策略 alpha 或 hard gate。"
+    ],
+    "required_context": [
+      "必须同时返回 source_evidence、applicability、not_applicable_when、review_status、conflict_status 和 machine_gate。",
+      "若外接项目问题涉及实盘、法律、授权、资金或风控动作，必须要求项目事实层或人工 owner 复核。"
+    ],
+    "fallback_behavior": "cite_with_caveat"
+  },
+  "machine_gate": {
+    "default_guidance": "caveat_only",
+    "review_visibility": "reviewed_caveat_only",
+    "reason": "reviewed/caveat_only audit passed; approved/default guidance/hard gate remain disabled.",
+    "requires_human_escalation": false,
+    "hidden_from_default_queue": true,
+    "visible_in_default_guidance_queue": false,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "risk_threshold_advice_allowed": false,
+    "legal_compliance_conclusion_allowed": false,
+    "blocking_reasons": [],
+    "checked_at": "2026-06-13T10:29:14+00:00",
+    "gate_version": "1.0.0"
+  },
+  "contribution": {
+    "origin": "phase45_research_ingestion",
+    "private_data_removed": true,
+    "contains_project_private_strategy": false,
+    "contains_secret": false,
+    "notes": "通用 Trading Engineering 支持层候选知识，不包含外接项目私有交易事实。"
+  },
+  "recommended_extra_sources": []
+}

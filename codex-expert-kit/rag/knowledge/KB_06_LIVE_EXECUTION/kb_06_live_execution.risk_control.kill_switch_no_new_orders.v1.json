@@ -1,0 +1,187 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_06_live_execution.risk_control.kill_switch_no_new_orders.v1",
+  "title": "实盘 kill switch 触发后默认禁止新开仓",
+  "metadata": {
+    "partition_id": "KB_06_LIVE_EXECUTION",
+    "domain": "live_trading",
+    "subdomain": "risk_control",
+    "rule_type": "procedure",
+    "content_type": "json",
+    "project_binding": "none",
+    "tree_node_id": "kt.live_execution.risk_control",
+    "tree_path": "CEK-TA / Trading Engineering / Live Execution / Risk Control",
+    "canonical_node_id": "kt.trading_engineering.risk_management.kill_switch",
+    "canonical_tree_path": "CEK-TA / Trading Engineering / Risk Management / Kill Switch",
+    "risk_level": "critical",
+    "used_for": [
+      "code_review",
+      "simulation",
+      "live_trading",
+      "trade_analysis",
+      "mcp",
+      "vue_audit_ui",
+      "project_integration"
+    ],
+    "claim_type": "risk_boundary_rule",
+    "classification_notes": "UI tree node is kt.live_execution.risk_control; canonical classification is kt.trading_engineering.risk_management.kill_switch."
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "multi",
+    "timeframe": "general",
+    "data_granularity": "account_event",
+    "project_type": "live_binance_futures",
+    "applies_when": [
+      "自动化或半自动化实盘系统触发最大亏损、异常订单、风控阈值、连接异常或人工急停",
+      "需要定义保护状态下允许和禁止的交易动作"
+    ],
+    "not_applicable_when": [
+      "离线回测报告中仅做历史统计",
+      "人工交易系统没有自动下单权限，但仍可参考风险控制流程",
+      "交易所或监管规则要求更严格处理时，以更严格规则为准"
+    ]
+  },
+  "content": {
+    "statement": "实盘 kill switch 触发后，系统默认必须禁止新开仓，并进入保护状态；撤单、减仓、平仓和恢复交易必须按权限、审计日志和人工确认策略分离处理。",
+    "rationale": "市场接入和自动化交易风险控制的核心目标是限制财务暴露、阻止错误订单和管理系统风险。触发急停后继续允许新开仓会扩大暴露并削弱风控目的。",
+    "procedure": [
+      "停止所有新开仓入口。",
+      "冻结策略信号到订单适配器的通道。",
+      "根据预案决定是否撤单、只允许减仓或只允许人工平仓。",
+      "记录触发原因、账户范围、时间、执行动作和恢复条件。",
+      "恢复交易前执行人工确认和健康检查。"
+    ],
+    "examples": [
+      "最大日亏损触发后，策略继续生成信号，但执行层必须拒绝新开仓。"
+    ],
+    "anti_patterns": [
+      "kill switch 只写日志但仍允许新订单。",
+      "急停后自动恢复交易，没有人工确认。",
+      "把平仓、撤单、新开仓混成一个权限。"
+    ],
+    "validation": [
+      "模拟触发最大亏损后提交新开仓订单，应被拒绝。",
+      "检查审计日志是否记录触发和恢复。",
+      "检查恢复交易是否需要显式授权。"
+    ],
+    "risk_notes": [
+      "该知识不替代交易所、监管和项目自身合规要求。",
+      "不同市场和账户权限下撤单/平仓策略需要单独定义。"
+    ],
+    "citation_notes": "SEC 市场接入规则强调风险管理控制要限制财务暴露并防止超过阈值或错误订单；CFTC 自动交易风险控制概念发布强调自动化交易环境需要预交易风控、系统保障和风险限制。"
+  },
+  "assumptions": [
+    "系统拥有自动或半自动下单权限。",
+    "kill switch 已经被定义为保护状态入口。"
+  ],
+  "source_evidence": [
+    {
+      "source_id": "src_seed_011",
+      "source_title": "SEC Risk Management Controls for Brokers or Dealers With Market Access",
+      "source_url": "https://www.sec.gov/rules-regulations/2011/06/risk-management-controls-brokers-or-dealers-market-access",
+      "source_type": "official_doc",
+      "publisher": "U.S. Securities and Exchange Commission",
+      "published_at": "2011-06-27",
+      "accessed_at": "2026-06-08",
+      "version": "Rule 15c3-5 overview",
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "SEC 规则要求建立风险管理控制以限制财务暴露并阻止超过预设阈值或错误订单，支持急停后阻断新风险暴露。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_seed_012",
+      "source_title": "CFTC Risk Controls and System Safeguards for Automated Trading Environments",
+      "source_url": "https://www.cftc.gov/PressRoom/PressReleases/6683-13",
+      "source_type": "official_doc",
+      "publisher": "U.S. Commodity Futures Trading Commission",
+      "published_at": "2013-09-09",
+      "accessed_at": "2026-06-08",
+      "version": "Release 6683-13",
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "CFTC 发布的自动交易环境风险控制讨论覆盖预交易风险控制、系统保障和有序市场保护，支持自动化系统需要急停和保护机制。",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 94,
+    "score_version": "1.0.0",
+    "primary_source_count": 2,
+    "supporting_source_count": 0,
+    "limitations": [
+      "来源是美国监管语境；具体交易所和司法辖区需另行复核。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [],
+    "conflicts": [],
+    "resolution_summary": "作为高风险实盘保护默认规则，无现有冲突。",
+    "default_recommendation": "use_as_guidance"
+  },
+  "review": {
+    "confidence": "high",
+    "freshness": "time_sensitive",
+    "review_status": "approved",
+    "reviewer": "codex",
+    "reviewed_at": "2026-06-08",
+    "created_at": "2026-06-08",
+    "updated_at": "2026-06-08",
+    "open_questions": [
+      "后续应补充目标交易所 API 和账户权限级别的恢复流程。"
+    ],
+    "decision_log": [
+      {
+        "at": "2026-06-08",
+        "actor": "codex",
+        "decision": "approved",
+        "reason": "高权威来源、保守默认、边界明确。"
+      }
+    ],
+    "approval_status": "approved",
+    "default_guidance_allowed": true,
+    "source_candidate_id": null,
+    "ai_audit_result_id": null
+  },
+  "contribution": {
+    "contribution_id": null,
+    "source_project": null,
+    "sanitization_status": "not_applicable",
+    "private_data_removed": true,
+    "generic_mapping_notes": "通用实盘风控知识。"
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于审计和解释 CEK-TA / Trading Engineering / Risk Management / Kill Switch 范围内的专业边界。",
+      "用于提醒用户补充适用范围、来源、冲突状态和验证条件。",
+      "用于阻止 AI 把未满足边界的知识当成默认交易建议。"
+    ],
+    "not_allowed": [
+      "不得据此生成买卖点、仓位、杠杆或实盘执行指令。",
+      "不得在缺少适用边界、来源或冲突状态时作为默认指导。",
+      "不得把 reviewed 或 caveat_only 知识表述为 approved 结论。",
+      "不得绕过人工风险确认或项目事实核验。"
+    ],
+    "required_context": [
+      "project_type",
+      "market",
+      "asset",
+      "timeframe",
+      "data_granularity",
+      "task_type"
+    ],
+    "fallback_behavior": "cite_with_caveat"
+  },
+  "machine_gate": {
+    "default_guidance": "allow",
+    "reason": "approved; default_guidance_allowed=true; sources, conflict, freshness, and privacy gates passed.",
+    "requires_human_escalation": false,
+    "blocking_reasons": [],
+    "checked_at": "2026-06-09",
+    "gate_version": "1.0.0"
+  },
+  "recommended_extra_sources": []
+}

@@ -1,0 +1,292 @@
+{
+  "package_id": "phase37_trading_engineering_knowledge_scope_for_audit_20260609",
+  "package_type": "knowledge_scope_audit",
+  "project": "CEK-TA",
+  "phase": "Phase 37",
+  "title": "Trading Engineering 交易专业知识库采集范围审计清单",
+  "language": "zh-CN",
+  "created_at": "2026-06-09",
+  "purpose": "供人工或外部 AI 审计评估 Phase 37 Trading Engineering 需要补齐的交易专业知识库分区、知识点范围、边界、缺口和优先级。",
+  "important_boundary": {
+    "not_formal_knowledge": true,
+    "not_default_guidance": true,
+    "not_approved": true,
+    "description": "本 JSON 只是 Trading Engineering 知识采集范围和审计清单，不是正式知识卡，不得作为 MCP/SearchLab/外部项目默认指导。所有知识点必须后续经过联网采集、来源评分、冲突审计、候选审核、formal reviewed/approved 治理流程。"
+  },
+  "branch_boundary_policy": {
+    "core_rule": "Trading Engineering 沉淀交易专业规则本体；AI Engineering 只引用这些交易知识并定义训练、检索、评估和治理方式。",
+    "trading_engineering_owns": [
+      "量化基础、EV、R/R、成本、仓位和交易决策流",
+      "市场数据工程、时间对齐、缺失重复、时区和数据版本",
+      "K 线结构、指标边界、多周期、入场、止损和止盈",
+      "市场微观结构、盘口、流动性、订单流和执行成本",
+      "回测可信度、数据泄漏、过拟合、样本外和成本模型",
+      "回放、模拟盘、fill model、同根 K TP/SL、滑点和延迟",
+      "实盘执行、订单状态机、仓位同步、kill switch 和事故恢复",
+      "风险管理、单笔风险、日亏损、组合暴露和风控闸门",
+      "交易复盘、坏例 taxonomy、R/R 分解和交易质量归因"
+    ],
+    "trading_engineering_must_not_include": [
+      "LLM/SFT/DPO/PEFT 训练方法本体",
+      "RAG/MCP tool contract 本体",
+      "模型部署、LLMOps 和 AI governance 本体",
+      "外部项目私有策略参数、账户事实、密钥和实盘配置"
+    ],
+    "ai_engineering_usage": "AI Engineering 只能通过 knowledge_refs、retrieved_knowledge、label_schema、eval_case、gate_policy 引用 Trading Engineering 知识，不得复制或改写交易规则本体。",
+    "audit_check": "审计时如果发现某个知识点主要描述训练、检索、部署或 AI 治理，应移回 AI Engineering；如果描述交易规则本体，应留在 Trading Engineering。"
+  },
+  "audit_instructions": {
+    "auditor_goal": "评估 Trading Engineering P0 知识范围是否覆盖外接 LLM gating/scoring 项目开发所需的交易专业基础，同时避免和 AI Engineering、RAG Engineering、MCP Engineering 重复。",
+    "auditor_should_check": [
+      "P0 知识点是否覆盖交易数据、信号、回测、模拟、实盘、风控和复盘闭环。",
+      "是否存在应归入 AI Engineering 的训练、部署、评估、RAG/MCP 规则。",
+      "是否存在项目私有事实、具体买卖建议、无边界交易结论或无法通用的策略参数。",
+      "是否缺少关键交易工程知识点。",
+      "命名是否清晰，是否便于后续转换为 knowledge_id、canonical_node_id 和 ResearchIngestionTask。",
+      "每个分组是否可以独立采集、独立审计、独立沉淀。"
+    ],
+    "auditor_output_expected": {
+      "decision": "accept | accept_with_changes | reject",
+      "missing_items": "列出建议补充的知识点",
+      "move_to_ai_engineering": "列出应移到 AI Engineering 的知识点",
+      "move_to_other_branch": "列出应移到其他分支的知识点",
+      "merge_or_split": "列出需要合并或拆分的知识点",
+      "risk_notes": "列出来源、冲突、泛化、项目污染或默认指导风险",
+      "priority_changes": "列出建议调整优先级的知识点"
+    }
+  },
+  "p0_summary": {
+    "total": 96,
+    "groups": [
+      {
+        "group_id": "A",
+        "name": "Quant Foundation / 量化基础",
+        "count": 12,
+        "primary_partition": "KB_01_QUANT_FOUNDATION"
+      },
+      {
+        "group_id": "B",
+        "name": "Data Engineering / 市场数据工程",
+        "count": 12,
+        "primary_partition": "KB_02_DATA_ENGINEERING"
+      },
+      {
+        "group_id": "C",
+        "name": "Kline / Strategy Engineering / K线与策略工程",
+        "count": 12,
+        "primary_partition": "KB_03_STRATEGY_ENGINEERING"
+      },
+      {
+        "group_id": "D",
+        "name": "Market Microstructure / 市场微观结构",
+        "count": 12,
+        "primary_partition": "KB_03_STRATEGY_ENGINEERING"
+      },
+      {
+        "group_id": "E",
+        "name": "Backtest / 回测可信度",
+        "count": 12,
+        "primary_partition": "KB_04_BACKTEST"
+      },
+      {
+        "group_id": "F",
+        "name": "Replay / Simulation / 回放与模拟",
+        "count": 12,
+        "primary_partition": "KB_05_REPLAY_SIMULATION"
+      },
+      {
+        "group_id": "G",
+        "name": "Live Execution / Risk Management / 实盘执行与风控",
+        "count": 12,
+        "primary_partition": "KB_06_LIVE_EXECUTION / KB_07_RISK_MANAGEMENT"
+      },
+      {
+        "group_id": "H",
+        "name": "Trade Analysis / 交易复盘",
+        "count": 12,
+        "primary_partition": "KB_08_TRADE_ANALYSIS"
+      }
+    ]
+  },
+  "p0_items": [
+    {
+      "group_id": "A",
+      "group_name": "Quant Foundation / 量化基础",
+      "items": [
+        "quant_foundation.expected_value_definition.v1",
+        "quant_foundation.r_multiple_definition.v1",
+        "quant_foundation.risk_reward_boundary.v1",
+        "quant_foundation.cost_adjusted_expectancy_required.v1",
+        "quant_foundation.win_rate_not_enough.v1",
+        "quant_foundation.position_sizing_requires_risk_unit.v1",
+        "quant_foundation.leverage_amplifies_drawdown.v1",
+        "quant_foundation.signal_decision_execution_separation.v1",
+        "quant_foundation.trade_frequency_vs_quality_boundary.v1",
+        "quant_foundation.edge_requires_out_of_sample_evidence.v1",
+        "quant_foundation.sample_size_and_regime_caveat.v1",
+        "quant_foundation.no_profit_claim_without_costs.v1"
+      ]
+    },
+    {
+      "group_id": "B",
+      "group_name": "Data Engineering / 市场数据工程",
+      "items": [
+        "data_engineering.timestamp_alignment_required.v1",
+        "data_engineering.timezone_policy_required.v1",
+        "data_engineering.missing_bar_detection_required.v1",
+        "data_engineering.duplicate_event_detection_required.v1",
+        "data_engineering.ohlcv_schema_required.v1",
+        "data_engineering.feature_timestamp_required.v1",
+        "data_engineering.data_versioning_required.v1",
+        "data_engineering.symbol_contract_normalization_required.v1",
+        "data_engineering.corporate_action_or_contract_rollover_policy.v1",
+        "data_engineering.outlier_detection_required.v1",
+        "data_engineering.raw_vs_adjusted_data_boundary.v1",
+        "data_engineering.data_quality_report_required.v1"
+      ]
+    },
+    {
+      "group_id": "C",
+      "group_name": "Kline / Strategy Engineering / K线与策略工程",
+      "items": [
+        "kline_strategy.trend_structure_boundary.v1",
+        "kline_strategy.market_structure_requires_timeframe.v1",
+        "kline_strategy.entry_signal_not_equal_trade_decision.v1",
+        "kline_strategy.stop_loss_requires_invalidation_logic.v1",
+        "kline_strategy.take_profit_requires_reachability_check.v1",
+        "kline_strategy.multi_timeframe_context_required.v1",
+        "kline_strategy.indicator_lag_boundary.v1",
+        "kline_strategy.atr_volatility_context_required.v1",
+        "kline_strategy.rsi_threshold_not_universal.v1",
+        "kline_strategy.volume_confirmation_boundary.v1",
+        "kline_strategy.signal_generalization_forbidden_without_market_scope.v1",
+        "kline_strategy.strategy_rule_version_required.v1"
+      ]
+    },
+    {
+      "group_id": "D",
+      "group_name": "Market Microstructure / 市场微观结构",
+      "items": [
+        "microstructure.spread_liquidity_context_required.v1",
+        "microstructure.order_book_depth_boundary.v1",
+        "microstructure.trade_prints_aggressor_caveat.v1",
+        "microstructure.order_flow_proxy_boundary.v1",
+        "microstructure.cvd_interpretation_caveat.v1",
+        "microstructure.funding_open_interest_context_required.v1",
+        "microstructure.liquidity_regime_required.v1",
+        "microstructure.market_impact_cost_required.v1",
+        "microstructure.high_frequency_signal_latency_boundary.v1",
+        "microstructure.slippage_regime_caveat.v1",
+        "microstructure.thin_market_execution_risk.v1",
+        "microstructure.microstructure_feature_not_universal.v1"
+      ]
+    },
+    {
+      "group_id": "E",
+      "group_name": "Backtest / 回测可信度",
+      "items": [
+        "backtest.lookahead_bias_block.v1",
+        "backtest.data_leakage_block.v1",
+        "backtest.survivorship_selection_bias_check.v1",
+        "backtest.parameter_search_separate_from_final_eval.v1",
+        "backtest.walk_forward_validation_required.v1",
+        "backtest.out_of_sample_required.v1",
+        "backtest.cost_model_required.v1",
+        "backtest.slippage_fee_spread_required.v1",
+        "backtest.metric_interpretation_boundary.v1",
+        "backtest.profit_factor_drawdown_context_required.v1",
+        "backtest.reproducibility_package_required.v1",
+        "backtest.strategy_version_and_data_version_required.v1"
+      ]
+    },
+    {
+      "group_id": "F",
+      "group_name": "Replay / Simulation / 回放与模拟",
+      "items": [
+        "replay.event_clock_required.v1",
+        "replay.ohlc_same_bar_tp_sl_ordering_required.v1",
+        "replay.fill_model_assumption_required.v1",
+        "replay.partial_fill_policy_required.v1",
+        "replay.latency_model_required.v1",
+        "replay.paper_trading_not_equal_live.v1",
+        "replay.exchange_rule_simulation_required.v1",
+        "replay.minimum_order_size_required.v1",
+        "replay.order_reject_and_cancel_policy_required.v1",
+        "replay.simulation_live_gap_report_required.v1",
+        "replay.tick_replay_vs_ohlc_boundary.v1",
+        "replay.execution_cost_consistency_required.v1"
+      ]
+    },
+    {
+      "group_id": "G",
+      "group_name": "Live Execution / Risk Management / 实盘执行与风控",
+      "items": [
+        "live_execution.least_privilege_api_required.v1",
+        "live_execution.order_state_machine_required.v1",
+        "live_execution.position_reconciliation_required.v1",
+        "live_execution.kill_switch_required.v1",
+        "live_execution.exchange_adapter_error_contract_required.v1",
+        "live_execution.order_fill_trade_log_required.v1",
+        "risk_management.single_trade_risk_limit_required.v1",
+        "risk_management.daily_loss_limit_required.v1",
+        "risk_management.max_open_positions_required.v1",
+        "risk_management.portfolio_exposure_limit_required.v1",
+        "risk_management.consecutive_loss_stop_required.v1",
+        "risk_management.hard_risk_gate_precedes_execution.v1"
+      ]
+    },
+    {
+      "group_id": "H",
+      "group_name": "Trade Analysis / 交易复盘",
+      "items": [
+        "trade_analysis.planned_vs_realized_r_required.v1",
+        "trade_analysis.mae_mfe_for_post_trade_only.v1",
+        "trade_analysis.bad_trade_taxonomy_required.v1",
+        "trade_analysis.good_loss_bad_win_distinction.v1",
+        "trade_analysis.entry_quality_review_required.v1",
+        "trade_analysis.exit_quality_review_required.v1",
+        "trade_analysis.risk_quality_review_required.v1",
+        "trade_analysis.execution_quality_review_required.v1",
+        "trade_analysis.rule_compliance_review_required.v1",
+        "trade_analysis.regime_fit_review_required.v1",
+        "trade_analysis.reason_code_required.v1",
+        "trade_analysis.research_hypothesis_requires_validation.v1"
+      ]
+    }
+  ],
+  "source_requirements_for_future_collection": {
+    "minimum_sources_per_item": 2,
+    "preferred_sources": [
+      "学术论文和可复现实证研究",
+      "交易所官方规则和 API 文档",
+      "成熟交易/回测/执行框架官方文档",
+      "权威书籍或机构研究",
+      "可核验的工程事故复盘或公开技术报告"
+    ],
+    "must_record": [
+      "适用市场、周期、样本和数据边界",
+      "不适用场景",
+      "假设和风险",
+      "来源质量",
+      "冲突审计",
+      "LLM 使用策略",
+      "machine_gate"
+    ]
+  },
+  "hard_boundaries": [
+    "不得把具体买卖点写成通用默认指导。",
+    "不得把单一市场、单一周期、单一回测结果泛化为普适规律。",
+    "不得把外部项目私有样本、私有策略参数或账户事实写入通用知识库。",
+    "不得让 candidate 直接变成 approved。",
+    "不得让 AI Engineering 复制 Trading Engineering 的交易规则本体。"
+  ],
+  "related_files": [
+    "docs/tasks/phase37_trading_engineering_knowledge_expansion.md",
+    "docs/research/phase37_trading_engineering_knowledge_scope.md",
+    "docs/tasks/phase36_ai_engineering_gating_scoring_knowledge.md",
+    "docs/audit/phase36_ai_engineering_knowledge_scope_for_audit.json",
+    "codex-expert-kit/rag/knowledge_tree.md",
+    "codex-expert-kit/rag/knowledge_item_schema.md",
+    "docs/contracts/knowledge_item_schema_v1_1_contract.md"
+  ]
+}

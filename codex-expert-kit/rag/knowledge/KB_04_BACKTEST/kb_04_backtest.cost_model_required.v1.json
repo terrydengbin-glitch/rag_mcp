@@ -1,0 +1,361 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_04_backtest.cost_model_required.v1",
+  "title": "回测必须显式声明成本模型",
+  "metadata": {
+    "partition_id": "KB_04_BACKTEST",
+    "domain": "backtest",
+    "subdomain": "cost_model",
+    "rule_type": "backtest_reliability_boundary_rule",
+    "claim_type": "backtest_validity_rule",
+    "content_type": "json",
+    "project_binding": "none",
+    "tree_node_id": "kt.trading_engineering.backtest",
+    "tree_path": "CEK-TA / Trading Engineering / Backtest",
+    "canonical_node_id": "kt.trading_engineering.backtest",
+    "canonical_tree_path": "CEK-TA / Trading Engineering / Backtest",
+    "risk_level": "medium",
+    "used_for": [
+      "backtest_review",
+      "strategy_validation_audit",
+      "ai_trader_project_gap_audit",
+      "external_project_rag_retrieval"
+    ],
+    "source_candidate_id": "cand_20260611_phase37_backtest_cost_model_required_001",
+    "research_task_id": "P37-E-B07",
+    "phase": "Phase 37",
+    "classification_notes": "Phase 37 Backtest formal reviewed/caveat_only；只约束回测可信度、偏差、成本、验证和复现边界，不是 approved/default guidance。",
+    "related_nodes": [
+      "kt.trading_engineering",
+      "kt.trading_engineering.data_engineering",
+      "kt.kline_strategy",
+      "kt.market_microstructure",
+      "kt.replay_simulation",
+      "kt.live_execution",
+      "kt.risk_management",
+      "kt.ai_engineering.llm_training"
+    ]
+  },
+  "applicability": {
+    "market": "general_with_market_specific_mapping",
+    "asset": "general",
+    "timeframe": "historical_evaluation",
+    "data_granularity": "historical_market_data_and_orders",
+    "project_type": "trading_ai_support_layer",
+    "applies_when": [
+      "审计策略回测、参数搜索、指标解释、成本模型、fill 假设或复现实验包",
+      "把回测结果用于 AI scoring、策略筛选、paper/live 前置评估或研究报告"
+    ],
+    "not_applicable_when": [
+      "需要直接生成买卖点、仓位、杠杆、止损止盈或实盘执行建议",
+      "没有历史数据版本、策略规则版本或 evaluation timestamp",
+      "问题属于 live execution、risk hard gate 或交易所实盘订单规则，应由对应分支处理",
+      "需要买卖点、仓位、杠杆、止损止盈参数或实盘执行建议时，本知识不得使用。",
+      "需要自动拒单、自动停机或 hard gate 时，应由 Risk Management / Live Execution owner 定义。"
+    ]
+  },
+  "content": {
+    "statement": "Backtest 必须显式声明佣金、交易所费用、借贷/融资成本、税费、市场冲击和机会成本等成本模型；未扣成本的收益不得作为净表现证据。",
+    "rationale": "本候选只定义回测可信度、偏差、成本、验证和复现边界，不输出买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+    "normalized_claim": "backtest.cost_model_required.v1",
+    "claim_strength": "reviewed_caveat_only",
+    "performance_claim": false,
+    "reviewed_patch_notes": {
+      "source": [
+        "QuantConnect 等平台文档只能作为实现语义示例，不得泛化为所有 backtest engine。"
+      ],
+      "content": [],
+      "boundary": [
+        "reviewed/caveat_only 不等于 approved、default guidance 或 hard gate。",
+        "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+        "样本外、walk-forward、成本建模或回测复现通过，也不等于实盘许可。"
+      ],
+      "conflict": [
+        "与 Quant Foundation、Data Engineering、Market Microstructure、Replay、Live Execution、Risk Management、AI Engineering 仅做 cross-reference 和 owner 边界拆分。"
+      ]
+    },
+    "audit_reason": [
+      "CFA execution/TCA 与 QuantConnect fee/slippage/fill model 官方文档足以支持成本模型和净表现边界。",
+      "平台文档只作为实现语义示例，不代表所有 backtest engine。"
+    ]
+  },
+  "assumptions": [
+    "候选用于 CEK-TA 通用支持层知识库，不包含任何外接项目私有策略参数。",
+    "回测结论必须保留数据、成本、执行、样本、参数搜索、验证和复现边界。",
+    "候选通过外部审计前不能进入正式 reviewed 知识库。"
+  ],
+  "limitations": [
+    "论文和专业机构资料支持方法边界，不能证明任何特定策略有效。",
+    "平台文档只可作为实现语义示例，外接项目必须映射自己的 backtest engine、broker、交易所和数据供应商。",
+    "本候选不提供任何投资建议或实盘执行许可。",
+    "reviewed/caveat_only 不等于 approved，也不允许进入默认指导队列。",
+    "平台文档只作为实现语义示例，外接项目必须映射自己的 backtest engine、数据供应商、broker 和交易所契约。"
+  ],
+  "source_evidence": [
+    {
+      "source_id": "src_001",
+      "title": "Trade Strategy and Execution",
+      "url": "https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/trade-strategy-execution",
+      "source_type": "professional_curriculum",
+      "publisher": "CFA Institute",
+      "published_at": "2026-01-01",
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "summary": "CFA Institute frames execution around liquidity needs, market conditions, execution risk, opportunity cost, market impact and trade cost analysis.",
+      "supports": [
+        "claim_statement",
+        "applicability_boundary",
+        "non_default_guidance_boundary"
+      ]
+    },
+    {
+      "source_id": "src_002",
+      "title": "Transaction Fees - Key Concepts",
+      "url": "https://www.quantconnect.com/docs/v2/writing-algorithms/reality-modeling/transaction-fees/key-concepts",
+      "source_type": "platform_doc",
+      "publisher": "QuantConnect",
+      "published_at": null,
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "medium_high",
+      "relevance": "high",
+      "summary": "QuantConnect fee models simulate brokerage transaction fees to make backtest results more realistic.",
+      "supports": [
+        "claim_statement",
+        "applicability_boundary",
+        "non_default_guidance_boundary"
+      ]
+    },
+    {
+      "source_id": "src_003",
+      "title": "Slippage Models - Key Concepts",
+      "url": "https://www.quantconnect.com/docs/v2/writing-algorithms/reality-modeling/slippage/key-concepts",
+      "source_type": "platform_doc",
+      "publisher": "QuantConnect",
+      "published_at": null,
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "medium_high",
+      "relevance": "medium_high",
+      "summary": "QuantConnect defines slippage as the difference between expected and actual fill price and models it for more realistic backtests.",
+      "supports": [
+        "claim_statement",
+        "applicability_boundary",
+        "non_default_guidance_boundary"
+      ]
+    },
+    {
+      "source_id": "src_004",
+      "title": "Trade Fills - Key Concepts",
+      "url": "https://www.quantconnect.com/docs/v2/writing-algorithms/reality-modeling/trade-fills/key-concepts",
+      "source_type": "platform_doc",
+      "publisher": "QuantConnect",
+      "published_at": null,
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "medium_high",
+      "relevance": "medium_high",
+      "summary": "QuantConnect explains fill models, spread costs and interaction with slippage models for backtest order fills.",
+      "supports": [
+        "claim_statement",
+        "applicability_boundary",
+        "non_default_guidance_boundary"
+      ]
+    }
+  ],
+  "source_refs": [
+    {
+      "source_title": "Trade Strategy and Execution",
+      "source_url": "https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/trade-strategy-execution",
+      "source_type": "professional_curriculum",
+      "publisher": "CFA Institute",
+      "published_at": "2026-01-01",
+      "reliability": "high",
+      "score": 88,
+      "freshness": "time_sensitive",
+      "evidence_summary": "CFA Institute frames execution around liquidity needs, market conditions, execution risk, opportunity cost, market impact and trade cost analysis.",
+      "limitations": [
+        "Supports cost and execution boundary; not a backtest platform contract."
+      ],
+      "source_id": "src_001",
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "Transaction Fees - Key Concepts",
+      "source_url": "https://www.quantconnect.com/docs/v2/writing-algorithms/reality-modeling/transaction-fees/key-concepts",
+      "source_type": "platform_doc",
+      "publisher": "QuantConnect",
+      "published_at": null,
+      "reliability": "medium_high",
+      "score": 82,
+      "freshness": "time_sensitive",
+      "evidence_summary": "QuantConnect fee models simulate brokerage transaction fees to make backtest results more realistic.",
+      "limitations": [
+        "Platform-specific; external projects must map actual brokerage/exchange fees."
+      ],
+      "source_id": "src_002",
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "Slippage Models - Key Concepts",
+      "source_url": "https://www.quantconnect.com/docs/v2/writing-algorithms/reality-modeling/slippage/key-concepts",
+      "source_type": "platform_doc",
+      "publisher": "QuantConnect",
+      "published_at": null,
+      "reliability": "medium_high",
+      "score": 82,
+      "freshness": "time_sensitive",
+      "evidence_summary": "QuantConnect defines slippage as the difference between expected and actual fill price and models it for more realistic backtests.",
+      "limitations": [
+        "Platform-specific; supports slippage concept and modeling boundary."
+      ],
+      "source_id": "src_003",
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "relevance": "medium_high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "Trade Fills - Key Concepts",
+      "source_url": "https://www.quantconnect.com/docs/v2/writing-algorithms/reality-modeling/trade-fills/key-concepts",
+      "source_type": "platform_doc",
+      "publisher": "QuantConnect",
+      "published_at": null,
+      "reliability": "medium_high",
+      "score": 82,
+      "freshness": "time_sensitive",
+      "evidence_summary": "QuantConnect explains fill models, spread costs and interaction with slippage models for backtest order fills.",
+      "limitations": [
+        "Platform-specific semantics; external projects must map their own fill model."
+      ],
+      "source_id": "src_004",
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "relevance": "medium_high",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "medium_high",
+    "score": 83.5,
+    "score_version": "phase37_backtest_source_scoring_v1",
+    "primary_source_count": 3,
+    "supporting_source_count": 1,
+    "low_reliability_source_count": 0,
+    "mandatory_downgrades": [],
+    "limitations": [
+      "正式入库前必须由外部审计确认 claim 没有超出来源可证明范围。",
+      "平台文档只能证明平台语义，不能单独证明策略有效或实盘可执行。"
+    ],
+    "reviewed_preparation_audit_result_id": "audit_result_phase37_backtest_reviewed_preparation_20260611_strict_v1",
+    "reviewed_preparation_confidence": "high"
+  },
+  "conflict_audit": {
+    "conflict_status": "none_known_in_visible_context",
+    "checked_against": [
+      "Phase 37 Trading 与 AI 跨分支引用契约",
+      "现有 Backtest formal seed 知识",
+      "Data Engineering / Replay / Live Execution / Risk Management owner 边界"
+    ],
+    "conflicts": [],
+    "resolution_summary": "reviewed/caveat_only preparation audit passed; full formal KB conflict check remains required before any future approved/default guidance governance.",
+    "approval_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "patch_notes": [
+      "与 Quant Foundation、Data Engineering、Market Microstructure、Replay、Live Execution、Risk Management、AI Engineering 仅做 cross-reference 和 owner 边界拆分。"
+    ]
+  },
+  "review": {
+    "review_status": "reviewed",
+    "reviewed_at": "2026-06-11",
+    "reviewed_by": "codex_with_external_ai_audit",
+    "confidence": "high",
+    "freshness": "mixed",
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase37_backtest_reviewed_preparation_20260611_strict_v1",
+      "package_id": "phase37_backtest_reviewed_preparation_audit_package_20260611",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "CFA execution/TCA 与 QuantConnect fee/slippage/fill model 官方文档足以支持成本模型和净表现边界。",
+        "平台文档只作为实现语义示例，不代表所有 backtest engine。"
+      ],
+      "patch_notes": {
+        "source": [
+          "QuantConnect 等平台文档只能作为实现语义示例，不得泛化为所有 backtest engine。"
+        ],
+        "content": [],
+        "boundary": [
+          "reviewed/caveat_only 不等于 approved、default guidance 或 hard gate。",
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+          "样本外、walk-forward、成本建模或回测复现通过，也不等于实盘许可。"
+        ],
+        "conflict": [
+          "与 Quant Foundation、Data Engineering、Market Microstructure、Replay、Live Execution、Risk Management、AI Engineering 仅做 cross-reference 和 owner 边界拆分。"
+        ]
+      }
+    },
+    "open_questions": [],
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "source_candidate_id": "cand_20260611_phase37_backtest_cost_model_required_001",
+    "ai_audit_result_id": "audit_result_phase37_backtest_reviewed_preparation_20260611_strict_v1"
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于提醒 AI IDE 检索 Backtest 可信度、偏差、成本、验证和复现边界。",
+      "用于审计交易项目方案中是否缺少回测证据、成本模型、样本外、walk-forward 或复现实验包。",
+      "用于辅助外接项目设计 backtest review checklist、reason code 和 evidence gate。"
+    ],
+    "not_allowed": [
+      "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+      "不得把候选知识当作 reviewed、approved、default guidance 或 hard gate。",
+      "不得绕过外接项目事实层、数据契约、执行适配器、风控 hard gate 或人工治理流程。",
+      "不得作为默认指导。",
+      "不得作为 approved 知识。",
+      "不得生成买卖点、仓位、杠杆、止损止盈或实盘执行建议。",
+      "不得启用 hard gate 或自动风控动作。"
+    ],
+    "requires_context": [
+      "外接项目的 backtest engine、数据版本、成本模型、fill model、样本划分和评估时间。"
+    ],
+    "required_context": [
+      "必须同时返回 source_evidence、applicability、not_applicable_when、review_status、conflict_status 和 machine_gate。",
+      "若外接项目问题涉及实盘、法律、授权、资金或风控动作，必须要求项目事实层或人工 owner 复核。"
+    ],
+    "fallback_behavior": "cite_with_caveat"
+  },
+  "machine_gate": {
+    "default_guidance": "caveat_only",
+    "reason": "reviewed/caveat_only only; approved/default guidance/hard gate are disabled. Backtest knowledge only constrains evidence reliability and may not produce trade instructions.",
+    "requires_human_escalation": true,
+    "hidden_from_default_queue": true,
+    "visible_in_default_guidance_queue": false,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "blocking_reasons": [],
+    "checked_at": "2026-06-13T10:29:14+00:00",
+    "gate_version": "1.0.0"
+  },
+  "contribution": {
+    "source_type": "phase37_candidate_to_reviewed",
+    "source_candidate_id": "cand_20260611_phase37_backtest_cost_model_required_001",
+    "audit_result_id": "audit_result_phase37_backtest_reviewed_preparation_20260611_strict_v1",
+    "private_data_removed": true
+  },
+  "recommended_extra_sources": []
+}

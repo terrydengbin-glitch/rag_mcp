@@ -1,0 +1,477 @@
+{
+  "package_id": "phase45_stress_scenario_stress02_market_liquidity_reaudit_package_20260612",
+  "created_at": "2026-06-12",
+  "created_by": "codex",
+  "phase": "45",
+  "task_id": "CEK-TA-466",
+  "scope": {
+    "branch": "Trading Engineering / Risk Management / Scenario Stress Risk",
+    "target": "复审 STRESS02 liquidity stress boundary 补入 market/execution liquidity 直接来源后是否可进入 formal reviewed/caveat_only。",
+    "candidate_count": 1
+  },
+  "hard_boundaries": {
+    "reviewed_caveat_only_max": true,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "risk_threshold_advice_allowed": false,
+    "liquidation_horizon_advice_allowed": false,
+    "trade_execution_advice_allowed": false
+  },
+  "audit_instructions": [
+    "必须搜索相关专业网站、监管资料、交易所/市场资料、案例和数据，对补证包进行严格再审。",
+    "确认 PFMI/CCP/CME/DTCC 只作为 clearing/funding liquidity 来源。",
+    "确认 ESMA、SEC/eCFR、CFA、NY Fed 能否支撑 market depth、bid-ask spread、market impact、trade/order size、liquidation cost 和 time-to-liquidate 作为 market/execution liquidity 维度。",
+    "确认缺失 market_depth_source_id、spread_source_id、market_impact_source_id、time_to_liquidate_source_id 时必须标记 unknown，不得当作 normal、zero 或 safe。",
+    "输出只能是 accepted_for_reviewed_caveat_only、needs_more_evidence、rejected 或 blocked。"
+  ],
+  "required_output_schema": {
+    "audit_result_id": "string",
+    "package_id": "phase45_stress_scenario_stress02_market_liquidity_reaudit_package_20260612",
+    "summary": {
+      "total": 1,
+      "accepted_for_reviewed_caveat_only": 0,
+      "needs_more_evidence": 0,
+      "rejected": 0,
+      "blocked": 0
+    },
+    "candidate_results": [
+      {
+        "candidate_id": "string",
+        "research_task_id": "P45-E-STRESS02",
+        "decision": "accepted_for_reviewed_caveat_only | needs_more_evidence | rejected | blocked",
+        "reviewed_allowed": "boolean",
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "risk_threshold_advice_allowed": false,
+        "reasons": [
+          "string"
+        ],
+        "required_followups": [
+          "string"
+        ],
+        "patch_notes": {
+          "source": [
+            "string"
+          ],
+          "content": [
+            "string"
+          ],
+          "boundary": [
+            "string"
+          ],
+          "conflict": [
+            "string"
+          ]
+        }
+      }
+    ]
+  },
+  "quality_gate": {
+    "gate_id": "phase45_stress_scenario_stress02_market_liquidity_reaudit_gate",
+    "checked_at": "2026-06-12",
+    "task_id": "CEK-TA-466",
+    "package_id": "phase45_stress_scenario_stress02_market_liquidity_reaudit_package_20260612",
+    "candidate_count": 1,
+    "expected_count": 1,
+    "gate_status": "pass",
+    "failures": [],
+    "warnings": [
+      "本包只允许判断 STRESS02 是否可进入 formal reviewed/caveat_only。",
+      "不得创建 approved、default guidance、hard gate、风险阈值、清仓时长数值、滑点阈值、可成交数量或实盘交易动作。"
+    ]
+  },
+  "candidates": [
+    {
+      "schema_version": "1.1.0-candidate",
+      "candidate_id": "cand_20260612_phase45_stress_scenario_p45_e_stress02_001",
+      "research_task_id": "P45-E-STRESS02",
+      "status": {
+        "review_status": "needs_more_evidence",
+        "ingestion_decision": "needs_more_evidence",
+        "decision_reason": "reviewed/caveat_only 准备审计未通过；已按审计意见补 market/execution liquidity 证据并导出再审包。",
+        "created_at": "2026-06-12",
+        "updated_at": "2026-06-12"
+      },
+      "classification": {
+        "tree_node_id": "kt.risk_management.stress_scenario",
+        "canonical_node_id": "kt.risk_management.stress_scenario",
+        "tree_path": "CEK-TA / Trading Engineering / Risk Management / Scenario Stress Risk",
+        "related_nodes": [
+          "kt.risk_management.layered_risk_controls",
+          "kt.live_execution.resilience_incident_log",
+          "kt.trading_engineering.live_execution.execution_tca",
+          "kt.trade_analysis.review_reason_code"
+        ],
+        "partition_id": "KB_07_RISK_MANAGEMENT",
+        "domain": "risk_management",
+        "subdomain": "scenario_stress_risk",
+        "rule_type": "stress_risk_boundary_rule",
+        "claim_type": "liquidity_stress_boundary_rule",
+        "used_for": [
+          "trading_ai_project_design_audit",
+          "stress_testing_review",
+          "scenario_risk_checklist",
+          "external_project_rag_retrieval"
+        ],
+        "classification_notes": "P45-E STRESS02 已补 market/execution liquidity 直接来源；仍需外部再审确认能否进入 reviewed/caveat_only。"
+      },
+      "claim": {
+        "claim_id": "claim_p45_e_stress02",
+        "title": "流动性压力必须和价格 PnL 压力分开",
+        "statement": "流动性压力测试必须把 clearing/funding liquidity 与 market/execution liquidity 分开声明。clearing/funding liquidity 覆盖 funding source、settlement/collateral、clearing resources 和 liquid resources；market/execution liquidity 覆盖 market depth、bid-ask spread、market impact、trade/order size、liquidation cost 和 time-to-liquidate。缺失 market_depth_source_id、spread_source_id、market_impact_source_id 或 time_to_liquidate_source_id 时，必须标记 unknown，不得当作 normal、zero、safe 或可成交性证明。",
+        "normalized_claim": "phase45_stress_scenario.liquidity_stress_boundary.v1",
+        "evidence_summary": "PFMI、CCP resilience、CME 和 DTCC 支撑 clearing/funding liquidity stress；ESMA LST guidelines 支撑 liquidation cost、time to liquidity/time to liquidation、trade/order size、stressed market 下 higher bid-ask spread、lower liquidity 和 longer time to liquidate；SEC/eCFR Rule 22e-4 支撑 time-to-convert/sell/dispose-of liquidity classification；CFA Institute 支撑 bid-ask spread 和 price impact 作为 market/execution liquidity 维度；NY Fed 支撑 market depth 作为特定价格上可买卖数量的市场流动性维度。",
+        "interpretation_notes": "本候选只定义压力测试、场景风险、流动性压力、尾部损失和风险复核边界，不输出风险阈值、交易参数或实盘执行建议。",
+        "claim_strength": "candidate",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general_with_clearing_venue_broker_and_jurisdiction_caveats",
+        "asset": "general",
+        "timeframe": "stress_scenario_and_risk_review_context",
+        "data_granularity": "portfolio_exposure_scenario_market_liquidity_risk_events",
+        "project_type": "trading_ai_support_layer",
+        "applies_when": [
+          "外接项目需要设计场景压力测试、流动性压力、相关性失效、跳空/隔夜风险、尾部亏损复核或 stress result governance。",
+          "AI IDE 需要判断风险评估是否把普通回测指标误当作 stress test。",
+          "需要把 scenario result、risk owner、人工审批和 deterministic final gate 分开建模。"
+        ],
+        "not_applicable_when": [
+          "用户要求具体风险阈值、仓位、杠杆、止损止盈、买卖点、交易许可或实盘执行动作。",
+          "需要外接项目真实账户、清算、保证金、融资或实时市场事实时，应由外接项目事实层提供。",
+          "需要监管资本、清算资源或合规结论时，应由对应机构/合规/legal owner 判断。"
+        ],
+        "assumptions": [
+          "Stress Testing / Scenario Risk 是风险复核与治理上下文，不是策略 alpha。",
+          "所有 stress、liquidity、clearing、CCP、banking 和 exchange 来源必须声明适用边界。",
+          "候选通过外部审计前不能进入 formal reviewed 知识库。"
+        ],
+        "limitations": [
+          "PFMI、BCBS、CCP、CME、DTCC 来源多为 FMI、银行、清算或交易所风险管理语境，不等同于所有交易项目规则。",
+          "压力测试不能替代 live risk gate、market data truth、order truth 或 portfolio owner 决策。",
+          "本候选不包含任何项目私有风险阈值或交易参数。",
+          "ESMA/SEC/CFA/NY Fed 来源分别具有 fund、equity、Treasury 或市场研究语境，不能直接泛化为所有交易项目的流动性阈值。",
+          "market/execution liquidity 只能作为压力情景和审计维度，不输出可成交数量、滑点阈值、清仓时长数值或交易许可。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_title": "CPMI-IOSCO Principles for Financial Market Infrastructures",
+          "source_url": "https://www.iosco.org/library/pubdocs/pdf/IOSCOPD377.pdf",
+          "source_type": "professional_body",
+          "publisher": "CPMI-IOSCO",
+          "reliability": "high",
+          "score": 93,
+          "freshness": "stable",
+          "evidence_summary": "PFMI supports stress testing, liquidity-risk management and extreme-but-plausible scenario analysis for financial market infrastructures.",
+          "limitations": [
+            "FMI/CCP-focused principles; must be mapped carefully to trading-system project risk review."
+          ],
+          "source_id": "src_001",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "CPMI-IOSCO Resilience of Central Counterparties: Further Guidance on the PFMI",
+          "source_url": "https://www.bis.org/cpmi/publ/d163.pdf",
+          "source_type": "professional_body",
+          "publisher": "BIS CPMI / IOSCO",
+          "reliability": "high",
+          "score": 92,
+          "freshness": "stable",
+          "evidence_summary": "The CCP resilience guidance discusses stress-testing frameworks, credit and liquidity risk exposure, extreme but plausible market conditions, and multiday liquidity stress considerations.",
+          "limitations": [
+            "CCP-focused; use as scenario and liquidity-stress pattern, not as project-specific threshold source."
+          ],
+          "source_id": "src_002",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "CME Clearing Liquidity Risk Management Practices",
+          "source_url": "https://www.cmegroup.com/articles/brochures-and-handbooks/101-overview-cme-clearing-liquidity-risk-management-practices.html",
+          "source_type": "official_exchange_doc",
+          "publisher": "CME Group",
+          "reliability": "high",
+          "score": 88,
+          "freshness": "time_sensitive",
+          "evidence_summary": "CME describes liquidity stress testing with historical and hypothetical scenarios for clearing liquidity-risk management.",
+          "limitations": [
+            "CME Clearing liquidity context; not a universal strategy-liquidity rule."
+          ],
+          "source_id": "src_003",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "DTCC Stress Testing",
+          "source_url": "https://www.dtcc.com/managing-risk/financial-risk-management/stress-testing",
+          "source_type": "official_platform_doc",
+          "publisher": "DTCC",
+          "reliability": "high",
+          "score": 86,
+          "freshness": "time_sensitive",
+          "evidence_summary": "DTCC states stress testing measures stress-scenario impact on credit and liquidity exposures and financial resources for each clearing agency.",
+          "limitations": [
+            "Clearing-agency risk management context; not a trading-strategy approval source."
+          ],
+          "source_id": "src_004",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_market_liquidity_001",
+          "source_title": "ESMA Guidelines on Liquidity Stress Testing in UCITS and AIFs",
+          "source_url": "https://www.esma.europa.eu/sites/default/files/library/esma34-39-897_guidelines_on_liquidity_stress_testing_in_ucits_and_aifs_en.pdf",
+          "source_type": "regulatory_guideline",
+          "publisher": "European Securities and Markets Authority",
+          "reliability": "high",
+          "score": 94,
+          "freshness": "stable",
+          "relevance": "high",
+          "accessed_at": "2026-06-12",
+          "version": "ESMA34-39-897",
+          "evidence_summary": "ESMA LST guidelines support liquidation cost, time to liquidity/time to liquidation, trade/order size, stressed market conditions, higher bid-ask spread, lower liquidity and longer time to liquidate.",
+          "limitations": [
+            "UCITS/AIF fund-liquidity stress testing context; use as market/asset liquidity stress pattern, not as a CEK-TA liquidation-horizon threshold."
+          ],
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_market_liquidity_002",
+          "source_title": "17 CFR 270.22e-4 Liquidity risk management programs",
+          "source_url": "https://www.ecfr.gov/current/title-17/chapter-II/part-270/section-270.22e-4",
+          "source_type": "regulatory_rule",
+          "publisher": "eCFR / U.S. Securities and Exchange Commission",
+          "reliability": "high",
+          "score": 91,
+          "freshness": "time_sensitive",
+          "relevance": "medium_high",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "evidence_summary": "SEC liquidity risk management rule supports time-to-convert/sell/dispose-of investment concepts and significant dilution boundaries for liquidity classification.",
+          "limitations": [
+            "U.S. registered open-end fund context; not a universal market-depth or trading execution rule."
+          ],
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_market_liquidity_003",
+          "source_title": "CFA Institute: Liquidity in Equity Markets",
+          "source_url": "https://www.cfainstitute.org/sites/default/files/-/media/documents/article/position-paper/liquidity-in-equity-markets-characteristics-dynamics-implications-for-market-quality.pdf",
+          "source_type": "professional_body",
+          "publisher": "CFA Institute",
+          "reliability": "high",
+          "score": 88,
+          "freshness": "stable",
+          "relevance": "high",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "evidence_summary": "CFA Institute supports bid-ask spread as a trading-cost/liquidity measure and price impact as important for large block orders that must be worked.",
+          "limitations": [
+            "Equity-market liquidity paper; use as execution/market liquidity evidence, not as all-asset stress-test threshold."
+          ],
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_id": "src_market_liquidity_004",
+          "source_title": "New York Fed Liberty Street Economics: Measuring Treasury Market Depth",
+          "source_url": "https://libertystreeteconomics.newyorkfed.org/2024/02/measuring-treasury-market-depth/",
+          "source_type": "central_bank_research",
+          "publisher": "Federal Reserve Bank of New York",
+          "reliability": "high",
+          "score": 88,
+          "freshness": "time_sensitive",
+          "relevance": "medium_high",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "evidence_summary": "NY Fed describes market depth as the quantity market participants are willing to buy or sell at particular prices, supporting market depth as a distinct market-liquidity dimension.",
+          "limitations": [
+            "U.S. Treasury market research; use for market-depth concept, not as all-market liquidity adequacy rule."
+          ],
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "high",
+        "score": 90.0,
+        "score_version": "phase45_source_scoring_v1",
+        "primary_source_count": 8,
+        "supporting_source_count": 0,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "正式 reviewed 前必须由外部审计确认 claim 没有超出来源可证明范围。",
+          "FMI、CCP、banking、exchange 来源必须保留 jurisdiction、clearing、venue 和 product caveat。",
+          "若后续使用内部 stress_result schema，需要提供 contract extract 或 hash。"
+        ],
+        "source_groups": {
+          "clearing_funding_liquidity": [
+            "CPMI-IOSCO PFMI",
+            "CPMI-IOSCO CCP resilience guidance",
+            "CME Clearing Liquidity Risk Management Practices",
+            "DTCC Stress Testing"
+          ],
+          "market_execution_liquidity": [
+            "ESMA Liquidity Stress Testing Guidelines",
+            "SEC/eCFR Rule 22e-4",
+            "CFA Institute Liquidity in Equity Markets",
+            "NY Fed Measuring Treasury Market Depth"
+          ]
+        }
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "checked_against": [
+          "Phase 37 Risk Management formal reviewed knowledge",
+          "Phase 45 Layered Risk formal reviewed knowledge",
+          "Phase 45 Resilience Incident Log formal reviewed knowledge",
+          "Phase 45 Execution TCA formal reviewed knowledge"
+        ],
+        "conflicts": [],
+        "resolution_summary": "STRESS02 已补 direct market/execution liquidity sources，并将 clearing/funding liquidity 与 market/execution liquidity 分组；等待再审。",
+        "approval_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "risk_threshold_advice_allowed": false
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 区分 backtest drawdown、scenario stress、liquidity stress、tail loss 和 final gate。",
+          "用于生成压力测试设计 checklist、schema review、RAG 检索上下文和风险 reason code。",
+          "用于检查外接项目是否把 stress test 通过结果误写成交易许可或默认放行。"
+        ],
+        "not_allowed": [
+          "不得生成具体风险阈值、仓位、杠杆、买卖点、止损止盈、交易许可或实盘执行建议。",
+          "不得把候选知识当作 approved 或默认指导。",
+          "不得替外接项目启用 hard gate、拒单、停机、撤单或解锁流程。"
+        ]
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "candidate only; pending external strict audit; no reviewed/approved/default/hard gate.",
+        "requires_human_escalation": false,
+        "hidden_from_default_queue": true,
+        "visible_in_default_guidance_queue": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "risk_threshold_advice_allowed": false
+      },
+      "review": {
+        "review_status": "candidate_ready",
+        "review_mode": "external_strict_audit_required",
+        "confidence": "medium_high",
+        "freshness": "mixed",
+        "reviewer": null,
+        "reviewed_at": null,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "risk_threshold_advice_allowed": false,
+        "audit_log": [
+          {
+            "at": "2026-06-12",
+            "actor": "codex",
+            "action": "phase45_stress_scenario_candidate_generated",
+            "reason": "Generated from Phase 45 P45-E task queue with professional, clearing and exchange sources."
+          },
+          {
+            "at": "2026-06-12",
+            "actor": "external_ai_strict_audit",
+            "action": "phase45_stress_scenario_candidate_audit_imported",
+            "reason": "accepted_for_draft / confidence=medium_high",
+            "audit_result_id": "audit_phase45_stress_scenario_candidate_20260612_external_strict"
+          },
+          {
+            "at": "2026-06-12",
+            "actor": "codex",
+            "action": "phase45_stress_scenario_stress02_market_liquidity_supplemented",
+            "reason": "按 reviewed/caveat_only 审计意见补 market/execution liquidity 直接来源，等待再审。",
+            "audit_result_id": "audit_phase45_stress_scenario_reviewed_preparation_20260612"
+          }
+        ],
+        "ai_audit": {
+          "audit_result_id": "audit_phase45_stress_scenario_reviewed_preparation_20260612",
+          "package_id": "phase45_stress_scenario_reviewed_preparation_audit_package_20260612",
+          "decision": "needs_more_evidence",
+          "confidence": "medium_high",
+          "reviewed_allowed": false,
+          "approved_allowed": false,
+          "default_guidance_allowed": false,
+          "hard_gate_allowed": false,
+          "risk_threshold_advice_allowed": false,
+          "required_followups": [
+            "补 ESMA liquidity stress testing guidelines，覆盖 liquidation cost、time to liquidity、trade/order size、higher bid-ask spread、longer time to liquidate。",
+            "补 market liquidity / asset liquidity / market impact 来源，覆盖 market depth、bid-ask spread、market impact、time-to-liquidation。",
+            "把 clearing liquidity 与 market/execution liquidity 分成两个 source group。",
+            "明确缺失 market depth / spread source 时必须标记 unknown，不得当作 normal、zero 或 safe。"
+          ],
+          "patch_notes": {
+            "source": [
+              "保留 PFMI、CPMI-IOSCO CCP resilience guidance、CME liquidity risk management、DTCC stress testing 作为 clearing liquidity 来源。",
+              "新增 ESMA liquidity stress testing、SEC/eCFR liquidity classification、CFA market liquidity 和 NY Fed market depth 作为 market/execution liquidity 来源。"
+            ],
+            "content": [
+              "把 market_depth、bid_ask_spread、market_impact、time_to_liquidate 作为 market liquidity dimensions。",
+              "把 funding、settlement、collateral、clearing、liquid_resources 作为 clearing/funding liquidity dimensions。"
+            ],
+            "boundary": [
+              "不得输出可成交数量。",
+              "不得输出滑点阈值。",
+              "不得输出 liquidation horizon 数值。",
+              "不得生成交易许可或仓位建议。"
+            ],
+            "conflict": []
+          }
+        }
+      },
+      "workflow": {
+        "stage": "needs_more_evidence_supplemented",
+        "queue_group": "needs_more_evidence",
+        "source_phase": "45",
+        "source_task_id": "CEK-TA-465",
+        "batch": "P45-E Stress Testing / Scenario Risk",
+        "formal_knowledge_id": null,
+        "formal_knowledge_path": null,
+        "allowed_next_decisions": [
+          "accepted_for_reviewed_caveat_only",
+          "needs_more_evidence",
+          "rejected",
+          "blocked"
+        ],
+        "forbidden_next_decisions": [
+          "approved",
+          "default_guidance",
+          "hard_gate",
+          "risk_threshold_advice"
+        ],
+        "conversion_target": {
+          "proposed_knowledge_id": "kb_phase45_stress_scenario.liquidity_stress_boundary.v1",
+          "target_review_status": "reviewed",
+          "target_machine_gate": "caveat_only",
+          "approved_allowed": false,
+          "default_guidance_allowed": false,
+          "hard_gate_allowed": false,
+          "risk_threshold_advice_allowed": false
+        }
+      },
+      "contribution": {
+        "source": "phase45_professional_research",
+        "private_data_removed": true,
+        "project_specific_details_removed": true,
+        "notes": "Generated for external strict audit; no project account, key, position, threshold, or private strategy data included."
+      }
+    }
+  ]
+}

@@ -1,0 +1,425 @@
+{
+  "audit_result_id": "audit_result_phase40_extended_p1_batch_de_20260610_strict_v1",
+  "source_package_id": "phase40_extended_p1_candidate_audit_package_20260610",
+  "audit_date": "2026-06-10",
+  "decision": "conditional_accept_for_formal_draft_queue",
+  "decisions": [
+    {
+      "candidate_id": "cand_20260610_phase40_p40_e01_replayable_audit_trail_001",
+      "research_task_id": "P40-E01",
+      "decision": "accepted_for_draft",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "Snowflake-style observability logs, MLflow registry lineage/versioning, and NIST governance are sufficient to support a replayable AI audit trail as a draft governance rule.",
+      "source_patch_notes": [],
+      "content_patch_notes": [
+        "Define replay fields: event_time, decision_time, feature_snapshot_hash, scorer_output_ref, llm_audit_output_ref, final_gate_decision_ref, model_version, prompt_version, rag_index_version, threshold_policy_version, outcome_ref."
+      ],
+      "boundary_patch_notes": [
+        "Replayable audit trail is for post-hoc audit and debugging; it must not recreate private account data, secrets, raw strategy bodies, or final trading authority."
+      ],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false conflicts with the package boundary that candidate knowledge must not enter default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before draft conversion."
+      ],
+      "required_followups": []
+    },
+    {
+      "candidate_id": "cand_20260610_phase40_p40_e02_label_policy_version_compatibility_001",
+      "research_task_id": "P40-E02",
+      "decision": "accepted_for_draft",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "Data Cards support dataset documentation and MLflow supports versioned lifecycle metadata; together they sufficiently support label-policy-version compatibility documentation at draft level.",
+      "source_patch_notes": [],
+      "content_patch_notes": [
+        "Add LabelPolicyMigrationNote with old_label_policy_version, new_label_policy_version, affected_dataset_versions, compatibility_mode, relabel_required, historical_metric_comparability."
+      ],
+      "boundary_patch_notes": [
+        "Do not use label policy migration to silently rewrite old labels or improve historical metrics without provenance."
+      ],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false conflicts with the package boundary that candidate knowledge must not enter default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before draft conversion."
+      ],
+      "required_followups": []
+    },
+    {
+      "candidate_id": "cand_20260610_phase40_p40_e03_drift_root_cause_classification_001",
+      "research_task_id": "P40-E03",
+      "decision": "accepted_for_draft",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "Fiddler, DataRobot, and Arize sources support drift monitoring, data quality issues, feature/prediction drift, and root-cause analysis; this is enough for draft if trading-specific terms are kept as references.",
+      "source_patch_notes": [],
+      "content_patch_notes": [
+        "Define root_cause_category enum: data_quality, feature_distribution, score_distribution, label_or_concept_drift, market_regime_ref, strategy_version_ref, execution_context_ref, unknown."
+      ],
+      "boundary_patch_notes": [
+        "market_regime_ref and strategy_version_ref are monitoring slices only; AI Engineering must not define trading regime rules or strategy logic."
+      ],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false conflicts with the package boundary that candidate knowledge must not enter default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before draft conversion."
+      ],
+      "required_followups": []
+    },
+    {
+      "candidate_id": "cand_20260610_phase40_p40_e04_incident_retraining_requires_approval_001",
+      "research_task_id": "P40-E04",
+      "decision": "accepted_for_draft",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "AI incident response, MLflow workflow, and NIST governance sources support the rule that incident-driven retraining remains subject to normal evaluation, approval, and rollback governance.",
+      "source_patch_notes": [],
+      "content_patch_notes": [
+        "Add incident_retraining_approval_record with incident_id, trigger_reason, affected_artifacts, evaluation_required, owner_approval_ref, rollback_target_ref."
+      ],
+      "boundary_patch_notes": [
+        "Incident-driven retraining may generate a candidate model only; it must not auto-promote or bypass champion/challenger gates."
+      ],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false conflicts with the package boundary that candidate knowledge must not enter default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before draft conversion."
+      ],
+      "required_followups": []
+    },
+    {
+      "candidate_id": "cand_20260610_phase40_p40_e05_calibration_bins_coverage_001",
+      "research_task_id": "P40-E05",
+      "decision": "accepted_for_draft",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "scikit-learn directly supports calibration curves/reliability diagrams and bin-level predicted-versus-observed comparisons; accepted with sample-coverage caveats.",
+      "source_patch_notes": [],
+      "content_patch_notes": [
+        "Add n_per_bin, min_bin_support, empty_bin_policy, sparse_slice_policy, calibration_set_hash, calibration_independence_check, reliability_diagram_artifact."
+      ],
+      "boundary_patch_notes": [
+        "Bins with insufficient support may produce warnings only; they must not create hard thresholds."
+      ],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false conflicts with the package boundary that candidate knowledge must not enter default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before draft conversion."
+      ],
+      "required_followups": []
+    },
+    {
+      "candidate_id": "cand_20260610_phase40_p40_e06_challenger_risk_metrics_001",
+      "research_task_id": "P40-E06",
+      "decision": "needs_more_evidence",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "The direction is correct, but IBM model-risk and monitoring sources are too generic for the claim that champion/challenger comparison must include trading risk metrics and not average return only.",
+      "source_patch_notes": [
+        "Add claim-specific sources or internal contracts for false_allow_rate, false_block_cost, tail loss/drawdown, calibration, review load, and execution-cost references."
+      ],
+      "content_patch_notes": [
+        "Rewrite to distinguish AI model risk metrics from Trading Engineering PnL/fill/cost metrics."
+      ],
+      "boundary_patch_notes": [
+        "Trading PnL, slippage, fill, drawdown, and execution-cost definitions must be Phase 37 references, not AI Engineering definitions."
+      ],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false conflicts with the package boundary that candidate knowledge must not enter default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before draft conversion."
+      ],
+      "required_followups": [
+        "Define champion_challenger_risk_metric_set_v1 and required Phase37 reference fields."
+      ]
+    },
+    {
+      "candidate_id": "cand_20260610_phase40_p40_e07_shadow_paper_execution_gap_001",
+      "research_task_id": "P40-E07",
+      "decision": "needs_more_evidence",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "AWS and Microsoft support shadow testing, but the package does not sufficiently support paper-trading/replay differences from real execution or fill/cost/latency assumptions.",
+      "source_patch_notes": [
+        "Add paper/replay evaluation source and Phase37 Trading Engineering fill/cost/latency boundary contract."
+      ],
+      "content_patch_notes": [
+        "Separate shadow_result_gap from paper_replay_execution_gap; require explicit non-equivalence caveat."
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering must not define fill model, market impact, fee, slippage, latency, or order-state assumptions."
+      ],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false conflicts with the package boundary that candidate knowledge must not enter default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before draft conversion."
+      ],
+      "required_followups": [
+        "Add fill_cost_assumption_ref, replay_engine_version, market_data_replay_policy_ref, and execution_gap_report schema."
+      ]
+    },
+    {
+      "candidate_id": "cand_20260610_phase40_p40_e08_rollback_freezes_artifacts_001",
+      "research_task_id": "P40-E08",
+      "decision": "accepted_for_draft",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "Incident response and MLflow version/alias/tag sources support freezing artifacts after rollback at draft level.",
+      "source_patch_notes": [],
+      "content_patch_notes": [
+        "Add rollback_freeze_manifest with model_version, prompt_version, rag_index_version, threshold_policy_version, dataset_hash, incident_id, unfreeze_approval_ref."
+      ],
+      "boundary_patch_notes": [
+        "Freeze is an audit/control action; it must not automatically retrain, re-enable, or approve a successor artifact."
+      ],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false conflicts with the package boundary that candidate knowledge must not enter default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before draft conversion."
+      ],
+      "required_followups": []
+    },
+    {
+      "candidate_id": "cand_20260610_phase40_p40_e09_rag_update_retrieval_regression_001",
+      "research_task_id": "P40-E09",
+      "decision": "accepted_for_draft",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "Google Cloud, Evidently, and Arize sources directly support RAG evaluation with query sets, retrieval/generation separation, retrieval quality debugging, and regression-style evaluation.",
+      "source_patch_notes": [],
+      "content_patch_notes": [
+        "Add retrieval_regression_set_id, query_set_version, expected_source_refs, recall_at_k, precision_at_k, faithfulness_metric, no_hit_cases, regression_failure_policy."
+      ],
+      "boundary_patch_notes": [
+        "RAG regression is a knowledge/retrieval quality gate, not a trading allow/block gate."
+      ],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false conflicts with the package boundary that candidate knowledge must not enter default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before draft conversion."
+      ],
+      "required_followups": []
+    },
+    {
+      "candidate_id": "cand_20260610_phase40_p40_e10_human_review_audit_trace_001",
+      "research_task_id": "P40-E10",
+      "decision": "accepted_for_draft",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "Label Studio, IBM adjudication, and Data Cards support human annotation review, conflict handling, and dataset documentation; accepted for draft.",
+      "source_patch_notes": [],
+      "content_patch_notes": [
+        "Add HumanReviewAuditTrace with reviewer_id, review_reason, evidence_refs, conflict_status, adjudication_status, label_provenance."
+      ],
+      "boundary_patch_notes": [
+        "Human review is not automatically ground truth until adjudication/provenance checks pass."
+      ],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false conflicts with the package boundary that candidate knowledge must not enter default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before draft conversion."
+      ],
+      "required_followups": []
+    },
+    {
+      "candidate_id": "cand_20260610_phase40_p40_e11_confidence_not_evidence_001",
+      "research_task_id": "P40-E11",
+      "decision": "needs_more_evidence",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "NIST/model-risk and probability calibration sources support risk caution, but they do not directly support the RAG/citation claim that confidence cannot replace source evidence.",
+      "source_patch_notes": [
+        "Add RAG faithfulness/groundedness, citation resolver, source attribution, hallucination/no-source abstain sources."
+      ],
+      "content_patch_notes": [
+        "Rewrite as: model confidence may be logged as a signal, but source_evidence_refs and citation_resolution_status are required for knowledge claims."
+      ],
+      "boundary_patch_notes": [
+        "High confidence must not become default guidance, final gate, or unsupported factual evidence."
+      ],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false conflicts with the package boundary that candidate knowledge must not enter default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before draft conversion."
+      ],
+      "required_followups": [
+        "Add citation_resolver_version, unsupported_claims, and source_evidence_required tests."
+      ]
+    },
+    {
+      "candidate_id": "cand_20260610_phase40_p40_e12_continuous_learning_dashboard_001",
+      "research_task_id": "P40-E12",
+      "decision": "needs_more_evidence",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "Drift and calibration dashboard sources are adequate, but false allow/block and human-review-cost trends require a project metric contract not present in the source_refs.",
+      "source_patch_notes": [
+        "Add CEK-TA/Phase40 KPI contract or professional MLOps/decision-cost sources covering review cost and false-decision cost monitoring."
+      ],
+      "content_patch_notes": [
+        "Separate dashboard panels: drift, calibration, decision cost, human review load, release status."
+      ],
+      "boundary_patch_notes": [
+        "Dashboard metrics are observability signals, not automatic retraining or hard-gate triggers."
+      ],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false conflicts with the package boundary that candidate knowledge must not enter default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before draft conversion."
+      ],
+      "required_followups": [
+        "Define continuous_learning_dashboard_metric_schema_v1."
+      ]
+    },
+    {
+      "candidate_id": "cand_20260610_phase40_p40_p01_long_tail_feedback_sampling_001",
+      "research_task_id": "P40-P01",
+      "decision": "accepted_for_draft",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "Long-tailed learning and tail-sampling sources adequately support the need to document long-tail/low-frequency coverage in feedback sampling, if framed as monitoring coverage rather than model performance.",
+      "source_patch_notes": [],
+      "content_patch_notes": [
+        "Add sampling_policy_version, head/tail strata, low_frequency_strategy_coverage, market_slice_coverage, random_control_sample, bias_report."
+      ],
+      "boundary_patch_notes": [
+        "Tail sampling must not replace representative evaluation; preserve random/stratified control samples."
+      ],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false conflicts with the package boundary that candidate knowledge must not enter default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before draft conversion."
+      ],
+      "required_followups": []
+    },
+    {
+      "candidate_id": "cand_20260610_phase40_p40_p02_label_conflict_gold_set_001",
+      "research_task_id": "P40-P02",
+      "decision": "accepted_for_draft",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "IBM adjudication, Label Studio review workflow, and Data Cards support conflict adjudication and durable label documentation; accepted for draft.",
+      "source_patch_notes": [],
+      "content_patch_notes": [
+        "Add adjudication_policy_version, gold_set_id, conflict_type, adjudicator_role, regression_eval_set_hash, relabel_policy."
+      ],
+      "boundary_patch_notes": [
+        "Gold set updates require provenance and regression checks; they must not silently rewrite past evaluation results."
+      ],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false conflicts with the package boundary that candidate knowledge must not enter default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before draft conversion."
+      ],
+      "required_followups": []
+    },
+    {
+      "candidate_id": "cand_20260610_phase40_p40_p03_scheduled_event_retraining_001",
+      "research_task_id": "P40-P03",
+      "decision": "accepted_for_draft",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "Model retraining, drift, and model-registry workflow sources support a hybrid scheduled/event-triggered retraining plan at P1 draft level.",
+      "source_patch_notes": [],
+      "content_patch_notes": [
+        "Add retraining_schedule, event_trigger_types, trigger_evidence_refs, cooldown_policy, owner_approval_ref, candidate_model_only flag."
+      ],
+      "boundary_patch_notes": [
+        "Retraining schedule/event trigger creates a candidate only; it must not auto-promote or alter final-gate thresholds."
+      ],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false conflicts with the package boundary that candidate knowledge must not enter default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before draft conversion."
+      ],
+      "required_followups": []
+    },
+    {
+      "candidate_id": "cand_20260610_phase40_p40_p04_rejected_challenger_reason_tracking_001",
+      "research_task_id": "P40-P04",
+      "decision": "accepted_for_draft",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "MLflow registry/workflow and model-risk management support tracking rejected challenger versions and reasons; accepted for draft.",
+      "source_patch_notes": [],
+      "content_patch_notes": [
+        "Add rejected_challenger_record with candidate_model_version, rejection_reason_codes, failed_metrics, evaluator, date, followup_experiment_refs."
+      ],
+      "boundary_patch_notes": [
+        "Rejected challenger knowledge is an experiment-learning artifact, not a default policy or future approval shortcut."
+      ],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false conflicts with the package boundary that candidate knowledge must not enter default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before draft conversion."
+      ],
+      "required_followups": []
+    },
+    {
+      "candidate_id": "cand_20260610_phase40_p40_p05_composite_artifact_rollback_001",
+      "research_task_id": "P40-P05",
+      "decision": "needs_more_evidence",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "The direction is correct, but sources support model and RAG evaluation more clearly than a combined rollback across model, prompt, RAG package, and threshold policy.",
+      "source_patch_notes": [
+        "Add release manifest / composite artifact management source or CEK-TA contract explicitly covering model_version, prompt_version, rag_index_version, threshold_policy_version as a rollback unit."
+      ],
+      "content_patch_notes": [
+        "Define CompositeReleaseUnit and CompositeRollbackTarget; clarify whether threshold is part of AI Engineering release or final-gate policy."
+      ],
+      "boundary_patch_notes": [
+        "Threshold/final-gate rollback must remain governed by deterministic final-gate owner approval."
+      ],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false conflicts with the package boundary that candidate knowledge must not enter default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before draft conversion."
+      ],
+      "required_followups": [
+        "Add composite_artifact_release_manifest_schema_v1."
+      ]
+    },
+    {
+      "candidate_id": "cand_20260610_phase40_p40_p06_prompt_rag_model_eval_separation_001",
+      "research_task_id": "P40-P06",
+      "decision": "accepted_for_draft",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reason": "Braintrust/Evidently/Promptfoo/Arize sources support LLM eval workflows and separate RAG retrieval/generation evaluation; accepted for draft.",
+      "source_patch_notes": [],
+      "content_patch_notes": [
+        "Add eval lanes: prompt_regression, retrieval_regression, generation_eval, model_eval, threshold_policy_eval; require fixed eval_set_hash per lane."
+      ],
+      "boundary_patch_notes": [
+        "LLM/RAG/model evaluation separation does not authorize LLM audit assistant or scorer to make final gate decisions."
+      ],
+      "conflict_patch_notes": [
+        "workflow.hidden_from_default_queue=false conflicts with the package boundary that candidate knowledge must not enter default guidance; set hidden_from_default_queue=true and visible_in_default_guidance_queue=false before draft conversion."
+      ],
+      "required_followups": []
+    }
+  ],
+  "batch_summary": {
+    "accepted_count": 13,
+    "needs_more_evidence_count": 5,
+    "rejected_count": 0,
+    "misrouted_to_trading_count": 0
+  },
+  "global_findings": [
+    "All 18 candidates have valid normalized_claim and proposed_knowledge_id slugs; no empty-slug rejection is required.",
+    "All 18 candidates set workflow.hidden_from_default_queue=false, which conflicts with the package boundary that candidates are not default guidance.",
+    "conversion_target.default_guidance_allowed=false and conversion_target.hard_gate_allowed=false are correctly set across candidates.",
+    "conflict_audit.approval_allowed=true appears across candidates, but accepted_for_draft must not be interpreted as approved."
+  ],
+  "global_required_patches": [
+    "Set workflow.hidden_from_default_queue=true and visible_in_default_guidance_queue=false for every candidate before draft conversion.",
+    "Set reviewed_allowed=false, approved_allowed=false, default_guidance_allowed=false, hard_gate_allowed=false in imported audit records.",
+    "Treat Phase 37 / Trading Engineering concepts as references only: fill, slippage, fee, latency, order state, execution cost, market regime definitions, and trading thresholds.",
+    "Continuous learning must remain controlled periodic/event-driven retraining plus evaluation, not live online self-learning.",
+    "Retraining must generate candidate models only; champion replacement requires approval, release manifest, rollback target, and kill switch."
+  ]
+}

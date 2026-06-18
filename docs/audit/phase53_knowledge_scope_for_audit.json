@@ -1,0 +1,236 @@
+{
+  "audit_package_id": "phase53_knowledge_scope_for_audit_20260613",
+  "phase": 53,
+  "title": "AI/Trading 安全、市场行为与运行治理知识扩展范围审计",
+  "created_at": "2026-06-13",
+  "status": "scope_ready_for_audit",
+  "hard_boundaries": {
+    "candidate_is_not_formal_knowledge": true,
+    "accepted_for_draft_is_not_reviewed": true,
+    "reviewed_is_not_approved": true,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "trade_execution_advice_allowed": false,
+    "risk_threshold_advice_allowed": false,
+    "legal_opinion_allowed": false
+  },
+  "audit_instructions": {
+    "language": "zh-CN",
+    "must_search_external_sources": true,
+    "must_search_requirement": "必须搜索相关专业网站、官方资料、案例和数据，对知识范围、分类、来源和边界进行严格审计。",
+    "allowed_decisions": [
+      "accept_scope",
+      "accept_with_patch",
+      "needs_revision",
+      "reject_scope"
+    ],
+    "required_output_fields": [
+      "decision",
+      "confidence",
+      "scope_findings",
+      "classification_findings",
+      "source_findings",
+      "boundary_findings",
+      "required_patches",
+      "recommended_candidate_changes"
+    ]
+  },
+  "upstream": [
+    "docs/reports/phase52_ai_trade_authoritative_gap_audit_report.md",
+    "docs/tasks/phase53_ai_trade_security_market_conduct_extension.md"
+  ],
+  "scope_documents": [
+    "docs/research/phase53_ai_trade_security_market_conduct_scope.md",
+    "docs/research/phase53_source_seed.md",
+    "docs/research/phase53_research_task_queue.md"
+  ],
+  "target_knowledge_points": [
+    {
+      "gap_id": "GAP-AI-01",
+      "research_task_id": "P53-AI-SEC01",
+      "priority": "P0",
+      "branch": "AI Engineering",
+      "l2": "Security Governance",
+      "l3": "Agent Threat Model",
+      "canonical_node_id": "kt.ai_engineering.security_governance.agent_threat_model",
+      "candidate_slug": "trading_ai_agent_threat_model_required",
+      "proposed_claim": "交易 AI Agent 必须把 prompt injection、tool misuse、memory poisoning、excessive agency、overreliance、sensitive information disclosure 和 supply chain compromise 作为独立威胁面建模；LLM/RAG/MCP 只能提供分析、审计、解释和检索辅助，不能绕过 deterministic final gate、Risk Management 或 Live Execution owner。",
+      "primary_sources": [
+        "P53-SRC-AI-001",
+        "P53-SRC-AI-002",
+        "P53-SRC-AI-003"
+      ],
+      "must_not_do": [
+        "不得输出交易信号",
+        "不得把 LLM 安全风险自动解释成交易 hard gate",
+        "不得给出漏洞利用步骤"
+      ]
+    },
+    {
+      "gap_id": "GAP-AI-02",
+      "research_task_id": "P53-AI-SBOM01",
+      "priority": "P0",
+      "branch": "AI Engineering",
+      "l2": "Supply Chain Governance",
+      "l3": "AI SBOM",
+      "canonical_node_id": "kt.ai_engineering.supply_chain_governance.ai_sbom",
+      "candidate_slug": "ai_sbom_model_sbom_required",
+      "proposed_claim": "外接交易 AI 项目在使用模型、LoRA/adapter、embedding model、RAG index、训练数据、容器、依赖和推理服务前，应维护 AI SBOM / Model SBOM，用于供应链透明度、许可证审计、漏洞影响分析、模型来源追踪和回滚。",
+      "primary_sources": [
+        "P53-SRC-AI-004",
+        "P53-SRC-AI-005",
+        "P53-SRC-AI-002"
+      ],
+      "must_not_do": [
+        "不强制具体 SBOM 工具",
+        "不把 SBOM 当作安全通过证明",
+        "不把供应链信息暴露给未授权用户"
+      ]
+    },
+    {
+      "gap_id": "GAP-TR-01",
+      "research_task_id": "P53-TR-MC01",
+      "priority": "P0",
+      "branch": "Trading Engineering",
+      "l2": "Market Conduct",
+      "l3": "Surveillance Taxonomy",
+      "canonical_node_id": "kt.trading_engineering.market_conduct.surveillance_taxonomy",
+      "candidate_slug": "market_conduct_surveillance_taxonomy_required",
+      "proposed_claim": "交易系统应将 spoofing、layering、wash/self-trade、momentum ignition、marking the close、front-running 等市场行为风险作为监控 taxonomy 和审计上下文；该 taxonomy 只用于合规/审计/人工复核，不得替代法律结论或自动交易许可。",
+      "primary_sources": [
+        "P53-SRC-TR-003",
+        "P53-SRC-TR-007"
+      ],
+      "must_not_do": [
+        "不得输出法律意见",
+        "不得把异常标签直接变成硬阻断",
+        "不得把正常做市/撤单泛化为市场操纵"
+      ]
+    },
+    {
+      "gap_id": "GAP-TR-02",
+      "research_task_id": "P53-TR-MA01",
+      "priority": "P0",
+      "branch": "Trading Engineering",
+      "l2": "Market Access",
+      "l3": "Regulatory Boundary",
+      "canonical_node_id": "kt.trading_engineering.market_access.regulatory_boundary",
+      "candidate_slug": "market_access_dea_regulatory_boundary_required",
+      "proposed_claim": "外接项目若连接 broker、交易所、ATS、DEA 或 sponsored access，应明确 market access owner、预交易金融/监管/错误订单控制、接入权限、年度/周期性 review、venue jurisdiction 和 recordkeeping；CEK-TA 只能沉淀证据契约和边界，不能输出合规意见或具体阈值。",
+      "primary_sources": [
+        "P53-SRC-TR-001",
+        "P53-SRC-TR-002",
+        "P53-SRC-TR-005"
+      ],
+      "must_not_do": [
+        "不得输出信用额度、保证金比例、订单规模阈值",
+        "不得声明项目已经满足某监管要求",
+        "不得把美国 SEC/FINRA 规则泛化到 EU、crypto 或期货市场"
+      ]
+    },
+    {
+      "gap_id": "GAP-TR-03",
+      "research_task_id": "P53-TR-TS01",
+      "priority": "P0",
+      "branch": "Trading Engineering",
+      "l2": "Audit Trace",
+      "l3": "Time Synchronization",
+      "canonical_node_id": "kt.trading_engineering.audit_trace.time_synchronization",
+      "candidate_slug": "trade_audit_time_synchronization_required",
+      "proposed_claim": "交易事件、行情事件、订单状态、成交、风控动作、RAG 审计和模型推理日志必须声明 clock source、sync status、timestamp precision、timezone、drift policy 和 time-ordering caveat；没有可信时间同步证据时，不得声称事件先后顺序可用于执行质量或合规审计结论。",
+      "primary_sources": [
+        "P53-SRC-TR-004",
+        "P53-SRC-TR-006",
+        "P53-SRC-TR-010",
+        "P53-SRC-AI-007"
+      ],
+      "must_not_do": [
+        "不得作为高频策略建议",
+        "不得给出具体硬件采购建议",
+        "不得把 clock sync 状态直接等同于交易许可"
+      ]
+    }
+  ],
+  "source_seed": [
+    {
+      "source_id": "P53-SRC-AI-001",
+      "publisher": "NIST",
+      "url": "https://www.nist.gov/itl/ai-risk-management-framework"
+    },
+    {
+      "source_id": "P53-SRC-AI-002",
+      "publisher": "OWASP",
+      "url": "https://owasp.org/www-project-top-10-for-large-language-model-applications/"
+    },
+    {
+      "source_id": "P53-SRC-AI-003",
+      "publisher": "MITRE",
+      "url": "https://atlas.mitre.org/"
+    },
+    {
+      "source_id": "P53-SRC-AI-004",
+      "publisher": "CISA",
+      "url": "https://www.cisa.gov/topics/information-communications-technology-supply-chain-security/sbom"
+    },
+    {
+      "source_id": "P53-SRC-AI-005",
+      "publisher": "CISA",
+      "url": "https://www.cisa.gov/resources-tools/resources/software-bill-materials-ai-minimum-elements"
+    },
+    {
+      "source_id": "P53-SRC-TR-001",
+      "publisher": "SEC",
+      "url": "https://www.sec.gov/files/rules/final/2010/34-63241-secg.htm"
+    },
+    {
+      "source_id": "P53-SRC-TR-003",
+      "publisher": "FINRA",
+      "url": "https://www.finra.org/rules-guidance/guidance/reports/2026-finra-annual-regulatory-oversight-report/manipulative-trading"
+    },
+    {
+      "source_id": "P53-SRC-TR-004",
+      "publisher": "FINRA",
+      "url": "https://www.finra.org/rules-guidance/rulebooks/finra-rules/6820"
+    },
+    {
+      "source_id": "P53-SRC-TR-005",
+      "publisher": "ESMA",
+      "url": "https://www.esma.europa.eu/publications-and-data/interactive-single-rulebook/mifid-ii/article-17-algorithmic-trading"
+    },
+    {
+      "source_id": "P53-SRC-TR-010",
+      "publisher": "CAT NMS Plan",
+      "url": "https://www.catnmsplan.com/guidance/clock-synchronization"
+    },
+    {
+      "source_id": "P53-SRC-TR-002",
+      "publisher": "SEC",
+      "url": "https://www.sec.gov/rules-regulations/staff-guidance/trading-markets-frequently-asked-questions/divisionsmarketregfaq-0"
+    },
+    {
+      "source_id": "P53-SRC-TR-006",
+      "publisher": "European Commission",
+      "url": "https://ec.europa.eu/finance/securities/docs/isd/mifid/rts/160607-rts-25_en.pdf"
+    },
+    {
+      "source_id": "P53-SRC-TR-007",
+      "publisher": "CFTC",
+      "url": "https://www.cftc.gov/LawRegulation/DoddFrankAct/Rulemakings/DF_24_DisruptiveTrading/index.htm"
+    },
+    {
+      "source_id": "P53-SRC-AI-007",
+      "publisher": "OpenTelemetry",
+      "url": "https://opentelemetry.io/docs/concepts/observability-primer/"
+    }
+  ],
+  "next_step": "请外部 AI/人工先审计本范围包。范围通过后，Codex 再执行 CEK-TA-521 生成 5 条 P0 候选知识。",
+  "scope_audit_patch_status": {
+    "decision": "accept_with_patch",
+    "patched_at": "2026-06-13",
+    "patches_applied": [
+      "Added missing source_seed ids P53-SRC-TR-002, P53-SRC-TR-006, P53-SRC-TR-007, P53-SRC-AI-007.",
+      "Candidate generation applies source, content, boundary, and conflict patches from scope audit."
+    ]
+  }
+}

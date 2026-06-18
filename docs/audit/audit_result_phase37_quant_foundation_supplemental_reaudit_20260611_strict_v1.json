@@ -1,0 +1,102 @@
+{
+  "audit_result_id": "audit_result_phase37_quant_foundation_supplemental_reaudit_20260611_strict_v1",
+  "package_id": "phase37_quant_foundation_supplemental_reaudit_package_20260611",
+  "auditor": "external_ai_strict_reaudit",
+  "audited_at": "2026-06-11",
+  "scope": "Phase 37 Quant Foundation supplemental re-audit for P37-A-Q02/Q08/Q09",
+  "summary": {
+    "total": 3,
+    "accepted_for_draft": 2,
+    "needs_more_evidence": 1,
+    "rejected": 0,
+    "blocked": 0
+  },
+  "hard_boundaries": {
+    "reviewed_allowed": false,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "candidate_only": true
+  },
+  "candidate_results": [
+    {
+      "candidate_id": "cand_20260611_phase37_r_multiple_definition_001",
+      "research_task_id": "P37-A-Q02",
+      "decision": "needs_more_evidence",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "R-multiple 直接本体来源仍主要是交易日志、教育或供应商网页，不足以作为专业知识库中 risk-normalized metric 定义的强来源。",
+        "CFA execution/risk 来源只能支持成本、执行和风险边界，不能计为 R-multiple 定义的一手主来源。",
+        "canonical node 仍在 position_sizing，只增加 related_nodes，未完全满足 performance/risk-normalized metrics 的分类要求。"
+      ],
+      "required_followups": [
+        "补充更强的 R/R-multiple 本体来源：可核验书籍版次和页码、专业课程材料、研究论文或机构级交易绩效评价资料。",
+        "将 canonical node 调整为 performance_metrics / risk_normalized_metrics，或新增独立 L3 节点；position_sizing 只能作为 related dependency。",
+        "保留边界：R-multiple 只能作为风险归一化复盘/标签候选指标，不能替代成本、滑点、样本外验证、回撤和风控审计。"
+      ],
+      "patch_notes": [
+        "保持 needs_more_evidence，不升级 accepted_for_draft。",
+        "后续应单独处理 L3 节点或分类契约，而不是把 position_sizing 当作主节点长期承载 performance metric。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_signal_decision_execution_separation_001",
+      "research_task_id": "P37-A-Q08",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "FIX/FIXimate、OnixS、Trading Technologies 的 ExecutionReport 来源已直接支撑 order/execution/fill/result 层的证据链。",
+        "CFA Trade Strategy and Execution 支撑决策、订单、执行、评价链路和 execution quality 审计。"
+      ],
+      "required_followups": [
+        "正式 draft 前补 OMS/EMS/order lifecycle 文档或内部事件链 schema 标准。",
+        "补充不同 venue / broker / asset class 下 ExecutionReport 或 fill-report 字段差异。"
+      ],
+      "patch_notes": [
+        "将“必须分层记录”限定为 CEK-TA 交易系统事件流与 AI 审计 schema 的架构要求，不表述为所有市场的外部监管硬要求。",
+        "建议 schema 显式拆分 signal_id、decision_id、order_intent_id、execution_report_id、fill_id、trade_result_id。",
+        "AI Engineering 只能引用，不得复制或改写 Trading Engineering 规则本体。"
+      ]
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_trade_frequency_vs_quality_boundary_001",
+      "research_task_id": "P37-A-Q09",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "补证后 statement 已收窄到高周转、日内、保证金、杠杆或流动性受限场景，解决原泛化过宽问题。",
+        "FINRA 2026 intraday margin 资料、CFA 交易成本材料和 factor-cost 摘要支撑 TCA/turnover cost 边界。"
+      ],
+      "required_followups": [
+        "正式 draft 前补更强的 TCA / market microstructure 教材、论文或机构材料。",
+        "更新 FINRA intraday margin 来源元数据：Regulatory Notice 26-10 发布于 2026-04-20，生效日为 2026-06-04，phase-in 到 2027-10-20。"
+      ],
+      "patch_notes": [
+        "保留高周转、日内、保证金、杠杆或流动性受限场景限定，不得回退为所有市场/所有资产泛化断言。",
+        "保留“可能显著提高”，不得改写为“必然提高”。",
+        "不得把该规则改写为禁止高频/高周转策略，也不得输出交易频率、仓位或执行建议。"
+      ]
+    }
+  ],
+  "source_urls_referenced_by_auditor": [
+    "https://trademetria.com/blog/what-are-r-multiples-the-key-metric-every-trader-should-know/",
+    "https://fiximate.fixtrading.org/legacy/en/FIX.4.4/body_5756.html?find=Side",
+    "https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/trade-strategy-execution",
+    "https://www.finra.org/rules-guidance/rulebooks/finra-rules/2270",
+    "https://www.finra.org/rules-guidance/notices/26-10",
+    "https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/trading-costs-and-electronic-markets",
+    "https://rpc.cfainstitute.org/research/financial-analysts-journal/2019/ip-transaction-costs-of-factor-investing-strategies"
+  ]
+}

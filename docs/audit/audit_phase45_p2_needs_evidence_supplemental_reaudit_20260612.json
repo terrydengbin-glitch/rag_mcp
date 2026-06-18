@@ -1,0 +1,114 @@
+{
+  "audit_result_id": "audit_phase45_p2_needs_evidence_supplemental_reaudit_20260612",
+  "auditor": "external_ai_strict_audit",
+  "audited_at": "2026-06-12",
+  "package_id": "phase45_p2_needs_evidence_supplemental_reaudit_package_20260612",
+  "summary": {
+    "total": 2,
+    "accepted_for_draft": 2,
+    "needs_more_evidence": 0,
+    "rejected": 0,
+    "blocked": 0
+  },
+  "candidate_results": [
+    {
+      "candidate_id": "cand_20260612_phase45_reference_data_entitlement_p45_g_data05_001",
+      "research_task_id": "P45-G-DATA05",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "trade_execution_advice_allowed": false,
+      "legal_license_conclusion_allowed": false,
+      "reasons": [
+        "CEK-TA internal lineage contract 支撑 parser_version、normalization_version、raw_snapshot_digest、lineage_id 等字段本体。",
+        "OpenLineage、MLflow、Iceberg、DVC 只作为 lineage / digest / snapshot / reproducibility 模式来源，不是强制工具依赖。",
+        "claim 未输出法律授权结论、训练授权结论、数据再分发许可、交易信号或 hard gate。"
+      ],
+      "required_followups": [
+        "进入 reviewed 前必须提供 CEK-TA internal lineage contract 的 contract hash 或 schema extract。",
+        "正式文本必须区分 vendor_schema_version 与 internal parser_version / normalization_version。",
+        "OpenLineage、MLflow、Iceberg、DVC 只能作为参考模式，不得写成强制技术栈。",
+        "market-data license、training use、redistribution permission 必须继续交给 legal/vendor agreement owner 判断。"
+      ],
+      "patch_notes": {
+        "source": [
+          "保留 Databento Schemas、Databento Instrument Definitions、Databento Statistics、Nasdaq Symbol Directory。",
+          "新增并保留 CEK-TA Market Data Ingestion Lineage Contract。",
+          "新增并保留 OpenLineage、MLflow Dataset Tracking / Dataset API、Apache Iceberg、DVC 作为 lineage / digest / snapshot / reproducibility 模式来源。"
+        ],
+        "content": [
+          "保留 vendor、dataset、venue、schema_version、field_dictionary_ref、parser_version、parser_code_hash、normalization_version、normalization_code_hash、raw_snapshot_uri、raw_snapshot_digest、lineage_id、input_dataset_version、output_dataset_version 字段。",
+          "明确供应商字段、单位、枚举或语义变化不得静默影响回测、训练、TCA 或实盘审计。"
+        ],
+        "boundary": [
+          "不得输出法律授权结论。",
+          "不得输出训练授权结论。",
+          "不得输出数据再分发许可。",
+          "不得生成交易信号。",
+          "不得生成 hard gate。"
+        ],
+        "conflict": []
+      }
+    },
+    {
+      "candidate_id": "cand_20260612_phase45_crypto_perp_p45_h_crypto05_001",
+      "research_task_id": "P45-H-CRYPTO05",
+      "decision": "accepted_for_draft",
+      "confidence": "medium_high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "trade_execution_advice_allowed": false,
+      "legal_license_conclusion_allowed": false,
+      "reasons": [
+        "Binance / Bybit WebSocket 文档支撑 API/WebSocket 断连、heartbeat / ping-pong、连接有效期和限流风险。",
+        "Binance maintenance updates 支撑交易所维护窗口来源；Binance Mark Price API 支撑 mark/index 监控字段。",
+        "claim 已将 clawback 收窄为 exchange-specific loss-allocation mechanism，未输出清算规避、仓位、杠杆、止损止盈、停机 hard gate、自动解锁或实盘执行建议。"
+      ],
+      "required_followups": [
+        "进入 reviewed 前补具体 exchange status page / incident event source，而不只使用 maintenance announcement list。",
+        "进入 reviewed 前补 mark price anomaly 或 index component abnormal handling 的直接规则来源；当前 Mark Price API 只支撑监控字段，不支撑异常处理规则。",
+        "若继续使用 clawback 一词，必须补对应 venue rulebook；否则正式文本继续使用 exchange-specific loss-allocation mechanism。",
+        "API/WebSocket 风险只能进入 observability / audit checklist，不得变成自动停机 hard gate。"
+      ],
+      "patch_notes": {
+        "source": [
+          "保留 Databento Status、OKX Pre-market、Binance ADL、Binance Insurance Fund、Binance Aggregate Trade Streams。",
+          "新增并保留 Binance USD-M Futures WebSocket Market Streams、Binance WebSocket API General Info、Binance Maintenance Updates、Bybit WebSocket Connect、Binance Mark Price API。"
+        ],
+        "content": [
+          "将 exchange maintenance / service interruption、api_ws_disconnect、heartbeat_ping_pong_failure、stream_rate_limit、mark_index_monitoring、pre_market_rule、adl_insurance_event、loss_allocation_mechanism 分字段建模。",
+          "把 clawback 收窄为 exchange-specific loss-allocation mechanism。"
+        ],
+        "boundary": [
+          "不得输出清算规避建议。",
+          "不得输出仓位、杠杆或止损止盈。",
+          "不得生成停机 hard gate。",
+          "不得生成自动解锁、自动撤单或强平处理动作。",
+          "不得把 Binance / Bybit / OKX 规则泛化为所有 crypto venue。"
+        ],
+        "conflict": []
+      }
+    }
+  ],
+  "hard_boundaries": {
+    "reviewed_allowed": false,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "risk_threshold_advice_allowed": false,
+    "trade_execution_advice_allowed": false,
+    "legal_license_conclusion_allowed": false
+  },
+  "global_notes": [
+    "DATA05 与 CRYPTO05 可以从 needs_more_evidence 升级为 accepted_for_draft。",
+    "本次复审不允许创建 formal reviewed、approved、default guidance 或 hard gate。",
+    "后续若转 reviewed/caveat_only，必须另行 reviewed-preparation 审计。"
+  ]
+}

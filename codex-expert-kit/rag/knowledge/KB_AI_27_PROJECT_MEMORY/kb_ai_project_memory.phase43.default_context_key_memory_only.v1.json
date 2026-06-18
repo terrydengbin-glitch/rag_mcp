@@ -1,0 +1,335 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_ai_project_memory.phase43.default_context_key_memory_only.v1",
+  "title": "默认上下文只注入关键记忆",
+  "metadata": {
+    "partition_id": "KB_AI_27_PROJECT_MEMORY",
+    "domain": "ai_engineering",
+    "subdomain": "memory_retrieval_context",
+    "rule_type": "governance_rule",
+    "content_type": "json",
+    "project_binding": "none",
+    "tree_node_id": "kt.ai_engineering.external_project_memory.memory_retrieval_context",
+    "tree_path": "CEK-TA / AI Engineering / External Project AI Memory Layer",
+    "canonical_node_id": "kt.ai_engineering.external_project_memory.memory_retrieval_context",
+    "canonical_tree_path": "CEK-TA / AI Engineering / External Project AI Memory Layer",
+    "risk_level": "medium",
+    "used_for": [
+      "external_ai_ide",
+      "external_project_memory",
+      "mcp",
+      "project_memory_mcp",
+      "rag_engineering",
+      "vue_audit_ui"
+    ],
+    "source_candidate_id": "cand_20260611_phase43_p43_p0e_002_default_context_key_memory_only_001",
+    "research_task_id": "P43-P0E-002",
+    "claim_type": "rag_governance_rule",
+    "classification_notes": "Phase 43 formal reviewed/caveat_only 知识；用于外接项目 AI Memory Layer 契约审计。不得保存外接项目私有记忆，不得进入 approved/default guidance/hard gate。"
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "general",
+    "data_granularity": "general",
+    "project_type": "external_ai_project_memory_layer",
+    "applies_when": [
+      "外接项目需要让 AI IDE / Agent 记住项目目标、任务、决策、产物、经验、边界、错误复盘或审计结论。",
+      "该规则用于设计 Project Memory Contract、MemoryItem schema、MCP/API、write gate、retrieval budget、安全治理或 adapter 选型。"
+    ],
+    "not_applicable_when": [
+      "用户需要具体买卖点、仓位、止损止盈、K 线形态、策略参数或实盘下单建议。",
+      "知识点主要描述交易执行、fill model、订单状态机、交易所异常处理或实盘风控阈值，应路由到 Trading Engineering。",
+      "用户要求 CEK-TA 保存外接项目私有目标、任务、错误、决策、产物内容或真实数据库结构。"
+    ]
+  },
+  "content": {
+    "statement": "默认上下文只注入关键记忆",
+    "rationale": "本候选只沉淀外接项目 AI Memory Layer 的治理契约；不保存外接项目私有记忆，不创建真实数据库，不绑定单一 vendor。",
+    "procedure": [
+      "确认当前任务属于外接项目 AI Memory Layer，而不是 CEK-TA 本项目私有记忆实现。",
+      "先读取 CEK-TA 专业知识，再读取外接项目 Project Memory；两者不得混为同一事实源。",
+      "写入长期记忆前必须经过 source check、secret scan、prompt injection scan、memory poisoning scan、visibility check、conflict check 和人工/规则审核。",
+      "Project Memory 只能辅助 AI IDE / Agent 的任务上下文，不得进入交易 final gate 或实盘执行链路。"
+    ],
+    "examples": [],
+    "anti_patterns": [
+      "自动把所有聊天、日志和中间推断写入长期记忆。",
+      "把 vector hit 或第三方 memory engine 输出当作事实源。",
+      "把外接项目私有目标、错误、决策、表结构或账户字段写入 CEK-TA 通用知识。",
+      "让 LLM 直接写 active memory，或绕过 write gate。"
+    ],
+    "validation": [
+      "review.review_status 必须为 reviewed，review_mode 必须为 caveat_only；approved/default guidance/hard gate 仍需单独人工治理。",
+      "machine_gate.default_guidance 必须为 caveat_only，且 default_guidance_allowed 必须为 false。",
+      "source_evidence 必须非空，且 conflict_status 不得为 confirmed/unchecked。",
+      "候选回链必须保留 source_candidate_id 和 ai_audit_result_id。"
+    ],
+    "risk_notes": [
+      "本条已通过 reviewed/caveat_only 准备审计；后续 approved/default guidance/hard gate 仍需单独人工治理。",
+      "本条不实现 Project Memory MCP server，不创建生产数据库，不改变 MCP 写权限。",
+      "审计时确认该候选是否需要补充更贴近外接 AI IDE 的实例、反例或 adapter 迁移案例。",
+      "candidate is not formal knowledge",
+      "accepted_for_draft is not reviewed or approved",
+      "reviewed_allowed=false",
+      "approved_allowed=false",
+      "default_guidance_allowed=false",
+      "hard_gate_allowed=false",
+      "本条是 formal reviewed/caveat_only，不是 approved。",
+      "不得创建生产数据库、实现 Project Memory MCP server 或绑定单一 memory vendor。",
+      "本条为 formal reviewed/caveat_only，不是 approved；不得进入默认指导或 hard gate。"
+    ],
+    "citation_notes": "LangChain documents short-term and long-term memory concepts, including LangGraph long-term memories stored as JSON documents under namespaces and keys.；LangChain documents long-term memory across conversations, based on LangGraph stores organized by namespace and key.；Letta archival memory is semantically searchable and queried on demand through tools, instead of always being pinned to context.；Mem0 separates memory into layers so agents remember the right detail at the right time and avoid over-fetching.；Defines MemoryItem v0.1, memory types, lifecycle, source, write_policy, security, retrieval and integrity fields.",
+    "audit_patch_notes": {
+      "source_patch_notes": [],
+      "content_patch_notes": [],
+      "boundary_patch_notes": [
+        "candidate is not formal knowledge",
+        "accepted_for_draft is not reviewed or approved",
+        "reviewed_allowed=false",
+        "approved_allowed=false",
+        "default_guidance_allowed=false",
+        "hard_gate_allowed=false"
+      ],
+      "conflict_patch_notes": [],
+      "required_followups": [
+        "Formal reviewed/caveat_only conversion requires a separate audit result that explicitly allows reviewed.",
+        "Keep external project private memory out of CEK-TA and keep AI write access propose-only."
+      ]
+    }
+  },
+  "assumptions": [
+    "外接项目自行保存私有项目记忆；CEK-TA 只沉淀通用 memory contract 和治理规则。",
+    "候选知识必须通过 AI/人工审计后才能转为 formal reviewed，不得直接作为 approved 默认指导。"
+  ],
+  "source_evidence": [
+    {
+      "source_id": "src_langchain_memory",
+      "source_title": "LangChain Docs: Memory overview",
+      "source_url": "https://docs.langchain.com/oss/python/concepts/memory",
+      "source_type": "official_doc",
+      "publisher": "LangChain",
+      "published_at": null,
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "LangChain documents short-term and long-term memory concepts, including LangGraph long-term memories stored as JSON documents under namespaces and keys.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_langchain_long_term",
+      "source_title": "LangChain Docs: Long-term memory",
+      "source_url": "https://docs.langchain.com/oss/python/langchain/long-term-memory",
+      "source_type": "official_doc",
+      "publisher": "LangChain",
+      "published_at": null,
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "LangChain documents long-term memory across conversations, based on LangGraph stores organized by namespace and key.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_letta_archival",
+      "source_title": "Letta Docs: Archival memory",
+      "source_url": "https://docs.letta.com/guides/core-concepts/memory/archival-memory/",
+      "source_type": "official_doc",
+      "publisher": "Letta",
+      "published_at": null,
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "Letta archival memory is semantically searchable and queried on demand through tools, instead of always being pinned to context.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_mem0_types",
+      "source_title": "Mem0 Docs: Memory Types",
+      "source_url": "https://docs.mem0.ai/core-concepts/memory-types",
+      "source_type": "official_doc",
+      "publisher": "Mem0",
+      "published_at": null,
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "Mem0 separates memory into layers so agents remember the right detail at the right time and avoid over-fetching.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_phase43_project_memory_contract",
+      "source_title": "Phase 43 Project Memory Contract",
+      "source_url": "docs/contracts/phase43_project_memory_contract.md",
+      "source_type": "internal_contract",
+      "publisher": "CEK-TA",
+      "published_at": null,
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "Defines MemoryItem v0.1, memory types, lifecycle, source, write_policy, security, retrieval and integrity fields.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_phase43_external_project_ai_memory_scope",
+      "source_title": "Phase 43 External Project AI Memory Layer Scope",
+      "source_url": "docs/research/phase43_external_project_ai_memory_scope.md",
+      "source_type": "internal_contract",
+      "publisher": "CEK-TA",
+      "published_at": null,
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "Defines Phase 43 scope, L3 topics, cross-branch boundaries and the 29-topic candidate matrix.",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 85.7,
+    "score_version": "1.1.0",
+    "primary_source_count": 6,
+    "supporting_source_count": 6,
+    "low_reliability_source_count": 0,
+    "limitations": [
+      "来源支持通用 agent memory、MCP/API、安全、存储和 adapter 原则；正式知识转换时需保留 CEK-TA 具体上下游引用。",
+      "Phase 43 formal reviewed/caveat_only；不是 approved，不得作为默认指导或 hard gate。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "docs/research/phase43_external_project_ai_memory_scope.md",
+      "docs/contracts/phase43_project_memory_contract.md",
+      "docs/contracts/phase43_project_memory_mcp_api_contract.md",
+      "docs/contracts/phase43_memory_write_retrieval_policy.md",
+      "docs/contracts/phase43_memory_security_governance_contract.md",
+      "docs/contracts/phase43_memory_retention_privacy_contract.md",
+      "docs/tasks/phase43_external_project_ai_memory_layer.md"
+    ],
+    "conflicts": [],
+    "resolution_summary": "Phase 43 reviewed/caveat_only conversion passed; formal reviewed knowledge is searchable and citable, but not approved, not default guidance, not hard gate, and not external project private memory.",
+    "default_recommendation": "caveat_only_until_human_approval"
+  },
+  "review": {
+    "review_status": "reviewed",
+    "confidence": "medium",
+    "freshness": "time_sensitive",
+    "reviewer": "codex",
+    "reviewed_at": "2026-06-11",
+    "updated_at": "2026-06-11",
+    "default_guidance_allowed": false,
+    "approval_status": "not_requested",
+    "source_candidate_id": "cand_20260611_phase43_p43_p0e_002_default_context_key_memory_only_001",
+    "ai_audit_result_id": "audit_result_phase43_supplemental_reaudit_20260611_strict_v2",
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase43_formal_draft_reviewed_preparation_20260611_strict_v1",
+      "package_id": "phase43_formal_draft_reviewed_audit_package_20260611",
+      "auditor": "external_ai_audit",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "Phase 43 formal draft reviewed/caveat_only preparation audit passed for this item.",
+        "Formal reviewed knowledge remains caveat_only and cannot become approved/default guidance/hard gate without separate governance."
+      ]
+    },
+    "open_questions": [
+      "需要单独 reviewed/caveat_only 审计确认后，才能从 formal draft 升级为 reviewed。"
+    ],
+    "review_mode": "caveat_only",
+    "approved_allowed": false,
+    "hard_gate_allowed": false,
+    "hidden_from_default_queue": true,
+    "visible_in_default_guidance_queue": false
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于提醒外接项目 AI IDE 设计项目记忆层、MemoryItem schema、写入门禁和检索预算。",
+      "用于生成任务卡、接口契约、审计 checklist、候选知识补证问题和安全边界。",
+      "用于阻断无来源长期记忆、自动保存所有聊天、AI 直接写 active memory、记忆污染 CEK-TA 知识库。",
+      "用于设计外接项目 Project Memory Contract、MemoryItem schema、MCP/API、写入门禁和检索预算的 draft 审计。"
+    ],
+    "not_allowed": [
+      "不得据此生成买卖点、仓位、杠杆、止损止盈或实盘下单建议。",
+      "不得据此直接保存外接项目私有记忆、创建生产数据库或绑定单一 memory vendor。",
+      "不得把 reviewed/caveat_only 当作 approved 默认指导。",
+      "不得把 reviewed/caveat_only 当作 approved 或默认指导。",
+      "不得让 AI 直接写 active memory。",
+      "不得把外接项目私有记忆写入 CEK-TA。",
+      "不得把 reviewed/caveat_only 当作 approved、default guidance 或 hard gate。"
+    ],
+    "required_context": [
+      "必须确认调用方是在设计外接项目 AI Memory Layer，而不是请求保存 CEK-TA 本项目私有记忆。",
+      "必须同时返回 review_status=reviewed、review_mode=caveat_only、machine_gate=caveat_only、source_evidence 和适用边界。"
+    ],
+    "fallback_behavior": "ask_for_context"
+  },
+  "machine_gate": {
+    "default_guidance": "caveat_only",
+    "reason": "CEK-TA-368 按 Phase 43 formal draft reviewed-preparation 审计结果沉淀为 formal reviewed/caveat_only；不可作为 approved 默认指导或 hard gate。",
+    "requires_human_escalation": true,
+    "blocking_reasons": [
+      "reviewed_not_approved",
+      "default_guidance_disabled_until_human_approval",
+      "hard_gate_disabled",
+      "external_project_private_memory_not_allowed",
+      "production_memory_store_changes_require_separate_task"
+    ],
+    "checked_at": "2026-06-11",
+    "gate_version": "1.0.0",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "recommended_extra_sources": [],
+  "contribution": {
+    "origin_project": "CEK-TA",
+    "private_data_removed": true,
+    "project_private_fields": []
+  },
+  "version_history": [
+    {
+      "version": "v1",
+      "created_at": "2026-06-11",
+      "actor": "codex",
+      "change": "Created formal draft from Phase 43 accepted_for_draft candidate.",
+      "audit_result_id": "audit_result_phase43_supplemental_reaudit_20260611_strict_v2"
+    },
+    {
+      "version": "v1",
+      "created_at": "2026-06-11",
+      "actor": "codex",
+      "change": "Promoted Phase 43 formal draft to formal reviewed/caveat_only after external audit.",
+      "audit_result_id": "audit_result_phase43_formal_draft_reviewed_preparation_20260611_strict_v1"
+    },
+    {
+      "version": "v1",
+      "created_at": "2026-06-11",
+      "actor": "codex",
+      "change": "Promoted Phase 43 formal draft to formal reviewed/caveat_only after external audit.",
+      "audit_result_id": "audit_result_phase43_formal_draft_reviewed_preparation_20260611_strict_v1"
+    }
+  ],
+  "updated_at": "2026-06-11",
+  "phase43_conversion": {
+    "task_id": "CEK-TA-368",
+    "audit_result_id": "audit_result_phase43_formal_draft_reviewed_preparation_20260611_strict_v1",
+    "source_package_id": "phase43_formal_draft_reviewed_audit_package_20260611",
+    "review_status": "reviewed",
+    "review_mode": "caveat_only",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "external_project_private_memory_allowed": false,
+    "production_database_changes_allowed": false,
+    "vendor_activation_allowed": false,
+    "trading_execution_allowed": false
+  }
+}

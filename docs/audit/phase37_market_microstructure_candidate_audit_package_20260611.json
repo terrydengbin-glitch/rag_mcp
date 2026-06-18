@@ -1,0 +1,3201 @@
+{
+  "schema_version": "1.0.0",
+  "package_id": "phase37_market_microstructure_candidate_audit_package_20260611",
+  "phase": "37",
+  "task_id": "CEK-TA-403",
+  "created_at": "2026-06-11",
+  "purpose": "外部 AI/人工对 Phase 37 Market Microstructure 12 条候选进行严格审计，判断每条只能进入 accepted_for_draft、needs_more_evidence 或 rejected。",
+  "hard_boundaries": {
+    "candidate_is_not_formal_knowledge": true,
+    "reviewed_allowed_in_this_package": false,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "trade_instruction_allowed": false,
+    "must_not_generate": [
+      "买卖点",
+      "仓位",
+      "杠杆",
+      "止损止盈参数",
+      "实盘执行建议"
+    ]
+  },
+  "audit_instructions": [
+    "必须搜索相关专业网站、论文、官方文档、监管资料、交易所/API 文档、案例和数据，对候选来源与 claim 进行严格审计。",
+    "检查每条 claim 是否被来源充分支持，尤其是盘口深度、逐笔成交、aggressor side、CVD、funding/OI、流动性、滑点、延迟和市场影响成本。",
+    "检查是否混入 AI Engineering、Backtest、Replay、Live Execution 或 Risk Management 本体；如混入，请给出拆分建议。",
+    "检查供应商/平台文档是否被过度当作通用理论来源；字段级文档只能支撑数据语义，不能证明交易优势。",
+    "检查是否存在中文乱码、mock/test 污染、项目私有参数、账户事实、密钥、交易所私有配置或实盘敏感信息。",
+    "只允许输出 accepted_for_draft / needs_more_evidence / rejected；不得输出 reviewed、approved、default_guidance 或 hard_gate。",
+    "若 needs_more_evidence，请列出缺少的具体来源类型、需要补强的 statement、边界和冲突处理。"
+  ],
+  "expected_output_schema": {
+    "package_id": "string",
+    "quality_gate": {
+      "pass": "boolean",
+      "reason": "string"
+    },
+    "results": [
+      {
+        "candidate_id": "string",
+        "research_task_id": "string",
+        "decision": "accepted_for_draft | needs_more_evidence | rejected",
+        "confidence": "low | medium | medium_high | high",
+        "reviewed_allowed": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "patch_notes": {
+          "source": [
+            "string"
+          ],
+          "content": [
+            "string"
+          ],
+          "boundary": [
+            "string"
+          ],
+          "conflict": [
+            "string"
+          ]
+        },
+        "reason": "string"
+      }
+    ]
+  },
+  "scope_notes": [
+    "本批归入 KB_03_MARKET_MICROSTRUCTURE / Trading Engineering / Market Microstructure。",
+    "本批只做市场微观结构、订单簿、订单流、流动性、滑点、延迟和市场影响边界，不证明任何策略盈利。",
+    "AI Engineering 只能通过 knowledge_refs 引用本批规则，不得复制改写 Trading Engineering 规则本体。"
+  ],
+  "candidate_count": 12,
+  "candidates": [
+    {
+      "schema_version": "1.1.0-candidate",
+      "candidate_id": "cand_20260611_phase37_market_microstructure_cvd_interpretation_caveat_001",
+      "research_task_id": "P37-D-M05",
+      "status": {
+        "review_status": "sourced",
+        "ingestion_decision": "candidate_ready",
+        "decision_reason": "Phase 37 Market Microstructure 候选生成完成；等待外部 AI/人工严格审计。",
+        "created_at": "2026-06-11",
+        "updated_at": "2026-06-11"
+      },
+      "classification": {
+        "tree_node_id": "kt.market_microstructure.order_flow",
+        "canonical_node_id": "kt.market_microstructure.order_flow",
+        "tree_path": "CEK-TA / Trading Engineering / Market Microstructure / Order Flow",
+        "related_nodes": [
+          "kt.trading_engineering",
+          "kt.market_microstructure",
+          "kt.trading_engineering.data_engineering",
+          "kt.kline_strategy",
+          "kt.backtest",
+          "kt.replay_simulation",
+          "kt.live_execution",
+          "kt.risk_management",
+          "kt.ai_engineering.llm_training"
+        ],
+        "partition_id": "KB_03_MARKET_MICROSTRUCTURE",
+        "domain": "market_microstructure",
+        "subdomain": "order_flow",
+        "rule_type": "trading_microstructure_boundary_rule",
+        "claim_type": "methodological_constraint",
+        "used_for": [
+          "market_microstructure_audit",
+          "strategy_design_audit",
+          "execution_cost_boundary",
+          "ai_trader_project_gap_audit",
+          "external_project_rag_retrieval"
+        ],
+        "classification_notes": "本候选主归属 Trading Engineering / Market Microstructure。AI Engineering 只能引用本规则，不得把盘口、订单流、滑点、funding/OI 或市场影响本体改写为模型训练规则。"
+      },
+      "claim": {
+        "claim_id": "claim_p37_d_m05",
+        "title": "CVD 只能作为订单流代理，不能单独定义趋势结论",
+        "statement": "Cumulative Volume Delta 或 Volume Delta 只能作为指定数据源和采样规则下的订单流代理；CVD 背离、上升或下降不得单独证明趋势、反转或交易优势。",
+        "normalized_claim": "microstructure.cvd_interpretation_caveat.v1",
+        "evidence_summary": "Overcharts defines Volume Delta as ASK sizes minus BID sizes over a chart resolution, where ask-side hits indicate buyer aggressor and bid-side hits indicate seller aggressor.；Databento trades records include a side field for the side that initiates the trade, with bid/ask/none semantics depending on availability.；Databento MBO provides every order book event across every price level keyed by order ID, including adds, cancels, modifies, trades and fills; it is commonly called L3 data.",
+        "interpretation_notes": "本候选只定义市场微观结构解释、数据和执行边界，不输出买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+        "claim_strength": "medium_high",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general_with_market_specific_mapping",
+        "asset": "general",
+        "timeframe": "event_to_intraday",
+        "data_granularity": "order_book_trades_or_derivatives_market_data",
+        "project_type": "trading_ai_support_layer",
+        "applies_when": [
+          "审计 CVD、Volume Delta、bid/ask volume 或主动成交量解释",
+          "把 CVD 作为交易候选的辅助上下文"
+        ],
+        "not_applicable_when": [
+          "缺少逐笔成交或 bid/ask 归属数据",
+          "把 CVD 直接当成买卖点、止损止盈、仓位或最终交易许可",
+          "需要具体买卖点、仓位、杠杆、止损止盈价格、交易所私有配置、账户事实或实盘权限时，应由外接项目事实层、执行层和风控层处理。",
+          "AI Engineering 只能引用本规则，不得把本规则改写为 LLM 训练、MCP、RAG 或模型部署本体规则。"
+        ],
+        "assumptions": [
+          "候选用于 CEK-TA 通用支持层知识库，不包含任何外接项目私有策略参数。",
+          "微观结构结论必须保留市场、交易所、数据源、时间戳、粒度、执行和验证边界。",
+          "候选通过外部审计前不能进入正式 reviewed 知识库。"
+        ],
+        "limitations": [
+          "官方文档和平台文档只能支撑数据字段、接口语义和工程边界，不能证明交易优势。",
+          "论文或专业机构资料支持方法边界，不能替代具体交易所、数据供应商或外接项目契约。",
+          "本候选不提供任何投资建议或实盘执行许可。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_title": "Volume Delta",
+          "source_url": "https://www.overcharts.com/en/helpcenter/docs/volume-delta/",
+          "source_type": "trading_platform_doc",
+          "publisher": "Overcharts",
+          "published_at": null,
+          "reliability": "medium",
+          "score": 70,
+          "freshness": "time_sensitive",
+          "evidence_summary": "Overcharts defines Volume Delta as ASK sizes minus BID sizes over a chart resolution, where ask-side hits indicate buyer aggressor and bid-side hits indicate seller aggressor.",
+          "limitations": [
+            "Platform-specific indicator documentation; supporting evidence only, not universal CVD truth."
+          ],
+          "source_id": "src_001",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Trades schema",
+          "source_url": "https://databento.com/docs/schemas-and-data-formats/trades",
+          "source_type": "official_data_vendor_doc",
+          "publisher": "Databento",
+          "published_at": null,
+          "reliability": "medium_high",
+          "score": 82,
+          "freshness": "time_sensitive",
+          "evidence_summary": "Databento trades records include a side field for the side that initiates the trade, with bid/ask/none semantics depending on availability.",
+          "limitations": [
+            "Aggressor classification is feed- and venue-dependent; absence or ambiguity must be handled explicitly."
+          ],
+          "source_id": "src_002",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Market by order (MBO)",
+          "source_url": "https://databento.com/docs/schemas-and-data-formats/mbo",
+          "source_type": "official_data_vendor_doc",
+          "publisher": "Databento",
+          "published_at": null,
+          "reliability": "medium_high",
+          "score": 82,
+          "freshness": "time_sensitive",
+          "evidence_summary": "Databento MBO provides every order book event across every price level keyed by order ID, including adds, cancels, modifies, trades and fills; it is commonly called L3 data.",
+          "limitations": [
+            "Vendor-specific schema; use as concrete data-model evidence, not universal market behavior."
+          ],
+          "source_id": "src_003",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Trade Strategy and Execution",
+          "source_url": "https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/trade-strategy-execution",
+          "source_type": "professional_curriculum",
+          "publisher": "CFA Institute",
+          "published_at": "2026-01-01",
+          "reliability": "high",
+          "score": 88,
+          "freshness": "time_sensitive",
+          "evidence_summary": "CFA Institute frames trading decisions around liquidity needs, market conditions, execution risk, opportunity cost, market impact and trade cost analysis.",
+          "limitations": [
+            "Professional curriculum source; it supports execution and cost boundaries, not any profitable microstructure signal."
+          ],
+          "source_id": "src_004",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "medium_high",
+        "score": 80.5,
+        "score_version": "phase37_market_microstructure_source_scoring_v1",
+        "primary_source_count": 1,
+        "supporting_source_count": 3,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "正式入库前必须由外部审计确认 claim 没有超出来源可证明范围。",
+          "供应商、交易平台和交易所接口文档只可作为数据语义与工程边界证据，不能单独证明信号有效。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none_known_in_visible_context",
+        "checked_against": [
+          "Phase 36/38/40/41 AI Engineering 知识边界",
+          "现有 Trading Engineering formal 知识",
+          "Phase 37 Trading 与 AI 跨分支引用契约"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与可见正式知识的直接冲突；本候选只定义 Trading Engineering 市场微观结构规则本体，AI Engineering 只能引用。",
+        "approval_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 检索 Trading Engineering 市场微观结构边界。",
+          "用于审计交易项目方案中是否缺少盘口、订单流、流动性、滑点、延迟、市场影响和数据源边界。",
+          "用于辅助外接项目设计数据契约、特征边界、审计清单和 reason code。"
+        ],
+        "not_allowed": [
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+          "不得把候选知识当作 reviewed、approved、default guidance 或 hard gate。",
+          "不得绕过外接项目事实层、数据契约、执行适配器、风控 hard gate 或人工治理流程。"
+        ]
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "Phase 37 Market Microstructure candidate only; formal reviewed requires later reviewed-preparation gate.",
+        "requires_human_escalation": true,
+        "hidden_from_default_queue": true,
+        "visible_in_default_guidance_queue": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "review": {
+        "confidence": "medium_high",
+        "freshness": "mixed",
+        "reviewer": "codex_pre_audit_generation",
+        "reviewed_at": "2026-06-11",
+        "open_questions": [
+          "外部审计是否认为来源足以支撑该 claim？",
+          "是否需要补充更强的一手论文、监管材料、交易所规范或数据供应商字段级证据？",
+          "是否存在与现有 Data Engineering、Backtest、Replay、Live Execution、Risk Management 或 AI Engineering formal 知识的重叠，需要合并或拆分？"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-11",
+            "actor": "codex",
+            "action": "created",
+            "reason": "根据 Phase 37 P37-D Market Microstructure 队列生成 Trading Engineering 候选知识。"
+          },
+          {
+            "at": "2026-06-11",
+            "actor": "codex",
+            "action": "sourced",
+            "reason": "记录专业机构、监管、交易所/API、数据供应商和论文来源摘要。"
+          }
+        ]
+      },
+      "workflow": {
+        "stage": "candidate_ready",
+        "queue_group": "pending_ai_audit",
+        "current_task_id": "CEK-TA-402",
+        "next_action": "export_candidate_audit_package",
+        "next_allowed_decisions": [
+          "accepted_for_draft",
+          "needs_more_evidence",
+          "rejected"
+        ],
+        "forbidden_decisions": [
+          "reviewed",
+          "approved",
+          "default_guidance",
+          "hard_gate"
+        ],
+        "formalization_allowed": false,
+        "conversion_target": {
+          "proposed_knowledge_id": "kb_03_market_microstructure.cvd_interpretation_caveat.v1",
+          "target_review_status": "draft_only_after_external_audit",
+          "target_default_guidance": "deny"
+        }
+      },
+      "contribution": {
+        "origin": "codex_research_ingestion_phase37",
+        "private_data_removed": true,
+        "contains_account_facts": false,
+        "contains_secret": false,
+        "contains_project_private_strategy": false
+      }
+    },
+    {
+      "schema_version": "1.1.0-candidate",
+      "candidate_id": "cand_20260611_phase37_market_microstructure_funding_open_interest_context_required_001",
+      "research_task_id": "P37-D-M06",
+      "status": {
+        "review_status": "sourced",
+        "ingestion_decision": "candidate_ready",
+        "decision_reason": "Phase 37 Market Microstructure 候选生成完成；等待外部 AI/人工严格审计。",
+        "created_at": "2026-06-11",
+        "updated_at": "2026-06-11"
+      },
+      "classification": {
+        "tree_node_id": "kt.market_microstructure",
+        "canonical_node_id": "kt.market_microstructure",
+        "tree_path": "CEK-TA / Trading Engineering / Market Microstructure",
+        "related_nodes": [
+          "kt.trading_engineering",
+          "kt.market_microstructure",
+          "kt.trading_engineering.data_engineering",
+          "kt.kline_strategy",
+          "kt.backtest",
+          "kt.replay_simulation",
+          "kt.live_execution",
+          "kt.risk_management",
+          "kt.ai_engineering.llm_training"
+        ],
+        "partition_id": "KB_03_MARKET_MICROSTRUCTURE",
+        "domain": "market_microstructure",
+        "subdomain": "derivatives_flow",
+        "rule_type": "trading_microstructure_boundary_rule",
+        "claim_type": "methodological_constraint",
+        "used_for": [
+          "market_microstructure_audit",
+          "strategy_design_audit",
+          "execution_cost_boundary",
+          "ai_trader_project_gap_audit",
+          "external_project_rag_retrieval"
+        ],
+        "classification_notes": "本候选主归属 Trading Engineering / Market Microstructure。AI Engineering 只能引用本规则，不得把盘口、订单流、滑点、funding/OI 或市场影响本体改写为模型训练规则。"
+      },
+      "claim": {
+        "claim_id": "claim_p37_d_m06",
+        "title": "资金费率和持仓量必须声明衍生品上下文",
+        "statement": "Funding rate、open interest、合约持仓量和永续合约定位指标必须声明交易所、合约类型、时间戳、结算机制和样本范围；不得把单所资金费率或 OI 当成全市场方向事实。",
+        "normalized_claim": "microstructure.funding_open_interest_context_required.v1",
+        "evidence_summary": "Binance futures API returns symbol-level fundingRate, fundingTime and markPrice with request limits and time-window semantics.；Binance futures API exposes present open interest for a specific symbol.；Brunnermeier and Pedersen model how market liquidity and funding liquidity can reinforce each other and can dry up under stress.",
+        "interpretation_notes": "本候选只定义市场微观结构解释、数据和执行边界，不输出买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+        "claim_strength": "medium_high",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general_with_market_specific_mapping",
+        "asset": "general",
+        "timeframe": "event_to_intraday",
+        "data_granularity": "order_book_trades_or_derivatives_market_data",
+        "project_type": "trading_ai_support_layer",
+        "applies_when": [
+          "分析永续合约资金费率、OI、杠杆拥挤和流动性压力",
+          "把衍生品流指标作为交易候选背景特征"
+        ],
+        "not_applicable_when": [
+          "现货、股票或无 funding/OI 机制的市场",
+          "没有合约规格、结算时间和交易所覆盖说明",
+          "需要具体买卖点、仓位、杠杆、止损止盈价格、交易所私有配置、账户事实或实盘权限时，应由外接项目事实层、执行层和风控层处理。",
+          "AI Engineering 只能引用本规则，不得把本规则改写为 LLM 训练、MCP、RAG 或模型部署本体规则。"
+        ],
+        "assumptions": [
+          "候选用于 CEK-TA 通用支持层知识库，不包含任何外接项目私有策略参数。",
+          "微观结构结论必须保留市场、交易所、数据源、时间戳、粒度、执行和验证边界。",
+          "候选通过外部审计前不能进入正式 reviewed 知识库。"
+        ],
+        "limitations": [
+          "官方文档和平台文档只能支撑数据字段、接口语义和工程边界，不能证明交易优势。",
+          "论文或专业机构资料支持方法边界，不能替代具体交易所、数据供应商或外接项目契约。",
+          "本候选不提供任何投资建议或实盘执行许可。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_title": "Get Funding Rate History",
+          "source_url": "https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Get-Funding-Rate-History",
+          "source_type": "official_exchange_api_doc",
+          "publisher": "Binance Open Platform",
+          "published_at": null,
+          "reliability": "medium_high",
+          "score": 82,
+          "freshness": "time_sensitive",
+          "evidence_summary": "Binance futures API returns symbol-level fundingRate, fundingTime and markPrice with request limits and time-window semantics.",
+          "limitations": [
+            "Crypto perpetuals specific; funding fields must not be generalized to spot, equities or all derivatives."
+          ],
+          "source_id": "src_001",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Open Interest",
+          "source_url": "https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Open-Interest",
+          "source_type": "official_exchange_api_doc",
+          "publisher": "Binance Open Platform",
+          "published_at": null,
+          "reliability": "medium_high",
+          "score": 82,
+          "freshness": "time_sensitive",
+          "evidence_summary": "Binance futures API exposes present open interest for a specific symbol.",
+          "limitations": [
+            "Single-exchange open interest must be timestamped and cannot represent total market positioning by itself."
+          ],
+          "source_id": "src_002",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Market Liquidity and Funding Liquidity",
+          "source_url": "https://www.nber.org/system/files/working_papers/w12939/w12939.pdf",
+          "source_type": "academic_paper",
+          "publisher": "NBER",
+          "published_at": "2007-02-01",
+          "reliability": "high",
+          "score": 88,
+          "freshness": "stable",
+          "evidence_summary": "Brunnermeier and Pedersen model how market liquidity and funding liquidity can reinforce each other and can dry up under stress.",
+          "limitations": [
+            "Theoretical liquidity-stress source; does not define a trading signal or venue-specific field."
+          ],
+          "source_id": "src_003",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Gauging the interplay between market liquidity and funding liquidity",
+          "source_url": "https://www.ecb.europa.eu/press/financial-stability-publications/fsr/special/html/ecb.fsrart202305_01~830184261b.en.html",
+          "source_type": "central_bank_research",
+          "publisher": "European Central Bank",
+          "published_at": "2023-05-31",
+          "reliability": "high",
+          "score": 86,
+          "freshness": "stable",
+          "evidence_summary": "ECB defines market liquidity as the ability to rapidly execute large transactions at low cost and limited price impact, and distinguishes it from funding liquidity.",
+          "limitations": [
+            "Macro/financial-stability framing; use for liquidity definitions and stress caveats."
+          ],
+          "source_id": "src_004",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "medium_high",
+        "score": 84.5,
+        "score_version": "phase37_market_microstructure_source_scoring_v1",
+        "primary_source_count": 2,
+        "supporting_source_count": 2,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "正式入库前必须由外部审计确认 claim 没有超出来源可证明范围。",
+          "供应商、交易平台和交易所接口文档只可作为数据语义与工程边界证据，不能单独证明信号有效。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none_known_in_visible_context",
+        "checked_against": [
+          "Phase 36/38/40/41 AI Engineering 知识边界",
+          "现有 Trading Engineering formal 知识",
+          "Phase 37 Trading 与 AI 跨分支引用契约"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与可见正式知识的直接冲突；本候选只定义 Trading Engineering 市场微观结构规则本体，AI Engineering 只能引用。",
+        "approval_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 检索 Trading Engineering 市场微观结构边界。",
+          "用于审计交易项目方案中是否缺少盘口、订单流、流动性、滑点、延迟、市场影响和数据源边界。",
+          "用于辅助外接项目设计数据契约、特征边界、审计清单和 reason code。"
+        ],
+        "not_allowed": [
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+          "不得把候选知识当作 reviewed、approved、default guidance 或 hard gate。",
+          "不得绕过外接项目事实层、数据契约、执行适配器、风控 hard gate 或人工治理流程。"
+        ]
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "Phase 37 Market Microstructure candidate only; formal reviewed requires later reviewed-preparation gate.",
+        "requires_human_escalation": true,
+        "hidden_from_default_queue": true,
+        "visible_in_default_guidance_queue": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "review": {
+        "confidence": "medium_high",
+        "freshness": "mixed",
+        "reviewer": "codex_pre_audit_generation",
+        "reviewed_at": "2026-06-11",
+        "open_questions": [
+          "外部审计是否认为来源足以支撑该 claim？",
+          "是否需要补充更强的一手论文、监管材料、交易所规范或数据供应商字段级证据？",
+          "是否存在与现有 Data Engineering、Backtest、Replay、Live Execution、Risk Management 或 AI Engineering formal 知识的重叠，需要合并或拆分？"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-11",
+            "actor": "codex",
+            "action": "created",
+            "reason": "根据 Phase 37 P37-D Market Microstructure 队列生成 Trading Engineering 候选知识。"
+          },
+          {
+            "at": "2026-06-11",
+            "actor": "codex",
+            "action": "sourced",
+            "reason": "记录专业机构、监管、交易所/API、数据供应商和论文来源摘要。"
+          }
+        ]
+      },
+      "workflow": {
+        "stage": "candidate_ready",
+        "queue_group": "pending_ai_audit",
+        "current_task_id": "CEK-TA-402",
+        "next_action": "export_candidate_audit_package",
+        "next_allowed_decisions": [
+          "accepted_for_draft",
+          "needs_more_evidence",
+          "rejected"
+        ],
+        "forbidden_decisions": [
+          "reviewed",
+          "approved",
+          "default_guidance",
+          "hard_gate"
+        ],
+        "formalization_allowed": false,
+        "conversion_target": {
+          "proposed_knowledge_id": "kb_03_market_microstructure.funding_open_interest_context_required.v1",
+          "target_review_status": "draft_only_after_external_audit",
+          "target_default_guidance": "deny"
+        }
+      },
+      "contribution": {
+        "origin": "codex_research_ingestion_phase37",
+        "private_data_removed": true,
+        "contains_account_facts": false,
+        "contains_secret": false,
+        "contains_project_private_strategy": false
+      }
+    },
+    {
+      "schema_version": "1.1.0-candidate",
+      "candidate_id": "cand_20260611_phase37_market_microstructure_high_frequency_signal_latency_boundary_001",
+      "research_task_id": "P37-D-M09",
+      "status": {
+        "review_status": "sourced",
+        "ingestion_decision": "candidate_ready",
+        "decision_reason": "Phase 37 Market Microstructure 候选生成完成；等待外部 AI/人工严格审计。",
+        "created_at": "2026-06-11",
+        "updated_at": "2026-06-11"
+      },
+      "classification": {
+        "tree_node_id": "kt.market_microstructure",
+        "canonical_node_id": "kt.market_microstructure",
+        "tree_path": "CEK-TA / Trading Engineering / Market Microstructure",
+        "related_nodes": [
+          "kt.trading_engineering",
+          "kt.market_microstructure",
+          "kt.trading_engineering.data_engineering",
+          "kt.kline_strategy",
+          "kt.backtest",
+          "kt.replay_simulation",
+          "kt.live_execution",
+          "kt.risk_management",
+          "kt.ai_engineering.llm_training"
+        ],
+        "partition_id": "KB_03_MARKET_MICROSTRUCTURE",
+        "domain": "market_microstructure",
+        "subdomain": "latency_timing",
+        "rule_type": "trading_microstructure_boundary_rule",
+        "claim_type": "methodological_constraint",
+        "used_for": [
+          "market_microstructure_audit",
+          "strategy_design_audit",
+          "execution_cost_boundary",
+          "ai_trader_project_gap_audit",
+          "external_project_rag_retrieval"
+        ],
+        "classification_notes": "本候选主归属 Trading Engineering / Market Microstructure。AI Engineering 只能引用本规则，不得把盘口、订单流、滑点、funding/OI 或市场影响本体改写为模型训练规则。"
+      },
+      "claim": {
+        "claim_id": "claim_p37_d_m09",
+        "title": "高频微观结构信号必须声明延迟和时钟同步边界",
+        "statement": "高频盘口、成交、订单流和微观结构信号必须声明数据延迟、处理延迟、时钟同步、事件顺序和可执行窗口；无法证明时间一致性时，不能用于声称实时交易优势。",
+        "normalized_claim": "microstructure.high_frequency_signal_latency_boundary.v1",
+        "evidence_summary": "RTS 25 requires trading venues and participants to synchronise business clocks and timestamp reportable events with an accurate time source.；CFA Institute explains explicit and implicit trading costs, transaction cost estimation, electronic trading, speed needs, market monitoring and systemic-risk caveats.；Databento MBO provides every order book event across every price level keyed by order ID, including adds, cancels, modifies, trades and fills; it is commonly called L3 data.",
+        "interpretation_notes": "本候选只定义市场微观结构解释、数据和执行边界，不输出买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+        "claim_strength": "medium_high",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general_with_market_specific_mapping",
+        "asset": "general",
+        "timeframe": "event_to_intraday",
+        "data_granularity": "order_book_trades_or_derivatives_market_data",
+        "project_type": "trading_ai_support_layer",
+        "applies_when": [
+          "毫秒/微秒级 market data、order book replay、event-driven execution 或 HFT 特征",
+          "审计 signal timestamp、decision timestamp 和 execution timestamp 的一致性"
+        ],
+        "not_applicable_when": [
+          "日线或低频研究不涉及事件级顺序",
+          "没有可靠时钟、接收时间、处理时间和交易所事件时间字段",
+          "需要具体买卖点、仓位、杠杆、止损止盈价格、交易所私有配置、账户事实或实盘权限时，应由外接项目事实层、执行层和风控层处理。",
+          "AI Engineering 只能引用本规则，不得把本规则改写为 LLM 训练、MCP、RAG 或模型部署本体规则。"
+        ],
+        "assumptions": [
+          "候选用于 CEK-TA 通用支持层知识库，不包含任何外接项目私有策略参数。",
+          "微观结构结论必须保留市场、交易所、数据源、时间戳、粒度、执行和验证边界。",
+          "候选通过外部审计前不能进入正式 reviewed 知识库。"
+        ],
+        "limitations": [
+          "官方文档和平台文档只能支撑数据字段、接口语义和工程边界，不能证明交易优势。",
+          "论文或专业机构资料支持方法边界，不能替代具体交易所、数据供应商或外接项目契约。",
+          "本候选不提供任何投资建议或实盘执行许可。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_title": "Commission Delegated Regulation RTS 25 clock synchronisation",
+          "source_url": "https://ec.europa.eu/finance/securities/docs/isd/mifid/rts/160607-rts-25_en.pdf",
+          "source_type": "regulatory_standard",
+          "publisher": "European Commission / ESMA",
+          "published_at": "2016-06-07",
+          "reliability": "high",
+          "score": 88,
+          "freshness": "stable",
+          "evidence_summary": "RTS 25 requires trading venues and participants to synchronise business clocks and timestamp reportable events with an accurate time source.",
+          "limitations": [
+            "EU regulatory context; use as strong timing/clock-sync boundary evidence, not universal global law."
+          ],
+          "source_id": "src_001",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Trading Costs and Electronic Markets",
+          "source_url": "https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/trading-costs-and-electronic-markets",
+          "source_type": "professional_curriculum",
+          "publisher": "CFA Institute",
+          "published_at": "2026-01-01",
+          "reliability": "high",
+          "score": 88,
+          "freshness": "time_sensitive",
+          "evidence_summary": "CFA Institute explains explicit and implicit trading costs, transaction cost estimation, electronic trading, speed needs, market monitoring and systemic-risk caveats.",
+          "limitations": [
+            "Supports cost, speed and execution-quality context; it does not define exchange-specific order-book fields."
+          ],
+          "source_id": "src_002",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Market by order (MBO)",
+          "source_url": "https://databento.com/docs/schemas-and-data-formats/mbo",
+          "source_type": "official_data_vendor_doc",
+          "publisher": "Databento",
+          "published_at": null,
+          "reliability": "medium_high",
+          "score": 82,
+          "freshness": "time_sensitive",
+          "evidence_summary": "Databento MBO provides every order book event across every price level keyed by order ID, including adds, cancels, modifies, trades and fills; it is commonly called L3 data.",
+          "limitations": [
+            "Vendor-specific schema; use as concrete data-model evidence, not universal market behavior."
+          ],
+          "source_id": "src_003",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Nasdaq TotalView-ITCH 5.0 specification",
+          "source_url": "https://www.nasdaqtrader.com/content/technicalsupport/specifications/dataproducts/NQTVITCHSpecification.pdf",
+          "source_type": "official_exchange_spec",
+          "publisher": "Nasdaq Trader",
+          "published_at": "2024-01-01",
+          "reliability": "medium_high",
+          "score": 84,
+          "freshness": "time_sensitive",
+          "evidence_summary": "Nasdaq TotalView-ITCH tracks full order depth through order-level messages that add, execute, cancel, delete and replace customer orders.",
+          "limitations": [
+            "Specific to Nasdaq ITCH feed semantics and not directly transferable to all exchanges."
+          ],
+          "source_id": "src_004",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "medium_high",
+        "score": 85.5,
+        "score_version": "phase37_market_microstructure_source_scoring_v1",
+        "primary_source_count": 2,
+        "supporting_source_count": 2,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "正式入库前必须由外部审计确认 claim 没有超出来源可证明范围。",
+          "供应商、交易平台和交易所接口文档只可作为数据语义与工程边界证据，不能单独证明信号有效。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none_known_in_visible_context",
+        "checked_against": [
+          "Phase 36/38/40/41 AI Engineering 知识边界",
+          "现有 Trading Engineering formal 知识",
+          "Phase 37 Trading 与 AI 跨分支引用契约"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与可见正式知识的直接冲突；本候选只定义 Trading Engineering 市场微观结构规则本体，AI Engineering 只能引用。",
+        "approval_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 检索 Trading Engineering 市场微观结构边界。",
+          "用于审计交易项目方案中是否缺少盘口、订单流、流动性、滑点、延迟、市场影响和数据源边界。",
+          "用于辅助外接项目设计数据契约、特征边界、审计清单和 reason code。"
+        ],
+        "not_allowed": [
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+          "不得把候选知识当作 reviewed、approved、default guidance 或 hard gate。",
+          "不得绕过外接项目事实层、数据契约、执行适配器、风控 hard gate 或人工治理流程。"
+        ]
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "Phase 37 Market Microstructure candidate only; formal reviewed requires later reviewed-preparation gate.",
+        "requires_human_escalation": true,
+        "hidden_from_default_queue": true,
+        "visible_in_default_guidance_queue": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "review": {
+        "confidence": "medium_high",
+        "freshness": "mixed",
+        "reviewer": "codex_pre_audit_generation",
+        "reviewed_at": "2026-06-11",
+        "open_questions": [
+          "外部审计是否认为来源足以支撑该 claim？",
+          "是否需要补充更强的一手论文、监管材料、交易所规范或数据供应商字段级证据？",
+          "是否存在与现有 Data Engineering、Backtest、Replay、Live Execution、Risk Management 或 AI Engineering formal 知识的重叠，需要合并或拆分？"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-11",
+            "actor": "codex",
+            "action": "created",
+            "reason": "根据 Phase 37 P37-D Market Microstructure 队列生成 Trading Engineering 候选知识。"
+          },
+          {
+            "at": "2026-06-11",
+            "actor": "codex",
+            "action": "sourced",
+            "reason": "记录专业机构、监管、交易所/API、数据供应商和论文来源摘要。"
+          }
+        ]
+      },
+      "workflow": {
+        "stage": "candidate_ready",
+        "queue_group": "pending_ai_audit",
+        "current_task_id": "CEK-TA-402",
+        "next_action": "export_candidate_audit_package",
+        "next_allowed_decisions": [
+          "accepted_for_draft",
+          "needs_more_evidence",
+          "rejected"
+        ],
+        "forbidden_decisions": [
+          "reviewed",
+          "approved",
+          "default_guidance",
+          "hard_gate"
+        ],
+        "formalization_allowed": false,
+        "conversion_target": {
+          "proposed_knowledge_id": "kb_03_market_microstructure.high_frequency_signal_latency_boundary.v1",
+          "target_review_status": "draft_only_after_external_audit",
+          "target_default_guidance": "deny"
+        }
+      },
+      "contribution": {
+        "origin": "codex_research_ingestion_phase37",
+        "private_data_removed": true,
+        "contains_account_facts": false,
+        "contains_secret": false,
+        "contains_project_private_strategy": false
+      }
+    },
+    {
+      "schema_version": "1.1.0-candidate",
+      "candidate_id": "cand_20260611_phase37_market_microstructure_liquidity_regime_required_001",
+      "research_task_id": "P37-D-M07",
+      "status": {
+        "review_status": "sourced",
+        "ingestion_decision": "candidate_ready",
+        "decision_reason": "Phase 37 Market Microstructure 候选生成完成；等待外部 AI/人工严格审计。",
+        "created_at": "2026-06-11",
+        "updated_at": "2026-06-11"
+      },
+      "classification": {
+        "tree_node_id": "kt.market_microstructure",
+        "canonical_node_id": "kt.market_microstructure",
+        "tree_path": "CEK-TA / Trading Engineering / Market Microstructure",
+        "related_nodes": [
+          "kt.trading_engineering",
+          "kt.market_microstructure",
+          "kt.trading_engineering.data_engineering",
+          "kt.kline_strategy",
+          "kt.backtest",
+          "kt.replay_simulation",
+          "kt.live_execution",
+          "kt.risk_management",
+          "kt.ai_engineering.llm_training"
+        ],
+        "partition_id": "KB_03_MARKET_MICROSTRUCTURE",
+        "domain": "market_microstructure",
+        "subdomain": "liquidity_regime",
+        "rule_type": "trading_microstructure_boundary_rule",
+        "claim_type": "methodological_constraint",
+        "used_for": [
+          "market_microstructure_audit",
+          "strategy_design_audit",
+          "execution_cost_boundary",
+          "ai_trader_project_gap_audit",
+          "external_project_rag_retrieval"
+        ],
+        "classification_notes": "本候选主归属 Trading Engineering / Market Microstructure。AI Engineering 只能引用本规则，不得把盘口、订单流、滑点、funding/OI 或市场影响本体改写为模型训练规则。"
+      },
+      "claim": {
+        "claim_id": "claim_p37_d_m07",
+        "title": "流动性状态必须按 regime 标注",
+        "statement": "Microstructure 特征必须区分 normal、thin、stressed、event-driven、rollover 或 session-specific liquidity regime；不得把正常时段的盘口特征直接外推到压力、休市前后或低流动性时段。",
+        "normalized_claim": "microstructure.liquidity_regime_required.v1",
+        "evidence_summary": "ECB defines market liquidity as the ability to rapidly execute large transactions at low cost and limited price impact, and distinguishes it from funding liquidity.；Brunnermeier and Pedersen model how market liquidity and funding liquidity can reinforce each other and can dry up under stress.；CFA Institute frames trading decisions around liquidity needs, market conditions, execution risk, opportunity cost, market impact and trade cost analysis.",
+        "interpretation_notes": "本候选只定义市场微观结构解释、数据和执行边界，不输出买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+        "claim_strength": "medium_high",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general_with_market_specific_mapping",
+        "asset": "general",
+        "timeframe": "event_to_intraday",
+        "data_granularity": "order_book_trades_or_derivatives_market_data",
+        "project_type": "trading_ai_support_layer",
+        "applies_when": [
+          "审计盘口、成交、滑点、市场影响或订单流特征的 regime 适用范围",
+          "把流动性状态作为 backtest、replay 或 live execution 输入"
+        ],
+        "not_applicable_when": [
+          "没有交易时段、事件日、交易量或报价可用性信息",
+          "需要证明某个 regime 下必然盈利",
+          "需要具体买卖点、仓位、杠杆、止损止盈价格、交易所私有配置、账户事实或实盘权限时，应由外接项目事实层、执行层和风控层处理。",
+          "AI Engineering 只能引用本规则，不得把本规则改写为 LLM 训练、MCP、RAG 或模型部署本体规则。"
+        ],
+        "assumptions": [
+          "候选用于 CEK-TA 通用支持层知识库，不包含任何外接项目私有策略参数。",
+          "微观结构结论必须保留市场、交易所、数据源、时间戳、粒度、执行和验证边界。",
+          "候选通过外部审计前不能进入正式 reviewed 知识库。"
+        ],
+        "limitations": [
+          "官方文档和平台文档只能支撑数据字段、接口语义和工程边界，不能证明交易优势。",
+          "论文或专业机构资料支持方法边界，不能替代具体交易所、数据供应商或外接项目契约。",
+          "本候选不提供任何投资建议或实盘执行许可。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_title": "Gauging the interplay between market liquidity and funding liquidity",
+          "source_url": "https://www.ecb.europa.eu/press/financial-stability-publications/fsr/special/html/ecb.fsrart202305_01~830184261b.en.html",
+          "source_type": "central_bank_research",
+          "publisher": "European Central Bank",
+          "published_at": "2023-05-31",
+          "reliability": "high",
+          "score": 86,
+          "freshness": "stable",
+          "evidence_summary": "ECB defines market liquidity as the ability to rapidly execute large transactions at low cost and limited price impact, and distinguishes it from funding liquidity.",
+          "limitations": [
+            "Macro/financial-stability framing; use for liquidity definitions and stress caveats."
+          ],
+          "source_id": "src_001",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Market Liquidity and Funding Liquidity",
+          "source_url": "https://www.nber.org/system/files/working_papers/w12939/w12939.pdf",
+          "source_type": "academic_paper",
+          "publisher": "NBER",
+          "published_at": "2007-02-01",
+          "reliability": "high",
+          "score": 88,
+          "freshness": "stable",
+          "evidence_summary": "Brunnermeier and Pedersen model how market liquidity and funding liquidity can reinforce each other and can dry up under stress.",
+          "limitations": [
+            "Theoretical liquidity-stress source; does not define a trading signal or venue-specific field."
+          ],
+          "source_id": "src_002",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Trade Strategy and Execution",
+          "source_url": "https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/trade-strategy-execution",
+          "source_type": "professional_curriculum",
+          "publisher": "CFA Institute",
+          "published_at": "2026-01-01",
+          "reliability": "high",
+          "score": 88,
+          "freshness": "time_sensitive",
+          "evidence_summary": "CFA Institute frames trading decisions around liquidity needs, market conditions, execution risk, opportunity cost, market impact and trade cost analysis.",
+          "limitations": [
+            "Professional curriculum source; it supports execution and cost boundaries, not any profitable microstructure signal."
+          ],
+          "source_id": "src_003",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Trading Costs and Electronic Markets",
+          "source_url": "https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/trading-costs-and-electronic-markets",
+          "source_type": "professional_curriculum",
+          "publisher": "CFA Institute",
+          "published_at": "2026-01-01",
+          "reliability": "high",
+          "score": 88,
+          "freshness": "time_sensitive",
+          "evidence_summary": "CFA Institute explains explicit and implicit trading costs, transaction cost estimation, electronic trading, speed needs, market monitoring and systemic-risk caveats.",
+          "limitations": [
+            "Supports cost, speed and execution-quality context; it does not define exchange-specific order-book fields."
+          ],
+          "source_id": "src_004",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "medium_high",
+        "score": 87.5,
+        "score_version": "phase37_market_microstructure_source_scoring_v1",
+        "primary_source_count": 4,
+        "supporting_source_count": 0,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "正式入库前必须由外部审计确认 claim 没有超出来源可证明范围。",
+          "供应商、交易平台和交易所接口文档只可作为数据语义与工程边界证据，不能单独证明信号有效。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none_known_in_visible_context",
+        "checked_against": [
+          "Phase 36/38/40/41 AI Engineering 知识边界",
+          "现有 Trading Engineering formal 知识",
+          "Phase 37 Trading 与 AI 跨分支引用契约"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与可见正式知识的直接冲突；本候选只定义 Trading Engineering 市场微观结构规则本体，AI Engineering 只能引用。",
+        "approval_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 检索 Trading Engineering 市场微观结构边界。",
+          "用于审计交易项目方案中是否缺少盘口、订单流、流动性、滑点、延迟、市场影响和数据源边界。",
+          "用于辅助外接项目设计数据契约、特征边界、审计清单和 reason code。"
+        ],
+        "not_allowed": [
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+          "不得把候选知识当作 reviewed、approved、default guidance 或 hard gate。",
+          "不得绕过外接项目事实层、数据契约、执行适配器、风控 hard gate 或人工治理流程。"
+        ]
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "Phase 37 Market Microstructure candidate only; formal reviewed requires later reviewed-preparation gate.",
+        "requires_human_escalation": true,
+        "hidden_from_default_queue": true,
+        "visible_in_default_guidance_queue": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "review": {
+        "confidence": "medium_high",
+        "freshness": "mixed",
+        "reviewer": "codex_pre_audit_generation",
+        "reviewed_at": "2026-06-11",
+        "open_questions": [
+          "外部审计是否认为来源足以支撑该 claim？",
+          "是否需要补充更强的一手论文、监管材料、交易所规范或数据供应商字段级证据？",
+          "是否存在与现有 Data Engineering、Backtest、Replay、Live Execution、Risk Management 或 AI Engineering formal 知识的重叠，需要合并或拆分？"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-11",
+            "actor": "codex",
+            "action": "created",
+            "reason": "根据 Phase 37 P37-D Market Microstructure 队列生成 Trading Engineering 候选知识。"
+          },
+          {
+            "at": "2026-06-11",
+            "actor": "codex",
+            "action": "sourced",
+            "reason": "记录专业机构、监管、交易所/API、数据供应商和论文来源摘要。"
+          }
+        ]
+      },
+      "workflow": {
+        "stage": "candidate_ready",
+        "queue_group": "pending_ai_audit",
+        "current_task_id": "CEK-TA-402",
+        "next_action": "export_candidate_audit_package",
+        "next_allowed_decisions": [
+          "accepted_for_draft",
+          "needs_more_evidence",
+          "rejected"
+        ],
+        "forbidden_decisions": [
+          "reviewed",
+          "approved",
+          "default_guidance",
+          "hard_gate"
+        ],
+        "formalization_allowed": false,
+        "conversion_target": {
+          "proposed_knowledge_id": "kb_03_market_microstructure.liquidity_regime_required.v1",
+          "target_review_status": "draft_only_after_external_audit",
+          "target_default_guidance": "deny"
+        }
+      },
+      "contribution": {
+        "origin": "codex_research_ingestion_phase37",
+        "private_data_removed": true,
+        "contains_account_facts": false,
+        "contains_secret": false,
+        "contains_project_private_strategy": false
+      }
+    },
+    {
+      "schema_version": "1.1.0-candidate",
+      "candidate_id": "cand_20260611_phase37_market_microstructure_market_impact_cost_required_001",
+      "research_task_id": "P37-D-M08",
+      "status": {
+        "review_status": "sourced",
+        "ingestion_decision": "candidate_ready",
+        "decision_reason": "Phase 37 Market Microstructure 候选生成完成；等待外部 AI/人工严格审计。",
+        "created_at": "2026-06-11",
+        "updated_at": "2026-06-11"
+      },
+      "classification": {
+        "tree_node_id": "kt.market_microstructure",
+        "canonical_node_id": "kt.market_microstructure",
+        "tree_path": "CEK-TA / Trading Engineering / Market Microstructure",
+        "related_nodes": [
+          "kt.trading_engineering",
+          "kt.market_microstructure",
+          "kt.trading_engineering.data_engineering",
+          "kt.kline_strategy",
+          "kt.backtest",
+          "kt.replay_simulation",
+          "kt.live_execution",
+          "kt.risk_management",
+          "kt.ai_engineering.llm_training"
+        ],
+        "partition_id": "KB_03_MARKET_MICROSTRUCTURE",
+        "domain": "market_microstructure",
+        "subdomain": "market_impact",
+        "rule_type": "trading_microstructure_boundary_rule",
+        "claim_type": "methodological_constraint",
+        "used_for": [
+          "market_microstructure_audit",
+          "strategy_design_audit",
+          "execution_cost_boundary",
+          "ai_trader_project_gap_audit",
+          "external_project_rag_retrieval"
+        ],
+        "classification_notes": "本候选主归属 Trading Engineering / Market Microstructure。AI Engineering 只能引用本规则，不得把盘口、订单流、滑点、funding/OI 或市场影响本体改写为模型训练规则。"
+      },
+      "claim": {
+        "claim_id": "claim_p37_d_m08",
+        "title": "市场影响成本必须进入微观结构解释边界",
+        "statement": "使用盘口深度、订单流或短周期信号评估交易候选时，必须考虑订单规模、执行速度、流动性、临时/永久市场影响和机会成本；不得只看理论信号而忽略执行带来的价格冲击。",
+        "normalized_claim": "microstructure.market_impact_cost_required.v1",
+        "evidence_summary": "Almgren and Chriss model optimal execution as a trade-off between transaction costs, market impact and volatility risk.；CFA Institute explains explicit and implicit trading costs, transaction cost estimation, electronic trading, speed needs, market monitoring and systemic-risk caveats.；CFA Institute frames trading decisions around liquidity needs, market conditions, execution risk, opportunity cost, market impact and trade cost analysis.",
+        "interpretation_notes": "本候选只定义市场微观结构解释、数据和执行边界，不输出买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+        "claim_strength": "medium_high",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general_with_market_specific_mapping",
+        "asset": "general",
+        "timeframe": "event_to_intraday",
+        "data_granularity": "order_book_trades_or_derivatives_market_data",
+        "project_type": "trading_ai_support_layer",
+        "applies_when": [
+          "高周转、短周期、大单、薄市场或盘口驱动策略",
+          "把 microstructure signal 接入回测、回放、模拟或交易质量复盘"
+        ],
+        "not_applicable_when": [
+          "只做理论研究且不评估可执行性",
+          "需要直接给出执行算法、下单拆分或最优执行参数",
+          "需要具体买卖点、仓位、杠杆、止损止盈价格、交易所私有配置、账户事实或实盘权限时，应由外接项目事实层、执行层和风控层处理。",
+          "AI Engineering 只能引用本规则，不得把本规则改写为 LLM 训练、MCP、RAG 或模型部署本体规则。"
+        ],
+        "assumptions": [
+          "候选用于 CEK-TA 通用支持层知识库，不包含任何外接项目私有策略参数。",
+          "微观结构结论必须保留市场、交易所、数据源、时间戳、粒度、执行和验证边界。",
+          "候选通过外部审计前不能进入正式 reviewed 知识库。"
+        ],
+        "limitations": [
+          "官方文档和平台文档只能支撑数据字段、接口语义和工程边界，不能证明交易优势。",
+          "论文或专业机构资料支持方法边界，不能替代具体交易所、数据供应商或外接项目契约。",
+          "本候选不提供任何投资建议或实盘执行许可。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_title": "Optimal Liquidation",
+          "source_url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=53501",
+          "source_type": "academic_paper",
+          "publisher": "SSRN / Applied Mathematical Finance",
+          "published_at": "2000-12-01",
+          "reliability": "high",
+          "score": 90,
+          "freshness": "stable",
+          "evidence_summary": "Almgren and Chriss model optimal execution as a trade-off between transaction costs, market impact and volatility risk.",
+          "limitations": [
+            "Optimal-execution model assumptions must be stated; not a default live trading permission."
+          ],
+          "source_id": "src_001",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Trading Costs and Electronic Markets",
+          "source_url": "https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/trading-costs-and-electronic-markets",
+          "source_type": "professional_curriculum",
+          "publisher": "CFA Institute",
+          "published_at": "2026-01-01",
+          "reliability": "high",
+          "score": 88,
+          "freshness": "time_sensitive",
+          "evidence_summary": "CFA Institute explains explicit and implicit trading costs, transaction cost estimation, electronic trading, speed needs, market monitoring and systemic-risk caveats.",
+          "limitations": [
+            "Supports cost, speed and execution-quality context; it does not define exchange-specific order-book fields."
+          ],
+          "source_id": "src_002",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Trade Strategy and Execution",
+          "source_url": "https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/trade-strategy-execution",
+          "source_type": "professional_curriculum",
+          "publisher": "CFA Institute",
+          "published_at": "2026-01-01",
+          "reliability": "high",
+          "score": 88,
+          "freshness": "time_sensitive",
+          "evidence_summary": "CFA Institute frames trading decisions around liquidity needs, market conditions, execution risk, opportunity cost, market impact and trade cost analysis.",
+          "limitations": [
+            "Professional curriculum source; it supports execution and cost boundaries, not any profitable microstructure signal."
+          ],
+          "source_id": "src_003",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Gauging the interplay between market liquidity and funding liquidity",
+          "source_url": "https://www.ecb.europa.eu/press/financial-stability-publications/fsr/special/html/ecb.fsrart202305_01~830184261b.en.html",
+          "source_type": "central_bank_research",
+          "publisher": "European Central Bank",
+          "published_at": "2023-05-31",
+          "reliability": "high",
+          "score": 86,
+          "freshness": "stable",
+          "evidence_summary": "ECB defines market liquidity as the ability to rapidly execute large transactions at low cost and limited price impact, and distinguishes it from funding liquidity.",
+          "limitations": [
+            "Macro/financial-stability framing; use for liquidity definitions and stress caveats."
+          ],
+          "source_id": "src_004",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "medium_high",
+        "score": 88.0,
+        "score_version": "phase37_market_microstructure_source_scoring_v1",
+        "primary_source_count": 4,
+        "supporting_source_count": 0,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "正式入库前必须由外部审计确认 claim 没有超出来源可证明范围。",
+          "供应商、交易平台和交易所接口文档只可作为数据语义与工程边界证据，不能单独证明信号有效。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none_known_in_visible_context",
+        "checked_against": [
+          "Phase 36/38/40/41 AI Engineering 知识边界",
+          "现有 Trading Engineering formal 知识",
+          "Phase 37 Trading 与 AI 跨分支引用契约"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与可见正式知识的直接冲突；本候选只定义 Trading Engineering 市场微观结构规则本体，AI Engineering 只能引用。",
+        "approval_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 检索 Trading Engineering 市场微观结构边界。",
+          "用于审计交易项目方案中是否缺少盘口、订单流、流动性、滑点、延迟、市场影响和数据源边界。",
+          "用于辅助外接项目设计数据契约、特征边界、审计清单和 reason code。"
+        ],
+        "not_allowed": [
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+          "不得把候选知识当作 reviewed、approved、default guidance 或 hard gate。",
+          "不得绕过外接项目事实层、数据契约、执行适配器、风控 hard gate 或人工治理流程。"
+        ]
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "Phase 37 Market Microstructure candidate only; formal reviewed requires later reviewed-preparation gate.",
+        "requires_human_escalation": true,
+        "hidden_from_default_queue": true,
+        "visible_in_default_guidance_queue": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "review": {
+        "confidence": "medium_high",
+        "freshness": "mixed",
+        "reviewer": "codex_pre_audit_generation",
+        "reviewed_at": "2026-06-11",
+        "open_questions": [
+          "外部审计是否认为来源足以支撑该 claim？",
+          "是否需要补充更强的一手论文、监管材料、交易所规范或数据供应商字段级证据？",
+          "是否存在与现有 Data Engineering、Backtest、Replay、Live Execution、Risk Management 或 AI Engineering formal 知识的重叠，需要合并或拆分？"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-11",
+            "actor": "codex",
+            "action": "created",
+            "reason": "根据 Phase 37 P37-D Market Microstructure 队列生成 Trading Engineering 候选知识。"
+          },
+          {
+            "at": "2026-06-11",
+            "actor": "codex",
+            "action": "sourced",
+            "reason": "记录专业机构、监管、交易所/API、数据供应商和论文来源摘要。"
+          }
+        ]
+      },
+      "workflow": {
+        "stage": "candidate_ready",
+        "queue_group": "pending_ai_audit",
+        "current_task_id": "CEK-TA-402",
+        "next_action": "export_candidate_audit_package",
+        "next_allowed_decisions": [
+          "accepted_for_draft",
+          "needs_more_evidence",
+          "rejected"
+        ],
+        "forbidden_decisions": [
+          "reviewed",
+          "approved",
+          "default_guidance",
+          "hard_gate"
+        ],
+        "formalization_allowed": false,
+        "conversion_target": {
+          "proposed_knowledge_id": "kb_03_market_microstructure.market_impact_cost_required.v1",
+          "target_review_status": "draft_only_after_external_audit",
+          "target_default_guidance": "deny"
+        }
+      },
+      "contribution": {
+        "origin": "codex_research_ingestion_phase37",
+        "private_data_removed": true,
+        "contains_account_facts": false,
+        "contains_secret": false,
+        "contains_project_private_strategy": false
+      }
+    },
+    {
+      "schema_version": "1.1.0-candidate",
+      "candidate_id": "cand_20260611_phase37_market_microstructure_microstructure_feature_not_universal_001",
+      "research_task_id": "P37-D-M12",
+      "status": {
+        "review_status": "sourced",
+        "ingestion_decision": "candidate_ready",
+        "decision_reason": "Phase 37 Market Microstructure 候选生成完成；等待外部 AI/人工严格审计。",
+        "created_at": "2026-06-11",
+        "updated_at": "2026-06-11"
+      },
+      "classification": {
+        "tree_node_id": "kt.market_microstructure",
+        "canonical_node_id": "kt.market_microstructure",
+        "tree_path": "CEK-TA / Trading Engineering / Market Microstructure",
+        "related_nodes": [
+          "kt.trading_engineering",
+          "kt.market_microstructure",
+          "kt.trading_engineering.data_engineering",
+          "kt.kline_strategy",
+          "kt.backtest",
+          "kt.replay_simulation",
+          "kt.live_execution",
+          "kt.risk_management",
+          "kt.ai_engineering.llm_training"
+        ],
+        "partition_id": "KB_03_MARKET_MICROSTRUCTURE",
+        "domain": "market_microstructure",
+        "subdomain": "feature_boundary",
+        "rule_type": "trading_microstructure_boundary_rule",
+        "claim_type": "methodological_constraint",
+        "used_for": [
+          "market_microstructure_audit",
+          "strategy_design_audit",
+          "execution_cost_boundary",
+          "ai_trader_project_gap_audit",
+          "external_project_rag_retrieval"
+        ],
+        "classification_notes": "本候选主归属 Trading Engineering / Market Microstructure。AI Engineering 只能引用本规则，不得把盘口、订单流、滑点、funding/OI 或市场影响本体改写为模型训练规则。"
+      },
+      "claim": {
+        "claim_id": "claim_p37_d_m12",
+        "title": "微观结构特征不得跨市场无条件泛化",
+        "statement": "盘口、订单流、CVD、funding、OI、深度、滑点和市场影响特征不能跨资产、交易所、数据源、交易时段和 market regime 无条件泛化；每个特征必须声明适用市场、数据契约和验证范围。",
+        "normalized_claim": "microstructure.microstructure_feature_not_universal.v1",
+        "evidence_summary": "Databento MBO provides every order book event across every price level keyed by order ID, including adds, cancels, modifies, trades and fills; it is commonly called L3 data.；Binance futures API returns symbol-level fundingRate, fundingTime and markPrice with request limits and time-window semantics.；CFA Institute explains explicit and implicit trading costs, transaction cost estimation, electronic trading, speed needs, market monitoring and systemic-risk caveats.",
+        "interpretation_notes": "本候选只定义市场微观结构解释、数据和执行边界，不输出买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+        "claim_strength": "medium_high",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general_with_market_specific_mapping",
+        "asset": "general",
+        "timeframe": "event_to_intraday",
+        "data_granularity": "order_book_trades_or_derivatives_market_data",
+        "project_type": "trading_ai_support_layer",
+        "applies_when": [
+          "把微观结构特征用于策略工程、AI scoring、RAG 解释或交易质量复盘",
+          "审计跨市场、跨交易所、跨数据供应商迁移的特征声明"
+        ],
+        "not_applicable_when": [
+          "只做单市场描述且不迁移",
+          "需要证明某个 microstructure feature 在所有市场长期有效",
+          "需要具体买卖点、仓位、杠杆、止损止盈价格、交易所私有配置、账户事实或实盘权限时，应由外接项目事实层、执行层和风控层处理。",
+          "AI Engineering 只能引用本规则，不得把本规则改写为 LLM 训练、MCP、RAG 或模型部署本体规则。"
+        ],
+        "assumptions": [
+          "候选用于 CEK-TA 通用支持层知识库，不包含任何外接项目私有策略参数。",
+          "微观结构结论必须保留市场、交易所、数据源、时间戳、粒度、执行和验证边界。",
+          "候选通过外部审计前不能进入正式 reviewed 知识库。"
+        ],
+        "limitations": [
+          "官方文档和平台文档只能支撑数据字段、接口语义和工程边界，不能证明交易优势。",
+          "论文或专业机构资料支持方法边界，不能替代具体交易所、数据供应商或外接项目契约。",
+          "本候选不提供任何投资建议或实盘执行许可。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_title": "Market by order (MBO)",
+          "source_url": "https://databento.com/docs/schemas-and-data-formats/mbo",
+          "source_type": "official_data_vendor_doc",
+          "publisher": "Databento",
+          "published_at": null,
+          "reliability": "medium_high",
+          "score": 82,
+          "freshness": "time_sensitive",
+          "evidence_summary": "Databento MBO provides every order book event across every price level keyed by order ID, including adds, cancels, modifies, trades and fills; it is commonly called L3 data.",
+          "limitations": [
+            "Vendor-specific schema; use as concrete data-model evidence, not universal market behavior."
+          ],
+          "source_id": "src_001",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Get Funding Rate History",
+          "source_url": "https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Get-Funding-Rate-History",
+          "source_type": "official_exchange_api_doc",
+          "publisher": "Binance Open Platform",
+          "published_at": null,
+          "reliability": "medium_high",
+          "score": 82,
+          "freshness": "time_sensitive",
+          "evidence_summary": "Binance futures API returns symbol-level fundingRate, fundingTime and markPrice with request limits and time-window semantics.",
+          "limitations": [
+            "Crypto perpetuals specific; funding fields must not be generalized to spot, equities or all derivatives."
+          ],
+          "source_id": "src_002",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Trading Costs and Electronic Markets",
+          "source_url": "https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/trading-costs-and-electronic-markets",
+          "source_type": "professional_curriculum",
+          "publisher": "CFA Institute",
+          "published_at": "2026-01-01",
+          "reliability": "high",
+          "score": 88,
+          "freshness": "time_sensitive",
+          "evidence_summary": "CFA Institute explains explicit and implicit trading costs, transaction cost estimation, electronic trading, speed needs, market monitoring and systemic-risk caveats.",
+          "limitations": [
+            "Supports cost, speed and execution-quality context; it does not define exchange-specific order-book fields."
+          ],
+          "source_id": "src_003",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Optimal Liquidation",
+          "source_url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=53501",
+          "source_type": "academic_paper",
+          "publisher": "SSRN / Applied Mathematical Finance",
+          "published_at": "2000-12-01",
+          "reliability": "high",
+          "score": 90,
+          "freshness": "stable",
+          "evidence_summary": "Almgren and Chriss model optimal execution as a trade-off between transaction costs, market impact and volatility risk.",
+          "limitations": [
+            "Optimal-execution model assumptions must be stated; not a default live trading permission."
+          ],
+          "source_id": "src_004",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Commission Delegated Regulation RTS 25 clock synchronisation",
+          "source_url": "https://ec.europa.eu/finance/securities/docs/isd/mifid/rts/160607-rts-25_en.pdf",
+          "source_type": "regulatory_standard",
+          "publisher": "European Commission / ESMA",
+          "published_at": "2016-06-07",
+          "reliability": "high",
+          "score": 88,
+          "freshness": "stable",
+          "evidence_summary": "RTS 25 requires trading venues and participants to synchronise business clocks and timestamp reportable events with an accurate time source.",
+          "limitations": [
+            "EU regulatory context; use as strong timing/clock-sync boundary evidence, not universal global law."
+          ],
+          "source_id": "src_005",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "medium_high",
+        "score": 86.0,
+        "score_version": "phase37_market_microstructure_source_scoring_v1",
+        "primary_source_count": 3,
+        "supporting_source_count": 2,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "正式入库前必须由外部审计确认 claim 没有超出来源可证明范围。",
+          "供应商、交易平台和交易所接口文档只可作为数据语义与工程边界证据，不能单独证明信号有效。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none_known_in_visible_context",
+        "checked_against": [
+          "Phase 36/38/40/41 AI Engineering 知识边界",
+          "现有 Trading Engineering formal 知识",
+          "Phase 37 Trading 与 AI 跨分支引用契约"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与可见正式知识的直接冲突；本候选只定义 Trading Engineering 市场微观结构规则本体，AI Engineering 只能引用。",
+        "approval_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 检索 Trading Engineering 市场微观结构边界。",
+          "用于审计交易项目方案中是否缺少盘口、订单流、流动性、滑点、延迟、市场影响和数据源边界。",
+          "用于辅助外接项目设计数据契约、特征边界、审计清单和 reason code。"
+        ],
+        "not_allowed": [
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+          "不得把候选知识当作 reviewed、approved、default guidance 或 hard gate。",
+          "不得绕过外接项目事实层、数据契约、执行适配器、风控 hard gate 或人工治理流程。"
+        ]
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "Phase 37 Market Microstructure candidate only; formal reviewed requires later reviewed-preparation gate.",
+        "requires_human_escalation": true,
+        "hidden_from_default_queue": true,
+        "visible_in_default_guidance_queue": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "review": {
+        "confidence": "medium_high",
+        "freshness": "mixed",
+        "reviewer": "codex_pre_audit_generation",
+        "reviewed_at": "2026-06-11",
+        "open_questions": [
+          "外部审计是否认为来源足以支撑该 claim？",
+          "是否需要补充更强的一手论文、监管材料、交易所规范或数据供应商字段级证据？",
+          "是否存在与现有 Data Engineering、Backtest、Replay、Live Execution、Risk Management 或 AI Engineering formal 知识的重叠，需要合并或拆分？"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-11",
+            "actor": "codex",
+            "action": "created",
+            "reason": "根据 Phase 37 P37-D Market Microstructure 队列生成 Trading Engineering 候选知识。"
+          },
+          {
+            "at": "2026-06-11",
+            "actor": "codex",
+            "action": "sourced",
+            "reason": "记录专业机构、监管、交易所/API、数据供应商和论文来源摘要。"
+          }
+        ]
+      },
+      "workflow": {
+        "stage": "candidate_ready",
+        "queue_group": "pending_ai_audit",
+        "current_task_id": "CEK-TA-402",
+        "next_action": "export_candidate_audit_package",
+        "next_allowed_decisions": [
+          "accepted_for_draft",
+          "needs_more_evidence",
+          "rejected"
+        ],
+        "forbidden_decisions": [
+          "reviewed",
+          "approved",
+          "default_guidance",
+          "hard_gate"
+        ],
+        "formalization_allowed": false,
+        "conversion_target": {
+          "proposed_knowledge_id": "kb_03_market_microstructure.microstructure_feature_not_universal.v1",
+          "target_review_status": "draft_only_after_external_audit",
+          "target_default_guidance": "deny"
+        }
+      },
+      "contribution": {
+        "origin": "codex_research_ingestion_phase37",
+        "private_data_removed": true,
+        "contains_account_facts": false,
+        "contains_secret": false,
+        "contains_project_private_strategy": false
+      }
+    },
+    {
+      "schema_version": "1.1.0-candidate",
+      "candidate_id": "cand_20260611_phase37_market_microstructure_order_book_depth_boundary_001",
+      "research_task_id": "P37-D-M02",
+      "status": {
+        "review_status": "sourced",
+        "ingestion_decision": "candidate_ready",
+        "decision_reason": "Phase 37 Market Microstructure 候选生成完成；等待外部 AI/人工严格审计。",
+        "created_at": "2026-06-11",
+        "updated_at": "2026-06-11"
+      },
+      "classification": {
+        "tree_node_id": "kt.market_microstructure",
+        "canonical_node_id": "kt.market_microstructure",
+        "tree_path": "CEK-TA / Trading Engineering / Market Microstructure",
+        "related_nodes": [
+          "kt.trading_engineering",
+          "kt.market_microstructure",
+          "kt.trading_engineering.data_engineering",
+          "kt.kline_strategy",
+          "kt.backtest",
+          "kt.replay_simulation",
+          "kt.live_execution",
+          "kt.risk_management",
+          "kt.ai_engineering.llm_training"
+        ],
+        "partition_id": "KB_03_MARKET_MICROSTRUCTURE",
+        "domain": "market_microstructure",
+        "subdomain": "order_book_depth",
+        "rule_type": "trading_microstructure_boundary_rule",
+        "claim_type": "methodological_constraint",
+        "used_for": [
+          "market_microstructure_audit",
+          "strategy_design_audit",
+          "execution_cost_boundary",
+          "ai_trader_project_gap_audit",
+          "external_project_rag_retrieval"
+        ],
+        "classification_notes": "本候选主归属 Trading Engineering / Market Microstructure。AI Engineering 只能引用本规则，不得把盘口、订单流、滑点、funding/OI 或市场影响本体改写为模型训练规则。"
+      },
+      "claim": {
+        "claim_id": "claim_p37_d_m02",
+        "title": "盘口深度必须声明 L2/L3 和可见性边界",
+        "statement": "Order book depth 只能描述可见订单簿的深度和变动，必须声明是 L2 aggregate depth、L3 market-by-order、top-of-book 还是完整深度；不得把可见深度等同于全部市场流动性。",
+        "normalized_claim": "microstructure.order_book_depth_boundary.v1",
+        "evidence_summary": "Databento MBO provides every order book event across every price level keyed by order ID, including adds, cancels, modifies, trades and fills; it is commonly called L3 data.；Databento MBP-10 provides order-book events across the top ten price levels, with trade events and aggregate market depth by price; it is commonly called L2 data.；Nasdaq describes TotalView as complete depth-of-book for displayed orders across Nasdaq, NYSE and regional securities.",
+        "interpretation_notes": "本候选只定义市场微观结构解释、数据和执行边界，不输出买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+        "claim_strength": "medium_high",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general_with_market_specific_mapping",
+        "asset": "general",
+        "timeframe": "event_to_intraday",
+        "data_granularity": "order_book_trades_or_derivatives_market_data",
+        "project_type": "trading_ai_support_layer",
+        "applies_when": [
+          "解析 L2/L3 盘口、队列、深度或 DOM 特征",
+          "设计盘口特征、执行仿真或流动性审计"
+        ],
+        "not_applicable_when": [
+          "只拥有 OHLCV 数据而无 order book feed",
+          "需要断言隐藏流动性、暗池或全市场真实深度",
+          "需要具体买卖点、仓位、杠杆、止损止盈价格、交易所私有配置、账户事实或实盘权限时，应由外接项目事实层、执行层和风控层处理。",
+          "AI Engineering 只能引用本规则，不得把本规则改写为 LLM 训练、MCP、RAG 或模型部署本体规则。"
+        ],
+        "assumptions": [
+          "候选用于 CEK-TA 通用支持层知识库，不包含任何外接项目私有策略参数。",
+          "微观结构结论必须保留市场、交易所、数据源、时间戳、粒度、执行和验证边界。",
+          "候选通过外部审计前不能进入正式 reviewed 知识库。"
+        ],
+        "limitations": [
+          "官方文档和平台文档只能支撑数据字段、接口语义和工程边界，不能证明交易优势。",
+          "论文或专业机构资料支持方法边界，不能替代具体交易所、数据供应商或外接项目契约。",
+          "本候选不提供任何投资建议或实盘执行许可。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_title": "Market by order (MBO)",
+          "source_url": "https://databento.com/docs/schemas-and-data-formats/mbo",
+          "source_type": "official_data_vendor_doc",
+          "publisher": "Databento",
+          "published_at": null,
+          "reliability": "medium_high",
+          "score": 82,
+          "freshness": "time_sensitive",
+          "evidence_summary": "Databento MBO provides every order book event across every price level keyed by order ID, including adds, cancels, modifies, trades and fills; it is commonly called L3 data.",
+          "limitations": [
+            "Vendor-specific schema; use as concrete data-model evidence, not universal market behavior."
+          ],
+          "source_id": "src_001",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Market by price (MBP-10)",
+          "source_url": "https://databento.com/docs/schemas-and-data-formats/mbp-10",
+          "source_type": "official_data_vendor_doc",
+          "publisher": "Databento",
+          "published_at": null,
+          "reliability": "medium_high",
+          "score": 82,
+          "freshness": "time_sensitive",
+          "evidence_summary": "Databento MBP-10 provides order-book events across the top ten price levels, with trade events and aggregate market depth by price; it is commonly called L2 data.",
+          "limitations": [
+            "Top-of-book/depth limitation must be declared; vendor-specific fields cannot be assumed for all feeds."
+          ],
+          "source_id": "src_002",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Nasdaq TotalView",
+          "source_url": "https://www.nasdaq.com/solutions/data/equities/nasdaq-totalview",
+          "source_type": "official_exchange_data_doc",
+          "publisher": "Nasdaq",
+          "published_at": null,
+          "reliability": "medium_high",
+          "score": 82,
+          "freshness": "time_sensitive",
+          "evidence_summary": "Nasdaq describes TotalView as complete depth-of-book for displayed orders across Nasdaq, NYSE and regional securities.",
+          "limitations": [
+            "Exchange/data-product specific; not a universal guarantee of hidden liquidity, off-book trades or all venues."
+          ],
+          "source_id": "src_003",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Nasdaq TotalView-ITCH 5.0 specification",
+          "source_url": "https://www.nasdaqtrader.com/content/technicalsupport/specifications/dataproducts/NQTVITCHSpecification.pdf",
+          "source_type": "official_exchange_spec",
+          "publisher": "Nasdaq Trader",
+          "published_at": "2024-01-01",
+          "reliability": "medium_high",
+          "score": 84,
+          "freshness": "time_sensitive",
+          "evidence_summary": "Nasdaq TotalView-ITCH tracks full order depth through order-level messages that add, execute, cancel, delete and replace customer orders.",
+          "limitations": [
+            "Specific to Nasdaq ITCH feed semantics and not directly transferable to all exchanges."
+          ],
+          "source_id": "src_004",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "medium_high",
+        "score": 82.5,
+        "score_version": "phase37_market_microstructure_source_scoring_v1",
+        "primary_source_count": 0,
+        "supporting_source_count": 4,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "正式入库前必须由外部审计确认 claim 没有超出来源可证明范围。",
+          "供应商、交易平台和交易所接口文档只可作为数据语义与工程边界证据，不能单独证明信号有效。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none_known_in_visible_context",
+        "checked_against": [
+          "Phase 36/38/40/41 AI Engineering 知识边界",
+          "现有 Trading Engineering formal 知识",
+          "Phase 37 Trading 与 AI 跨分支引用契约"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与可见正式知识的直接冲突；本候选只定义 Trading Engineering 市场微观结构规则本体，AI Engineering 只能引用。",
+        "approval_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 检索 Trading Engineering 市场微观结构边界。",
+          "用于审计交易项目方案中是否缺少盘口、订单流、流动性、滑点、延迟、市场影响和数据源边界。",
+          "用于辅助外接项目设计数据契约、特征边界、审计清单和 reason code。"
+        ],
+        "not_allowed": [
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+          "不得把候选知识当作 reviewed、approved、default guidance 或 hard gate。",
+          "不得绕过外接项目事实层、数据契约、执行适配器、风控 hard gate 或人工治理流程。"
+        ]
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "Phase 37 Market Microstructure candidate only; formal reviewed requires later reviewed-preparation gate.",
+        "requires_human_escalation": true,
+        "hidden_from_default_queue": true,
+        "visible_in_default_guidance_queue": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "review": {
+        "confidence": "medium_high",
+        "freshness": "mixed",
+        "reviewer": "codex_pre_audit_generation",
+        "reviewed_at": "2026-06-11",
+        "open_questions": [
+          "外部审计是否认为来源足以支撑该 claim？",
+          "是否需要补充更强的一手论文、监管材料、交易所规范或数据供应商字段级证据？",
+          "是否存在与现有 Data Engineering、Backtest、Replay、Live Execution、Risk Management 或 AI Engineering formal 知识的重叠，需要合并或拆分？"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-11",
+            "actor": "codex",
+            "action": "created",
+            "reason": "根据 Phase 37 P37-D Market Microstructure 队列生成 Trading Engineering 候选知识。"
+          },
+          {
+            "at": "2026-06-11",
+            "actor": "codex",
+            "action": "sourced",
+            "reason": "记录专业机构、监管、交易所/API、数据供应商和论文来源摘要。"
+          }
+        ]
+      },
+      "workflow": {
+        "stage": "candidate_ready",
+        "queue_group": "pending_ai_audit",
+        "current_task_id": "CEK-TA-402",
+        "next_action": "export_candidate_audit_package",
+        "next_allowed_decisions": [
+          "accepted_for_draft",
+          "needs_more_evidence",
+          "rejected"
+        ],
+        "forbidden_decisions": [
+          "reviewed",
+          "approved",
+          "default_guidance",
+          "hard_gate"
+        ],
+        "formalization_allowed": false,
+        "conversion_target": {
+          "proposed_knowledge_id": "kb_03_market_microstructure.order_book_depth_boundary.v1",
+          "target_review_status": "draft_only_after_external_audit",
+          "target_default_guidance": "deny"
+        }
+      },
+      "contribution": {
+        "origin": "codex_research_ingestion_phase37",
+        "private_data_removed": true,
+        "contains_account_facts": false,
+        "contains_secret": false,
+        "contains_project_private_strategy": false
+      }
+    },
+    {
+      "schema_version": "1.1.0-candidate",
+      "candidate_id": "cand_20260611_phase37_market_microstructure_order_flow_proxy_boundary_001",
+      "research_task_id": "P37-D-M04",
+      "status": {
+        "review_status": "sourced",
+        "ingestion_decision": "candidate_ready",
+        "decision_reason": "Phase 37 Market Microstructure 候选生成完成；等待外部 AI/人工严格审计。",
+        "created_at": "2026-06-11",
+        "updated_at": "2026-06-11"
+      },
+      "classification": {
+        "tree_node_id": "kt.market_microstructure.order_flow",
+        "canonical_node_id": "kt.market_microstructure.order_flow",
+        "tree_path": "CEK-TA / Trading Engineering / Market Microstructure / Order Flow",
+        "related_nodes": [
+          "kt.trading_engineering",
+          "kt.market_microstructure",
+          "kt.trading_engineering.data_engineering",
+          "kt.kline_strategy",
+          "kt.backtest",
+          "kt.replay_simulation",
+          "kt.live_execution",
+          "kt.risk_management",
+          "kt.ai_engineering.llm_training"
+        ],
+        "partition_id": "KB_03_MARKET_MICROSTRUCTURE",
+        "domain": "market_microstructure",
+        "subdomain": "order_flow",
+        "rule_type": "trading_microstructure_boundary_rule",
+        "claim_type": "methodological_constraint",
+        "used_for": [
+          "market_microstructure_audit",
+          "strategy_design_audit",
+          "execution_cost_boundary",
+          "ai_trader_project_gap_audit",
+          "external_project_rag_retrieval"
+        ],
+        "classification_notes": "本候选主归属 Trading Engineering / Market Microstructure。AI Engineering 只能引用本规则，不得把盘口、订单流、滑点、funding/OI 或市场影响本体改写为模型训练规则。"
+      },
+      "claim": {
+        "claim_id": "claim_p37_d_m04",
+        "title": "订单流代理指标不能替代真实订单簿事实",
+        "statement": "Order flow proxy、imbalance、signed volume 或 OFI 类指标必须声明输入数据、采样窗口、方向推断和归一化方式；代理指标不能替代真实订单、取消、修改和成交事件事实。",
+        "normalized_claim": "microstructure.order_flow_proxy_boundary.v1",
+        "evidence_summary": "Databento MBO provides every order book event across every price level keyed by order ID, including adds, cancels, modifies, trades and fills; it is commonly called L3 data.；Databento MBP-10 provides order-book events across the top ten price levels, with trade events and aggregate market depth by price; it is commonly called L2 data.；Databento trades records include a side field for the side that initiates the trade, with bid/ask/none semantics depending on availability.",
+        "interpretation_notes": "本候选只定义市场微观结构解释、数据和执行边界，不输出买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+        "claim_strength": "medium_high",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general_with_market_specific_mapping",
+        "asset": "general",
+        "timeframe": "event_to_intraday",
+        "data_granularity": "order_book_trades_or_derivatives_market_data",
+        "project_type": "trading_ai_support_layer",
+        "applies_when": [
+          "构造 order flow proxy、OFI、signed volume 或 imbalance 特征",
+          "把订单流代理接入 AI scoring 或交易复盘"
+        ],
+        "not_applicable_when": [
+          "需要重建真实队列位置但只有聚合或 OHLCV 数据",
+          "没有声明采样窗口、重采样规则和方向推断方法",
+          "需要具体买卖点、仓位、杠杆、止损止盈价格、交易所私有配置、账户事实或实盘权限时，应由外接项目事实层、执行层和风控层处理。",
+          "AI Engineering 只能引用本规则，不得把本规则改写为 LLM 训练、MCP、RAG 或模型部署本体规则。"
+        ],
+        "assumptions": [
+          "候选用于 CEK-TA 通用支持层知识库，不包含任何外接项目私有策略参数。",
+          "微观结构结论必须保留市场、交易所、数据源、时间戳、粒度、执行和验证边界。",
+          "候选通过外部审计前不能进入正式 reviewed 知识库。"
+        ],
+        "limitations": [
+          "官方文档和平台文档只能支撑数据字段、接口语义和工程边界，不能证明交易优势。",
+          "论文或专业机构资料支持方法边界，不能替代具体交易所、数据供应商或外接项目契约。",
+          "本候选不提供任何投资建议或实盘执行许可。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_title": "Market by order (MBO)",
+          "source_url": "https://databento.com/docs/schemas-and-data-formats/mbo",
+          "source_type": "official_data_vendor_doc",
+          "publisher": "Databento",
+          "published_at": null,
+          "reliability": "medium_high",
+          "score": 82,
+          "freshness": "time_sensitive",
+          "evidence_summary": "Databento MBO provides every order book event across every price level keyed by order ID, including adds, cancels, modifies, trades and fills; it is commonly called L3 data.",
+          "limitations": [
+            "Vendor-specific schema; use as concrete data-model evidence, not universal market behavior."
+          ],
+          "source_id": "src_001",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Market by price (MBP-10)",
+          "source_url": "https://databento.com/docs/schemas-and-data-formats/mbp-10",
+          "source_type": "official_data_vendor_doc",
+          "publisher": "Databento",
+          "published_at": null,
+          "reliability": "medium_high",
+          "score": 82,
+          "freshness": "time_sensitive",
+          "evidence_summary": "Databento MBP-10 provides order-book events across the top ten price levels, with trade events and aggregate market depth by price; it is commonly called L2 data.",
+          "limitations": [
+            "Top-of-book/depth limitation must be declared; vendor-specific fields cannot be assumed for all feeds."
+          ],
+          "source_id": "src_002",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Trades schema",
+          "source_url": "https://databento.com/docs/schemas-and-data-formats/trades",
+          "source_type": "official_data_vendor_doc",
+          "publisher": "Databento",
+          "published_at": null,
+          "reliability": "medium_high",
+          "score": 82,
+          "freshness": "time_sensitive",
+          "evidence_summary": "Databento trades records include a side field for the side that initiates the trade, with bid/ask/none semantics depending on availability.",
+          "limitations": [
+            "Aggressor classification is feed- and venue-dependent; absence or ambiguity must be handled explicitly."
+          ],
+          "source_id": "src_003",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Trading Costs and Electronic Markets",
+          "source_url": "https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/trading-costs-and-electronic-markets",
+          "source_type": "professional_curriculum",
+          "publisher": "CFA Institute",
+          "published_at": "2026-01-01",
+          "reliability": "high",
+          "score": 88,
+          "freshness": "time_sensitive",
+          "evidence_summary": "CFA Institute explains explicit and implicit trading costs, transaction cost estimation, electronic trading, speed needs, market monitoring and systemic-risk caveats.",
+          "limitations": [
+            "Supports cost, speed and execution-quality context; it does not define exchange-specific order-book fields."
+          ],
+          "source_id": "src_004",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "medium_high",
+        "score": 83.5,
+        "score_version": "phase37_market_microstructure_source_scoring_v1",
+        "primary_source_count": 1,
+        "supporting_source_count": 3,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "正式入库前必须由外部审计确认 claim 没有超出来源可证明范围。",
+          "供应商、交易平台和交易所接口文档只可作为数据语义与工程边界证据，不能单独证明信号有效。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none_known_in_visible_context",
+        "checked_against": [
+          "Phase 36/38/40/41 AI Engineering 知识边界",
+          "现有 Trading Engineering formal 知识",
+          "Phase 37 Trading 与 AI 跨分支引用契约"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与可见正式知识的直接冲突；本候选只定义 Trading Engineering 市场微观结构规则本体，AI Engineering 只能引用。",
+        "approval_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 检索 Trading Engineering 市场微观结构边界。",
+          "用于审计交易项目方案中是否缺少盘口、订单流、流动性、滑点、延迟、市场影响和数据源边界。",
+          "用于辅助外接项目设计数据契约、特征边界、审计清单和 reason code。"
+        ],
+        "not_allowed": [
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+          "不得把候选知识当作 reviewed、approved、default guidance 或 hard gate。",
+          "不得绕过外接项目事实层、数据契约、执行适配器、风控 hard gate 或人工治理流程。"
+        ]
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "Phase 37 Market Microstructure candidate only; formal reviewed requires later reviewed-preparation gate.",
+        "requires_human_escalation": true,
+        "hidden_from_default_queue": true,
+        "visible_in_default_guidance_queue": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "review": {
+        "confidence": "medium_high",
+        "freshness": "mixed",
+        "reviewer": "codex_pre_audit_generation",
+        "reviewed_at": "2026-06-11",
+        "open_questions": [
+          "外部审计是否认为来源足以支撑该 claim？",
+          "是否需要补充更强的一手论文、监管材料、交易所规范或数据供应商字段级证据？",
+          "是否存在与现有 Data Engineering、Backtest、Replay、Live Execution、Risk Management 或 AI Engineering formal 知识的重叠，需要合并或拆分？"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-11",
+            "actor": "codex",
+            "action": "created",
+            "reason": "根据 Phase 37 P37-D Market Microstructure 队列生成 Trading Engineering 候选知识。"
+          },
+          {
+            "at": "2026-06-11",
+            "actor": "codex",
+            "action": "sourced",
+            "reason": "记录专业机构、监管、交易所/API、数据供应商和论文来源摘要。"
+          }
+        ]
+      },
+      "workflow": {
+        "stage": "candidate_ready",
+        "queue_group": "pending_ai_audit",
+        "current_task_id": "CEK-TA-402",
+        "next_action": "export_candidate_audit_package",
+        "next_allowed_decisions": [
+          "accepted_for_draft",
+          "needs_more_evidence",
+          "rejected"
+        ],
+        "forbidden_decisions": [
+          "reviewed",
+          "approved",
+          "default_guidance",
+          "hard_gate"
+        ],
+        "formalization_allowed": false,
+        "conversion_target": {
+          "proposed_knowledge_id": "kb_03_market_microstructure.order_flow_proxy_boundary.v1",
+          "target_review_status": "draft_only_after_external_audit",
+          "target_default_guidance": "deny"
+        }
+      },
+      "contribution": {
+        "origin": "codex_research_ingestion_phase37",
+        "private_data_removed": true,
+        "contains_account_facts": false,
+        "contains_secret": false,
+        "contains_project_private_strategy": false
+      }
+    },
+    {
+      "schema_version": "1.1.0-candidate",
+      "candidate_id": "cand_20260611_phase37_market_microstructure_slippage_regime_caveat_001",
+      "research_task_id": "P37-D-M10",
+      "status": {
+        "review_status": "sourced",
+        "ingestion_decision": "candidate_ready",
+        "decision_reason": "Phase 37 Market Microstructure 候选生成完成；等待外部 AI/人工严格审计。",
+        "created_at": "2026-06-11",
+        "updated_at": "2026-06-11"
+      },
+      "classification": {
+        "tree_node_id": "kt.market_microstructure",
+        "canonical_node_id": "kt.market_microstructure",
+        "tree_path": "CEK-TA / Trading Engineering / Market Microstructure",
+        "related_nodes": [
+          "kt.trading_engineering",
+          "kt.market_microstructure",
+          "kt.trading_engineering.data_engineering",
+          "kt.kline_strategy",
+          "kt.backtest",
+          "kt.replay_simulation",
+          "kt.live_execution",
+          "kt.risk_management",
+          "kt.ai_engineering.llm_training"
+        ],
+        "partition_id": "KB_03_MARKET_MICROSTRUCTURE",
+        "domain": "market_microstructure",
+        "subdomain": "slippage",
+        "rule_type": "trading_microstructure_boundary_rule",
+        "claim_type": "methodological_constraint",
+        "used_for": [
+          "market_microstructure_audit",
+          "strategy_design_audit",
+          "execution_cost_boundary",
+          "ai_trader_project_gap_audit",
+          "external_project_rag_retrieval"
+        ],
+        "classification_notes": "本候选主归属 Trading Engineering / Market Microstructure。AI Engineering 只能引用本规则，不得把盘口、订单流、滑点、funding/OI 或市场影响本体改写为模型训练规则。"
+      },
+      "claim": {
+        "claim_id": "claim_p37_d_m10",
+        "title": "滑点必须按流动性和执行 regime 建模",
+        "statement": "Slippage 不应使用固定常数覆盖所有品种、时段和订单类型；微观结构相关滑点必须按流动性、价差、深度、订单规模、波动、延迟和执行方式分层建模或审计。",
+        "normalized_claim": "microstructure.slippage_regime_caveat.v1",
+        "evidence_summary": "CFA Institute explains explicit and implicit trading costs, transaction cost estimation, electronic trading, speed needs, market monitoring and systemic-risk caveats.；CFA Institute frames trading decisions around liquidity needs, market conditions, execution risk, opportunity cost, market impact and trade cost analysis.；Almgren and Chriss model optimal execution as a trade-off between transaction costs, market impact and volatility risk.",
+        "interpretation_notes": "本候选只定义市场微观结构解释、数据和执行边界，不输出买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+        "claim_strength": "medium_high",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general_with_market_specific_mapping",
+        "asset": "general",
+        "timeframe": "event_to_intraday",
+        "data_granularity": "order_book_trades_or_derivatives_market_data",
+        "project_type": "trading_ai_support_layer",
+        "applies_when": [
+          "回测、回放、模拟盘、纸面交易或实盘复盘中的滑点假设",
+          "把 short-horizon signal 转成可执行交易候选"
+        ],
+        "not_applicable_when": [
+          "只研究理论指标不涉及成交",
+          "缺少订单类型、订单规模、成交规则或市场数据粒度",
+          "需要具体买卖点、仓位、杠杆、止损止盈价格、交易所私有配置、账户事实或实盘权限时，应由外接项目事实层、执行层和风控层处理。",
+          "AI Engineering 只能引用本规则，不得把本规则改写为 LLM 训练、MCP、RAG 或模型部署本体规则。"
+        ],
+        "assumptions": [
+          "候选用于 CEK-TA 通用支持层知识库，不包含任何外接项目私有策略参数。",
+          "微观结构结论必须保留市场、交易所、数据源、时间戳、粒度、执行和验证边界。",
+          "候选通过外部审计前不能进入正式 reviewed 知识库。"
+        ],
+        "limitations": [
+          "官方文档和平台文档只能支撑数据字段、接口语义和工程边界，不能证明交易优势。",
+          "论文或专业机构资料支持方法边界，不能替代具体交易所、数据供应商或外接项目契约。",
+          "本候选不提供任何投资建议或实盘执行许可。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_title": "Trading Costs and Electronic Markets",
+          "source_url": "https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/trading-costs-and-electronic-markets",
+          "source_type": "professional_curriculum",
+          "publisher": "CFA Institute",
+          "published_at": "2026-01-01",
+          "reliability": "high",
+          "score": 88,
+          "freshness": "time_sensitive",
+          "evidence_summary": "CFA Institute explains explicit and implicit trading costs, transaction cost estimation, electronic trading, speed needs, market monitoring and systemic-risk caveats.",
+          "limitations": [
+            "Supports cost, speed and execution-quality context; it does not define exchange-specific order-book fields."
+          ],
+          "source_id": "src_001",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Trade Strategy and Execution",
+          "source_url": "https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/trade-strategy-execution",
+          "source_type": "professional_curriculum",
+          "publisher": "CFA Institute",
+          "published_at": "2026-01-01",
+          "reliability": "high",
+          "score": 88,
+          "freshness": "time_sensitive",
+          "evidence_summary": "CFA Institute frames trading decisions around liquidity needs, market conditions, execution risk, opportunity cost, market impact and trade cost analysis.",
+          "limitations": [
+            "Professional curriculum source; it supports execution and cost boundaries, not any profitable microstructure signal."
+          ],
+          "source_id": "src_002",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Optimal Liquidation",
+          "source_url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=53501",
+          "source_type": "academic_paper",
+          "publisher": "SSRN / Applied Mathematical Finance",
+          "published_at": "2000-12-01",
+          "reliability": "high",
+          "score": 90,
+          "freshness": "stable",
+          "evidence_summary": "Almgren and Chriss model optimal execution as a trade-off between transaction costs, market impact and volatility risk.",
+          "limitations": [
+            "Optimal-execution model assumptions must be stated; not a default live trading permission."
+          ],
+          "source_id": "src_003",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Gauging the interplay between market liquidity and funding liquidity",
+          "source_url": "https://www.ecb.europa.eu/press/financial-stability-publications/fsr/special/html/ecb.fsrart202305_01~830184261b.en.html",
+          "source_type": "central_bank_research",
+          "publisher": "European Central Bank",
+          "published_at": "2023-05-31",
+          "reliability": "high",
+          "score": 86,
+          "freshness": "stable",
+          "evidence_summary": "ECB defines market liquidity as the ability to rapidly execute large transactions at low cost and limited price impact, and distinguishes it from funding liquidity.",
+          "limitations": [
+            "Macro/financial-stability framing; use for liquidity definitions and stress caveats."
+          ],
+          "source_id": "src_004",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "medium_high",
+        "score": 88.0,
+        "score_version": "phase37_market_microstructure_source_scoring_v1",
+        "primary_source_count": 4,
+        "supporting_source_count": 0,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "正式入库前必须由外部审计确认 claim 没有超出来源可证明范围。",
+          "供应商、交易平台和交易所接口文档只可作为数据语义与工程边界证据，不能单独证明信号有效。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none_known_in_visible_context",
+        "checked_against": [
+          "Phase 36/38/40/41 AI Engineering 知识边界",
+          "现有 Trading Engineering formal 知识",
+          "Phase 37 Trading 与 AI 跨分支引用契约"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与可见正式知识的直接冲突；本候选只定义 Trading Engineering 市场微观结构规则本体，AI Engineering 只能引用。",
+        "approval_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 检索 Trading Engineering 市场微观结构边界。",
+          "用于审计交易项目方案中是否缺少盘口、订单流、流动性、滑点、延迟、市场影响和数据源边界。",
+          "用于辅助外接项目设计数据契约、特征边界、审计清单和 reason code。"
+        ],
+        "not_allowed": [
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+          "不得把候选知识当作 reviewed、approved、default guidance 或 hard gate。",
+          "不得绕过外接项目事实层、数据契约、执行适配器、风控 hard gate 或人工治理流程。"
+        ]
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "Phase 37 Market Microstructure candidate only; formal reviewed requires later reviewed-preparation gate.",
+        "requires_human_escalation": true,
+        "hidden_from_default_queue": true,
+        "visible_in_default_guidance_queue": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "review": {
+        "confidence": "medium_high",
+        "freshness": "mixed",
+        "reviewer": "codex_pre_audit_generation",
+        "reviewed_at": "2026-06-11",
+        "open_questions": [
+          "外部审计是否认为来源足以支撑该 claim？",
+          "是否需要补充更强的一手论文、监管材料、交易所规范或数据供应商字段级证据？",
+          "是否存在与现有 Data Engineering、Backtest、Replay、Live Execution、Risk Management 或 AI Engineering formal 知识的重叠，需要合并或拆分？"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-11",
+            "actor": "codex",
+            "action": "created",
+            "reason": "根据 Phase 37 P37-D Market Microstructure 队列生成 Trading Engineering 候选知识。"
+          },
+          {
+            "at": "2026-06-11",
+            "actor": "codex",
+            "action": "sourced",
+            "reason": "记录专业机构、监管、交易所/API、数据供应商和论文来源摘要。"
+          }
+        ]
+      },
+      "workflow": {
+        "stage": "candidate_ready",
+        "queue_group": "pending_ai_audit",
+        "current_task_id": "CEK-TA-402",
+        "next_action": "export_candidate_audit_package",
+        "next_allowed_decisions": [
+          "accepted_for_draft",
+          "needs_more_evidence",
+          "rejected"
+        ],
+        "forbidden_decisions": [
+          "reviewed",
+          "approved",
+          "default_guidance",
+          "hard_gate"
+        ],
+        "formalization_allowed": false,
+        "conversion_target": {
+          "proposed_knowledge_id": "kb_03_market_microstructure.slippage_regime_caveat.v1",
+          "target_review_status": "draft_only_after_external_audit",
+          "target_default_guidance": "deny"
+        }
+      },
+      "contribution": {
+        "origin": "codex_research_ingestion_phase37",
+        "private_data_removed": true,
+        "contains_account_facts": false,
+        "contains_secret": false,
+        "contains_project_private_strategy": false
+      }
+    },
+    {
+      "schema_version": "1.1.0-candidate",
+      "candidate_id": "cand_20260611_phase37_market_microstructure_spread_liquidity_context_required_001",
+      "research_task_id": "P37-D-M01",
+      "status": {
+        "review_status": "sourced",
+        "ingestion_decision": "candidate_ready",
+        "decision_reason": "Phase 37 Market Microstructure 候选生成完成；等待外部 AI/人工严格审计。",
+        "created_at": "2026-06-11",
+        "updated_at": "2026-06-11"
+      },
+      "classification": {
+        "tree_node_id": "kt.market_microstructure",
+        "canonical_node_id": "kt.market_microstructure",
+        "tree_path": "CEK-TA / Trading Engineering / Market Microstructure",
+        "related_nodes": [
+          "kt.trading_engineering",
+          "kt.market_microstructure",
+          "kt.trading_engineering.data_engineering",
+          "kt.kline_strategy",
+          "kt.backtest",
+          "kt.replay_simulation",
+          "kt.live_execution",
+          "kt.risk_management",
+          "kt.ai_engineering.llm_training"
+        ],
+        "partition_id": "KB_03_MARKET_MICROSTRUCTURE",
+        "domain": "market_microstructure",
+        "subdomain": "spread_liquidity",
+        "rule_type": "trading_microstructure_boundary_rule",
+        "claim_type": "methodological_constraint",
+        "used_for": [
+          "market_microstructure_audit",
+          "strategy_design_audit",
+          "execution_cost_boundary",
+          "ai_trader_project_gap_audit",
+          "external_project_rag_retrieval"
+        ],
+        "classification_notes": "本候选主归属 Trading Engineering / Market Microstructure。AI Engineering 只能引用本规则，不得把盘口、订单流、滑点、funding/OI 或市场影响本体改写为模型训练规则。"
+      },
+      "claim": {
+        "claim_id": "claim_p37_d_m01",
+        "title": "价差信号必须声明流动性上下文",
+        "statement": "Bid-ask spread、盘口价差或价差收窄/扩大信号，必须同时声明市场、品种、交易时段、数据源、成交量和流动性状态；不得把单一价差变化解释为通用交易方向。",
+        "normalized_claim": "microstructure.spread_liquidity_context_required.v1",
+        "evidence_summary": "CFA Institute explains explicit and implicit trading costs, transaction cost estimation, electronic trading, speed needs, market monitoring and systemic-risk caveats.；CFA Institute frames trading decisions around liquidity needs, market conditions, execution risk, opportunity cost, market impact and trade cost analysis.；ECB defines market liquidity as the ability to rapidly execute large transactions at low cost and limited price impact, and distinguishes it from funding liquidity.",
+        "interpretation_notes": "本候选只定义市场微观结构解释、数据和执行边界，不输出买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+        "claim_strength": "medium_high",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general_with_market_specific_mapping",
+        "asset": "general",
+        "timeframe": "event_to_intraday",
+        "data_granularity": "order_book_trades_or_derivatives_market_data",
+        "project_type": "trading_ai_support_layer",
+        "applies_when": [
+          "审计价差、流动性、报价质量或执行成本相关指标",
+          "把价差特征用于交易候选评分或交易质量复盘"
+        ],
+        "not_applicable_when": [
+          "需要直接生成买卖方向、仓位、杠杆或止损止盈参数",
+          "数据源没有 bid/ask、深度、时间戳或交易时段信息",
+          "需要具体买卖点、仓位、杠杆、止损止盈价格、交易所私有配置、账户事实或实盘权限时，应由外接项目事实层、执行层和风控层处理。",
+          "AI Engineering 只能引用本规则，不得把本规则改写为 LLM 训练、MCP、RAG 或模型部署本体规则。"
+        ],
+        "assumptions": [
+          "候选用于 CEK-TA 通用支持层知识库，不包含任何外接项目私有策略参数。",
+          "微观结构结论必须保留市场、交易所、数据源、时间戳、粒度、执行和验证边界。",
+          "候选通过外部审计前不能进入正式 reviewed 知识库。"
+        ],
+        "limitations": [
+          "官方文档和平台文档只能支撑数据字段、接口语义和工程边界，不能证明交易优势。",
+          "论文或专业机构资料支持方法边界，不能替代具体交易所、数据供应商或外接项目契约。",
+          "本候选不提供任何投资建议或实盘执行许可。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_title": "Trading Costs and Electronic Markets",
+          "source_url": "https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/trading-costs-and-electronic-markets",
+          "source_type": "professional_curriculum",
+          "publisher": "CFA Institute",
+          "published_at": "2026-01-01",
+          "reliability": "high",
+          "score": 88,
+          "freshness": "time_sensitive",
+          "evidence_summary": "CFA Institute explains explicit and implicit trading costs, transaction cost estimation, electronic trading, speed needs, market monitoring and systemic-risk caveats.",
+          "limitations": [
+            "Supports cost, speed and execution-quality context; it does not define exchange-specific order-book fields."
+          ],
+          "source_id": "src_001",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Trade Strategy and Execution",
+          "source_url": "https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/trade-strategy-execution",
+          "source_type": "professional_curriculum",
+          "publisher": "CFA Institute",
+          "published_at": "2026-01-01",
+          "reliability": "high",
+          "score": 88,
+          "freshness": "time_sensitive",
+          "evidence_summary": "CFA Institute frames trading decisions around liquidity needs, market conditions, execution risk, opportunity cost, market impact and trade cost analysis.",
+          "limitations": [
+            "Professional curriculum source; it supports execution and cost boundaries, not any profitable microstructure signal."
+          ],
+          "source_id": "src_002",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Gauging the interplay between market liquidity and funding liquidity",
+          "source_url": "https://www.ecb.europa.eu/press/financial-stability-publications/fsr/special/html/ecb.fsrart202305_01~830184261b.en.html",
+          "source_type": "central_bank_research",
+          "publisher": "European Central Bank",
+          "published_at": "2023-05-31",
+          "reliability": "high",
+          "score": 86,
+          "freshness": "stable",
+          "evidence_summary": "ECB defines market liquidity as the ability to rapidly execute large transactions at low cost and limited price impact, and distinguishes it from funding liquidity.",
+          "limitations": [
+            "Macro/financial-stability framing; use for liquidity definitions and stress caveats."
+          ],
+          "source_id": "src_003",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Nasdaq TotalView",
+          "source_url": "https://www.nasdaq.com/solutions/data/equities/nasdaq-totalview",
+          "source_type": "official_exchange_data_doc",
+          "publisher": "Nasdaq",
+          "published_at": null,
+          "reliability": "medium_high",
+          "score": 82,
+          "freshness": "time_sensitive",
+          "evidence_summary": "Nasdaq describes TotalView as complete depth-of-book for displayed orders across Nasdaq, NYSE and regional securities.",
+          "limitations": [
+            "Exchange/data-product specific; not a universal guarantee of hidden liquidity, off-book trades or all venues."
+          ],
+          "source_id": "src_004",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "medium_high",
+        "score": 86.0,
+        "score_version": "phase37_market_microstructure_source_scoring_v1",
+        "primary_source_count": 3,
+        "supporting_source_count": 1,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "正式入库前必须由外部审计确认 claim 没有超出来源可证明范围。",
+          "供应商、交易平台和交易所接口文档只可作为数据语义与工程边界证据，不能单独证明信号有效。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none_known_in_visible_context",
+        "checked_against": [
+          "Phase 36/38/40/41 AI Engineering 知识边界",
+          "现有 Trading Engineering formal 知识",
+          "Phase 37 Trading 与 AI 跨分支引用契约"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与可见正式知识的直接冲突；本候选只定义 Trading Engineering 市场微观结构规则本体，AI Engineering 只能引用。",
+        "approval_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 检索 Trading Engineering 市场微观结构边界。",
+          "用于审计交易项目方案中是否缺少盘口、订单流、流动性、滑点、延迟、市场影响和数据源边界。",
+          "用于辅助外接项目设计数据契约、特征边界、审计清单和 reason code。"
+        ],
+        "not_allowed": [
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+          "不得把候选知识当作 reviewed、approved、default guidance 或 hard gate。",
+          "不得绕过外接项目事实层、数据契约、执行适配器、风控 hard gate 或人工治理流程。"
+        ]
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "Phase 37 Market Microstructure candidate only; formal reviewed requires later reviewed-preparation gate.",
+        "requires_human_escalation": true,
+        "hidden_from_default_queue": true,
+        "visible_in_default_guidance_queue": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "review": {
+        "confidence": "medium_high",
+        "freshness": "mixed",
+        "reviewer": "codex_pre_audit_generation",
+        "reviewed_at": "2026-06-11",
+        "open_questions": [
+          "外部审计是否认为来源足以支撑该 claim？",
+          "是否需要补充更强的一手论文、监管材料、交易所规范或数据供应商字段级证据？",
+          "是否存在与现有 Data Engineering、Backtest、Replay、Live Execution、Risk Management 或 AI Engineering formal 知识的重叠，需要合并或拆分？"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-11",
+            "actor": "codex",
+            "action": "created",
+            "reason": "根据 Phase 37 P37-D Market Microstructure 队列生成 Trading Engineering 候选知识。"
+          },
+          {
+            "at": "2026-06-11",
+            "actor": "codex",
+            "action": "sourced",
+            "reason": "记录专业机构、监管、交易所/API、数据供应商和论文来源摘要。"
+          }
+        ]
+      },
+      "workflow": {
+        "stage": "candidate_ready",
+        "queue_group": "pending_ai_audit",
+        "current_task_id": "CEK-TA-402",
+        "next_action": "export_candidate_audit_package",
+        "next_allowed_decisions": [
+          "accepted_for_draft",
+          "needs_more_evidence",
+          "rejected"
+        ],
+        "forbidden_decisions": [
+          "reviewed",
+          "approved",
+          "default_guidance",
+          "hard_gate"
+        ],
+        "formalization_allowed": false,
+        "conversion_target": {
+          "proposed_knowledge_id": "kb_03_market_microstructure.spread_liquidity_context_required.v1",
+          "target_review_status": "draft_only_after_external_audit",
+          "target_default_guidance": "deny"
+        }
+      },
+      "contribution": {
+        "origin": "codex_research_ingestion_phase37",
+        "private_data_removed": true,
+        "contains_account_facts": false,
+        "contains_secret": false,
+        "contains_project_private_strategy": false
+      }
+    },
+    {
+      "schema_version": "1.1.0-candidate",
+      "candidate_id": "cand_20260611_phase37_market_microstructure_thin_market_execution_risk_001",
+      "research_task_id": "P37-D-M11",
+      "status": {
+        "review_status": "sourced",
+        "ingestion_decision": "candidate_ready",
+        "decision_reason": "Phase 37 Market Microstructure 候选生成完成；等待外部 AI/人工严格审计。",
+        "created_at": "2026-06-11",
+        "updated_at": "2026-06-11"
+      },
+      "classification": {
+        "tree_node_id": "kt.market_microstructure",
+        "canonical_node_id": "kt.market_microstructure",
+        "tree_path": "CEK-TA / Trading Engineering / Market Microstructure",
+        "related_nodes": [
+          "kt.trading_engineering",
+          "kt.market_microstructure",
+          "kt.trading_engineering.data_engineering",
+          "kt.kline_strategy",
+          "kt.backtest",
+          "kt.replay_simulation",
+          "kt.live_execution",
+          "kt.risk_management",
+          "kt.ai_engineering.llm_training"
+        ],
+        "partition_id": "KB_03_MARKET_MICROSTRUCTURE",
+        "domain": "market_microstructure",
+        "subdomain": "thin_market",
+        "rule_type": "trading_microstructure_boundary_rule",
+        "claim_type": "methodological_constraint",
+        "used_for": [
+          "market_microstructure_audit",
+          "strategy_design_audit",
+          "execution_cost_boundary",
+          "ai_trader_project_gap_audit",
+          "external_project_rag_retrieval"
+        ],
+        "classification_notes": "本候选主归属 Trading Engineering / Market Microstructure。AI Engineering 只能引用本规则，不得把盘口、订单流、滑点、funding/OI 或市场影响本体改写为模型训练规则。"
+      },
+      "claim": {
+        "claim_id": "claim_p37_d_m11",
+        "title": "薄市场执行风险必须显式阻断或降级",
+        "statement": "在薄市场、低深度、宽价差、事件冲击或流动性枯竭场景下，微观结构信号必须降级为风险提示或要求人工/风控复核；不能把正常市场假设沿用到 thin market 执行。",
+        "normalized_claim": "microstructure.thin_market_execution_risk.v1",
+        "evidence_summary": "ECB defines market liquidity as the ability to rapidly execute large transactions at low cost and limited price impact, and distinguishes it from funding liquidity.；Brunnermeier and Pedersen model how market liquidity and funding liquidity can reinforce each other and can dry up under stress.；CFA Institute frames trading decisions around liquidity needs, market conditions, execution risk, opportunity cost, market impact and trade cost analysis.",
+        "interpretation_notes": "本候选只定义市场微观结构解释、数据和执行边界，不输出买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+        "claim_strength": "medium_high",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general_with_market_specific_mapping",
+        "asset": "general",
+        "timeframe": "event_to_intraday",
+        "data_granularity": "order_book_trades_or_derivatives_market_data",
+        "project_type": "trading_ai_support_layer",
+        "applies_when": [
+          "低流动性品种、盘前盘后、重大事件、市场压力或异常价差状态",
+          "设计 final gate 前的风险提示、降级或人工复核规则"
+        ],
+        "not_applicable_when": [
+          "没有行情质量、深度、成交量或事件上下文",
+          "把风险提示直接写成自动交易许可",
+          "需要具体买卖点、仓位、杠杆、止损止盈价格、交易所私有配置、账户事实或实盘权限时，应由外接项目事实层、执行层和风控层处理。",
+          "AI Engineering 只能引用本规则，不得把本规则改写为 LLM 训练、MCP、RAG 或模型部署本体规则。"
+        ],
+        "assumptions": [
+          "候选用于 CEK-TA 通用支持层知识库，不包含任何外接项目私有策略参数。",
+          "微观结构结论必须保留市场、交易所、数据源、时间戳、粒度、执行和验证边界。",
+          "候选通过外部审计前不能进入正式 reviewed 知识库。"
+        ],
+        "limitations": [
+          "官方文档和平台文档只能支撑数据字段、接口语义和工程边界，不能证明交易优势。",
+          "论文或专业机构资料支持方法边界，不能替代具体交易所、数据供应商或外接项目契约。",
+          "本候选不提供任何投资建议或实盘执行许可。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_title": "Gauging the interplay between market liquidity and funding liquidity",
+          "source_url": "https://www.ecb.europa.eu/press/financial-stability-publications/fsr/special/html/ecb.fsrart202305_01~830184261b.en.html",
+          "source_type": "central_bank_research",
+          "publisher": "European Central Bank",
+          "published_at": "2023-05-31",
+          "reliability": "high",
+          "score": 86,
+          "freshness": "stable",
+          "evidence_summary": "ECB defines market liquidity as the ability to rapidly execute large transactions at low cost and limited price impact, and distinguishes it from funding liquidity.",
+          "limitations": [
+            "Macro/financial-stability framing; use for liquidity definitions and stress caveats."
+          ],
+          "source_id": "src_001",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Market Liquidity and Funding Liquidity",
+          "source_url": "https://www.nber.org/system/files/working_papers/w12939/w12939.pdf",
+          "source_type": "academic_paper",
+          "publisher": "NBER",
+          "published_at": "2007-02-01",
+          "reliability": "high",
+          "score": 88,
+          "freshness": "stable",
+          "evidence_summary": "Brunnermeier and Pedersen model how market liquidity and funding liquidity can reinforce each other and can dry up under stress.",
+          "limitations": [
+            "Theoretical liquidity-stress source; does not define a trading signal or venue-specific field."
+          ],
+          "source_id": "src_002",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Trade Strategy and Execution",
+          "source_url": "https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/trade-strategy-execution",
+          "source_type": "professional_curriculum",
+          "publisher": "CFA Institute",
+          "published_at": "2026-01-01",
+          "reliability": "high",
+          "score": 88,
+          "freshness": "time_sensitive",
+          "evidence_summary": "CFA Institute frames trading decisions around liquidity needs, market conditions, execution risk, opportunity cost, market impact and trade cost analysis.",
+          "limitations": [
+            "Professional curriculum source; it supports execution and cost boundaries, not any profitable microstructure signal."
+          ],
+          "source_id": "src_003",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Responses to Frequently Asked Questions Concerning Risk Management Controls for Brokers or Dealers with Market Access",
+          "source_url": "https://www.sec.gov/rules-regulations/staff-guidance/trading-markets-frequently-asked-questions/divisionsmarketregfaq-0",
+          "source_type": "regulatory_guidance",
+          "publisher": "U.S. Securities and Exchange Commission",
+          "published_at": "2013-04-15",
+          "reliability": "high",
+          "score": 88,
+          "freshness": "stable",
+          "evidence_summary": "SEC Rule 15c3-5 guidance requires risk management controls and supervisory procedures for market access to be reviewed regularly for effectiveness.",
+          "limitations": [
+            "Broker-dealer market-access regulation; use as risk-control context rather than microstructure signal proof."
+          ],
+          "source_id": "src_004",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "medium_high",
+        "score": 87.5,
+        "score_version": "phase37_market_microstructure_source_scoring_v1",
+        "primary_source_count": 4,
+        "supporting_source_count": 0,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "正式入库前必须由外部审计确认 claim 没有超出来源可证明范围。",
+          "供应商、交易平台和交易所接口文档只可作为数据语义与工程边界证据，不能单独证明信号有效。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none_known_in_visible_context",
+        "checked_against": [
+          "Phase 36/38/40/41 AI Engineering 知识边界",
+          "现有 Trading Engineering formal 知识",
+          "Phase 37 Trading 与 AI 跨分支引用契约"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与可见正式知识的直接冲突；本候选只定义 Trading Engineering 市场微观结构规则本体，AI Engineering 只能引用。",
+        "approval_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 检索 Trading Engineering 市场微观结构边界。",
+          "用于审计交易项目方案中是否缺少盘口、订单流、流动性、滑点、延迟、市场影响和数据源边界。",
+          "用于辅助外接项目设计数据契约、特征边界、审计清单和 reason code。"
+        ],
+        "not_allowed": [
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+          "不得把候选知识当作 reviewed、approved、default guidance 或 hard gate。",
+          "不得绕过外接项目事实层、数据契约、执行适配器、风控 hard gate 或人工治理流程。"
+        ]
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "Phase 37 Market Microstructure candidate only; formal reviewed requires later reviewed-preparation gate.",
+        "requires_human_escalation": true,
+        "hidden_from_default_queue": true,
+        "visible_in_default_guidance_queue": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "review": {
+        "confidence": "medium_high",
+        "freshness": "mixed",
+        "reviewer": "codex_pre_audit_generation",
+        "reviewed_at": "2026-06-11",
+        "open_questions": [
+          "外部审计是否认为来源足以支撑该 claim？",
+          "是否需要补充更强的一手论文、监管材料、交易所规范或数据供应商字段级证据？",
+          "是否存在与现有 Data Engineering、Backtest、Replay、Live Execution、Risk Management 或 AI Engineering formal 知识的重叠，需要合并或拆分？"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-11",
+            "actor": "codex",
+            "action": "created",
+            "reason": "根据 Phase 37 P37-D Market Microstructure 队列生成 Trading Engineering 候选知识。"
+          },
+          {
+            "at": "2026-06-11",
+            "actor": "codex",
+            "action": "sourced",
+            "reason": "记录专业机构、监管、交易所/API、数据供应商和论文来源摘要。"
+          }
+        ]
+      },
+      "workflow": {
+        "stage": "candidate_ready",
+        "queue_group": "pending_ai_audit",
+        "current_task_id": "CEK-TA-402",
+        "next_action": "export_candidate_audit_package",
+        "next_allowed_decisions": [
+          "accepted_for_draft",
+          "needs_more_evidence",
+          "rejected"
+        ],
+        "forbidden_decisions": [
+          "reviewed",
+          "approved",
+          "default_guidance",
+          "hard_gate"
+        ],
+        "formalization_allowed": false,
+        "conversion_target": {
+          "proposed_knowledge_id": "kb_03_market_microstructure.thin_market_execution_risk.v1",
+          "target_review_status": "draft_only_after_external_audit",
+          "target_default_guidance": "deny"
+        }
+      },
+      "contribution": {
+        "origin": "codex_research_ingestion_phase37",
+        "private_data_removed": true,
+        "contains_account_facts": false,
+        "contains_secret": false,
+        "contains_project_private_strategy": false
+      }
+    },
+    {
+      "schema_version": "1.1.0-candidate",
+      "candidate_id": "cand_20260611_phase37_market_microstructure_trade_prints_aggressor_caveat_001",
+      "research_task_id": "P37-D-M03",
+      "status": {
+        "review_status": "sourced",
+        "ingestion_decision": "candidate_ready",
+        "decision_reason": "Phase 37 Market Microstructure 候选生成完成；等待外部 AI/人工严格审计。",
+        "created_at": "2026-06-11",
+        "updated_at": "2026-06-11"
+      },
+      "classification": {
+        "tree_node_id": "kt.market_microstructure",
+        "canonical_node_id": "kt.market_microstructure",
+        "tree_path": "CEK-TA / Trading Engineering / Market Microstructure",
+        "related_nodes": [
+          "kt.trading_engineering",
+          "kt.market_microstructure",
+          "kt.trading_engineering.data_engineering",
+          "kt.kline_strategy",
+          "kt.backtest",
+          "kt.replay_simulation",
+          "kt.live_execution",
+          "kt.risk_management",
+          "kt.ai_engineering.llm_training"
+        ],
+        "partition_id": "KB_03_MARKET_MICROSTRUCTURE",
+        "domain": "market_microstructure",
+        "subdomain": "trade_prints",
+        "rule_type": "trading_microstructure_boundary_rule",
+        "claim_type": "methodological_constraint",
+        "used_for": [
+          "market_microstructure_audit",
+          "strategy_design_audit",
+          "execution_cost_boundary",
+          "ai_trader_project_gap_audit",
+          "external_project_rag_retrieval"
+        ],
+        "classification_notes": "本候选主归属 Trading Engineering / Market Microstructure。AI Engineering 只能引用本规则，不得把盘口、订单流、滑点、funding/OI 或市场影响本体改写为模型训练规则。"
+      },
+      "claim": {
+        "claim_id": "claim_p37_d_m03",
+        "title": "逐笔成交 aggressor 方向必须保留数据源语义",
+        "statement": "Trade prints 的买卖主动方、bid/ask hit 或 aggressor side 必须按数据源字段定义解释；缺失、推断或 venue 规则不一致时，不能把 trade side 当成确定订单流事实。",
+        "normalized_claim": "microstructure.trade_prints_aggressor_caveat.v1",
+        "evidence_summary": "Databento trades records include a side field for the side that initiates the trade, with bid/ask/none semantics depending on availability.；Nasdaq TotalView-ITCH tracks full order depth through order-level messages that add, execute, cancel, delete and replace customer orders.；Databento MBO provides every order book event across every price level keyed by order ID, including adds, cancels, modifies, trades and fills; it is commonly called L3 data.",
+        "interpretation_notes": "本候选只定义市场微观结构解释、数据和执行边界，不输出买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+        "claim_strength": "medium_high",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general_with_market_specific_mapping",
+        "asset": "general",
+        "timeframe": "event_to_intraday",
+        "data_granularity": "order_book_trades_or_derivatives_market_data",
+        "project_type": "trading_ai_support_layer",
+        "applies_when": [
+          "使用逐笔成交、tape、aggressor side、trade side 或成交方向特征",
+          "审计订单流、成交量 delta 或交易行为标签"
+        ],
+        "not_applicable_when": [
+          "数据源没有 aggressor 字段且未声明推断规则",
+          "跨交易所直接合并 trade side 而未做字段映射",
+          "需要具体买卖点、仓位、杠杆、止损止盈价格、交易所私有配置、账户事实或实盘权限时，应由外接项目事实层、执行层和风控层处理。",
+          "AI Engineering 只能引用本规则，不得把本规则改写为 LLM 训练、MCP、RAG 或模型部署本体规则。"
+        ],
+        "assumptions": [
+          "候选用于 CEK-TA 通用支持层知识库，不包含任何外接项目私有策略参数。",
+          "微观结构结论必须保留市场、交易所、数据源、时间戳、粒度、执行和验证边界。",
+          "候选通过外部审计前不能进入正式 reviewed 知识库。"
+        ],
+        "limitations": [
+          "官方文档和平台文档只能支撑数据字段、接口语义和工程边界，不能证明交易优势。",
+          "论文或专业机构资料支持方法边界，不能替代具体交易所、数据供应商或外接项目契约。",
+          "本候选不提供任何投资建议或实盘执行许可。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_title": "Trades schema",
+          "source_url": "https://databento.com/docs/schemas-and-data-formats/trades",
+          "source_type": "official_data_vendor_doc",
+          "publisher": "Databento",
+          "published_at": null,
+          "reliability": "medium_high",
+          "score": 82,
+          "freshness": "time_sensitive",
+          "evidence_summary": "Databento trades records include a side field for the side that initiates the trade, with bid/ask/none semantics depending on availability.",
+          "limitations": [
+            "Aggressor classification is feed- and venue-dependent; absence or ambiguity must be handled explicitly."
+          ],
+          "source_id": "src_001",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Nasdaq TotalView-ITCH 5.0 specification",
+          "source_url": "https://www.nasdaqtrader.com/content/technicalsupport/specifications/dataproducts/NQTVITCHSpecification.pdf",
+          "source_type": "official_exchange_spec",
+          "publisher": "Nasdaq Trader",
+          "published_at": "2024-01-01",
+          "reliability": "medium_high",
+          "score": 84,
+          "freshness": "time_sensitive",
+          "evidence_summary": "Nasdaq TotalView-ITCH tracks full order depth through order-level messages that add, execute, cancel, delete and replace customer orders.",
+          "limitations": [
+            "Specific to Nasdaq ITCH feed semantics and not directly transferable to all exchanges."
+          ],
+          "source_id": "src_002",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Market by order (MBO)",
+          "source_url": "https://databento.com/docs/schemas-and-data-formats/mbo",
+          "source_type": "official_data_vendor_doc",
+          "publisher": "Databento",
+          "published_at": null,
+          "reliability": "medium_high",
+          "score": 82,
+          "freshness": "time_sensitive",
+          "evidence_summary": "Databento MBO provides every order book event across every price level keyed by order ID, including adds, cancels, modifies, trades and fills; it is commonly called L3 data.",
+          "limitations": [
+            "Vendor-specific schema; use as concrete data-model evidence, not universal market behavior."
+          ],
+          "source_id": "src_003",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Trading Costs and Electronic Markets",
+          "source_url": "https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/trading-costs-and-electronic-markets",
+          "source_type": "professional_curriculum",
+          "publisher": "CFA Institute",
+          "published_at": "2026-01-01",
+          "reliability": "high",
+          "score": 88,
+          "freshness": "time_sensitive",
+          "evidence_summary": "CFA Institute explains explicit and implicit trading costs, transaction cost estimation, electronic trading, speed needs, market monitoring and systemic-risk caveats.",
+          "limitations": [
+            "Supports cost, speed and execution-quality context; it does not define exchange-specific order-book fields."
+          ],
+          "source_id": "src_004",
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "relevance": "medium_high",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "medium_high",
+        "score": 84.0,
+        "score_version": "phase37_market_microstructure_source_scoring_v1",
+        "primary_source_count": 1,
+        "supporting_source_count": 3,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "正式入库前必须由外部审计确认 claim 没有超出来源可证明范围。",
+          "供应商、交易平台和交易所接口文档只可作为数据语义与工程边界证据，不能单独证明信号有效。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none_known_in_visible_context",
+        "checked_against": [
+          "Phase 36/38/40/41 AI Engineering 知识边界",
+          "现有 Trading Engineering formal 知识",
+          "Phase 37 Trading 与 AI 跨分支引用契约"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与可见正式知识的直接冲突；本候选只定义 Trading Engineering 市场微观结构规则本体，AI Engineering 只能引用。",
+        "approval_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 检索 Trading Engineering 市场微观结构边界。",
+          "用于审计交易项目方案中是否缺少盘口、订单流、流动性、滑点、延迟、市场影响和数据源边界。",
+          "用于辅助外接项目设计数据契约、特征边界、审计清单和 reason code。"
+        ],
+        "not_allowed": [
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+          "不得把候选知识当作 reviewed、approved、default guidance 或 hard gate。",
+          "不得绕过外接项目事实层、数据契约、执行适配器、风控 hard gate 或人工治理流程。"
+        ]
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "Phase 37 Market Microstructure candidate only; formal reviewed requires later reviewed-preparation gate.",
+        "requires_human_escalation": true,
+        "hidden_from_default_queue": true,
+        "visible_in_default_guidance_queue": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "review": {
+        "confidence": "medium_high",
+        "freshness": "mixed",
+        "reviewer": "codex_pre_audit_generation",
+        "reviewed_at": "2026-06-11",
+        "open_questions": [
+          "外部审计是否认为来源足以支撑该 claim？",
+          "是否需要补充更强的一手论文、监管材料、交易所规范或数据供应商字段级证据？",
+          "是否存在与现有 Data Engineering、Backtest、Replay、Live Execution、Risk Management 或 AI Engineering formal 知识的重叠，需要合并或拆分？"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-11",
+            "actor": "codex",
+            "action": "created",
+            "reason": "根据 Phase 37 P37-D Market Microstructure 队列生成 Trading Engineering 候选知识。"
+          },
+          {
+            "at": "2026-06-11",
+            "actor": "codex",
+            "action": "sourced",
+            "reason": "记录专业机构、监管、交易所/API、数据供应商和论文来源摘要。"
+          }
+        ]
+      },
+      "workflow": {
+        "stage": "candidate_ready",
+        "queue_group": "pending_ai_audit",
+        "current_task_id": "CEK-TA-402",
+        "next_action": "export_candidate_audit_package",
+        "next_allowed_decisions": [
+          "accepted_for_draft",
+          "needs_more_evidence",
+          "rejected"
+        ],
+        "forbidden_decisions": [
+          "reviewed",
+          "approved",
+          "default_guidance",
+          "hard_gate"
+        ],
+        "formalization_allowed": false,
+        "conversion_target": {
+          "proposed_knowledge_id": "kb_03_market_microstructure.trade_prints_aggressor_caveat.v1",
+          "target_review_status": "draft_only_after_external_audit",
+          "target_default_guidance": "deny"
+        }
+      },
+      "contribution": {
+        "origin": "codex_research_ingestion_phase37",
+        "private_data_removed": true,
+        "contains_account_facts": false,
+        "contains_secret": false,
+        "contains_project_private_strategy": false
+      }
+    }
+  ]
+}

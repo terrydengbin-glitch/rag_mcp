@@ -1,0 +1,216 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_09_rag_engineering.source_quality.unsourced_default_block.v1",
+  "title": "无来源知识不能作为 Codex 默认专业指导",
+  "metadata": {
+    "partition_id": "KB_09_RAG_ENGINEERING",
+    "domain": "rag_engineering",
+    "subdomain": "source_quality",
+    "rule_type": "principle",
+    "content_type": "json",
+    "project_binding": "none",
+    "tree_node_id": "kt.rag_engineering.source_quality",
+    "tree_path": "CEK-TA / AI Engineering / RAG Engineering / Source Quality",
+    "canonical_node_id": "kt.ai_engineering.rag_engineering.source_quality",
+    "canonical_tree_path": "CEK-TA / AI Engineering / RAG Engineering / Source Quality",
+    "risk_level": "high",
+    "used_for": [
+      "code_review",
+      "llm_training",
+      "rag_engineering",
+      "mcp",
+      "vue_audit_ui",
+      "project_integration"
+    ],
+    "claim_type": "rag_governance_rule",
+    "classification_notes": "UI tree node is kt.rag_engineering.source_quality; canonical classification is kt.ai_engineering.rag_engineering.source_quality."
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "general",
+    "data_granularity": "general",
+    "project_type": "trading_llm_assistant",
+    "applies_when": [
+      "Codex、MCP 或 RAG 系统准备把知识作为默认专业指导返回",
+      "知识条目会影响交易工程、回测审计、实盘风控、LLM 训练或外部项目决策",
+      "需要判断候选知识是否可进入 approved 或 default_guidance"
+    ],
+    "not_applicable_when": [
+      "仅在 audit 模式展示 draft/candidate 知识，并明确标注缺来源",
+      "用户只是整理待采集 backlog，不把内容作为专业结论使用",
+      "知识是项目私有事实且尚未脱敏、泛化和来源补强"
+    ]
+  },
+  "content": {
+    "statement": "没有 source_evidence 的知识不得成为 approved，也不得在 default_guidance 模式下作为 Codex 专业指导返回。",
+    "rationale": "交易和 AI 工程知识会影响策略设计、回测判断、风控实现和模型训练；无来源结论无法审计、无法复核适用边界，也无法与冲突规则比较。",
+    "procedure": [
+      "检查知识条目是否有 source_evidence 或 source_refs。",
+      "检查 source_type、publisher、accessed_at、reliability、evidence_summary 是否完整。",
+      "检查来源是否支撑具体 statement，而不是只相关于宽泛主题。",
+      "默认检索只允许 approved 且 source_evidence 非空的知识进入 default_guidance。",
+      "缺来源知识只能进入 backlog、draft 或 audit 视图，并生成补来源任务。"
+    ],
+    "examples": [
+      "一条回测规则没有任何来源，只能作为候选或待研究问题，不能作为默认指导。",
+      "一条来自项目事故复盘的经验，必须先脱敏、补来源、分类和冲突检查，才能考虑泛化。"
+    ],
+    "anti_patterns": [
+      "把 Codex 生成的总结直接标记为 approved。",
+      "把项目私有经验标记为 project_binding=none。",
+      "引用来源主题相关但不支撑具体规则。"
+    ],
+    "validation": [
+      "检查 approved 条目的 source_evidence 长度必须大于 0。",
+      "检查 low-only 来源不能单独支撑 approved。",
+      "检查 default_guidance 检索不得返回 unsourced 条目。",
+      "检查 Vue3 以红色或阻断状态显示无来源 approved 尝试。"
+    ],
+    "risk_notes": [
+      "该知识是治理规则，不是交易信号。",
+      "内部 CEK-TA 规范可作为中等可靠来源支撑系统行为，但专业交易结论仍需外部或权威来源支撑。",
+      "对时间敏感来源还必须检查 freshness。"
+    ],
+    "citation_notes": "CEK-TA source quality、search result contract、quality metrics 已规定 approved/default guidance 需要来源、引用和阻断规则；NIST AI RMF Core 也强调风险管理中的文档化、度量和持续改进。"
+  },
+  "assumptions": [
+    "该知识用于 CEK-TA 的 RAG/MCP/Vue3 知识治理。",
+    "用户希望 Codex 返回可审计、可引用、可复核的专业知识。",
+    "缺来源知识可以被保存为候选，但不能作为默认专业指导。"
+  ],
+  "source_evidence": [
+    {
+      "source_id": "src_seed_005",
+      "source_title": "NIST AI RMF Core",
+      "source_url": "https://airc.nist.gov/airmf-resources/airmf/5-sec-core/",
+      "source_type": "official_doc",
+      "publisher": "NIST Trustworthy and Responsible AI Resource Center",
+      "published_at": "2023-01-26",
+      "accessed_at": "2026-06-08",
+      "version": "AI RMF 1.0 Core",
+      "reliability": "high",
+      "relevance": "medium",
+      "evidence_summary": "NIST AI RMF Core 强调 AI 风险管理需要 govern、map、measure、manage，并强调文档、度量、风险识别和持续改进，为 RAG 知识治理中的来源和审计要求提供治理依据。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_seed_007",
+      "source_title": "CEK-TA Source Quality Rules",
+      "source_url": "codex-expert-kit/rag/source_quality_rules.md",
+      "source_type": "internal_report",
+      "publisher": "CEK-TA",
+      "published_at": "2026-06-08",
+      "accessed_at": "2026-06-08",
+      "version": "1.0.0",
+      "reliability": "medium",
+      "relevance": "high",
+      "evidence_summary": "CEK-TA 来源质量规则规定 approved 知识至少需要 medium/high 来源，low 来源不能单独支持批准。",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_seed_008",
+      "source_title": "CEK-TA Search Result Contract",
+      "source_url": "codex-expert-kit/rag/search_result_contract.md",
+      "source_type": "internal_report",
+      "publisher": "CEK-TA",
+      "published_at": "2026-06-08",
+      "accessed_at": "2026-06-08",
+      "version": "1.0.0",
+      "reliability": "medium",
+      "relevance": "high",
+      "evidence_summary": "CEK-TA 检索结果契约规定默认指导必须带 source_refs，并阻断无来源、draft、rejected、deprecated 或未消解冲突知识。",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 86,
+    "score_version": "1.0.0",
+    "primary_source_count": 1,
+    "supporting_source_count": 2,
+    "limitations": [
+      "该条是 CEK-TA 治理知识，部分依据来自项目内部契约；涉及具体交易专业结论时仍需外部专业来源。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "kb_04_backtest.bias.multiple_testing_overfit.v1",
+      "kb_04_backtest.fill_model.ohlc_same_bar_path_ambiguity.v1"
+    ],
+    "conflicts": [],
+    "resolution_summary": "该知识是 RAG 治理阻断规则，不与回测专业知识冲突。",
+    "default_recommendation": "use_as_guidance"
+  },
+  "review": {
+    "confidence": "high",
+    "freshness": "time_sensitive",
+    "review_status": "approved",
+    "reviewer": "codex",
+    "reviewed_at": "2026-06-08",
+    "created_at": "2026-06-08",
+    "updated_at": "2026-06-08",
+    "open_questions": [
+      "后续应在 MCP 实现层增加自动阻断测试，确保无来源条目无法 default_guidance 返回。"
+    ],
+    "decision_log": [
+      {
+        "at": "2026-06-08",
+        "actor": "codex",
+        "decision": "approved",
+        "reason": "来源、治理契约和质量门槛一致，适合作为 RAG 知识治理 seed。"
+      }
+    ],
+    "approval_status": "approved",
+    "default_guidance_allowed": true,
+    "source_candidate_id": null,
+    "ai_audit_result_id": null
+  },
+  "contribution": {
+    "contribution_id": null,
+    "source_project": null,
+    "sanitization_status": "not_applicable",
+    "private_data_removed": true,
+    "generic_mapping_notes": "通用 RAG 治理知识，不含项目私有事实。"
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于审计和解释 CEK-TA / AI Engineering / RAG Engineering / Source Quality 范围内的专业边界。",
+      "用于提醒用户补充适用范围、来源、冲突状态和验证条件。",
+      "用于阻止 AI 把未满足边界的知识当成默认交易建议。"
+    ],
+    "not_allowed": [
+      "不得据此生成买卖点、仓位、杠杆或实盘执行指令。",
+      "不得在缺少适用边界、来源或冲突状态时作为默认指导。",
+      "不得把 reviewed 或 caveat_only 知识表述为 approved 结论。"
+    ],
+    "required_context": [
+      "project_type",
+      "market",
+      "asset",
+      "timeframe",
+      "data_granularity",
+      "task_type"
+    ],
+    "fallback_behavior": "cite_with_caveat"
+  },
+  "machine_gate": {
+    "default_guidance": "allow",
+    "reason": "approved; default_guidance_allowed=true; sources, conflict, freshness, and privacy gates passed.",
+    "requires_human_escalation": false,
+    "blocking_reasons": [],
+    "checked_at": "2026-06-09",
+    "gate_version": "1.0.0"
+  },
+  "recommended_extra_sources": [
+    {
+      "title": "NIST AI Risk Management Framework",
+      "source_url": null,
+      "source_type": "official_doc",
+      "purpose": "补强 AI 系统风险治理、可追踪性和文档化边界。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_1"
+    }
+  ]
+}

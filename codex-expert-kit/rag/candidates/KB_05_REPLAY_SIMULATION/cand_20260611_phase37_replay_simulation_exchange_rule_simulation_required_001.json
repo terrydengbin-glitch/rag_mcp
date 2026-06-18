@@ -1,0 +1,386 @@
+{
+  "schema_version": "1.1.0-candidate",
+  "candidate_id": "cand_20260611_phase37_replay_simulation_exchange_rule_simulation_required_001",
+  "research_task_id": "P37-F-R07",
+  "status": {
+    "review_status": "reviewed",
+    "ingestion_decision": "accepted_for_reviewed_caveat_only",
+    "decision_reason": "reviewed-preparation 审计允许 formal reviewed/caveat_only；不允许 approved/default guidance/hard gate。",
+    "created_at": "2026-06-11",
+    "updated_at": "2026-06-12"
+  },
+  "classification": {
+    "tree_node_id": "kt.replay_simulation",
+    "canonical_node_id": "kt.replay_simulation",
+    "tree_path": "CEK-TA / Trading Engineering / Replay Simulation",
+    "related_nodes": [
+      "kt.trading_engineering",
+      "kt.trading_engineering.backtest",
+      "kt.trading_engineering.data_engineering",
+      "kt.market_microstructure",
+      "kt.live_execution",
+      "kt.risk_management",
+      "kt.ai_engineering.llm_training"
+    ],
+    "partition_id": "KB_05_REPLAY_SIMULATION",
+    "domain": "replay_simulation",
+    "subdomain": "exchange_rules",
+    "rule_type": "replay_simulation_boundary_rule",
+    "claim_type": "venue_rule_mapping_contract",
+    "used_for": [
+      "replay_review",
+      "simulation_audit",
+      "paper_trading_readiness_review",
+      "external_project_rag_retrieval"
+    ],
+    "classification_notes": "本候选主归属 Trading Engineering / Replay Simulation。AI Engineering 只能引用本规则，不得把成交模拟、交易所规则或执行假设改写为模型训练本体规则。"
+  },
+  "claim": {
+    "claim_id": "claim_p37_f_r07",
+    "title": "交易所规则必须进入模拟约束",
+    "statement": "Replay / Simulation 若声称接近实盘，必须按市场和品种映射交易所/经纪商规则，包括交易时段、撮合算法、订单类型、最小数量、价格步长、涨跌停/暂停和拒单条件。",
+    "normalized_claim": "replay.exchange_rule_simulation_required.v1",
+    "evidence_summary": "CME describes matching algorithms such as allocation, FIFO, pro-rata and configurable variants, supporting venue-specific execution-rule modeling.；Binance official filters define LOT_SIZE, MIN_NOTIONAL and NOTIONAL constraints for acceptable order quantity and notional values.；IBKR documents available order types and order fields, supporting the need to map simulated orders to broker-supported orders.",
+    "interpretation_notes": "本候选只定义 replay/simulation 的事件、成交、延迟、交易所规则、订单状态和模拟-实盘差异边界，不输出买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+    "claim_strength": "medium_high",
+    "performance_claim": false
+  },
+  "applicability": {
+    "market": "general_with_venue_specific_mapping",
+    "asset": "general",
+    "timeframe": "historical_replay_or_paper_simulation",
+    "data_granularity": "ohlc_tick_quote_order_book_and_order_events",
+    "project_type": "trading_ai_support_layer",
+    "applies_when": [
+      "审计 replay、simulation、paper trading、fill model、latency model 或交易所规则模拟",
+      "把模拟成交结果用于 AI scoring、paper/live 前置评估、回测复核或执行质量研究"
+    ],
+    "not_applicable_when": [
+      "需要直接生成买卖点、仓位、杠杆、止损止盈或实盘执行建议",
+      "问题属于 live execution 真实订单路由、账户同步或 risk hard gate，应由对应分支处理",
+      "没有市场、交易所、品种、数据粒度、事件时钟或订单状态来源"
+    ],
+    "assumptions": [
+      "候选用于 CEK-TA 通用支持层知识库，不包含任何外接项目私有策略参数。",
+      "模拟结果必须保留事件时钟、成交模型、成本、延迟、订单状态、交易所规则和数据粒度边界。",
+      "候选通过外部审计前不能进入正式 reviewed 知识库。"
+    ],
+    "limitations": [
+      "平台和框架文档只能支持实现模式，不能证明任何特定策略可实盘盈利。",
+      "交易所或经纪商规则具有市场、品种、时间和版本差异，外接项目必须映射自己的 venue/rulebook。",
+      "本候选不提供任何投资建议、订单建议或实盘许可。"
+    ]
+  },
+  "source_refs": [
+    {
+      "source_title": "Matching Algorithm Overview",
+      "source_url": "https://www.cmegroup.com/education/matching-algorithm-overview",
+      "source_type": "exchange_rule",
+      "publisher": "CME Group",
+      "reliability": "medium_high",
+      "score": 78,
+      "freshness": "stable",
+      "evidence_summary": "CME describes matching algorithms such as allocation, FIFO, pro-rata and configurable variants, supporting venue-specific execution-rule modeling.",
+      "limitations": [
+        "Educational overview; specific products require current rulebook/session mapping."
+      ],
+      "source_id": "src_001",
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "Filters",
+      "source_url": "https://developers.binance.com/docs/binance-spot-api-docs/filters",
+      "source_type": "exchange_rule",
+      "publisher": "Binance Open Platform",
+      "reliability": "medium_high",
+      "score": 80,
+      "freshness": "time_sensitive",
+      "evidence_summary": "Binance official filters define LOT_SIZE, MIN_NOTIONAL and NOTIONAL constraints for acceptable order quantity and notional values.",
+      "limitations": [
+        "Crypto venue-specific; use as example that exchange constraints must be simulated per venue."
+      ],
+      "source_id": "src_002",
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "Order Types",
+      "source_url": "https://www.interactivebrokers.com/campus/ibkr-api-page/order-types/",
+      "source_type": "official_doc",
+      "publisher": "Interactive Brokers",
+      "reliability": "medium_high",
+      "score": 78,
+      "freshness": "time_sensitive",
+      "evidence_summary": "IBKR documents available order types and order fields, supporting the need to map simulated orders to broker-supported orders.",
+      "limitations": [
+        "Broker-specific order semantics."
+      ],
+      "source_id": "src_003",
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "relevance": "medium_high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "Reality Modelling - Brokerage Models",
+      "source_url": "https://www.quantconnect.com/docs/v1/algorithm-reference/reality-modelling",
+      "source_type": "framework_doc",
+      "publisher": "QuantConnect",
+      "reliability": "medium_high",
+      "score": 78,
+      "freshness": "time_sensitive",
+      "evidence_summary": "QuantConnect brokerage models set fees, fill models, slippage models and validate whether orders can be submitted to a brokerage model.",
+      "limitations": [
+        "Older platform documentation; use as implementation pattern, not CEK-TA mandatory tooling."
+      ],
+      "source_id": "src_004",
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "relevance": "medium_high",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "medium_high",
+    "score": 78.5,
+    "score_version": "phase37_replay_simulation_source_scoring_v1",
+    "primary_source_count": 4,
+    "supporting_source_count": 4,
+    "low_reliability_source_count": 0,
+    "mandatory_downgrades": [],
+    "limitations": [
+      "本批候选大量使用平台/框架/交易所文档，审计时必须防止把具体平台实现泛化为通用交易所真理。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none_known_in_visible_context",
+    "checked_against": [
+      "KB_04_BACKTEST",
+      "KB_03_MARKET_MICROSTRUCTURE",
+      "KB_06_LIVE_EXECUTION",
+      "KB_07_RISK_MANAGEMENT",
+      "KB_AI_ENGINEERING"
+    ],
+    "resolution_summary": "首轮审计内容层 accepted_for_draft；candidate 不是 formal knowledge，不得创建 reviewed/approved/default guidance/hard gate。",
+    "approval_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于提醒 AI IDE 设计 replay/simulation 时声明事件时钟、成交模型、延迟、成本和交易所规则边界",
+      "用于审计模拟盘、回放、paper trading 和 backtest-to-live gap 报告",
+      "用于阻止 AI 把模拟成交当作真实成交或实盘许可"
+    ],
+    "not_allowed": [
+      "不得据此生成买卖点、仓位、杠杆、止损止盈参数或实盘订单",
+      "不得据此声称某个策略可盈利或可实盘",
+      "不得把某个框架或交易所的实现细节写成所有市场通用规则"
+    ],
+    "requires_context": [
+      "market",
+      "venue",
+      "instrument",
+      "data_granularity",
+      "event_clock",
+      "order_type",
+      "fill_model_version",
+      "latency_model_version"
+    ]
+  },
+  "machine_gate": {
+    "default_guidance": "deny",
+    "reason": "Phase 37 Replay / Simulation first audit allows accepted_for_draft only; formal reviewed requires later reviewed-preparation audit.",
+    "requires_human_escalation": true,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "hidden_from_default_queue": true,
+    "visible_in_default_guidance_queue": false
+  },
+  "conversion_target": {
+    "proposed_knowledge_id": "kb_05_replay_simulation.exchange_rule_simulation_required.v1",
+    "target_review_status": "reviewed",
+    "default_guidance_after_conversion": "deny_until_reviewed_caveat_only_audit",
+    "formalization_blockers": [
+      "requires_reviewed_preparation_audit"
+    ],
+    "reviewed_allowed": true,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "copyright": {
+    "stores_full_text": false,
+    "stores_long_quote": false,
+    "summary_only": true
+  },
+  "workflow": {
+    "phase": "37",
+    "task_id": "CEK-TA-424",
+    "stage": "formalized_reviewed",
+    "next_allowed_decisions": [
+      "accepted_for_draft",
+      "needs_more_evidence",
+      "rejected",
+      "blocked"
+    ],
+    "forbidden_decisions": [
+      "reviewed",
+      "approved",
+      "default_guidance",
+      "hard_gate"
+    ],
+    "ai_audit_result_id": "audit_result_phase37_replay_simulation_reviewed_preparation_20260612_strict_v1",
+    "formal_knowledge_id": "kb_05_replay_simulation.exchange_rule_simulation_required.v1",
+    "formal_review_status": "reviewed",
+    "default_guidance_allowed": false,
+    "approved_allowed": false,
+    "hard_gate_allowed": false,
+    "hidden_from_default_queue": true,
+    "visible_in_default_guidance_queue": false,
+    "formalization_allowed": true,
+    "conversion_target": {
+      "target_review_status": "draft",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false
+    },
+    "queue_group": "formalized",
+    "next_action": "none",
+    "formal_knowledge_path": "codex-expert-kit/rag/knowledge/KB_05_REPLAY_SIMULATION/kb_05_replay_simulation.exchange_rule_simulation_required.v1.json",
+    "knowledge_path": "codex-expert-kit/rag/knowledge/KB_05_REPLAY_SIMULATION/kb_05_replay_simulation.exchange_rule_simulation_required.v1.json",
+    "reviewed_preparation_audit_result_id": "audit_result_phase37_replay_simulation_reviewed_preparation_20260612_strict_v1"
+  },
+  "review": {
+    "audit_log": [
+      {
+        "at": "2026-06-12",
+        "actor": "external_ai_strict_audit",
+        "action": "phase37_replay_simulation_first_audit_imported",
+        "reason": "accepted_for_draft / confidence=high",
+        "audit_result_id": "audit_result_phase37_replay_simulation_candidate_audit_20260611_strict_v1",
+        "patch_notes": [
+          "source: 框架、平台、交易所、broker 和 FIX 文档只能支撑各自语义，不得泛化为所有市场通用规则。",
+          "content: Replay / Simulation 只表达事件时钟、成交模型、partial/no fill、延迟模型、交易所/经纪商规则映射、订单状态生命周期、模拟盘/实盘 gap report、OHLC vs tick replay 粒度边界。",
+          "boundary: simulation evidence invalidation 不等于自动拒单、实盘停机或风控 hard gate。",
+          "conflict: R07/R08/R09 与 Live Execution / Exchange Adapter 重叠时，Replay 只模拟规则与状态；真实下单、真实拒单、账户同步、实盘订单状态归 Live Execution owner。"
+        ]
+      },
+      {
+        "at": "2026-06-12",
+        "actor": "external_ai_strict_audit",
+        "action": "phase37_replay_simulation_first_audit_imported",
+        "reason": "accepted_for_draft / confidence=high",
+        "audit_result_id": "audit_result_phase37_replay_simulation_candidate_audit_20260611_strict_v1",
+        "patch_notes": [
+          "source: 框架、平台、交易所、broker 和 FIX 文档只能支撑各自语义，不得泛化为所有市场通用规则。",
+          "content: Replay / Simulation 只表达事件时钟、成交模型、partial/no fill、延迟模型、交易所/经纪商规则映射、订单状态生命周期、模拟盘/实盘 gap report、OHLC vs tick replay 粒度边界。",
+          "boundary: simulation evidence invalidation 不等于自动拒单、实盘停机或风控 hard gate。",
+          "conflict: R07/R08/R09 与 Live Execution / Exchange Adapter 重叠时，Replay 只模拟规则与状态；真实下单、真实拒单、账户同步、实盘订单状态归 Live Execution owner。"
+        ]
+      },
+      {
+        "at": "2026-06-12",
+        "actor": "codex",
+        "action": "phase37_replay_simulation_formal_reviewed_created",
+        "reason": "CEK-TA-430: formal reviewed/caveat_only written to codex-expert-kit/rag/knowledge/KB_05_REPLAY_SIMULATION/kb_05_replay_simulation.exchange_rule_simulation_required.v1.json.",
+        "audit_result_id": "audit_result_phase37_replay_simulation_reviewed_preparation_20260612_strict_v1"
+      }
+    ],
+    "reviewer": "external_ai_and_codex_alignment",
+    "reviewed_at": "2026-06-12",
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase37_replay_simulation_candidate_audit_20260611_strict_v1",
+      "package_id": "phase37_replay_simulation_candidate_audit_package_20260611",
+      "auditor": "external_ai_strict_audit",
+      "audited_at": "2026-06-12",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "交易所/经纪商规则必须按 venue/product 映射进入模拟约束。"
+      ],
+      "required_followups": [
+        "进入 reviewed/caveat_only 前必须另行导出 reviewed-preparation 审计包。",
+        "不得创建 approved、default guidance 或 hard gate。"
+      ],
+      "patch_notes": [
+        "source: 框架、平台、交易所、broker 和 FIX 文档只能支撑各自语义，不得泛化为所有市场通用规则。",
+        "content: Replay / Simulation 只表达事件时钟、成交模型、partial/no fill、延迟模型、交易所/经纪商规则映射、订单状态生命周期、模拟盘/实盘 gap report、OHLC vs tick replay 粒度边界。",
+        "boundary: simulation evidence invalidation 不等于自动拒单、实盘停机或风控 hard gate。",
+        "conflict: R07/R08/R09 与 Live Execution / Exchange Adapter 重叠时，Replay 只模拟规则与状态；真实下单、真实拒单、账户同步、实盘订单状态归 Live Execution owner。"
+      ],
+      "patch_note_groups": {
+        "source": [
+          "框架、平台、交易所、broker 和 FIX 文档只能支撑各自语义，不得泛化为所有市场通用规则。"
+        ],
+        "content": [
+          "Replay / Simulation 只表达事件时钟、成交模型、partial/no fill、延迟模型、交易所/经纪商规则映射、订单状态生命周期、模拟盘/实盘 gap report、OHLC vs tick replay 粒度边界。"
+        ],
+        "boundary": [
+          "simulation evidence invalidation 不等于自动拒单、实盘停机或风控 hard gate。"
+        ],
+        "conflict": [
+          "R07/R08/R09 与 Live Execution / Exchange Adapter 重叠时，Replay 只模拟规则与状态；真实下单、真实拒单、账户同步、实盘订单状态归 Live Execution owner。"
+        ]
+      },
+      "source_assessment": {
+        "source_count": 4,
+        "missing_sources": [],
+        "weak_sources": [],
+        "recommended_extra_sources": []
+      },
+      "classification_assessment": {
+        "is_correct_branch": true,
+        "expected_branch": "Trading Engineering / Replay Simulation",
+        "misplaced_topics": []
+      },
+      "boundary": "accepted_for_draft is not reviewed or approved; this audit does not allow default guidance or hard gate."
+    },
+    "reviewed_preparation_audit": {
+      "audit_result_id": "audit_result_phase37_replay_simulation_reviewed_preparation_20260612_strict_v1",
+      "package_id": "phase37_replay_simulation_reviewed_preparation_audit_package_20260612",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "CME matching algorithm、Binance filters、IBKR order types 和 brokerage-model 资料足以支撑交易所/经纪商规则进入 simulation 约束；可 reviewed/caveat_only，但 Replay 只模拟规则，不拥有 live order owner 权限。"
+      ],
+      "required_followups": [
+        "正式 materialize reviewed/caveat_only 前仍需完整 CEK-TA formal KB 冲突、重复、owner 边界检查。",
+        "保留 vendor/framework/exchange 文档只能作为语义或实现示例的限制。"
+      ],
+      "patch_notes": {
+        "source": [
+          "框架、平台、交易所、broker 和 FIX 文档只能支撑各自语义，不得泛化为所有市场通用规则。",
+          "需要内部契约支撑的字段本体不得只由外部工具文档替代。"
+        ],
+        "content": [
+          "Replay / Simulation 只表达事件时钟、成交模型、partial/no fill、延迟模型、交易所/经纪商规则映射、订单状态生命周期、simulation-live gap report、OHLC vs tick replay 粒度边界。",
+          "simulation evidence invalidation 只能表示该模拟证据不可作为执行质量或可交易性证据。"
+        ],
+        "boundary": [
+          "reviewed/caveat_only 不等于 approved、default guidance 或 hard gate。",
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+          "不得把 paper/simulation 通过解释成 live execution permission。"
+        ],
+        "conflict": [
+          "R07/R08/R09 与 Live Execution / Exchange Adapter 重叠时，Replay 只模拟规则与状态；真实下单、真实拒单、账户同步、实盘订单状态归 Live Execution owner。",
+          "R12 与 Backtest/Replay/Live Execution 成本版本映射重叠时，需要 owner contract 明确 Backtest 记录、Replay 模拟、Live Execution 真实成交的边界。"
+        ]
+      }
+    }
+  }
+}

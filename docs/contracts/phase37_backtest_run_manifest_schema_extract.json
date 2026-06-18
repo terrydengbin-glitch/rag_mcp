@@ -1,0 +1,348 @@
+{
+  "schema_extract_id": "phase37_backtest_run_manifest_schema_extract_v1",
+  "schema_version": "1.0.0",
+  "generated_at": "2026-06-11",
+  "contract_path": "docs/contracts/phase37_backtest_run_manifest_contract.md",
+  "contract_sha256": "6698c0b2ec18dc12ebd85f46ace4c021c6b6d84e162ff45773c9a9e253289574",
+  "object": "BacktestRunManifest",
+  "purpose": "支撑 Backtest reviewed/caveat_only 知识的复现、版本、指标和审计字段本体。",
+  "hard_boundaries": {
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "trade_execution_advice_allowed": false,
+    "notes": [
+      "本契约只用于回测证据审计和复现追踪。",
+      "不得用于生成买卖点、仓位、杠杆、止损止盈或实盘执行建议。",
+      "MLflow、DVC、QuantConnect 等只能作为等价实现示例，不是强制工具依赖。"
+    ]
+  },
+  "sections": {
+    "run_identity": {
+      "required": true,
+      "fields": {
+        "backtest_run_id": {
+          "type": "string",
+          "required": true,
+          "semantics": "回测运行唯一 ID。"
+        },
+        "created_at": {
+          "type": "ISO-8601 timestamp",
+          "required": true,
+          "semantics": "运行创建时间。"
+        },
+        "created_by": {
+          "type": "enum",
+          "required": true,
+          "allowed": [
+            "human",
+            "system",
+            "ci"
+          ]
+        },
+        "project_id": {
+          "type": "string",
+          "required": true,
+          "semantics": "外接项目或研究项目 ID。"
+        },
+        "environment": {
+          "type": "enum",
+          "required": true,
+          "allowed": [
+            "research",
+            "validation",
+            "paper_precheck"
+          ]
+        },
+        "engine_name": {
+          "type": "string",
+          "required": true,
+          "semantics": "回测引擎名称。"
+        },
+        "engine_version": {
+          "type": "string",
+          "required": true,
+          "semantics": "回测引擎版本。"
+        },
+        "engine_config_hash": {
+          "type": "sha256-or-equivalent",
+          "required": true
+        }
+      }
+    },
+    "strategy_identity": {
+      "required": true,
+      "owner": "Strategy Engineering",
+      "fields": {
+        "strategy_id": {
+          "type": "string",
+          "required": true
+        },
+        "strategy_rule_version": {
+          "type": "semantic-version-or-policy-version",
+          "required": true,
+          "generation_rule": "策略规则、信号定义或决策规则变更时必须递增。",
+          "validation_rule": "同一 backtest_run_id 只能绑定一个 strategy_rule_version。"
+        },
+        "strategy_code_commit": {
+          "type": "git-commit-or-vcs-revision",
+          "required": true
+        },
+        "parameter_set_id": {
+          "type": "string",
+          "required": true
+        },
+        "parameter_hash": {
+          "type": "sha256-or-equivalent",
+          "required": true,
+          "generation_rule": "对规范化参数 JSON 按稳定 key 顺序哈希。",
+          "validation_rule": "参数内容变化必须导致 parameter_hash 变化。"
+        },
+        "signal_schema_version": {
+          "type": "string",
+          "required": true
+        },
+        "decision_policy_version": {
+          "type": "string",
+          "required": true
+        }
+      }
+    },
+    "data_identity": {
+      "required": true,
+      "owner": "Data Engineering",
+      "fields": {
+        "dataset_id": {
+          "type": "string",
+          "required": true
+        },
+        "dataset_version": {
+          "type": "dataset-version-or-snapshot-id",
+          "required": true,
+          "generation_rule": "数据快照、修正、复权或质量规则变化时必须更新。"
+        },
+        "source_dataset_version": {
+          "type": "string",
+          "required": true
+        },
+        "symbol_universe_version": {
+          "type": "string",
+          "required": true
+        },
+        "corporate_action_version": {
+          "type": "string",
+          "required": true
+        },
+        "adjustment_policy_id": {
+          "type": "string",
+          "required": true
+        },
+        "data_quality_report_id": {
+          "type": "string",
+          "required": true
+        },
+        "available_time_policy_id": {
+          "type": "string",
+          "required": true
+        }
+      }
+    },
+    "market_calendar_identity": {
+      "required": true,
+      "owner": "Market Microstructure / Data Engineering",
+      "fields": {
+        "market": {
+          "type": "string",
+          "required": true
+        },
+        "venue": {
+          "type": "string",
+          "required": true
+        },
+        "timezone": {
+          "type": "IANA timezone",
+          "required": true
+        },
+        "calendar_version": {
+          "type": "string",
+          "required": true
+        },
+        "session_template_version": {
+          "type": "string",
+          "required": true
+        },
+        "holiday_calendar_version": {
+          "type": "string",
+          "required": true
+        },
+        "early_close_calendar_version": {
+          "type": "string",
+          "required": true
+        }
+      }
+    },
+    "execution_assumption_identity": {
+      "required": true,
+      "owner": "Replay / Simulation / Live Execution",
+      "fields": {
+        "cost_model_version": {
+          "type": "string",
+          "required": true
+        },
+        "fee_model_version": {
+          "type": "string",
+          "required": true
+        },
+        "slippage_model_version": {
+          "type": "string",
+          "required": true
+        },
+        "spread_model_version": {
+          "type": "string",
+          "required": true
+        },
+        "fill_model_version": {
+          "type": "string",
+          "required": true
+        },
+        "order_type_policy_id": {
+          "type": "string",
+          "required": true
+        },
+        "liquidity_assumption_id": {
+          "type": "string",
+          "required": true
+        }
+      }
+    },
+    "metric_report": {
+      "required": true,
+      "fields": {
+        "metric_report_id": {
+          "type": "string",
+          "required": true
+        },
+        "metric_schema_version": {
+          "type": "string",
+          "required": true
+        },
+        "gross_metrics": {
+          "type": "object",
+          "required": true
+        },
+        "net_metrics": {
+          "type": "object",
+          "required": true
+        },
+        "research_metrics": {
+          "type": "object",
+          "required": true
+        },
+        "validation_metrics": {
+          "type": "object",
+          "required": true
+        },
+        "trade_count": {
+          "type": "integer",
+          "required": true
+        },
+        "profit_factor": {
+          "type": "number-or-undefined_or_infinite",
+          "required": true,
+          "validation_rule": "gross_loss_abs=0 时必须标记 undefined_or_infinite，不得静默写成极大优势。"
+        },
+        "max_drawdown": {
+          "type": "number",
+          "required": true
+        },
+        "return_over_max_drawdown": {
+          "type": "number",
+          "required": true
+        },
+        "fees": {
+          "type": "number",
+          "required": true
+        },
+        "estimated_slippage": {
+          "type": "number",
+          "required": true
+        },
+        "metric_limitations": {
+          "type": "array[string]",
+          "required": true
+        }
+      }
+    },
+    "reproducibility_package": {
+      "required": true,
+      "owner": "Backtest / Research Ops",
+      "fields": {
+        "package_id": {
+          "type": "string",
+          "required": true
+        },
+        "code_repository": {
+          "type": "string",
+          "required": true
+        },
+        "code_commit": {
+          "type": "git-commit-or-vcs-revision",
+          "required": true
+        },
+        "dependency_lockfile_hash": {
+          "type": "sha256-or-equivalent",
+          "required": true
+        },
+        "container_image_digest": {
+          "type": "string|null",
+          "required": false
+        },
+        "random_seed": {
+          "type": "integer|null",
+          "required": true
+        },
+        "config_file_hash": {
+          "type": "sha256-or-equivalent",
+          "required": true
+        },
+        "input_artifact_ids": {
+          "type": "array[string]",
+          "required": true
+        },
+        "output_artifact_ids": {
+          "type": "array[string]",
+          "required": true
+        },
+        "log_artifact_id": {
+          "type": "string",
+          "required": true
+        },
+        "metric_report_id": {
+          "type": "string",
+          "required": true
+        },
+        "lineage_id": {
+          "type": "string",
+          "required": true
+        },
+        "replay_command_or_ci_job_id": {
+          "type": "string",
+          "required": true
+        },
+        "known_non_determinism": {
+          "type": "array[string]",
+          "required": true
+        }
+      }
+    }
+  },
+  "cross_owner_mapping": {
+    "strategy_rule_version": "Strategy Engineering owns strategy rule identity.",
+    "parameter_hash": "Strategy Engineering owns normalized parameter hashing; Backtest records it immutably.",
+    "dataset_version": "Data Engineering owns dataset/version/snapshot semantics.",
+    "calendar_version": "Market Microstructure/Data Engineering own session and calendar evidence.",
+    "cost_model_version": "Replay/Simulation and Execution owners define cost/fill/slippage assumptions.",
+    "fill_model_version": "Replay/Simulation owns fill model assumptions; Backtest records version only.",
+    "evaluation_timestamp": "Backtest owns evaluation timestamp and must separate parameter search from final evaluation."
+  }
+}

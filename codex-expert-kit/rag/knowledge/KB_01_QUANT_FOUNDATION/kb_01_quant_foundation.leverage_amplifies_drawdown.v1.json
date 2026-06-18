@@ -1,0 +1,313 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_01_quant_foundation.leverage_amplifies_drawdown.v1",
+  "title": "杠杆和保证金会放大收益与亏损，并可能触发追加保证金、强平或超过初始资金的损失；任何使用杠杆的交易质量评价都必须单独展示杠杆、保证金和回撤边界。",
+  "metadata": {
+    "partition_id": "KB_01_QUANT_FOUNDATION",
+    "domain": "quant_trading",
+    "subdomain": "position_sizing",
+    "rule_type": "risk_boundary_rule",
+    "claim_type": "risk_boundary_rule",
+    "content_type": "json",
+    "project_binding": "none",
+    "tree_node_id": "kt.quant_foundation.position_sizing",
+    "tree_path": "CEK-TA / Trading Engineering / Quant Foundation",
+    "canonical_node_id": "kt.quant_foundation.position_sizing",
+    "canonical_tree_path": "CEK-TA / Trading Engineering / Quant Foundation",
+    "risk_level": "medium",
+    "used_for": [
+      "trading_knowledge_audit",
+      "ai_trader_project_design",
+      "trade_quality_scoring_context",
+      "external_project_rag_retrieval"
+    ],
+    "source_candidate_id": "cand_20260611_phase37_leverage_amplifies_drawdown_001",
+    "research_task_id": "P37-A-Q07",
+    "phase": "Phase 37",
+    "classification_notes": "Phase 37 Quant Foundation formal reviewed/caveat_only；这是 Trading Engineering 规则本体，不是 AI Engineering 训练/RAG/MCP 本体规则，也不是 approved/default guidance。"
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "general",
+    "data_granularity": "general",
+    "project_type": "trading_ai_support_layer",
+    "applies_when": [
+      "审计杠杆交易、保证金交易、合约或高波动资产交易评价",
+      "构建风险标签或交易质量评分"
+    ],
+    "not_applicable_when": [
+      "完全无杠杆的现货交易且没有借贷、保证金或衍生品暴露",
+      "需要给出具体杠杆倍数建议",
+      "需要具体交易策略参数、账户事实、交易所配置、密钥或实盘权限时，应由外接项目事实层处理。",
+      "AI Engineering 只能引用本规则，不得把本规则改写为模型训练、MCP 或 RAG 本体规则。"
+    ]
+  },
+  "content": {
+    "statement": "杠杆和保证金会放大收益与亏损，并可能触发追加保证金、强平或超过初始资金的损失；任何使用杠杆的交易质量评价都必须单独展示杠杆、保证金和回撤边界。",
+    "rationale": "本候选只定义交易专业知识边界，不输出买卖点、仓位、止损止盈、杠杆或实盘执行建议。",
+    "procedure": [
+      "确认当前问题属于 Quant Foundation / Trading Engineering 规则本体，而不是 AI Engineering 训练、RAG 或 MCP 本体。",
+      "同时检查概率、payoff、成本、样本、执行、风险和验证边界，避免单一指标泛化。",
+      "返回本知识时必须携带 source_evidence、review_status、machine_gate、适用范围和不适用场景。"
+    ],
+    "examples": [],
+    "anti_patterns": [
+      "把单一指标当作交易系统质量证明。",
+      "忽略成本、执行、样本外验证或数据偏差就声明可复用盈利能力。",
+      "把 reviewed/caveat_only 知识说成 approved 默认指导。"
+    ],
+    "validation": [
+      "source_evidence 非空，且来源类型覆盖定义、成本、执行或回测边界中的相关维度。",
+      "conflict_status 只能是 none、resolved 或 none_known_in_visible_context。",
+      "machine_gate.default_guidance 必须为 caveat_only，review.default_guidance_allowed 必须为 false。"
+    ],
+    "risk_notes": [
+      "首批候选以公开专业资料、监管资料、论文和教育资料为来源，仍需要外部 AI/人工严格审计。",
+      "部分来源是教育或供应商文章，只能作为 supporting evidence，不能单独支撑 approved。",
+      "本候选不提供任何投资建议或实盘执行许可。",
+      "保留美国证券保证金、期货、crypto、CFD、海外 broker/venue 的适用差异。",
+      "本条为 formal reviewed/caveat_only，不是 approved；不得作为默认指导或 hard gate。",
+      "不得据此生成买卖点、仓位、杠杆、止损止盈或实盘执行建议。",
+      "AI Engineering 只能引用本 Trading Engineering 规则本体，不得复制改写为模型训练/RAG/MCP 本体规则。"
+    ],
+    "citation_notes": "SEC, FINRA and CFTC sources directly support leverage/margin risk and loss-amplification boundaries.",
+    "audit_patch_notes": {
+      "source": [],
+      "content": [],
+      "boundary": [
+        "保留美国证券保证金、期货、crypto、CFD、海外 broker/venue 的适用差异。"
+      ],
+      "conflict": [
+        "可见上下文内未发现可证冲突；完整 formal KB 冲突检查由 CEK-TA-196/197 继续执行。"
+      ]
+    }
+  },
+  "assumptions": [
+    "候选用于 CEK-TA 通用支持层知识库，而不是某个项目私有策略。",
+    "所有交易结论都必须保留市场、样本、成本、执行和验证边界。",
+    "候选通过外部审计前不能进入正式 reviewed 知识库。"
+  ],
+  "source_evidence": [
+    {
+      "source_id": "src_001",
+      "source_title": "Understanding Margin Accounts",
+      "source_url": "https://www.sec.gov/investor/alerts/ib_marginaccounts.pdf",
+      "source_type": "regulatory_guidance",
+      "publisher": "U.S. Securities and Exchange Commission",
+      "published_at": null,
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "SEC investor guidance explains margin risks, including amplified losses and obligations beyond deposited cash.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_002",
+      "source_title": "FINRA Rule 2264 Margin Disclosure Statement",
+      "source_url": "https://www.finra.org/rules-guidance/rulebooks/finra-rules/2264",
+      "source_type": "regulatory_rule",
+      "publisher": "FINRA",
+      "published_at": null,
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "FINRA margin disclosure requires warning customers about margin risks and possible loss amplification.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_003",
+      "source_title": "Understand the Risks of Virtual Currency Trading",
+      "source_url": "https://www.cftc.gov/LearnAndProtect/AdvisoriesAndArticles/understand_risks_of_virtual_currency.html",
+      "source_type": "regulatory_guidance",
+      "publisher": "U.S. Commodity Futures Trading Commission",
+      "published_at": null,
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "CFTC warns that virtual-currency trading involves high volatility, leverage and fraud risks.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_004",
+      "source_title": "Measuring and Managing Market Risk",
+      "source_url": "https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/measuring-managing-market-risk",
+      "source_type": "professional_body",
+      "publisher": "CFA Institute",
+      "published_at": "2026-01-01",
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "CFA Institute frames market-risk management around risk measurement, limits, stress, and portfolio exposure.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_audit_investor_gov_margin_accounts",
+      "source_title": "Investor Bulletin: Understanding Margin Accounts",
+      "source_url": "https://www.investor.gov/introduction-investing/general-resources/news-alerts/alerts-bulletins/investor-bulletins-29",
+      "source_type": "regulator_investor_education",
+      "publisher": "Investor.gov / SEC",
+      "published_at": null,
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "说明保证金交易可能放大损失、触发追加保证金和强制卖出等风险。",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 86,
+    "score_version": "phase37_source_scoring_v1",
+    "primary_source_count": 5,
+    "supporting_source_count": 0,
+    "low_reliability_source_count": 0,
+    "limitations": [
+      "正式入库前必须由外部审计确认 claim 没有超出来源可证明范围。",
+      "监管资料按地区适用，不能自动泛化到所有市场或交易所。",
+      "本条为 formal reviewed/caveat_only；不是 approved，不得进入默认指导或 hard gate。",
+      "外部审计未提供完整 CEK-TA formal KB，因此冲突结论限于可见上下文。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "Phase 36/38/40/41 AI Engineering 知识边界",
+      "现有 KB_01_QUANT_FOUNDATION formal 知识"
+    ],
+    "conflicts": [],
+    "resolution_summary": "reviewed/caveat_only preparation audit passed for this item; full formal KB conflict coverage remains a runtime validation concern.",
+    "default_recommendation": "caveat_only_until_human_approval"
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于 AI IDE 或外接项目审计交易工程基础概念和边界。",
+      "用于提示用户补充成本、样本、执行、风险和验证条件。",
+      "用于 RAG/MCP/SearchLab 以 caveat 方式返回来源和边界。"
+    ],
+    "not_allowed": [
+      "不得据此生成买卖点、仓位、杠杆、止损止盈或实盘执行建议。",
+      "不得把 reviewed/caveat_only 当作 approved 默认指导。",
+      "不得绕过外接项目事实层、风控 hard gate 或人工治理流程。"
+    ],
+    "required_context": [
+      "canonical_node_id=kt.quant_foundation.position_sizing",
+      "必须返回 source_evidence、review_status、conflict_status、machine_gate 和不适用场景。"
+    ],
+    "fallback_behavior": "cite_with_caveat"
+  },
+  "machine_gate": {
+    "default_guidance": "caveat_only",
+    "reason": "CEK-TA-380: reviewed-preparation audit allowed formal reviewed/caveat_only only; no approved/default/hard gate.",
+    "requires_human_escalation": true,
+    "blocking_reasons": [
+      "reviewed_not_approved",
+      "default_guidance_allowed_false",
+      "hard_gate_allowed_false"
+    ],
+    "checked_at": "2026-06-11",
+    "gate_version": "1.0.0",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "recommended_extra_sources": [],
+  "review": {
+    "confidence": "high",
+    "freshness": "mixed",
+    "review_status": "reviewed",
+    "reviewer": "codex",
+    "reviewed_at": "2026-06-11",
+    "created_at": "2026-06-11",
+    "updated_at": "2026-06-11",
+    "default_guidance_allowed": false,
+    "approved_allowed": false,
+    "hard_gate_allowed": false,
+    "approval_status": "not_requested",
+    "source_candidate_id": "cand_20260611_phase37_leverage_amplifies_drawdown_001",
+    "ai_audit_result_id": "phase37_quant_foundation_reviewed_preparation_audit_result_20260611_strict_v2",
+    "ai_audit": {
+      "audit_result_id": "phase37_quant_foundation_reviewed_preparation_audit_result_20260611_strict_v2",
+      "source_package_id": "phase37_quant_foundation_reviewed_preparation_audit_package_20260611",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "required_patches": {
+        "source": [],
+        "content": [],
+        "boundary": [
+          "保留美国证券保证金、期货、crypto、CFD、海外 broker/venue 的适用差异。"
+        ],
+        "conflict": [
+          "可见上下文内未发现可证冲突；完整 formal KB 冲突检查由 CEK-TA-196/197 继续执行。"
+        ]
+      },
+      "required_extra_sources": [
+        {
+          "source_id": "src_audit_investor_gov_margin_accounts",
+          "source_title": "Investor Bulletin: Understanding Margin Accounts",
+          "source_url": "https://www.investor.gov/introduction-investing/general-resources/news-alerts/alerts-bulletins/investor-bulletins-29",
+          "source_type": "regulator_investor_education",
+          "publisher": "Investor.gov / SEC",
+          "published_at": null,
+          "accessed_at": "2026-06-11",
+          "version": null,
+          "reliability": "high",
+          "score": 88,
+          "relevance": "high",
+          "freshness": "stable",
+          "limitations": [
+            "美国证券保证金账户教育资料；不自动泛化到期货、crypto、CFD 或海外交易场所。"
+          ],
+          "evidence_summary": "说明保证金交易可能放大损失、触发追加保证金和强制卖出等风险。",
+          "quoted_excerpt_allowed": false
+        }
+      ]
+    },
+    "open_questions": [],
+    "decision_log": [
+      {
+        "at": "2026-06-11",
+        "actor": "external_ai_strict_audit",
+        "decision": "accepted_for_reviewed_caveat_only",
+        "reason": "SEC/Investor.gov 和 FINRA 保证金资料直接支持杠杆放大损失风险。"
+      },
+      {
+        "at": "2026-06-11",
+        "actor": "codex",
+        "decision": "reviewed",
+        "reason": "CEK-TA-380: formal reviewed/caveat_only created; approved/default guidance/hard gate all disabled."
+      }
+    ]
+  },
+  "contribution": {
+    "contribution_id": null,
+    "source_project": null,
+    "sanitization_status": "not_applicable",
+    "private_data_removed": true,
+    "generic_mapping_notes": "Generated from Phase 37 public-source Trading Engineering candidate; no project-private trading facts included."
+  },
+  "copyright": {
+    "stores_full_text": false,
+    "stores_long_quote": false,
+    "summary_only": true,
+    "license_notes": "仅保存来源链接、元数据和摘要，不保存长段原文。",
+    "reuse_risk": "low"
+  },
+  "phase37_conversion": {
+    "source_candidate_status": "accepted",
+    "source_ingestion_decision": "accepted_for_draft",
+    "promoted_by_task": "CEK-TA-380",
+    "reviewed_allowed": true,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  }
+}

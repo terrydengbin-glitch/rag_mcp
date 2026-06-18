@@ -1,0 +1,293 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_phase60_live_execution.paper_account_state.reset_trace_required.v1",
+  "title": "paper account reset、初始资金和账户状态必须可追踪",
+  "metadata": {
+    "partition_id": "KB_06_LIVE_EXECUTION",
+    "domain": "live_execution",
+    "subdomain": "paper_account_state",
+    "rule_type": "paper_account_governance_rule",
+    "claim_type": "account_state_boundary",
+    "content_type": "json",
+    "project_binding": "none",
+    "tree_node_id": "kt.live_execution",
+    "tree_path": "CEK-TA / Trading Engineering / Live Execution",
+    "canonical_node_id": "kt.live_execution",
+    "canonical_tree_path": "CEK-TA / Trading Engineering / Live Execution",
+    "related_nodes": [
+      "kt.trading_engineering",
+      "kt.replay_simulation",
+      "kt.live_execution",
+      "kt.risk_management",
+      "kt.data_engineering",
+      "kt.market_microstructure"
+    ],
+    "risk_level": "medium_high",
+    "used_for": [
+      "account_state_audit",
+      "external_project_rag_retrieval",
+      "mcp",
+      "paper_live_gap",
+      "paper_trading_review",
+      "searchlab",
+      "vue_audit_ui"
+    ],
+    "classification_notes": "Phase 60 P1 增强环境治理候选；只用于 sandbox/replay/paper/canary 的测试、监控、晋级和 gap 审计，不接管策略、实盘执行或风控阈值。",
+    "source_candidate_id": "cand_20260617_phase60_p1_paper_account_reset_trace_required_001",
+    "research_task_id": "P60-P1-03",
+    "phase": "Phase 60",
+    "formalization_task_id": "CEK-TA-586",
+    "review_mode": "reviewed_caveat_only",
+    "alias_of": "kb_phase60_replay_simulation.paper_trading_not_live_required.v1",
+    "alias_notes": "本条按 reviewed/caveat_only 方式作为既有 paper trading 边界知识的 Phase 60 alias / merge companion，不得与既有 formal knowledge 形成竞争规则。"
+  },
+  "applicability": {
+    "market": "general_with_platform_or_venue_specific_mapping",
+    "asset": "general",
+    "timeframe": "sandbox_replay_paper_or_live_canary_environment",
+    "data_granularity": "api_message_order_event_fill_event_health_metric_or_gap_report",
+    "project_type": "trading_ai_support_layer",
+    "applies_when": [
+      "外接项目设计 sandbox、UAT、testnet、replay、paper trading 或 live canary 环境治理",
+      "需要审计 adapter certification、scenario library、paper account state、runtime health、canary rollback 或 environment drift",
+      "需要把 Phase 60 P0 manifest/gap report 扩展为更完整的测试治理证据"
+    ],
+    "not_applicable_when": [
+      "需要生成买卖点、仓位、杠杆、止损止盈、风险阈值或实盘执行建议",
+      "需要直接证明策略有效、live-ready 或收益优势",
+      "没有平台、broker、exchange、API 版本、环境类型或数据来源证据"
+    ]
+  },
+  "content": {
+    "statement": "paper trading 的 account reset、virtual buying power、initial cash、position seed 和 broker model version 会改变评估语义，必须写入 audit trace；paper 账户状态不得与 live 账户事实、真实保证金或真实购买力混用。",
+    "rationale": "本候选是 Phase 60 P1 增强治理知识，只允许外部审计后进入 accepted_for_draft；不得直接 reviewed、approved、default guidance 或 hard gate。",
+    "procedure": [
+      "确认当前问题属于 sandbox、testnet、historical replay、realtime simulation、paper trading、live canary 或 live 环境治理。",
+      "要求外接项目提供 environment_manifest、gap_report、promotion_decision 或 order lifecycle mapping 的可审计证据。",
+      "返回来源、适用范围、不适用场景、owner 边界和 caveat，不返回交易执行许可。",
+      "遇到 live permission、risk threshold、hard gate 或实盘动作请求时，路由给外接项目 Live Execution / Risk Management owner。"
+    ],
+    "anti_patterns": [
+      "把 static API sandbox mocked response 当作真实市场行为。",
+      "把 testnet 订单、余额或成交写成 production fact。",
+      "把 paper trading 盈亏写成 live-ready 或策略有效。",
+      "把 historical replay fill 写成真实队列位置、真实 market impact 或 live 可成交性。",
+      "把 environment_manifest、promotion_decision 或 gap_report 写成实盘许可、自动晋级、自动拒单、自动停机或 hard gate。"
+    ],
+    "validation": [
+      "检查 source_evidence 是否至少包含官方/框架/标准/内部契约来源。",
+      "检查 conflict_audit.approval_allowed=false。",
+      "检查 machine_gate.default_guidance=caveat_only 且 approved/default/hard gate 均为 false。",
+      "检查内容没有买卖点、仓位、杠杆、止损止盈、风险阈值或 live permission。"
+    ],
+    "risk_notes": [
+      "P1 增强知识不能替代 P0 的 EnvironmentManifest、PromotionDecision 和 GapReport。",
+      "候选不能自动创建 reviewed、approved、default guidance 或 hard gate。",
+      "本候选不提供投资建议、订单建议、风险阈值或实盘许可。",
+      "不得混入 live account facts、真实保证金或真实购买力。",
+      "reviewed/caveat_only 只允许作为审计上下文、RAG 检索和项目方案 review；不等于 approved。",
+      "平台、broker、exchange 和 framework 来源必须保留具体适用范围，不得泛化为所有市场。"
+    ],
+    "citation_notes": "Alpaca documents paper trading as a test environment and discusses limitations such as market impact, latency, queue position, fees and dividends.；QuantConnect documents paper trading as live real-time data with fictional capital and simulated fills.；CEK-TA internal contract defines EnvironmentManifest fields, owner boundaries and machine gate restrictions.",
+    "required_followups": [
+      "正式写入时保留 Alpaca / QuantConnect 平台特定边界。",
+      "保留 paper_account_state_not_live_account_fact=true。",
+      "与 Phase 60 P0 paper_not_live 做子项 alias。"
+    ],
+    "audit_patch_notes": {
+      "source_patch_notes": [
+        "Alpaca / QuantConnect 均为平台特定来源。"
+      ],
+      "content_patch_notes": [
+        "paper reset、initial cash、position seed 会改变评估语义，必须进 audit trace。"
+      ],
+      "boundary_patch_notes": [
+        "不得混入 live account facts、真实保证金或真实购买力。"
+      ],
+      "conflict_patch_notes": [
+        "与 Phase 60 P0 paper_not_live 一致，应作为 paper account state 子项。"
+      ]
+    }
+  },
+  "assumptions": [
+    "候选用于 CEK-TA 通用支持层知识库，不包含外接项目私有策略参数。",
+    "每条候选都需要外部 AI/人工严格审计后才能进入 accepted_for_draft。",
+    "平台和工具来源只能作为 implementation pattern 或 supporting source。"
+  ],
+  "source_evidence": [
+    {
+      "source_id": "src_alpaca_paper",
+      "source_title": "Paper Trading",
+      "source_url": "https://docs.alpaca.markets/us/docs/paper-trading",
+      "source_type": "official_doc",
+      "publisher": "Alpaca",
+      "published_at": null,
+      "accessed_at": "2026-06-17",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "Alpaca documents paper trading as a test environment and discusses limitations such as market impact, latency, queue position, fees and dividends.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_quantconnect_paper",
+      "source_title": "QuantConnect Paper Trading",
+      "source_url": "https://www.quantconnect.com/docs/v2/cloud-platform/live-trading/brokerages/quantconnect-paper-trading",
+      "source_type": "platform_doc",
+      "publisher": "QuantConnect",
+      "published_at": null,
+      "accessed_at": "2026-06-17",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "QuantConnect documents paper trading as live real-time data with fictional capital and simulated fills.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_phase60_env_contract",
+      "source_title": "Phase 60 Sandbox / Replay / Paper Environment Contract",
+      "source_url": "docs/contracts/phase60_sandbox_replay_paper_environment_contract.md",
+      "source_type": "internal_contract",
+      "publisher": "CEK-TA",
+      "published_at": null,
+      "accessed_at": "2026-06-17",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "CEK-TA internal contract defines EnvironmentManifest fields, owner boundaries and machine gate restrictions.",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "medium_high",
+    "score": 84,
+    "source_count": 3,
+    "primary_source_count": 2,
+    "limitations": [
+      "候选来源需要外部严格审计；vendor/tool 文档不得过度泛化。"
+    ],
+    "source_quality_notes": [
+      "Reviewed/caveat_only sources support environment governance and audit boundaries, not strategy profitability or live permission.",
+      "Platform, broker, exchange and framework sources are implementation-pattern evidence and must retain scope caveats."
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "known_conflicts": [],
+    "potential_conflicts": [
+      "可能与 Phase 60 P0、Phase 58 环境等效链条、Phase 37 Replay/Live/Risk 知识重叠；正式转换前必须做重复和 owner 边界检查。"
+    ],
+    "resolution_summary": "Phase 60 P1 candidate audit accepted this item for draft only; reviewed/approved/default guidance/hard gate remain forbidden.",
+    "approval_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "approved_allowed": false
+  },
+  "review": {
+    "review_status": "reviewed",
+    "confidence": "high",
+    "freshness": "mixed",
+    "reviewer": "external_ai_strict_audit_and_codex_backwrite",
+    "reviewed_at": "2026-06-18",
+    "source_candidate_id": "cand_20260617_phase60_p1_paper_account_reset_trace_required_001",
+    "ai_audit_result_id": "audit_result_phase60_p1_reviewed_preparation_20260618_strict_v1",
+    "approval_status": "not_requested",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase60_p1_reviewed_preparation_20260618_strict_v1",
+      "package_id": "phase60_p1_reviewed_preparation_audit_package_20260617",
+      "candidate_id": "cand_20260617_phase60_p1_paper_account_reset_trace_required_001",
+      "research_task_id": "P60-P1-03",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "confidence": "high",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "trade_execution_advice_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "live_permission_allowed": false,
+      "required_followups": [
+        "正式写入时保留 Alpaca / QuantConnect 平台特定边界。",
+        "保留 paper_account_state_not_live_account_fact=true。",
+        "与 Phase 60 P0 paper_not_live 做子项 alias。"
+      ],
+      "patch_notes": {
+        "source": [
+          "Alpaca / QuantConnect 均为平台特定来源。"
+        ],
+        "content": [
+          "paper reset、initial cash、position seed 会改变评估语义，必须进 audit trace。"
+        ],
+        "boundary": [
+          "不得混入 live account facts、真实保证金或真实购买力。"
+        ],
+        "conflict": [
+          "与 Phase 60 P0 paper_not_live 一致，应作为 paper account state 子项。"
+        ]
+      }
+    },
+    "audit_log": [
+      {
+        "at": "2026-06-18",
+        "actor": "external_ai_strict_audit",
+        "action": "phase60_reviewed_preparation_audit_passed",
+        "reason": "accepted_for_reviewed_caveat_only; approved/default/hard gate remain forbidden.",
+        "audit_result_id": "audit_result_phase60_p1_reviewed_preparation_20260618_strict_v1"
+      },
+      {
+        "at": "2026-06-18",
+        "actor": "codex",
+        "action": "formal_reviewed_caveat_only_created",
+        "reason": "CEK-TA-586 materialized formal reviewed/caveat_only knowledge."
+      }
+    ]
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于提醒外接项目记录环境治理证据和 gap report。",
+      "用于审计 sandbox/replay/paper/canary 是否保留 owner 和边界。",
+      "用于阻止 AI 把测试环境结果泛化为 live-ready。"
+    ],
+    "not_allowed": [
+      "不得生成买卖点、仓位、杠杆、止损止盈或风险阈值。",
+      "不得授权实盘、自动拒单、自动停机或 hard gate。",
+      "不得把 candidate 当作正式 reviewed 或 approved 知识。"
+    ]
+  },
+  "machine_gate": {
+    "default_guidance": "caveat_only",
+    "reason": "Formal reviewed/caveat_only only; not approved, not default guidance, not hard gate, not live permission.",
+    "requires_human_escalation": true,
+    "hidden_from_default_queue": true,
+    "visible_in_default_guidance_queue": false,
+    "reviewed_allowed": true,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "trade_execution_advice_allowed": false,
+    "risk_threshold_advice_allowed": false,
+    "live_permission_allowed": false
+  },
+  "contract_refs": [],
+  "workflow": {
+    "source_candidate_id": "cand_20260617_phase60_p1_paper_account_reset_trace_required_001",
+    "source_candidate_path": "codex-expert-kit/rag/candidates/KB_06_LIVE_EXECUTION/cand_20260617_phase60_p1_paper_account_reset_trace_required_001.json",
+    "formalized_by_task_id": "CEK-TA-586",
+    "formalized_at": "2026-06-18",
+    "review_mode": "reviewed_caveat_only",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "live_permission_allowed": false
+  },
+  "contribution": {
+    "formalized_from_candidate": "cand_20260617_phase60_p1_paper_account_reset_trace_required_001",
+    "private_data_removed": true,
+    "contains_project_private_strategy": false,
+    "contains_secret": false,
+    "contains_account_facts": false
+  }
+}

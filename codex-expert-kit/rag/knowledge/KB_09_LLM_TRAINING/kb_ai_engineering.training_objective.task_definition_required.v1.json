@@ -1,0 +1,337 @@
+{
+  "schema_version": "1.1.0",
+  "knowledge_id": "kb_ai_engineering.training_objective.task_definition_required.v1",
+  "title": "LLM training work must declare the task objective, output ",
+  "metadata": {
+    "partition_id": "KB_09_LLM_TRAINING",
+    "domain": "llm_training",
+    "subdomain": "training_objective",
+    "rule_type": "principle",
+    "content_type": "json",
+    "project_binding": "none",
+    "tree_node_id": "kt.llm_training.model_training_engineering",
+    "tree_path": "CEK-TA / AI Engineering",
+    "canonical_node_id": "kt.llm_training.model_training_engineering",
+    "canonical_tree_path": "CEK-TA / AI Engineering",
+    "risk_level": "medium",
+    "used_for": [
+      "llm_training",
+      "rag_engineering",
+      "mcp",
+      "vue_audit_ui"
+    ],
+    "source_candidate_id": "cand_20260609_ai_engineering_training_objective_task_definition_required_v1_001",
+    "research_task_id": "RIT-P36-A-T01",
+    "claim_type": "llm_training_rule",
+    "classification_notes": "Phase 36 AI Engineering reviewed knowledge; UI tree and canonical node are inherited from candidate classification. Trading rule bodies must remain in Trading Engineering."
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "general",
+    "data_granularity": "general",
+    "project_type": "trading_llm_assistant",
+    "applies_when": [
+      "Building or auditing LLM training, RAG, MCP, evaluation, or governance for trade quality scoring/gating assistants."
+    ],
+    "not_applicable_when": [
+      "The task asks for concrete trading entries, exits, position sizing, account-specific settings, or live order execution."
+    ]
+  },
+  "content": {
+    "statement": "LLM training work must declare the task objective, output schema, evaluation target, and authority boundary before data collection or fine-tuning starts.",
+    "rationale": "This candidate is scoped to AI Engineering governance for LLM trade quality scoring/gating systems. It does not define trading signals, order execution rules, or strategy parameters. 审计结论：方向成立。训练工作开始前必须声明 task objective、output schema、evaluation target 和 authority boundary，这是模型优化、SFT/DPO 方法选择、数据收集和上线治理的前置条件。OpenAI model optimization 支持先定义目标和 eval baseline，TRL 支持区分 SFT/DPO/reward modeling 等训练方法。可进入 draft。",
+    "procedure": [
+      "确认项目事实匹配 applies_when，且没有命中 not_applicable_when。",
+      "按 source_patch_notes 检查来源是否足够支撑 statement。",
+      "按 content_patch_notes 补齐正式实现、schema、字段和 checklist。",
+      "按 boundary_patch_notes 确认没有把交易规则本体、项目私有参数或实盘执行规则写入 AI Engineering。",
+      "保留 required_followups，后续由来源增强或治理任务继续关闭。"
+    ],
+    "examples": [],
+    "anti_patterns": [
+      "把 reviewed 知识当作 approved 默认指导。",
+      "把 AI Engineering 规则扩写成具体交易阈值、仓位、买卖点或执行参数。",
+      "忽略审计结果中的来源限制、适用范围和后续补强要求。"
+    ],
+    "validation": [
+      "source_evidence 至少 2 条，且没有 low-only 来源。",
+      "conflict_status 为 none 或 resolved。",
+      "review_status 为 reviewed 时 machine_gate 必须是 caveat_only。",
+      "MCP/SearchLab 默认指导不得把本条当作 approved 返回。"
+    ],
+    "risk_notes": [
+      "Candidate requires human or AI audit before conversion to formal reviewed knowledge.",
+      "AI Engineering 管理任务目标、schema、eval、authority boundary 和 training method selection。",
+      "Trading Engineering 管理交易策略、风险阈值、执行逻辑、K 线信号和实盘交易风控。",
+      "不得把训练目标写成具体交易策略优化或实盘收益承诺。",
+      "与第九批 task_taxonomy.each_task_requires_schema_and_eval 互补：task taxonomy 是任务分类矩阵，本条是训练工作启动前的目标定义门槛。",
+      "与 method_selection.no_finetune_before_eval_baseline、rag_vs_finetune_boundary_required 互链。",
+      "未发现直接冲突。",
+      "补 training_objective_contract.md。",
+      "补 objective_type / authority_boundary enum。",
+      "补 eval cases：missing output schema、unclear task objective、training objective implies order execution、research task treated as live gate。"
+    ],
+    "citation_notes": "OpenAI model optimization guidance and TRL training method docs support treating task objective and method choice as explicit engineering inputs.",
+    "audit_patch_notes": {
+      "source_patch_notes": [
+        "保留 OpenAI model optimization 作为主来源。",
+        "保留 Hugging Face TRL 作为 SFT/DPO/reward modeling 等 method taxonomy supporting source。",
+        "补 Model Cards 作为 intended use、limitations、evaluation context 的 supporting source。",
+        "互链 task_taxonomy.each_task_requires_schema_and_eval、training_objective.rag_vs_finetune_boundary_required、sft.when_to_use_and_not_use。",
+        "补 CEK-TA training_objective_contract.md。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 可写为：Before data collection, SFT, DPO or evaluation design starts, every LLM training effort must declare task objective, output schema, evaluation target, authority boundary, allowed sources and forbidden outputs.",
+        "建议字段：task_id、task_type、objective、output_schema_id、eval_target、authority_boundary、allowed_sources、forbidden_outputs、owner、review_status。",
+        "明确 task objective 不得是具体买卖点、仓位、止损止盈或实盘订单动作。",
+        "缺少 authority boundary 时，不得进入 training data collection 或 fine-tuning proposal。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 管理任务目标、schema、eval、authority boundary 和 training method selection。",
+        "Trading Engineering 管理交易策略、风险阈值、执行逻辑、K 线信号和实盘交易风控。",
+        "不得把训练目标写成具体交易策略优化或实盘收益承诺。"
+      ],
+      "conflict_patch_notes": [
+        "与第九批 task_taxonomy.each_task_requires_schema_and_eval 互补：task taxonomy 是任务分类矩阵，本条是训练工作启动前的目标定义门槛。",
+        "与 method_selection.no_finetune_before_eval_baseline、rag_vs_finetune_boundary_required 互链。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 training_objective_contract.md。",
+        "补 objective_type / authority_boundary enum。",
+        "补 eval cases：missing output schema、unclear task objective、training objective implies order execution、research task treated as live gate。"
+      ]
+    }
+  },
+  "assumptions": [
+    "External projects provide project facts and private data; CEK-TA stores only generalized reusable knowledge."
+  ],
+  "source_evidence": [
+    {
+      "source_id": "src_001",
+      "source_title": "Model optimization | OpenAI API",
+      "source_url": "https://platform.openai.com/docs/guides/model-optimization",
+      "source_type": "official_doc",
+      "publisher": "OpenAI",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "OpenAI frames model optimization as an eval, prompt, fine-tuning, and feedback loop rather than a one-step training action.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_003",
+      "source_title": "TRL - Transformers Reinforcement Learning",
+      "source_url": "https://huggingface.co/docs/trl",
+      "source_type": "framework_doc",
+      "publisher": "Hugging Face",
+      "published_at": null,
+      "accessed_at": "2026-06-09",
+      "version": null,
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "TRL documents SFT, DPO, reward modeling, and related post-training tooling, supporting method-boundary classification.",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_occ_fed_fdic_revised_model_risk_2026",
+      "source_title": "Model Risk Management: Revised Guidance",
+      "source_url": "https://occ.gov/news-issuances/bulletins/2026/bulletin-2026-13.html",
+      "source_type": "standard_or_risk_framework",
+      "publisher": "OCC / Federal Reserve / FDIC",
+      "published_at": "2026-04-17",
+      "accessed_at": "2026-06-09",
+      "version": "OCC Bulletin 2026-13 / SR 26-2",
+      "reliability": "high",
+      "relevance": "medium",
+      "evidence_summary": "2026 年跨机构模型风险管理修订指南支持模型治理、验证、变更控制和风险分层；同时需注明 generative AI 和 agentic AI 不在其直接范围内，只能作为模型风险治理类比来源。",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "high",
+    "score": 90,
+    "score_version": "1.0.0",
+    "primary_source_count": 2,
+    "supporting_source_count": 1,
+    "low_reliability_source_count": 0,
+    "limitations": [
+      "本条为 reviewed 知识，来源和审计补丁已记录；默认指导仍需后续人工治理升级 approved。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none",
+    "checked_against": [
+      "docs/contracts/ai_engineering_gating_scoring_contract.md",
+      "docs/contracts/ai_engineering_knowledge_item_policy.md"
+    ],
+    "conflicts": [],
+    "resolution_summary": "No direct conflict found in current CEK-TA formal knowledge. Candidate is not default guidance.",
+    "default_recommendation": "caveat_only_until_approved"
+  },
+  "review": {
+    "confidence": "medium",
+    "freshness": "stable",
+    "review_status": "reviewed",
+    "reviewer": "codex",
+    "reviewed_at": "2026-06-09",
+    "created_at": "2026-06-09",
+    "updated_at": "2026-06-09",
+    "open_questions": [
+      "Should this candidate be split or merged with adjacent AI Engineering policy cards during formal draft conversion?",
+      "补 training_objective_contract.md。",
+      "补 objective_type / authority_boundary enum。",
+      "补 eval cases：missing output schema、unclear task objective、training objective implies order execution、research task treated as live gate。"
+    ],
+    "decision_log": [
+      {
+        "at": "2026-06-09",
+        "actor": "external_ai",
+        "decision": "accepted_for_draft",
+        "reason": "方向成立。训练工作开始前必须声明 task objective、output schema、evaluation target 和 authority boundary，这是模型优化、SFT/DPO 方法选择、数据收集和上线治理的前置条件。OpenAI model optimization 支持先定义目标和 eval baseline，TRL 支持区分 SFT/DPO/reward modeling 等训练方法。可进入 draft。",
+        "audit_result_id": "audit_result_phase36_ai_engineering_batch_10_of_10_20260609_gpt55_pro_strict_sources"
+      },
+      {
+        "at": "2026-06-09",
+        "actor": "codex",
+        "decision": "converted_to_reviewed",
+        "reason": "按 Phase 36 批量审计结果优化候选并转为 formal reviewed；未升级 approved。",
+        "audit_result_id": "audit_result_phase36_ai_engineering_batch_10_of_10_20260609_gpt55_pro_strict_sources"
+      }
+    ],
+    "approval_status": "not_requested",
+    "default_guidance_allowed": false,
+    "source_candidate_id": "cand_20260609_ai_engineering_training_objective_task_definition_required_v1_001",
+    "ai_audit_result_id": "audit_result_phase36_ai_engineering_batch_10_of_10_20260609_gpt55_pro_strict_sources",
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase36_ai_engineering_batch_10_of_10_20260609_gpt55_pro_strict_sources",
+      "source_package_id": "phase36_ai_engineering_candidate_audit_batch_10_of_10_20260609",
+      "decision": "accepted_for_draft",
+      "reason": "方向成立。训练工作开始前必须声明 task objective、output schema、evaluation target 和 authority boundary，这是模型优化、SFT/DPO 方法选择、数据收集和上线治理的前置条件。OpenAI model optimization 支持先定义目标和 eval baseline，TRL 支持区分 SFT/DPO/reward modeling 等训练方法。可进入 draft。",
+      "source_patch_notes": [
+        "保留 OpenAI model optimization 作为主来源。",
+        "保留 Hugging Face TRL 作为 SFT/DPO/reward modeling 等 method taxonomy supporting source。",
+        "补 Model Cards 作为 intended use、limitations、evaluation context 的 supporting source。",
+        "互链 task_taxonomy.each_task_requires_schema_and_eval、training_objective.rag_vs_finetune_boundary_required、sft.when_to_use_and_not_use。",
+        "补 CEK-TA training_objective_contract.md。"
+      ],
+      "content_patch_notes": [
+        "正式 statement 可写为：Before data collection, SFT, DPO or evaluation design starts, every LLM training effort must declare task objective, output schema, evaluation target, authority boundary, allowed sources and forbidden outputs.",
+        "建议字段：task_id、task_type、objective、output_schema_id、eval_target、authority_boundary、allowed_sources、forbidden_outputs、owner、review_status。",
+        "明确 task objective 不得是具体买卖点、仓位、止损止盈或实盘订单动作。",
+        "缺少 authority boundary 时，不得进入 training data collection 或 fine-tuning proposal。"
+      ],
+      "boundary_patch_notes": [
+        "AI Engineering 管理任务目标、schema、eval、authority boundary 和 training method selection。",
+        "Trading Engineering 管理交易策略、风险阈值、执行逻辑、K 线信号和实盘交易风控。",
+        "不得把训练目标写成具体交易策略优化或实盘收益承诺。"
+      ],
+      "conflict_patch_notes": [
+        "与第九批 task_taxonomy.each_task_requires_schema_and_eval 互补：task taxonomy 是任务分类矩阵，本条是训练工作启动前的目标定义门槛。",
+        "与 method_selection.no_finetune_before_eval_baseline、rag_vs_finetune_boundary_required 互链。",
+        "未发现直接冲突。"
+      ],
+      "required_followups": [
+        "补 training_objective_contract.md。",
+        "补 objective_type / authority_boundary enum。",
+        "补 eval cases：missing output schema、unclear task objective、training objective implies order execution、research task treated as live gate。"
+      ]
+    },
+    "approved_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "contribution": {
+    "contribution_id": null,
+    "source_project": null,
+    "sanitization_status": "not_applicable",
+    "private_data_removed": true,
+    "generic_mapping_notes": "Phase 36 public-source AI Engineering candidate; no project-private trading facts included."
+  },
+  "copyright": {
+    "stores_full_text": false,
+    "stores_long_quote": false,
+    "summary_only": true,
+    "license_notes": "Only source links and short summaries are stored.",
+    "reuse_risk": "low"
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于审计 AI Engineering、LLM 训练、RAG/MCP、部署、安全或治理链路。",
+      "用于提醒外接项目补齐来源、适用边界、冲突状态、审计记录和人工审批。",
+      "用于 reviewed/audit 模式下带 caveat 引用。"
+    ],
+    "not_allowed": [
+      "不得生成买卖点、仓位、杠杆、止损止盈或实盘执行指令。",
+      "不得覆盖确定性风控、交易执行系统或人工审批。",
+      "不得作为 approved/default guidance 直接返回。"
+    ],
+    "required_context": [
+      "project_type",
+      "task_type",
+      "mode",
+      "strategy_version",
+      "data_boundary",
+      "review_status"
+    ],
+    "fallback_behavior": "cite_with_caveat"
+  },
+  "machine_gate": {
+    "default_guidance": "caveat_only",
+    "reason": "reviewed only; accepted_for_draft is not approved; default guidance requires later human governance approval.",
+    "requires_human_escalation": true,
+    "blocking_reasons": [
+      "not_approved",
+      "phase36_batch_reviewed_only"
+    ],
+    "checked_at": "2026-06-09",
+    "gate_version": "1.0.0",
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "recommended_extra_sources": [
+    {
+      "title": "保留 OpenAI model optimization 作为主来源。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_1"
+    },
+    {
+      "title": "保留 Hugging Face TRL 作为 SFT/DPO/reward modeling 等 method taxonomy supporting source。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_2"
+    },
+    {
+      "title": "补 Model Cards 作为 intended use、limitations、evaluation context 的 supporting source。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_3"
+    },
+    {
+      "title": "互链 task_taxonomy.each_task_requires_schema_and_eval、training_objective.rag_vs_finetune_boundary_required、sft.when_to_use_and_not_use。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_4"
+    },
+    {
+      "title": "补 CEK-TA training_objective_contract.md。",
+      "source_url": null,
+      "source_type": "other",
+      "purpose": "来自第一批外部审计结果的来源补强建议。",
+      "status": "proposed",
+      "source_id": "recommended_extra_source_5"
+    }
+  ]
+}

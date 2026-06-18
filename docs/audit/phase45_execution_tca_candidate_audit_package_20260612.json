@@ -1,0 +1,1553 @@
+{
+  "package_id": "phase45_execution_tca_candidate_audit_package_20260612",
+  "created_at": "2026-06-12",
+  "created_by": "codex",
+  "phase": "45",
+  "task_id": "CEK-TA-457",
+  "scope": {
+    "branch": "Trading Engineering",
+    "partitions": [
+      "KB_06_LIVE_EXECUTION",
+      "KB_07_TRADE_ANALYSIS"
+    ],
+    "batch": "P45-A Execution TCA / 执行成本分析",
+    "candidate_count": 6,
+    "target": "审计 Execution TCA 候选，包括 implementation shortfall、benchmark 选择、VWAP/TWAP/POV 执行算法边界、成本拆分、best execution routing context 和执行算法不是策略 edge。"
+  },
+  "hard_boundaries": {
+    "candidate_not_formal": true,
+    "accepted_for_draft_not_reviewed": true,
+    "reviewed_not_approved": true,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "trade_execution_advice_allowed": false,
+    "risk_threshold_advice_allowed": false,
+    "must_not_create_formal_knowledge": true,
+    "must_not_generate": [
+      "买卖点",
+      "仓位",
+      "杠杆",
+      "止损止盈参数",
+      "实盘执行建议",
+      "风险阈值数值"
+    ]
+  },
+  "audit_instructions": [
+    "必须搜索相关的专业网站、官方文档、监管资料、协议文档、论文、案例和数据，对本审计包进行严格审计。",
+    "逐条检查来源是否足以支撑 claim；CFA、FINRA、SEC、FIX、平台文档不得被过度泛化。",
+    "检查 Execution TCA 是否正确分区，不得把策略 alpha、回测指标、实盘风控 hard gate 或 AI Engineering 本体混进本分支。",
+    "检查每条候选是否清楚声明适用范围、不适用场景、假设、限制、来源质量和 AI 使用边界。",
+    "重点审计 implementation shortfall、benchmark selection、VWAP/TWAP/POV、delay/impact/opportunity cost、best execution routing context 和 algorithmic execution not strategy edge。",
+    "检查是否有中文乱码、mock/test 污染、项目私有策略参数、账户事实、密钥、交易所私有配置或实盘敏感信息。",
+    "输出只能是 accepted_for_draft、needs_more_evidence、rejected 或 blocked；不得输出 reviewed、approved、default guidance 或 hard gate。"
+  ],
+  "required_output_schema": {
+    "audit_result_id": "string",
+    "auditor": "string",
+    "audited_at": "YYYY-MM-DD",
+    "package_id": "phase45_execution_tca_candidate_audit_package_20260612",
+    "summary": {
+      "total": 6,
+      "accepted_for_draft": 0,
+      "needs_more_evidence": 0,
+      "rejected": 0,
+      "blocked": 0
+    },
+    "candidate_results": [
+      {
+        "candidate_id": "string",
+        "research_task_id": "string",
+        "decision": "accepted_for_draft | needs_more_evidence | rejected | blocked",
+        "confidence": "low | medium | high",
+        "reviewed_allowed": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "reasons": [
+          "string"
+        ],
+        "required_followups": [
+          "string"
+        ],
+        "patch_notes": {
+          "source": [
+            "string"
+          ],
+          "content": [
+            "string"
+          ],
+          "boundary": [
+            "string"
+          ],
+          "conflict": [
+            "string"
+          ]
+        },
+        "source_assessment": {
+          "source_count": 0,
+          "missing_sources": [
+            "string"
+          ],
+          "weak_sources": [
+            "string"
+          ],
+          "recommended_extra_sources": [
+            "string"
+          ]
+        },
+        "classification_assessment": {
+          "is_correct_branch": true,
+          "expected_branch": "Trading Engineering / Execution TCA",
+          "misplaced_topics": [
+            "string"
+          ]
+        }
+      }
+    ]
+  },
+  "quality_gate": {
+    "gate_id": "phase45_execution_tca_candidate_audit_package_quality_gate",
+    "checked_at": "2026-06-12",
+    "phase": "45",
+    "task_id": "CEK-TA-457",
+    "package_id": "phase45_execution_tca_candidate_audit_package_20260612",
+    "candidate_count": 6,
+    "expected_count": 6,
+    "partitions": [
+      "KB_06_LIVE_EXECUTION",
+      "KB_07_TRADE_ANALYSIS"
+    ],
+    "gate_status": "pass",
+    "failures": [],
+    "warnings": [
+      "本包只审计 candidate；不得直接创建 reviewed、approved、default guidance 或 hard gate。",
+      "Execution TCA 只能用于执行成本、benchmark、routing context 和执行质量审计，不得证明策略 alpha。",
+      "FINRA/SEC 来源只覆盖对应辖区；CFA 是专业来源但不是外接项目事实层。"
+    ]
+  },
+  "candidates": [
+    {
+      "schema_version": "1.1.0-candidate",
+      "candidate_id": "cand_20260612_phase45_execution_tca_p45_a_tca01_001",
+      "research_task_id": "P45-A-TCA01",
+      "status": {
+        "review_status": "candidate_ready",
+        "ingestion_decision": "candidate_ready",
+        "decision_reason": "Phase 45 Execution TCA candidate generated for strict external audit; not formal knowledge.",
+        "created_at": "2026-06-12",
+        "updated_at": "2026-06-12"
+      },
+      "classification": {
+        "tree_node_id": "kt.trade_analysis.execution_tca_review",
+        "canonical_node_id": "kt.trade_analysis.execution_tca_review",
+        "tree_path": "CEK-TA / Trading Engineering / Trade Analysis / Execution TCA Review",
+        "related_nodes": [
+          "kt.live_execution.execution_tca",
+          "kt.trade_analysis.execution_tca_review",
+          "kt.replay_simulation.fill_model",
+          "kt.ai_engineering.llm_audit_assistant"
+        ],
+        "partition_id": "KB_07_TRADE_ANALYSIS",
+        "domain": "trade_analysis",
+        "subdomain": "execution_tca_review",
+        "rule_type": "boundary_rule",
+        "claim_type": "execution_tca_boundary_rule",
+        "used_for": [
+          "execution_quality_review",
+          "trade_cost_analysis_context",
+          "external_project_rag_retrieval",
+          "ai_trader_project_design_audit"
+        ],
+        "classification_notes": "主归属 Trading Engineering / Execution TCA；AI Engineering 只能通过 knowledge_refs 引用，不得复制为模型训练或 hard gate 本体。"
+      },
+      "claim": {
+        "claim_id": "claim_p45_a_tca01",
+        "title": "Execution TCA 必须记录 implementation shortfall",
+        "statement": "执行成本分析必须能表达 implementation shortfall 或等价的 arrival-price 成本口径，并拆分显性费用、隐性成本、市场冲击、延迟成本和机会成本；不能只用成交均价或最终 PnL 判断执行质量。",
+        "normalized_claim": "phase45_execution_tca.implementation_shortfall_required.v1",
+        "evidence_summary": "Professional and regulatory sources support TCA, execution-quality, cost-decomposition, benchmark and routing-context boundaries.",
+        "interpretation_notes": "本候选只定义执行成本和执行质量审计边界，不输出买卖点、仓位、止损止盈、杠杆或实盘执行建议。",
+        "claim_strength": "medium_high",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general_with_market_specific_caveats",
+        "asset": "general",
+        "timeframe": "general",
+        "data_granularity": "order_and_execution_events",
+        "project_type": "trading_ai_support_layer",
+        "applies_when": [
+          "外接项目需要评估订单执行质量、交易成本、路由上下文或执行算法边界",
+          "AI IDE 需要区分策略信号、订单执行、TCA 和 post-trade review",
+          "需要设计 execution report、fill report、cost report、routing context 或 TCA reason code"
+        ],
+        "not_applicable_when": [
+          "用户要求具体买卖点、仓位、杠杆或止损止盈参数",
+          "没有订单、成交、费用、滑点、时间戳或 benchmark 数据，无法做执行质量判断",
+          "需要 broker/venue 私有路由事实时，应由外接项目事实层和 Live Execution owner 提供",
+          "需要监管合规结论时，应由对应司法辖区的合规/法律 owner 判断"
+        ],
+        "assumptions": [
+          "Execution TCA 是交易工程审计上下文，不是策略 edge。",
+          "所有 benchmark、venue 和 routing claim 必须声明市场、产品、交易所、订单类型和时间范围。",
+          "候选通过外部审计前不能进入正式 reviewed 知识库。"
+        ],
+        "limitations": [
+          "CFA/FINRA/SEC 来源具有专业或辖区边界，不能泛化为所有市场的硬规则。",
+          "平台文档只能作为实现示例，不替代 CEK-TA 或外接项目字段契约。",
+          "本候选不提供投资建议、风控阈值或实盘执行许可。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_title": "Trading Costs and Electronic Markets",
+          "source_url": "https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/trading-costs-and-electronic-markets",
+          "source_type": "professional_body_reading",
+          "publisher": "CFA Institute",
+          "reliability": "high",
+          "score": 92,
+          "freshness": "time_sensitive",
+          "evidence_summary": "CFA explains implementation shortfall, explicit and implicit trading costs, market impact, delay cost, opportunity cost, and benchmark limitations in electronic markets.",
+          "limitations": [
+            "Professional curriculum source; use for TCA concepts, not as venue-specific execution policy."
+          ],
+          "source_id": "src_001",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Trade Strategy and Execution",
+          "source_url": "https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/trade-strategy-execution",
+          "source_type": "professional_body_reading",
+          "publisher": "CFA Institute",
+          "reliability": "high",
+          "score": 90,
+          "freshness": "time_sensitive",
+          "evidence_summary": "CFA describes trade cost analysis, execution quality, trading policies, escalation procedures, venue/partner selection, and post-trade evaluation.",
+          "limitations": [
+            "Professional reading; not a CEK-TA schema contract and not a direct trading recommendation."
+          ],
+          "source_id": "src_002",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "QuantConnect Reality Modeling: Trade Fills Key Concepts",
+          "source_url": "https://www.quantconnect.com/docs/v2/writing-algorithms/reality-modeling/trade-fills/key-concepts",
+          "source_type": "platform_doc",
+          "publisher": "QuantConnect",
+          "reliability": "medium_high",
+          "score": 78,
+          "freshness": "time_sensitive",
+          "evidence_summary": "QuantConnect fill modeling docs support the boundary that execution assumptions, fills, slippage, and fees are modeled components rather than strategy edge.",
+          "limitations": [
+            "Platform-specific implementation pattern; not a universal execution standard."
+          ],
+          "source_id": "src_003",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "high",
+        "score": 86.67,
+        "score_version": "phase45_source_scoring_v1",
+        "primary_source_count": 2,
+        "supporting_source_count": 1,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "正式 reviewed 前必须由外部审计确认 claim 没有超出来源可证明范围。",
+          "监管资料按地区适用，不能自动泛化到 crypto、外汇、非美市场或全部 broker。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "checked_against": [
+          "Phase 37 Live Execution / Replay / Trade Analysis formal reviewed knowledge",
+          "Phase 41 AI scoring boundary",
+          "Phase 42 Database/Storage contracts",
+          "Phase 45 runtime contract"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与现有正式知识的直接冲突；Execution TCA 与策略工程、回放仿真、AI scoring 的关系按 owner/reference 边界处理。",
+        "approval_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 区分策略信号、执行算法、订单事实和 TCA 复盘。",
+          "用于设计 execution-quality reason code、audit checklist、RAG 检索上下文。",
+          "用于检查外接项目方案是否遗漏成本、benchmark、routing context 或 opportunity cost。"
+        ],
+        "not_allowed": [
+          "不得生成买卖点、仓位、杠杆、止损止盈或实盘执行建议。",
+          "不得把候选知识当作 approved 或默认指导。",
+          "不得把执行算法、TCA 指标或 routing 选择写成策略 alpha 或 hard gate。"
+        ]
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "Phase 45 candidate audit has not passed; formal reviewed requires later gate.",
+        "requires_human_escalation": true,
+        "hidden_from_default_queue": true,
+        "visible_in_default_guidance_queue": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "risk_threshold_advice_allowed": false
+      },
+      "review": {
+        "confidence": "medium",
+        "freshness": "mixed",
+        "reviewer": "codex_candidate_generation",
+        "reviewed_at": "2026-06-12",
+        "open_questions": [
+          "外部审计是否认为来源足以支撑该 TCA 边界？",
+          "是否需要补充更强的一手监管、交易所、broker 或论文来源？",
+          "是否存在与 Phase 37 formal reviewed 知识的重复，需要合并或拆分？"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-12",
+            "actor": "codex",
+            "action": "created",
+            "reason": "根据 Phase 45 P45-A Execution TCA 队列生成候选知识。"
+          },
+          {
+            "at": "2026-06-12",
+            "actor": "codex",
+            "action": "sourced",
+            "reason": "记录 CFA、FINRA、SEC、FIX 和平台文档等来源摘要。"
+          },
+          {
+            "at": "2026-06-12",
+            "actor": "codex",
+            "action": "classified",
+            "reason": "归类到 KB_07_TRADE_ANALYSIS / kt.trade_analysis.execution_tca_review。"
+          }
+        ]
+      },
+      "workflow": {
+        "stage": "pending_external_audit",
+        "allowed_next_decisions": [
+          "accepted_for_draft",
+          "needs_more_evidence",
+          "rejected",
+          "blocked"
+        ],
+        "forbidden_next_decisions": [
+          "reviewed",
+          "approved",
+          "default_guidance",
+          "hard_gate"
+        ],
+        "formal_knowledge_id": null,
+        "audit_package_id": "phase45_execution_tca_candidate_audit_package_20260612"
+      },
+      "contribution": {
+        "origin": "phase45_research_ingestion",
+        "private_data_removed": true,
+        "contains_project_private_strategy": false,
+        "contains_secret": false,
+        "notes": "通用 Trading Engineering 支持层候选知识，不包含外接项目私有交易事实。"
+      }
+    },
+    {
+      "schema_version": "1.1.0-candidate",
+      "candidate_id": "cand_20260612_phase45_execution_tca_p45_a_tca02_001",
+      "research_task_id": "P45-A-TCA02",
+      "status": {
+        "review_status": "candidate_ready",
+        "ingestion_decision": "candidate_ready",
+        "decision_reason": "Phase 45 Execution TCA candidate generated for strict external audit; not formal knowledge.",
+        "created_at": "2026-06-12",
+        "updated_at": "2026-06-12"
+      },
+      "classification": {
+        "tree_node_id": "kt.trade_analysis.execution_tca_review",
+        "canonical_node_id": "kt.trade_analysis.execution_tca_review",
+        "tree_path": "CEK-TA / Trading Engineering / Trade Analysis / Execution TCA Review",
+        "related_nodes": [
+          "kt.live_execution.execution_tca",
+          "kt.trade_analysis.execution_tca_review",
+          "kt.replay_simulation.fill_model",
+          "kt.ai_engineering.llm_audit_assistant"
+        ],
+        "partition_id": "KB_07_TRADE_ANALYSIS",
+        "domain": "trade_analysis",
+        "subdomain": "execution_tca_review",
+        "rule_type": "boundary_rule",
+        "claim_type": "benchmark_boundary_rule",
+        "used_for": [
+          "execution_quality_review",
+          "trade_cost_analysis_context",
+          "external_project_rag_retrieval",
+          "ai_trader_project_design_audit"
+        ],
+        "classification_notes": "主归属 Trading Engineering / Execution TCA；AI Engineering 只能通过 knowledge_refs 引用，不得复制为模型训练或 hard gate 本体。"
+      },
+      "claim": {
+        "claim_id": "claim_p45_a_tca02",
+        "title": "Execution benchmark 必须声明选择边界",
+        "statement": "执行质量复盘必须声明 benchmark 口径，例如 arrival price、decision price、VWAP、TWAP、close price 或自定义 benchmark；不同 benchmark 解释不同问题，不能混用后声称执行好坏。",
+        "normalized_claim": "phase45_execution_tca.execution_benchmark_selection_boundary.v1",
+        "evidence_summary": "Professional and regulatory sources support TCA, execution-quality, cost-decomposition, benchmark and routing-context boundaries.",
+        "interpretation_notes": "本候选只定义执行成本和执行质量审计边界，不输出买卖点、仓位、止损止盈、杠杆或实盘执行建议。",
+        "claim_strength": "medium_high",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general_with_market_specific_caveats",
+        "asset": "general",
+        "timeframe": "general",
+        "data_granularity": "order_and_execution_events",
+        "project_type": "trading_ai_support_layer",
+        "applies_when": [
+          "外接项目需要评估订单执行质量、交易成本、路由上下文或执行算法边界",
+          "AI IDE 需要区分策略信号、订单执行、TCA 和 post-trade review",
+          "需要设计 execution report、fill report、cost report、routing context 或 TCA reason code"
+        ],
+        "not_applicable_when": [
+          "用户要求具体买卖点、仓位、杠杆或止损止盈参数",
+          "没有订单、成交、费用、滑点、时间戳或 benchmark 数据，无法做执行质量判断",
+          "需要 broker/venue 私有路由事实时，应由外接项目事实层和 Live Execution owner 提供",
+          "需要监管合规结论时，应由对应司法辖区的合规/法律 owner 判断"
+        ],
+        "assumptions": [
+          "Execution TCA 是交易工程审计上下文，不是策略 edge。",
+          "所有 benchmark、venue 和 routing claim 必须声明市场、产品、交易所、订单类型和时间范围。",
+          "候选通过外部审计前不能进入正式 reviewed 知识库。"
+        ],
+        "limitations": [
+          "CFA/FINRA/SEC 来源具有专业或辖区边界，不能泛化为所有市场的硬规则。",
+          "平台文档只能作为实现示例，不替代 CEK-TA 或外接项目字段契约。",
+          "本候选不提供投资建议、风控阈值或实盘执行许可。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_title": "Trading Costs and Electronic Markets",
+          "source_url": "https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/trading-costs-and-electronic-markets",
+          "source_type": "professional_body_reading",
+          "publisher": "CFA Institute",
+          "reliability": "high",
+          "score": 92,
+          "freshness": "time_sensitive",
+          "evidence_summary": "CFA explains implementation shortfall, explicit and implicit trading costs, market impact, delay cost, opportunity cost, and benchmark limitations in electronic markets.",
+          "limitations": [
+            "Professional curriculum source; use for TCA concepts, not as venue-specific execution policy."
+          ],
+          "source_id": "src_001",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Trade Strategy and Execution",
+          "source_url": "https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/trade-strategy-execution",
+          "source_type": "professional_body_reading",
+          "publisher": "CFA Institute",
+          "reliability": "high",
+          "score": 90,
+          "freshness": "time_sensitive",
+          "evidence_summary": "CFA describes trade cost analysis, execution quality, trading policies, escalation procedures, venue/partner selection, and post-trade evaluation.",
+          "limitations": [
+            "Professional reading; not a CEK-TA schema contract and not a direct trading recommendation."
+          ],
+          "source_id": "src_002",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "FINRA Rule 5310: Best Execution and Interpositioning",
+          "source_url": "https://www.finra.org/rules-guidance/rulebooks/finra-rules/5310",
+          "source_type": "regulatory_rule",
+          "publisher": "FINRA",
+          "reliability": "high",
+          "score": 90,
+          "freshness": "time_sensitive",
+          "evidence_summary": "FINRA Rule 5310 requires reasonable diligence to ascertain the best market and obtain favorable execution under prevailing market conditions.",
+          "limitations": [
+            "U.S. broker-dealer rule; not universal to all venues, assets, or jurisdictions."
+          ],
+          "source_id": "src_003",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "high",
+        "score": 90.67,
+        "score_version": "phase45_source_scoring_v1",
+        "primary_source_count": 3,
+        "supporting_source_count": 0,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "正式 reviewed 前必须由外部审计确认 claim 没有超出来源可证明范围。",
+          "监管资料按地区适用，不能自动泛化到 crypto、外汇、非美市场或全部 broker。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "checked_against": [
+          "Phase 37 Live Execution / Replay / Trade Analysis formal reviewed knowledge",
+          "Phase 41 AI scoring boundary",
+          "Phase 42 Database/Storage contracts",
+          "Phase 45 runtime contract"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与现有正式知识的直接冲突；Execution TCA 与策略工程、回放仿真、AI scoring 的关系按 owner/reference 边界处理。",
+        "approval_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 区分策略信号、执行算法、订单事实和 TCA 复盘。",
+          "用于设计 execution-quality reason code、audit checklist、RAG 检索上下文。",
+          "用于检查外接项目方案是否遗漏成本、benchmark、routing context 或 opportunity cost。"
+        ],
+        "not_allowed": [
+          "不得生成买卖点、仓位、杠杆、止损止盈或实盘执行建议。",
+          "不得把候选知识当作 approved 或默认指导。",
+          "不得把执行算法、TCA 指标或 routing 选择写成策略 alpha 或 hard gate。"
+        ]
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "Phase 45 candidate audit has not passed; formal reviewed requires later gate.",
+        "requires_human_escalation": true,
+        "hidden_from_default_queue": true,
+        "visible_in_default_guidance_queue": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "risk_threshold_advice_allowed": false
+      },
+      "review": {
+        "confidence": "medium",
+        "freshness": "mixed",
+        "reviewer": "codex_candidate_generation",
+        "reviewed_at": "2026-06-12",
+        "open_questions": [
+          "外部审计是否认为来源足以支撑该 TCA 边界？",
+          "是否需要补充更强的一手监管、交易所、broker 或论文来源？",
+          "是否存在与 Phase 37 formal reviewed 知识的重复，需要合并或拆分？"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-12",
+            "actor": "codex",
+            "action": "created",
+            "reason": "根据 Phase 45 P45-A Execution TCA 队列生成候选知识。"
+          },
+          {
+            "at": "2026-06-12",
+            "actor": "codex",
+            "action": "sourced",
+            "reason": "记录 CFA、FINRA、SEC、FIX 和平台文档等来源摘要。"
+          },
+          {
+            "at": "2026-06-12",
+            "actor": "codex",
+            "action": "classified",
+            "reason": "归类到 KB_07_TRADE_ANALYSIS / kt.trade_analysis.execution_tca_review。"
+          }
+        ]
+      },
+      "workflow": {
+        "stage": "pending_external_audit",
+        "allowed_next_decisions": [
+          "accepted_for_draft",
+          "needs_more_evidence",
+          "rejected",
+          "blocked"
+        ],
+        "forbidden_next_decisions": [
+          "reviewed",
+          "approved",
+          "default_guidance",
+          "hard_gate"
+        ],
+        "formal_knowledge_id": null,
+        "audit_package_id": "phase45_execution_tca_candidate_audit_package_20260612"
+      },
+      "contribution": {
+        "origin": "phase45_research_ingestion",
+        "private_data_removed": true,
+        "contains_project_private_strategy": false,
+        "contains_secret": false,
+        "notes": "通用 Trading Engineering 支持层候选知识，不包含外接项目私有交易事实。"
+      }
+    },
+    {
+      "schema_version": "1.1.0-candidate",
+      "candidate_id": "cand_20260612_phase45_execution_tca_p45_a_tca03_001",
+      "research_task_id": "P45-A-TCA03",
+      "status": {
+        "review_status": "candidate_ready",
+        "ingestion_decision": "candidate_ready",
+        "decision_reason": "Phase 45 Execution TCA candidate generated for strict external audit; not formal knowledge.",
+        "created_at": "2026-06-12",
+        "updated_at": "2026-06-12"
+      },
+      "classification": {
+        "tree_node_id": "kt.live_execution.execution_tca",
+        "canonical_node_id": "kt.live_execution.execution_tca",
+        "tree_path": "CEK-TA / Trading Engineering / Live Execution / Execution TCA",
+        "related_nodes": [
+          "kt.live_execution.execution_tca",
+          "kt.trade_analysis.execution_tca_review",
+          "kt.replay_simulation.fill_model",
+          "kt.ai_engineering.llm_audit_assistant"
+        ],
+        "partition_id": "KB_06_LIVE_EXECUTION",
+        "domain": "live_trading",
+        "subdomain": "execution_tca",
+        "rule_type": "boundary_rule",
+        "claim_type": "execution_algorithm_scope_rule",
+        "used_for": [
+          "execution_quality_review",
+          "trade_cost_analysis_context",
+          "external_project_rag_retrieval",
+          "ai_trader_project_design_audit"
+        ],
+        "classification_notes": "主归属 Trading Engineering / Execution TCA；AI Engineering 只能通过 knowledge_refs 引用，不得复制为模型训练或 hard gate 本体。"
+      },
+      "claim": {
+        "claim_id": "claim_p45_a_tca03",
+        "title": "VWAP/TWAP/POV 属于执行算法口径",
+        "statement": "VWAP、TWAP、POV 或 arrival-price 算法只能描述执行调度和成本控制目标；它们不是策略 alpha、不是交易信号，也不能绕过订单、风控、流动性和市场状态约束。",
+        "normalized_claim": "phase45_execution_tca.vwap_twap_pov_is_algorithm_scope.v1",
+        "evidence_summary": "Professional and regulatory sources support TCA, execution-quality, cost-decomposition, benchmark and routing-context boundaries.",
+        "interpretation_notes": "本候选只定义执行成本和执行质量审计边界，不输出买卖点、仓位、止损止盈、杠杆或实盘执行建议。",
+        "claim_strength": "medium_high",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general_with_market_specific_caveats",
+        "asset": "general",
+        "timeframe": "general",
+        "data_granularity": "order_and_execution_events",
+        "project_type": "trading_ai_support_layer",
+        "applies_when": [
+          "外接项目需要评估订单执行质量、交易成本、路由上下文或执行算法边界",
+          "AI IDE 需要区分策略信号、订单执行、TCA 和 post-trade review",
+          "需要设计 execution report、fill report、cost report、routing context 或 TCA reason code"
+        ],
+        "not_applicable_when": [
+          "用户要求具体买卖点、仓位、杠杆或止损止盈参数",
+          "没有订单、成交、费用、滑点、时间戳或 benchmark 数据，无法做执行质量判断",
+          "需要 broker/venue 私有路由事实时，应由外接项目事实层和 Live Execution owner 提供",
+          "需要监管合规结论时，应由对应司法辖区的合规/法律 owner 判断"
+        ],
+        "assumptions": [
+          "Execution TCA 是交易工程审计上下文，不是策略 edge。",
+          "所有 benchmark、venue 和 routing claim 必须声明市场、产品、交易所、订单类型和时间范围。",
+          "候选通过外部审计前不能进入正式 reviewed 知识库。"
+        ],
+        "limitations": [
+          "CFA/FINRA/SEC 来源具有专业或辖区边界，不能泛化为所有市场的硬规则。",
+          "平台文档只能作为实现示例，不替代 CEK-TA 或外接项目字段契约。",
+          "本候选不提供投资建议、风控阈值或实盘执行许可。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_title": "Trading Costs and Electronic Markets",
+          "source_url": "https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/trading-costs-and-electronic-markets",
+          "source_type": "professional_body_reading",
+          "publisher": "CFA Institute",
+          "reliability": "high",
+          "score": 92,
+          "freshness": "time_sensitive",
+          "evidence_summary": "CFA explains implementation shortfall, explicit and implicit trading costs, market impact, delay cost, opportunity cost, and benchmark limitations in electronic markets.",
+          "limitations": [
+            "Professional curriculum source; use for TCA concepts, not as venue-specific execution policy."
+          ],
+          "source_id": "src_001",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Trade Strategy and Execution",
+          "source_url": "https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/trade-strategy-execution",
+          "source_type": "professional_body_reading",
+          "publisher": "CFA Institute",
+          "reliability": "high",
+          "score": 90,
+          "freshness": "time_sensitive",
+          "evidence_summary": "CFA describes trade cost analysis, execution quality, trading policies, escalation procedures, venue/partner selection, and post-trade evaluation.",
+          "limitations": [
+            "Professional reading; not a CEK-TA schema contract and not a direct trading recommendation."
+          ],
+          "source_id": "src_002",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "FIX 4.4 Execution Report",
+          "source_url": "https://fiximate.fixtrading.org/legacy/en/FIX.4.4/body_5756.html",
+          "source_type": "official_protocol_doc",
+          "publisher": "FIX Trading Community",
+          "reliability": "medium_high",
+          "score": 82,
+          "freshness": "stable",
+          "evidence_summary": "FIX Execution Report supports order/execution event semantics and the separation of order state, fills, and post-trade reports.",
+          "limitations": [
+            "Protocol schema reference; does not define TCA metrics or best-execution obligations."
+          ],
+          "source_id": "src_003",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "high",
+        "score": 88.0,
+        "score_version": "phase45_source_scoring_v1",
+        "primary_source_count": 2,
+        "supporting_source_count": 1,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "正式 reviewed 前必须由外部审计确认 claim 没有超出来源可证明范围。",
+          "监管资料按地区适用，不能自动泛化到 crypto、外汇、非美市场或全部 broker。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "checked_against": [
+          "Phase 37 Live Execution / Replay / Trade Analysis formal reviewed knowledge",
+          "Phase 41 AI scoring boundary",
+          "Phase 42 Database/Storage contracts",
+          "Phase 45 runtime contract"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与现有正式知识的直接冲突；Execution TCA 与策略工程、回放仿真、AI scoring 的关系按 owner/reference 边界处理。",
+        "approval_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 区分策略信号、执行算法、订单事实和 TCA 复盘。",
+          "用于设计 execution-quality reason code、audit checklist、RAG 检索上下文。",
+          "用于检查外接项目方案是否遗漏成本、benchmark、routing context 或 opportunity cost。"
+        ],
+        "not_allowed": [
+          "不得生成买卖点、仓位、杠杆、止损止盈或实盘执行建议。",
+          "不得把候选知识当作 approved 或默认指导。",
+          "不得把执行算法、TCA 指标或 routing 选择写成策略 alpha 或 hard gate。"
+        ]
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "Phase 45 candidate audit has not passed; formal reviewed requires later gate.",
+        "requires_human_escalation": true,
+        "hidden_from_default_queue": true,
+        "visible_in_default_guidance_queue": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "risk_threshold_advice_allowed": false
+      },
+      "review": {
+        "confidence": "medium",
+        "freshness": "mixed",
+        "reviewer": "codex_candidate_generation",
+        "reviewed_at": "2026-06-12",
+        "open_questions": [
+          "外部审计是否认为来源足以支撑该 TCA 边界？",
+          "是否需要补充更强的一手监管、交易所、broker 或论文来源？",
+          "是否存在与 Phase 37 formal reviewed 知识的重复，需要合并或拆分？"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-12",
+            "actor": "codex",
+            "action": "created",
+            "reason": "根据 Phase 45 P45-A Execution TCA 队列生成候选知识。"
+          },
+          {
+            "at": "2026-06-12",
+            "actor": "codex",
+            "action": "sourced",
+            "reason": "记录 CFA、FINRA、SEC、FIX 和平台文档等来源摘要。"
+          },
+          {
+            "at": "2026-06-12",
+            "actor": "codex",
+            "action": "classified",
+            "reason": "归类到 KB_06_LIVE_EXECUTION / kt.live_execution.execution_tca。"
+          }
+        ]
+      },
+      "workflow": {
+        "stage": "pending_external_audit",
+        "allowed_next_decisions": [
+          "accepted_for_draft",
+          "needs_more_evidence",
+          "rejected",
+          "blocked"
+        ],
+        "forbidden_next_decisions": [
+          "reviewed",
+          "approved",
+          "default_guidance",
+          "hard_gate"
+        ],
+        "formal_knowledge_id": null,
+        "audit_package_id": "phase45_execution_tca_candidate_audit_package_20260612"
+      },
+      "contribution": {
+        "origin": "phase45_research_ingestion",
+        "private_data_removed": true,
+        "contains_project_private_strategy": false,
+        "contains_secret": false,
+        "notes": "通用 Trading Engineering 支持层候选知识，不包含外接项目私有交易事实。"
+      }
+    },
+    {
+      "schema_version": "1.1.0-candidate",
+      "candidate_id": "cand_20260612_phase45_execution_tca_p45_a_tca04_001",
+      "research_task_id": "P45-A-TCA04",
+      "status": {
+        "review_status": "candidate_ready",
+        "ingestion_decision": "candidate_ready",
+        "decision_reason": "Phase 45 Execution TCA candidate generated for strict external audit; not formal knowledge.",
+        "created_at": "2026-06-12",
+        "updated_at": "2026-06-12"
+      },
+      "classification": {
+        "tree_node_id": "kt.trade_analysis.execution_tca_review",
+        "canonical_node_id": "kt.trade_analysis.execution_tca_review",
+        "tree_path": "CEK-TA / Trading Engineering / Trade Analysis / Execution TCA Review",
+        "related_nodes": [
+          "kt.live_execution.execution_tca",
+          "kt.trade_analysis.execution_tca_review",
+          "kt.replay_simulation.fill_model",
+          "kt.ai_engineering.llm_audit_assistant"
+        ],
+        "partition_id": "KB_07_TRADE_ANALYSIS",
+        "domain": "trade_analysis",
+        "subdomain": "execution_tca_review",
+        "rule_type": "boundary_rule",
+        "claim_type": "cost_decomposition_rule",
+        "used_for": [
+          "execution_quality_review",
+          "trade_cost_analysis_context",
+          "external_project_rag_retrieval",
+          "ai_trader_project_design_audit"
+        ],
+        "classification_notes": "主归属 Trading Engineering / Execution TCA；AI Engineering 只能通过 knowledge_refs 引用，不得复制为模型训练或 hard gate 本体。"
+      },
+      "claim": {
+        "claim_id": "claim_p45_a_tca04",
+        "title": "执行成本必须拆分 delay、impact 和 opportunity cost",
+        "statement": "交易执行复盘应拆分 delay cost、market impact、spread/fee/slippage 和 opportunity cost；未成交、部分成交或延迟提交造成的机会成本不能静默忽略，也不能当作策略胜率问题处理。",
+        "normalized_claim": "phase45_execution_tca.delay_market_impact_opportunity_cost_decomposition.v1",
+        "evidence_summary": "Professional and regulatory sources support TCA, execution-quality, cost-decomposition, benchmark and routing-context boundaries.",
+        "interpretation_notes": "本候选只定义执行成本和执行质量审计边界，不输出买卖点、仓位、止损止盈、杠杆或实盘执行建议。",
+        "claim_strength": "medium_high",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general_with_market_specific_caveats",
+        "asset": "general",
+        "timeframe": "general",
+        "data_granularity": "order_and_execution_events",
+        "project_type": "trading_ai_support_layer",
+        "applies_when": [
+          "外接项目需要评估订单执行质量、交易成本、路由上下文或执行算法边界",
+          "AI IDE 需要区分策略信号、订单执行、TCA 和 post-trade review",
+          "需要设计 execution report、fill report、cost report、routing context 或 TCA reason code"
+        ],
+        "not_applicable_when": [
+          "用户要求具体买卖点、仓位、杠杆或止损止盈参数",
+          "没有订单、成交、费用、滑点、时间戳或 benchmark 数据，无法做执行质量判断",
+          "需要 broker/venue 私有路由事实时，应由外接项目事实层和 Live Execution owner 提供",
+          "需要监管合规结论时，应由对应司法辖区的合规/法律 owner 判断"
+        ],
+        "assumptions": [
+          "Execution TCA 是交易工程审计上下文，不是策略 edge。",
+          "所有 benchmark、venue 和 routing claim 必须声明市场、产品、交易所、订单类型和时间范围。",
+          "候选通过外部审计前不能进入正式 reviewed 知识库。"
+        ],
+        "limitations": [
+          "CFA/FINRA/SEC 来源具有专业或辖区边界，不能泛化为所有市场的硬规则。",
+          "平台文档只能作为实现示例，不替代 CEK-TA 或外接项目字段契约。",
+          "本候选不提供投资建议、风控阈值或实盘执行许可。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_title": "Trading Costs and Electronic Markets",
+          "source_url": "https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/trading-costs-and-electronic-markets",
+          "source_type": "professional_body_reading",
+          "publisher": "CFA Institute",
+          "reliability": "high",
+          "score": 92,
+          "freshness": "time_sensitive",
+          "evidence_summary": "CFA explains implementation shortfall, explicit and implicit trading costs, market impact, delay cost, opportunity cost, and benchmark limitations in electronic markets.",
+          "limitations": [
+            "Professional curriculum source; use for TCA concepts, not as venue-specific execution policy."
+          ],
+          "source_id": "src_001",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Trade Strategy and Execution",
+          "source_url": "https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/trade-strategy-execution",
+          "source_type": "professional_body_reading",
+          "publisher": "CFA Institute",
+          "reliability": "high",
+          "score": 90,
+          "freshness": "time_sensitive",
+          "evidence_summary": "CFA describes trade cost analysis, execution quality, trading policies, escalation procedures, venue/partner selection, and post-trade evaluation.",
+          "limitations": [
+            "Professional reading; not a CEK-TA schema contract and not a direct trading recommendation."
+          ],
+          "source_id": "src_002",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "QuantConnect Reality Modeling: Trade Fills Key Concepts",
+          "source_url": "https://www.quantconnect.com/docs/v2/writing-algorithms/reality-modeling/trade-fills/key-concepts",
+          "source_type": "platform_doc",
+          "publisher": "QuantConnect",
+          "reliability": "medium_high",
+          "score": 78,
+          "freshness": "time_sensitive",
+          "evidence_summary": "QuantConnect fill modeling docs support the boundary that execution assumptions, fills, slippage, and fees are modeled components rather than strategy edge.",
+          "limitations": [
+            "Platform-specific implementation pattern; not a universal execution standard."
+          ],
+          "source_id": "src_003",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "high",
+        "score": 86.67,
+        "score_version": "phase45_source_scoring_v1",
+        "primary_source_count": 2,
+        "supporting_source_count": 1,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "正式 reviewed 前必须由外部审计确认 claim 没有超出来源可证明范围。",
+          "监管资料按地区适用，不能自动泛化到 crypto、外汇、非美市场或全部 broker。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "checked_against": [
+          "Phase 37 Live Execution / Replay / Trade Analysis formal reviewed knowledge",
+          "Phase 41 AI scoring boundary",
+          "Phase 42 Database/Storage contracts",
+          "Phase 45 runtime contract"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与现有正式知识的直接冲突；Execution TCA 与策略工程、回放仿真、AI scoring 的关系按 owner/reference 边界处理。",
+        "approval_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 区分策略信号、执行算法、订单事实和 TCA 复盘。",
+          "用于设计 execution-quality reason code、audit checklist、RAG 检索上下文。",
+          "用于检查外接项目方案是否遗漏成本、benchmark、routing context 或 opportunity cost。"
+        ],
+        "not_allowed": [
+          "不得生成买卖点、仓位、杠杆、止损止盈或实盘执行建议。",
+          "不得把候选知识当作 approved 或默认指导。",
+          "不得把执行算法、TCA 指标或 routing 选择写成策略 alpha 或 hard gate。"
+        ]
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "Phase 45 candidate audit has not passed; formal reviewed requires later gate.",
+        "requires_human_escalation": true,
+        "hidden_from_default_queue": true,
+        "visible_in_default_guidance_queue": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "risk_threshold_advice_allowed": false
+      },
+      "review": {
+        "confidence": "medium",
+        "freshness": "mixed",
+        "reviewer": "codex_candidate_generation",
+        "reviewed_at": "2026-06-12",
+        "open_questions": [
+          "外部审计是否认为来源足以支撑该 TCA 边界？",
+          "是否需要补充更强的一手监管、交易所、broker 或论文来源？",
+          "是否存在与 Phase 37 formal reviewed 知识的重复，需要合并或拆分？"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-12",
+            "actor": "codex",
+            "action": "created",
+            "reason": "根据 Phase 45 P45-A Execution TCA 队列生成候选知识。"
+          },
+          {
+            "at": "2026-06-12",
+            "actor": "codex",
+            "action": "sourced",
+            "reason": "记录 CFA、FINRA、SEC、FIX 和平台文档等来源摘要。"
+          },
+          {
+            "at": "2026-06-12",
+            "actor": "codex",
+            "action": "classified",
+            "reason": "归类到 KB_07_TRADE_ANALYSIS / kt.trade_analysis.execution_tca_review。"
+          }
+        ]
+      },
+      "workflow": {
+        "stage": "pending_external_audit",
+        "allowed_next_decisions": [
+          "accepted_for_draft",
+          "needs_more_evidence",
+          "rejected",
+          "blocked"
+        ],
+        "forbidden_next_decisions": [
+          "reviewed",
+          "approved",
+          "default_guidance",
+          "hard_gate"
+        ],
+        "formal_knowledge_id": null,
+        "audit_package_id": "phase45_execution_tca_candidate_audit_package_20260612"
+      },
+      "contribution": {
+        "origin": "phase45_research_ingestion",
+        "private_data_removed": true,
+        "contains_project_private_strategy": false,
+        "contains_secret": false,
+        "notes": "通用 Trading Engineering 支持层候选知识，不包含外接项目私有交易事实。"
+      }
+    },
+    {
+      "schema_version": "1.1.0-candidate",
+      "candidate_id": "cand_20260612_phase45_execution_tca_p45_a_tca05_001",
+      "research_task_id": "P45-A-TCA05",
+      "status": {
+        "review_status": "candidate_ready",
+        "ingestion_decision": "candidate_ready",
+        "decision_reason": "Phase 45 Execution TCA candidate generated for strict external audit; not formal knowledge.",
+        "created_at": "2026-06-12",
+        "updated_at": "2026-06-12"
+      },
+      "classification": {
+        "tree_node_id": "kt.live_execution.execution_tca",
+        "canonical_node_id": "kt.live_execution.execution_tca",
+        "tree_path": "CEK-TA / Trading Engineering / Live Execution / Execution TCA",
+        "related_nodes": [
+          "kt.live_execution.execution_tca",
+          "kt.trade_analysis.execution_tca_review",
+          "kt.replay_simulation.fill_model",
+          "kt.ai_engineering.llm_audit_assistant"
+        ],
+        "partition_id": "KB_06_LIVE_EXECUTION",
+        "domain": "live_trading",
+        "subdomain": "execution_tca",
+        "rule_type": "boundary_rule",
+        "claim_type": "best_execution_context_rule",
+        "used_for": [
+          "execution_quality_review",
+          "trade_cost_analysis_context",
+          "external_project_rag_retrieval",
+          "ai_trader_project_design_audit"
+        ],
+        "classification_notes": "主归属 Trading Engineering / Execution TCA；AI Engineering 只能通过 knowledge_refs 引用，不得复制为模型训练或 hard gate 本体。"
+      },
+      "claim": {
+        "claim_id": "claim_p45_a_tca05",
+        "title": "Best execution 必须保留 routing context",
+        "statement": "best execution 或 routing 质量评审必须保留市场、venue、订单类型、流动性、冲突安排、路由选择、披露和 prevailing market conditions 上下文；不能只用最优价格或单一成交价格判断。",
+        "normalized_claim": "phase45_execution_tca.best_execution_routing_context_required.v1",
+        "evidence_summary": "Professional and regulatory sources support TCA, execution-quality, cost-decomposition, benchmark and routing-context boundaries.",
+        "interpretation_notes": "本候选只定义执行成本和执行质量审计边界，不输出买卖点、仓位、止损止盈、杠杆或实盘执行建议。",
+        "claim_strength": "medium_high",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general_with_market_specific_caveats",
+        "asset": "general",
+        "timeframe": "general",
+        "data_granularity": "order_and_execution_events",
+        "project_type": "trading_ai_support_layer",
+        "applies_when": [
+          "外接项目需要评估订单执行质量、交易成本、路由上下文或执行算法边界",
+          "AI IDE 需要区分策略信号、订单执行、TCA 和 post-trade review",
+          "需要设计 execution report、fill report、cost report、routing context 或 TCA reason code"
+        ],
+        "not_applicable_when": [
+          "用户要求具体买卖点、仓位、杠杆或止损止盈参数",
+          "没有订单、成交、费用、滑点、时间戳或 benchmark 数据，无法做执行质量判断",
+          "需要 broker/venue 私有路由事实时，应由外接项目事实层和 Live Execution owner 提供",
+          "需要监管合规结论时，应由对应司法辖区的合规/法律 owner 判断"
+        ],
+        "assumptions": [
+          "Execution TCA 是交易工程审计上下文，不是策略 edge。",
+          "所有 benchmark、venue 和 routing claim 必须声明市场、产品、交易所、订单类型和时间范围。",
+          "候选通过外部审计前不能进入正式 reviewed 知识库。"
+        ],
+        "limitations": [
+          "CFA/FINRA/SEC 来源具有专业或辖区边界，不能泛化为所有市场的硬规则。",
+          "平台文档只能作为实现示例，不替代 CEK-TA 或外接项目字段契约。",
+          "本候选不提供投资建议、风控阈值或实盘执行许可。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_title": "FINRA Rule 5310: Best Execution and Interpositioning",
+          "source_url": "https://www.finra.org/rules-guidance/rulebooks/finra-rules/5310",
+          "source_type": "regulatory_rule",
+          "publisher": "FINRA",
+          "reliability": "high",
+          "score": 90,
+          "freshness": "time_sensitive",
+          "evidence_summary": "FINRA Rule 5310 requires reasonable diligence to ascertain the best market and obtain favorable execution under prevailing market conditions.",
+          "limitations": [
+            "U.S. broker-dealer rule; not universal to all venues, assets, or jurisdictions."
+          ],
+          "source_id": "src_001",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "SEC FAQ: Rule 606 of Regulation NMS",
+          "source_url": "https://www.sec.gov/rules-regulations/staff-guidance/trading-markets-frequently-asked-questions/faq-rule-606-regulation",
+          "source_type": "regulatory_guidance",
+          "publisher": "U.S. SEC",
+          "reliability": "high",
+          "score": 88,
+          "freshness": "time_sensitive",
+          "evidence_summary": "SEC Rule 606 guidance supports order routing disclosure and execution-quality transparency for routing services.",
+          "limitations": [
+            "U.S. equity/options disclosure context; use for routing transparency boundary only."
+          ],
+          "source_id": "src_002",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Trade Strategy and Execution",
+          "source_url": "https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/trade-strategy-execution",
+          "source_type": "professional_body_reading",
+          "publisher": "CFA Institute",
+          "reliability": "high",
+          "score": 90,
+          "freshness": "time_sensitive",
+          "evidence_summary": "CFA describes trade cost analysis, execution quality, trading policies, escalation procedures, venue/partner selection, and post-trade evaluation.",
+          "limitations": [
+            "Professional reading; not a CEK-TA schema contract and not a direct trading recommendation."
+          ],
+          "source_id": "src_003",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "high",
+        "score": 89.33,
+        "score_version": "phase45_source_scoring_v1",
+        "primary_source_count": 3,
+        "supporting_source_count": 0,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "正式 reviewed 前必须由外部审计确认 claim 没有超出来源可证明范围。",
+          "监管资料按地区适用，不能自动泛化到 crypto、外汇、非美市场或全部 broker。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "checked_against": [
+          "Phase 37 Live Execution / Replay / Trade Analysis formal reviewed knowledge",
+          "Phase 41 AI scoring boundary",
+          "Phase 42 Database/Storage contracts",
+          "Phase 45 runtime contract"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与现有正式知识的直接冲突；Execution TCA 与策略工程、回放仿真、AI scoring 的关系按 owner/reference 边界处理。",
+        "approval_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 区分策略信号、执行算法、订单事实和 TCA 复盘。",
+          "用于设计 execution-quality reason code、audit checklist、RAG 检索上下文。",
+          "用于检查外接项目方案是否遗漏成本、benchmark、routing context 或 opportunity cost。"
+        ],
+        "not_allowed": [
+          "不得生成买卖点、仓位、杠杆、止损止盈或实盘执行建议。",
+          "不得把候选知识当作 approved 或默认指导。",
+          "不得把执行算法、TCA 指标或 routing 选择写成策略 alpha 或 hard gate。"
+        ]
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "Phase 45 candidate audit has not passed; formal reviewed requires later gate.",
+        "requires_human_escalation": true,
+        "hidden_from_default_queue": true,
+        "visible_in_default_guidance_queue": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "risk_threshold_advice_allowed": false
+      },
+      "review": {
+        "confidence": "medium",
+        "freshness": "mixed",
+        "reviewer": "codex_candidate_generation",
+        "reviewed_at": "2026-06-12",
+        "open_questions": [
+          "外部审计是否认为来源足以支撑该 TCA 边界？",
+          "是否需要补充更强的一手监管、交易所、broker 或论文来源？",
+          "是否存在与 Phase 37 formal reviewed 知识的重复，需要合并或拆分？"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-12",
+            "actor": "codex",
+            "action": "created",
+            "reason": "根据 Phase 45 P45-A Execution TCA 队列生成候选知识。"
+          },
+          {
+            "at": "2026-06-12",
+            "actor": "codex",
+            "action": "sourced",
+            "reason": "记录 CFA、FINRA、SEC、FIX 和平台文档等来源摘要。"
+          },
+          {
+            "at": "2026-06-12",
+            "actor": "codex",
+            "action": "classified",
+            "reason": "归类到 KB_06_LIVE_EXECUTION / kt.live_execution.execution_tca。"
+          }
+        ]
+      },
+      "workflow": {
+        "stage": "pending_external_audit",
+        "allowed_next_decisions": [
+          "accepted_for_draft",
+          "needs_more_evidence",
+          "rejected",
+          "blocked"
+        ],
+        "forbidden_next_decisions": [
+          "reviewed",
+          "approved",
+          "default_guidance",
+          "hard_gate"
+        ],
+        "formal_knowledge_id": null,
+        "audit_package_id": "phase45_execution_tca_candidate_audit_package_20260612"
+      },
+      "contribution": {
+        "origin": "phase45_research_ingestion",
+        "private_data_removed": true,
+        "contains_project_private_strategy": false,
+        "contains_secret": false,
+        "notes": "通用 Trading Engineering 支持层候选知识，不包含外接项目私有交易事实。"
+      }
+    },
+    {
+      "schema_version": "1.1.0-candidate",
+      "candidate_id": "cand_20260612_phase45_execution_tca_p45_a_tca06_001",
+      "research_task_id": "P45-A-TCA06",
+      "status": {
+        "review_status": "candidate_ready",
+        "ingestion_decision": "candidate_ready",
+        "decision_reason": "Phase 45 Execution TCA candidate generated for strict external audit; not formal knowledge.",
+        "created_at": "2026-06-12",
+        "updated_at": "2026-06-12"
+      },
+      "classification": {
+        "tree_node_id": "kt.live_execution.execution_tca",
+        "canonical_node_id": "kt.live_execution.execution_tca",
+        "tree_path": "CEK-TA / Trading Engineering / Live Execution / Execution TCA",
+        "related_nodes": [
+          "kt.live_execution.execution_tca",
+          "kt.trade_analysis.execution_tca_review",
+          "kt.replay_simulation.fill_model",
+          "kt.ai_engineering.llm_audit_assistant"
+        ],
+        "partition_id": "KB_06_LIVE_EXECUTION",
+        "domain": "live_trading",
+        "subdomain": "execution_tca",
+        "rule_type": "boundary_rule",
+        "claim_type": "execution_strategy_boundary_rule",
+        "used_for": [
+          "execution_quality_review",
+          "trade_cost_analysis_context",
+          "external_project_rag_retrieval",
+          "ai_trader_project_design_audit"
+        ],
+        "classification_notes": "主归属 Trading Engineering / Execution TCA；AI Engineering 只能通过 knowledge_refs 引用，不得复制为模型训练或 hard gate 本体。"
+      },
+      "claim": {
+        "claim_id": "claim_p45_a_tca06",
+        "title": "算法执行不能被写成策略 edge",
+        "statement": "执行算法、路由算法和 TCA 优化只能改善或解释交易实现成本；除非经过独立研究和样本外验证，否则不能把更低执行成本、VWAP 优于基准或更少滑点写成策略 alpha 或交易信号。",
+        "normalized_claim": "phase45_execution_tca.algorithmic_execution_not_strategy_edge.v1",
+        "evidence_summary": "Professional and regulatory sources support TCA, execution-quality, cost-decomposition, benchmark and routing-context boundaries.",
+        "interpretation_notes": "本候选只定义执行成本和执行质量审计边界，不输出买卖点、仓位、止损止盈、杠杆或实盘执行建议。",
+        "claim_strength": "medium_high",
+        "performance_claim": false
+      },
+      "applicability": {
+        "market": "general_with_market_specific_caveats",
+        "asset": "general",
+        "timeframe": "general",
+        "data_granularity": "order_and_execution_events",
+        "project_type": "trading_ai_support_layer",
+        "applies_when": [
+          "外接项目需要评估订单执行质量、交易成本、路由上下文或执行算法边界",
+          "AI IDE 需要区分策略信号、订单执行、TCA 和 post-trade review",
+          "需要设计 execution report、fill report、cost report、routing context 或 TCA reason code"
+        ],
+        "not_applicable_when": [
+          "用户要求具体买卖点、仓位、杠杆或止损止盈参数",
+          "没有订单、成交、费用、滑点、时间戳或 benchmark 数据，无法做执行质量判断",
+          "需要 broker/venue 私有路由事实时，应由外接项目事实层和 Live Execution owner 提供",
+          "需要监管合规结论时，应由对应司法辖区的合规/法律 owner 判断"
+        ],
+        "assumptions": [
+          "Execution TCA 是交易工程审计上下文，不是策略 edge。",
+          "所有 benchmark、venue 和 routing claim 必须声明市场、产品、交易所、订单类型和时间范围。",
+          "候选通过外部审计前不能进入正式 reviewed 知识库。"
+        ],
+        "limitations": [
+          "CFA/FINRA/SEC 来源具有专业或辖区边界，不能泛化为所有市场的硬规则。",
+          "平台文档只能作为实现示例，不替代 CEK-TA 或外接项目字段契约。",
+          "本候选不提供投资建议、风控阈值或实盘执行许可。"
+        ]
+      },
+      "source_refs": [
+        {
+          "source_title": "Trading Costs and Electronic Markets",
+          "source_url": "https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/trading-costs-and-electronic-markets",
+          "source_type": "professional_body_reading",
+          "publisher": "CFA Institute",
+          "reliability": "high",
+          "score": 92,
+          "freshness": "time_sensitive",
+          "evidence_summary": "CFA explains implementation shortfall, explicit and implicit trading costs, market impact, delay cost, opportunity cost, and benchmark limitations in electronic markets.",
+          "limitations": [
+            "Professional curriculum source; use for TCA concepts, not as venue-specific execution policy."
+          ],
+          "source_id": "src_001",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "Trade Strategy and Execution",
+          "source_url": "https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/trade-strategy-execution",
+          "source_type": "professional_body_reading",
+          "publisher": "CFA Institute",
+          "reliability": "high",
+          "score": 90,
+          "freshness": "time_sensitive",
+          "evidence_summary": "CFA describes trade cost analysis, execution quality, trading policies, escalation procedures, venue/partner selection, and post-trade evaluation.",
+          "limitations": [
+            "Professional reading; not a CEK-TA schema contract and not a direct trading recommendation."
+          ],
+          "source_id": "src_002",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "FINRA Rule 5310: Best Execution and Interpositioning",
+          "source_url": "https://www.finra.org/rules-guidance/rulebooks/finra-rules/5310",
+          "source_type": "regulatory_rule",
+          "publisher": "FINRA",
+          "reliability": "high",
+          "score": 90,
+          "freshness": "time_sensitive",
+          "evidence_summary": "FINRA Rule 5310 requires reasonable diligence to ascertain the best market and obtain favorable execution under prevailing market conditions.",
+          "limitations": [
+            "U.S. broker-dealer rule; not universal to all venues, assets, or jurisdictions."
+          ],
+          "source_id": "src_003",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        },
+        {
+          "source_title": "QuantConnect Reality Modeling: Trade Fills Key Concepts",
+          "source_url": "https://www.quantconnect.com/docs/v2/writing-algorithms/reality-modeling/trade-fills/key-concepts",
+          "source_type": "platform_doc",
+          "publisher": "QuantConnect",
+          "reliability": "medium_high",
+          "score": 78,
+          "freshness": "time_sensitive",
+          "evidence_summary": "QuantConnect fill modeling docs support the boundary that execution assumptions, fills, slippage, and fees are modeled components rather than strategy edge.",
+          "limitations": [
+            "Platform-specific implementation pattern; not a universal execution standard."
+          ],
+          "source_id": "src_004",
+          "accessed_at": "2026-06-12",
+          "version": null,
+          "relevance": "high",
+          "quoted_excerpt_allowed": false
+        }
+      ],
+      "source_quality": {
+        "overall_reliability": "high",
+        "score": 87.5,
+        "score_version": "phase45_source_scoring_v1",
+        "primary_source_count": 3,
+        "supporting_source_count": 1,
+        "low_reliability_source_count": 0,
+        "mandatory_downgrades": [],
+        "limitations": [
+          "正式 reviewed 前必须由外部审计确认 claim 没有超出来源可证明范围。",
+          "监管资料按地区适用，不能自动泛化到 crypto、外汇、非美市场或全部 broker。"
+        ]
+      },
+      "conflict_audit": {
+        "conflict_status": "none",
+        "checked_against": [
+          "Phase 37 Live Execution / Replay / Trade Analysis formal reviewed knowledge",
+          "Phase 41 AI scoring boundary",
+          "Phase 42 Database/Storage contracts",
+          "Phase 45 runtime contract"
+        ],
+        "conflicts": [],
+        "resolution_summary": "未发现与现有正式知识的直接冲突；Execution TCA 与策略工程、回放仿真、AI scoring 的关系按 owner/reference 边界处理。",
+        "approval_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "llm_usage_policy": {
+        "allowed": [
+          "用于提醒 AI IDE 区分策略信号、执行算法、订单事实和 TCA 复盘。",
+          "用于设计 execution-quality reason code、audit checklist、RAG 检索上下文。",
+          "用于检查外接项目方案是否遗漏成本、benchmark、routing context 或 opportunity cost。"
+        ],
+        "not_allowed": [
+          "不得生成买卖点、仓位、杠杆、止损止盈或实盘执行建议。",
+          "不得把候选知识当作 approved 或默认指导。",
+          "不得把执行算法、TCA 指标或 routing 选择写成策略 alpha 或 hard gate。"
+        ]
+      },
+      "machine_gate": {
+        "default_guidance": "deny",
+        "reason": "Phase 45 candidate audit has not passed; formal reviewed requires later gate.",
+        "requires_human_escalation": true,
+        "hidden_from_default_queue": true,
+        "visible_in_default_guidance_queue": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "risk_threshold_advice_allowed": false
+      },
+      "review": {
+        "confidence": "medium",
+        "freshness": "mixed",
+        "reviewer": "codex_candidate_generation",
+        "reviewed_at": "2026-06-12",
+        "open_questions": [
+          "外部审计是否认为来源足以支撑该 TCA 边界？",
+          "是否需要补充更强的一手监管、交易所、broker 或论文来源？",
+          "是否存在与 Phase 37 formal reviewed 知识的重复，需要合并或拆分？"
+        ],
+        "audit_log": [
+          {
+            "at": "2026-06-12",
+            "actor": "codex",
+            "action": "created",
+            "reason": "根据 Phase 45 P45-A Execution TCA 队列生成候选知识。"
+          },
+          {
+            "at": "2026-06-12",
+            "actor": "codex",
+            "action": "sourced",
+            "reason": "记录 CFA、FINRA、SEC、FIX 和平台文档等来源摘要。"
+          },
+          {
+            "at": "2026-06-12",
+            "actor": "codex",
+            "action": "classified",
+            "reason": "归类到 KB_06_LIVE_EXECUTION / kt.live_execution.execution_tca。"
+          }
+        ]
+      },
+      "workflow": {
+        "stage": "pending_external_audit",
+        "allowed_next_decisions": [
+          "accepted_for_draft",
+          "needs_more_evidence",
+          "rejected",
+          "blocked"
+        ],
+        "forbidden_next_decisions": [
+          "reviewed",
+          "approved",
+          "default_guidance",
+          "hard_gate"
+        ],
+        "formal_knowledge_id": null,
+        "audit_package_id": "phase45_execution_tca_candidate_audit_package_20260612"
+      },
+      "contribution": {
+        "origin": "phase45_research_ingestion",
+        "private_data_removed": true,
+        "contains_project_private_strategy": false,
+        "contains_secret": false,
+        "notes": "通用 Trading Engineering 支持层候选知识，不包含外接项目私有交易事实。"
+      }
+    }
+  ]
+}

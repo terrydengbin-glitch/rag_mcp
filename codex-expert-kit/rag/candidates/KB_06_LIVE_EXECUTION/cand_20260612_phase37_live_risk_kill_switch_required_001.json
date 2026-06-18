@@ -1,0 +1,377 @@
+{
+  "schema_version": "1.1.0-candidate",
+  "candidate_id": "cand_20260612_phase37_live_risk_kill_switch_required_001",
+  "research_task_id": "P37-G-L04",
+  "status": {
+    "review_status": "reviewed",
+    "ingestion_decision": "accepted_for_reviewed_caveat_only",
+    "decision_reason": "reviewed-preparation 审计允许 formal reviewed/caveat_only；不允许 approved/default guidance/hard gate/风险阈值建议。",
+    "created_at": "2026-06-12",
+    "updated_at": "2026-06-12"
+  },
+  "classification": {
+    "tree_node_id": "kt.live_execution.risk_control",
+    "canonical_node_id": "kt.live_execution.risk_control",
+    "tree_path": "CEK-TA / Trading Engineering / Live Execution / Risk Control",
+    "related_nodes": [
+      "kt.trading_engineering",
+      "kt.live_execution",
+      "kt.risk_management",
+      "kt.replay_simulation",
+      "kt.market_microstructure",
+      "kt.ai_engineering.llm_training"
+    ],
+    "partition_id": "KB_06_LIVE_EXECUTION",
+    "domain": "live_trading",
+    "subdomain": "kill_switch",
+    "rule_type": "live_risk_boundary_rule",
+    "claim_type": "incident_control_contract",
+    "used_for": [
+      "live_readiness_review",
+      "risk_gate_design_review",
+      "external_project_rag_retrieval",
+      "ai_trader_project_gap_audit"
+    ],
+    "classification_notes": "本候选主归属 Trading Engineering / Live Execution。AI Engineering 只能引用本规则，不得把实盘执行或风险管理本体改写为模型训练规则。"
+  },
+  "claim": {
+    "claim_id": "claim_p37_g_l04",
+    "title": "实盘系统必须有安全停机和撤单机制",
+    "statement": "实盘系统必须定义 kill switch、order-entry block、cancel working orders、manual override 和恢复流程；kill switch 触发不能等同于策略判断，只能作为执行安全控制。",
+    "normalized_claim": "live_trading.kill_switch_required.v1",
+    "evidence_summary": "CME Kill Switch can block new order entry and cancel working orders for configured entities.；CME describes pre-trade risk management across limit, order, permissions management, dashboards, reports, and audit trail.；FIA discusses automated trading risk controls such as maximum order size and kill switches from trader, broker, and venue perspectives.",
+    "interpretation_notes": "本候选只定义实盘执行与风险管理边界，不输出买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+    "claim_strength": "medium_high",
+    "performance_claim": false
+  },
+  "applicability": {
+    "market": "general_with_broker_venue_specific_mapping",
+    "asset": "general",
+    "timeframe": "live_or_paper_to_live_readiness",
+    "data_granularity": "orders_fills_positions_account_risk_events",
+    "project_type": "trading_ai_support_layer",
+    "applies_when": [
+      "审计外接项目的实盘执行、订单状态机、仓位对账、交易所适配器、risk gate 或 kill switch 设计",
+      "把 AI scoring / strategy signal 接入实盘前，需要确认 deterministic final gate 和执行安全边界"
+    ],
+    "not_applicable_when": [
+      "需要生成买卖点、仓位、杠杆、止损止盈或具体下单建议",
+      "问题属于回测、回放或模拟假设，应由 Backtest / Replay Simulation 分支处理",
+      "没有 broker、venue、account、order、position、risk policy 或 audit trace 上下文"
+    ],
+    "assumptions": [
+      "候选用于 CEK-TA 通用支持层知识库，不包含外接项目私有账户事实、密钥或策略参数。",
+      "实盘执行和风控规则必须按 broker、venue、asset、account、policy 和时间版本映射。",
+      "候选通过外部审计前不能进入正式 reviewed 知识库。"
+    ],
+    "limitations": [
+      "监管、交易所、broker 和平台来源只能支持原则和实现模式，不能替代外接项目自己的风控政策。",
+      "风险限制阈值必须由外接项目 owner 设定，本知识库不提供阈值数值建议。",
+      "本候选不提供任何投资建议或实盘许可。"
+    ]
+  },
+  "source_refs": [
+    {
+      "source_title": "Enforcing Kill Switch",
+      "source_url": "https://www.cmegroup.com/tools-information/webhelp/globex-credit-controls/Content/KS_Detail.html",
+      "source_type": "exchange_risk_doc",
+      "publisher": "CME Group",
+      "reliability": "medium_high",
+      "score": 84,
+      "freshness": "time_sensitive",
+      "evidence_summary": "CME Kill Switch can block new order entry and cancel working orders for configured entities.",
+      "limitations": [
+        "CME-specific kill switch semantics; external projects need their own broker/venue control mapping."
+      ],
+      "source_id": "src_001",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "Pre-Trade Risk Management",
+      "source_url": "https://www.cmegroup.com/solutions/market-access/globex/trade-on-globex/pre-trade-risk-management.html",
+      "source_type": "exchange_risk_doc",
+      "publisher": "CME Group",
+      "reliability": "medium_high",
+      "score": 84,
+      "freshness": "time_sensitive",
+      "evidence_summary": "CME describes pre-trade risk management across limit, order, permissions management, dashboards, reports, and audit trail.",
+      "limitations": [
+        "CME-specific systems; use as exchange pattern, not universal requirement."
+      ],
+      "source_id": "src_002",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "Best Practices for Automated Trading Risk Controls and System Safeguards",
+      "source_url": "https://www.fia.org/sites/default/files/2024-07/FIA_WP_AUTOMATED%20TRADING%20RISK%20CONTROLS_FINAL_0.pdf",
+      "source_type": "industry_guidance",
+      "publisher": "FIA",
+      "reliability": "medium_high",
+      "score": 84,
+      "freshness": "time_sensitive",
+      "evidence_summary": "FIA discusses automated trading risk controls such as maximum order size and kill switches from trader, broker, and venue perspectives.",
+      "limitations": [
+        "Industry guidance; not a substitute for project-specific risk policy."
+      ],
+      "source_id": "src_003",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "relevance": "medium_high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "Rule 15c3-5 Risk Management Controls for Brokers or Dealers with Market Access",
+      "source_url": "https://www.sec.gov/files/rules/final/2010/34-63241-secg.htm",
+      "source_type": "regulatory_rule",
+      "publisher": "SEC",
+      "reliability": "high",
+      "score": 90,
+      "freshness": "stable",
+      "evidence_summary": "SEC Rule 15c3-5 requires risk management controls and supervisory procedures for market access and addresses automated electronic trading risk.",
+      "limitations": [
+        "US broker-dealer market-access rule; not directly universal across all venues/assets."
+      ],
+      "source_id": "src_004",
+      "accessed_at": "2026-06-12",
+      "version": null,
+      "relevance": "medium_high",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "medium_high",
+    "score": 85.5,
+    "score_version": "phase37_live_risk_source_scoring_v1",
+    "primary_source_count": 4,
+    "supporting_source_count": 4,
+    "low_reliability_source_count": 0,
+    "mandatory_downgrades": [],
+    "limitations": [
+      "正式入库前必须由外部审计确认 claim 没有超出来源可证明范围。",
+      "broker/venue/platform 文档不得被泛化为所有市场通用规则。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none_known_in_visible_context",
+    "checked_against": [
+      "Phase 37 Trading 与 AI 跨分支引用契约",
+      "Replay / Simulation execution cost and gap-report boundaries",
+      "Market Microstructure venue/session boundaries",
+      "AI Engineering deterministic final gate boundaries"
+    ],
+    "conflicts": [],
+    "resolution_summary": "首轮审计内容层 accepted_for_draft；candidate 不是 formal knowledge，不得创建 reviewed、approved、default guidance 或 hard gate。",
+    "approval_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于提醒 AI IDE 设计实盘执行和风险管理时必须声明权限、状态、对账、日志、限额和安全停机边界。",
+      "用于审计 AI trader 项目是否缺少 deterministic final gate、order-state trace、position reconciliation 或 risk policy。",
+      "用于阻止 AI scoring 或策略信号绕过实盘执行和风控 owner。"
+    ],
+    "not_allowed": [
+      "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘订单。",
+      "不得把候选知识当作 reviewed、approved、default guidance 或 hard gate。",
+      "不得提供任何具体风险阈值、账户配置、交易所私有配置或资金划转建议。"
+    ],
+    "requires_context": [
+      "broker",
+      "venue",
+      "account_scope",
+      "order_type",
+      "risk_policy_id",
+      "permission_scope",
+      "position_source",
+      "audit_trace_id"
+    ]
+  },
+  "machine_gate": {
+    "default_guidance": "deny",
+    "reason": "Phase 37 Live/Risk first audit allows accepted_for_draft only; reviewed requires later reviewed-preparation audit.",
+    "requires_human_escalation": true,
+    "hidden_from_default_queue": true,
+    "visible_in_default_guidance_queue": false,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "conversion_target": {
+    "proposed_knowledge_id": "kb_06_live_execution.kill_switch_required.v1",
+    "target_review_status": "reviewed",
+    "default_guidance_after_conversion": "deny_until_reviewed_caveat_only_audit",
+    "formalization_blockers": [
+      "requires_reviewed_preparation_audit"
+    ],
+    "reviewed_allowed": true,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false,
+    "risk_threshold_advice_allowed": false
+  },
+  "workflow": {
+    "phase": "37",
+    "task_id": "CEK-TA-435",
+    "stage": "formalized_reviewed",
+    "queue_group": "formalized",
+    "next_allowed_decisions": [
+      "accepted_for_draft",
+      "needs_more_evidence",
+      "rejected",
+      "blocked"
+    ],
+    "forbidden_decisions": [
+      "reviewed",
+      "approved",
+      "default_guidance",
+      "hard_gate"
+    ],
+    "formalization_allowed": true,
+    "next_action": "none",
+    "ai_audit_result_id": "audit_result_phase37_live_risk_candidate_audit_20260612_strict_v1",
+    "formal_knowledge_id": "kb_06_live_execution.kill_switch_required.v1",
+    "formal_review_status": "reviewed",
+    "default_guidance_allowed": false,
+    "approved_allowed": false,
+    "hard_gate_allowed": false,
+    "hidden_from_default_queue": true,
+    "visible_in_default_guidance_queue": false,
+    "formal_knowledge_path": "codex-expert-kit/rag/knowledge/KB_06_LIVE_EXECUTION/kb_06_live_execution.kill_switch_required.v1.json",
+    "knowledge_path": "codex-expert-kit/rag/knowledge/KB_06_LIVE_EXECUTION/kb_06_live_execution.kill_switch_required.v1.json",
+    "reviewed_preparation_audit_result_id": "audit_result_phase37_live_risk_reviewed_preparation_20260612_strict_v1",
+    "risk_threshold_advice_allowed": false
+  },
+  "contribution": {
+    "origin": "codex_research_ingestion_phase37",
+    "private_data_removed": true,
+    "contains_account_facts": false,
+    "contains_secret": false,
+    "contains_project_private_strategy": false
+  },
+  "review": {
+    "audit_log": [
+      {
+        "at": "2026-06-12",
+        "actor": "external_ai_strict_audit",
+        "action": "phase37_live_risk_first_audit_imported",
+        "reason": "accepted_for_draft / confidence=high",
+        "audit_result_id": "audit_result_phase37_live_risk_candidate_audit_20260612_strict_v1",
+        "patch_notes": [
+          "source: SEC/CFTC/NIST/CME/FIA/FIX/IBKR/Binance/QuantConnect 只能支撑原则、监管/行业要求或具体 venue/broker/platform 语义。",
+          "source: 不得把任何 broker、venue、platform 文档写成所有市场通用规则。",
+          "content: Live Execution 负责 API 权限、订单状态、适配器错误、真实订单/成交/费用、仓位对账和审计日志。",
+          "content: Risk Management 负责 deterministic pre-trade risk gates、风险限额、日亏损、组合暴露、连续亏损和 kill/stop 事件政策边界。",
+          "boundary: accepted_for_draft 不是 reviewed、approved、default guidance 或 hard gate。",
+          "boundary: 不得生成买卖点、仓位、杠杆、止损止盈参数、实盘执行建议或风险阈值数值。",
+          "conflict: AI scoring / Agent 只能引用这些规则，不能绕过 deterministic final gate。",
+          "conflict: Replay/Simulation 只模拟；Live Execution / Risk Management 拥有真实订单、真实状态和风控动作。"
+        ]
+      },
+      {
+        "at": "2026-06-12",
+        "actor": "codex",
+        "action": "phase37_live_risk_formal_reviewed_created",
+        "reason": "CEK-TA-439: formal reviewed/caveat_only written to codex-expert-kit/rag/knowledge/KB_06_LIVE_EXECUTION/kb_06_live_execution.kill_switch_required.v1.json.",
+        "audit_result_id": "audit_result_phase37_live_risk_reviewed_preparation_20260612_strict_v1"
+      }
+    ],
+    "reviewer": "external_ai_and_codex_alignment",
+    "reviewed_at": "2026-06-12",
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase37_live_risk_candidate_audit_20260612_strict_v1",
+      "package_id": "phase37_live_risk_candidate_audit_package_20260612",
+      "auditor": "external_ai_strict_audit",
+      "audited_at": "2026-06-12",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "reasons": [
+        "CME Kill Switch 支撑 block new order entry / cancel working orders；kill switch 是执行安全控制，不是策略判断。"
+      ],
+      "required_followups": [
+        "进入 reviewed/caveat_only 前必须另行导出 reviewed-preparation 审计包。",
+        "不得创建 approved、default guidance 或 hard gate。"
+      ],
+      "patch_notes": [
+        "source: SEC/CFTC/NIST/CME/FIA/FIX/IBKR/Binance/QuantConnect 只能支撑原则、监管/行业要求或具体 venue/broker/platform 语义。",
+        "source: 不得把任何 broker、venue、platform 文档写成所有市场通用规则。",
+        "content: Live Execution 负责 API 权限、订单状态、适配器错误、真实订单/成交/费用、仓位对账和审计日志。",
+        "content: Risk Management 负责 deterministic pre-trade risk gates、风险限额、日亏损、组合暴露、连续亏损和 kill/stop 事件政策边界。",
+        "boundary: accepted_for_draft 不是 reviewed、approved、default guidance 或 hard gate。",
+        "boundary: 不得生成买卖点、仓位、杠杆、止损止盈参数、实盘执行建议或风险阈值数值。",
+        "conflict: AI scoring / Agent 只能引用这些规则，不能绕过 deterministic final gate。",
+        "conflict: Replay/Simulation 只模拟；Live Execution / Risk Management 拥有真实订单、真实状态和风控动作。"
+      ],
+      "patch_note_groups": {
+        "source": [
+          "SEC/CFTC/NIST/CME/FIA/FIX/IBKR/Binance/QuantConnect 只能支撑原则、监管/行业要求或具体 venue/broker/platform 语义。",
+          "不得把任何 broker、venue、platform 文档写成所有市场通用规则。"
+        ],
+        "content": [
+          "Live Execution 负责 API 权限、订单状态、适配器错误、真实订单/成交/费用、仓位对账和审计日志。",
+          "Risk Management 负责 deterministic pre-trade risk gates、风险限额、日亏损、组合暴露、连续亏损和 kill/stop 事件政策边界。"
+        ],
+        "boundary": [
+          "accepted_for_draft 不是 reviewed、approved、default guidance 或 hard gate。",
+          "不得生成买卖点、仓位、杠杆、止损止盈参数、实盘执行建议或风险阈值数值。"
+        ],
+        "conflict": [
+          "AI scoring / Agent 只能引用这些规则，不能绕过 deterministic final gate。",
+          "Replay/Simulation 只模拟；Live Execution / Risk Management 拥有真实订单、真实状态和风控动作。"
+        ]
+      },
+      "source_assessment": {
+        "source_count": 4,
+        "missing_sources": [],
+        "weak_sources": [],
+        "recommended_extra_sources": []
+      },
+      "classification_assessment": {
+        "is_correct_branch": true,
+        "expected_branch": "Trading Engineering / Live Execution or Risk Management",
+        "misplaced_topics": []
+      },
+      "boundary": "accepted_for_draft is not reviewed or approved; this audit does not allow default guidance or hard gate."
+    },
+    "reviewed_preparation_audit": {
+      "audit_result_id": "audit_result_phase37_live_risk_reviewed_preparation_20260612_strict_v1",
+      "package_id": "phase37_live_risk_reviewed_preparation_audit_package_20260612",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "risk_threshold_advice_allowed": false,
+      "reasons": [
+        "CME Kill Switch and pre-trade risk sources support order-entry block and cancellation controls; FIA/SEC support automated-trading safeguard context.",
+        "The candidate correctly frames kill switch as execution safety control, not strategy judgment."
+      ],
+      "required_followups": [],
+      "patch_notes": {
+        "source": [
+          "CME/FIA/SEC are venue/regulatory/industry examples; external projects need their own broker/venue mapping."
+        ],
+        "content": [
+          "Keep kill switch, order-entry block, cancel working orders, manual override and recovery as control capabilities."
+        ],
+        "boundary": [
+          "Reviewed/caveat-only does not enable actual kill switch operation or hard gate authority."
+        ],
+        "conflict": [
+          "Live Execution owns kill/cancel implementation; Risk owner defines policy and escalation."
+        ]
+      }
+    }
+  }
+}

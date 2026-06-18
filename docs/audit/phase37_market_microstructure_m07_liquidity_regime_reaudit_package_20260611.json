@@ -1,0 +1,634 @@
+{
+  "package_id": "phase37_market_microstructure_m07_liquidity_regime_reaudit_package_20260611",
+  "created_at": "2026-06-11",
+  "created_by": "codex",
+  "task_id": "CEK-TA-410",
+  "source_audit_result_id": "audit_result_phase37_market_microstructure_reviewed_preparation_20260611_strict_v1",
+  "scope": {
+    "phase": "Phase 37",
+    "partition_id": "KB_03_MARKET_MICROSTRUCTURE",
+    "research_task_id": "P37-D-M07",
+    "candidate_count": 1,
+    "purpose": "严格再审 P37-D-M07 是否可从 needs_more_evidence 升级为 accepted_for_reviewed_caveat_only。"
+  },
+  "audit_instructions": {
+    "language": "zh-CN",
+    "must_search_external_sources": true,
+    "instruction": "必须搜索相关的专业网站、资料、案例和数据，对本再审包进行严格审计。重点核验：交易日历、session hours、auction/halt、holiday schedule、contract rollover/expiry、vendor market status 是否足以支撑 liquidity regime taxonomy。",
+    "allowed_decisions": [
+      "accepted_for_reviewed_caveat_only",
+      "needs_more_evidence",
+      "rejected",
+      "blocked"
+    ],
+    "forbidden_decisions": [
+      "approved",
+      "default_guidance",
+      "hard_gate",
+      "trade_execution_advice"
+    ],
+    "hard_boundaries": [
+      "candidate 不是正式知识。",
+      "即使再审通过，也最多只能进入 formal reviewed/caveat_only。",
+      "不得创建 approved、default guidance 或 hard gate。",
+      "不得生成买卖点、仓位、杠杆、止损止盈或实盘执行建议。",
+      "不得把 CEK-TA 内部 regime taxonomy 说成外部通用标准。"
+    ]
+  },
+  "quality_gate_expectation": {
+    "minimum_source_count": 8,
+    "required_evidence_dimensions": [
+      "exchange_session_hours",
+      "auction_or_cross",
+      "trading_halt_or_pause",
+      "holiday_or_early_close_calendar",
+      "futures_expiration",
+      "futures_rollover",
+      "vendor_market_status_schema",
+      "liquidity_stress_context"
+    ],
+    "reviewed_allowed_only_if": [
+      "source_refs directly support the previously blocked dimensions",
+      "taxonomy is framed as CEK-TA internal labels, not universal standard",
+      "M11 thin market execution risk and Execution/Risk owner boundaries are not overwritten",
+      "approved/default/hard gate remain false"
+    ]
+  },
+  "candidate": {
+    "schema_version": "1.1.0-candidate",
+    "candidate_id": "cand_20260611_phase37_market_microstructure_liquidity_regime_required_001",
+    "research_task_id": "P37-D-M07",
+    "status": {
+      "review_status": "needs_more_evidence",
+      "ingestion_decision": "needs_more_evidence",
+      "decision_reason": "CEK-TA-410 已补充 session/calendar/auction/halt/holiday/rollover/expiry 证据，等待外部再审。",
+      "created_at": "2026-06-11",
+      "updated_at": "2026-06-11"
+    },
+    "classification": {
+      "tree_node_id": "kt.market_microstructure",
+      "canonical_node_id": "kt.market_microstructure",
+      "tree_path": "CEK-TA / Trading Engineering / Market Microstructure",
+      "related_nodes": [
+        "kt.trading_engineering",
+        "kt.market_microstructure",
+        "kt.trading_engineering.data_engineering",
+        "kt.kline_strategy",
+        "kt.backtest",
+        "kt.replay_simulation",
+        "kt.live_execution",
+        "kt.risk_management",
+        "kt.ai_engineering.llm_training"
+      ],
+      "partition_id": "KB_03_MARKET_MICROSTRUCTURE",
+      "domain": "market_microstructure",
+      "subdomain": "liquidity_regime",
+      "rule_type": "trading_microstructure_boundary_rule",
+      "claim_type": "methodological_constraint",
+      "used_for": [
+        "market_microstructure_audit",
+        "strategy_design_audit",
+        "execution_cost_boundary",
+        "ai_trader_project_gap_audit",
+        "external_project_rag_retrieval"
+      ],
+      "classification_notes": "本候选主归属 Trading Engineering / Market Microstructure。AI Engineering 只能引用本规则，不得把盘口、订单流、滑点、funding/OI 或市场影响本体改写为模型训练规则。"
+    },
+    "claim": {
+      "claim_id": "claim_p37_d_m07",
+      "title": "流动性状态必须按 regime 标注",
+      "statement": "Microstructure 特征必须使用明确的 liquidity regime 标签和证据来源区分 normal continuous、auction/open/close、holiday/early-close、halt/pause/reopen、rollover/expiry、thin/off-hours 与 stressed liquidity；不得把正常连续交易时段的盘口、滑点或订单流统计直接外推到特殊时段、事件时段或合约生命周期切换期。",
+      "normalized_claim": "microstructure.liquidity_regime_required.v1",
+      "evidence_summary": "ECB/NBER/CFA 支撑市场/资金流动性压力边界；NYSE/Nasdaq/CME/Databento 官方或供应商文档补充 session、holiday、auction/halt、expiration/rollover 和 market status 直接证据。",
+      "interpretation_notes": "本候选只定义市场微观结构解释、数据和执行边界，不输出买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+      "claim_strength": "medium_high",
+      "performance_claim": false
+    },
+    "applicability": {
+      "market": "general_with_market_specific_mapping",
+      "asset": "general",
+      "timeframe": "event_to_intraday",
+      "data_granularity": "order_book_trades_or_derivatives_market_data",
+      "project_type": "trading_ai_support_layer",
+      "applies_when": [
+        "审计盘口、成交、滑点、市场影响或订单流特征的 liquidity regime 适用范围",
+        "把流动性状态作为 backtest、replay、AI scoring 或 live execution 的上下文输入",
+        "需要区分正常连续交易、auction/open/close、halt/pause/reopen、holiday/early-close、rollover/expiry、thin/off-hours 或 stressed liquidity 时"
+      ],
+      "not_applicable_when": [
+        "没有交易时段、交易日历、market status、事件日、交易量或报价可用性信息",
+        "需要证明某个 regime 下必然盈利",
+        "需要具体买卖点、仓位、杠杆、止损止盈价格、交易所私有配置、账户事实或实盘权限时，应由外接项目事实层、执行层和风控层处理。",
+        "AI Engineering 只能引用本规则，不得把本规则改写为 LLM 训练、MCP、RAG 或模型部署本体规则。",
+        "外接项目不能直接套用 NYSE/Nasdaq/CME/Databento 的物理字段名，必须映射到自己的 venue、instrument、session 和数据供应商契约。"
+      ],
+      "assumptions": [
+        "候选用于 CEK-TA 通用支持层知识库，不包含任何外接项目私有策略参数。",
+        "微观结构结论必须保留市场、交易所、数据源、时间戳、粒度、执行和验证边界。",
+        "候选通过外部审计前不能进入正式 reviewed 知识库。"
+      ],
+      "limitations": [
+        "官方文档和平台文档只能支撑数据字段、接口语义和工程边界，不能证明交易优势。",
+        "论文或专业机构资料支持方法边界，不能替代具体交易所、数据供应商或外接项目契约。",
+        "本候选不提供任何投资建议或实盘执行许可。"
+      ]
+    },
+    "source_refs": [
+      {
+        "source_title": "Gauging the interplay between market liquidity and funding liquidity",
+        "source_url": "https://www.ecb.europa.eu/press/financial-stability-publications/fsr/special/html/ecb.fsrart202305_01~830184261b.en.html",
+        "source_type": "central_bank_research",
+        "publisher": "European Central Bank",
+        "published_at": "2023-05-31",
+        "reliability": "high",
+        "score": 86,
+        "freshness": "stable",
+        "evidence_summary": "ECB defines market liquidity as the ability to rapidly execute large transactions at low cost and limited price impact, and distinguishes it from funding liquidity.",
+        "limitations": [
+          "Macro/financial-stability framing; use for liquidity definitions and stress caveats."
+        ],
+        "source_id": "src_001",
+        "accessed_at": "2026-06-11",
+        "version": null,
+        "relevance": "high",
+        "quoted_excerpt_allowed": false
+      },
+      {
+        "source_title": "Market Liquidity and Funding Liquidity",
+        "source_url": "https://www.nber.org/system/files/working_papers/w12939/w12939.pdf",
+        "source_type": "academic_paper",
+        "publisher": "NBER",
+        "published_at": "2007-02-01",
+        "reliability": "high",
+        "score": 88,
+        "freshness": "stable",
+        "evidence_summary": "Brunnermeier and Pedersen model how market liquidity and funding liquidity can reinforce each other and can dry up under stress.",
+        "limitations": [
+          "Theoretical liquidity-stress source; does not define a trading signal or venue-specific field."
+        ],
+        "source_id": "src_002",
+        "accessed_at": "2026-06-11",
+        "version": null,
+        "relevance": "high",
+        "quoted_excerpt_allowed": false
+      },
+      {
+        "source_title": "Trade Strategy and Execution",
+        "source_url": "https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/trade-strategy-execution",
+        "source_type": "professional_curriculum",
+        "publisher": "CFA Institute",
+        "published_at": "2026-01-01",
+        "reliability": "high",
+        "score": 88,
+        "freshness": "time_sensitive",
+        "evidence_summary": "CFA Institute frames trading decisions around liquidity needs, market conditions, execution risk, opportunity cost, market impact and trade cost analysis.",
+        "limitations": [
+          "Professional curriculum source; it supports execution and cost boundaries, not any profitable microstructure signal."
+        ],
+        "source_id": "src_003",
+        "accessed_at": "2026-06-11",
+        "version": null,
+        "relevance": "medium_high",
+        "quoted_excerpt_allowed": false
+      },
+      {
+        "source_title": "Trading Costs and Electronic Markets",
+        "source_url": "https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/trading-costs-and-electronic-markets",
+        "source_type": "professional_curriculum",
+        "publisher": "CFA Institute",
+        "published_at": "2026-01-01",
+        "reliability": "high",
+        "score": 88,
+        "freshness": "time_sensitive",
+        "evidence_summary": "CFA Institute explains explicit and implicit trading costs, transaction cost estimation, electronic trading, speed needs, market monitoring and systemic-risk caveats.",
+        "limitations": [
+          "Supports cost, speed and execution-quality context; it does not define exchange-specific order-book fields."
+        ],
+        "source_id": "src_004",
+        "accessed_at": "2026-06-11",
+        "version": null,
+        "relevance": "medium_high",
+        "quoted_excerpt_allowed": false
+      },
+      {
+        "source_id": "src_m07_nyse_trading_information_sessions_auctions",
+        "source_title": "Trading Information",
+        "source_url": "https://www.nyse.com/trade/trading-information",
+        "source_type": "official_exchange_trading_rules",
+        "publisher": "NYSE",
+        "published_at": null,
+        "accessed_at": "2026-06-11",
+        "version": "live web page accessed 2026-06-11",
+        "reliability": "high",
+        "relevance": "high",
+        "evidence_summary": "NYSE documents pre-opening, early, core and late trading sessions, plus core open and closing auction timing. This supports session-specific liquidity regime boundaries.",
+        "limitations": [
+          "NYSE-specific; external projects must map their own venue sessions and auctions.",
+          "Supports session and auction taxonomy, not a profitable signal."
+        ],
+        "quoted_excerpt_allowed": false
+      },
+      {
+        "source_id": "src_m07_nyse_hours_calendars_holidays",
+        "source_title": "Holidays & Trading Hours",
+        "source_url": "https://www.nyse.com/markets/hours-calendars",
+        "source_type": "official_exchange_calendar",
+        "publisher": "NYSE",
+        "published_at": null,
+        "accessed_at": "2026-06-11",
+        "version": "2026/2027/2028 holiday and early close calendar",
+        "reliability": "high",
+        "relevance": "high",
+        "evidence_summary": "NYSE publishes holiday and early-close schedules. This supports treating holiday and early-close periods as separate liquidity regime contexts.",
+        "limitations": [
+          "NYSE equity-market calendar only; not universal across futures, crypto or non-US markets."
+        ],
+        "quoted_excerpt_allowed": false
+      },
+      {
+        "source_id": "src_m07_nasdaq_trade_halt_codes",
+        "source_title": "Trading Halts Code",
+        "source_url": "https://nasdaqtrader.com/Trader.aspx?id=TradeHaltCodes",
+        "source_type": "official_exchange_halt_status_doc",
+        "publisher": "Nasdaq Trader",
+        "published_at": null,
+        "accessed_at": "2026-06-11",
+        "version": "live web page accessed 2026-06-11",
+        "reliability": "high",
+        "relevance": "high",
+        "evidence_summary": "Nasdaq publishes halt code categories such as news pending, news released, single-stock trading pause and extraordinary market activity. This supports explicit halt/pause regime labels.",
+        "limitations": [
+          "Nasdaq equity halt-code semantics; other venues may use different status codes."
+        ],
+        "quoted_excerpt_allowed": false
+      },
+      {
+        "source_id": "src_m07_nasdaq_halt_cross_rule",
+        "source_title": "Nasdaq Equity Trading Rules",
+        "source_url": "https://listingcenter.nasdaq.com/rulebook/nasdaq/rules/Nasdaq%20Equity%204",
+        "source_type": "official_exchange_rulebook",
+        "publisher": "Nasdaq",
+        "published_at": null,
+        "accessed_at": "2026-06-11",
+        "version": "Equity 4 rules",
+        "reliability": "high",
+        "relevance": "medium_high",
+        "evidence_summary": "Nasdaq rules reference halt/pause handling and re-opening through a Halt Cross process. This supports auction/reopen specific regime boundaries after halts.",
+        "limitations": [
+          "Rulebook source supports venue process boundaries, not a trading edge or execution permission."
+        ],
+        "quoted_excerpt_allowed": false
+      },
+      {
+        "source_id": "src_m07_cme_holiday_trading_hours",
+        "source_title": "CME Group Holiday and Trading Hours",
+        "source_url": "https://www.cmegroup.com/trading-hours.html",
+        "source_type": "official_exchange_calendar",
+        "publisher": "CME Group",
+        "published_at": null,
+        "accessed_at": "2026-06-11",
+        "version": "2026 holiday and trading hours page",
+        "reliability": "high",
+        "relevance": "high",
+        "evidence_summary": "CME Group provides holiday schedules and product-filtered trading hours. This supports futures-specific holiday/session regime mapping.",
+        "limitations": [
+          "CME-specific; products may have different holiday hours and trading sessions."
+        ],
+        "quoted_excerpt_allowed": false
+      },
+      {
+        "source_id": "src_m07_cme_expiration_calendar",
+        "source_title": "Expirations Calendar",
+        "source_url": "https://www.cmegroup.com/tools-information/calendars/expiration-calendar.html",
+        "source_type": "official_exchange_contract_calendar",
+        "publisher": "CME Group",
+        "published_at": null,
+        "accessed_at": "2026-06-11",
+        "version": "live web page accessed 2026-06-11",
+        "reliability": "high",
+        "relevance": "high",
+        "evidence_summary": "CME provides important dates for futures and options expirations, deliveries, settlements and other key trading events. This supports expiration-event regime boundaries.",
+        "limitations": [
+          "Calendar source; product-specific contract specs still need to be mapped by the external project."
+        ],
+        "quoted_excerpt_allowed": false
+      },
+      {
+        "source_id": "src_m07_cme_equity_index_roll_dates",
+        "source_title": "Equity Index Roll Dates",
+        "source_url": "https://www.cmegroup.com/trading/equity-index/rolldates.html",
+        "source_type": "official_exchange_roll_calendar",
+        "publisher": "CME Group",
+        "published_at": null,
+        "accessed_at": "2026-06-11",
+        "version": "live web page accessed 2026-06-11",
+        "reliability": "high",
+        "relevance": "high",
+        "evidence_summary": "CME explains roll dates for equity index futures and notes that the lead month can change because the near expiring contract will terminate soon and may become less liquid. This directly supports rollover liquidity regime tagging.",
+        "limitations": [
+          "Equity-index futures specific; other futures families need their own roll rules."
+        ],
+        "quoted_excerpt_allowed": false
+      },
+      {
+        "source_id": "src_m07_databento_status_schema",
+        "source_title": "Status schema",
+        "source_url": "https://databento.com/docs/schemas-and-data-formats/status",
+        "source_type": "vendor_schema_doc",
+        "publisher": "Databento",
+        "published_at": null,
+        "accessed_at": "2026-06-11",
+        "version": "live docs accessed 2026-06-11",
+        "reliability": "medium_high",
+        "relevance": "high",
+        "evidence_summary": "Databento status schema provides updates about trading sessions, halts, pauses, auction starts and matching engine statuses. This supports using vendor market-status data to label liquidity regimes.",
+        "limitations": [
+          "Vendor schema; availability and granularity vary by publisher and dataset."
+        ],
+        "quoted_excerpt_allowed": false
+      }
+    ],
+    "source_quality": {
+      "overall_reliability": "medium_high",
+      "score": 89.0,
+      "score_version": "phase37_market_microstructure_source_scoring_v1",
+      "primary_source_count": 8,
+      "supporting_source_count": 4,
+      "low_reliability_source_count": 0,
+      "mandatory_downgrades": [],
+      "limitations": [
+        "CEK-TA liquidity regime taxonomy 是内部逻辑标签，不是外部通用标准。",
+        "交易所和供应商文档只支撑各自 venue/product/dataset 语义；外接项目必须映射自己的交易日历、market status、合约规格和数据契约。",
+        "正式 reviewed/caveat_only 仍需外部审计确认补证是否足以覆盖上一轮阻断项。"
+      ]
+    },
+    "conflict_audit": {
+      "conflict_status": "none_known_in_visible_context",
+      "checked_against": [
+        "Phase 36/38/40/41 AI Engineering 知识边界",
+        "现有 Trading Engineering formal 知识",
+        "Phase 37 Trading 与 AI 跨分支引用契约"
+      ],
+      "conflicts": [],
+      "resolution_summary": "未发现与可见正式知识的直接冲突；本候选只定义 Trading Engineering 市场微观结构规则本体，AI Engineering 只能引用。",
+      "approval_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false
+    },
+    "llm_usage_policy": {
+      "allowed": [
+        "用于提醒 AI IDE 检索 Trading Engineering 市场微观结构边界。",
+        "用于审计交易项目方案中是否缺少盘口、订单流、流动性、滑点、延迟、市场影响和数据源边界。",
+        "用于辅助外接项目设计数据契约、特征边界、审计清单和 reason code。"
+      ],
+      "not_allowed": [
+        "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+        "不得把候选知识当作 reviewed、approved、default guidance 或 hard gate。",
+        "不得绕过外接项目事实层、数据契约、执行适配器、风控 hard gate 或人工治理流程。"
+      ]
+    },
+    "machine_gate": {
+      "default_guidance": "deny",
+      "reason": "reviewed-preparation 审计未通过；补证前不得 formal reviewed、approved、default guidance 或 hard gate。",
+      "requires_human_escalation": true,
+      "hidden_from_default_queue": true,
+      "visible_in_default_guidance_queue": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false
+    },
+    "review": {
+      "confidence": "high",
+      "freshness": "mixed",
+      "reviewer": "external_ai_and_codex_alignment",
+      "reviewed_at": "2026-06-11",
+      "open_questions": [
+        "这些来源是否足以把 M07 从 needs_more_evidence 升级到 accepted_for_reviewed_caveat_only？",
+        "CEK-TA liquidity regime taxonomy 是否仍存在与 M11 thin market execution risk 或 Execution/Risk owner 边界重复？",
+        "是否需要继续补具体资产类别或交易所 product-level contract specs？"
+      ],
+      "audit_log": [
+        {
+          "at": "2026-06-11",
+          "actor": "codex",
+          "action": "created",
+          "reason": "根据 Phase 37 P37-D Market Microstructure 队列生成 Trading Engineering 候选知识。"
+        },
+        {
+          "at": "2026-06-11",
+          "actor": "codex",
+          "action": "sourced",
+          "reason": "记录专业机构、监管、交易所/API、数据供应商和论文来源摘要。"
+        },
+        {
+          "at": "2026-06-11",
+          "actor": "external_ai_strict_audit",
+          "action": "phase37_market_microstructure_first_audit_imported",
+          "reason": "accepted_for_draft / confidence=medium_high",
+          "audit_result_id": "audit_result_phase37_market_microstructure_candidate_audit_20260611_strict_v1",
+          "patch_notes": [
+            "source: 补交易所交易日历、session hours、auction/rollover/holiday/halts 等直接来源后才能 reviewed。",
+            "content: normal/thin/stressed/event-driven/rollover/session-specific 应定义为 CEK-TA regime 标签，不是外部通用标准分类。",
+            "boundary: 不得把正常流动性时段的盘口、滑点或订单流统计外推到事件、休市前后、换月或薄市场。",
+            "conflict: 与 Market Microstructure M11、Execution/Risk 的风险复核边界合并去重。"
+          ]
+        },
+        {
+          "at": "2026-06-11",
+          "actor": "codex",
+          "action": "phase37_market_microstructure_reviewed_preparation_needs_more_evidence",
+          "reason": "CEK-TA-408: ECB/NBER/CFA 足以支持 market/funding liquidity 与 stress caveat，但不足以支撑 statement 中 rollover、session-specific、休市前后、halts/auction 等完整 regime 边界；首轮 patch 要求的交易所日历、session、halt、rollover 直接来源未在本包补齐。"
+        },
+        {
+          "at": "2026-06-11",
+          "actor": "codex",
+          "action": "phase37_market_microstructure_m07_supplemented_for_reaudit",
+          "reason": "补充 NYSE/Nasdaq/CME/Databento 直接来源和 CEK-TA liquidity regime taxonomy，导出再审包。"
+        }
+      ],
+      "ai_audit": {
+        "audit_result_id": "pending_reaudit",
+        "source_package_id": "phase37_market_microstructure_m07_liquidity_regime_reaudit_package_20260611",
+        "decision": "needs_more_evidence_supplemented_for_reaudit",
+        "reviewed_allowed": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "reason": "已补齐交易所/供应商直接来源和 CEK-TA 内部 liquidity regime taxonomy，等待外部严格再审。"
+      }
+    },
+    "workflow": {
+      "stage": "supplemented_for_reaudit",
+      "queue_group": "needs_more_evidence",
+      "current_task_id": "CEK-TA-410",
+      "next_action": "external_reaudit_for_reviewed_caveat_only",
+      "next_allowed_decisions": [
+        "accepted_for_draft",
+        "needs_more_evidence",
+        "rejected"
+      ],
+      "forbidden_decisions": [
+        "reviewed",
+        "approved",
+        "default_guidance",
+        "hard_gate"
+      ],
+      "formalization_allowed": false,
+      "conversion_target": {
+        "proposed_knowledge_id": "kb_03_market_microstructure.liquidity_regime_required.v1",
+        "target_review_status": "reviewed_caveat_only_if_reaudit_passes",
+        "target_default_guidance": "deny",
+        "reviewed_allowed": false,
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false
+      },
+      "ai_audit_result_id": "audit_result_phase37_market_microstructure_reviewed_preparation_20260611_strict_v1",
+      "formal_knowledge_id": null,
+      "formal_review_status": null,
+      "default_guidance_allowed": false,
+      "approved_allowed": false,
+      "hard_gate_allowed": false,
+      "hidden_from_default_queue": false,
+      "visible_in_default_guidance_queue": false,
+      "ai_audit_package_id": "phase37_market_microstructure_m07_liquidity_regime_reaudit_package_20260611",
+      "reviewed_allowed": false
+    },
+    "contribution": {
+      "origin": "codex_research_ingestion_phase37",
+      "private_data_removed": true,
+      "contains_account_facts": false,
+      "contains_secret": false,
+      "contains_project_private_strategy": false
+    },
+    "supplemental_contracts": {
+      "liquidity_regime_taxonomy": {
+        "contract_id": "cek_ta_liquidity_regime_taxonomy_v1",
+        "owner": "Trading Engineering / Market Microstructure",
+        "status": "candidate_for_reaudit",
+        "purpose": "将市场微观结构特征按交易时段、事件、交易所状态、合约生命周期和压力状态切分，避免把正常流动性统计外推到特殊状态。",
+        "regime_labels": [
+          {
+            "label": "normal_continuous",
+            "meaning": "交易所正常连续交易时段，且无已知 halt、auction、holiday、rollover 或异常状态。",
+            "required_evidence": [
+              "venue_session_calendar",
+              "market_status_or_no_halt_evidence"
+            ]
+          },
+          {
+            "label": "pre_open_or_open_auction",
+            "meaning": "开盘前、开盘集合竞价或 opening cross 周边。",
+            "required_evidence": [
+              "exchange_auction_rules",
+              "session_time_boundary"
+            ]
+          },
+          {
+            "label": "closing_auction_or_close",
+            "meaning": "收盘集合竞价、收盘失衡冻结期或 close 周边。",
+            "required_evidence": [
+              "exchange_auction_rules",
+              "session_time_boundary"
+            ]
+          },
+          {
+            "label": "holiday_or_early_close",
+            "meaning": "交易所假日、节假日前后、提前收盘或节假日修改交易时段。",
+            "required_evidence": [
+              "exchange_holiday_calendar",
+              "early_close_schedule"
+            ]
+          },
+          {
+            "label": "halt_pause_reopen",
+            "meaning": "交易暂停、halt、pause、re-open 或 halt cross/reopen auction 周边。",
+            "required_evidence": [
+              "halt_code_or_market_status",
+              "reopen_or_cross_rule_if_applicable"
+            ]
+          },
+          {
+            "label": "rollover_or_expiry",
+            "meaning": "期货/期权合约换月、临近 last trading day、expiration、delivery 或 settlement 事件周边。",
+            "required_evidence": [
+              "contract_expiration_calendar",
+              "roll_schedule_or_product_contract_spec"
+            ]
+          },
+          {
+            "label": "stressed_liquidity",
+            "meaning": "市场/资金流动性压力、波动异常、成交与报价质量恶化或风控复核触发状态。",
+            "required_evidence": [
+              "liquidity_stress_source",
+              "project_defined_detection_rule"
+            ]
+          },
+          {
+            "label": "thin_or_off_hours",
+            "meaning": "盘前、盘后、隔夜、低成交、低深度或非核心交易时段。",
+            "required_evidence": [
+              "session_calendar",
+              "volume_depth_or_spread_threshold_policy"
+            ]
+          }
+        ],
+        "required_fields": [
+          "market",
+          "venue",
+          "instrument",
+          "session_id",
+          "session_timezone",
+          "regime_label",
+          "regime_start_time",
+          "regime_end_time",
+          "evidence_source_id",
+          "calendar_or_status_version",
+          "assigned_at",
+          "assigned_by",
+          "confidence"
+        ],
+        "hard_boundaries": [
+          "taxonomy 是 CEK-TA 内部标签契约，不是外部通用标准。",
+          "regime 标签只能约束解释、回测分层、特征适用范围和人工/风控复核，不得单独生成买卖点、仓位或实盘执行许可。",
+          "外接项目必须把自己的交易所日历、market status、合约规格和供应商字段映射到本 taxonomy，不能直接套用某一交易所或供应商的物理字段名。"
+        ]
+      }
+    }
+  },
+  "expected_output_schema": {
+    "audit_result_id": "string",
+    "package_id": "phase37_market_microstructure_m07_liquidity_regime_reaudit_package_20260611",
+    "quality_gate": {
+      "pass": "boolean",
+      "reason": "string"
+    },
+    "results": [
+      {
+        "candidate_id": "cand_20260611_phase37_market_microstructure_liquidity_regime_required_001",
+        "research_task_id": "P37-D-M07",
+        "decision": "accepted_for_reviewed_caveat_only | needs_more_evidence | rejected | blocked",
+        "confidence": "low | medium | medium_high | high",
+        "reviewed_allowed": "boolean",
+        "approved_allowed": false,
+        "default_guidance_allowed": false,
+        "hard_gate_allowed": false,
+        "patch_notes": {
+          "source": [
+            "string"
+          ],
+          "content": [
+            "string"
+          ],
+          "boundary": [
+            "string"
+          ],
+          "conflict": [
+            "string"
+          ]
+        },
+        "reason": "string"
+      }
+    ]
+  }
+}

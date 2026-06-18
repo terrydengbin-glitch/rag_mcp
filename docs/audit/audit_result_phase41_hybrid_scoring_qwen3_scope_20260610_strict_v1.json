@@ -1,0 +1,521 @@
+{
+  "audit_result_id": "audit_result_phase41_hybrid_scoring_qwen3_scope_20260610_strict_v1",
+  "source_package_id": "phase41_hybrid_scoring_qwen3_scope_for_audit_20260610",
+  "audit_date": "2026-06-10",
+  "audit_result": "accept_with_patch",
+  "summary": {
+    "total_topics": 38,
+    "accepted_scope_count": 30,
+    "patch_required_count": 8,
+    "needs_more_evidence_count": 0,
+    "rejected_count": 0,
+    "misrouted_topic_count": 0,
+    "missing_topic_count": 3
+  },
+  "misrouted_topics": [],
+  "missing_topics": [
+    {
+      "suggested_topic_id": "P41-A07",
+      "priority": "P0-Extended",
+      "canonical_node_id": "kt.ai_engineering.numeric_scoring.scorer_explainability",
+      "claim": "Feature attribution/top_features can support debugging and audit trace, but must not be treated as causal explanation or trading-rule evidence.",
+      "reason": "The package sets scorer_explainability expected_items=0, but hybrid scoring needs a clear attribution-not-causality boundary."
+    },
+    {
+      "suggested_topic_id": "P41-E09",
+      "priority": "P0-Core",
+      "canonical_node_id": "kt.ai_engineering.llm_audit_assistant.qwen3_audit_assistant",
+      "claim": "RAG context, user-provided trade summaries, and retrieved documents must be treated as untrusted inputs; prompt-injection and source-trust checks must run before Qwen3 audit output is accepted.",
+      "reason": "E03 covers no-hit/citation conflicts, but not prompt-injection or untrusted-context handling."
+    },
+    {
+      "suggested_topic_id": "P41-F08",
+      "priority": "P0-Extended",
+      "canonical_node_id": "kt.ai_engineering.model_release_governance.hybrid_runtime_contract",
+      "claim": "Hybrid runtime must define latency budgets and fallback behavior for scorer, calibrator, RAG, Qwen3, and final gate outages.",
+      "reason": "The current F topics cover release manifest and audit trace but not timeout/fallback behavior."
+    }
+  ],
+  "duplicate_or_overlapping_topics": [
+    {
+      "topics": [
+        "P41-A01",
+        "P41-A04"
+      ],
+      "issue": "A01 implies CatBoost must always be compared, while A04 makes CatBoost conditional.",
+      "patch": "Make A01 default comparison set Rule baseline + Logistic Regression + LightGBM + XGBoost; CatBoost remains conditional per A04."
+    },
+    {
+      "topics": [
+        "P41-C03",
+        "P41-F01"
+      ],
+      "issue": "Both touch final gate / threshold boundary.",
+      "patch": "Keep C03 as threshold-policy design and F01 as runtime authority boundary. F01 may read calibrated risk signals but must not obey model recommendation text."
+    }
+  ],
+  "priority_changes": [
+    {
+      "topic_id": "P41-A05",
+      "from": "P0-Extended",
+      "to": "P0-Core",
+      "reason": "Model-selection governance criteria should be core."
+    },
+    {
+      "topic_id": "P41-B05",
+      "from": "P0-Extended",
+      "to": "P0-Core",
+      "reason": "Training lineage is core reproducibility evidence."
+    },
+    {
+      "topic_id": "P41-D03",
+      "from": "P0-Extended",
+      "to": "P0-Core",
+      "reason": "Feature lineage is core leakage and parity evidence."
+    },
+    {
+      "topic_id": "P41-D04",
+      "from": "P0-Extended",
+      "to": "P0-Core",
+      "reason": "Label observation windows prevent target leakage."
+    }
+  ],
+  "source_requirements": [
+    "For P0-Core: at least 3 sources, including one official_doc or research_paper, plus internal contract where CEK-TA-specific behavior is asserted.",
+    "Add OWASP LLM01 / prompt-injection source for Qwen3 + RAG untrusted context.",
+    "Add SHAP/casual-inference source for scorer explainability boundary.",
+    "Add latency/fallback/SRE or incident-control source for runtime fallback.",
+    "Use Qwen official docs/GitHub for thinking/non-thinking mode claims.",
+    "Use Feast/Databricks or equivalent point-in-time feature sources for D topics.",
+    "Use scikit-learn calibration/threshold/common pitfalls/TimeSeriesSplit for B/C topics.",
+    "Use MLflow/Ray/Kubeflow/vLLM official docs only as conditional platform capability sources, not mandatory runtime dependencies."
+  ],
+  "boundary_risks": [
+    "A01 vs A04 CatBoost always-on vs conditional contradiction.",
+    "F01 currently risks excluding calibrated scorer signals from final gate inputs; clarify deterministic use of calibrated risk/bucket.",
+    "C05 regime/strategy/timeframe slicing can drift into Trading Engineering unless all regime and strategy definitions are refs only.",
+    "F04 paper/replay/soft-gate may drift into fill/slippage/execution modeling unless Phase37 refs are mandatory.",
+    "Qwen3 thinking mode must not store private chain-of-thought; only strict JSON / reason codes / citations should be persisted."
+  ],
+  "topic_decisions": [
+    {
+      "topic_id": "P41-A02",
+      "priority": "P0-Core",
+      "canonical_node_id": "kt.ai_engineering.numeric_scoring.model_family_selection",
+      "claim": "Logistic Regression 必须作为透明 baseline，用于暴露线性可解释边界和校准难度。",
+      "claim_type": "model_selection_rule",
+      "model_role": "tabular_scorer",
+      "decision": "accept_scope",
+      "reason": "Scope and boundary are acceptable for Phase 41 knowledge planning.",
+      "priority_change": null
+    },
+    {
+      "topic_id": "P41-A03",
+      "priority": "P0-Core",
+      "canonical_node_id": "kt.ai_engineering.numeric_scoring.model_family_selection",
+      "claim": "LightGBM 与 XGBoost 可作为强 GBDT 候选，但必须使用相同时间切分和指标评估。",
+      "claim_type": "model_selection_rule",
+      "model_role": "tabular_scorer",
+      "decision": "accept_scope",
+      "reason": "Scope and boundary are acceptable for Phase 41 knowledge planning.",
+      "priority_change": null
+    },
+    {
+      "topic_id": "P41-A04",
+      "priority": "P0-Extended",
+      "canonical_node_id": "kt.ai_engineering.numeric_scoring.model_family_selection",
+      "claim": "CatBoost 只在类别变量丰富或类别处理成本较高时作为条件候选。",
+      "claim_type": "conditional_model_rule",
+      "model_role": "tabular_scorer",
+      "decision": "accept_scope",
+      "reason": "Scope and boundary are acceptable for Phase 41 knowledge planning.",
+      "priority_change": null
+    },
+    {
+      "topic_id": "P41-A06",
+      "priority": "P0-Extended",
+      "canonical_node_id": "kt.ai_engineering.numeric_scoring.model_family_selection",
+      "claim": "模型集成只能作为增强项，必须先证明单模型 baseline 不足且不破坏可审计性。",
+      "claim_type": "extension_rule",
+      "model_role": "tabular_scorer",
+      "decision": "accept_scope",
+      "reason": "Scope and boundary are acceptable for Phase 41 knowledge planning.",
+      "priority_change": null
+    },
+    {
+      "topic_id": "P41-B01",
+      "priority": "P0-Core",
+      "canonical_node_id": "kt.ai_engineering.numeric_scoring.tabular_scorer_training",
+      "claim": "bad_trade / false_allow 少数类必须声明 class weight、sample weight 或采样策略。",
+      "claim_type": "training_policy_rule",
+      "model_role": "tabular_scorer",
+      "decision": "accept_scope",
+      "reason": "Scope and boundary are acceptable for Phase 41 knowledge planning.",
+      "priority_change": null
+    },
+    {
+      "topic_id": "P41-B02",
+      "priority": "P0-Core",
+      "canonical_node_id": "kt.ai_engineering.numeric_scoring.tabular_scorer_training",
+      "claim": "HPO 只能读取 train/validation，不得读取 holdout、calibration、shadow、paper 或 incident pool。",
+      "claim_type": "leakage_boundary_rule",
+      "model_role": "tabular_scorer",
+      "decision": "accept_scope",
+      "reason": "Scope and boundary are acceptable for Phase 41 knowledge planning.",
+      "priority_change": null
+    },
+    {
+      "topic_id": "P41-B03",
+      "priority": "P0-Core",
+      "canonical_node_id": "kt.ai_engineering.numeric_scoring.tabular_scorer_training",
+      "claim": "时间序列交易样本必须使用时间感知切分，不能随机打散导致未来信息泄漏。",
+      "claim_type": "leakage_boundary_rule",
+      "model_role": "tabular_scorer",
+      "decision": "accept_scope",
+      "reason": "Scope and boundary are acceptable for Phase 41 knowledge planning.",
+      "priority_change": null
+    },
+    {
+      "topic_id": "P41-B04",
+      "priority": "P0-Extended",
+      "canonical_node_id": "kt.ai_engineering.numeric_scoring.tabular_scorer_training",
+      "claim": "entity group split 必须避免同一策略/品种/周期族跨 split 泄漏。",
+      "claim_type": "leakage_boundary_rule",
+      "model_role": "tabular_scorer",
+      "decision": "accept_scope",
+      "reason": "Scope and boundary are acceptable for Phase 41 knowledge planning.",
+      "priority_change": null
+    },
+    {
+      "topic_id": "P41-B06",
+      "priority": "P1",
+      "canonical_node_id": "kt.ai_engineering.numeric_scoring.tabular_scorer_training",
+      "claim": "active learning 或 hard-example mining 只能作为复核采样增强，不能绕过 gold/eval 隔离。",
+      "claim_type": "extension_rule",
+      "model_role": "tabular_scorer",
+      "decision": "accept_scope",
+      "reason": "Scope and boundary are acceptable for Phase 41 knowledge planning.",
+      "priority_change": null
+    },
+    {
+      "topic_id": "P41-C01",
+      "priority": "P0-Core",
+      "canonical_node_id": "kt.ai_engineering.calibration_threshold.uncertainty",
+      "claim": "raw score 不得直接作为交易概率或 final gate 输入，必须经过校准或声明只用于排序。",
+      "claim_type": "calibration_rule",
+      "model_role": "calibrator",
+      "decision": "accept_scope",
+      "reason": "Scope and boundary are acceptable for Phase 41 knowledge planning.",
+      "priority_change": null
+    },
+    {
+      "topic_id": "P41-C02",
+      "priority": "P0-Core",
+      "canonical_node_id": "kt.ai_engineering.calibration_threshold.uncertainty",
+      "claim": "校准器必须使用独立 calibration set，不得使用 scorer 训练集直接拟合。",
+      "claim_type": "leakage_boundary_rule",
+      "model_role": "calibrator",
+      "decision": "accept_scope",
+      "reason": "Scope and boundary are acceptable for Phase 41 knowledge planning.",
+      "priority_change": null
+    },
+    {
+      "topic_id": "P41-C03",
+      "priority": "P0-Core",
+      "canonical_node_id": "kt.ai_engineering.calibration_threshold.uncertainty",
+      "claim": "threshold policy 必须绑定业务成本矩阵、false allow、false block 和 review capacity。",
+      "claim_type": "threshold_policy_rule",
+      "model_role": "final_gate",
+      "decision": "accept_scope",
+      "reason": "Scope and boundary are acceptable for Phase 41 knowledge planning.",
+      "priority_change": null
+    },
+    {
+      "topic_id": "P41-C04",
+      "priority": "P0-Extended",
+      "canonical_node_id": "kt.ai_engineering.calibration_threshold.uncertainty",
+      "claim": "Platt 与 isotonic 的选择必须声明样本量、单调性假设和过拟合风险。",
+      "claim_type": "calibration_method_rule",
+      "model_role": "calibrator",
+      "decision": "accept_scope",
+      "reason": "Scope and boundary are acceptable for Phase 41 knowledge planning.",
+      "priority_change": null
+    },
+    {
+      "topic_id": "P41-C06",
+      "priority": "P1",
+      "canonical_node_id": "kt.ai_engineering.calibration_threshold.uncertainty",
+      "claim": "conformal 或 abstain band 只能作为不确定性增强层，不能替代 deterministic final gate。",
+      "claim_type": "extension_rule",
+      "model_role": "calibrator",
+      "decision": "accept_scope",
+      "reason": "Scope and boundary are acceptable for Phase 41 knowledge planning.",
+      "priority_change": null
+    },
+    {
+      "topic_id": "P41-D01",
+      "priority": "P0-Core",
+      "canonical_node_id": "kt.ai_engineering.decision_time_feature_contract.feature_store",
+      "claim": "每个训练样本必须做 point-in-time feature join，feature_available_time 晚于 decision_time 必须阻断。",
+      "claim_type": "leakage_boundary_rule",
+      "model_role": "tabular_scorer",
+      "decision": "accept_scope",
+      "reason": "Scope and boundary are acceptable for Phase 41 knowledge planning.",
+      "priority_change": null
+    },
+    {
+      "topic_id": "P41-D02",
+      "priority": "P0-Core",
+      "canonical_node_id": "kt.ai_engineering.decision_time_feature_contract.feature_store",
+      "claim": "线上线下特征生成必须一致；不一致时必须记录差异并阻断默认指导。",
+      "claim_type": "serving_consistency_rule",
+      "model_role": "tabular_scorer",
+      "decision": "accept_scope",
+      "reason": "Scope and boundary are acceptable for Phase 41 knowledge planning.",
+      "priority_change": null
+    },
+    {
+      "topic_id": "P41-D05",
+      "priority": "P1",
+      "canonical_node_id": "kt.ai_engineering.decision_time_feature_contract.feature_store",
+      "claim": "Feast 或正式 feature store 只在离线/在线一致性压力出现后引入，POC 阶段可用文件化 manifest。",
+      "claim_type": "platform_boundary_rule",
+      "model_role": "platform_governance",
+      "decision": "accept_scope",
+      "reason": "Scope and boundary are acceptable for Phase 41 knowledge planning.",
+      "priority_change": null
+    },
+    {
+      "topic_id": "P41-E01",
+      "priority": "P0-Core",
+      "canonical_node_id": "kt.ai_engineering.llm_audit_assistant.qwen3_audit_assistant",
+      "claim": "Qwen3 只能做审计助手，不做 numeric scorer、final gate 或事实来源。",
+      "claim_type": "runtime_boundary_rule",
+      "model_role": "llm_audit_assistant",
+      "decision": "accept_scope",
+      "reason": "Scope and boundary are acceptable for Phase 41 knowledge planning.",
+      "priority_change": null
+    },
+    {
+      "topic_id": "P41-E02",
+      "priority": "P0-Core",
+      "canonical_node_id": "kt.ai_engineering.llm_audit_assistant.qwen3_audit_assistant",
+      "claim": "Qwen3 审计输出必须是 strict JSON，包含 recommendation、reason_codes、missing_fields、unsupported_claims 和 knowledge_refs。",
+      "claim_type": "output_contract_rule",
+      "model_role": "llm_audit_assistant",
+      "decision": "accept_scope",
+      "reason": "Scope and boundary are acceptable for Phase 41 knowledge planning.",
+      "priority_change": null
+    },
+    {
+      "topic_id": "P41-E03",
+      "priority": "P0-Core",
+      "canonical_node_id": "kt.ai_engineering.llm_audit_assistant.qwen3_audit_assistant",
+      "claim": "Qwen3 无 RAG 命中、无来源或引用冲突未消解时必须 abstain 或 needs_human_review。",
+      "claim_type": "citation_rule",
+      "model_role": "llm_audit_assistant",
+      "decision": "accept_scope",
+      "reason": "Scope and boundary are acceptable for Phase 41 knowledge planning.",
+      "priority_change": null
+    },
+    {
+      "topic_id": "P41-E04",
+      "priority": "P0-Extended",
+      "canonical_node_id": "kt.ai_engineering.llm_audit_assistant.qwen3_audit_assistant",
+      "claim": "thinking mode 只用于复杂审计，低延迟结构化检查可使用 non-thinking mode，最终只保存 strict JSON。",
+      "claim_type": "usage_policy_rule",
+      "model_role": "llm_audit_assistant",
+      "decision": "accept_scope",
+      "reason": "Scope and boundary are acceptable for Phase 41 knowledge planning.",
+      "priority_change": null
+    },
+    {
+      "topic_id": "P41-E05",
+      "priority": "P0-Core",
+      "canonical_node_id": "kt.ai_engineering.llm_audit_assistant.qwen3_training_recipe",
+      "claim": "Qwen3 SFT 只训练格式、reason code、引用习惯和审计流程，不训练交易概率。",
+      "claim_type": "training_boundary_rule",
+      "model_role": "llm_audit_assistant",
+      "decision": "accept_scope",
+      "reason": "Scope and boundary are acceptable for Phase 41 knowledge planning.",
+      "priority_change": null
+    },
+    {
+      "topic_id": "P41-E06",
+      "priority": "P0-Extended",
+      "canonical_node_id": "kt.ai_engineering.llm_audit_assistant.qwen3_training_recipe",
+      "claim": "DPO/preference pair 只能优化审计质量，不得以 PnL 高低直接构造偏好。",
+      "claim_type": "preference_training_rule",
+      "model_role": "llm_audit_assistant",
+      "decision": "accept_scope",
+      "reason": "Scope and boundary are acceptable for Phase 41 knowledge planning.",
+      "priority_change": null
+    },
+    {
+      "topic_id": "P41-E07",
+      "priority": "P0-Extended",
+      "canonical_node_id": "kt.ai_engineering.llm_audit_assistant.qwen3_training_recipe",
+      "claim": "RAG-first 和 prompt 修正必须先于 SFT/LoRA，只有格式或流程稳定性不足才训练权重。",
+      "claim_type": "method_selection_rule",
+      "model_role": "llm_audit_assistant",
+      "decision": "accept_scope",
+      "reason": "Scope and boundary are acceptable for Phase 41 knowledge planning.",
+      "priority_change": null
+    },
+    {
+      "topic_id": "P41-E08",
+      "priority": "P1",
+      "canonical_node_id": "kt.ai_engineering.llm_audit_assistant.qwen3_training_recipe",
+      "claim": "vLLM 或本地 Qwen serving 只在延迟、吞吐或离线批量审计需求明确后引入。",
+      "claim_type": "serving_boundary_rule",
+      "model_role": "platform_governance",
+      "decision": "accept_scope",
+      "reason": "Scope and boundary are acceptable for Phase 41 knowledge planning.",
+      "priority_change": null
+    },
+    {
+      "topic_id": "P41-F02",
+      "priority": "P0-Core",
+      "canonical_node_id": "kt.ai_engineering.model_release_governance.hybrid_runtime_contract",
+      "claim": "composite release manifest 必须绑定 scorer、calibrator、threshold、Qwen3 prompt、RAG index、reason taxonomy 和 rollback target。",
+      "claim_type": "release_governance_rule",
+      "model_role": "final_gate",
+      "decision": "accept_scope",
+      "reason": "Scope and boundary are acceptable for Phase 41 knowledge planning.",
+      "priority_change": null
+    },
+    {
+      "topic_id": "P41-F03",
+      "priority": "P0-Extended",
+      "canonical_node_id": "kt.ai_engineering.model_release_governance.hybrid_runtime_contract",
+      "claim": "每次 hybrid scoring 必须记录 audit trace，串联输入、scorer、calibrator、RAG、Qwen3 和 final gate 输出。",
+      "claim_type": "observability_rule",
+      "model_role": "final_gate",
+      "decision": "accept_scope",
+      "reason": "Scope and boundary are acceptable for Phase 41 knowledge planning.",
+      "priority_change": null
+    },
+    {
+      "topic_id": "P41-F05",
+      "priority": "P1",
+      "canonical_node_id": "kt.ai_engineering.model_release_governance.training_platform_governance",
+      "claim": "MLflow registry 只有在模型版本和 release manifest 复杂度上升时引入，POC 可先用文件化 registry。",
+      "claim_type": "platform_boundary_rule",
+      "model_role": "platform_governance",
+      "decision": "accept_scope",
+      "reason": "Scope and boundary are acceptable for Phase 41 knowledge planning.",
+      "priority_change": null
+    },
+    {
+      "topic_id": "P41-F06",
+      "priority": "P1",
+      "canonical_node_id": "kt.ai_engineering.model_release_governance.training_platform_governance",
+      "claim": "Ray/Kubeflow 只在分布式训练或流水线编排需求明确后引入，不作为 Phase 41 默认依赖。",
+      "claim_type": "platform_boundary_rule",
+      "model_role": "platform_governance",
+      "decision": "accept_scope",
+      "reason": "Scope and boundary are acceptable for Phase 41 knowledge planning.",
+      "priority_change": null
+    },
+    {
+      "topic_id": "P41-F07",
+      "priority": "P1",
+      "canonical_node_id": "kt.ai_engineering.model_release_governance.training_platform_governance",
+      "claim": "任何平台接入都必须保留 CEK-TA 知识检索只读、路径 resolver 和可移植配置边界。",
+      "claim_type": "integration_boundary_rule",
+      "model_role": "platform_governance",
+      "decision": "accept_scope",
+      "reason": "Scope and boundary are acceptable for Phase 41 knowledge planning.",
+      "priority_change": null
+    },
+    {
+      "topic_id": "P41-A01",
+      "priority": "P0-Core",
+      "canonical_node_id": "kt.ai_engineering.numeric_scoring.model_family_selection",
+      "claim": "Rule baseline、Logistic Regression、LightGBM、XGBoost、CatBoost 必须同场比较，不能预设胜出。",
+      "claim_type": "model_selection_rule",
+      "model_role": "tabular_scorer",
+      "decision": "accept_with_patch",
+      "reason": "A01 says CatBoost must be compared, while A04 makes CatBoost conditional. Patch A01 to make CatBoost conditional; keep rule/LR/LightGBM/XGBoost as default comparison set.",
+      "priority_change": null
+    },
+    {
+      "topic_id": "P41-A05",
+      "priority": "P0-Extended",
+      "canonical_node_id": "kt.ai_engineering.numeric_scoring.model_family_selection",
+      "claim": "模型选择必须同时比较业务成本、延迟、可解释性、校准质量和治理复杂度。",
+      "claim_type": "governance_rule",
+      "model_role": "tabular_scorer",
+      "decision": "accept_with_priority_change",
+      "reason": "Business cost, latency, explainability, calibration quality, and governance complexity are selection gate criteria, not optional P0-Extended refinements.",
+      "priority_change": "P0-Extended -> P0-Core"
+    },
+    {
+      "topic_id": "P41-B05",
+      "priority": "P0-Extended",
+      "canonical_node_id": "kt.ai_engineering.numeric_scoring.tabular_scorer_training",
+      "claim": "训练样本必须记录 dataset_hash、split_manifest_hash、feature_schema_version 和 label_policy_version。",
+      "claim_type": "lineage_rule",
+      "model_role": "tabular_scorer",
+      "decision": "accept_with_priority_change",
+      "reason": "dataset_hash, split_manifest_hash, feature_schema_version, and label_policy_version are mandatory reproducibility fields for scorer training.",
+      "priority_change": "P0-Extended -> P0-Core"
+    },
+    {
+      "topic_id": "P41-C05",
+      "priority": "P0-Extended",
+      "canonical_node_id": "kt.ai_engineering.calibration_threshold.uncertainty",
+      "claim": "校准应按 regime、strategy family、timeframe 切片检查，发现漂移时触发再校准审计。",
+      "claim_type": "monitoring_rule",
+      "model_role": "calibrator",
+      "decision": "accept_with_boundary_patch",
+      "reason": "regime/strategy/timeframe slices are useful, but regime/strategy definitions must be refs only and cannot become Trading Engineering rules inside AI Engineering.",
+      "priority_change": null
+    },
+    {
+      "topic_id": "P41-D03",
+      "priority": "P0-Extended",
+      "canonical_node_id": "kt.ai_engineering.decision_time_feature_contract.feature_store",
+      "claim": "feature lineage 必须记录 source_object_ref、lineage_ref、schema_version 和缺失值策略。",
+      "claim_type": "lineage_rule",
+      "model_role": "tabular_scorer",
+      "decision": "accept_with_priority_change",
+      "reason": "feature lineage and missing-value policy are core leakage/debugging controls for decision-time features.",
+      "priority_change": "P0-Extended -> P0-Core"
+    },
+    {
+      "topic_id": "P41-D04",
+      "priority": "P0-Extended",
+      "canonical_node_id": "kt.ai_engineering.decision_time_feature_contract.feature_store",
+      "claim": "label_observation_window 必须晚于 decision_time 且不能反向进入 scorer features。",
+      "claim_type": "label_boundary_rule",
+      "model_role": "tabular_scorer",
+      "decision": "accept_with_priority_change",
+      "reason": "label_observation_window prevents post-outcome leakage and should be treated as a P0 feature/label contract control.",
+      "priority_change": "P0-Extended -> P0-Core"
+    },
+    {
+      "topic_id": "P41-F01",
+      "priority": "P0-Core",
+      "canonical_node_id": "kt.ai_engineering.model_release_governance.hybrid_runtime_contract",
+      "claim": "final gate 只能读取策略版本、阈值策略、风控规则命中和人工审批，不直接听模型建议。",
+      "claim_type": "runtime_boundary_rule",
+      "model_role": "final_gate",
+      "decision": "accept_with_patch",
+      "reason": "Final gate should not follow model recommendations, but it may read calibrated_score/risk_bucket plus threshold policy as deterministic inputs. Current wording is too restrictive.",
+      "priority_change": null
+    },
+    {
+      "topic_id": "P41-F04",
+      "priority": "P0-Extended",
+      "canonical_node_id": "kt.ai_engineering.model_release_governance.hybrid_runtime_contract",
+      "claim": "champion/challenger 晋级必须经过 offline、shadow、paper/soft gate 和人工批准，不得自动替换 champion。",
+      "claim_type": "promotion_gate_rule",
+      "model_role": "final_gate",
+      "decision": "accept_with_boundary_patch",
+      "reason": "paper/soft-gate promotion evidence is valid only with Phase37 fill/cost/execution assumptions referenced, not defined in AI Engineering.",
+      "priority_change": null
+    }
+  ],
+  "final_recommendation": "Accept Phase 41 scope with patches. Do not create formal reviewed knowledge until A01/A04 conflict, priority changes, missing topics, and final-gate wording patches are applied."
+}

@@ -1,0 +1,315 @@
+{
+  "schema_version": "1.1.0-candidate",
+  "candidate_id": "cand_20260611_phase37_kline_strategy_multi_timeframe_context_required_001",
+  "research_task_id": "P37-C-K06",
+  "status": {
+    "review_status": "accepted",
+    "ingestion_decision": "accepted_for_draft",
+    "decision_reason": "Phase 37 Kline / Strategy Engineering 首轮严格审计结论为 accepted_for_draft；不允许 reviewed/approved/default guidance/hard gate。",
+    "created_at": "2026-06-11",
+    "updated_at": "2026-06-11"
+  },
+  "classification": {
+    "tree_node_id": "kt.kline_strategy.market_structure",
+    "canonical_node_id": "kt.kline_strategy.market_structure",
+    "tree_path": "CEK-TA / Trading Engineering / Kline Strategy / Market Structure",
+    "related_nodes": [
+      "kt.trading_engineering",
+      "kt.kline_strategy",
+      "kt.trading_engineering.data_engineering",
+      "kt.ai_engineering.llm_training",
+      "kt.kline_strategy.market_structure"
+    ],
+    "partition_id": "KB_02_KLINE_STRATEGY",
+    "domain": "kline_strategy",
+    "subdomain": "multi_timeframe",
+    "rule_type": "trading_method_boundary_rule",
+    "claim_type": "methodological_constraint",
+    "used_for": [
+      "strategy_design_audit",
+      "kline_signal_boundary",
+      "ai_trader_project_gap_audit",
+      "external_project_rag_retrieval"
+    ],
+    "classification_notes": "本候选主归属 KB_02_KLINE_STRATEGY / Trading Engineering / Kline Strategy。历史 Phase 37 范围文档曾使用 KB_03_STRATEGY_ENGINEERING 旧称；运行时以 knowledge_tree 和 schema 的 KB_02_KLINE_STRATEGY 为准。"
+  },
+  "claim": {
+    "claim_id": "claim_p37_c_k06",
+    "statement": "多周期 K 线策略必须说明高低周期数据如何同步、何时确认、是否可能 repaint、如何避免未来数据泄漏，以及每个周期在决策中的职责。",
+    "normalized_claim": "kline_strategy.multi_timeframe_context_required.v1",
+    "evidence_summary": "TradingView documents higher/lower timeframe data requests and behavior differences between historical and realtime bars.; TradingView explains repainting and historical versus realtime behavior for script calculations.; QuantConnect documents time-period consolidators for aggregating data into multiple resolutions.",
+    "interpretation_notes": "本候选只定义 K线/策略工程方法边界，不输出买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+    "claim_strength": "medium_high",
+    "performance_claim": false
+  },
+  "applicability": {
+    "market": "general",
+    "asset": "general",
+    "timeframe": "general",
+    "data_granularity": "kline",
+    "project_type": "trading_ai_support_layer",
+    "applies_when": [
+      "高周期过滤低周期入场",
+      "多周期指标或结构共振",
+      "把多周期特征输入 AI scoring"
+    ],
+    "not_applicable_when": [
+      "单一周期策略且不引用其他周期数据",
+      "纯订单簿策略不使用 K 线聚合",
+      "需要具体买卖点、仓位、杠杆、止损止盈价格、交易所私有配置、账户事实或实盘权限时，应由外接项目事实层和风控层处理。",
+      "AI Engineering 只能引用本规则，不得把本规则改写为 LLM 训练、MCP、RAG 或模型部署本体规则。"
+    ],
+    "assumptions": [
+      "候选用于 CEK-TA 通用支持层知识库，而不是某个项目私有交易系统配置。",
+      "所有 K线/策略工程结论必须保留市场、周期、数据、成本、样本和验证边界。",
+      "候选通过外部审计前不能进入正式 reviewed 知识库。"
+    ],
+    "limitations": [
+      "本批来源包含论文、专业机构综述、交易平台文档和技术库文档，仍需要外部 AI/人工严格审计来源强度。",
+      "平台/框架文档只能支撑工程边界和例子，不能替代具体交易所、数据供应商或外接项目策略契约。",
+      "本候选不提供任何投资建议或实盘执行许可。"
+    ]
+  },
+  "source_refs": [
+    {
+      "source_title": "Other timeframes and data",
+      "source_url": "https://www.tradingview.com/pine-script-docs/concepts/other-timeframes-and-data/",
+      "source_type": "trading_platform_official_doc",
+      "publisher": "TradingView",
+      "published_at": null,
+      "reliability": "medium_high",
+      "score": 82,
+      "freshness": "time_sensitive",
+      "evidence_summary": "TradingView documents higher/lower timeframe data requests and behavior differences between historical and realtime bars.",
+      "limitations": [
+        "Pine Script-specific implementation source; use for multi-timeframe/repainting caveats, not universal platform requirements."
+      ],
+      "source_id": "src_001",
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "Repainting",
+      "source_url": "https://www.tradingview.com/pine-script-docs/concepts/repainting/",
+      "source_type": "trading_platform_official_doc",
+      "publisher": "TradingView",
+      "published_at": null,
+      "reliability": "medium_high",
+      "score": 82,
+      "freshness": "time_sensitive",
+      "evidence_summary": "TradingView explains repainting and historical versus realtime behavior for script calculations.",
+      "limitations": [
+        "Platform-specific; supports the need to document bar confirmation and realtime/historical semantics."
+      ],
+      "source_id": "src_002",
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "Time Period Consolidators",
+      "source_url": "https://www.quantconnect.com/docs/v2/writing-algorithms/consolidating-data/consolidator-types/time-period-consolidators",
+      "source_type": "trading_engine_official_doc",
+      "publisher": "QuantConnect",
+      "published_at": null,
+      "reliability": "medium_high",
+      "score": 80,
+      "freshness": "time_sensitive",
+      "evidence_summary": "QuantConnect documents time-period consolidators for aggregating data into multiple resolutions.",
+      "limitations": [
+        "LEAN-specific implementation; supports multi-timeframe aggregation concepts only."
+      ],
+      "source_id": "src_003",
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "relevance": "medium_high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "Periods",
+      "source_url": "https://www.quantconnect.com/docs/v2/writing-algorithms/key-concepts/time-modeling/periods",
+      "source_type": "trading_engine_official_doc",
+      "publisher": "QuantConnect",
+      "published_at": null,
+      "reliability": "medium_high",
+      "score": 82,
+      "freshness": "time_sensitive",
+      "evidence_summary": "QuantConnect states that bars have start and end times and are passed to algorithms at end time to avoid unavailable-bar lookahead.",
+      "limitations": [
+        "LEAN-specific time model; external projects must map equivalent bar availability semantics."
+      ],
+      "source_id": "src_004",
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "relevance": "medium_high",
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "medium_high",
+    "score": 81.5,
+    "score_version": "phase37_kline_strategy_source_scoring_v1",
+    "primary_source_count": 0,
+    "supporting_source_count": 4,
+    "low_reliability_source_count": 0,
+    "mandatory_downgrades": [],
+    "limitations": [
+      "正式入库前必须由外部审计确认 claim 没有超出来源可证明范围。",
+      "教育、平台和框架文档只能作为 supporting evidence，不能单独证明交易信号有效性。"
+    ]
+  },
+  "conflict_audit": {
+    "conflict_status": "none_known_in_visible_context",
+    "checked_against": [
+      "Phase 36/38/40/41 AI Engineering 知识边界",
+      "现有 KB_02_KLINE_STRATEGY formal 知识",
+      "Phase 37 Trading 与 AI 跨分支引用契约"
+    ],
+    "conflicts": [],
+    "resolution_summary": "未发现与可见正式知识的直接冲突；本候选只定义 Trading Engineering K线/策略工程规则本体，AI Engineering 只能引用。",
+    "approval_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于提醒 AI IDE 检索 Trading Engineering K线/策略工程边界。",
+      "用于审计交易项目方案中是否缺少周期、样本、成本、验证和执行边界。",
+      "用于辅助外接项目设计策略规则、信号版本、审计清单和 reason code。"
+    ],
+    "not_allowed": [
+      "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+      "不得把候选知识当作 reviewed、approved、default guidance 或 hard gate。",
+      "不得绕过外接项目事实层、数据契约、风控 hard gate 或人工治理流程。"
+    ]
+  },
+  "machine_gate": {
+    "default_guidance": "deny",
+    "reason": "Phase 37 Kline / Strategy Engineering first audit does not allow default guidance; formal reviewed requires a later reviewed-preparation gate.",
+    "requires_human_escalation": true,
+    "hidden_from_default_queue": true,
+    "visible_in_default_guidance_queue": false,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "review": {
+    "confidence": "medium_high",
+    "freshness": "mixed",
+    "reviewer": "external_ai_and_codex_alignment",
+    "reviewed_at": "2026-06-11",
+    "open_questions": [
+      "外部审计是否认为来源足以支撑该 claim？",
+      "是否需要补充更强的一手论文、专业协会资料、交易平台或回测框架资料？",
+      "是否存在与现有 Kline Strategy、Backtest、Replay 或 AI Engineering formal 知识的重叠，需要合并或拆分？"
+    ],
+    "audit_log": [
+      {
+        "at": "2026-06-11",
+        "actor": "codex",
+        "action": "created",
+        "reason": "根据 Phase 37 P37-C Kline / Strategy Engineering 队列生成 Trading Engineering 候选知识。"
+      },
+      {
+        "at": "2026-06-11",
+        "actor": "codex",
+        "action": "sourced",
+        "reason": "记录论文、专业机构综述、交易平台文档、技术指标库和回测框架来源摘要。"
+      },
+      {
+        "at": "2026-06-11",
+        "actor": "codex",
+        "action": "classified",
+        "reason": "归类到 KB_02_KLINE_STRATEGY / kt.kline_strategy.market_structure / multi_timeframe。"
+      },
+      {
+        "at": "2026-06-11",
+        "actor": "external_ai_strict_audit",
+        "action": "phase37_kline_strategy_first_audit_imported",
+        "reason": "accepted_for_draft / confidence=high",
+        "audit_result_id": "audit_result_phase37_kline_strategy_candidate_audit_20260611_strict_v1",
+        "patch_notes": [
+          "source: Add a platform-neutral data-leakage/point-in-time feature source if AI scoring/training remains in scope.",
+          "source: QuantConnect/TradingView sources are platform-specific and must not be universalized.",
+          "content: Require explicit responsibilities for each timeframe, e.g. regime filter, trigger, confirmation, veto, or feature source.",
+          "content: Define how HTF values are aligned to LTF decision timestamps.",
+          "boundary: No multi-timeframe confluence may be claimed as edge without sample/OOS/cost evidence.",
+          "conflict: Potential overlap with Data Engineering feature timestamp and Kline market-structure items; deduplicate in formal KB."
+        ]
+      },
+      {
+        "at": "2026-06-11",
+        "actor": "codex",
+        "action": "phase37_kline_strategy_formal_reviewed_created",
+        "reason": "CEK-TA-400: formal reviewed/caveat_only written to codex-expert-kit/rag/knowledge/KB_02_KLINE_STRATEGY/kb_02_kline_strategy.multi_timeframe_context_required.v1.json."
+      }
+    ],
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase37_kline_strategy_reviewed_preparation_20260611_strict_v1",
+      "source_package_id": "phase37_kline_strategy_reviewed_preparation_audit_package_20260611",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "required_patches": {
+        "source": [
+          "TradingView 与 Databricks 只支撑各自时间语义和 point-in-time 模式。"
+        ],
+        "content": [
+          "多周期特征必须声明高周期数据确认时间、低周期决策时间和可用性边界。"
+        ],
+        "boundary": [
+          "不得把高周期未确认信息作为低周期已知事实。"
+        ],
+        "conflict": [
+          "与 Data Engineering feature timestamp / point-in-time 规则交叉引用。"
+        ]
+      }
+    }
+  },
+  "workflow": {
+    "stage": "formalized_reviewed",
+    "next_allowed_decisions": [
+      "accepted_for_draft",
+      "needs_more_evidence",
+      "rejected"
+    ],
+    "forbidden_decisions": [
+      "reviewed",
+      "approved",
+      "default_guidance",
+      "hard_gate"
+    ],
+    "formal_knowledge_id": "kb_02_kline_strategy.multi_timeframe_context_required.v1",
+    "conversion_target": {
+      "proposed_knowledge_id": "kb_02_kline_strategy.multi_timeframe_context_required.v1",
+      "target_review_status": "reviewed",
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reviewed_allowed": true,
+      "approved_allowed": false
+    },
+    "ai_audit_result_id": "audit_result_phase37_kline_strategy_reviewed_preparation_20260611_strict_v1",
+    "formal_review_status": "reviewed",
+    "default_guidance_allowed": false,
+    "approved_allowed": false,
+    "hard_gate_allowed": false,
+    "hidden_from_default_queue": true,
+    "visible_in_default_guidance_queue": false,
+    "formalization_allowed": true,
+    "queue_group": "formalized",
+    "next_action": "none",
+    "knowledge_path": "codex-expert-kit/rag/knowledge/KB_02_KLINE_STRATEGY/kb_02_kline_strategy.multi_timeframe_context_required.v1.json",
+    "formal_knowledge_path": "codex-expert-kit/rag/knowledge/KB_02_KLINE_STRATEGY/kb_02_kline_strategy.multi_timeframe_context_required.v1.json"
+  },
+  "contribution": {
+    "source": "phase37_research_ingestion",
+    "private_data_removed": true,
+    "project_private_fields": [],
+    "external_project_backflow": false
+  }
+}

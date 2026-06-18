@@ -1,0 +1,540 @@
+{
+  "audit_result_id": "audit_result_phase37_replay_simulation_candidate_audit_20260611_strict_v1",
+  "auditor": "external_ai_strict_audit",
+  "audited_at": "2026-06-12",
+  "package_id": "phase37_replay_simulation_candidate_audit_package_20260611",
+  "quality_gate": {
+    "pass": false,
+    "reason": "原候选 conflict_audit.approval_allowed=true 与包级 hard boundary 冲突；导入前由 Codex 补丁修正为 false。",
+    "machine_ingestion_blocker": "conflict_audit.approval_allowed must be patched to false before ingestion"
+  },
+  "content_decision": {
+    "accepted_for_draft": 12,
+    "needs_more_evidence": 0,
+    "rejected": 0,
+    "blocked": 0
+  },
+  "summary": {
+    "total": 12,
+    "accepted_for_draft": 12,
+    "needs_more_evidence": 0,
+    "rejected": 0,
+    "blocked": 0
+  },
+  "candidate_results": [
+    {
+      "candidate_id": "cand_20260611_phase37_replay_simulation_event_clock_required_001",
+      "research_task_id": "P37-F-R01",
+      "decision": "accepted_for_draft",
+      "confidence": "medium_high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "事件时钟、撮合时点、信号生成和订单提交顺序属于 Replay / Simulation 的基础边界，可进入 draft。"
+      ],
+      "required_followups": [
+        "进入 reviewed/caveat_only 前必须另行导出 reviewed-preparation 审计包。",
+        "不得创建 approved、default guidance 或 hard gate。"
+      ],
+      "patch_notes": {
+        "source": [
+          "框架、平台、交易所、broker 和 FIX 文档只能支撑各自语义，不得泛化为所有市场通用规则。"
+        ],
+        "content": [
+          "Replay / Simulation 只表达事件时钟、成交模型、partial/no fill、延迟模型、交易所/经纪商规则映射、订单状态生命周期、模拟盘/实盘 gap report、OHLC vs tick replay 粒度边界。"
+        ],
+        "boundary": [
+          "simulation evidence invalidation 不等于自动拒单、实盘停机或风控 hard gate。"
+        ],
+        "conflict": [
+          "R07/R08/R09 与 Live Execution / Exchange Adapter 重叠时，Replay 只模拟规则与状态；真实下单、真实拒单、账户同步、实盘订单状态归 Live Execution owner。"
+        ]
+      },
+      "source_assessment": {
+        "source_count": 4,
+        "missing_sources": [],
+        "weak_sources": [],
+        "recommended_extra_sources": []
+      },
+      "classification_assessment": {
+        "is_correct_branch": true,
+        "expected_branch": "Trading Engineering / Replay Simulation",
+        "misplaced_topics": []
+      }
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_replay_simulation_exchange_rule_simulation_required_001",
+      "research_task_id": "P37-F-R07",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "交易所/经纪商规则必须按 venue/product 映射进入模拟约束。"
+      ],
+      "required_followups": [
+        "进入 reviewed/caveat_only 前必须另行导出 reviewed-preparation 审计包。",
+        "不得创建 approved、default guidance 或 hard gate。"
+      ],
+      "patch_notes": {
+        "source": [
+          "框架、平台、交易所、broker 和 FIX 文档只能支撑各自语义，不得泛化为所有市场通用规则。"
+        ],
+        "content": [
+          "Replay / Simulation 只表达事件时钟、成交模型、partial/no fill、延迟模型、交易所/经纪商规则映射、订单状态生命周期、模拟盘/实盘 gap report、OHLC vs tick replay 粒度边界。"
+        ],
+        "boundary": [
+          "simulation evidence invalidation 不等于自动拒单、实盘停机或风控 hard gate。"
+        ],
+        "conflict": [
+          "R07/R08/R09 与 Live Execution / Exchange Adapter 重叠时，Replay 只模拟规则与状态；真实下单、真实拒单、账户同步、实盘订单状态归 Live Execution owner。"
+        ]
+      },
+      "source_assessment": {
+        "source_count": 4,
+        "missing_sources": [],
+        "weak_sources": [],
+        "recommended_extra_sources": []
+      },
+      "classification_assessment": {
+        "is_correct_branch": true,
+        "expected_branch": "Trading Engineering / Replay Simulation",
+        "misplaced_topics": []
+      }
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_replay_simulation_execution_cost_consistency_required_001",
+      "research_task_id": "P37-F-R12",
+      "decision": "accepted_for_draft",
+      "confidence": "medium_high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "Backtest/Replay/Paper/Live 的执行成本口径必须版本化映射；reviewed 前需与 Backtest/Execution owner schema 对齐。"
+      ],
+      "required_followups": [
+        "进入 reviewed/caveat_only 前必须另行导出 reviewed-preparation 审计包。",
+        "不得创建 approved、default guidance 或 hard gate。"
+      ],
+      "patch_notes": {
+        "source": [
+          "框架、平台、交易所、broker 和 FIX 文档只能支撑各自语义，不得泛化为所有市场通用规则。"
+        ],
+        "content": [
+          "Replay / Simulation 只表达事件时钟、成交模型、partial/no fill、延迟模型、交易所/经纪商规则映射、订单状态生命周期、模拟盘/实盘 gap report、OHLC vs tick replay 粒度边界。"
+        ],
+        "boundary": [
+          "simulation evidence invalidation 不等于自动拒单、实盘停机或风控 hard gate。"
+        ],
+        "conflict": [
+          "R07/R08/R09 与 Live Execution / Exchange Adapter 重叠时，Replay 只模拟规则与状态；真实下单、真实拒单、账户同步、实盘订单状态归 Live Execution owner。"
+        ]
+      },
+      "source_assessment": {
+        "source_count": 4,
+        "missing_sources": [],
+        "weak_sources": [],
+        "recommended_extra_sources": []
+      },
+      "classification_assessment": {
+        "is_correct_branch": true,
+        "expected_branch": "Trading Engineering / Replay Simulation",
+        "misplaced_topics": []
+      }
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_replay_simulation_fill_model_assumption_required_001",
+      "research_task_id": "P37-F-R03",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "Fill model 必须声明成交价格、数量、spread、slippage、队列/流动性限制和适用市场，来源支撑充足。"
+      ],
+      "required_followups": [
+        "进入 reviewed/caveat_only 前必须另行导出 reviewed-preparation 审计包。",
+        "不得创建 approved、default guidance 或 hard gate。"
+      ],
+      "patch_notes": {
+        "source": [
+          "框架、平台、交易所、broker 和 FIX 文档只能支撑各自语义，不得泛化为所有市场通用规则。"
+        ],
+        "content": [
+          "Replay / Simulation 只表达事件时钟、成交模型、partial/no fill、延迟模型、交易所/经纪商规则映射、订单状态生命周期、模拟盘/实盘 gap report、OHLC vs tick replay 粒度边界。"
+        ],
+        "boundary": [
+          "simulation evidence invalidation 不等于自动拒单、实盘停机或风控 hard gate。"
+        ],
+        "conflict": [
+          "R07/R08/R09 与 Live Execution / Exchange Adapter 重叠时，Replay 只模拟规则与状态；真实下单、真实拒单、账户同步、实盘订单状态归 Live Execution owner。"
+        ]
+      },
+      "source_assessment": {
+        "source_count": 4,
+        "missing_sources": [],
+        "weak_sources": [],
+        "recommended_extra_sources": []
+      },
+      "classification_assessment": {
+        "is_correct_branch": true,
+        "expected_branch": "Trading Engineering / Replay Simulation",
+        "misplaced_topics": []
+      }
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_replay_simulation_latency_model_required_001",
+      "research_task_id": "P37-F-R05",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "高频或盘中 simulation 必须声明 feed/order/confirmation/report latency。"
+      ],
+      "required_followups": [
+        "进入 reviewed/caveat_only 前必须另行导出 reviewed-preparation 审计包。",
+        "不得创建 approved、default guidance 或 hard gate。"
+      ],
+      "patch_notes": {
+        "source": [
+          "框架、平台、交易所、broker 和 FIX 文档只能支撑各自语义，不得泛化为所有市场通用规则。"
+        ],
+        "content": [
+          "Replay / Simulation 只表达事件时钟、成交模型、partial/no fill、延迟模型、交易所/经纪商规则映射、订单状态生命周期、模拟盘/实盘 gap report、OHLC vs tick replay 粒度边界。"
+        ],
+        "boundary": [
+          "simulation evidence invalidation 不等于自动拒单、实盘停机或风控 hard gate。"
+        ],
+        "conflict": [
+          "R07/R08/R09 与 Live Execution / Exchange Adapter 重叠时，Replay 只模拟规则与状态；真实下单、真实拒单、账户同步、实盘订单状态归 Live Execution owner。"
+        ]
+      },
+      "source_assessment": {
+        "source_count": 4,
+        "missing_sources": [],
+        "weak_sources": [],
+        "recommended_extra_sources": []
+      },
+      "classification_assessment": {
+        "is_correct_branch": true,
+        "expected_branch": "Trading Engineering / Replay Simulation",
+        "misplaced_topics": []
+      }
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_replay_simulation_minimum_order_size_required_001",
+      "research_task_id": "P37-F-R08",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "最小数量、步长、最小名义金额、价格精度和订单类型限制必须模拟。"
+      ],
+      "required_followups": [
+        "进入 reviewed/caveat_only 前必须另行导出 reviewed-preparation 审计包。",
+        "不得创建 approved、default guidance 或 hard gate。"
+      ],
+      "patch_notes": {
+        "source": [
+          "框架、平台、交易所、broker 和 FIX 文档只能支撑各自语义，不得泛化为所有市场通用规则。"
+        ],
+        "content": [
+          "Replay / Simulation 只表达事件时钟、成交模型、partial/no fill、延迟模型、交易所/经纪商规则映射、订单状态生命周期、模拟盘/实盘 gap report、OHLC vs tick replay 粒度边界。"
+        ],
+        "boundary": [
+          "simulation evidence invalidation 不等于自动拒单、实盘停机或风控 hard gate。"
+        ],
+        "conflict": [
+          "R07/R08/R09 与 Live Execution / Exchange Adapter 重叠时，Replay 只模拟规则与状态；真实下单、真实拒单、账户同步、实盘订单状态归 Live Execution owner。"
+        ]
+      },
+      "source_assessment": {
+        "source_count": 4,
+        "missing_sources": [],
+        "weak_sources": [],
+        "recommended_extra_sources": []
+      },
+      "classification_assessment": {
+        "is_correct_branch": true,
+        "expected_branch": "Trading Engineering / Replay Simulation",
+        "misplaced_topics": []
+      }
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_replay_simulation_ohlc_same_bar_tp_sl_ordering_required_001",
+      "research_task_id": "P37-F-R02",
+      "decision": "accepted_for_draft",
+      "confidence": "medium_high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "OHLC 同根 K 内 TP/SL 真实先后不可证明，必须声明处理假设；reviewed 前建议补 CEK-TA fill-ordering contract。"
+      ],
+      "required_followups": [
+        "进入 reviewed/caveat_only 前必须另行导出 reviewed-preparation 审计包。",
+        "不得创建 approved、default guidance 或 hard gate。"
+      ],
+      "patch_notes": {
+        "source": [
+          "框架、平台、交易所、broker 和 FIX 文档只能支撑各自语义，不得泛化为所有市场通用规则。"
+        ],
+        "content": [
+          "Replay / Simulation 只表达事件时钟、成交模型、partial/no fill、延迟模型、交易所/经纪商规则映射、订单状态生命周期、模拟盘/实盘 gap report、OHLC vs tick replay 粒度边界。"
+        ],
+        "boundary": [
+          "simulation evidence invalidation 不等于自动拒单、实盘停机或风控 hard gate。"
+        ],
+        "conflict": [
+          "R07/R08/R09 与 Live Execution / Exchange Adapter 重叠时，Replay 只模拟规则与状态；真实下单、真实拒单、账户同步、实盘订单状态归 Live Execution owner。"
+        ]
+      },
+      "source_assessment": {
+        "source_count": 4,
+        "missing_sources": [],
+        "weak_sources": [],
+        "recommended_extra_sources": []
+      },
+      "classification_assessment": {
+        "is_correct_branch": true,
+        "expected_branch": "Trading Engineering / Replay Simulation",
+        "misplaced_topics": []
+      }
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_replay_simulation_order_reject_and_cancel_policy_required_001",
+      "research_task_id": "P37-F-R09",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "拒单、撤单、撤改单、过期、pending 和回报缺失不能被省略。"
+      ],
+      "required_followups": [
+        "进入 reviewed/caveat_only 前必须另行导出 reviewed-preparation 审计包。",
+        "不得创建 approved、default guidance 或 hard gate。"
+      ],
+      "patch_notes": {
+        "source": [
+          "框架、平台、交易所、broker 和 FIX 文档只能支撑各自语义，不得泛化为所有市场通用规则。"
+        ],
+        "content": [
+          "Replay / Simulation 只表达事件时钟、成交模型、partial/no fill、延迟模型、交易所/经纪商规则映射、订单状态生命周期、模拟盘/实盘 gap report、OHLC vs tick replay 粒度边界。"
+        ],
+        "boundary": [
+          "simulation evidence invalidation 不等于自动拒单、实盘停机或风控 hard gate。"
+        ],
+        "conflict": [
+          "R07/R08/R09 与 Live Execution / Exchange Adapter 重叠时，Replay 只模拟规则与状态；真实下单、真实拒单、账户同步、实盘订单状态归 Live Execution owner。"
+        ]
+      },
+      "source_assessment": {
+        "source_count": 4,
+        "missing_sources": [],
+        "weak_sources": [],
+        "recommended_extra_sources": []
+      },
+      "classification_assessment": {
+        "is_correct_branch": true,
+        "expected_branch": "Trading Engineering / Replay Simulation",
+        "misplaced_topics": []
+      }
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_replay_simulation_paper_trading_not_equal_live_001",
+      "research_task_id": "P37-F-R06",
+      "decision": "accepted_for_draft",
+      "confidence": "medium_high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "Paper trading 只能验证流程和部分执行假设，不能等同真实成交、滑点、拒单、延迟或风控表现。"
+      ],
+      "required_followups": [
+        "进入 reviewed/caveat_only 前必须另行导出 reviewed-preparation 审计包。",
+        "不得创建 approved、default guidance 或 hard gate。"
+      ],
+      "patch_notes": {
+        "source": [
+          "框架、平台、交易所、broker 和 FIX 文档只能支撑各自语义，不得泛化为所有市场通用规则。"
+        ],
+        "content": [
+          "Replay / Simulation 只表达事件时钟、成交模型、partial/no fill、延迟模型、交易所/经纪商规则映射、订单状态生命周期、模拟盘/实盘 gap report、OHLC vs tick replay 粒度边界。"
+        ],
+        "boundary": [
+          "simulation evidence invalidation 不等于自动拒单、实盘停机或风控 hard gate。"
+        ],
+        "conflict": [
+          "R07/R08/R09 与 Live Execution / Exchange Adapter 重叠时，Replay 只模拟规则与状态；真实下单、真实拒单、账户同步、实盘订单状态归 Live Execution owner。"
+        ]
+      },
+      "source_assessment": {
+        "source_count": 4,
+        "missing_sources": [],
+        "weak_sources": [],
+        "recommended_extra_sources": []
+      },
+      "classification_assessment": {
+        "is_correct_branch": true,
+        "expected_branch": "Trading Engineering / Replay Simulation",
+        "misplaced_topics": []
+      }
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_replay_simulation_partial_fill_policy_required_001",
+      "research_task_id": "P37-F-R04",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "不能默认所有订单完整成交，partial/no fill 与订单状态需要显式建模。"
+      ],
+      "required_followups": [
+        "进入 reviewed/caveat_only 前必须另行导出 reviewed-preparation 审计包。",
+        "不得创建 approved、default guidance 或 hard gate。"
+      ],
+      "patch_notes": {
+        "source": [
+          "框架、平台、交易所、broker 和 FIX 文档只能支撑各自语义，不得泛化为所有市场通用规则。"
+        ],
+        "content": [
+          "Replay / Simulation 只表达事件时钟、成交模型、partial/no fill、延迟模型、交易所/经纪商规则映射、订单状态生命周期、模拟盘/实盘 gap report、OHLC vs tick replay 粒度边界。"
+        ],
+        "boundary": [
+          "simulation evidence invalidation 不等于自动拒单、实盘停机或风控 hard gate。"
+        ],
+        "conflict": [
+          "R07/R08/R09 与 Live Execution / Exchange Adapter 重叠时，Replay 只模拟规则与状态；真实下单、真实拒单、账户同步、实盘订单状态归 Live Execution owner。"
+        ]
+      },
+      "source_assessment": {
+        "source_count": 4,
+        "missing_sources": [],
+        "weak_sources": [],
+        "recommended_extra_sources": []
+      },
+      "classification_assessment": {
+        "is_correct_branch": true,
+        "expected_branch": "Trading Engineering / Replay Simulation",
+        "misplaced_topics": []
+      }
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_replay_simulation_simulation_live_gap_report_required_001",
+      "research_task_id": "P37-F-R10",
+      "decision": "accepted_for_draft",
+      "confidence": "medium_high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "simulation/paper 到 live 前需要 gap report；reviewed 前应补 CEK-TA gap report schema。"
+      ],
+      "required_followups": [
+        "进入 reviewed/caveat_only 前必须另行导出 reviewed-preparation 审计包。",
+        "不得创建 approved、default guidance 或 hard gate。"
+      ],
+      "patch_notes": {
+        "source": [
+          "框架、平台、交易所、broker 和 FIX 文档只能支撑各自语义，不得泛化为所有市场通用规则。"
+        ],
+        "content": [
+          "Replay / Simulation 只表达事件时钟、成交模型、partial/no fill、延迟模型、交易所/经纪商规则映射、订单状态生命周期、模拟盘/实盘 gap report、OHLC vs tick replay 粒度边界。"
+        ],
+        "boundary": [
+          "simulation evidence invalidation 不等于自动拒单、实盘停机或风控 hard gate。"
+        ],
+        "conflict": [
+          "R07/R08/R09 与 Live Execution / Exchange Adapter 重叠时，Replay 只模拟规则与状态；真实下单、真实拒单、账户同步、实盘订单状态归 Live Execution owner。"
+        ]
+      },
+      "source_assessment": {
+        "source_count": 4,
+        "missing_sources": [],
+        "weak_sources": [],
+        "recommended_extra_sources": []
+      },
+      "classification_assessment": {
+        "is_correct_branch": true,
+        "expected_branch": "Trading Engineering / Replay Simulation",
+        "misplaced_topics": []
+      }
+    },
+    {
+      "candidate_id": "cand_20260611_phase37_replay_simulation_tick_replay_vs_ohlc_boundary_001",
+      "research_task_id": "P37-F-R11",
+      "decision": "accepted_for_draft",
+      "confidence": "high",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "tick/order-book replay 与 OHLC replay 粒度边界清晰，不能伪装为真实市场反应。"
+      ],
+      "required_followups": [
+        "进入 reviewed/caveat_only 前必须另行导出 reviewed-preparation 审计包。",
+        "不得创建 approved、default guidance 或 hard gate。"
+      ],
+      "patch_notes": {
+        "source": [
+          "框架、平台、交易所、broker 和 FIX 文档只能支撑各自语义，不得泛化为所有市场通用规则。"
+        ],
+        "content": [
+          "Replay / Simulation 只表达事件时钟、成交模型、partial/no fill、延迟模型、交易所/经纪商规则映射、订单状态生命周期、模拟盘/实盘 gap report、OHLC vs tick replay 粒度边界。"
+        ],
+        "boundary": [
+          "simulation evidence invalidation 不等于自动拒单、实盘停机或风控 hard gate。"
+        ],
+        "conflict": [
+          "R07/R08/R09 与 Live Execution / Exchange Adapter 重叠时，Replay 只模拟规则与状态；真实下单、真实拒单、账户同步、实盘订单状态归 Live Execution owner。"
+        ]
+      },
+      "source_assessment": {
+        "source_count": 4,
+        "missing_sources": [],
+        "weak_sources": [],
+        "recommended_extra_sources": []
+      },
+      "classification_assessment": {
+        "is_correct_branch": true,
+        "expected_branch": "Trading Engineering / Replay Simulation",
+        "misplaced_topics": []
+      }
+    }
+  ],
+  "global_patch_notes": {
+    "machine": [
+      "所有候选 conflict_audit.approval_allowed 必须改为 false。",
+      "所有候选 conflict_audit.default_guidance_allowed 必须为 false。",
+      "所有候选 conflict_audit.hard_gate_allowed 必须为 false。"
+    ],
+    "boundary": [
+      "所有候选必须保持 reviewed_allowed=false、approved_allowed=false、default_guidance_allowed=false、hard_gate_allowed=false。"
+    ]
+  }
+}

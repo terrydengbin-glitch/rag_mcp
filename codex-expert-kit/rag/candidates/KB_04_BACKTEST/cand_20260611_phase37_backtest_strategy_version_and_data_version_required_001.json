@@ -1,0 +1,631 @@
+{
+  "schema_version": "1.1.0-candidate",
+  "candidate_id": "cand_20260611_phase37_backtest_strategy_version_and_data_version_required_001",
+  "research_task_id": "P37-E-B12",
+  "status": {
+    "review_status": "reviewed",
+    "ingestion_decision": "accepted_for_reviewed_caveat_only",
+    "decision_reason": "内联契约再审允许 formal reviewed/caveat_only；不允许 approved/default/hard gate。",
+    "created_at": "2026-06-11",
+    "updated_at": "2026-06-11"
+  },
+  "classification": {
+    "tree_node_id": "kt.trading_engineering.backtest",
+    "canonical_node_id": "kt.trading_engineering.backtest",
+    "tree_path": "CEK-TA / Trading Engineering / Backtest",
+    "related_nodes": [
+      "kt.trading_engineering",
+      "kt.trading_engineering.data_engineering",
+      "kt.kline_strategy",
+      "kt.market_microstructure",
+      "kt.replay_simulation",
+      "kt.live_execution",
+      "kt.risk_management",
+      "kt.ai_engineering.llm_training"
+    ],
+    "partition_id": "KB_04_BACKTEST",
+    "domain": "backtest",
+    "subdomain": "reproducibility",
+    "rule_type": "backtest_reliability_boundary_rule",
+    "claim_type": "versioning_contract",
+    "used_for": [
+      "backtest_review",
+      "strategy_validation_audit",
+      "ai_trader_project_gap_audit",
+      "external_project_rag_retrieval"
+    ],
+    "classification_notes": "本候选主归属 Trading Engineering / Backtest。AI Engineering 只能引用本规则，不得把回测可信度规则改写为模型训练或 RAG/MCP 本体规则。"
+  },
+  "claim": {
+    "claim_id": "claim_p37_e_b12",
+    "title": "策略版本和数据版本必须绑定",
+    "statement": "回测结论必须同时绑定 strategy_rule_version、parameter_hash、data_version、market calendar/session version、cost/fill/slippage model version 和 evaluation timestamp；否则无法审计策略、数据、日历和执行假设是否一致。",
+    "normalized_claim": "backtest.strategy_version_and_data_version_required.v1",
+    "evidence_summary": "CEK-TA 内联 schema extract 定义 strategy/data/calendar/execution identity 字段；MLflow dataset/model registry 只作为版本追踪 supporting source。",
+    "interpretation_notes": "本候选只定义回测可信度、偏差、成本、验证和复现边界，不输出买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+    "claim_strength": "reviewed_caveat_only_pending_reaudit",
+    "performance_claim": false
+  },
+  "applicability": {
+    "market": "general_with_market_specific_mapping",
+    "asset": "general",
+    "timeframe": "historical_evaluation",
+    "data_granularity": "historical_market_data_and_orders",
+    "project_type": "trading_ai_support_layer",
+    "applies_when": [
+      "审计策略回测、参数搜索、指标解释、成本模型、fill 假设或复现实验包",
+      "把回测结果用于 AI scoring、策略筛选、paper/live 前置评估或研究报告"
+    ],
+    "not_applicable_when": [
+      "需要直接生成买卖点、仓位、杠杆、止损止盈或实盘执行建议",
+      "没有历史数据版本、策略规则版本或 evaluation timestamp",
+      "问题属于 live execution、risk hard gate 或交易所实盘订单规则，应由对应分支处理"
+    ],
+    "assumptions": [
+      "候选用于 CEK-TA 通用支持层知识库，不包含任何外接项目私有策略参数。",
+      "回测结论必须保留数据、成本、执行、样本、参数搜索、验证和复现边界。",
+      "候选通过外部审计前不能进入正式 reviewed 知识库。"
+    ],
+    "limitations": [
+      "论文和专业机构资料支持方法边界，不能证明任何特定策略有效。",
+      "平台文档只可作为实现语义示例，外接项目必须映射自己的 backtest engine、broker、交易所和数据供应商。",
+      "本候选不提供任何投资建议或实盘执行许可。",
+      "本候选只约束回测证据包完整性，不证明策略盈利能力。",
+      "本候选不生成买卖点、仓位、杠杆、止损止盈或实盘执行建议。",
+      "字段本体由 CEK-TA contract/schema extract 支撑，外部工具文档只支撑等价实现模式。"
+    ]
+  },
+  "source_refs": [
+    {
+      "source_title": "MLflow Tracking",
+      "source_url": "https://mlflow.org/docs/latest/tracking.html",
+      "source_type": "framework_doc",
+      "publisher": "MLflow",
+      "published_at": null,
+      "reliability": "medium_high",
+      "score": 82,
+      "freshness": "time_sensitive",
+      "evidence_summary": "MLflow Tracking records parameters, metrics, artifacts and source/version metadata for reproducible experiments.",
+      "limitations": [
+        "Framework implementation example; not mandatory for CEK-TA."
+      ],
+      "source_id": "src_001",
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "DVC Pipelines",
+      "source_url": "https://dvc.org/doc/user-guide/pipelines",
+      "source_type": "framework_doc",
+      "publisher": "DVC",
+      "published_at": null,
+      "reliability": "medium_high",
+      "score": 82,
+      "freshness": "time_sensitive",
+      "evidence_summary": "DVC pipelines define stages, dependencies, outputs and reproducible data workflows.",
+      "limitations": [
+        "Framework implementation example; not mandatory for CEK-TA."
+      ],
+      "source_id": "src_002",
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "relevance": "high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "Backtesting & Simulation",
+      "source_url": "https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/backtesting-and-simulation",
+      "source_type": "professional_curriculum",
+      "publisher": "CFA Institute",
+      "published_at": "2026-01-01",
+      "reliability": "high",
+      "score": 88,
+      "freshness": "time_sensitive",
+      "evidence_summary": "CFA Institute frames backtesting as approximating the real-life investment process, including rolling-window processes, rules, portfolio formation, rebalancing, performance and risk profiles.",
+      "limitations": [
+        "Professional curriculum source; use for process and boundary, not for a specific trading edge."
+      ],
+      "source_id": "src_003",
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "relevance": "medium_high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_title": "Trade Fills - Key Concepts",
+      "source_url": "https://www.quantconnect.com/docs/v2/writing-algorithms/reality-modeling/trade-fills/key-concepts",
+      "source_type": "platform_doc",
+      "publisher": "QuantConnect",
+      "published_at": null,
+      "reliability": "medium_high",
+      "score": 82,
+      "freshness": "time_sensitive",
+      "evidence_summary": "QuantConnect explains fill models, spread costs and interaction with slippage models for backtest order fills.",
+      "limitations": [
+        "Platform-specific semantics; external projects must map their own fill model."
+      ],
+      "source_id": "src_004",
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "relevance": "medium_high",
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_p37_backtest_contract_versioning",
+      "source_title": "Phase 37 Backtest Run Manifest Contract",
+      "source_url": "docs/contracts/phase37_backtest_run_manifest_contract.md",
+      "source_type": "internal_contract",
+      "publisher": "CEK-TA",
+      "published_at": "2026-06-11",
+      "accessed_at": "2026-06-11",
+      "version": "v1",
+      "reliability": "high",
+      "relevance": "high",
+      "evidence_summary": "定义 strategy_rule_version、parameter_hash、dataset_version、calendar/session version、cost/fill/slippage/fee model version 等回测证据包字段。",
+      "limitations": [
+        "内部契约只定义 CEK-TA 逻辑字段，外接项目需映射自身字段。"
+      ],
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_mlflow_dataset_tracking",
+      "source_title": "MLflow Dataset Tracking",
+      "source_url": "https://mlflow.org/docs/latest/ml/dataset/",
+      "source_type": "framework_doc",
+      "publisher": "MLflow",
+      "published_at": null,
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "medium_high",
+      "relevance": "medium_high",
+      "evidence_summary": "MLflow Dataset Tracking 支撑 dataset、model、metrics 和 evaluation artifacts 的 tracking/versioning。",
+      "limitations": [
+        "框架实现示例，不是 CEK-TA 唯一工具要求。"
+      ],
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_mlflow_model_registry",
+      "source_title": "MLflow Model Registry",
+      "source_url": "https://mlflow.org/docs/latest/ml/model-registry/",
+      "source_type": "framework_doc",
+      "publisher": "MLflow",
+      "published_at": null,
+      "accessed_at": "2026-06-11",
+      "version": null,
+      "reliability": "medium_high",
+      "relevance": "medium",
+      "evidence_summary": "MLflow registry 支撑 model version、run linkage、lineage 和 rollback 语义，可作为版本追踪 supporting source。",
+      "limitations": [
+        "模型注册语义仅作版本追踪类比，不替代 backtest_run_manifest。"
+      ],
+      "quoted_excerpt_allowed": false
+    },
+    {
+      "source_id": "src_p37_backtest_inline_contract_p37_e_b12",
+      "source_title": "Phase 37 Backtest Run Manifest Contract - inline schema extract",
+      "source_url": "docs/contracts/phase37_backtest_run_manifest_schema_extract.json",
+      "source_type": "internal_contract_schema_extract",
+      "publisher": "CEK-TA",
+      "published_at": "2026-06-11",
+      "accessed_at": "2026-06-11",
+      "version": "1.0.0",
+      "reliability": "high",
+      "relevance": "high",
+      "score": 92,
+      "evidence_summary": "内联 backtest_run_manifest 字段表、required/optional 标记、字段语义、生成规则、校验规则和 contract sha256。",
+      "limitations": [
+        "只支撑 CEK-TA 内部逻辑字段；外部项目可映射等价字段，不要求相同物理表名。"
+      ],
+      "quoted_excerpt_allowed": false
+    }
+  ],
+  "source_quality": {
+    "overall_reliability": "medium_high",
+    "score": 83.5,
+    "score_version": "phase37_backtest_source_scoring_v1",
+    "primary_source_count": 3,
+    "supporting_source_count": 1,
+    "low_reliability_source_count": 0,
+    "mandatory_downgrades": [],
+    "limitations": [
+      "正式入库前必须由外部审计确认 claim 没有超出来源可证明范围。",
+      "平台文档只能证明平台语义，不能单独证明策略有效或实盘可执行。",
+      "本轮补证将 CEK-TA 内部 backtest_run_manifest 契约作为字段本体主来源，外部工具文档仅作实现语义示例。",
+      "CEK-TA 内部字段本体现在以 schema extract 和 contract sha256 形式进入再审包。",
+      "MLflow、DVC、QuantConnect 只能作为实现语义示例，不能替代 CEK-TA backtest_run_manifest 字段契约。",
+      "本轮仍只请求 reviewed/caveat_only，不请求 approved/default guidance/hard gate。"
+    ],
+    "supplemental_evidence_status": "ready_for_reaudit",
+    "supplemental_source_count": 3,
+    "internal_contract_evidence_status": "inline_schema_extract_added",
+    "internal_contract_sha256": "6698c0b2ec18dc12ebd85f46ace4c021c6b6d84e162ff45773c9a9e253289574"
+  },
+  "conflict_audit": {
+    "conflict_status": "none_known_in_visible_context",
+    "checked_against": [
+      "Phase 37 Trading 与 AI 跨分支引用契约",
+      "现有 Backtest formal seed 知识",
+      "Data Engineering / Replay / Live Execution / Risk Management owner 边界"
+    ],
+    "conflicts": [],
+    "resolution_summary": "未发现与可见正式知识的直接冲突；本候选只定义 Backtest 可信度边界，AI Engineering 只能引用。",
+    "approval_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "llm_usage_policy": {
+    "allowed": [
+      "用于提醒 AI IDE 检索 Backtest 可信度、偏差、成本、验证和复现边界。",
+      "用于审计交易项目方案中是否缺少回测证据、成本模型、样本外、walk-forward 或复现实验包。",
+      "用于辅助外接项目设计 backtest review checklist、reason code 和 evidence gate。"
+    ],
+    "not_allowed": [
+      "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+      "不得把候选知识当作 reviewed、approved、default guidance 或 hard gate。",
+      "不得绕过外接项目事实层、数据契约、执行适配器、风控 hard gate 或人工治理流程。"
+    ]
+  },
+  "machine_gate": {
+    "default_guidance": "deny",
+    "reason": "Phase 37 Backtest first audit does not allow default guidance; formal reviewed requires a later reviewed-preparation gate.",
+    "requires_human_escalation": true,
+    "hidden_from_default_queue": true,
+    "visible_in_default_guidance_queue": false,
+    "approved_allowed": false,
+    "default_guidance_allowed": false,
+    "hard_gate_allowed": false
+  },
+  "review": {
+    "confidence": "medium_high",
+    "freshness": "mixed",
+    "reviewer": "external_ai_and_codex_alignment",
+    "reviewed_at": "2026-06-11",
+    "open_questions": [
+      "审计方是否认可内联 schema extract 足以支撑 CEK-TA backtest_run_manifest 字段本体？",
+      "审计方是否认可 B11/B12 仍只能进入 reviewed/caveat_only，而不能进入 approved/default guidance/hard gate？",
+      "审计方是否发现与 Data Engineering、Market Microstructure、Replay 或 Execution owner 字段存在冲突或重复？"
+    ],
+    "audit_log": [
+      {
+        "at": "2026-06-11",
+        "actor": "codex",
+        "action": "created",
+        "reason": "根据 Phase 37 P37-E Backtest 队列生成 Trading Engineering 候选知识。"
+      },
+      {
+        "at": "2026-06-11",
+        "actor": "codex",
+        "action": "sourced",
+        "reason": "记录专业机构、论文、平台和复现实验框架来源摘要。"
+      },
+      {
+        "at": "2026-06-11",
+        "actor": "external_ai_strict_audit",
+        "action": "phase37_backtest_first_audit_imported",
+        "reason": "accepted_for_draft / confidence=medium",
+        "audit_result_id": "audit_result_phase37_backtest_candidate_audit_20260611_strict_v1",
+        "patch_notes": [
+          "source: 平台文档只能作为实现语义示例，不得泛化为所有 backtest engine。",
+          "source: B03 需补 survivorship bias / delisted assets / historical universe / contract expiry-rollover 的直接来源。",
+          "source: B10 需补 profit factor、drawdown、收益回撤比的专业定义和局限来源。",
+          "source: B11/B12 需补 CEK-TA backtest_run_manifest 或 reproducibility_package schema。",
+          "content: 把 block/阻断改写为 evidence invalidation：该回测不得作为策略有效性证据。",
+          "content: 所有回测结论必须声明数据版本、策略版本、参数、成本、滑点、fill model、样本划分和评估时间。",
+          "content: gross result、net result、research result、validation result 必须分开。",
+          "boundary: 不得创建 reviewed、approved、default guidance 或 hard gate。",
+          "boundary: 不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+          "boundary: 样本外、walk-forward 或成本建模通过，也不等于实盘许可。",
+          "conflict: 与 Quant Foundation、Data Engineering、Market Microstructure、Replay、Live Execution、Risk Management、AI Engineering 只做引用和 owner 边界拆分。"
+        ]
+      },
+      {
+        "at": "2026-06-11",
+        "actor": "external_ai_strict_audit",
+        "action": "phase37_backtest_reviewed_preparation_imported",
+        "reason": "needs_more_evidence / confidence=high",
+        "audit_result_id": "audit_result_phase37_backtest_reviewed_preparation_20260611_strict_v1"
+      },
+      {
+        "at": "2026-06-11",
+        "actor": "external_ai_strict_reaudit",
+        "action": "phase37_backtest_reviewed_blocked_supplemental_reaudit_imported",
+        "reason": "needs_more_evidence / confidence=high",
+        "audit_result_id": "audit_result_phase37_backtest_reviewed_blocked_supplemental_reaudit_20260611_strict_v1",
+        "patch_notes": [
+          "source: 内部契约型来源必须提供完整 schema 正文或 schema extract。",
+          "source: MLflow/DVC 只能作为版本追踪类实现示例。",
+          "content: B12 应以内联 CEK-TA strategy/data/calendar/execution assumption 字段契约作为字段本体主证据。",
+          "boundary: 继续阻断 reviewed/caveat_only；不得 approved/default/hard gate。",
+          "conflict: 字段映射必须与 Data Engineering、Market Microstructure、Replay 和 Live Execution owner 边界对齐。"
+        ]
+      },
+      {
+        "at": "2026-06-11",
+        "actor": "codex",
+        "action": "phase37_backtest_b11_b12_inline_contract_supplemented",
+        "reason": "CEK-TA-422: 内联 backtest_run_manifest contract/schema extract，补字段表、schema hash 和 owner 映射。",
+        "audit_result_id": "pending_phase37_backtest_b11_b12_inline_contract_reaudit_package_20260611"
+      },
+      {
+        "at": "2026-06-11",
+        "actor": "external_ai_strict_reaudit",
+        "action": "phase37_backtest_b11_b12_inline_contract_reaudit_imported",
+        "reason": "accepted_for_reviewed_caveat_only / confidence=high",
+        "audit_result_id": "audit_result_phase37_backtest_b11_b12_inline_contract_reaudit_20260611_strict_v1",
+        "patch_notes": [
+          "source: MLflow、DVC、QuantConnect 只能作为 implementation pattern 或 supporting source，不得替代 CEK-TA 字段契约。",
+          "source: CEK-TA backtest_run_manifest schema extract 是 strategy/data/calendar/execution version 字段本体主来源。",
+          "content: B12 formal materialization 前应把 evaluation_timestamp 显式加入 run_identity 或 audit_trace，或声明 run_identity.created_at 是 evaluation timestamp alias。",
+          "content: B12 必须保留 strategy/data/calendar/execution assumption 的 owner mapping。",
+          "boundary: reviewed/caveat_only 只表示带 caveat 的版本绑定方法边界，不代表策略有效或实盘许可。",
+          "boundary: 不得创建 approved、default guidance 或 hard gate。",
+          "conflict: strategy_rule_version 归 Strategy Engineering；dataset_version 归 Data Engineering；calendar/session 归 Market Microstructure/Data Engineering；cost/fill/slippage 归 Replay/Simulation/Live Execution；Backtest 只记录、绑定和审计一致性。"
+        ]
+      }
+    ],
+    "ai_audit": {
+      "audit_result_id": "audit_result_phase37_backtest_candidate_audit_20260611_strict_v1",
+      "package_id": "phase37_backtest_candidate_audit_package_20260611",
+      "auditor": "external_ai_strict_audit",
+      "audited_at": "2026-06-11",
+      "decision": "accepted_for_draft",
+      "confidence": "medium",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "MLflow/DVC 支撑参数、代码、artifact、数据/模型版本和 pipeline tracking；CEK-TA 专用版本字段 reviewed 前需 schema 补强。"
+      ],
+      "required_followups": [
+        "reviewed 前补 CEK-TA strategy_rule_version / calendar_session_version / cost_fill_model_version schema。"
+      ],
+      "patch_notes": [
+        "source: 平台文档只能作为实现语义示例，不得泛化为所有 backtest engine。",
+        "source: B03 需补 survivorship bias / delisted assets / historical universe / contract expiry-rollover 的直接来源。",
+        "source: B10 需补 profit factor、drawdown、收益回撤比的专业定义和局限来源。",
+        "source: B11/B12 需补 CEK-TA backtest_run_manifest 或 reproducibility_package schema。",
+        "content: 把 block/阻断改写为 evidence invalidation：该回测不得作为策略有效性证据。",
+        "content: 所有回测结论必须声明数据版本、策略版本、参数、成本、滑点、fill model、样本划分和评估时间。",
+        "content: gross result、net result、research result、validation result 必须分开。",
+        "boundary: 不得创建 reviewed、approved、default guidance 或 hard gate。",
+        "boundary: 不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+        "boundary: 样本外、walk-forward 或成本建模通过，也不等于实盘许可。",
+        "conflict: 与 Quant Foundation、Data Engineering、Market Microstructure、Replay、Live Execution、Risk Management、AI Engineering 只做引用和 owner 边界拆分。"
+      ],
+      "patch_note_groups": {
+        "source": [
+          "平台文档只能作为实现语义示例，不得泛化为所有 backtest engine。",
+          "B03 需补 survivorship bias / delisted assets / historical universe / contract expiry-rollover 的直接来源。",
+          "B10 需补 profit factor、drawdown、收益回撤比的专业定义和局限来源。",
+          "B11/B12 需补 CEK-TA backtest_run_manifest 或 reproducibility_package schema。"
+        ],
+        "content": [
+          "把 block/阻断改写为 evidence invalidation：该回测不得作为策略有效性证据。",
+          "所有回测结论必须声明数据版本、策略版本、参数、成本、滑点、fill model、样本划分和评估时间。",
+          "gross result、net result、research result、validation result 必须分开。"
+        ],
+        "boundary": [
+          "不得创建 reviewed、approved、default guidance 或 hard gate。",
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+          "样本外、walk-forward 或成本建模通过，也不等于实盘许可。"
+        ],
+        "conflict": [
+          "与 Quant Foundation、Data Engineering、Market Microstructure、Replay、Live Execution、Risk Management、AI Engineering 只做引用和 owner 边界拆分。"
+        ]
+      },
+      "source_assessment": {
+        "source_count": 4,
+        "missing_sources": [
+          "reviewed 前补 CEK-TA strategy_rule_version / calendar_session_version / cost_fill_model_version schema。"
+        ],
+        "weak_sources": [
+          "平台/框架文档只能作为实现示例"
+        ],
+        "recommended_extra_sources": [
+          "reviewed 前补 CEK-TA strategy_rule_version / calendar_session_version / cost_fill_model_version schema。"
+        ]
+      },
+      "classification_assessment": {
+        "correct_partition": true,
+        "expected_partition": "KB_04_BACKTEST",
+        "correct_tree_node": true,
+        "notes": "归类到 Trading Engineering / Backtest；其他分支只做引用和 owner 边界拆分。"
+      },
+      "boundary_assessment": {
+        "no_trade_advice": true,
+        "candidate_only": true,
+        "requires_external_project_facts": true,
+        "notes": "本轮不能 reviewed/approved/default/hard gate，也不能产生交易执行建议。"
+      },
+      "boundary": "accepted_for_draft is not reviewed or approved; this audit does not allow default guidance or hard gate."
+    },
+    "reviewed_preparation_audit": {
+      "audit_result_id": "audit_result_phase37_backtest_reviewed_preparation_20260611_strict_v1",
+      "package_id": "phase37_backtest_reviewed_preparation_audit_package_20260611",
+      "decision": "needs_more_evidence",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "MLflow/DVC 支撑参数、代码和 artifact 版本追踪，但 strategy_rule_version、calendar/session version、cost/fill model version 属于 CEK-TA schema 字段，当前缺内部 schema。"
+      ],
+      "required_followups": [
+        "上传或内联 CEK-TA backtest_run_manifest / reproducibility_package / versioning schema。"
+      ],
+      "patch_notes": {
+        "source": [
+          "上传或内联 CEK-TA backtest_run_manifest / reproducibility_package / versioning schema。"
+        ],
+        "content": [
+          "区分外部工具可支持的实验追踪能力与 CEK-TA 内部字段契约。"
+        ],
+        "boundary": [
+          "reviewed/caveat_only 不等于 approved、default guidance 或 hard gate。",
+          "不得生成买卖点、仓位、杠杆、止损止盈参数或实盘执行建议。",
+          "样本外、walk-forward、成本建模或回测复现通过，也不等于实盘许可。"
+        ],
+        "conflict": [
+          "与 Quant Foundation、Data Engineering、Market Microstructure、Replay、Live Execution、Risk Management、AI Engineering 仅做 cross-reference 和 owner 边界拆分。"
+        ]
+      }
+    },
+    "reviewed_blocked_supplement": {
+      "task_id": "CEK-TA-420",
+      "source_audit_result_id": "audit_result_phase37_backtest_reviewed_preparation_20260611_strict_v1",
+      "supplemented_at": "2026-06-11",
+      "contract_path": "docs/contracts/phase37_backtest_run_manifest_contract.md",
+      "supplemental_sources": [
+        "src_p37_backtest_contract_versioning",
+        "src_mlflow_dataset_tracking",
+        "src_mlflow_model_registry"
+      ],
+      "decision_boundary": "补证后只能请求 accepted_for_reviewed_caveat_only；不得 approved/default guidance/hard gate。"
+    },
+    "reviewed_blocked_supplemental_reaudit": {
+      "audit_result_id": "audit_result_phase37_backtest_reviewed_blocked_supplemental_reaudit_20260611_strict_v1",
+      "package_id": "phase37_backtest_reviewed_blocked_supplemental_reaudit_package_20260611",
+      "decision": "needs_more_evidence",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "MLflow Tracking / Dataset Tracking / Model Registry 可以支持参数、指标、artifact、dataset、model version、run linkage、lineage 和 rollback 语义。",
+        "B12 的核心是 CEK-TA 专用字段，当前包没有内联完整 schema 正文。"
+      ],
+      "required_followups": [
+        "上传或内联 strategy_identity / data_identity / market_calendar_identity / execution_assumption_identity 章节。",
+        "提供字段类型、语义、生成规则、校验规则和 schema version/hash。",
+        "说明 strategy_rule_version、parameter_hash、data_version、calendar/session version、cost/fill model version、evaluation timestamp 如何生成、保存和验证。",
+        "说明它们如何映射到 Data Engineering、Market Microstructure、Replay 和 Execution owner 字段。"
+      ],
+      "patch_notes": {
+        "source": [
+          "内部契约型来源必须提供完整 schema 正文或 schema extract。",
+          "MLflow/DVC 只能作为版本追踪类实现示例。"
+        ],
+        "content": [
+          "B12 应以内联 CEK-TA strategy/data/calendar/execution assumption 字段契约作为字段本体主证据。"
+        ],
+        "boundary": [
+          "继续阻断 reviewed/caveat_only；不得 approved/default/hard gate。"
+        ],
+        "conflict": [
+          "字段映射必须与 Data Engineering、Market Microstructure、Replay 和 Live Execution owner 边界对齐。"
+        ]
+      }
+    },
+    "inline_contract_reaudit": {
+      "package_id": "phase37_backtest_b11_b12_inline_contract_reaudit_package_20260611",
+      "previous_audit_result_id": "audit_result_phase37_backtest_reviewed_blocked_supplemental_reaudit_20260611_strict_v1",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "required_checks": [
+        "full_contract_text_present",
+        "schema_extract_present",
+        "contract_sha256_present",
+        "required_optional_field_table_present",
+        "cross_owner_mapping_present",
+        "tool_docs_not_used_as_internal_contract"
+      ]
+    },
+    "inline_contract_reaudit_result": {
+      "audit_result_id": "audit_result_phase37_backtest_b11_b12_inline_contract_reaudit_20260611_strict_v1",
+      "package_id": "phase37_backtest_b11_b12_inline_contract_reaudit_package_20260611",
+      "decision": "accepted_for_reviewed_caveat_only",
+      "reviewed_allowed": true,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false,
+      "reasons": [
+        "内联 schema 已定义 strategy_identity、data_identity、market_calendar_identity 和 execution_assumption_identity。",
+        "owner mapping 已明确 Strategy Engineering、Data Engineering、Market Microstructure、Replay/Simulation/Live Execution 与 Backtest 的边界。",
+        "Backtest 只负责记录、绑定和审计一致性，不接管其他分支本体规则。"
+      ],
+      "patch_notes": {
+        "source": [
+          "MLflow、DVC、QuantConnect 只能作为 implementation pattern 或 supporting source，不得替代 CEK-TA 字段契约。",
+          "CEK-TA backtest_run_manifest schema extract 是 strategy/data/calendar/execution version 字段本体主来源。"
+        ],
+        "content": [
+          "B12 formal materialization 前应把 evaluation_timestamp 显式加入 run_identity 或 audit_trace，或声明 run_identity.created_at 是 evaluation timestamp alias。",
+          "B12 必须保留 strategy/data/calendar/execution assumption 的 owner mapping。"
+        ],
+        "boundary": [
+          "reviewed/caveat_only 只表示带 caveat 的版本绑定方法边界，不代表策略有效或实盘许可。",
+          "不得创建 approved、default guidance 或 hard gate。"
+        ],
+        "conflict": [
+          "strategy_rule_version 归 Strategy Engineering；dataset_version 归 Data Engineering；calendar/session 归 Market Microstructure/Data Engineering；cost/fill/slippage 归 Replay/Simulation/Live Execution；Backtest 只记录、绑定和审计一致性。"
+        ]
+      }
+    }
+  },
+  "workflow": {
+    "stage": "formalized_reviewed",
+    "queue_group": "formalized",
+    "current_task_id": "CEK-TA-423",
+    "next_action": "none",
+    "next_allowed_decisions": [
+      "accepted_for_reviewed_caveat_only",
+      "needs_more_evidence",
+      "rejected",
+      "blocked"
+    ],
+    "forbidden_decisions": [
+      "approved",
+      "default_guidance",
+      "hard_gate"
+    ],
+    "formalization_allowed": true,
+    "conversion_target": {
+      "proposed_knowledge_id": "kb_04_backtest.strategy_version_and_data_version_required.v1",
+      "target_review_status": "draft",
+      "target_default_guidance": "deny",
+      "reviewed_allowed": false,
+      "approved_allowed": false,
+      "default_guidance_allowed": false,
+      "hard_gate_allowed": false
+    },
+    "ai_audit_result_id": "audit_result_phase37_backtest_candidate_audit_20260611_strict_v1",
+    "formal_knowledge_id": "kb_04_backtest.strategy_version_and_data_version_required.v1",
+    "formal_review_status": "reviewed",
+    "default_guidance_allowed": false,
+    "approved_allowed": false,
+    "hard_gate_allowed": false,
+    "hidden_from_default_queue": true,
+    "visible_in_default_guidance_queue": false,
+    "reviewed_preparation_audit_result_id": "audit_result_phase37_backtest_reviewed_preparation_20260611_strict_v1",
+    "reviewed_blocked_supplemental_audit_result_id": "audit_result_phase37_backtest_reviewed_blocked_supplemental_reaudit_20260611_strict_v1",
+    "formal_knowledge_path": "codex-expert-kit/rag/knowledge/KB_04_BACKTEST/kb_04_backtest.strategy_version_and_data_version_required.v1.json",
+    "inline_contract_reaudit_result_id": "audit_result_phase37_backtest_b11_b12_inline_contract_reaudit_20260611_strict_v1"
+  },
+  "contribution": {
+    "origin": "codex_research_ingestion_phase37",
+    "private_data_removed": true,
+    "contains_account_facts": false,
+    "contains_secret": false,
+    "contains_project_private_strategy": false
+  },
+  "_inline_contract_evidence": {
+    "task_id": "CEK-TA-422",
+    "contract_path": "docs/contracts/phase37_backtest_run_manifest_contract.md",
+    "schema_extract_path": "docs/contracts/phase37_backtest_run_manifest_schema_extract.json",
+    "contract_sha256": "6698c0b2ec18dc12ebd85f46ace4c021c6b6d84e162ff45773c9a9e253289574",
+    "schema_extract_id": "phase37_backtest_run_manifest_schema_extract_v1",
+    "inline_sections_for_audit": [
+      "strategy_identity",
+      "data_identity",
+      "market_calendar_identity",
+      "execution_assumption_identity",
+      "reproducibility_package"
+    ]
+  }
+}
